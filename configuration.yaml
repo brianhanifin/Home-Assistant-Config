@@ -1,0 +1,34 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret hass_latitude
+  longitude: !secret hass_longitude
+
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: !secret hass_elevation
+
+  # metric for Metric, imperial for Imperial
+  unit_system: !secret hass_units
+  
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: !secret hass_timezone
+
+  # Customization file
+  #customize: !include_dir_merge_named customize
+  #customize_domain: !include customize_domain.yaml
+  #customize_glob: !include customize_glob.yaml
+
+  # Self contained packages
+  packages: !include_dir_named packages
+
+group: !include_dir_merge_named groups
+
+#automation: !include_dir_merge_list automation
+#input_boolean: !include_dir_merge_named input_boolean
+#light: !include light_groups.yaml
+#scene: !include_dir_merge_list scenes
+#script: !include_dir_merge_named scripts
+#sensor: !include_dir_merge_list sensors
+#switch: !include switches.yaml
