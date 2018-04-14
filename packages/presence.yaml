@@ -1,0 +1,149 @@
+homeassistant:
+  customize:
+    ##### Brian's Devices
+    device_tracker.brians_iphone:
+      friendly_name: "Brian's Phone"
+    device_tracker.brians_iphone_bluetooth:
+      friendly_name: "Brian's Phone"
+    devices.automatic:
+      friendly_name: "Brian's Car"
+
+    ##### Nerene's Devices
+    device_tracker.nerenes_iphone:
+      friendly_name: "Nerene's Phone"
+    device_tracker.parrot_ck3100:
+      friendly_name: "Nerene's Car"
+
+    ##### Occupancy Sensors
+    binary_sensor.bedroom_occupancy:
+      device_class: occupancy
+    binary_sensor.home_occupancy:
+      device_class: occupancy
+    binary_sensor.living_room_occupancy:
+      device_class: occupancy
+    binary_sensor.lucas_bedroom_occupancy:
+      device_class: occupancy
+
+    ##### Combined Occupancy Sensor (at least one person is home)
+    binary_sensor.presence_home:
+      friendly_name: "At Home"
+      device_class: occupancy
+      icon: mdi:account-multiple
+    input_boolean.presence_home:
+      friendly_name: "At Home"
+      icon: mdi:account-multiple
+
+    ##### Motion Sensors
+    binary_sensor.living_room_motion:
+      friendly_name: "Living Room"
+      device_class: motion
+      icon: mdi:run
+    binary_sensor.play_room_motion:
+      friendly_name: "Play Room"
+      device_class: motion
+      icon: mdi:run
+
+
+################################################
+## Component Settings
+################################################
+device_tracker:
+  - platform: bluetooth_tracker
+
+  - platform: nmap_tracker
+    hosts:
+      - 10.0.0.29   # Brian's iPhone
+      - 10.0.0.71   # Nerene's iPhone
+      #- 10.0.0.0/16
+    home_interval: 3
+    new_device_defaults:
+      track_new_devices: false
+      hide_if_away: false
+
+################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: template
+    sensors:
+      presence_home:
+        value_template: >-
+          {{ is_state('input_boolean.presence_home', 'on') }}
+        device_class: presence
+
+################################################
+## Switches
+################################################
+input_boolean:
+  guest_mode:
+    name: Guest Mode
+    icon: mdi:account-alert
+    initial: off
+
+  presence_home:
+    name: At Home
+    icon: mdi:account-multiple
+    initial: off
+
+################################################
+## Automation
+################################################
+automation:
+  - alias: Brian and Nerene Leave Home
+    trigger:
+      - platform: state
+        entity_id: device_tracker.brians_iphone, device_tracker.brians_iphone_bluetooth, device_tracker.nerenes_iphone
+
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: 'device_tracker.brians_iphone'
+          state: 'away'
+        - condition: state
+          entity_id: 'device_tracker.brians_iphone_bluetooth'
+          state: 'away'
+        - condition: state
+          entity_id: 'device_tracker.nerenes_iphone'
+          state: 'away'
+        - condition: state
+          entity_id: input_boolean.guest_mode
+          state: 'off'
+  #    for:
+  #      hours: 0
+  #      minutes: 2
+  #      seconds: 0
+
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.presence_home
+
+
+  - alias: Brian or Nerene Return Home
+    trigger:
+      - platform: state
+        entity_id: device_tracker.brians_iphone, device_tracker.brians_iphone_bluetooth, device_tracker.nerenes_iphone
+
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: 'device_tracker.brians_iphone'
+          state: 'home'
+        - condition: state
+          entity_id: 'device_tracker.brians_iphone_bluetooth'
+          state: 'home'
+        - condition: state
+          entity_id: 'device_tracker.nerenes_iphone'
+          state: 'home'
+        - condition: state
+          entity_id: input_boolean.guest_mode
+          state: 'on'
+#      for:
+#        hours: 0
+#        minutes: 0
+#        seconds: 30
+
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.presence_home

@@ -1,0 +1,24 @@
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: since_last_boot
+      - type: processor_use
+      - type: memory_use_percent
+      - type: load_15m
+
+################################################
+## Groups
+################################################
+group:
+  system_monitor:
+    name: Server
+    icon: mdi:desktop-classic
+    view: no
+    entities:
+      - sensor.since_last_boot
+      - sensor.processor_use
+      - sensor.memory_use_percent
+      - sensor.load_15m

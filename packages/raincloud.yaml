@@ -1,0 +1,206 @@
+homeassistant:
+  customize_glob:
+    "*._watering*":
+      hidden: true
+      homebridge_hidden: true
+
+  customize:
+    #### Connectivity Sensors
+    binary_sensor.aquatimer_control_unit_status:
+      friendly_name: RainCloud (Base)
+      device_class: connectivity
+      icon: mdi:server-network
+      homebridge_hidden: false
+    binary_sensor.side_yard_status:
+      friendly_name: RainCloud (Remote)
+      device_class: connectivity
+      icon: mdi:water-pump
+      homebridge_hidden: false
+
+    sensor.side_yard_battery:
+      device_class: battery
+      homebridge_hidden: false
+
+    #### Watering Sensors
+    binary_sensor.front_yard_watering:
+      device_class: moisture
+      homebridge_hidden: false
+    binary_sensor.pool_filler_watering:
+      device_class: moisture
+      homebridge_hidden: false
+
+    #### Watering Automatic/Manual Disable
+    switch.front_yard_automatic_watering:
+      homebridge_hidden: false
+    switch.front_yard_manual_watering:
+      homebridge_hidden: false
+    switch.pool_filler_automatic_watering:
+      homebridge_hidden: false
+    switch.pool_filler_manual_watering:
+      homebridge_hidden: false
+    
+    #### Raincloud Base Power
+    switch.raincloud:
+      homebridge_hidden: true
+    script.raincloud_restart:
+      can_cancel: false
+      homebridge_hidden: false
+
+
+################################################
+## Component Settings
+################################################
+raincloud:
+  username: !secret email1
+  password: !secret raincloud_pass
+
+################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: raincloud
+    monitored_conditions:
+      - is_watering
+      - status
+
+sensor:
+  - platform: raincloud
+    monitored_conditions:
+      - battery
+      - next_cycle
+      - rain_delay
+      - watering_time
+
+################################################
+## Switch
+################################################
+switch:
+  - platform: raincloud
+    watering_minutes: 10
+    monitored_conditions:
+      - auto_watering
+      - manual_watering
+
+################################################
+## Groups
+################################################
+group:
+  raincloud_drip:
+    entities:
+      - binary_sensor.front_yard_watering
+      - sensor.front_yard_next_cycle
+      - sensor.front_yard_rain_delay
+      - switch.front_yard_automatic_watering
+      - switch.front_yard_manual_watering
+    name: Front Yard Drip System
+    icon: mdi:flower
+    control: hidden
+    view: no
+
+  raincloud_poolfill:
+    entities:
+      - binary_sensor.pool_filler_watering
+      - sensor.pool_filler_next_cycle
+      - sensor.pool_filler_rain_delay
+      - switch.pool_filler_automatic_watering
+      - switch.pool_filler_manual_watering
+    name: Pool Filler
+    icon: mdi:pool
+    control: hidden
+    view: no
+
+  raincloud_maintenance:
+    entities:
+      - switch.raincloud
+      - script.raincloud_restart
+    name: Maintenance
+    icon: mdi:wrench
+    control: hidden
+    view: no
+
+################################################
+## Script
+################################################
+script:
+  raincloud_offline_notify:
+    alias: Raincloud Offline Notification
+    sequence:
+      - service: logbook.log
+        data:
+          name: "Raincloud Offline:"
+          message: "If this doesn't resolve itself in a few mintues, send a notification."
+
+      #- service: notify.brians_iphone
+      #  data:
+      #    title: "Raincloud Offline"
+      #    message: "Raincloud has been offline for 5 minutes as of {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+
+      - service: script.notify_ios_engine
+        data_template:
+          value1: 'Raincloud: Offline'
+          value2: 'Raincloud has been offline for 5 minutes.'
+          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          who: "brian"
+
+      - service: persistent_notification.create
+        data:
+          message: "Raincloud has been offline for 5 minutes as of {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+
+  raincloud_restart:
+    alias: Restart Raincloud
+    sequence:
+      - service: logbook.log
+        data:
+          name: "Raincloud Restart:"
+          message: "Powering Raincloud Hub off then on again."
+
+      #- service: notify.brians_iphone
+      #  data:
+      #    title: "Raincloud Restarting"
+      #    message: "Attempting to restart the Raincloud Hub. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+
+      - service: script.notify_ios_engine
+        data_template:
+          value1: 'Raincloud: Restarting'
+          value2: 'Attempting to restart the Raincloud Hub.'
+          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          who: "brian"
+
+      - service: script.notify_web_engine
+        data_template:
+          value1: 'Raincloud: Restarting'
+          value2: 'Attempting to restart the Raincloud Hub.'
+          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      #- service: persistent_notification.create
+      #  data:
+      #    message: "Attempting to restart the Raincloud Hub. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+
+      - service: switch.turn_off
+        entity_id: switch.raincloud
+
+      - wait_template: "{{ is_state('switch.raincloud', 'off') }}"
+        timeout: '00:01:00'
+
+      - service: switch.turn_on
+        entity_id: switch.raincloud
+
+################################################
+## Automation
+################################################
+automation:
+  - alias: Raincloud Offline Watchdog
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.aquatimer_control_unit_status
+        from: 'on'
+
+    action:
+      # Wait 5 minutes and test again.
+      - delay: 00:05:00
+
+      - condition: state
+        entity_id: binary_sensor.aquatimer_control_unit_status
+        state: 'off'
+
+      - service: script.turn_on
+        entity_id: script.raincloud_offline_notify

@@ -1,0 +1,72 @@
+homeassistant:
+  customize:
+    camera.front_door:
+      homebridge_hidden: false
+
+    binary_sensor.ring_front_door_motion:
+      device_class: motion
+
+    sensor.ring_front_door_last_motion:
+      homebridge_hidden: false
+
+
+################################################
+## Component Settings
+################################################
+ring:
+  username: !secret email1
+  password: !secret ring_pass
+
+################################################
+## Cameras
+################################################
+camera:
+  - platform: ring
+    scan_interval: 90
+
+################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: ring
+    monitored_conditions:
+      - ding
+      - motion
+
+sensor:
+  - platform: ring
+    monitored_conditions:
+      - last_activity
+      - last_ding
+      - last_motion
+    #  - volume
+    #  - wifi_signal_category
+    #  - wifi_signal_strength
+
+################################################
+## Script
+################################################
+script:
+  doorbell_pressed:
+    sequence:
+      - service: logbook.log
+        data:
+          name: "Ring Doorbell:"
+          message: "Someone Pressed the Doorbell."
+#      - service: xiaomi_aqara.play_ringtone
+#        data:
+#          gw_mac: !secret xiaomi_mac1
+#          ringtone_id: 10
+
+################################################
+## Automation
+################################################
+automation:
+  - alias: Doorbell Pressed
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ring_front_door_ding
+        from: 'off'
+    action:
+      - service: script.turn_on
+        entity_id: script.doorbell_pressed

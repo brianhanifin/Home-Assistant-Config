@@ -1,0 +1,106 @@
+homeassistant:
+  customize:
+    sensor.dark_sky_minutely_summary:
+      friendly_name: Current Conditions
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: darksky
+    api_key: !secret darksky_apikey
+    forecast:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+    monitored_conditions:
+      - temperature
+      - apparent_temperature
+      - apparent_temperature_max
+      - apparent_temperature_min
+      - precip_probability
+      - precip_accumulation
+      - precip_type
+      - precip_intensity
+      - summary
+      - icon
+      - nearest_storm_distance
+      - daily_summary
+      - hourly_summary
+      - minutely_summary
+      - cloud_cover
+      - humidity
+      - precip_intensity_max
+      - pressure
+      - wind_speed
+      - wind_bearing
+
+input_text:
+  current_icon:
+    name: Current Conditions Icon
+    initial: mdi:weather-sunny
+
+################################################
+## Groups
+################################################
+group:
+  darksky:
+    entities:
+      - sensor.dark_sky_cloud_coverage
+      - sensor.dark_sky_daily_high_apparent_temperature
+      - sensor.dark_sky_daily_low_apparent_temperature
+      - sensor.dark_sky_daily_max_precip_intensity
+      - sensor.dark_sky_daily_summary
+      - sensor.dark_sky_hourly_summary
+      - sensor.dark_sky_humidity
+      - sensor.dark_sky_minutely_summary
+      - sensor.dark_sky_nearest_storm_distance
+      - sensor.dark_sky_precip
+      - sensor.dark_sky_precip_intensity
+      - sensor.dark_sky_precip_probability
+      - sensor.dark_sky_summary
+      - sensor.dark_sky_temperature
+      - sensor.dark_sky_wind_bearing
+      - sensor.dark_sky_wind_speed
+    name: Dark Sky
+    view: no
+
+################################################
+## Script
+################################################
+script:
+  weather_group_icon:
+    alias: Weather Group Icon Update
+    sequence:
+      - service: group.set
+        data_template:
+          object_id: weather
+          icon: mdi:{% if is_state('sensor.dark_sky_icon', 'clear-day') %}weather-sunny{% endif %}{% if is_state('sensor.dark_sky_icon', 'clear-night') %}weather-night{% endif %}{% if is_state('sensor.dark_sky_icon', 'rain') %}weather-rainy{% endif %}{% if is_state('sensor.dark_sky_icon', 'snow') %}weather-snowy{% endif %}{% if is_state('sensor.dark_sky_icon', 'sleet') %}weather-snowy-rainy{% endif %}{% if is_state('sensor.dark_sky_icon', 'wind') %}weather-windy-variant{% endif %}{% if is_state('sensor.dark_sky_icon', 'fog') %}weather-fog{% endif %}{% if is_state('sensor.dark_sky_icon', 'cloudy') %}weather-cloudy{% endif %}{% if is_state('sensor.dark_sky_icon', 'partly-cloudy-day') or is_state('sensor.dark_sky_icon', 'partly-cloudy-night') %}weather-partlycloudy{% endif %}{% if is_state('sensor.dark_sky_icon', 'hail') %}weather-hail{% endif %}{% if is_state('sensor.dark_sky_icon', 'thunderstorm') %}weather-lightning{% endif %}
+
+################################################
+## Automation
+################################################
+automation:
+  ## Update the weather group icon when conditions change
+  - alias: Weather Group Icon Update
+    trigger:
+      - platform: state
+        entity_id: sensor.dark_sky_icon
+
+    action:
+      - service: script.turn_on
+        entity_id: script.weather_group_icon
+
+  ## Update the weather group icon when Home Assistant loads
+  - alias: Dark Sky Startup Actions
+    trigger:
+      platform: homeassistant
+      event: start
+
+    action:      
+      - service: script.turn_on
+        entity_id: script.weather_group_icon

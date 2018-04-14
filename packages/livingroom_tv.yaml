@@ -1,0 +1,167 @@
+homeassistant:
+  customize:
+    media_player.livingroom_un55d7000:
+      homebridge_hidden: false
+    group.mediaplayer_livingroom:
+      visible: false
+
+    ################################################
+    ## Node Anchors
+    ################################################
+    package.node_anchors:
+      customize: &customize
+        package: 'livingroom_tv'
+
+    ################################################
+    ## Script
+    ################################################
+    automation.turn_on_livingroom_tv:
+      <<: *customize
+      friendly_name: "Turn On Television"
+      icon: mdi:television
+
+    automation.turn_off_livingroom_tv:
+      <<: *customize
+      friendly_name: "Turn On Television"
+      icon: mdi:television
+
+    ################################################
+    ## Switch 
+    ################################################
+    switch.livingroom_tv:
+      <<: *customize
+      friendly_name: "Living Room TV"
+      icon: mdi:television
+      persistent: true
+      homebridge_hidden: false
+
+apple_tv:
+  - host: 10.0.0.39
+    login_id: 00000000-0689-9b13-c05e-c025b18b4d36
+    name: Living Room
+    start_off: true
+
+remote:
+  - platform: harmony
+    name: Living Room
+    host: 10.0.0.16
+
+################################################
+## Groups
+################################################
+group:
+  mediaplayer_livingroom:
+    entities:
+      - media_player.living_room
+    name: Media Player - Living Room
+    view: no
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: template
+    sensors:
+      harmony_livingroom_activity:
+        value_template: '{{ states.remote.living_room_2.attributes.current_activity }}'
+        friendly_name: "Living Room"
+
+################################################
+## Switches
+################################################
+switch:
+  platform: template
+  switches:
+    livingroom_tv:
+      value_template: "{% if is_state('sensor.harmony_livingroom_activity', 'PowerOff') or is_state('sensor.harmony_livingroom_activity', 'None') %}off{% else %}on{% endif %}"
+      turn_on:
+        service: script.turn_on
+        entity_id: script.turn_on_livingroom_tv 
+      turn_off:
+        service: script.turn_on
+        entity_id: script.turn_off_livingroom_tv 
+
+################################################
+## Scripts
+################################################
+script:
+  livingroom_mediaplayer_enable:
+    alias: Media Player - Living Room Enable
+    sequence:
+      - service: media_player.turn_on 
+        entity_id: media_player.living_room
+
+      #- service: group.set_visibility
+      #  entity_id: group.mediaplayer_livingroom
+      #  data:
+      #    visible: true
+
+  livingroom_mediaplayer_disable:
+    alias: Media Player - Living Room Disable
+    sequence:
+      - service: media_player.turn_off
+        entity_id: media_player.living_room
+
+      #- service: group.set_visibility
+      #  entity_id: group.mediaplayer_livingroom
+      #  data:
+      #    visible: false
+
+  mediaplayer_livingroom_showhide:
+    alias: Media Player - Living Room Visibility
+    sequence:
+      - service: group.set_visibility
+        entity_id: group.mediaplayer_livingroom
+        data_template:
+          visible: >
+            {% if is_state('sensor.harmony_livingroom_activity', 'Apple TV') %}
+              True
+            {% else %}
+              False
+            {% endif %}
+
+  turn_on_livingroom_tv:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_2
+          activity: >
+            18768213
+
+  turn_off_livingroom_tv:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_2
+          activity: >
+            -1
+
+################################################
+## Automation
+################################################
+#automation:
+#  - alias: Living Room Media Player
+#    trigger:
+#      - platform: state
+#        entity_id: sensor.harmony_livingroom_activity
+#    action:
+#      - service: script.turn_on
+#        entity_id: script.mediaplayer_livingroom_showhide
+
+#  - alias: Living Room Media Player Disable
+#    trigger:
+#      - platform: state
+#        entity_id: media_player.living_room
+#        from: 'playing'
+#    action:
+#      - service: script.turn_on 
+#        entity_id: script.livingroom_mediaplayer_disable
+
+#  - alias: Living Room Media Player Enable
+#    trigger:
+#      - platform: state
+#        entity_id: media_player.living_room
+#        to: 'playing'
+#    action:
+#      - service: script.turn_on 
+#        entity_id: script.livingroom_mediaplayer_enable

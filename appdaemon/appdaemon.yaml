@@ -1,0 +1,18 @@
+secrets: /config/secrets.yaml
+log:
+  logfile: STDOUT
+  errorfile: STDERR
+appdaemon:
+  # If you are using AppDaemon just for the dasboard and not the Apps, you can disable the app engine with the following directive:
+  disable_apps: 1  # This will free up some CPU and memory.
+  threads: 10
+  app_dir: /config/appdaemon/apps
+  plugins:
+    HASS:
+      type: hass
+      #ha_url: http://hassio/homeassistant
+      ha_url: http://hassio.local:8123
+      ha_key: 290db999ad484735870dba550e6a258d
+hadashboard:
+  dash_url: http://127.0.0.1:5050
+  dash_dir: /config/appdaemon/dashboards

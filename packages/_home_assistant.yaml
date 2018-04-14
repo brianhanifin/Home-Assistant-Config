@@ -1,0 +1,146 @@
+homeassistant:
+  customize:
+    group.home:
+      order: 1
+    group.alarm_clocks:
+      order: 2
+    group.playroom:
+      order: 3
+    group.upstairs:
+      order: 4
+    group.weather:
+      order: 5
+    group.watering:
+      order: 6
+    group.information:
+      order: 7
+
+    script.restart:
+      icon: mdi:restart
+
+
+################################################
+## Component Settings
+################################################
+# Enables configuration UI
+config:
+
+# Discover some devices automatically
+discovery:
+
+history: !include /config/history.yaml
+
+# View all events in a logbook
+logbook:
+
+logger:
+  #default: info
+  default: warning
+
+recorder: !include /config/recorder.yaml
+
+sun:
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  include_used_components: true
+
+weblink:
+  entities:
+    - name: Alexa Skills
+      icon: mdi:amazon-alexa
+      url: https://alexa.amazon.com
+    - name: Router
+      icon: mdi:router-wireless
+      url: http://10.0.0.1/
+
+zeroconf:
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+
+  - platform: moon
+
+input_text:
+  dusk:
+    name: Time of Dusk
+
+################################################
+## Switches
+################################################
+input_boolean:
+  experiments_enabled:
+    name: Experimental Automations
+    icon: mdi:test-tube
+    initial: off
+
+################################################
+## Script
+################################################
+script:
+  reboot:
+    alias: Reboot Home Assistant
+    sequence:
+      - service: homeassistant.restart
+
+  restart:
+    alias: Restart Home Assistant
+    sequence:
+      - service: homeassistant.restart
+
+#########################################
+##### Automation
+#########################################
+automation:
+  - alias: Home Assistant Startup Actions
+    trigger:
+      platform: homeassistant
+      event: start
+    action:
+      - service: script.turn_on
+        entity_id: script.mediaplayer_livingroom_showhide
+      - service: script.turn_on
+        entity_id: script.mediaplayer_playroom_showhide
+      - service: input_text.set_value
+        entity_id: input_text.dusk
+        data:
+          value_template: '{{ states.sun.sun.attributes.next_dusk }}'
+
+  ## Set today's dusk time at midnight
+  - alias: Set Time of Dusk
+    trigger:
+      platform: time
+      at: "00:00"
+    action:
+      - service: input_text.set_value
+        entity_id: input_text.dusk
+        data:
+          value_template: '{{ states.sun.sun.attributes.next_dusk }}'
+
+  - alias: Notify on Home Automation Updates
+    trigger:
+      platform: state
+      entity_id: updater.updater
+    action:
+      - service: script.notify_ios_engine
+        data_template:
+          value1: 'Home Assistant Update Available'
+          value2: ''
+          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          who: "brian"
+      - service: persistent_notification.create
+        data:
+          title: "Update Available"
+          message: "Home Assistant {{ states('updater.updater') }} is available. - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+          #notification_id: "update_available"

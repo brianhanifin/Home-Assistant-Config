@@ -1,0 +1,186 @@
+################################################
+## Component Settings
+################################################
+ios:
+  push_alarmclock2:
+    categories:
+      - name: alarm clock
+        identifier: 'alarmclock2'
+        actions:
+          - identifier: 'AWAKE'
+            title: 'Awake'
+            destructive: no
+          - identifier: 'SNOOZE'
+            title: 'Snooze'
+            destructive: yes
+
+################################################
+## Group
+################################################
+group:
+  alarmclock2:
+    name: "Lucas' Medicine Reminder"
+    entities:
+      - sensor.alarmclock_time2
+      - input_number.alarmclock_hour2
+      - input_number.alarmclock_minutes2
+      - input_boolean.alarmclock_status2
+
+################################################
+## Sliders
+################################################
+input_number:
+  alarmclock_hour2:
+    name: Hour
+    icon: mdi:timer
+    mode: slider
+    initial: 6
+    min: 0
+    max: 23
+    step: 1
+
+  alarmclock_minutes2:
+    name: Minutes
+    icon: mdi:timer
+    mode: slider
+    initial: 30
+    min: 0
+    max: 59
+    step: 5
+
+################################################
+## Switches
+################################################
+input_boolean:
+  alarmclock_status2:
+    initial: on
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: template
+    sensors:
+      alarmclock_time2:
+        value_template: >-
+          {{ states.sensor.alarmclock_hour2.state }}:
+          {%- if states.sensor.alarmclock_minutes2.state|length == 1 -%}
+            0
+          {%- endif -%}
+            {{ states.sensor.alarmclock_minutes2.state }}
+
+      alarmclock_time_long2:
+        value_template: >-
+          {% if states.sensor.alarmclock_hour2.state|length == 1 -%}
+            0
+          {%- endif -%}
+            {{ states.sensor.alarmclock_hour2.state }}:
+          {%- if states.sensor.alarmclock_minutes2.state|length == 1 -%}
+            0
+          {%- endif -%}
+            {{ states.sensor.alarmclock_minutes2.state }}
+
+################################################
+## Scripts
+################################################
+script:
+  alarmclock2_notifylucas:
+    sequence:
+    - service: script.notify_ios_engine
+      data_template:
+        value1: 'Take Medicine'
+        value2: 'Please take your medicine.'
+        value3: ''
+        #value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+        who: "lucas"
+        #engines: persistent, ios
+
+  ###### script for running what happens after awake button is pushed ######
+  s_alarmclock_awake2:
+    sequence:
+    - delay: '00:15:00'
+    - service: script.turn_on
+      data:
+        entity_id: script.alarmclock2_notifylucas
+
+  ###### script for running what happens when snooze button is pushed and for turning on the snooze timer and turning off lights ###### 
+  s_alarmclock_snooze2:
+    sequence:
+    - service: script.turn_off
+      data:
+        entity_id: script.s_alarmclock_snooze_timer2
+    - service: script.turn_on
+      data:
+        entity_id: script.s_alarmclock_snooze_timer2
+
+  ###### script for the snooze timer ######
+  s_alarmclock_snooze_timer2:
+    sequence:
+    - delay:
+        minutes: 5
+    - service: automation.trigger
+      data:
+        entity_id: automation.alarmclock_activated2
+
+  ###### script for running what happens when the alarm clock gets turned on ######
+  s_alarmclock_wake_up2:
+    sequence:
+    - service: script.turn_on
+      data:
+        entity_id: script.alarmclock2_notifylucas
+
+################################################
+## Automation
+################################################
+automation:
+  ###### automation for turning on the alarm ######
+  id: alarmclock_activated2
+  alias: Alarm Clock Activated
+  hide_entity: False
+  trigger:
+    platform: template
+    value_template: '{{ states.sensor.alarmclock_time2.state == states.sensor.alarmclock_time_long2.state }}'
+  condition:
+    condition: state
+    entity_id: input_boolean.alarmclock_status2
+    state: 'on'
+  action:
+  - service: script.turn_on
+    entity_id: script.s_alarmclock_wake_up2
+  #- service: notify.ios_3vasi0ns_iphone
+  #  data:
+  #    title: "Alarm Clock"
+  #    message: "It's Time For You To Wake Up!"
+  #    data:
+  #      push:
+  #        sound: "US-EN-Alexa-Good-Morning.wav"
+  #        badge: 0
+  #        category: 'alarmclock'
+
+  ###### awake actionable notification pushed ######
+  id: a_alarmclock_awake_action2
+  alias: alarm clock awake action
+  initial_state: true
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: AWAKE
+  action:
+    service: script.turn_on
+    entity_id: script.s_alarmclock_awake2
+
+  ###### snooze actionable notification pushed ######
+  id: a_alarmclock_snooze_action2
+  alias: alarm clock snooze action
+  initial_state: true
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: SNOOZE
+  action:
+    service: script.turn_on
+    entity_id: script.s_alarmclock_snooze2

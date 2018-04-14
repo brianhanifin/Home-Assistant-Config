@@ -1,0 +1,79 @@
+homeassistant:
+  customize:
+    climate.home:
+      friendly_name: Thermostat
+      homebridge_hidden: true
+      icon: mdi:air-conditioner
+    climate.playroom:
+      friendly_name: Thermostat
+      homebridge_hidden: true
+      icon: mdi:air-conditioner
+
+    switch.thermostat_fan_home:
+      homebridge_hidden: false
+    switch.thermostat_fan_playroom:
+      homebridge_hidden: false
+
+################################################
+## Component Settings
+################################################
+ecobee:
+  api_key: !secret ecobee_apikey
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: template
+    sensors:
+      ecobee_fan_home:
+        friendly_name: "Ecobee Fan State"
+        value_template: "{{ states.climate.home.attributes.fan }}"
+
+################################################
+## Switch
+################################################
+switch:
+  - platform: template
+    switches:
+      thermostat_fan_home:
+        friendly_name: "Thermostat Fan"
+        value_template: "{{ states.climate.home.attributes.fan_min_on_time | int > 5 }}"
+        turn_on:
+          - service: climate.ecobee_set_fan_min_on_time
+            data:
+              entity_id: climate.home
+              fan_min_on_time: 60
+        turn_off:
+          - service: climate.ecobee_set_fan_min_on_time
+            data:
+              entity_id: climate.home
+              fan_min_on_time: 0
+        icon_template: >-
+          {% if is_state('switch.thermostat_fan_home', 'on') %}
+            mdi:fan
+          {% else %}
+            mdi:fan-off
+          {% endif %}
+
+  - platform: template
+    switches:
+      thermostat_fan_playroom:
+        friendly_name: "Thermostat Fan" # [Playroom]
+        value_template: "{{ states.climate.playroom.attributes.fan_min_on_time | int > 5 }}"
+        turn_on:
+          - service: climate.ecobee_set_fan_min_on_time
+            data:
+              entity_id: climate.playroom
+              fan_min_on_time: 60
+        turn_off:
+          - service: climate.ecobee_set_fan_min_on_time
+            data:
+              entity_id: climate.playroom
+              fan_min_on_time: 0
+        icon_template: >-
+          {% if is_state('switch.thermostat_fan_playroom', 'on') %}
+            mdi:fan
+          {% else %}
+            mdi:fan-off
+          {% endif %}

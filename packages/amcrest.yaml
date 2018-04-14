@@ -1,0 +1,35 @@
+homeassistant:
+  customize:
+    camera.workbench:
+      homebridge_hidden: false
+
+    sensor.workbench_motion_detected:
+      homebridge_hidden: false
+
+################################################
+## Component Settings
+################################################
+amcrest:
+  - host: 10.0.0.13
+    name: Workbench
+    username: !secret amcrest_user
+    password: !secret amcrest_pass
+    sensors:
+      - motion_detector
+      - ptz_preset
+      #- sdcard
+    switches:
+      - motion_detection
+      - motion_recording
+
+################################################
+## Cameras
+################################################
+camera:
+  - platform: amcrest
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: amcrest

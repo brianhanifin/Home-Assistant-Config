@@ -1,0 +1,27 @@
+homeassistant:
+  customize:
+    binary_sensor.garage_state:
+      device_class: garage_door
+
+################################################
+## Component Settings
+################################################
+cover:
+  - platform: myq
+    username: !secret email1
+    password: !secret myq_pass
+    name: garage_door
+    type: liftmaster
+
+################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: template
+    sensors:
+      garage_door:
+        value_template: '{{ states.cover.garage_door.state }}'
+        device_class: garage_door
+        friendly_name: 'Garage Door'
+        #icon_template: mdi:garage'{% if is_state(cover.garage_door == 'open' %}-open{% endif %}'
+        #icon: mdi:garage

@@ -1,0 +1,60 @@
+homeassistant:
+  customize:
+    binary_sensor.glowforge_window:
+      device_class: window
+    #binary_sensor.xiaomi_button
+    #light.xiaomi_gateway_light
+    #sensor.xiaomi_gateway_illumination
+
+################################################
+## Component Settings
+################################################
+xiaomi_aqara:
+  discovery_retry: 5
+  gateways:
+    - mac: !secret xiaomi_mac1
+      key: !secret xiaomi_key1
+
+################################################
+## Automation
+################################################
+automation:
+  - alias: Smart button single click
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.xiaomi_button
+        click_type: single
+    action:
+      service: xiaomi_aqara.stop_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac1
+
+  - alias: Smart button long press
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.xiaomi_button
+        click_type: long_click_press
+    action:
+      service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac1
+        ringtone_id: 20
+        ringtone_vol: 10001
+
+  - alias: Smart button double click
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.xiaomi_button
+        click_type: double
+    action:
+      service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac1
+        ringtone_id: 21
+        ringtone_vol: 20

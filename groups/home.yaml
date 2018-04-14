@@ -1,0 +1,75 @@
+##################
+##### Home Tab
+##################
+default_view:
+  entities:
+    - binary_sensor.presence_home
+    - binary_sensor.living_room_motion
+    - binary_sensor.garage_door
+    - binary_sensor.glowforge_window
+    - sensor.dark_sky_apparent_temperature
+    - sensor.living_room_temperature
+    - binary_sensor.aquatimer_control_unit_status
+    - sensor.side_yard_battery
+    - group.living_room
+    - group.cameras
+    - group.entry
+    - group.downstairs_other
+    - group.mediaplayer_livingroom
+    - group.control_panel
+  name: Dash
+  view: yes
+  icon: mdi:sofa
+
+cameras:
+  entities:
+    - camera.front_door
+  view: no
+  icon: mdi:cctv
+
+control_panel:
+  entities:
+    - scene.good_night
+    - input_boolean.guest_mode
+    - input_boolean.dusk_dimmers_enabled
+    - input_boolean.ios_notifications
+    - input_boolean.experiments_enabled
+    - script.restart
+  name: Control Panel
+  icon: mdi:file-document-box
+  control: hidden
+  view: no
+
+downstairs_other:
+  entities:
+    - light.family_room_lights
+    - light.dining_room_light
+    - light.play_room_lights
+    - cover.garage_door
+  name: Family, Dining, Garage
+  icon: mdi:monitor
+  control: hidden
+  view: no
+
+entry:
+  entities:
+    - light.porch_light
+    - light.stair_light
+    - switch.entry_step_light
+  control: hidden
+  name: Entry
+  view: no
+
+living_room:
+  entities:
+    - light.living_room_light
+    - light.living_corner_lamp
+    - binary_sensor.living_room_motion
+    - switch.livingroom_tv
+    - sensor.harmony_livingroom_activity
+    - climate.home
+    - switch.thermostat_fan_home
+  name: Living Room
+  icon: mdi:monitor
+  control: hidden
+  view: no
