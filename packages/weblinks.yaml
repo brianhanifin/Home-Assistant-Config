@@ -3,11 +3,16 @@
 ################################################
 weblink:
   entities:
+    ##### Resources
+    - name: HA Resources
+      url: https://www.vcloudinfo.com/2018/04/some-of-my-favorite-home-assistant.html?m=1
+    - name: Icons
+      url: https://materialdesignicons.com
+
+    ##### Management Tools
     - name: Alexa
       icon: mdi:amazon-alexa
       url: https://alexa.amazon.com
-    - name: HA Resources
-      url: https://www.vcloudinfo.com/2018/04/some-of-my-favorite-home-assistant.html?m=1
     - name: Router
       icon: mdi:router-wireless
       url: http://10.0.0.1/
@@ -33,20 +38,26 @@ weblink:
 ## Groups
 ################################################
 group:
-  weblinks:
-    name: Links
-    icon: mdi:open-in-new
+  weblink_management:
     entities:
       - weblink.alexa
-      - weblink.ha_resources
       - weblink.router
-      - group.weblink_projects
+    name: Management
+    icon: mdi:wrench
 
   weblink_projects:
-    name: Projects
     entities:
       - weblink.kitchen_lighting
       - weblink.new_features
       - weblink.repository
       - weblink.research
       - weblink.voice_control
+    name: Projects
+    icon: mdi:worker
+
+  weblink_resources:
+    entities:
+      - weblink.ha_resources
+      - weblink.icons
+    name: Resources
+    icon: mdi:open-in-new

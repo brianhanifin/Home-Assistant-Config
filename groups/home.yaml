@@ -3,6 +3,7 @@
 ##################
 default_view:
   entities:
+    ##### Sensors
     - binary_sensor.presence_home
     - binary_sensor.living_room_motion
     - binary_sensor.garage_door
@@ -11,18 +12,19 @@ default_view:
     #- sensor.dark_sky_apparent_temperature
     - binary_sensor.aquatimer_control_unit_status
     - sensor.side_yard_battery
+
+    ##### Panels
     - group.living_room
     - group.entry
     - group.downstairs_other
     - group.mediaplayer_livingroom
     - group.control_panel
-    - group.weblinks
-    - group.cameras
   name: Dash
   view: yes
   icon: mdi:sofa
 
-cameras:
+camera_front_door:
+  name: Camera
   entities:
     - camera.front_door
   view: no
@@ -33,13 +35,71 @@ control_panel:
     - scene.goodbye
     - scene.good_night
     - input_boolean.guest_mode
-    - input_boolean.dusk_dimmers_enabled
-    - input_boolean.ios_notifications
-    - input_boolean.experiments_enabled
-    - script.restart
+    - group.control_panel_features
+    - group.control_panel_motion
+    - group.control_panel_projects
+    - group.control_panel_resources
+    - group.control_panel_manage
   name: Control Panel
   icon: mdi:file-document-box
   control: hidden
+  view: no
+
+control_panel_features:
+  entities:
+    - input_boolean.dusk_dimmers_enabled
+    - input_boolean.ios_notifications
+    - input_boolean.experiments_enabled
+  name: Features
+  icon: mdi:power
+  control: hidden
+  view: no
+
+control_panel_manage:
+  entities:
+    - sensor.since_last_boot
+    - sensor.processor_use
+    - sensor.memory_use_percent
+    - sensor.load_15m
+    - weblink.alexa
+    - weblink.router
+    - script.restart
+  name: Manage
+  icon: mdi:wrench
+  control: hidden
+  view: no
+
+control_panel_motion:
+  entities:
+    - binary_sensor.front_door_motion
+    - binary_sensor.ring_front_door_motion
+    - sensor.ring_front_door_last_motion
+    - binary_sensor.living_room_motion
+    - binary_sensor.kitchen_motion
+    - binary_sensor.play_room_motion
+    - sensor.workbench_motion_detected
+  name: Motion
+  icon: mdi:run-fast
+  control: hidden
+  view: no
+
+control_panel_projects:
+  entities:
+    - weblink.kitchen_lighting
+    - weblink.new_features
+    - weblink.repository
+    - weblink.research
+    - weblink.voice_control
+  name: Projects
+  icon: mdi:worker
+  view: no
+
+control_panel_resources:
+  entities:
+    - weblink.ha_resources
+    - weblink.icons
+  name: Resources
+  icon: mdi:open-in-new
   view: no
 
 downstairs_other:
@@ -48,7 +108,6 @@ downstairs_other:
     - light.dining_room_light
     - light.play_room_lights
     - cover.garage_door
-    - binary_sensor.kitchen_motion
   name: Family, Dining, Garage
   icon: mdi:monitor
   control: hidden
@@ -59,8 +118,8 @@ entry:
     - light.porch_light
     - light.stair_light
     - switch.entry_step_light
-    - binary_sensor.front_door_motion
     - sensor.ring_front_door_last_activity
+    - group.camera_front_door
   control: hidden
   name: Entry
   view: no
