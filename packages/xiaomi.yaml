@@ -19,7 +19,7 @@ xiaomi_aqara:
 ## Automation
 ################################################
 automation:
-  - alias: Smart button single click
+  - alias: Bathroom Switch Fan Toggle #Smart button single click
     trigger:
       platform: event
       event_type: click
@@ -27,11 +27,10 @@ automation:
         entity_id: binary_sensor.xiaomi_button
         click_type: single
     action:
-      service: xiaomi_aqara.stop_ringtone
-      data:
-        gw_mac: !secret xiaomi_mac1
+      service: switch.toggle
+      entity_id: switch.thermostat_fan_playroom
 
-  - alias: Smart button long press
+  - alias: Bathroom Switch Fan 15 minutes #Smart button long press
     trigger:
       platform: event
       event_type: click
@@ -39,11 +38,11 @@ automation:
         entity_id: binary_sensor.xiaomi_button
         click_type: long_click_press
     action:
-      service: xiaomi_aqara.play_ringtone
-      data:
-        gw_mac: !secret xiaomi_mac1
-        ringtone_id: 20
-        ringtone_vol: 10001
+      - service: switch.turn_on
+        entity_id: switch.thermostat_fan_playroom
+      - delay: 0:15
+      - service: switch.turn_off
+        entity_id: switch.thermostat_fan_playroom
 
   - alias: Smart button double click
     trigger:
@@ -53,8 +52,8 @@ automation:
         entity_id: binary_sensor.xiaomi_button
         click_type: double
     action:
-      service: xiaomi_aqara.play_ringtone
-      data:
-        gw_mac: !secret xiaomi_mac1
-        ringtone_id: 21
-        ringtone_vol: 20
+      - service: switch.turn_on
+        entity_id: switch.thermostat_fan_playroom
+      - delay: 1:30
+      - service: switch.turn_off
+        entity_id: switch.thermostat_fan_playroom
