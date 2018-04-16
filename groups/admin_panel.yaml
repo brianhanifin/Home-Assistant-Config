@@ -1,0 +1,74 @@
+## Admin Panel
+#######################
+admin_panel:
+  entities:
+    - group.admin_panel_projects
+    - group.admin_panel_resources
+    - group.admin_panel_manage
+    - group.admin_panel_presence
+  name: Admin Panel
+  icon: mdi:file-document-box
+  control: hidden
+  view: no
+
+admin_panel_features:
+  entities:
+    - input_boolean.dusk_dimmers_enabled
+    - input_boolean.ios_notifications
+    - input_boolean.experiments_enabled
+  name: Features
+  icon: mdi:power
+  control: hidden
+  view: no
+
+admin_panel_manage:
+  entities:
+    - sensor.since_last_boot
+    - sensor.processor_use
+    - sensor.memory_use_percent
+    - sensor.load_15m
+    - weblink.alexa
+    - weblink.router
+    - script.raincloud_restart
+    - script.reboot
+    - script.reload_groups
+    - script.reload_hass
+  name: Manage
+  icon: mdi:wrench
+  control: hidden
+  view: no
+
+admin_panel_presence:
+  entities:
+    #- binary_sensor.presence_home
+    - binary_sensor.home_occupancy
+    - binary_sensor.living_room_occupancy
+    - binary_sensor.kitchen_motion
+    - binary_sensor.play_room_motion
+    - sensor.workbench_motion_detected
+    - binary_sensor.front_door_motion
+    - binary_sensor.ring_front_door_motion
+    - sensor.ring_front_door_last_motion
+  name: Presence Detection
+  icon: mdi:run-fast
+  control: hidden
+  view: no
+
+admin_panel_projects:
+  entities:
+    - weblink.kitchen
+    - weblink.new_features
+    - weblink.research
+    - weblink.voice_control
+    - weblink.repository
+  name: Projects
+  icon: mdi:worker
+  view: no
+
+admin_panel_resources:
+  entities:
+    - weblink.ha_resources
+    - weblink.icons
+  name: Resources
+  icon: mdi:open-in-new
+  view: no

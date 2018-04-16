@@ -4,18 +4,6 @@ homeassistant:
       order: 1
     group.alarm_clocks:
       order: 2
-    script.reboot:
-      icon: mdi:restart
-    script.reload_automations:
-      icon: mdi:restart
-    script.reload_groups:
-      icon: mdi:restart
-    script.reload_hass:
-      icon: mdi:restart
-    script.reload_scripts:
-      icon: mdi:restart
-    script.restart:
-      icon: mdi:restart
 
 ################################################
 ## Component Settings
@@ -28,85 +16,6 @@ discovery:
 
 downloader:
   download_dir: /config/www/downloads
-
-history: !include /config/history.yaml
-
-# View all events in a logbook
-logbook:
-
-logger:
-  #default: info
-  default: warning
-
-recorder: !include /config/recorder.yaml
-
-sun:
-
-# Checks for available updates
-# Note: This component will send some information about your system to
-# the developers to assist with development of Home Assistant.
-# For more information, please see:
-# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
-updater:
-  # Optional, allows Home Assistant developers to focus on popular components.
-  include_used_components: true
-
-zeroconf:
-
-
-################################################
-## Sensors
-################################################
-sensor:
-  - platform: time_date
-    display_options:
-      - 'time'
-      - 'date'
-
-  - platform: moon
-
-input_text:
-  dusk:
-    name: Time of Dusk
-
-################################################
-## Script
-################################################
-script:
-  reboot:
-    alias: Reboot Server
-    sequence:
-      - service: hassio.host_reboot
-
-  reload_automations:
-    alias: Reload Automations
-    sequence:
-      - service: script.reload
-
-  reload_core:
-    alias: Reload Core
-    sequence:
-      - service: homeassistant.reload_core_config
-
-  reload_groups:
-    alias: Reload Groups
-    sequence:
-      - service: group.reload
-
-  reload_hass:
-    alias: Reload Home Assistant
-    sequence:
-      - service: homeassistant.restart
-
-  reload_scripts:
-    alias: Reload Scripts
-    sequence:
-      - service: script.reload
-
-  restart:
-    alias: Restart Home Assistant
-    sequence:
-      - service: homeassistant.restart
 
 #########################################
 ## Automation
