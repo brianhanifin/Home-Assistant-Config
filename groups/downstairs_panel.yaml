@@ -1,0 +1,119 @@
+## Downstairs Panels
+#######################
+downstairs_light_panel:
+  entities:
+    - group.living_room_lights
+    - light.family_room_lights
+    - light.dining_room_light
+    - light.play_room_lights
+    - group.entry_lighting
+  name: Downstairs Lights
+  icon: mdi:sofa
+  #control: hidden
+  view: no
+
+downstairs_device_panel:
+  entities:
+    - group.home_thermostat
+    - group.playroom_thermostat
+    - cover.garage_door
+    - group.living_room_tv
+    - group.playroom_tv
+    - group.doorbell
+    - group.camera_front_door
+    - group.playroom_workbench_camera
+    - binary_sensor.glowforge_window
+  name: Downstairs Devices
+  icon: mdi:television
+  control: hidden
+  view: no
+
+## Downstairs Subpanels
+#######################
+camera_front_door:
+  entities:
+    - camera.front_door
+  name: Front Door
+  icon: mdi:cctv
+  view: no
+
+doorbell:
+  entities:
+    - camera.front_door
+    - sensor.ring_front_door_last_motion
+    - sensor.ring_front_door_last_ding
+  name: Doorbell
+  icon: mdi:doorbell-video
+  control: hidden
+  view: no
+
+entry_lighting:
+  entities:
+    - light.stair_light
+    - switch.entry_step_light
+  name: Entry Lighting
+  icon: mdi:led-on
+  view: no
+
+home_thermostat:
+  entities:
+    - climate.home
+    - switch.thermostat_fan_home
+    - sensor.home_temperature
+    - sensor.living_room_temperature
+    - sensor.home_humidity
+    - binary_sensor.home_occupancy
+    - binary_sensor.living_room_motion
+  name: Home Thermostat
+  icon: mdi:thermometer-lines
+  view: no
+
+living_room_lights:
+  entities:
+    - light.living_room_light
+    - input_number.livingroom_dimmer
+    - light.living_corner_lamp
+    - input_number.livingroom_corner_dimmer
+  name: Living Room
+  icon: mdi:lightbulb
+  view: no
+
+living_room_tv:
+  entities:
+    - switch.livingroom_tv
+    - sensor.harmony_livingroom_activity
+    - binary_sensor.living_room_motion
+  name: Living Room
+  icon: mdi:television
+  view: no
+
+## Play Room Subpanels
+#######################
+playroom_thermostat:
+  entities:
+    - climate.playroom
+    - switch.thermostat_fan_playroom
+    - sensor.playroom_temperature
+    - sensor.playroom_humidity
+    - binary_sensor.playroom_occupancy
+    - binary_sensor.play_room_motion
+  name: Play Room Thermostat
+  icon: mdi:thermometer-lines
+  view: no
+
+playroom_tv:
+  entities:
+    - switch.playroom_tv
+    - sensor.harmony_playroom_activity
+    - binary_sensor.play_room_motion
+  name: Play Room
+  icon: mdi:television
+  view: no
+
+playroom_workbench_camera:
+  entities:
+    - camera.workbench
+  name: Glowforge
+  control: hidden
+  icon: mdi:cctv
+  view: no

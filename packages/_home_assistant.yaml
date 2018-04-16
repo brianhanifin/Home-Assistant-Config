@@ -4,18 +4,18 @@ homeassistant:
       order: 1
     group.alarm_clocks:
       order: 2
-    group.playroom:
-      order: 3
-    group.upstairs:
-      order: 4
-    group.watering:
-      order: 5
-    group.weather:
-      order: 6
-
+    script.reboot:
+      icon: mdi:restart
+    script.reload_automations:
+      icon: mdi:restart
+    script.reload_groups:
+      icon: mdi:restart
+    script.reload_hass:
+      icon: mdi:restart
+    script.reload_scripts:
+      icon: mdi:restart
     script.restart:
       icon: mdi:restart
-
 
 ################################################
 ## Component Settings
@@ -74,9 +74,34 @@ input_text:
 ################################################
 script:
   reboot:
-    alias: Reboot Home Assistant
+    alias: Reboot Server
+    sequence:
+      - service: hassio.host_reboot
+
+  reload_automations:
+    alias: Reload Automations
+    sequence:
+      - service: script.reload
+
+  reload_core:
+    alias: Reload Core
+    sequence:
+      - service: homeassistant.reload_core_config
+
+  reload_groups:
+    alias: Reload Groups
+    sequence:
+      - service: group.reload
+
+  reload_hass:
+    alias: Reload Home Assistant
     sequence:
       - service: homeassistant.restart
+
+  reload_scripts:
+    alias: Reload Scripts
+    sequence:
+      - service: script.reload
 
   restart:
     alias: Restart Home Assistant
@@ -84,7 +109,7 @@ script:
       - service: homeassistant.restart
 
 #########################################
-##### Automation
+## Automation
 #########################################
 automation:
   - alias: Home Assistant Startup Actions
@@ -119,9 +144,9 @@ automation:
     action:
       - service: script.notify_ios_engine
         data_template:
-          value1: 'Home Assistant Update Available'
-          value2: ''
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          value1: "Home Assistant Update Available"
+          value2: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          value3: ""
           who: "brian"
       - service: persistent_notification.create
         data:
