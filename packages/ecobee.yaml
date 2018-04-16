@@ -30,6 +30,12 @@ sensor:
         friendly_name: "Ecobee Fan: Home"
         value_template: "{{ states.climate.home.attributes.fan }}"
 
+  - platform: template
+    sensors:
+      ecobee_fan_playroom:
+        friendly_name: "Ecobee Fan: Play Room"
+        value_template: "{{ states.climate.playroom.attributes.fan }}"
+
 ################################################
 ## Switch
 ################################################
@@ -43,12 +49,12 @@ switch:
           - service: climate.ecobee_set_fan_min_on_time
             data:
               entity_id: climate.home
-              fan_min_on_time: 60
+              fan_min_on_time: 15
         turn_off:
           - service: climate.ecobee_set_fan_min_on_time
             data:
               entity_id: climate.home
-              fan_min_on_time: 0
+              fan_min_on_time: 0     
         icon_template: >-
           {% if is_state('switch.thermostat_fan_home', 'on') %}
             mdi:fan
@@ -65,7 +71,7 @@ switch:
           - service: climate.ecobee_set_fan_min_on_time
             data:
               entity_id: climate.playroom
-              fan_min_on_time: 60
+              fan_min_on_time: 15
         turn_off:
           - service: climate.ecobee_set_fan_min_on_time
             data:
@@ -82,7 +88,7 @@ switch:
 ## Automations
 ################################################
 automation:
-  - alias: Play Room Fan Run for 15 minutes #Smart button single click
+  - alias: Play Room Fan Run for default duration #Smart button single click
     trigger:
       platform: event
       event_type: click
@@ -90,10 +96,12 @@ automation:
         entity_id: binary_sensor.xiaomi_button
         click_type: single
     action:
-      - service: switch.turn_on
-        entity_id: switch.thermostat_fan_playroom
-      - delay: 0:15
-      - service: switch.turn_off
+      #- service: switch.turn_on
+      #  entity_id: switch.thermostat_fan_playroom
+      #- delay: 0:15
+      #- service: switch.turn_off
+      #  entity_id: switch.thermostat_fan_playroom
+      - service: switch.toggle
         entity_id: switch.thermostat_fan_playroom
 
   - alias: Play Room Fan Run for 60 minutes #Smart button long press
@@ -106,8 +114,14 @@ automation:
     action:
       - service: switch.turn_on
         entity_id: switch.thermostat_fan_playroom
-      - delay: 1:00
-      - service: switch.turn_off
+      - delay: 0:15
+      - service: switch.turn_on
+        entity_id: switch.thermostat_fan_playroom
+      - delay: 0:15
+      - service: switch.turn_on
+        entity_id: switch.thermostat_fan_playroom
+      - delay: 0:15
+      - service: switch.turn_on
         entity_id: switch.thermostat_fan_playroom
 
   - alias: Play Room Fan Turn Off Now
