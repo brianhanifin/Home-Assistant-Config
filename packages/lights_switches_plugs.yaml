@@ -166,28 +166,6 @@ switch:
   platform: insteon_local
 
 ################################################
-## Sliders
-################################################
-#input_number:
-#  livingroom_dimmer:
-#    name: Floor Lamp
-#    icon: mdi:lightbulb-on-outline
-#    mode: slider
-#    initial: 100
-#    min: 0
-#    max: 100
-#    step: 10
-#
-#  livingroom_corner_dimmer:
-#    name: Corner Lamp
-#    icon: mdi:lightbulb-on-outline
-#    mode: slider
-#    initial: 100
-#    min: 0
-#    max: 100
-#    step: 10
-
-################################################
 ## Scenes
 ################################################
 scene:
@@ -196,11 +174,9 @@ scene:
       light.porch_light: on
       light.entry_light:
         state: on
-        transition: 1
         brightness_pct: '60'
       light.nightlight:       # Boys Bathroom Nightlight
         state: on
-        transition: 5
         brightness_pct: '30'
 
   - name: Goodbye
@@ -509,79 +485,6 @@ automation:
         data:
           brightness_pct: '50'
           entity_id: light.living_corner_lamp
-
-  ##############################################
-  ## Living Room Slider Automations
-  ##############################################
-#  - alias: Living Room - Floor Lamp Turns ON
-#    trigger:
-#      - platform: state
-#        entity_id: light.living_room_light
-#        from: 'off'
-#        to: 'on'
-#    condition:
-#      - below: '1'
-#        condition: numeric_state
-#        entity_id: input_number.livingroom_dimmer
-#    action:
-#      - service: input_number.set_value
-#        data:
-#          entity_id: input_number.livingroom_dimmer
-#          value: '100'
-
-#  - alias: Living Room - Corner Lamp Turns ON
-#    trigger:
-#      - platform: state
-#        entity_id: light.living_corner_lamp
-#        from: 'off'
-#        to: 'on'
-#    condition:
-#      - condition: state
-#        entity_id: input_number.livingroom_corner_dimmer
-#        state: '0'
-#    action:
-#      - service: input_number.set_value
-#        data:
-#          entity_id: input_number.livingroom_corner_dimmer
-#          value: '100'
-
-#  - alias: Living Room - Corner Lamp Turns Off
-#    trigger:
-#      - platform: state
-#        entity_id: light.living_corner_lamp
-#        from: 'on'
-#        to: 'off'
-#    action:
-#      - service: input_number.set_value
-#        data:
-#          entity_id: input_number.livingroom_corner_dimmer
-#          value: '0'
-
-#  - alias: Living Room - Corner Lamp Slider Changes
-#    trigger:
-#      - platform: state
-#        entity_id: input_number.livingroom_corner_dimmer
-#    action:
-#      - service: light.turn_on
-#        data:
-#          entity_id: light.living_corner.lamp
-#          brightness_pct: '{{ state.input_number.livingroom_corner_dimmer.attributes.state }}'
-#        data_template:
-#          entity_id: light.living_corner_lamp
-#          brightness_pct: '{{ trigger.to_state.state | int }}'
-
-#  - alias: Living Room - Floor Lamp Slider
-#    trigger:
-#      - platform: state
-#        entity_id: input_number.livingroom_dimmer  
-#    action:
-#      - service: light.turn_on
-#        data:
-#          entity_id: light.living_room_light
-#          brightness_pct: '{{ state.input_number.livingroom_dimmer.attributes.value }}'
-#        data_template:
-#          entity_id: light.living_room_light
-#          brightness_pct: '{{ trigger.to_state.state | int }}'
 
   ##############################################
   ## Sunrise & Sunset Automations

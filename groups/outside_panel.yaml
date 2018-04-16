@@ -1,0 +1,89 @@
+## Outside Panel
+#######################
+outside_panel:
+  entities:
+    - light.porch_light
+    - group.raincloud_drip
+    - group.raincloud_poolfill
+    #- group.raincloud_maintenance
+    - group.wunderground
+    - group.darksky
+  name: Outside
+  icon: mdi:sun
+  control: hidden
+  view: no
+
+## Weather Subpanels
+#####################
+darksky:
+  entities:
+    - sensor.dark_sky_cloud_coverage
+    - sensor.dark_sky_daily_high_apparent_temperature
+    - sensor.dark_sky_daily_low_apparent_temperature
+    - sensor.dark_sky_daily_max_precip_intensity
+    - sensor.dark_sky_daily_summary
+    - sensor.dark_sky_hourly_summary
+    - sensor.dark_sky_humidity
+    - sensor.dark_sky_minutely_summary
+    - sensor.dark_sky_nearest_storm_distance
+    - sensor.dark_sky_precip
+    - sensor.dark_sky_precip_intensity
+    - sensor.dark_sky_precip_probability
+    - sensor.dark_sky_summary
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_wind_bearing
+    - sensor.dark_sky_wind_speed
+  name: Dark Sky
+  icon: mdi:theme-light-dark
+  view: no
+
+wunderground:
+  entities:
+    - sun.sun
+    - sensor.pws_alerts
+    - sensor.pws_temp_f
+    - sensor.pws_weather_1d
+    - sensor.pws_weather_1h
+    - sensor.pws_weather_1n
+    - sensor.pws_weather_2d
+    - sensor.pws_weather_2n
+    - sensor.pws_weather_3d
+    - sensor.pws_weather_3n
+  name: Weather Underground
+  icon: mdi:theme-light-dark
+  view: no
+
+## Raincloud Subpanels
+#######################
+raincloud_drip:
+  entities:
+    - binary_sensor.front_yard_watering
+    - sensor.front_yard_next_cycle
+    - sensor.front_yard_rain_delay
+    - switch.front_yard_automatic_watering
+    - switch.front_yard_manual_watering
+  name: Front Yard Drip System
+  icon: mdi:flower
+  control: hidden
+  view: no
+
+raincloud_poolfill:
+  entities:
+    - binary_sensor.pool_filler_watering
+    - sensor.pool_filler_next_cycle
+    - sensor.pool_filler_rain_delay
+    - switch.pool_filler_automatic_watering
+    - switch.pool_filler_manual_watering
+  name: Pool Filler
+  icon: mdi:pool
+  control: hidden
+  view: no
+
+raincloud_maintenance:
+  entities:
+    - switch.raincloud
+    - script.raincloud_restart
+  name: Maintenance
+  icon: mdi:wrench
+  control: hidden
+  view: no

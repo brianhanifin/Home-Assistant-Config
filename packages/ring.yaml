@@ -1,12 +1,15 @@
 homeassistant:
   customize:
     camera.front_door:
+      friendly_name: "Porch"
       homebridge_hidden: false
 
-    binary_sensor.ring_front_door_motion:
+    binary_sensor.front_door_motion:
+      friendly_name: "Porch Motion"
       device_class: motion
 
-    sensor.ring_front_door_last_motion:
+    sensor.ring_front_door_last_activity:
+      friendly_name: "Last Porch Activity"
       homebridge_hidden: false
 
 
@@ -53,10 +56,20 @@ script:
         data:
           name: "Ring Doorbell:"
           message: "Someone Pressed the Doorbell."
+      - service: script.turn_on
+        entity_id: script.ring_video_download
 #      - service: xiaomi_aqara.play_ringtone
 #        data:
 #          gw_mac: !secret xiaomi_mac1
 #          ringtone_id: 10
+
+  ring_video_download:
+    sequence:
+      - service: downloader.download_file
+        data_template:
+          url: ""
+          subdir: ""
+          filename: ""
 
 ################################################
 ## Automation

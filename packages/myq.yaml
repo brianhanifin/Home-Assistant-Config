@@ -25,3 +25,21 @@ binary_sensor:
         friendly_name: 'Garage Door'
         #icon_template: mdi:garage'{% if is_state(cover.garage_door == 'open' %}-open{% endif %}'
         #icon: mdi:garage
+
+################################################
+## Scenes
+################################################
+scene:
+  - name: Open the Garage Door
+    entities:
+      cover.garage_door_opener: on
+  - name: Open Garage
+    entities:
+      cover.garage_door_opener: on
+
+  - name: Close the Garage Door
+    entities:
+      cover.garage_door_opener: off
+  - name: Close Garage
+    entities:
+      cover.garage_door_opener: off

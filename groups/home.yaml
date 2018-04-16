@@ -1,34 +1,38 @@
-##################
-##### Home Tab
-##################
+#######################
+## Home Tab
+#######################
 default_view:
   entities:
-    ##### Sensors
+    ## Sensors
     - binary_sensor.presence_home
-    - binary_sensor.living_room_motion
     - binary_sensor.garage_door
     - binary_sensor.glowforge_window
-    - sensor.living_room_temperature
-    #- sensor.dark_sky_apparent_temperature
     - binary_sensor.aquatimer_control_unit_status
     - sensor.side_yard_battery
 
-    ##### Panels
-    - group.living_room
-    - group.entry
-    - group.downstairs_other
-    - group.mediaplayer_livingroom
+    ## Panels
+    - group.downstairs_light_panel
+    - group.downstairs_device_panel
+    - group.upstairs_panel
+    - group.outside_panel
     - group.control_panel
-  name: Dash
-  view: yes
+    - group.admin_panel
+  name: Downstairs
   icon: mdi:sofa
+  view: yes
 
-camera_front_door:
-  name: Camera
+## Home Panels
+#######################
+admin_panel:
   entities:
-    - camera.front_door
+    - group.control_panel_projects
+    - group.control_panel_resources
+    - group.control_panel_manage
+    - group.control_panel_presence
+  name: Admin Panel
+  icon: mdi:file-document-box
+  control: hidden
   view: no
-  icon: mdi:cctv
 
 control_panel:
   entities:
@@ -36,10 +40,6 @@ control_panel:
     - scene.good_night
     - input_boolean.guest_mode
     - group.control_panel_features
-    - group.control_panel_motion
-    - group.control_panel_projects
-    - group.control_panel_resources
-    - group.control_panel_manage
   name: Control Panel
   icon: mdi:file-document-box
   control: hidden
@@ -63,33 +63,37 @@ control_panel_manage:
     - sensor.load_15m
     - weblink.alexa
     - weblink.router
-    - script.restart
+    - script.raincloud_restart
+    - script.reload_groups
+    - script.reload_hass
   name: Manage
   icon: mdi:wrench
   control: hidden
   view: no
 
-control_panel_motion:
+control_panel_presence:
   entities:
-    - binary_sensor.front_door_motion
-    - binary_sensor.ring_front_door_motion
-    - sensor.ring_front_door_last_motion
-    - binary_sensor.living_room_motion
+    #- binary_sensor.presence_home
+    - binary_sensor.home_occupancy
+    - binary_sensor.living_room_occupancy
     - binary_sensor.kitchen_motion
     - binary_sensor.play_room_motion
     - sensor.workbench_motion_detected
-  name: Motion
+    - binary_sensor.front_door_motion
+    - binary_sensor.ring_front_door_motion
+    - sensor.ring_front_door_last_motion
+  name: Presence Detection
   icon: mdi:run-fast
   control: hidden
   view: no
 
 control_panel_projects:
   entities:
-    - weblink.kitchen_lighting
+    - weblink.kitchen
     - weblink.new_features
-    - weblink.repository
     - weblink.research
     - weblink.voice_control
+    - weblink.repository
   name: Projects
   icon: mdi:worker
   view: no
@@ -100,40 +104,4 @@ control_panel_resources:
     - weblink.icons
   name: Resources
   icon: mdi:open-in-new
-  view: no
-
-downstairs_other:
-  entities:
-    - light.family_room_lights
-    - light.dining_room_light
-    - light.play_room_lights
-    - cover.garage_door
-  name: Family, Dining, Garage
-  icon: mdi:monitor
-  control: hidden
-  view: no
-
-entry:
-  entities:
-    - light.porch_light
-    - light.stair_light
-    - switch.entry_step_light
-    - sensor.ring_front_door_last_activity
-    - group.camera_front_door
-  control: hidden
-  name: Entry
-  view: no
-
-living_room:
-  entities:
-    - light.living_room_light
-    - light.living_corner_lamp
-    - binary_sensor.living_room_motion
-    - switch.livingroom_tv
-    - sensor.harmony_livingroom_activity
-    - climate.home
-    - switch.thermostat_fan_home
-  name: Living Room
-  icon: mdi:monitor
-  control: hidden
   view: no

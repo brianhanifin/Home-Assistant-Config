@@ -1,0 +1,128 @@
+## Light Brightness Slider Controls
+################################################
+
+################################################
+## Sliders
+################################################
+input_number:
+  livingroom_dimmer:
+    name: Floor Lamp
+    icon: mdi:lightbulb-on-outline
+    mode: slider
+    initial: 100
+    min: 0
+    max: 100
+    step: 10
+
+  livingroom_corner_dimmer:
+    name: Corner Lamp
+    icon: mdi:lightbulb-on-outline
+    mode: slider
+    initial: 100
+    min: 0
+    max: 100
+    step: 10
+
+################################################
+## Automations
+################################################
+automation:
+  #### Living Room Slider Automations
+  - alias: When Living Room Floor Lamp Turns ON
+    trigger:
+      - platform: state
+        entity_id: light.living_room_light
+        from: 'off'
+        to: 'on'
+    condition:
+      - below: '1'
+        condition: numeric_state
+        entity_id: input_number.livingroom_dimmer
+    action:
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.livingroom_dimmer
+          value: '100'
+
+  - alias: When Living Room Corner Lamp Turns ON
+    trigger:
+      - platform: state
+        entity_id: light.living_corner_lamp
+        from: 'off'
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_number.livingroom_corner_dimmer
+        state: '0'
+    action:
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.livingroom_corner_dimmer
+          value: '100'
+
+  - alias: When Living Room Corner Lamp Turns Off
+    trigger:
+      - platform: state
+        entity_id: light.living_corner_lamp
+        from: 'on'
+        to: 'off'
+    action:
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.livingroom_corner_dimmer
+          value: '0'
+
+  - alias: When Living Room Corner Lamp Slider Changes
+    trigger:
+      - platform: state
+        entity_id: input_number.livingroom_corner_dimmer
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.living_corner.lamp
+          brightness_pct: '{{ state.input_number.livingroom_corner_dimmer.attributes.state }}'
+        data_template:
+          entity_id: light.living_corner_lamp
+          brightness_pct: '{{ trigger.to_state.state | int }}'
+
+  - alias: When Living Room Floor Lamp Slider Changes
+    trigger:
+      - platform: state
+        entity_id: input_number.livingroom_dimmer  
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.living_room_light
+          brightness_pct: '{{ state.input_number.livingroom_dimmer.attributes.value }}'
+        data_template:
+          entity_id: light.living_room_light
+          brightness_pct: '{{ trigger.to_state.state | int }}'
+
+  - alias: When Floor Lamp 0-74 Set Living Room Slider
+    trigger:
+      - platform: numeric_state
+        entity_id: light.living_room_light
+        value_template: '{{ state.attributes.brightness }}'
+        below: '190'
+    action:
+      - service: light.turn_off
+        entity_id: light.living_corner_lamp
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.livingroom_dimmer
+          value_template: '{{ state.light.living_room_light.attributes.brightness_pct }}'
+
+  - alias: When Light 75-100% Set Living Room Slider
+    trigger:
+      - platform: numeric_state
+        entity_id: light.living_room_light
+        value_template: '{{ state.attributes.brightness }}'
+        above: '190'
+        # Delay to avoid premature turn on flash.
+        for:
+          seconds: 1
+    action:
+      - service: input_number.set_value
+        data:
+          entity_id: input_number.livingroom_corner_dimmer
+          value: 50
