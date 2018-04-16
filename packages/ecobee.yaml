@@ -27,7 +27,7 @@ sensor:
   - platform: template
     sensors:
       ecobee_fan_home:
-        friendly_name: "Ecobee Fan State"
+        friendly_name: "Ecobee Fan: Home"
         value_template: "{{ states.climate.home.attributes.fan }}"
 
 ################################################
@@ -77,3 +77,46 @@ switch:
           {% else %}
             mdi:fan-off
           {% endif %}
+
+################################################
+## Automations
+################################################
+automation:
+  - alias: Play Room Fan Run for 15 minutes #Smart button single click
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.xiaomi_button
+        click_type: single
+    action:
+      - service: switch.turn_on
+        entity_id: switch.thermostat_fan_playroom
+      - delay: 0:15
+      - service: switch.turn_off
+        entity_id: switch.thermostat_fan_playroom
+
+  - alias: Play Room Fan Run for 60 minutes #Smart button long press
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.xiaomi_button
+        click_type: long_click_press
+    action:
+      - service: switch.turn_on
+        entity_id: switch.thermostat_fan_playroom
+      - delay: 1:00
+      - service: switch.turn_off
+        entity_id: switch.thermostat_fan_playroom
+
+  - alias: Play Room Fan Turn Off Now
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.xiaomi_button
+        click_type: double
+    action:
+      - service: switch.turn_off
+        entity_id: switch.thermostat_fan_playroom
