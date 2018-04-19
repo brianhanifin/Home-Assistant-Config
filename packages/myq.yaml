@@ -43,3 +43,42 @@ scene:
   - name: Close Garage
     entities:
       cover.garage_door_opener: off
+
+##############################################
+## Scripts
+##############################################
+script:
+  garage_door_warning:
+    sequence:
+      - service: script.notify_ios_engine
+        data_template:
+          value1: 'WARNING: Garage Door'
+          value2: 'Your garage door is still open! You should probably close it.'
+          value3: ''
+          who: "parents"
+      - service: script.notify_web_engine
+        data_template:
+            value1: 'WARNING: Garage Door'
+            value2: 'Your garage door is still open! You should close it.'
+            value3: ''
+
+##############################################
+## Automations
+##############################################
+automation:
+  ############################################
+  ## Warn us if the garage door is still open
+  ############################################
+  - alias: Garage Door Watchdog
+    trigger:
+      platform: time
+      hours: 20
+      minutes: 0
+      seconds: 0
+    condition:
+      - condition: state
+        entity_id: cover.garage_door_opener
+        state: 'open'
+    action:
+      - service: script.turn_on
+        entity_id: script.garage_door_open_notification
