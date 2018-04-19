@@ -1,60 +1,64 @@
 ## Admin Panel
 #######################
-admin_panel:
+panel_admin:
   entities:
-    - group.admin_panel_projects
-    - group.admin_panel_resources
-    - group.admin_panel_manage
-    - group.admin_panel_presence
+    - group.panel_admin_projects
+    - group.panel_admin_resources
+    - group.panel_admin_manage
+    - group.panel_admin_presence
   name: Admin Panel
   icon: mdi:file-document-box
   control: hidden
   view: no
 
-admin_panel_features:
+panel_admin_features:
   entities:
     - input_boolean.dusk_dimmers_enabled
-    - input_boolean.ios_notifications
-    - input_boolean.experiments_enabled
+    - input_boolean.ios_notifications_enabled
+    - input_boolean.presence_lighting_enabled
   name: Features
   icon: mdi:power
   control: hidden
   view: no
 
-admin_panel_manage:
+panel_admin_manage:
   entities:
-    - sensor.since_last_boot
-    - sensor.processor_use
-    - sensor.memory_use_percent
-    - sensor.load_15m
-    - weblink.alexa
-    - weblink.router
     - script.raincloud_restart
     - script.reboot
     - script.reload_groups
     - script.reload_hass
+    - sensor.since_last_boot
+    - sensor.processor_use
+    - sensor.memory_use_percent
+    - sensor.load_15m
   name: Manage
   icon: mdi:wrench
   control: hidden
   view: no
 
-admin_panel_presence:
+panel_admin_presence:
   entities:
-    #- binary_sensor.presence_home
+    - device_tracker.brians_iphone
+    - device_tracker.brians_iphone_bluetooth
+    - device_tracker.nerenes_iphone
+    - devices.automatic
+    - device_tracker.parrot_ck3100
     - binary_sensor.home_occupancy
     - binary_sensor.living_room_occupancy
     - binary_sensor.kitchen_motion
     - binary_sensor.play_room_motion
     - sensor.workbench_motion_detected
-    - binary_sensor.front_door_motion
+    - binary_sensor.bedroom_occupancy
+    - binary_sensor.lucas_bedroom_occupancy
+    #- binary_sensor.front_door_motion
     - binary_sensor.ring_front_door_motion
     - sensor.ring_front_door_last_motion
-  name: Presence Detection
-  icon: mdi:run-fast
+  name: Presence Inspector
+  icon: mdi:run
   control: hidden
   view: no
 
-admin_panel_projects:
+panel_admin_projects:
   entities:
     - weblink.kitchen
     - weblink.new_features
@@ -65,8 +69,10 @@ admin_panel_projects:
   icon: mdi:worker
   view: no
 
-admin_panel_resources:
+panel_admin_resources:
   entities:
+    - weblink.alexa
+    - weblink.router
     - weblink.ha_resources
     - weblink.icons
   name: Resources

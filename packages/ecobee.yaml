@@ -8,6 +8,10 @@ homeassistant:
       friendly_name: Thermostat
       homebridge_hidden: true
       icon: mdi:air-conditioner
+    
+    binary_sensor.home_occupancy:
+      friendly_name: Hallway Occupancy
+      icon: mdi:run
 
     switch.thermostat_fan_home:
       homebridge_hidden: false
@@ -28,12 +32,24 @@ sensor:
     sensors:
       ecobee_fan_home:
         friendly_name: "Ecobee Fan: Home"
+        icon_template: >-
+          {% if is_state('states.climate.playroom.attributes.fan', 'on') %}
+            mdi:fan
+          {% else %}
+            mdi:fan-off
+          {% endif %}
         value_template: "{{ states.climate.home.attributes.fan }}"
 
   - platform: template
     sensors:
       ecobee_fan_playroom:
         friendly_name: "Ecobee Fan: Play Room"
+        icon_template: >-
+          {% if is_state('states.climate.playroom.attributes.fan', 'on') %}
+            mdi:fan
+          {% else %}
+            mdi:fan-off
+          {% endif %}
         value_template: "{{ states.climate.playroom.attributes.fan }}"
 
 ################################################
@@ -56,7 +72,7 @@ switch:
               entity_id: climate.home
               fan_min_on_time: 0     
         icon_template: >-
-          {% if is_state('switch.thermostat_fan_home', 'on') %}
+          {% if is_state('switch.ecobee_fan_home', 'on') %}
             mdi:fan
           {% else %}
             mdi:fan-off
@@ -78,7 +94,7 @@ switch:
               entity_id: climate.playroom
               fan_min_on_time: 0
         icon_template: >-
-          {% if is_state('switch.thermostat_fan_playroom', 'on') %}
+          {% if is_state('switch.ecobee_fan_playroom', 'on') %}
             mdi:fan
           {% else %}
             mdi:fan-off
@@ -93,7 +109,7 @@ automation:
       platform: event
       event_type: click
       event_data:
-        entity_id: binary_sensor.xiaomi_button
+        entity_id: binary_sensor.playroom_fan_button
         click_type: single
     action:
       #- service: switch.turn_on
@@ -109,7 +125,7 @@ automation:
       platform: event
       event_type: click
       event_data:
-        entity_id: binary_sensor.xiaomi_button
+        entity_id: binary_sensor.playroom_fan_button
         click_type: long_click_press
     action:
       - service: switch.turn_on
@@ -129,7 +145,7 @@ automation:
       platform: event
       event_type: click
       event_data:
-        entity_id: binary_sensor.xiaomi_button
+        entity_id: binary_sensor.playroom_fan_button
         click_type: double
     action:
       - service: switch.turn_off

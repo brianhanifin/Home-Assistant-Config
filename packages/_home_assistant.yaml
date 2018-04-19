@@ -1,9 +1,26 @@
 homeassistant:
   customize:
-    group.home:
+    # Attempting to influence panel layout order.
+    group.panel_downstairs_lights:
       order: 1
-    group.alarm_clocks:
+    group.panel_downstairs_devices:
       order: 2
+    group.panel_upstairs:
+      order: 3
+    group.panel_outside:
+      order: 4
+    group.panel_control:
+      order: 5
+    group.panel_admin:
+      order: 6
+
+  customize_glob:
+    # Hides UI Panels from smart hubs.
+    "group.panel_*":
+      hidden: false
+      alexa_hidden: true
+      emulated_hue_hidden: true
+      homebridge_hidden: true
 
 ################################################
 ## Component Settings
@@ -14,8 +31,49 @@ config:
 # Discover some devices automatically
 discovery:
 
+# Common component used by Ring Camera and others
 downloader:
-  download_dir: /config/www/downloads
+  download_dir: /config/www/downloads #appears as /local/downlads on the website
+
+history: !include /config/history.yaml
+
+# View all events in a logbook
+logbook:
+
+logger:
+  #default: info
+  default: warning
+
+recorder: !include /config/recorder.yaml
+
+sun:
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  include_used_components: true
+
+zeroconf:
+
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+
+  - platform: moon
+
+input_text:
+  dusk:
+    name: Time of Dusk
 
 #########################################
 ## Automation
