@@ -3,16 +3,21 @@ homeassistant:
     ##### Brian's Devices
     device_tracker.brians_iphone:
       friendly_name: "Brian's Phone"
+      device_class: presence
     device_tracker.brians_iphone_bluetooth:
       friendly_name: "Brian's Phone"
+      device_class: presence
     devices.automatic:
       friendly_name: "Brian's Car"
+      device_class: connectivity
 
     ##### Nerene's Devices
     device_tracker.nerenes_iphone:
       friendly_name: "Nerene's Phone"
+      device_class: presence
     device_tracker.parrot_ck3100:
       friendly_name: "Nerene's Car"
+      device_class: connectivity
 
     ##### Occupancy Sensors
     binary_sensor.bedroom_occupancy:
@@ -40,6 +45,14 @@ homeassistant:
       icon: mdi:run
     binary_sensor.play_room_motion:
       friendly_name: "Play Room"
+      device_class: motion
+      icon: mdi:run
+    sensor.workbench_motion_detected:
+      friendly_name: Workbench
+      device_class: motion
+      icon: mdi:run
+    binary_sensor.ring_front_door_motion:
+      name: Porch
       device_class: motion
       icon: mdi:run
 
@@ -110,9 +123,7 @@ automation:
           entity_id: input_boolean.guest_mode
           state: 'off'
   #    for:
-  #      hours: 0
   #      minutes: 2
-  #      seconds: 0
 
     action:
       - service: input_boolean.turn_off
@@ -140,8 +151,6 @@ automation:
           entity_id: input_boolean.guest_mode
           state: 'on'
 #      for:
-#        hours: 0
-#        minutes: 0
 #        seconds: 30
 
     action:

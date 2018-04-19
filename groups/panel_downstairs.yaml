@@ -1,27 +1,26 @@
 ## Downstairs Panels
 #######################
-downstairs_light_panel:
+panel_downstairs_lights:
   entities:
     - group.living_room_lights
-    - light.family_room_lights
+    - group.family_room_lights
     - light.dining_room_light
-    - light.play_room_lights
-    - group.entry_lighting
+    - group.play_room_lights
+    - group.entry_lights
   name: Downstairs Lights
   icon: mdi:sofa
-  #control: hidden
   view: no
 
-downstairs_device_panel:
+panel_downstairs_devices:
   entities:
-    - group.home_thermostat
-    - group.playroom_thermostat
-    - cover.garage_door
-    - group.living_room_tv
-    - group.playroom_tv
-    - group.doorbell
-    - group.camera_front_door
-    - group.playroom_workbench_camera
+    - group.panel_home_thermostat
+    - group.panel_playroom_thermostat
+    - cover.garage_door_opener
+    - group.panel_living_room_tv
+    - group.panel_play_room_tv
+    - group.panel_doorbell
+    - group.panel_camera_front_door
+    - group.panel_workbench_camera
     - binary_sensor.glowforge_window
   name: Downstairs Devices
   icon: mdi:television
@@ -30,14 +29,14 @@ downstairs_device_panel:
 
 ## Downstairs Subpanels
 #######################
-camera_front_door:
+panel_camera_front_door:
   entities:
     - camera.front_door
   name: Front Door
   icon: mdi:cctv
   view: no
 
-doorbell:
+panel_doorbell:
   entities:
     - camera.front_door
     - sensor.ring_front_door_last_motion
@@ -47,7 +46,7 @@ doorbell:
   control: hidden
   view: no
 
-entry_lighting:
+panel_entry_lighting:
   entities:
     - light.stair_light
     - switch.entry_step_light
@@ -55,7 +54,7 @@ entry_lighting:
   icon: mdi:led-on
   view: no
 
-home_thermostat:
+panel_home_thermostat:
   entities:
     - climate.home
     - switch.thermostat_fan_home
@@ -66,9 +65,10 @@ home_thermostat:
     - binary_sensor.living_room_motion
   name: Home Thermostat
   icon: mdi:thermometer-lines
+  control: hidden
   view: no
 
-living_room_lights:
+panel_living_room_lights:
   entities:
     - light.living_room_light
     - input_number.livingroom_dimmer
@@ -78,11 +78,41 @@ living_room_lights:
   icon: mdi:lightbulb
   view: no
 
-living_room_tv:
+panel_living_room_tv:
   entities:
     - switch.livingroom_tv
     - sensor.harmony_livingroom_activity
     - binary_sensor.living_room_motion
   name: Living Room
   icon: mdi:television
+  view: no
+
+panel_playroom_thermostat:
+  entities:
+    - climate.playroom
+    - switch.thermostat_fan_playroom
+    - sensor.playroom_temperature
+    - sensor.playroom_temperature
+    - sensor.playroom_humidity
+    - binary_sensor.playroom_occupancy
+    - binary_sensor.play_room_motion
+  name: Play Room Thermostat
+  icon: mdi:thermometer-lines
+  control: hidden
+  view: no
+
+panel_play_room_tv:
+  entities:
+    - switch.playroom_tv
+    - sensor.harmony_playroom_activity
+    - binary_sensor.play_room_motion
+  name: Play Room
+  icon: mdi:television
+  view: no
+
+panel_workbench_camera:
+  entities:
+    - camera.workbench
+  name: Workbench
+  icon: mdi:cctv
   view: no

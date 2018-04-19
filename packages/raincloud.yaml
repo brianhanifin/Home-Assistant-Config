@@ -17,6 +17,7 @@ homeassistant:
       icon: mdi:water-pump
       homebridge_hidden: false
     sensor.side_yard_battery:
+      friendly_name: RainCloud (Battery)
       device_class: battery
       homebridge_hidden: false
 
@@ -39,6 +40,8 @@ homeassistant:
       homebridge_hidden: false
     
     #### Raincloud Base Power
+    switch.wifi_satellite:
+      homebridge_hidden: true
     switch.raincloud:
       homebridge_hidden: true
     script.raincloud_restart:
@@ -101,14 +104,19 @@ script:
         data_template:
           value1: 'Raincloud: Offline'
           value2: 'Your watering system has been offline for 5 minutes.'
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          value3: 'Attempting to restart the Raincloud Base Station.'
+          #value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
 
       - service: script.notify_web_engine
         data_template:
           value1: 'Raincloud: Offline'
           value2: 'Your watering system has been offline for 5 minutes.'
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          value3: 'Attempting to restart the Raincloud Base Station.'
+          #value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+
+      - service: script.turn_on
+        entity_id: script.raincloud_restart
  
   raincloud_restart:
     alias: Restart Raincloud
@@ -116,37 +124,58 @@ script:
       - service: logbook.log
         data:
           name: "Raincloud Restart:"
-          message: "Powering Raincloud Hub off then on again."
+          message: "Powering Raincloud Base Station off then on again."
 
       #- service: notify.brians_iphone
       #  data:
       #    title: "Raincloud Restarting"
-      #    message: "Attempting to restart the Raincloud Hub. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+      #    message: "Attempting to restart the Raincloud Base Station. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
 
-      - service: script.notify_ios_engine
-        data_template:
-          value1: 'Raincloud: Restarting'
-          value2: 'Attempting to restart the Raincloud Hub.'
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
-          who: "brian"
+      #- service: script.notify_ios_engine
+      #  data_template:
+      #    value1: 'Raincloud: Restart'
+      #    value2: 'Attempting to restart the Raincloud Base Station.'
+      #    value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      #    who: "brian"
 
-      - service: script.notify_web_engine
-        data_template:
-          value1: 'Raincloud: Restarting'
-          value2: 'Attempting to restart the Raincloud Hub.'
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
-      #- service: persistent_notification.create
-      #  data:
-      #    message: "Attempting to restart the Raincloud Hub. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+      #- service: script.notify_web_engine
+      #  data_template:
+      #    value1: 'Raincloud: Restarting'
+      #    value2: 'Attempting to restart the Raincloud Base Station.'
+      #    value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
 
+      - service: switch.turn_off
+        entity_id: switch.wifi_satellite
       - service: switch.turn_off
         entity_id: switch.raincloud
 
-      - wait_template: "{{ is_state('switch.raincloud', 'off') }}"
-        timeout: '00:01:00'
+      - wait_template: "{{ is_state('switch.wifi_satellite', 'off') }}"
+        timeout: '00:02:00'
+
+      - service: switch.turn_on
+        entity_id: switch.wifi_satellite
+
+      # Wait 5 minutes before restarting the Raincloud Base Station.
+      - delay: 00:05:00
 
       - service: switch.turn_on
         entity_id: switch.raincloud
+
+      - service: switch.turn_on
+        entity_id: script.raincloud_watchdog
+
+  raincloud_watchdog:
+    alias: Raincloud Watchdog
+    sequence:
+      # Wait 5 minutes and test again.
+      - delay: 00:05:00
+
+      - condition: state
+        entity_id: binary_sensor.aquatimer_control_unit_status
+        state: 'off'
+
+      - service: script.turn_on
+        entity_id: script.raincloud_offline_notify
 
 ################################################
 ## Automation
@@ -159,12 +188,5 @@ automation:
         from: 'on'
 
     action:
-      # Wait 5 minutes and test again.
-      - delay: 00:05:00
-
-      - condition: state
-        entity_id: binary_sensor.aquatimer_control_unit_status
-        state: 'off'
-
       - service: script.turn_on
-        entity_id: script.raincloud_offline_notify
+        entity_id: script.raincloud_watchdog

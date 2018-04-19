@@ -1,0 +1,180 @@
+################################################
+## Switches
+################################################
+input_boolean:
+  dusk_dimmers_enabled:
+    name: Dusk Dimmers
+    icon: mdi:weather-sunset
+    initial: off
+
+  presence_lighting_enabled:
+    name: Presence Based Lighting
+    icon: mdi:test-tube
+    initial: off
+
+
+################################################
+## Groups
+################################################
+group:
+  motion_inside_house:
+    entities:
+      - binary_sensor.home_occupancy
+      - binary_sensor.living_room_occupancy
+      - binary_sensor.kitchen_motion
+      - binary_sensor.play_room_motion
+      - sensor.workbench_motion_detected
+      - binary_sensor.bedroom_occupancy
+      - binary_sensor.lucas_bedroom_occupancy
+      # Front Door
+      #- binary_sensor.front_door_motion
+      #- binary_sensor.ring_front_door_motion
+    name: Motion Detected
+    icon: mdi:run
+    control: hidden
+    view: no
+
+##############################################
+## Scripts
+##############################################
+script:
+  ##############################################
+  ## [UNUSED] Light brightness adjusts based on time
+  ##############################################
+  set_light_brightness_pct_by_time:
+    alias: "Function: Set Light Brightness By Time"
+    sequence:
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ trigger.event.data.entity_id }}"
+          brightness_pct: >
+            {%- macro brightnessPctByTime() -%}
+              {% set hour=states("sensor.time").split(':')[0] | int %}
+              {% set minutes=states("sensor.time").split(':')[1] | int %}
+              {%- if hour >= 5 and hour < 8  -%}
+                60
+              {%- elif hour >= 8 and hour < 19  -%}
+                100
+              {%- elif hour >= 19 and hour < 20 and minutes < 30 -%}
+                80
+              {%- elif hour >= 19 and hour < 20 and minutes > 30 -%}
+                60
+              {%- elif hour >= 20 and hour < 21 and minutes < 30 -%}
+                50
+              {%- elif hour >= 20 and hour < 21 and minutes > 30 -%}
+                40
+              {%- elif hour >= 21 or hour < 1 -%}
+                30
+              {%- else -%}
+                40
+              {%- endif %}
+            {%- endmacro -%}
+            {{ brightnessPctByTime() }}
+
+##############################################
+## Automations
+##############################################
+automation:
+  ##############################################
+  ## Light brightness adjusts based on time
+  ##############################################
+  - alias: Adjust light brightness at night
+    trigger:
+      - platform: event
+        event_type: state_changed
+
+    condition:
+      # Only adjust light brightness if someone is home and the Dusk Dimmers are enabled.
+      - condition: state
+        entity_id: binary_sensor.presence_home
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.dusk_dimmers_enabled
+        state: 'on'
+
+      # Only look at lights.
+      - condition: template
+        value_template: "{{ trigger.event.data is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'light' }}"
+
+      # Don't change these lights.
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.living_corner_lamp' }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.family_table_lamp' }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.brians_light' }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.boys_bathroom_nightlight' }}"
+
+      # Only when lights are going from off to on.
+      - condition: template
+        value_template: "{{ trigger.event.data.old_state.state == 'off' }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.new_state.state == 'on' }}"
+
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ trigger.event.data.entity_id }}"
+          brightness_pct: >
+            {%- macro brightnessPctByTime() -%}
+              {% set hour=states("sensor.time").split(':')[0] | int %}
+              {% set minutes=states("sensor.time").split(':')[1] | int %}
+              {%- if hour >= 5 and hour < 8  -%}
+                60
+              {%- elif hour >= 8 and hour < 19  -%}
+                100
+              {%- elif hour >= 19 and hour < 20 and minutes < 30 -%}
+                80
+              {%- elif hour >= 19 and hour < 20 and minutes > 30 -%}
+                60
+              {%- elif hour >= 20 and hour < 21 and minutes < 30 -%}
+                50
+              {%- elif hour >= 20 and hour < 21 and minutes > 30 -%}
+                40
+              {%- elif hour >= 21 or hour < 1 -%}
+                30
+              {%- else -%}
+                40
+              {%- endif %}
+            {%- endmacro -%}
+            {{ brightnessPctByTime() }}
+
+  ##############################################
+  ## Presence based lighting
+  ##############################################
+  - alias: Turn Living Room Light On With Movement
+    trigger:
+      - platform: state
+        #entity_id: binary_sensor.living_room_motion
+        entity_id: binary_sensor.living_room_occupancy
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_boolean.presence_lighting_enabled
+        state: 'on'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: light.living_corner_lamp
+      - delay: 0:00:02
+      - service: homeassistant.turn_off
+        entity_id: light.living_corner_lamp
+
+  - alias: Turn Living Room Light Off After Movement Ends
+    trigger:
+      platform: state
+      entity_id: binary_sensor.living_room_motion
+      to: 'off'
+      for:
+        seconds: 10
+    condition:
+      - condition: state
+        entity_id: input_boolean.presence_lighting_enabled
+        state: 'on'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: light.living_corner_lamp
