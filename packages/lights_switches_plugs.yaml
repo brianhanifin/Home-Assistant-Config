@@ -26,7 +26,16 @@ insteon_local:
   host: 10.0.0.40
   username: !secret insteon_user
   password: !secret insteon_pass
-  timeout: 30
+  timeout: 90
+
+################################################
+## Switches
+################################################
+input_boolean:
+  dusk_dimmers_enabled:
+    name: Dusk Dimmers
+    icon: mdi:weather-sunset
+    initial: off
 
 ################################################
 ## Lights
@@ -34,18 +43,38 @@ insteon_local:
 light:
   - platform: insteon_local
 
-  ## Light Groups
+  ## Light Zone Groups
   #######################
   - platform: group
-    name: "Interior Lights"
+    name: "Downstairs Lights"
     entities:
-      - light.bedroom_lights
       - light.dining_room_light
       - light.entry_light
       - light.family_room_lights
       - light.living_room_lights
-      - light.play_room_light
+      - light.play_room_lights
 
+  - platform: group
+    name: "Exterior Lights"
+    entities:
+      - light.porch_light
+
+  - platform: group
+    name: "Interior Lights"
+    entities:
+      - light.downstairs_lights
+      - light.upstairs_lights
+      # Ignore the bathroom nightlight, that should remain on
+      # no matter what during the night.
+
+  - platform: group
+    name: "Upstairs Lights"
+    entities:
+      - light.bedroom_light
+      - light.brians_light
+
+  ## Light Room Groups
+  #######################
   - platform: group
     name: "Bedroom Lights"
     entities:
@@ -62,7 +91,7 @@ light:
     name: "Living Room Lights"
     entities:
       - light.living_room_light
-      - light.living_corner_lamp
+      - light.living_room_corner_light
 
   - platform: group
     name: "Play Room Lights"
@@ -134,7 +163,7 @@ group:
       - light.family_room_light
       - light.family_table_lamp
       - light.living_room_light
-      - light.living_corner_lamp
+      - light.living_room_corner_light
       - light.play_room_light
       - light.computer_desk_light
     name: Downstairs Lights
@@ -171,7 +200,7 @@ group:
       - light.family_room_light
       - light.family_table_lamp
       - light.living_room_light
-      - light.living_corner_lamp
+      - light.living_room_corner_light
       - light.play_room_light
       - light.computer_desk_light
     name: Interior Lights
@@ -182,7 +211,7 @@ group:
   living_room_lights:
     entities:
       - light.living_room_light
-      - light.living_corner_lamp
+      - light.living_room_corner_light
     name: Living Room Lights
     icon: mdi:lightbulb
     #control: hidden
@@ -201,6 +230,7 @@ group:
     entities:
       - light.bedroom_light
       - light.brians_light
+      # The Bathroom Nightlight always stays on at night, so exclude it.
     name: Upstairs Lights
     icon: mdi:lightbulb
     #control: hidden
@@ -216,6 +246,7 @@ switch:
 ## Scenes
 ################################################
 scene:
+  ## Time Based Scenes
   - name: Dusk
     entities:
       light.porch_light: on
@@ -238,6 +269,28 @@ scene:
     entities:
       group.morning_devices: off
 
+  # Location Based Scenes
+  - name: Turn Off Downstairs Lights
+    entities:
+      group.downstairs_lights: off
+  - name: Turn On Downstairs Lights
+    entities:
+      group.downstairs_lights: on
+
+  - name: Turn Off Interior Lights
+    entities:
+      group.interior_lights: off
+  - name: Turn On Interior Lights
+    entities:
+      group.interior_lights: on
+
+  - name: Turn Off Upstairs Lights
+    entities:
+      group.upstairs_lights: off
+  - name: Turn On Upstairs Lights
+    entities:
+      group.upstairs_lights: on
+
 ################################################
 ## Scripts
 ################################################
@@ -256,7 +309,7 @@ script:
     sequence:
       - service: light.turn_off
         entity_id: 
-          - light.living_corner_lamp
+          - light.living_room_corner_light
           - light.family_table_lamp
       - service: light.turn_on
         data_template:
@@ -269,7 +322,7 @@ script:
     sequence:
       - service: light.turn_off
         entity_id: 
-          - light.living_corner_lamp
+          - light.living_room_corner_light
           - light.family_table_lamp
       - service: light.turn_on
         data_template:
@@ -282,7 +335,7 @@ script:
     sequence:
       - service: light.turn_off
         entity_id: 
-          - light.living_corner_lamp
+          - light.living_room_corner_light
           - light.family_table_lamp
       - service: light.turn_on
         data_template:
@@ -295,7 +348,7 @@ script:
     sequence:
       - service: light.turn_off
         entity_id: 
-          - light.living_corner_lamp
+          - light.living_room_corner_light
           - light.family_table_lamp
       - service: light.turn_on
         data_template:
@@ -393,7 +446,7 @@ automation:
         to: 'off'
     action:
       - service: light.turn_off
-        entity_id: light.living_corner_lamp
+        entity_id: light.living_room_corner_light
 
   - alias: Living Room Light lt 75pct
     trigger:
@@ -403,7 +456,7 @@ automation:
         below: '190'
     action:
       - service: light.turn_off
-        entity_id: light.living_corner_lamp
+        entity_id: light.living_room_corner_light
       #- service: input_number.set_value
       #  data:
       #    entity_id: input_number.livingroom_dimmer
@@ -426,7 +479,7 @@ automation:
       - service: light.turn_on
         data:
           brightness_pct: '50'
-          entity_id: light.living_corner_lamp
+          entity_id: light.living_room_corner_light
 
   ##############################################
   ## Sunrise & Sunset Automations

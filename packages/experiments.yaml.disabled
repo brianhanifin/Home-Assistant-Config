@@ -2,11 +2,6 @@
 ## Switches
 ################################################
 input_boolean:
-  dusk_dimmers_enabled:
-    name: Dusk Dimmers
-    icon: mdi:weather-sunset
-    initial: off
-
   presence_lighting_enabled:
     name: Presence Based Lighting
     icon: mdi:test-tube
@@ -30,6 +25,15 @@ group:
       #- binary_sensor.front_door_motion
       #- binary_sensor.ring_front_door_motion
     name: Motion Detected
+    icon: mdi:run
+    control: hidden
+    view: no
+
+  motion_outside_house:
+    entities:
+      - binary_sensor.front_door_motion
+      - binary_sensor.ring_front_door_motion
+    name: Outside Motion Detected
     icon: mdi:run
     control: hidden
     view: no
@@ -102,7 +106,7 @@ automation:
 
       # Don't change these lights.
       - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.living_corner_lamp' }}"
+        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.light.living_room_corner_light' }}"
       - condition: template
         value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.family_table_lamp' }}"
       - condition: template
@@ -159,10 +163,10 @@ automation:
         state: 'on'
     action:
       - service: homeassistant.turn_on
-        entity_id: light.living_corner_lamp
+        entity_id: light.light.living_room_corner_light
       - delay: 0:00:02
       - service: homeassistant.turn_off
-        entity_id: light.living_corner_lamp
+        entity_id: light.light.living_room_corner_light
 
   - alias: Turn Living Room Light Off After Movement Ends
     trigger:
@@ -177,4 +181,4 @@ automation:
         state: 'on'
     action:
       - service: homeassistant.turn_off
-        entity_id: light.living_corner_lamp
+        entity_id: light.light.living_room_corner_light
