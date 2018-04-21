@@ -33,7 +33,7 @@ sensor:
       ecobee_fan_home:
         friendly_name: "Ecobee Fan: Home"
         icon_template: >-
-          {% if is_state('states.climate.playroom.attributes.fan', 'on') %}
+          {% if is_state('states.climate.home.attributes.fan', 'on') %}
             mdi:fan
           {% else %}
             mdi:fan-off
@@ -60,17 +60,17 @@ switch:
     switches:
       thermostat_fan_home:
         friendly_name: "Thermostat Fan"
-        value_template: "{{ states.climate.home.attributes.fan_min_on_time | int > 5 }}"
+        value_template: "{{ states.climate.home.attributes.fan }}"
         turn_on:
-          - service: climate.ecobee_set_fan_min_on_time
+          - service: climate.set_fan_mode
             data:
               entity_id: climate.home
-              fan_min_on_time: 15
+              fan_mode: on
         turn_off:
-          - service: climate.ecobee_set_fan_min_on_time
+          - service: climate.set_fan_mode
             data:
               entity_id: climate.home
-              fan_min_on_time: 0     
+              fan_mode: auto
         icon_template: >-
           {% if is_state('switch.ecobee_fan_home', 'on') %}
             mdi:fan
@@ -82,17 +82,17 @@ switch:
     switches:
       thermostat_fan_playroom:
         friendly_name: "Thermostat Fan" # [Playroom]
-        value_template: "{{ states.climate.playroom.attributes.fan_min_on_time | int > 5 }}"
+        value_template: "{{ states.climate.playroom.attributes.fan }}"
         turn_on:
-          - service: climate.ecobee_set_fan_min_on_time
+          - service: climate.set_fan_mode
             data:
               entity_id: climate.playroom
-              fan_min_on_time: 15
+              fan_mode: on
         turn_off:
-          - service: climate.ecobee_set_fan_min_on_time
+          - service: climate.set_fan_mode
             data:
               entity_id: climate.playroom
-              fan_min_on_time: 0
+              fan_mode: auto
         icon_template: >-
           {% if is_state('switch.ecobee_fan_playroom', 'on') %}
             mdi:fan
@@ -112,11 +112,11 @@ automation:
         entity_id: binary_sensor.playroom_fan_button
         click_type: single
     action:
-      #- service: switch.turn_on
-      #  entity_id: switch.thermostat_fan_playroom
-      #- delay: 0:15
-      #- service: switch.turn_off
-      #  entity_id: switch.thermostat_fan_playroom
+      - service: switch.turn_on
+        entity_id: switch.thermostat_fan_playroom
+      - delay: 0:15
+      - service: switch.turn_off
+        entity_id: switch.thermostat_fan_playroom
       - service: switch.toggle
         entity_id: switch.thermostat_fan_playroom
 
