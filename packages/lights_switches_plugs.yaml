@@ -52,7 +52,7 @@ light:
       - light.entry_light
       - light.family_room_lights
       - light.living_room_lights
-      - light.play_room_lights
+      - light.play_room_light_bulbs
 
   - platform: group
     name: "Exterior Lights"
@@ -81,11 +81,11 @@ light:
       - light.bedroom_light
       - light.brians_light
 
-  - platform: group
-    name: "Family Room Lights"
-    entities:
-      - light.family_room_light
-      - light.family_table_lamp
+#  - platform: group
+#    name: "Family Room Lights"
+#    entities:
+#      - light.family_room_light
+#      - light.family_room_table_lamp
 
   - platform: group
     name: "Living Room Lights"
@@ -96,7 +96,7 @@ light:
   - platform: group
     name: "Play Room Lights"
     entities:
-      - light.play_room_light
+      - light.play_room_light_bulb
       - light.computer_desk_light
 
   ## Light Aliases
@@ -152,7 +152,7 @@ group:
       - light.brians_light
     name: Bed Room Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
   downstairs_lights:
@@ -161,14 +161,14 @@ group:
       - light.entry_light
       - switch.entry_step_light
       - light.family_room_light
-      - light.family_table_lamp
+      - light.family_room_table_lamp
       - light.living_room_light
       - light.living_room_corner_light
-      - light.play_room_light
+      - light.play_room_light_bulb
       - light.computer_desk_light
     name: Downstairs Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
   entry_lights:
@@ -177,16 +177,16 @@ group:
       - switch.entry_step_light
     name: Entry Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
   family_room_lights:
     entities:
       - light.family_room_light
-      - light.family_table_lamp
+      - light.family_room_table_lamp
     name: Family Room Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
   # excluding night lights (eg. Kid's Bathroom & Porch)
@@ -198,14 +198,14 @@ group:
       - switch.entry_step_light
       - light.dining_room_light
       - light.family_room_light
-      - light.family_table_lamp
+      - light.family_room_table_lamp
       - light.living_room_light
       - light.living_room_corner_light
-      - light.play_room_light
+      - light.play_room_light_bulb
       - light.computer_desk_light
     name: Interior Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
   living_room_lights:
@@ -214,16 +214,16 @@ group:
       - light.living_room_corner_light
     name: Living Room Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
-  play_room_lights:
+  play_room_light_bulbs:
     entities:
-      - light.play_room_light
+      - light.play_room_light_bulb
       - light.computer_desk_light
     name: Play Room Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
   upstairs_lights:
@@ -233,7 +233,7 @@ group:
       # The Bathroom Nightlight always stays on at night, so exclude it.
     name: Upstairs Lights
     icon: mdi:lightbulb
-    #control: hidden
+    control: hidden
     view: no
 
 ################################################
@@ -300,7 +300,7 @@ script:
     sequence:
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light_bulb', 'on') %}, light.play_room_light_bulb{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           transition: 10
           brightness_pct: 80
 
@@ -310,10 +310,10 @@ script:
       - service: light.turn_off
         entity_id: 
           - light.living_room_corner_light
-          - light.family_table_lamp
+          - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light_bulb', 'on') %}, light.play_room_light_bulb{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           transition: 10
           brightness_pct: 60
 
@@ -323,10 +323,10 @@ script:
       - service: light.turn_off
         entity_id: 
           - light.living_room_corner_light
-          - light.family_table_lamp
+          - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light_bulb', 'on') %}, light.play_room_light_bulb{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           transition: 10
           brightness_pct: 50
 
@@ -336,10 +336,10 @@ script:
       - service: light.turn_off
         entity_id: 
           - light.living_room_corner_light
-          - light.family_table_lamp
+          - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light_bulb', 'on') %}, light.play_room_light_bulb{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           transition: 10
           brightness_pct: 40
 
@@ -349,10 +349,10 @@ script:
       - service: light.turn_off
         entity_id: 
           - light.living_room_corner_light
-          - light.family_table_lamp
+          - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light_bulb', 'on') %}, light.play_room_light_bulb{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           transition: 10
           brightness_pct: 30
 
@@ -410,7 +410,7 @@ automation:
         to: 'off'
     action:
       - service: light.turn_off
-        entity_id: light.family_table_lamp
+        entity_id: light.family_room_table_lamp
 
   - alias: Family Room Light lt 75pct
     trigger:
@@ -420,7 +420,7 @@ automation:
         below: '190' # slightly less than 75%
     action:
       - service: light.turn_off
-        entity_id: light.family_table_lamp
+        entity_id: light.family_room_table_lamp
 
   - alias: Family Room Light gte 75pct
     trigger:
@@ -433,7 +433,7 @@ automation:
           seconds: 1
     action:
       - service: light.turn_on
-        entity_id: light.family_table_lamp
+        entity_id: light.family_room_table_lamp
 
   ##############################################
   ## Living Room Light Automations
