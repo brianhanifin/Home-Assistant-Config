@@ -8,6 +8,7 @@ panel_outside:
     #- group.panel_raincloud_maintenance
     - group.panel_wunderground
     - group.panel_darksky
+    - group.panel_solar
   name: Outside
   icon: mdi:sun
   control: hidden
@@ -84,6 +85,19 @@ panel_raincloud_maintenance:
     - switch.raincloud
     - script.raincloud_restart
   name: Maintenance
+  icon: mdi:wrench
+  control: hidden
+  view: no
+
+panel_solar:
+  entities:
+    - sensor.power_consumption
+    - sensor.energy_consumption
+    - sensor.power_generation
+    - sensor.energy_generation
+    - sensor.pvoutput
+    - weblink.pvoutput
+  name: Solar
   icon: mdi:wrench
   control: hidden
   view: no
