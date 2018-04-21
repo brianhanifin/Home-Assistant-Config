@@ -47,7 +47,7 @@ automation:
   - alias: When Living Room Corner Lamp Turns ON
     trigger:
       - platform: state
-        entity_id: light.living_corner_lamp
+        entity_id: light.light.living_room_corner_light
         from: 'off'
         to: 'on'
     condition:
@@ -63,7 +63,7 @@ automation:
   - alias: When Living Room Corner Lamp Turns Off
     trigger:
       - platform: state
-        entity_id: light.living_corner_lamp
+        entity_id: light.light.living_room_corner_light
         from: 'on'
         to: 'off'
     action:
@@ -82,7 +82,7 @@ automation:
           entity_id: light.living_corner.lamp
           brightness_pct: '{{ state.input_number.livingroom_corner_dimmer.attributes.state }}'
         data_template:
-          entity_id: light.living_corner_lamp
+          entity_id: light.light.living_room_corner_light
           brightness_pct: '{{ trigger.to_state.state | int }}'
 
   - alias: When Living Room Floor Lamp Slider Changes
@@ -106,7 +106,7 @@ automation:
         below: '190'
     action:
       - service: light.turn_off
-        entity_id: light.living_corner_lamp
+        entity_id: light.light.living_room_corner_light
       - service: input_number.set_value
         data:
           entity_id: input_number.livingroom_dimmer

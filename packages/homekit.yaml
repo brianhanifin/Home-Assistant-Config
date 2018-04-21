@@ -1,0 +1,105 @@
+################################################
+## Component Settings
+################################################
+homekit:
+  auto_start: False
+  filter:
+    include_entities:
+      - script.raincloud_restart
+      - script.reboot
+      - script.reload_automations
+      - script.reload_core
+      - script.reload_groups
+      - script.reload_hass
+      - script.reload_scripts
+      - script.restart
+      - script.turn_off_livingroom_tv
+      - script.turn_off_playroom_tv
+      - script.turn_on_livingroom_tv
+      - script.turn_on_playroom_tv
+      - sensor.front_yard_next_cycle
+      - sensor.pool_filler_next_cycle
+      - sensor.side_yard_battery
+  #  include_domains:
+  #    - alert
+  #    - cover
+  #    - input_boolean
+  #    - light
+  #    - scene
+  #    - script
+  #    - switch
+    exclude_entities:
+      - binary_sensor._watering
+      - binary_sensor._watering_2
+      - binary_sensor.front_door_button_pressed
+      - binary_sensor.ring_front_door_ding
+      - binary_sensor.wink
+      - device_tracker.brians_iphone
+      - device_tracker.nerenes_iphone
+      - input_text.current_icon
+      - input_text.dusk
+      - light.brians_light
+      - light.computer_desk_light
+      - light.family_table_lamp
+      - light.boys_bathroom_nightlight
+      - light.light.living_room_corner_light
+      - light.play_room_light
+      #- light.bedroom_lights
+      #- light.family_table_lights
+      #- light.living_room_lights
+      #- light.play_room_lights
+      #- light.interior_lights
+      #- light.upstairs_lights
+      - scene.close_garage
+      - scene.open_garage
+      - scene.morning_devices_off
+      - script.garage_door_warning
+      - script.livingroom_mediaplayer_enable
+      - script.livingroom_mediaplayer_disable
+      - script.mediaplayer_livingroom_showhide
+      - script.notify_ios_engine
+      - script.notify_web_engine
+      - script.raincloud_watchdog
+      - script.turn_off_livingroom_tv
+      - script.turn_on_livingroom_tv
+      - script.turn_off_playroom_tv
+      - script.turn_on_playroom_tv
+      - switch.entry_step_light
+      - switch.front_yard_automatic_watering
+      - switch.pool_filler_automatic_watering
+      - switch.motion_detection
+      - switch.motion_recording
+    exclude_domains:
+      - automation
+      - binary_sensor
+      - climate
+      - cover
+      - device_tracker
+      - group
+      - media_player
+      - remote
+      - script
+      - sensor
+      - switch
+  entity_config:
+    remote.living_room_2:
+      name: Living Room Apple TV
+      description: Apple TV in the Living Room.
+      display_categories: media_player
+
+################################################
+## Automations
+################################################
+automation:
+  - alias: 'Start HomeKit'
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      - delay: 00:02  # Waits 2 minutes
+      - service: homekit.start
+      - service: script.notify_web_engine
+        data_template:
+          value1: 'Homekit is starting...'
+          value2: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          value3: ''
