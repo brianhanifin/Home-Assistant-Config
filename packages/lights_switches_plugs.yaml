@@ -37,6 +37,11 @@ input_boolean:
     icon: mdi:weather-sunset
     initial: off
 
+#  kitchen_lights:
+#    name: Kitchen Lights
+#    icon: mdi:lightbulb
+#    initial: off
+
 ################################################
 ## Lights
 ################################################
@@ -162,6 +167,8 @@ group:
       - switch.entry_step_light
       - light.family_room_light
       - light.family_room_table_lamp
+      - switch.kitchen_prep_light
+      - switch.kitchen_stove_light
       - light.living_room_light
       - light.living_room_corner_light
       - light.play_room_light_bulb
@@ -189,6 +196,15 @@ group:
     control: hidden
     view: no
 
+  kitchen_lights:
+    entities:
+      - switch.kitchen_prep_light
+      - switch.kitchen_stove_light
+    name: Kitchen Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
   # excluding night lights (eg. Kid's Bathroom & Porch)
   interior_lights:
     entities:
@@ -199,6 +215,8 @@ group:
       - light.dining_room_light
       - light.family_room_light
       - light.family_room_table_lamp
+      - switch.kitchen_prep_light
+      - switch.kitchen_stove_light
       - light.living_room_light
       - light.living_room_corner_light
       - light.play_room_light_bulb
@@ -276,6 +294,13 @@ scene:
   - name: Turn On Downstairs Lights
     entities:
       group.downstairs_lights: on
+
+  - name: Turn On Kitchen Lights
+    entities:
+      group.kitchen_lights: on
+  - name: Turn Off Kitchen Lights
+    entities:
+      group.kitchen_lights: off
 
   - name: Turn Off Interior Lights
     entities:
