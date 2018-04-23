@@ -71,9 +71,9 @@ sensor:
 
   - platform: moon
 
-input_text:
-  dusk:
-    name: Time of Dusk
+#input_text:
+#  dusk:
+#    name: Time of Dusk
 
 #########################################
 ## Automation
@@ -88,21 +88,21 @@ automation:
         entity_id: script.mediaplayer_livingroom_showhide
       - service: script.turn_on
         entity_id: script.mediaplayer_playroom_showhide
-      - service: input_text.set_value
-        entity_id: input_text.dusk
-        data:
-          value_template: '{{ states.sun.sun.attributes.next_dusk }}'
+      #- service: input_text.set_value
+      #  entity_id: input_text.dusk
+      #  data:
+      #    value_template: '{{ states.sun.sun.attributes.next_dusk }}'
 
   ## Set today's dusk time at midnight
-  - alias: Set Time of Dusk
-    trigger:
-      platform: time
-      at: "00:00"
-    action:
-      - service: input_text.set_value
-        entity_id: input_text.dusk
-        data:
-          value_template: '{{ states.sun.sun.attributes.next_dusk }}'
+  #- alias: Set Time of Dusk
+  #  trigger:
+  #    platform: time
+  #    at: "00:00"
+  #  action:
+  #    - service: input_text.set_value
+  #      entity_id: input_text.dusk
+  #      data:
+  #        value_template: '{{ states.sun.sun.attributes.next_dusk }}'
 
   - alias: Notify on Home Automation Updates
     trigger:

@@ -83,14 +83,25 @@ input_boolean:
 ## Script
 ################################################
 script:
+  #test_notify_engine:
+  #  - sequence:
+  #    - service: script.turn_on
+  #      entity_id: notify_engine
+  #      data_template:
+  #        value1: "Notify Engine"
+  #        value2: "Testing"
+  #        value3: "Testing... 1, 2, 3"
+  #        engines: "web"
+  
   #notify_engine:
   #  - sequence:
   #    - service: script.turn_on
   #      data_template: 
   #        #entity_id: {% set add_comma = false %}{% if engines|select("ios") %}script.notify_ios_engine{% set add_comma = true %}{% endif %}{% if add_comma %}, {% end if %}{% if engines|select("web") %}script.notify_web_engine{% endif %}
-  #        entity_id: >
-  #          {% set engine_list = (engines|replace(",","")).split() %}
-  #          {% for item in engine_list %}{{ "notify_" ~ item ~ "_engine " }}{% endfor %}
+  #        entity_id: {% set engine_list = (engines|replace(",","")).split() %}{% for item in engine_list %}{{ "notify_" ~ item ~ "_engine " }}{% endfor %}
+  #        value1: '{{ value1 }}'
+  #        value2: '{{ value2 }}'
+  #        value3: '{{ value3 }}'
 
   notify_web_engine:
     sequence:
