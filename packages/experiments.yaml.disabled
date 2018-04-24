@@ -106,7 +106,7 @@ automation:
 
       # Don't change these lights.
       - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.living_room_corner_light' }}"
+        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.living_room_corner_lamp' }}"
       - condition: template
         value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.family_room_table_lamp' }}"
       - condition: template
@@ -163,10 +163,10 @@ automation:
         state: 'on'
     action:
       - service: homeassistant.turn_on
-        entity_id: light.living_room_corner_light
+        entity_id: light.living_room_corner_lamp
       - delay: 0:00:02
       - service: homeassistant.turn_off
-        entity_id: light.living_room_corner_light
+        entity_id: light.living_room_corner_lamp
 
   - alias: Turn Living Room Light Off After Movement Ends
     trigger:
@@ -181,4 +181,4 @@ automation:
         state: 'on'
     action:
       - service: homeassistant.turn_off
-        entity_id: light.living_room_corner_light
+        entity_id: light.living_room_corner_lamp

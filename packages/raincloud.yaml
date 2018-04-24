@@ -103,17 +103,15 @@ script:
       - service: script.notify_ios_engine
         data_template:
           value1: 'Raincloud: Offline'
-          value2: 'Your watering system has been offline for 5 minutes.'
-          value3: 'Attempting to restart the Raincloud Base Station.'
-          #value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          value2: 'Attempting to restart the Raincloud Base Station.'
+          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
 
       - service: script.notify_web_engine
         data_template:
           value1: 'Raincloud: Offline'
-          value2: 'Your watering system has been offline for 5 minutes.'
-          value3: 'Attempting to restart the Raincloud Base Station.'
-          #value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          value2: 'Attempting to restart the Raincloud Base Station.'
+          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
 
       - service: script.turn_on
         entity_id: script.raincloud_restart
