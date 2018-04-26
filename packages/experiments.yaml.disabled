@@ -7,6 +7,10 @@ input_boolean:
     icon: mdi:test-tube
     initial: off
 
+  flashing_lights_enabled:
+    name: Flashing Lights Notify
+    icon: mdi:test-tube
+    initial: off
 
 ################################################
 ## Groups
@@ -42,9 +46,44 @@ group:
 ## Scripts
 ##############################################
 script:
-  ##############################################
+  ############################################
+  ## Garage Entry Light Automations
+  ############################################
+  flashing_light:
+    alias: "Flashing Light: Start"
+    sequence:
+      - service: homeassistant.turn_on
+        data_template:
+          entity_id: "{{ thelight }}"
+      - service: homeassistant.turn_off
+        data_template:
+          entity_id: "{{ thelight }}"
+      - delay:
+          seconds: 1
+      - service: script.flashing_light
+        data:
+          thelight: "{{ thelight }}"
+
+  flashing_light_stop:
+    alias: "Flashing Light: Stop"
+    sequence:
+      - service: script.turn_off
+        entity_id: script.flash_light
+
+  flashing_light_test:
+    alias: "Flashing Light: Test"
+    sequence:
+      - service: script.flash_light
+        data_template:
+          thelight: "light.garage_entry_light"
+      - delay:
+          seconds: 30
+      - service: script.turn_off
+        entity_id: script.flash_light
+
+  ############################################
   ## [UNUSED] Light brightness adjusts based on time
-  ##############################################
+  ############################################
   set_light_brightness_pct_by_time:
     alias: "Function: Set Light Brightness By Time"
     sequence:
@@ -79,6 +118,28 @@ script:
 ## Automations
 ##############################################
 automation:
+  ##############################################
+  ## Garage Entry Light Automations
+  ##############################################
+  - alias: Garage Door Opens When Someone Is Home
+    trigger:
+      - platform: state
+        entity_id: cover.garage_door_opener
+        from: "closed"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.presence_home
+        state: 'on'
+    # Flash the lights to notify the person inside
+    action:
+      - service: script.turn_on
+        entity_id: script.flashing_light
+        data_template:
+          thelight: light.garage_entry_light
+      - delay: 0:00:10
+      - service: script.turn_off
+        entity_id: script.flashing_light
+
   ##############################################
   ## Light brightness adjusts based on time
   ##############################################

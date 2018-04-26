@@ -89,7 +89,7 @@ binary_sensor:
 ################################################
 input_boolean:
   guest_mode:
-    name: Guest Staying Home
+    name: Guest Mode
     icon: mdi:account-alert
     initial: off
 
@@ -102,11 +102,10 @@ input_boolean:
 ## Automation
 ################################################
 automation:
-  - alias: Brian and Nerene Leave Home
+  - alias: If Everyone Leaves Home
     trigger:
       - platform: state
         entity_id: device_tracker.brians_iphone, device_tracker.brians_iphone_bluetooth, device_tracker.nerenes_iphone
-
     condition:
       condition: and
       conditions:
@@ -119,22 +118,20 @@ automation:
         - condition: state
           entity_id: 'device_tracker.nerenes_iphone'
           state: 'away'
+        # Only if Guest Mode is also disabled.
         - condition: state
           entity_id: input_boolean.guest_mode
           state: 'off'
-  #    for:
-  #      minutes: 2
-
+      #for:
+      #  minutes: 2
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.presence_home
 
-
-  - alias: Brian or Nerene Return Home
+  - alias: If Anyone Arrives At Home
     trigger:
       - platform: state
         entity_id: device_tracker.brians_iphone, device_tracker.brians_iphone_bluetooth, device_tracker.nerenes_iphone
-
     condition:
       condition: or
       conditions:
@@ -147,12 +144,12 @@ automation:
         - condition: state
           entity_id: 'device_tracker.nerenes_iphone'
           state: 'home'
+        # Or if Guest Mode is enabled.
         - condition: state
           entity_id: input_boolean.guest_mode
           state: 'on'
-#      for:
-#        seconds: 30
-
+      #for:
+      #  seconds: 30
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.presence_home

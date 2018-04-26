@@ -26,6 +26,14 @@ binary_sensor:
         #icon_template: mdi:garage'{% if is_state(cover.garage_door == 'open' %}-open{% endif %}'
         #icon: mdi:garage
 
+
+
+input_text:
+  fake_garage_door:
+    name: Fake Garage Door
+    initial: "closed"
+
+
 ################################################
 ## Scenes
 ################################################
@@ -66,6 +74,40 @@ script:
 ## Automations
 ##############################################
 automation:
+  ##############################################
+  ## Garage Entry Light Automations
+  ##############################################
+  - alias: Garage Door Opens
+    trigger:
+      - platform: state
+        entity_id: cover.garage_door_opener, input_text.fake_garage_door
+        from: "closed"
+    #condition:
+    #  - condition: state
+    #    entity_id: binary_sensor.presence_home
+    #    state: 'off'
+    action:
+      - service: light.turn_on
+        entity_id: light.garage_entry_light
+      # If after 5 minutes the garage is still open, dim the light 50%.
+      - delay: 0:05:00
+      - condition: state
+        entity_id: light.garage_entry_light
+        state: 'on'
+      - service: light.turn_on
+        data:
+          entity_id: light.garage_entry_light
+          brightness_pct: 5
+
+  - alias: Garage Door Is Closed
+    trigger:
+      - platform: state
+        entity_id: cover.garage_door_opener, input_text.fake_garage_door
+        to: "closed"
+    action:
+      - service: light.turn_off
+        entity_id: light.garage_entry_light
+
   ############################################
   ## Warn us if the garage door is still open
   ############################################

@@ -21,12 +21,26 @@ homeassistant:
       alexa_hidden: true
       emulated_hue_hidden: true
       homebridge_hidden: true
+      customize_glob:
+    # Custom UI: https://github.com/andrey-git/home-assistant-custom-ui/
+    light.*:
+      custom_ui_state_card: state-card-custom-ui
+    cover.*:
+      custom_ui_state_card: state-card-custom-ui
 
 ################################################
 ## Component Settings
 ################################################
 # Enables configuration UI
 config:
+
+customizer:
+  # Custom UI: https://github.com/andrey-git/home-assistant-custom-ui/
+  custom_ui: hosted #debug #Only use (debug) for reporting readable Javascript errors!
+  #hide_attributes:
+  #  - node_id
+  #  - value_index
+  #columns: 350, 700, 1050, 1400, 1850, 2100
 
 # Discover some devices automatically
 discovery:
@@ -36,6 +50,13 @@ discovery:
 # Common component used by Ring Camera and others
 downloader:
   download_dir: /config/www/downloads #appears as /local/downlads on the website
+
+frontend:
+  # Custom UI: https://github.com/andrey-git/home-assistant-custom-ui/
+  extra_html_url:
+    - https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui.html
+  extra_html_url_es5:
+    - https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui-es5.html
 
 history: !include /config/recorder.yaml
 
