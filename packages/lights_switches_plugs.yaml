@@ -163,6 +163,7 @@ group:
       - light.family_room_light
       - light.family_room_table_lamp
       - switch.kitchen_prep_light
+      - light.kitchen_sink_light
       - switch.kitchen_stove_light
       - light.living_room_light
       - light.living_room_corner_lamp
@@ -194,8 +195,18 @@ group:
   kitchen_lights:
     entities:
       - switch.kitchen_prep_light
+      - light.kitchen_sink_light
       - switch.kitchen_stove_light
     name: Kitchen Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+  
+  kitchen_light_switches:
+    entities:
+      - switch.kitchen_prep_light
+      - switch.kitchen_stove_light
+    name: Kitchen Light Switches
     icon: mdi:lightbulb
     control: hidden
     view: no
@@ -211,6 +222,7 @@ group:
       - light.family_room_light
       - light.family_room_table_lamp
       - switch.kitchen_prep_light
+      - light.kitchen_sink_light
       - switch.kitchen_stove_light
       - light.living_room_light
       - light.living_room_corner_lamp
@@ -270,6 +282,10 @@ scene:
         state: on
         brightness_pct: '30'
 
+  - name: Morning Devices Off
+    entities:
+      group.morning_devices: off
+
   - name: Goodbye
     entities:
       group.goodbye_devices: off
@@ -277,10 +293,6 @@ scene:
   - name: Good Night
     entities:
       group.goodnight_devices: off
-
-  - name: Morning Devices Off
-    entities:
-      group.morning_devices: off
 
   # Location Based Scenes
   - name: Turn Off Downstairs Lights
@@ -454,6 +466,29 @@ automation:
     action:
       - service: light.turn_on
         entity_id: light.family_room_table_lamp
+
+  ##############################################
+  ## Kitchen Light Automations
+  ##############################################
+  - alias: Kitchen Light(s) Turn On
+    trigger:
+      - platform: state
+        #entity_id: group.kitchen_light_switches
+        entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
+        to: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.kitchen_sink_light
+
+  - alias: Kitchen Light(s) Turn Off
+    trigger:
+      - platform: state
+        #entity_id: group.kitchen_light_switches
+        entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
+        to: "off"
+    action:
+      - service: light.turn_off
+        entity_id: light.kitchen_sink_light
 
   ##############################################
   ## Living Room Light Automations
