@@ -1,0 +1,108 @@
+homeassistant:
+  customize_glob:
+    # Custom UI: https://github.com/andrey-git/home-assistant-custom-ui/
+    "*.*":
+      custom_ui_state_card: state-card-custom-ui
+
+    ################################################
+    ## Covers
+    ################################################
+    cover.*:
+      show_last_changed: true
+    cover.garage_door_opener:
+      confirm_controls_show_lock: true
+
+    ################################################
+    ## Devices
+    ################################################
+    device_tracker.*:
+      state_card_mode: badges
+
+    ################################################
+    ## Groups
+    ################################################
+    group.*:
+      show_last_changed: true
+    group.panel_downstairs_lights:
+      confirm_controls_show_lock: true
+    group.panel_raincloud_status:
+      state_card_mode: badges
+
+    ################################################
+    ## Lights
+    ################################################
+    light.*:
+      show_last_changed: true
+    light.computer_desk_light:
+      group:
+        group.panel_play_room_lights:
+          friendly_name: Computer Desk
+    light.family_room_light:
+      group:
+        group.panel_family_room_lights:
+          friendly_name: Switched
+    light.family_room_table_lamp:
+      group:
+        group.panel_family_room_lights:
+          friendly_name: Table
+    light.garage_entry_light:
+      group:
+        group.panel_entry_lighting:
+          friendly_name: Garage Entry
+    light.kitchen_sink_light:
+      group:
+        group.panel_kitchen_lights:
+          friendly_name: Sink
+    light.living_room_light:
+      group:
+        group.panel_living_room_lights:
+          friendly_name: Switched
+    light.living_room_corner_light:
+      group:
+        group.panel_living_room_lights:
+          friendly_name: Corner
+    light.play_room_light:
+      group:
+        group.panel_play_room_lights:
+          friendly_name: Hanging Bulb
+    light.porch_light:
+      confirm_controls_show_lock: true
+
+    ################################################
+    ## Sensors
+    ################################################
+    binary_sensor.*:
+      show_last_changed: true
+      state_card_mode: badges
+    sensor.*:
+      show_last_changed: true
+      state_card_mode: badges
+
+    ################################################
+    ## Switches (+ input_boolean)
+    ################################################
+    input_boolean.*:
+      show_last_changed: true
+    input_boolean.nerene_wakeup_enabled:
+      confirm_controls_show_lock: true
+    
+    switch.*:
+      show_last_changed: true
+    switch.kitchen_prep_light:
+      group:
+        group.panel_kitchen_lights:
+          friendly_name: Prep
+    switch.kitchen_stove_light:
+      group:
+        group.panel_kitchen_lights:
+          friendly_name: Stove
+    switch.livingroom_tv:
+      confirm_controls_show_lock: true
+      group:
+        group.panel_living_room_tv:
+          friendly_name: TV
+    switch.playroom_tv:
+      confirm_controls_show_lock: true
+      group:
+        group.panel_play_room_tv:
+          friendly_name: TV
