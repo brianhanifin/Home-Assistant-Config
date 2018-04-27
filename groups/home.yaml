@@ -4,11 +4,11 @@
 default_view:
   entities:
     ## Sensors
-    - binary_sensor.presence_home
-    - binary_sensor.garage_door
-    - binary_sensor.glowforge_window
+    #- binary_sensor.presence_home
+    #- binary_sensor.garage_door
+    #- binary_sensor.glowforge_window
     #- binary_sensor.aquatimer_control_unit_status
-    - sensor.side_yard_battery
+    #- sensor.side_yard_battery
 
     ## Panels
     - group.panel_control
@@ -26,11 +26,23 @@ default_view:
 #######################
 panel_control:
   entities:
+    - binary_sensor.presence_home
+    - binary_sensor.glowforge_window
+    - input_boolean.nerene_wakeup_enabled
+    - input_boolean.guest_mode
+    - input_boolean.dusk_dimmers_enabled
+    - group.panel_admin_features
+    - group.panel_control_scenes
+  name: Control Panel
+  icon: mdi:file-document-box
+  control: hidden
+  view: no
+
+panel_control_scenes:
+  entities:
     - scene.goodbye
     - scene.good_night
-    - input_boolean.guest_mode
-    - group.panel_admin_features
-  name: Control Panel
+  name: Scenes
   icon: mdi:file-document-box
   control: hidden
   view: no
