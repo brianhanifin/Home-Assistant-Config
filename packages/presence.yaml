@@ -33,28 +33,22 @@ homeassistant:
     binary_sensor.presence_home:
       friendly_name: "At Home"
       device_class: occupancy
-      icon: mdi:account-multiple
     input_boolean.presence_home:
       friendly_name: "At Home"
-      icon: mdi:account-multiple
 
     ##### Motion Sensors
     binary_sensor.kitchen_room_motion:
       friendly_name: "Kitchen"
       device_class: motion
-      icon: mdi:run
     binary_sensor.play_room_motion:
       friendly_name: "Play Room"
       device_class: motion
-      icon: mdi:run
     sensor.workbench_motion_detected:
       friendly_name: Workbench
       device_class: motion
-      icon: mdi:run
     binary_sensor.ring_front_door_motion:
       name: Porch
       device_class: motion
-      icon: mdi:run
 
 
 ################################################
@@ -66,9 +60,10 @@ device_tracker:
   - platform: nmap_tracker
     hosts:
       - 10.0.0.29   # Brian's iPhone
-      - 10.0.0.71   # Nerene's iPhone
+      - 10.0.0.35   # Nerene's iPhone
       #- 10.0.0.0/16
     home_interval: 3
+
     new_device_defaults:
       track_new_devices: false
       hide_if_away: false
@@ -95,7 +90,7 @@ input_boolean:
 
   presence_home:
     name: At Home
-    icon: mdi:account-multiple
+    icon: mdi:home
     initial: off
 
 ################################################
