@@ -1,0 +1,47 @@
+################################################
+## Component Settings
+################################################
+tts:
+  - platform: amazon_polly
+    aws_access_key_id: !secret aws_key_id
+    aws_secret_access_key: !secret aws_access_key
+    cache: True
+    cache_dir: /tmp/tts
+    region_name: 'us-west-1'
+    text_type: text #ssml
+    voice: Joanna
+
+## Broadcast Devices
+########################
+media_player:
+  - platform: cast
+    host: 10.0.0.19  # media_player.living_room_speaker
+
+################################################
+## Switches
+################################################
+input_boolean:
+  speech_enabled:
+    name: Speech Enabled
+    icon: mdi:speaker
+    initial: on
+
+################################################
+## Script
+################################################
+script:
+  speech_engine:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.speech_enabled
+        state: 'on'
+      - service: tts.amazon_polly_say
+        data_template:
+          #entity_id: 
+          #  {% if where == 'livingroom' | where == 'living_room' | where == 'living room' %}
+          #    media_player.living_room_speaker
+          #  {% else %}
+          #    media_player.living_room_speaker
+          #  {% endif %}
+          message: "{{ message }}"
+          cache: false

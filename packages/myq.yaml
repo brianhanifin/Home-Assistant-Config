@@ -66,9 +66,12 @@ script:
           who: "parents"
       - service: script.notify_web_engine
         data_template:
-            value1: 'WARNING: Garage Door'
-            value2: 'Your garage door is still open! You should close it.'
-            value3: ''
+          value1: 'WARNING: Garage Door'
+          value2: 'Your garage door is still open! You should close it.'
+          value3: ''
+      - service: script.speech_engine
+        data_template:
+          message: "Your garage door is still open! You should probably close it."
 
 ##############################################
 ## Automations
