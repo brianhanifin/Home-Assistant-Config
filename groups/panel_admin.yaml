@@ -2,12 +2,26 @@
 #######################
 panel_admin:
   entities:
+    - group.panel_admin_docker
     - group.panel_admin_projects
     - group.panel_admin_resources
     - group.panel_admin_manage
     - group.panel_admin_presence
   name: Admin Panel
   icon: mdi:file-document-box
+  control: hidden
+  view: no
+
+panel_admin_docker:
+  entities:
+    - weblink.portainerio
+    - weblink.hass_playground
+    - weblink.hadockermon
+    - weblink.influxdb
+    - weblink.mosquitto
+    - weblink.organizr
+  name: Docker
+  icon: mdi:wrench
   control: hidden
   view: no
 
@@ -41,9 +55,9 @@ panel_admin_manage:
 
 panel_admin_presence:
   entities:
-    - device_tracker.brians_iphone
-    - device_tracker.brians_iphone_bluetooth
-    - device_tracker.nerenes_iphone
+    #- device_tracker.brians_iphone
+    #- device_tracker.brians_iphone_bluetooth
+    #- device_tracker.nerenes_iphone
     - devices.automatic
     - device_tracker.parrot_ck3100
     - binary_sensor.home_occupancy
