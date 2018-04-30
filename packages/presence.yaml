@@ -101,6 +101,22 @@ input_boolean:
     icon: mdi:home
     initial: off
 
+script:
+  test_arrival:
+    sequence:
+      - service: script.announce_arrival
+        data_template:
+          who: "Buddy"
+
+  announce_arrival:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.speech_enabled
+        state: 'on'
+      - service: script.speech_engine
+        data_template:
+          message: "Hooray! {{ who }} is home!"
+
 ################################################
 ## Automation
 ################################################
@@ -156,3 +172,22 @@ automation:
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.presence_home
+
+  - alias: "Announce Nerene's Arrival"
+    trigger:
+      - platform: state
+        entity_id: device_tracker.nerenes_iphone
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: 'device_tracker.nerenes_iphone'
+          state: 'home'
+        # And speech mode is enabled.
+        - condition: state
+          entity_id: input_boolean.speech_enabled
+          state: 'on'
+    action:
+      - service: script.announce_arrival
+        data_template:
+          who: "Nerene"
