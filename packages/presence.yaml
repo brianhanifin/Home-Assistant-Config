@@ -2,18 +2,18 @@ homeassistant:
   customize:
     ##### Brian's Devices
     device_tracker.brians_iphone:
-      friendly_name: "Brian's Phone"
+      friendly_name: "Brian"
       device_class: presence
     device_tracker.brians_iphone_bluetooth:
       friendly_name: "Brian's Phone"
-      device_class: presence
+      device_class: connectivity
     devices.automatic:
       friendly_name: "Brian's Car"
       device_class: connectivity
 
     ##### Nerene's Devices
     device_tracker.nerenes_iphone:
-      friendly_name: "Nerene's Phone"
+      friendly_name: "Nerene"
       device_class: presence
     device_tracker.parrot_ck3100:
       friendly_name: "Nerene's Car"
@@ -55,7 +55,7 @@ homeassistant:
 ## Component Settings
 ################################################
 device_tracker:
-  - platform: bluetooth_tracker
+  #- platform: bluetooth_tracker
 
   #- platform: netgear
   #  host: 10.0.0.1
@@ -173,20 +173,41 @@ automation:
       - service: input_boolean.turn_on
         entity_id: input_boolean.presence_home
 
-  - alias: "Announce Nerene's Arrival"
+  - alias: Brian Arrives At Home
+    trigger:
+      - platform: state
+        entity_id: device_tracker.brians_iphone
+    condition:
+      condition: and
+      conditions:
+        # Only when the device just arrived at home...
+        - condition: state
+          entity_id: 'device_tracker.brians_iphone'
+          state: 'home'
+        # ... and the device has been at home for 5 minutes or less.
+        # This avoids playing the welcome message every time the app is restarted.
+        - condition: template
+          value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.brians_iphone.last_changed) < 301 }}"
+    action:
+      - service: script.announce_arrival
+        data_template:
+          who: "Brian"
+
+  - alias: Nerene Arrives At Home
     trigger:
       - platform: state
         entity_id: device_tracker.nerenes_iphone
     condition:
       condition: and
       conditions:
+        # Only when the device just arrived at home...
         - condition: state
           entity_id: 'device_tracker.nerenes_iphone'
           state: 'home'
-        # And speech mode is enabled.
-        - condition: state
-          entity_id: input_boolean.speech_enabled
-          state: 'on'
+        # ... and the device has been at home for 5 minutes or less.
+        # This avoids playing the welcome message every time the app is restarted.
+        - condition: template
+          value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.nerene_iphone.last_changed) < 301 }}"
     action:
       - service: script.announce_arrival
         data_template:
