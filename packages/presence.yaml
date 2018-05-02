@@ -184,14 +184,14 @@ automation:
         - condition: state
           entity_id: 'device_tracker.brians_iphone'
           state: 'home'
-        # ... and the device has been at home for 5 minutes or less.
-        # This avoids playing the welcome message every time the app is restarted.
+        # ... and the server has been running for more than 5 minutes.
+        # This avoids playing the welcome message every time the server is restarted.
         - condition: template
-          value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.brians_iphone.last_changed) < 301 }}"
+          value_template: "{{ as_timestamp(now()) | int - states.variable.ha_laststartup.state | int > 300 }}"
     action:
-      - service: script.announce_arrival
+      - service: script.speech_engine
         data_template:
-          who: "Brian"
+          message: "Brian is home!"
 
   - alias: Nerene Arrives At Home
     trigger:
@@ -204,11 +204,11 @@ automation:
         - condition: state
           entity_id: 'device_tracker.nerenes_iphone'
           state: 'home'
-        # ... and the device has been at home for 5 minutes or less.
-        # This avoids playing the welcome message every time the app is restarted.
+        # ... and the server has been running for more than 5 minutes.
+        # This avoids playing the welcome message every time the server is restarted.
         - condition: template
-          value_template: "{{ as_timestamp(now()) - as_timestamp(states.device_tracker.nerene_iphone.last_changed) < 301 }}"
+          value_template: "{{ as_timestamp(now()) | int - states.variable.ha_laststartup.state | int > 300 }}"
     action:
-      - service: script.announce_arrival
+      - service: script.speech_engine
         data_template:
-          who: "Nerene"
+          message: "Nerene is home!"
