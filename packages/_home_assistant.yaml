@@ -102,10 +102,14 @@ automation:
       platform: homeassistant
       event: start
     action:
-      - service: script.turn_on
-        entity_id: script.mediaplayer_livingroom_showhide
-      - service: script.turn_on
-        entity_id: script.mediaplayer_playroom_showhide
+      - service: variable.set_variable
+        data:
+          variable: ha_laststartup
+          value_template: "{{ as_timestamp(now()) }}"
+      #- service: script.turn_on
+      #  entity_id: script.mediaplayer_livingroom_showhide
+      #- service: script.turn_on
+      #  entity_id: script.mediaplayer_playroom_showhide
       #- service: input_text.set_value
       #  entity_id: input_text.dusk
       #  data:
