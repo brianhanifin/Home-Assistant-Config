@@ -57,15 +57,6 @@ homeassistant:
 device_tracker:
   #- platform: bluetooth_tracker
 
-  #- platform: netgear
-  #  host: 10.0.0.1
-  #  username: !secret netgear_user
-  #  password: !secret netgear_pass
-  #  consider_home: 180
-  #  new_device_defaults:
-  #    track_new_devices: false
-  #    hide_if_away: true
-
   - platform: nmap_tracker
     hosts:
       - 10.0.0.29   # Brian's iPhone
@@ -75,6 +66,18 @@ device_tracker:
     new_device_defaults:
       track_new_devices: false
       hide_if_away: true
+
+################################################
+## Groups
+################################################
+group:
+  family:
+    entities:
+      - device_tracker.brians_iphone
+      - device_tracker.nerenes_iphone
+    name: Is Anyone At Home?
+    icon: mdi:home
+    view: no
 
 ################################################
 ## Sensors

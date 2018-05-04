@@ -71,12 +71,12 @@ switch:
             data:
               entity_id: climate.home
               resume_all: true
-        icon_template: >-
-          {% if is_state_attr('climate.home', 'fan', 'on') %}
-            mdi:fan
-          {% else %}
-            mdi:fan-off
-          {% endif %}
+        #icon_template: >-
+        #  {% if is_state_attr('climate.home', 'fan', 'on') %}
+        #    mdi:fan
+        #  {% else %}
+        #    mdi:fan-off
+        #  {% endif %}
 
   - platform: template
     switches:
@@ -93,12 +93,12 @@ switch:
             data:
               entity_id: climate.playroom
               resume_all: true
-        icon_template: >-
-          {% if is_state_attr('climate.playroom', 'fan', 'on') %}
-            mdi:fan
-          {% else %}
-            mdi:fan-off
-          {% endif %}
+        #icon_template: >-
+        #  {% if is_state_attr('climate.playroom', 'fan', 'on') %}
+        #    mdi:fan
+        #  {% else %}
+        #    mdi:fan-off
+        #  {% endif %}
 
 ################################################
 ## Automations
@@ -116,8 +116,6 @@ automation:
         entity_id: switch.thermostat_fan_playroom
       - delay: 0:15
       - service: switch.turn_off
-        entity_id: switch.thermostat_fan_playroom
-      - service: switch.toggle
         entity_id: switch.thermostat_fan_playroom
 
   - alias: Play Room Fan Run for 60 minutes #Smart button long press
