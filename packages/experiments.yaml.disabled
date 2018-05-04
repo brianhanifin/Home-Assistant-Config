@@ -126,10 +126,6 @@ automation:
       - platform: state
         entity_id: cover.garage_door_opener
         from: "closed"
-    condition:
-      - condition: state
-        entity_id: binary_sensor.presence_home
-        state: 'on'
     # Flash the lights to notify the person inside
     action:
       - service: script.turn_on
@@ -151,8 +147,10 @@ automation:
     condition:
       # Only adjust light brightness if someone is home and the Dusk Dimmers are enabled.
       - condition: state
-        entity_id: binary_sensor.presence_home
-        state: 'on'
+        entity_id: group.family
+        from: 'not_home'
+        to: 'home'
+        for: '00:03:00'
       - condition: state
         entity_id: input_boolean.dusk_dimmers_enabled
         state: 'on'

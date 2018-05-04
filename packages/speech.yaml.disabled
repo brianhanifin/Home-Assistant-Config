@@ -50,9 +50,12 @@ script:
     sequence:
       - condition: or
         conditions:
+          # Only if someone is home.
           - condition: state
-            entity_id: input_boolean.presence_home
-            state: 'on'
+            entity_id: group.family
+            from: 'not_home'
+            to: 'home'
+            #for: '00:03:00'
 
       - service: script.speech_processing
         data_template:
