@@ -1,0 +1,186 @@
+################################################
+## Component Settings
+################################################
+ios:
+  push_scheduled_wakeup_brian:
+    categories:
+      - name: alarm clock
+        identifier: 'scheduled_wakeup_brian'
+        actions:
+          - identifier: 'AWAKE'
+            title: 'Awake'
+            destructive: no
+          - identifier: 'SNOOZE'
+            title: 'Snooze'
+            destructive: yes
+
+################################################
+## Group
+################################################
+group:
+  scheduled_wakeup_brian:
+    name: "Brian's Wakeup"
+    entities:
+      - sensor.scheduled_wakeup_brian_time
+      - input_number.scheduled_wakeup_brian_hour
+      - input_number.scheduled_wakeup_brian_minutes
+      - input_boolean.scheduled_wakeup_brian_status
+
+################################################
+## Sliders
+################################################
+input_number:
+  scheduled_wakeup_brian_hour:
+    name: Hour
+    icon: mdi:timer
+    mode: slider
+    initial: 6
+    min: 0
+    max: 23
+    step: 1
+
+  scheduled_wakeup_brian_minutes:
+    name: Minutes
+    icon: mdi:timer
+    mode: slider
+    initial: 30
+    min: 0
+    max: 59
+    step: 5
+
+################################################
+## Switches
+################################################
+input_boolean:
+  scheduled_wakeup_brian_weekday:
+    name: Weekdays
+    initial: on
+    icon: mdi:calendar
+  scheduled_wakeup_brian_status:
+    initial: on
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: template
+    sensors:
+      scheduled_wakeup_brian_time:
+        value_template: >-
+          {{ states.sensor.scheduled_wakeup_brian_hour.state }}:
+          {%- if states.sensor.scheduled_wakeup_brian_minutes.state|length == 1 -%}
+            0
+          {%- endif -%}
+          {{ states.sensor.scheduled_wakeup_brian_minutes.state }}
+
+      scheduled_wakeup_brian_time_long:
+        value_template: >-
+          {% if states.sensor.scheduled_wakeup_brian_hour.state|length == 1 -%}
+            0
+          {%- endif -%}
+            {{ states.sensor.scheduled_wakeup_brian_hour.state }}:
+          {%- if states.sensor.scheduled_wakeup_brian_minutes.state|length == 1 -%}
+            0
+          {%- endif -%}
+          {{ states.sensor.scheduled_wakeup_brian_minutes.state }}
+
+################################################
+## Scripts
+################################################
+script:
+  ###### script for running what happens after awake button is pushed ######
+  s_scheduled_wakeup_brian_awake:
+    sequence:
+    - delay: '00:15:00'
+    - service: light.turn_off
+      data:
+        entity_id: light.bedroom_light
+        transition: 60
+
+  ###### script for running what happens when snooze button is pushed and for turning on the snooze timer and turning off lights ###### 
+  s_scheduled_wakeup_brian_snooze:
+    sequence:
+    - service: script.turn_off
+      data:
+        entity_id: script.s_scheduled_wakeup_brian_snooze_timer
+    - service: light.turn_off
+      data:
+        entity_id: light.bedroom_lamp
+        transition: 60
+    - service: script.turn_on
+      data:
+        entity_id: script.s_scheduled_wakeup_brian_snooze_timer
+
+  ###### script for the snooze timer ######
+  s_scheduled_wakeup_brian_snooze_timer:
+    sequence:
+    - delay:
+        minutes: 5
+    - service: automation.trigger
+      data:
+        entity_id: automation.scheduled_wakeup_brian_activated
+
+  ###### script for running what happens when the alarm clock gets turned on ######
+  s_scheduled_wakeup_brian_wake_up:
+    sequence:
+    - service: light.turn_on
+      data:
+        entity_id: light.bedroom_lamp
+        brightness: 255
+        transition: 600
+
+################################################
+## Automation
+################################################
+automation:
+  ###### automation for turning on the alarm ######
+  id: scheduled_wakeup_brian_activated
+  alias: Alarm Clock Activated
+  hide_entity: False
+  trigger:
+    platform: template
+    value_template: '{{ states.sensor.scheduled_wakeup_brian_time.state == states.sensor.scheduled_wakeup_brian_time_long.state }}'
+  condition:
+    condition: state
+    entity_id: input_boolean.scheduled_wakeup_brian_status
+    state: 'on'
+  action:
+  - service: script.turn_on
+    entity_id: script.s_scheduled_wakeup_brian_wake_up
+  #- service: notify.ios_3vasi0ns_iphone
+  #  data:
+  #    title: "Alarm Clock"
+  #    message: "It's Time For You To Wake Up!"
+  #    data:
+  #      push:
+  #        sound: "US-EN-Alexa-Good-Morning.wav"
+  #        badge: 0
+  #        category: 'alarmclock'
+
+  ###### awake actionable notification pushed ######
+  id: a_scheduled_wakeup_brian_awake_action
+  alias: alarm clock awake action
+  initial_state: true
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: AWAKE
+  action:
+    service: script.turn_on
+    entity_id: script.s_scheduled_wakeup_brian_awake
+
+  ###### snooze actionable notification pushed ######
+  id: a_scheduled_wakeup_brian_snooze_action
+  alias: alarm clock snooze action
+  initial_state: true
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: SNOOZE
+  action:
+    service: script.turn_on
+    entity_id: script.s_scheduled_wakeup_brian_snooze
