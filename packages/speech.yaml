@@ -15,35 +15,249 @@ tts:
 ########################
 media_player:
   - platform: cast
-    host: 10.0.0.19 #10.0.0.27 # media_player.living_room_speaker
+    host: 10.0.0.27 # media_player.living_room_speaker
   - platform: cast
-    host: 10.0.0.20 #10.0.0.28  # media_player.living_room_speaker
-
-################################################
-## Switches
-################################################
-input_boolean:
-  speech_enabled:
-    name: Speech Enabled
-    icon: mdi:speaker
-    #initial: off
+    host: 10.0.0.28  # media_player.living_room_speaker
 
 ################################################
 ## Script
 ################################################
 script:
+######################################################################################################
+###Script to send notifications to the ChromeCast Audios during normal hours and only when we are home! Call like this:
+  # action:
+    # service: script.speech_engine
+    # data:
+    #   call_no_announcement:
+    #   call_dark_outside:
+    #   call_window_check:
+    #   call_garage_check:
+    #   call_responsibilities
+    #   call_light_check
+    #   call_inside_weather
+    #   call_outside_weather
+# # @CCOSTAN
+# Original Repo : https://github.com/CCOSTAN/Home-AssistantConfig
+######################################################################################################
   speech_engine:
     sequence:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: group.family
+            state: 'home'
+          - condition: state
+            entity_id: input_boolean.guest_mode
+            state: 'on'
+      - service: script.speech_processing
+        data_template:
+          media_player: >-
+              {% if media_player | length == 0 %}
+                {% set media_player = [
+                  'media_player.living_room_speaker',
+                  'media_player.play_room_speaker'
+                ] %}
+              {% endif %}
+              {% if media_player is not string and media_player is sequence %}
+                {% set media_player = media_player|join(', ') %}
+              {% endif %}
+              {{ media_player }}
+          speech_message: >-
+            {%- macro dark_outside() -%}
+              {{ [
+                'It is pretty dark outside. I will turn on the outside lights now.',
+                'It is a little past Sunset. Time to turn on the outside lights. I am on it.',
+                'I will switch on the outside lights. It is getting dark outside.',
+                'Time to turn on the front lights. I will take care of it.'
+              ]|random }}
+            {%- endmacro -%}
+            {%- macro responsibilities() -%}
+              {% if now().strftime('%a') == 'Sun' or now().strftime('%a') == 'Tue' or now().strftime('%a') == 'Fri' %}
+                #Today is {{ now().strftime('%A') }} and {{ now().strftime('%A') }} is garbage day.
+                Please clean up the dog yard.
+              {% endif %}
+              {% if now().strftime('%a') == 'Mon' %}
+                Please take out all of the garbage cans to the curb tonight.
+              {% endif %}
+              {% if now().strftime('%j')|int % 2 != 0 %}
+                Today is Lucas's day to do a family contribution.
+              {% else %}
+                Today is Kyle's day to do a family contribution.
+              {% endif %}
+            {%- endmacro -%}
+
+            {%- macro outside_weather() -%}
+              Outside, it is going to be {{ states('sensor.dark_sky_minutely_summary') }}
+            {%- endmacro -%}
+            {%- macro light_check() -%}
+              {% if states.group.all_lights.state != 'off' -%}
+                There are
+              {% for state in states.light if state.state == 'on' -%}
+                {%- if loop.last -%}
+                  {{ loop.index }}
+                {%- endif -%}
+              {%- endfor %}
+              lights on right now.
+              {% set comma = joiner(', ') %}
+              The
+              {% for group in states.group|groupby('state') -%}
+                {%- for entity in group.list if entity.state == 'on' and entity.name.split(' ')[1]|lower == 'lights' and entity.name.split(' ')[0]|lower != 'all' and entity.name.split(' ')[0]|lower != 'interior' -%}
+                  {{ ' and' if loop.last and not loop.first else comma() }}
+                  {{ entity.name }}
+                {%- endfor -%}
+              {%- endfor -%}
+              .
+              {%- endif -%}
+            {%- endmacro -%}
+            {%- macro garage_check() -%}
+              {% if states.cover.garage_door_opener.state !='closed' -%}
+                The Garage Door needs to be closed.
+              {%- endif -%}
+            {%- endmacro -%}
+            {%- macro moon() -%}
+              {%- if states.sensor.moon.state == 'Full moon' -%}
+                Check out the full moon tonight!
+              {%- endif -%}
+            {%- endmacro -%}
+            {%- macro uv() -%}
+              {% if states.sensor.dark_sky_uv_index.state|int >= 6 and states.sensor.dark_sky_uv_index.state|int <= 7.9 %}
+                Today's UV index is {{ states.sensor.dark_sky_uv_index.state }}.  You should wear sunscreen if going outside.
+              {% elif states.sensor.dark_sky_uv_index.state|int >= 8 and states.sensor.dark_sky_uv_index.state|int <=10.9 %}
+                Today's UV index is {{ states.sensor.dark_sky_uv_index.state }}.  This is VERY HIGH. Be sure wear sunscreen and re-apply.
+              {% elif states.sensor.dark_sky_uv_index.state|int >= 11 %}
+                Today's UV index is {{ states.sensor.dark_sky_uv_index.state }}.  This is EXTREME. You should be very cautious going outside.
+              {% endif %}
+            {%- endmacro -%}
+
+            {# ********************************************* #}
+            {#  ******** Start the Speech routines ********  #}
+            {# ********************************************* #}
+            {% if call_no_announcement != 1 %}
+              {% if now().strftime('%H')|int < 12 and now().strftime('%H')|int > 6 %}
+                Good morning.
+              {% elif now().strftime('%H')|int >= 12 and now().strftime('%H')|int < 17 %}
+                Good afternoon.
+              {% else %}
+                Good evening.
+              {% endif %}
+            {% endif %}
+            {# Called from Annoucenments #}
+            {{ personarriving }}
+
+            {% if call_outside_weather == 1 and is_state('sun.sun', 'above_horizon') %}
+              {{ outside_weather() }}
+            {% endif %}
+            {{ DoorOpened }}
+            {{ DoorClosed }}
+            {% if call_dark_outside == 1 %}
+              {{ dark_outside() }}
+            {% endif %}
+            {% if call_garage_check == 1 or is_state('sun.sun', 'below_horizon') %}
+              {{ garage_check() }}
+            {% endif %}
+
+            {% if call_light_check == 1 %}
+              {{ light_check() }}
+            {% endif %}
+
+            {% if value1 is not none %}
+              {{ value1 }}
+            {% endif %}
+
+      - service: input_boolean.turn_off
+        data:
+          entity_id:
+            - input_boolean.home_stats
+
+  speech_engine_brian:
+    sequence:
       - condition: state
-        entity_id: input_boolean.speech_enabled
+        entity_id: input_boolean.speech_notifications
         state: 'on'
+      # Turn the speaker(s) on to avoid missing the beginning of the message.
+      - service: media_player.turn_on
+        data_template:
+          entity_id: >-
+            {% if media_player | length == 0 %}
+              {% set media_player = [
+                'media_player.living_room_speaker'
+              ] %}
+            {% endif %}
+            {% if media_player is not string and media_player is sequence %}
+              {% set media_player = media_player|join(', ') %}
+            {% endif %}
+            {{ media_player }}
+      # Adjust the speaker volume based on the time of day.
+      - service: media_player.volume_set
+        data_template:
+          entity_id: >-
+            {{ media_player }}
+          volume_level: >-
+            {% if now().strftime('%H')|int < 12 and now().strftime('%H')|int > 6 %}
+              0.6
+            {% elif now().strftime('%H')|int > 12 and now().strftime('%H')|int < 20 %}
+              0.9
+            {% else %}
+              0.6
+            {% endif %}
+      # Speak the message.
       - service: tts.amazon_polly_say
         data_template:
-          #entity_id: 
-          #  {% if where == 'livingroom' | where == 'living_room' | where == 'living room' %}
-          #    media_player.living_room_speaker
-          #  {% else %}
-          #    media_player.living_room_speaker
-          #  {% endif %}
+          #cache: false
           message: "{{ message }}"
-          cache: false
+          entity_id: >-
+            {{ media_player }}
+      # Turn the speaker(s) back off.
+      - service: media_player.turn_off
+        data_template:
+          entity_id: >-
+            {{ media_player }}
+
+
+
+  #test_cast_audio:
+  #  - service: hassio.addon_stdin
+  #    data:
+  #      addon: local_audio_player
+  #      input: "http://localhost:8123/local/sounds/two-tone-chime.mp3"
+
+  test_speech_engine:
+    sequence:
+      - service: script.speech_engine
+        data_template:
+          media_player: "media_player.living_room_speaker, media_player.play_room_speaker"
+          message: "This is a test, of the home assistant broadcast system."
+          #message: "This is a test."
+
+
+################################################
+## Automations
+################################################
+automation:
+  ######################################################################
+  ##  Some home facts when we get back home from being away.
+  ######################################################################
+  - alias: 'Home Stats'
+    trigger:
+      - platform: state
+        entity_id: group.family
+        from: 'not_home'
+        to: 'home'
+        #for: '00:03:00'
+      - platform: state
+        entity_id: input_boolean.home_stats
+        to: 'on'
+        from: 'off'
+    action:
+      - wait_template: >-
+         {{ is_state('cover.garage_door_opener', 'closed') }}
+        timeout: 00:05:30
+      - service: script.speech_engine
+        data:
+          call_inside_weather: 1
+          call_responsibilities: 1
+          call_outside_weather: 1
+          call_garage_check: 1
+          call_window_check: 1
+          call_light_check: 1
+

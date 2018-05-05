@@ -1,68 +1,41 @@
-# Text to speech
-tts:
-#  - platform: picotts
-  - platform: google
-
-  #- platform: amazon_polly
-  #  aws_access_key_id: !secret aws_access_key_ID
-  #  aws_secret_access_key: !secret aws_secret_access_key
-  #  region_name: 'us-west-1'
-  #  text_type: ssml
-  #  cache: True
-  #  cache_dir: /config/tts
-
-################################################
-## Switches
-################################################
-input_boolean:
-  home_stats:
-    name: Home Stats
-    icon: mdi:tablet-ipad
-    initial: off
-
-################################################
-## Script
-################################################
 script:
-  #player_test:
-  #  - service: hassio.addon_stdin
-  #    data:
-  #      addon: local_audio_player
-  #      input: "http://localhost:8123/local/sounds/two-tone-chime.mp3"
 
-######################################################################################################
-###Script to send notifications to the ChromeCast Audios during normal hours and only when we are home! Call like this:
-  # action:
-    # service: script.speech_engine
-    # data:
-    #   call_no_announcement:
-    #   call_dark_outside:
-    #   call_window_check:
-    #   call_garage_check:
-    #   call_responsibilities
-    #   call_light_check
-    #   call_inside_weather
-    #   call_outside_weather
-# # @CCOSTAN
-# Original Repo : https://github.com/CCOSTAN/Home-AssistantConfig
-######################################################################################################
+  ######################################################################################################
+  ###Script to send notifications to the ChromeCast Audios during normal hours and only when we are home! Call like this:
+    # action:
+      # service: script.speech_engine
+      # data:
+      #   call_no_announcement:
+      #   call_dark_outside:
+      #   call_window_check:
+      #   call_garage_check:
+      #   call_responsibilities
+      #   call_light_check
+      #   call_inside_weather
+      #   call_outside_weather
+  # # @CCOSTAN
+  # Original Repo : https://github.com/CCOSTAN/Home-AssistantConfig
+  ######################################################################################################
+
   speech_engine:
     sequence:
       - condition: or
         conditions:
-          # Only if someone is home.
           - condition: state
             entity_id: group.family
-            from: 'not_home'
-            to: 'home'
-            #for: '00:03:00'
+            state: 'home'
+          - condition: state
+            entity_id: input_boolean.guest_mode
+            state: 'on'
 
       - service: script.speech_processing
         data_template:
           media_player: >-
               {% if media_player | length == 0 %}
                 {% set media_player = [
-                  'media_player.echo_living_room'
+                  'media_player.livingroomcc',
+                  'media_player.alarm_clock',
+                  'media_player.bedroom_alarm_panel'
                 ] %}
               {% endif %}
               {% if media_player is not string and media_player is sequence %}
@@ -91,7 +64,9 @@ script:
                 Today is Paige's day to do the chores.
               {% endif %}
             {%- endmacro -%}
-
+            {%- macro inside_weather() -%}
+              Inside the house, it is {{ states.climate.downstairs.attributes['current_temperature'] }} degrees with around {{ states('sensor.downstairs_thermostat_humidity') }} percent humidity.
+            {%- endmacro -%}
             {%- macro outside_weather() -%}
               Outside, it is going to be {{ states('sensor.dark_sky_minutely_summary') }}
             {%- endmacro -%}
@@ -115,10 +90,45 @@ script:
               .
               {%- endif -%}
             {%- endmacro -%}
-            {%- macro garage_check() -%}
-              {% if states.cover.garage_door_opener.state !='closed' -%}
-                The Garage Door needs to be closed.
+            {%- macro window_check() -%}
+              {% if states.group.entry_points.state != 'off' -%}
+                {% set comma = joiner(', ') %}
+                The
+                {% for state in states.binary_sensor if state.state == 'on' and state.attributes.device_class == 'opening' -%}
+                {%- endfor %}
+                {% for group in states.binary_sensor|groupby('state') -%}
+                  {%- for entity in group.list  if entity.state == 'on' and entity.attributes.device_class == 'opening'  -%}
+                    {{ ' and' if loop.last and not loop.first else comma() }}
+                    {{ entity.attributes.friendly_name }}
+                  {%- endfor -%}
+                {% endfor %}
+                 need to be closed.
               {%- endif -%}
+            {%- endmacro -%}
+            {%- macro garage_check() -%}
+              {% if states.group.garage_doors.state !='closed' -%}
+                The
+                {%- for state in states.cover -%}
+                {%- endfor %}
+                {% for group in states.cover|groupby('state') -%}
+                  {%- for entity in group.list  if entity.state == 'open' and entity.attributes.device_class == 'garage'  -%}
+                    {{ ' and' if loop.last and not loop.first }}
+                    {{ entity.attributes.friendly_name }}
+                  {%- endfor -%}
+                {%- endfor %}
+                need to be closed.
+              {%- endif -%}
+            {%- endmacro -%}
+            {%- macro medicine() -%}
+              {% if is_state('input_boolean.medicine', 'off') -%}
+                It looks like Carlo has not taken his medicine yet. Please make sure Carlo takes his medicine now.
+              {% endif -%}
+            {%- endmacro -%}
+            {%- macro iss() -%}
+              {% if is_state('binary_sensor.iss', 'on') -%}
+                Here is something interesting. The international space station is above us now. There are {{ states.binary_sensor.iss.attributes['number_of_people_in_space'] }} people in space right now.
+                {{ outside_weather() }}
+              {% endif -%}
             {%- endmacro -%}
             {%- macro moon() -%}
               {%- if states.sensor.moon.state == 'Full moon' -%}
@@ -134,7 +144,11 @@ script:
                 Today's UV index is {{ states.sensor.dark_sky_uv_index.state }}.  This is EXTREME. You should be very cautious going outside.
               {% endif %}
             {%- endmacro -%}
-
+            {%- macro holiday() -%}
+              {% if states.sensor.holiday.state != '' %}
+                Today is {{ states.sensor.holiday.state }}.
+              {% endif %}
+            {%- endmacro -%}
             {# ********************************************* #}
             {#  ******** Start the Speech routines ********  #}
             {# ********************************************* #}
@@ -149,7 +163,11 @@ script:
             {% endif %}
             {# Called from Annoucenments #}
             {{ personarriving }}
-
+            {# Called from Nest when thermostats turn on #}
+            {{ NestStatus }}
+            {% if call_inside_weather == 1 %}
+              {{ inside_weather() }}
+            {% endif %}
             {% if call_outside_weather == 1 and is_state('sun.sun', 'above_horizon') %}
               {{ outside_weather() }}
             {% endif %}
@@ -161,16 +179,26 @@ script:
             {% if call_garage_check == 1 or is_state('sun.sun', 'below_horizon') %}
               {{ garage_check() }}
             {% endif %}
-
+            {% if (call_window_check == 1 or is_state('sun.sun', 'below_horizon')) or is_state('group.entry_points', 'on') %}
+              {{ window_check() }}
+            {% endif %}
+            {{ NewDevice }}
             {% if call_light_check == 1 %}
               {{ light_check() }}
             {% endif %}
-
+            {% if call_responsibilities == 1 %}
+              {{ responsibilities() }}
+            {% endif %}
+            {% if now().strftime('%H')|int > 21 %}
+              {{ medicine() }}
+            {% endif %}
             {% if value1 is not none %}
               {{ value1 }}
             {% endif %}
-
+            {# call a Random fact about the house #}
+            {{ ([iss, moon, uv, holiday]|random)() }}
       - service: input_boolean.turn_off
         data:
           entity_id:
             - input_boolean.home_stats
+            - input_boolean.responsibilities
