@@ -2,10 +2,10 @@
 ## Component Settings
 ################################################
 ios:
-  push_scheduled_wakeup_brian:
+  push_scheduled_wakeup_nerene:
     categories:
       - name: alarm clock
-        identifier: 'scheduled_wakeup_brian'
+        identifier: 'scheduled_wakeup_nerene'
         actions:
           - identifier: 'AWAKE'
             title: 'Awake'
@@ -18,31 +18,30 @@ ios:
 ## Group
 ################################################
 group:
-  scheduled_wakeup_brian:
-    name: "Brian's Wakeup"
+  scheduled_wakeup_nerene:
+    name: "Nerene's Wakeup"
     entities:
-      - sensor.scheduled_wakeup_brian_time
-      - input_number.scheduled_wakeup_brian_hour
-      - input_number.scheduled_wakeup_brian_minutes
-      - input_boolean.scheduled_wakeup_brian_awake
-      - input_select.scheduled_wakeup_brian_light
+      - sensor.scheduled_wakeup_nerene_time
+      - input_number.scheduled_wakeup_nerene_hour
+      - input_number.scheduled_wakeup_nerene_minutes
+      - input_boolean.scheduled_wakeup_nerene_awake
+      - input_select.scheduled_wakeup_nerene_light
 
 ################################################
 ## Input Selectors
 ################################################
 input_select:
-  scheduled_wakeup_brian_light:
+  scheduled_wakeup_nerene_light:
     name: Wakeup Light
     options:
-      - light.brians_light
       - light.bedroom_light
-      - light.garage_entry_light
+      - light.brians_light
 
 ################################################
 ## Sliders
 ################################################
 input_number:
-  scheduled_wakeup_brian_hour:
+  scheduled_wakeup_nerene_hour:
     name: Hour
     icon: mdi:timer
     mode: slider
@@ -51,7 +50,7 @@ input_number:
     max: 23
     step: 1
 
-  scheduled_wakeup_brian_minutes:
+  scheduled_wakeup_nerene_minutes:
     name: Minutes
     icon: mdi:timer
     mode: slider
@@ -64,11 +63,11 @@ input_number:
 ## Switches
 ################################################
 input_boolean:
-  scheduled_wakeup_brian:
+  scheduled_wakeup_nerene:
     name: Enabled
     #initial: on
     icon: mdi:calendar
-  scheduled_wakeup_brian_awake:
+  scheduled_wakeup_nerene_awake:
     initial: off
 
 ################################################
@@ -77,34 +76,34 @@ input_boolean:
 sensor:
   - platform: template
     sensors:
-      scheduled_wakeup_brian_time:
+      scheduled_wakeup_nerene_time:
         value_template: >-
-          {{ states.input_number.scheduled_wakeup_brian_hour.state }}:
-          {%- if states.input_number.scheduled_wakeup_brian_minutes.state|length == 1 -%}
+          {{ states.input_number.scheduled_wakeup_nerene_hour.state }}:
+          {%- if states.input_number.scheduled_wakeup_nerene_minutes.state|length == 1 -%}
             0
           {%- endif -%}
-          {{ states.input_number.scheduled_wakeup_brian_minutes.state }}
+          {{ states.input_number.scheduled_wakeup_nerene_minutes.state }}
 
-      scheduled_wakeup_brian_time_long:
+      scheduled_wakeup_nerene_time_long:
         value_template: >-
-          {% if states.input_number.scheduled_wakeup_brian_hour.state|length == 1 -%}
+          {% if states.input_number.scheduled_wakeup_nerene_hour.state|length == 1 -%}
             0
           {%- endif -%}
-            {{ states.input_number.scheduled_wakeup_brian_hour.state }}:
-          {%- if states.input_number.scheduled_wakeup_brian_minutes.state|length == 1 -%}
+            {{ states.input_number.scheduled_wakeup_nerene_hour.state }}:
+          {%- if states.input_number.scheduled_wakeup_nerene_minutes.state|length == 1 -%}
             0
           {%- endif -%}
-          {{ states.input_number.scheduled_wakeup_brian_minutes.state }}
+          {{ states.input_number.scheduled_wakeup_nerene_minutes.state }}
 
 ################################################
 ## Scripts
 ################################################
 script:
   ###### script for running what happens after awake button is pushed ######
-  s_scheduled_wakeup_brian_awake:
+  s_scheduled_wakeup_nerene_awake:
     sequence:
     - service: homeassistant.turn_on
-      entity_id: input_boolean.s_scheduled_wakeup_brian_awake
+      entity_id: input_boolean.s_scheduled_wakeup_nerene_awake
     - delay: '00:15:00'
     - service: homeassistant.turn_off
       data:
@@ -112,36 +111,36 @@ script:
         #transition: 60
 
   ###### script for running what happens when snooze button is pushed and for turning on the snooze timer and turning off lights ###### 
-  s_scheduled_wakeup_brian_snooze:
+  s_scheduled_wakeup_nerene_snooze:
     sequence:
     - service: script.turn_off
       data:
-        entity_id: script.s_scheduled_wakeup_brian_snooze_timer
+        entity_id: script.s_scheduled_wakeup_nerene_snooze_timer
     - service: homeassistant.turn_off
       data:
         entity_id: light.bedroom_lamp
         #transition: 60
     - service: script.turn_on
       data:
-        entity_id: script.s_scheduled_wakeup_brian_snooze_timer
+        entity_id: script.s_scheduled_wakeup_nerene_snooze_timer
 
   ###### script for the snooze timer ######
-  s_scheduled_wakeup_brian_snooze_timer:
+  s_scheduled_wakeup_nerene_snooze_timer:
     sequence:
     - delay:
         minutes: 5
     - service: automation.trigger
       data:
-        entity_id: automation.scheduled_wakeup_brian_activated
+        entity_id: automation.scheduled_wakeup_nerene_activated
 
   ###### script for running what happens when the alarm clock gets turned on ######
-  s_scheduled_wakeup_brian_wake_up:
+  s_scheduled_wakeup_nerene_wake_up:
     sequence:
       - service: python_script.lightfade
         data_template:
           # Go from 10%-100% up 2% every 13 seconds 
           # to go to full brightness in about 10 minutes.
-          entity_id: "{{ input_select.scheduled_wakeup_brian_light }}"
+          entity_id: "{{ input_select.scheduled_wakeup_nerene_light }}"
           delay_in_sec: 13
           start_level_pct: 10
           end_level_pct: 100
@@ -152,33 +151,32 @@ script:
 ################################################
 automation:
   ###### automation for turning on the alarm ######
-  id: scheduled_wakeup_brian_activated
+  id: scheduled_wakeup_nerene_activated
   alias: Alarm Clock Activated
   hide_entity: False
   trigger:
     platform: template
-    value_template: '{{ states.sensor.scheduled_wakeup_brian_time.state == states.sensor.scheduled_wakeup_brian_time_long.state }}'
+    value_template: '{{ states.sensor.scheduled_wakeup_nerene_time.state == states.sensor.scheduled_wakeup_nerene_time_long.state }}'
   condition:
     # Is the alarm enabled?
     - condition: state
-      entity_id: input_boolean.scheduled_wakeup_brian
+      entity_id: input_boolean.scheduled_wakeup_nerene
       state: 'on'
     # Should the alarm turn on today?
     - condition: time
       weekday:
+        - sun
         - mon
-        - tue
-        - wed
-        - thu
         - fri
+        - sat
     # Has he told us that he is awake?
     - condition: state
-      entity_id: input_boolean.scheduled_wakeup_brian_awake
+      entity_id: input_boolean.scheduled_wakeup_nerene_awake
       state: 'off'
   action:
     - service: script.turn_on
-      entity_id: script.s_scheduled_wakeup_brian_wake_up
-    - service: notify.brians_iphone
+      entity_id: script.s_scheduled_wakeup_nerene_wake_up
+    - service: notify.nerenes_iphone
       data:
         title: "Alarm Clock"
         message: "It's Time For You To Wake Up!"
@@ -189,7 +187,7 @@ automation:
             category: 'alarmclock'
 
   ###### awake actionable notification pushed ######
-  id: a_scheduled_wakeup_brian_awake_action
+  id: a_scheduled_wakeup_nerene_awake_action
   alias: alarm clock awake action
   initial_state: true
   hide_entity: true
@@ -200,10 +198,10 @@ automation:
       actionName: AWAKE
   action:
     service: script.turn_on
-    entity_id: script.s_scheduled_wakeup_brian_awake
+    entity_id: script.s_scheduled_wakeup_nerene_awake
 
   ###### snooze actionable notification pushed ######
-  id: a_scheduled_wakeup_brian_snooze_action
+  id: a_scheduled_wakeup_nerene_snooze_action
   alias: alarm clock snooze action
   initial_state: true
   hide_entity: true
@@ -214,4 +212,4 @@ automation:
       actionName: SNOOZE
   action:
     service: script.turn_on
-    entity_id: script.s_scheduled_wakeup_brian_snooze
+    entity_id: script.s_scheduled_wakeup_nerene_snooze
