@@ -1,47 +1,54 @@
-################################################
-## Component Settings
-################################################
-ios:
-  push_scheduled_wakeup_nerene:
-    categories:
-      - name: alarm clock
-        identifier: 'scheduled_wakeup_nerene'
-        actions:
-          - identifier: 'AWAKE'
-            title: 'Awake'
-            destructive: no
-          - identifier: 'SNOOZE'
-            title: 'Snooze'
-            destructive: yes
+# Original: @mf-social https://github.com/mf-social/Home-Assistant/blob/master/packages/virtual_devices/alarm_clocks/nerene_alarm_clock.yaml
+homeassistant:
+  customize:
+    sensor.nerene_alarm_clock_light:
+      state_card_mode: none
+    sensor.nerene_alarm_clock_day_label:
+      state_card_mode: none
 
 ################################################
 ## Group
 ################################################
 group:
-  scheduled_wakeup_nerene:
-    name: "Nerene's Wakeup"
+  nerene_alarm_clock:
+    name: "Nerene's Wakeup Light"
     entities:
-      - sensor.scheduled_wakeup_nerene_time
-      - input_number.scheduled_wakeup_nerene_hour
-      - input_number.scheduled_wakeup_nerene_minutes
-      - input_boolean.scheduled_wakeup_nerene_awake
-      - input_select.scheduled_wakeup_nerene_light
+      - input_boolean.nerene_alarm_clock_status
+      - input_number.nerene_alarm_clock_hour
+      - input_number.nerene_alarm_clock_minutes
+      - input_select.nerene_alarm_clock_light
+      - sensor.nerene_alarm_clock_day_label
+      - input_boolean.nerene_alarm_clock_mon
+      - input_boolean.nerene_alarm_clock_tue
+      - input_boolean.nerene_alarm_clock_wed
+      - input_boolean.nerene_alarm_clock_thu
+      - input_boolean.nerene_alarm_clock_fri
+      - input_boolean.nerene_alarm_clock_sat
+      - input_boolean.nerene_alarm_clock_sun
+
+      - sensor.time
+      - sensor.nerene_alarm_clock_time
+      #- sensor.nerene_alarm_clock_light
+    control: hidden
+    view: no
 
 ################################################
 ## Input Selectors
 ################################################
 input_select:
-  scheduled_wakeup_nerene_light:
+  nerene_alarm_clock_light:
     name: Wakeup Light
+    icon: mdi:lightbulb
     options:
       - light.bedroom_light
       - light.brians_light
+      #- light.garage_entry_light
 
 ################################################
 ## Sliders
 ################################################
 input_number:
-  scheduled_wakeup_nerene_hour:
+  nerene_alarm_clock_hour:
     name: Hour
     icon: mdi:timer
     mode: slider
@@ -49,24 +56,14 @@ input_number:
     max: 23
     step: 1
 
-  scheduled_wakeup_nerene_minutes:
+  nerene_alarm_clock_minutes:
     name: Minutes
-    icon: mdi:timer
+    icon: mdi:clock-outline
     mode: slider
     min: 0
     max: 59
-    step: 5
-
-################################################
-## Switches
-################################################
-input_boolean:
-  scheduled_wakeup_nerene:
-    name: Enabled
-    icon: mdi:calendar
-  scheduled_wakeup_nerene_awake:
-    name: Nerene is Awake
-    initial: off
+    #step: 5
+    step: 1
 
 ################################################
 ## Sensors
@@ -74,101 +71,85 @@ input_boolean:
 sensor:
   - platform: template
     sensors:
-      scheduled_wakeup_nerene_time:
+      nerene_alarm_clock_time:
+        friendly_name: "Alarm"
+        icon_template: mdi:clock-outline
         value_template: >-
-          {{ states.input_number.scheduled_wakeup_nerene_hour.state | int }}:
-          {%- if states.input_number.scheduled_wakeup_nerene_minutes.state | int < 10 -%}0{%- endif -%}
-          {{ states.input_number.scheduled_wakeup_nerene_minutes.state | int }}
+          {% set nerene_alarm_clock_time = "%0.02d:%0.02d" | format(states('input_number.nerene_alarm_clock_hour')|int, states('input_number.nerene_alarm_clock_minutes')|int) %}
+          {{ nerene_alarm_clock_time | timestamp_custom('%H:%M', false) }}
+      
+      nerene_alarm_clock_day_label:
+        friendly_name: "Select days:"
+        icon_template: mdi:calendar-range
+        value_template: ""
 
-      scheduled_wakeup_nerene_time_long:
+      nerene_alarm_clock_light:
+        friendly_name: "Light"
+        icon_template: mdi:lightbulb
         value_template: >-
-          {% if states.input_number.scheduled_wakeup_nerene_hour.state | int < 10 -%}0{%- endif -%}
-          {{ states.input_number.scheduled_wakeup_nerene_hour.state | int }}:
-          {%- if states.input_number.scheduled_wakeup_nerene_minutes.state | int < 10 -%}0{%- endif -%}
-          {{ states.input_number.scheduled_wakeup_nerene_minutes.state | int }}
+          {{ states('input_select.nerene_alarm_clock_light') }}
+
+################################################
+## Switches
+################################################
+input_boolean:
+  nerene_alarm_clock_status:
+    name: Activate Alarm
+    icon: mdi:alarm-check
+
+  nerene_alarm_clock_mon:
+    name: Monday
+    icon: mdi:blank
+  nerene_alarm_clock_tue:
+    name: Tuesday
+    icon: mdi:blank
+  nerene_alarm_clock_wed:
+    name: Wednesday
+    icon: mdi:blank
+  nerene_alarm_clock_thu:
+    name: Thursday
+    icon: mdi:blank
+  nerene_alarm_clock_fri:
+    name: Friday
+    icon: mdi:blank
+  nerene_alarm_clock_sat:
+    name: Saturday
+    icon: mdi:blank
+  nerene_alarm_clock_sun:
+    name: Sunday
+    icon: mdi:blank
+
+################################################
+## Scenes
+################################################
+scene:
+  - name: nerene Wake Up
+    entities:
+      light.entry_light:
+        state: on
+        brightness_pct: '40'
+      light.kitchen_sink_light: on
+      light.garage_entry_light:
+        state: on
+        brightness_pct: '5'
 
 ################################################
 ## Scripts
 ################################################
 script:
-  ###### script for running what happens after awake button is pushed ######
-  s_scheduled_wakeup_nerene_awake:
+  nerene_alarm_clock_activate:
     sequence:
-    - service: homeassistant.turn_on
-      entity_id: input_boolean.s_scheduled_wakeup_nerene_awake
-    - delay: '00:15:00'
-    - service: homeassistant.turn_off
-      data:
-        entity_id: light.bedroom_light
-        #transition: 60
-
-  ###### script for running what happens when snooze button is pushed and for turning on the snooze timer and turning off lights ###### 
-  s_scheduled_wakeup_nerene_snooze:
-    sequence:
-    - service: script.turn_off
-      data:
-        entity_id: script.s_scheduled_wakeup_nerene_snooze_timer
-    - service: homeassistant.turn_off
-      data:
-        entity_id: light.bedroom_lamp
-        #transition: 60
     - service: script.turn_on
-      data:
-        entity_id: script.s_scheduled_wakeup_nerene_snooze_timer
+      entity_id: script.nerene_alarm_clock_light_fade
+    - service: scene.turn_on
+      entity_id: scene.nerene_wake_up
+    #- delay: 00:10:00
+    #- service: script.turn_on
+    #  entity_id: script.nerene_alarm_clock_ios_alarm
 
-  ###### script for the snooze timer ######
-  s_scheduled_wakeup_nerene_snooze_timer:
+  nerene_alarm_clock_ios_alarm:
     sequence:
-    - delay:
-        minutes: 5
-    - service: automation.trigger
-      data:
-        entity_id: automation.scheduled_wakeup_nerene_activated
-
-  ###### script for running what happens when the alarm clock gets turned on ######
-  s_scheduled_wakeup_nerene_wake_up:
-    sequence:
-      - service: python_script.lightfade
-        data_template:
-          # Go from 10%-100% up 2% every 13 seconds 
-          # to go to full brightness in about 10 minutes.
-          entity_id: "{{ input_select.scheduled_wakeup_nerene_light }}"
-          delay_in_sec: 13
-          start_level_pct: 10
-          end_level_pct: 100
-          step_in_level_pct: 2
-
-################################################
-## Automation
-################################################
-automation:
-  ###### automation for turning on the alarm ######
-  id: scheduled_wakeup_nerene_activated
-  alias: Alarm Clock Activated
-  hide_entity: False
-  trigger:
-    platform: template
-    value_template: '{{ states.sensor.scheduled_wakeup_nerene_time.state == states.sensor.scheduled_wakeup_nerene_time_long.state }}'
-  condition:
-    # Is the alarm enabled?
-    - condition: state
-      entity_id: input_boolean.scheduled_wakeup_nerene
-      state: 'on'
-    # Should the alarm turn on today?
-    - condition: time
-      weekday:
-        - sun
-        - mon
-        - fri
-        - sat
-    # Has he told us that he is awake?
-    - condition: state
-      entity_id: input_boolean.scheduled_wakeup_nerene_awake
-      state: 'off'
-  action:
-    - service: script.turn_on
-      entity_id: script.s_scheduled_wakeup_nerene_wake_up
-    - service: notify.nerenes_iphone
+    - service: notify.nerene
       data:
         title: "Alarm Clock"
         message: "It's Time For You To Wake Up!"
@@ -178,30 +159,58 @@ automation:
             badge: 0
             category: 'alarmclock'
 
-  ###### awake actionable notification pushed ######
-  id: a_scheduled_wakeup_nerene_awake_action
-  alias: alarm clock awake action
-  initial_state: true
-  hide_entity: true
-  trigger:
-    platform: event
-    event_type: ios.notification_action_fired
-    event_data:
-      actionName: AWAKE
-  action:
-    service: script.turn_on
-    entity_id: script.s_scheduled_wakeup_nerene_awake
+  nerene_alarm_clock_light_fade:
+    sequence:
+    - service: python_script.lightfade
+      data_template:
+        # Go from 10%-100% up 2% every 13 seconds 
+        # to go to full brightness in about 10 minutes.
+        entity_id: "{{ states('input_select.nerene_alarm_clock_light') }}"
+        delay_in_sec: 13
+        start_level_pct: 10
+        end_level_pct: 100
+        step_in_level_pct: 2
 
-  ###### snooze actionable notification pushed ######
-  id: a_scheduled_wakeup_nerene_snooze_action
-  alias: alarm clock snooze action
-  initial_state: true
-  hide_entity: true
+################################################
+## Automations
+################################################
+automation:
+  alias: "Alarm Clock: nerene"
+  initial_state: on
+  # Start the light fading in 10 minutes before the time is set
   trigger:
-    platform: event
-    event_type: ios.notification_action_fired
-    event_data:
-      actionName: SNOOZE
+    platform: template
+    #value_template: "{{ ((utcnow().strftime('%s')|int - 600)|timestamp_custom('%H:%M')) == states('sensor.nerene_alarm_clock_time')|timestamp_custom('%H:%M') }}"
+    value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.nerene_alarm_clock_time')|timestamp_custom('%H:%M', false) }}"
+  condition:
+    # Is this one of the selected 
+    condition: template
+    value_template: >
+      {% if now().day == 0 and states.input_boolean.nerene_alarm_clock_mon.state %}{{true}}
+      {% elif now().day == 1 and states.input_boolean.nerene_alarm_clock_tue.state %}{{true}}
+      {% elif now().day == 2 and states.input_boolean.nerene_alarm_clock_wed.state %}{{true}}
+      {% elif now().day == 3 and states.input_boolean.nerene_alarm_clock_thu.state %}{{true}}
+      {% elif now().day == 4 and states.input_boolean.nerene_alarm_clock_fri.state %}{{true}}
+      {% elif now().day == 5 and states.input_boolean.nerene_alarm_clock_sat.state %}{{true}}
+      {% elif now().day == 6 and states.input_boolean.nerene_alarm_clock_sun.state %}{{true}}
+      {% else %}{{false}}{% endif %}
+
+  #  - condition: state
+  #    entity_id: device_tracker.nerene
+  #    state: home
+  #  - condition: state
+  #    entity_id: input_boolean.nerene_alarm_clock_status
+  #    state: on
   action:
     service: script.turn_on
-    entity_id: script.s_scheduled_wakeup_nerene_snooze
+    entity_id: script.nerene_alarm_clock_activate
+
+
+#          {% set i = 0 %}
+#          {% if input_boolean.nerene_alarm_clock_mon %}{% if i > 0 %}, {% endif %}mon{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.nerene_alarm_clock_tue %}{% if i > 0 %}, {% endif %}tue{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.nerene_alarm_clock_wed %}{% if i > 0 %}, {% endif %}wed{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.nerene_alarm_clock_thu %}{% if i > 0 %}, {% endif %}thu{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.nerene_alarm_clock_fri %}{% if i > 0 %}, {% endif %}fri{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.nerene_alarm_clock_sat %}{% if i > 0 %}, {% endif %}sat{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.nerene_alarm_clock_sun %}{% if i > 0 %}, {% endif %}sun{% set i = i + 1 %}{% endif %}
