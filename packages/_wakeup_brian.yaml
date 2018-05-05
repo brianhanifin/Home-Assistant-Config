@@ -46,7 +46,6 @@ input_number:
     name: Hour
     icon: mdi:timer
     mode: slider
-    #initial: 6
     min: 0
     max: 23
     step: 1
@@ -55,7 +54,6 @@ input_number:
     name: Minutes
     icon: mdi:timer
     mode: slider
-    #initial: 30
     min: 0
     max: 59
     step: 5
@@ -66,9 +64,9 @@ input_number:
 input_boolean:
   scheduled_wakeup_brian:
     name: Enabled
-    #initial: on
     icon: mdi:calendar
   scheduled_wakeup_brian_awake:
+    name: Brian is Awake
     initial: off
 
 ################################################
@@ -79,22 +77,16 @@ sensor:
     sensors:
       scheduled_wakeup_brian_time:
         value_template: >-
-          {{ states.input_number.scheduled_wakeup_brian_hour.state }}:
-          {%- if states.input_number.scheduled_wakeup_brian_minutes.state|length == 1 -%}
-            0
-          {%- endif -%}
-          {{ states.input_number.scheduled_wakeup_brian_minutes.state }}
+          {{ states.input_number.scheduled_wakeup_brian_hour.state | int }}:
+          {%- if states.input_number.scheduled_wakeup_brian_minutes.state | int < 10 -%}0{%- endif -%}
+          {{ states.input_number.scheduled_wakeup_brian_minutes.state | int }}
 
       scheduled_wakeup_brian_time_long:
         value_template: >-
-          {% if states.input_number.scheduled_wakeup_brian_hour.state|length == 1 -%}
-            0
-          {%- endif -%}
-            {{ states.input_number.scheduled_wakeup_brian_hour.state }}:
-          {%- if states.input_number.scheduled_wakeup_brian_minutes.state|length == 1 -%}
-            0
-          {%- endif -%}
-          {{ states.input_number.scheduled_wakeup_brian_minutes.state }}
+          {% if states.input_number.scheduled_wakeup_brian_hour.state | int < 10 -%}0{%- endif -%}
+          {{ states.input_number.scheduled_wakeup_brian_hour.state | int }}:
+          {%- if states.input_number.scheduled_wakeup_brian_minutes.state | int < 10 -%}0{%- endif -%}
+          {{ states.input_number.scheduled_wakeup_brian_minutes.state | int }}
 
 ################################################
 ## Scripts
