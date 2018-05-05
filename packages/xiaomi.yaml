@@ -2,8 +2,10 @@ homeassistant:
   customize:
     binary_sensor.glowforge_window:
       device_class: window
+      hide_if_away: true
     binary_sensor.boys_bathroom_window:
       device_class: window
+      hide_if_away: true
     #binary_sensor.playroom_fan_button
     #light.xiaomi_gateway_light
     #sensor.xiaomi_gateway_illumination
@@ -16,3 +18,29 @@ xiaomi_aqara:
   gateways:
     - mac: !secret xiaomi_mac1
       key: !secret xiaomi_key1
+
+################################################
+## Automations
+################################################
+automation:
+  ##############################################
+  ##  Door Open Announcements
+  ##############################################
+  - alias: 'Door Opened'
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.glowforge_window
+          - binary_sensor.boys_bathroom_window
+        from: 'off'
+    action:
+      - service: script.notify_engine
+        data_template:
+          who: 'parents'
+          value1: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.alert_mode
+      - service: script.speech_engine
+        data_template:
+          call_window_check: 1
+          call_inside_weather: 1
