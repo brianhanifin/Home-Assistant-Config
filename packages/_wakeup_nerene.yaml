@@ -26,8 +26,8 @@ group:
       - input_boolean.nerene_alarm_clock_sat
       - input_boolean.nerene_alarm_clock_sun
 
-      - sensor.time
-      - sensor.nerene_alarm_clock_time
+      #- sensor.time
+      #- sensor.nerene_alarm_clock_time
       #- sensor.nerene_alarm_clock_light
     control: hidden
     view: no
@@ -123,7 +123,12 @@ input_boolean:
 ## Scenes
 ################################################
 scene:
-  - name: nerene Wake Up
+  - name: Nerene Leaves 
+    entities:
+      light.kitchen_sink_light: off
+      light.garage_entry_light: off
+  
+  - name: Nerene Wake Up
     entities:
       light.entry_light:
         state: on
@@ -143,21 +148,10 @@ script:
       entity_id: script.nerene_alarm_clock_light_fade
     - service: scene.turn_on
       entity_id: scene.nerene_wake_up
-    #- delay: 00:10:00
-    #- service: script.turn_on
-    #  entity_id: script.nerene_alarm_clock_ios_alarm
-
-  nerene_alarm_clock_ios_alarm:
-    sequence:
-    - service: notify.nerene
-      data:
-        title: "Alarm Clock"
-        message: "It's Time For You To Wake Up!"
-        data:
-          push:
-            sound: "US-EN-Alexa-Good-Morning.wav"
-            badge: 0
-            category: 'alarmclock'
+    - wait_template: "{{ states.cover.garage_door_opener.state == 'closed' }}"
+      timeout: '01:00:00'
+    - service: scene.turn_on
+      entity_id: scene.nerene_leaves
 
   nerene_alarm_clock_light_fade:
     sequence:
@@ -177,42 +171,30 @@ script:
 ## Automations
 ################################################
 automation:
-  alias: "Alarm Clock: nerene"
-  initial_state: on
-  # Start the light fading in 10 minutes before the time is set
+  alias: "Alarm Clock: Nerene"
   trigger:
     platform: template
-    #value_template: "{{ ((utcnow().strftime('%s')|int - 600)|timestamp_custom('%H:%M')) == states('sensor.nerene_alarm_clock_time')|timestamp_custom('%H:%M') }}"
     value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.nerene_alarm_clock_time')|timestamp_custom('%H:%M', false) }}"
   condition:
-    # Is this one of the selected 
-    condition: template
-    value_template: >
-      {% if now().day == 0 and states.input_boolean.nerene_alarm_clock_mon.state %}{{true}}
-      {% elif now().day == 1 and states.input_boolean.nerene_alarm_clock_tue.state %}{{true}}
-      {% elif now().day == 2 and states.input_boolean.nerene_alarm_clock_wed.state %}{{true}}
-      {% elif now().day == 3 and states.input_boolean.nerene_alarm_clock_thu.state %}{{true}}
-      {% elif now().day == 4 and states.input_boolean.nerene_alarm_clock_fri.state %}{{true}}
-      {% elif now().day == 5 and states.input_boolean.nerene_alarm_clock_sat.state %}{{true}}
-      {% elif now().day == 6 and states.input_boolean.nerene_alarm_clock_sun.state %}{{true}}
-      {% else %}{{false}}{% endif %}
-
-  #  - condition: state
-  #    entity_id: device_tracker.nerene
-  #    state: home
-  #  - condition: state
-  #    entity_id: input_boolean.nerene_alarm_clock_status
-  #    state: on
+    condition: and
+    conditions:
+    #  - condition: state
+    #    entity_id: device_tracker.nerene
+    #    state: home
+      - condition: state
+        entity_id: input_boolean.nerene_alarm_clock_status
+        state: 'on'
+      # Is this one of the selected 
+      - condition: template
+        value_template: >
+          {% if now().day == 0 and states.input_boolean.nerene_alarm_clock_mon.state == 'on' %}{{true}}
+          {% elif now().day == 1 and states.input_boolean.nerene_alarm_clock_tue.state == 'on' %}{{true}}
+          {% elif now().day == 2 and states.input_boolean.nerene_alarm_clock_wed.state == 'on' %}{{true}}
+          {% elif now().day == 3 and states.input_boolean.nerene_alarm_clock_thu.state == 'on' %}{{true}}
+          {% elif now().day == 4 and states.input_boolean.nerene_alarm_clock_fri.state == 'on' %}{{true}}
+          {% elif now().day == 5 and states.input_boolean.nerene_alarm_clock_sat.state == 'on' %}{{true}}
+          {% elif now().day == 6 and states.input_boolean.nerene_alarm_clock_sun.state == 'on' %}{{true}}
+          {% else %}{{false}}{% endif %}
   action:
     service: script.turn_on
     entity_id: script.nerene_alarm_clock_activate
-
-
-#          {% set i = 0 %}
-#          {% if input_boolean.nerene_alarm_clock_mon %}{% if i > 0 %}, {% endif %}mon{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.nerene_alarm_clock_tue %}{% if i > 0 %}, {% endif %}tue{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.nerene_alarm_clock_wed %}{% if i > 0 %}, {% endif %}wed{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.nerene_alarm_clock_thu %}{% if i > 0 %}, {% endif %}thu{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.nerene_alarm_clock_fri %}{% if i > 0 %}, {% endif %}fri{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.nerene_alarm_clock_sat %}{% if i > 0 %}, {% endif %}sat{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.nerene_alarm_clock_sun %}{% if i > 0 %}, {% endif %}sun{% set i = i + 1 %}{% endif %}

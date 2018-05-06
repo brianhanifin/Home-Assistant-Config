@@ -27,7 +27,8 @@ group:
       - input_boolean.brian_alarm_clock_sun
 
       #- sensor.time
-      #- sensor.brian_alarm_clock_time
+      #- sensor.nerene_alarm_clock_time
+      #- sensor.nerene_alarm_clock_light
     control: hidden
     view: no
 
@@ -134,11 +135,14 @@ script:
     sequence:
     - service: script.turn_on
       entity_id: script.brian_alarm_clock_light_fade
-    - service: scene.turn_on
-      entity_id: scene.brian_wake_up
+    #- service: scene.turn_on
+    #  entity_id: scene.brian_wake_up
     #- delay: 00:10:00
     #- service: script.turn_on
     #  entity_id: script.brian_alarm_clock_ios_alarm
+    #- delay: 00:30:00
+    #  service: light.turn_off
+    #  entity_id: light.kitchen_sink_light
 
   brian_alarm_clock_ios_alarm:
     sequence:
@@ -154,7 +158,7 @@ script:
 
   brian_alarm_clock_light_fade:
     sequence:
-    - service: homeasssitant.turn_off
+    - service: input_boolean.turn_off
       entity_id: input_boolean.bedroom_light_sync_enabled
     - service: python_script.lightfade
       data_template:
@@ -171,31 +175,29 @@ script:
 ################################################
 automation:
   alias: "Alarm Clock: brian"
-  initial_state: on
-  # Start the light fading in 10 minutes before the time is set
   trigger:
     platform: template
-    #value_template: "{{ ((utcnow().strftime('%s')|int - 600)|timestamp_custom('%H:%M')) == states('sensor.brian_alarm_clock_time')|timestamp_custom('%H:%M') }}"
     value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.brian_alarm_clock_time')|timestamp_custom('%H:%M', false) }}"
   condition:
-    # Is this one of the selected 
-    condition: template
-    value_template: >
-      {% if now().day == 0 and states.input_boolean.brian_alarm_clock_mon.state %}{{true}}
-      {% elif now().day == 1 and states.input_boolean.brian_alarm_clock_tue.state %}{{true}}
-      {% elif now().day == 2 and states.input_boolean.brian_alarm_clock_wed.state %}{{true}}
-      {% elif now().day == 3 and states.input_boolean.brian_alarm_clock_thu.state %}{{true}}
-      {% elif now().day == 4 and states.input_boolean.brian_alarm_clock_fri.state %}{{true}}
-      {% elif now().day == 5 and states.input_boolean.brian_alarm_clock_sat.state %}{{true}}
-      {% elif now().day == 6 and states.input_boolean.brian_alarm_clock_sun.state %}{{true}}
-      {% else %}{{false}}{% endif %}
-
-  #  - condition: state
-  #    entity_id: device_tracker.brian
-  #    state: home
-  #  - condition: state
-  #    entity_id: input_boolean.brian_alarm_clock_status
-  #    state: on
+    condition: and
+    conditions:
+      #  - condition: state
+      #    entity_id: device_tracker.brian
+      #    state: home
+      - condition: state
+        entity_id: input_boolean.brian_alarm_clock_status
+        state: 'on'
+      # Is today one of the selected days?
+      - condition: template
+        value_template: >
+          {% if now().day == 0 and states.input_boolean.brian_alarm_clock_mon.state == 'on' %}{{true}}
+          {% elif now().day == 1 and states.input_boolean.brian_alarm_clock_tue.state == 'on' %}{{true}}
+          {% elif now().day == 2 and states.input_boolean.brian_alarm_clock_wed.state == 'on' %}{{true}}
+          {% elif now().day == 3 and states.input_boolean.brian_alarm_clock_thu.state == 'on' %}{{true}}
+          {% elif now().day == 4 and states.input_boolean.brian_alarm_clock_fri.state == 'on' %}{{true}}
+          {% elif now().day == 5 and states.input_boolean.brian_alarm_clock_sat.state == 'on' %}{{true}}
+          {% elif now().day == 6 and states.input_boolean.brian_alarm_clock_sun.state == 'on' %}{{true}}
+          {% else %}{{false}}{% endif %}
   action:
     service: script.turn_on
     entity_id: script.brian_alarm_clock_activate
