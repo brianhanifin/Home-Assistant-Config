@@ -39,8 +39,8 @@ input_select:
     name: Wakeup Light
     icon: mdi:lightbulb
     options:
-      - light.brians_light
       - light.bedroom_light
+      - light.brians_light
       #- light.garage_entry_light
 
 ################################################
@@ -154,6 +154,8 @@ script:
 
   brian_alarm_clock_light_fade:
     sequence:
+    - service: homeasssitant.turn_off
+      entity_id: input_boolean.bedroom_light_sync_enabled
     - service: python_script.lightfade
       data_template:
         # Go from 10%-100% up 2% every 13 seconds 

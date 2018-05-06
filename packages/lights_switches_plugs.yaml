@@ -29,6 +29,11 @@ input_boolean:
     name: Dusk Dimmers
     icon: mdi:weather-sunset
     initial: on
+  
+  bedroom_light_sync_enabled:
+    name: Bedroom Light Sync
+    icon: mdi:lightbulb-outline
+    initial: on
 
 ################################################
 ## Lights
@@ -346,9 +351,26 @@ automation:
         # Delay to avoid premature turn on flash.
         for:
           seconds: 2
+    condition:
+      - condition: state
+        entity_id: input_boolean.bedroom_light_sync_enabled
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: light.brians_light
+ 
+  # This should only stay off long enough for the bedroom light to fade to 100%.
+  - alias: Bed Room Light Sync is Switched Off
+    trigger:
+      platform: state
+      entity_id: input_boolean.bedroom_light_sync_enabled
+      from: 'on'
+      to: 'off'
+      for:
+        minutes: 15
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.bedroom_light_sync_enabled
 
   ##############################################
   ## Family Room Light Automations
