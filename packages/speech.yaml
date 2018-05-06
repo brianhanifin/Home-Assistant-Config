@@ -133,10 +133,13 @@ script:
             {#  ******** Start the Speech routines ********  #}
             {# ********************************************* #}
             {% if call_no_announcement != 1 %}
-              {% if now().strftime('%H')|int < 12 and now().strftime('%H')|int > 6 %}
+              # Midnight to Noon == morning.
+              {% if now().strftime('%H')|int > 0 and now().strftime('%H')|int < 12  %}
                 Good morning.
+              # Noon to 5pm == afternoon
               {% elif now().strftime('%H')|int >= 12 and now().strftime('%H')|int < 17 %}
                 Good afternoon.
+              # 5pm - Midnight == evening
               {% else %}
                 Good evening.
               {% endif %}
@@ -208,10 +211,10 @@ script:
           entity_id: >-
             {{ media_player }}
       # Turn the speaker(s) back off.
-      #- service: media_player.turn_off
-      #  data_template:
-      #    entity_id: >-
-      #      {{ media_player }}
+      - service: media_player.turn_off
+        data_template:
+          entity_id: >-
+            {{ media_player }}
 
 
 
