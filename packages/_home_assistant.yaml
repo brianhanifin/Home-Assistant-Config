@@ -1,4 +1,34 @@
 homeassistant:
+  customize_glob:
+    # Hides UI Panels from smart hubs.
+    "group.panel_*":
+      hidden: false
+      alexa_hidden: true
+      emulated_hue_hidden: true
+      homebridge_hidden: true
+    
+    # Hide unwanted items from smart hubs.
+    "input_boolean.*_alarm_clock_*":
+      hidden: true
+      alexa_hidden: true
+      emulated_hue_hidden: true
+      homebridge_hidden: true
+    "script.*_alarm_clock_*":
+      hidden: true
+      alexa_hidden: true
+      emulated_hue_hidden: true
+      homebridge_hidden: true
+    "script.speech_*":
+      hidden: true
+      alexa_hidden: true
+      emulated_hue_hidden: true
+      homebridge_hidden: true
+    "script.*_speech_*":
+      hidden: true
+      alexa_hidden: true
+      emulated_hue_hidden: true
+      homebridge_hidden: true
+
   customize:
     # Attempting to influence panel layout order.
     group.panel_downstairs_lights:
@@ -13,15 +43,6 @@ homeassistant:
       order: 5
     group.panel_admin:
       order: 6
-
-  customize_glob:
-    # Hides UI Panels from smart hubs.
-    "group.panel_*":
-      hidden: false
-      alexa_hidden: true
-      emulated_hue_hidden: true
-      homebridge_hidden: true
-      customize_glob:
 
 ################################################
 ## Component Settings
@@ -59,8 +80,7 @@ history: !include /config/recorder.yaml
 logbook: !include /config/logbook.yaml
 
 logger:
-  #default: info
-  default: warning
+  default: error
 
 python_script:
 
@@ -90,10 +110,6 @@ sensor:
       - 'date'
 
   - platform: moon
-
-#input_text:
-#  dusk:
-#    name: Time of Dusk
 
 #########################################
 ## Automation
