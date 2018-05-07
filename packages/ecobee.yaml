@@ -13,9 +13,9 @@ homeassistant:
       friendly_name: Hallway Occupancy
       icon: mdi:run
 
-    switch.thermostat_fan_home:
+    switch.ecobee_home_fan:
       homebridge_hidden: false
-    switch.thermostat_fan_playroom:
+    switch.ecobee_playroom_fan:
       homebridge_hidden: false
 
 ################################################
@@ -25,13 +25,48 @@ ecobee:
   api_key: !secret ecobee_apikey
 
 ################################################
+## Thermostat Display Panels
+################################################
+group:
+  panel_home_thermostat:
+    entities:
+      - climate.home
+      - switch.ecobee_home_fan
+      - sensor.home_temperature
+      - sensor.living_room_temperature
+      - sensor.home_humidity
+      - sensor.ecobee_home_hold_mode
+      - sensor.ecobee_home_away_mode
+      - binary_sensor.home_occupancy
+      - binary_sensor.living_room_motion
+    name: Home Thermostat
+    icon: mdi:thermometer-lines
+    control: hidden
+    view: no
+
+  panel_playroom_thermostat:
+    entities:
+      - climate.playroom
+      - switch.ecobee_playroom_fan
+      - sensor.playroom_temperature
+      - sensor.playroom_humidity
+      - sensor.ecobee_playroom_hold_mode
+      - sensor.ecobee_playroom_away_mode
+      - binary_sensor.playroom_occupancy
+      - binary_sensor.play_room_motion
+    name: Play Room Thermostat
+    icon: mdi:thermometer-lines
+    control: hidden
+    view: no
+
+################################################
 ## Sensors
 ################################################
 sensor:
   - platform: template
     sensors:
-      ecobee_fan_home:
-        friendly_name: "Ecobee Fan: Home"
+      ecobee_home_fan:
+        friendly_name: "Fan"
         icon_template: >-
           {% if is_state('states.climate.home.attributes.fan', 'on') %}
             mdi:fan
@@ -42,8 +77,32 @@ sensor:
 
   - platform: template
     sensors:
-      ecobee_fan_playroom:
-        friendly_name: "Ecobee Fan: Play Room"
+      ecobee_home_away_mode:
+        friendly_name: "Away and Hold"
+        icon_template: >-
+          {% if is_state('states.climate.home.attributes.away_mode', 'on') %}
+            mdi:airplane-takeoff
+          {% else %}
+            mdi:airplane-landing
+          {% endif %}
+        value_template: "{{ states.climate.home.attributes.away_mode }}"
+
+  - platform: template
+    sensors:
+      ecobee_home_hold_mode:
+        friendly_name: "Temp Hold Mode"
+        icon_template: >-
+          {% if is_state('states.climate.home.attributes.away_mode', 'on') %}
+            mdi:airplane-takeoff
+          {% else %}
+            mdi:airplane-landing
+          {% endif %}
+        value_template: "{{ states.climate.home.attributes.away_mode }}"
+
+  - platform: template
+    sensors:
+      ecobee_playroom_fan:
+        friendly_name: "Fan"
         icon_template: >-
           {% if is_state('states.climate.playroom.attributes.fan', 'on') %}
             mdi:fan
@@ -52,13 +111,37 @@ sensor:
           {% endif %}
         value_template: "{{ states.climate.playroom.attributes.fan }}"
 
+  - platform: template
+    sensors:
+      ecobee_playroom_away_mode:
+        friendly_name: "Away and Hold"
+        icon_template: >-
+          {% if is_state('states.climate.playroom.attributes.away_mode', 'on') %}
+            mdi:airplane-takeoff
+          {% else %}
+            mdi:airplane-landing
+          {% endif %}
+        value_template: "{{ states.climate.playroom.attributes.away_mode }}"
+
+  - platform: template
+    sensors:
+      ecobee_playroom_hold_mode:
+        friendly_name: "Temp Hold Mode"
+        icon_template: >-
+          {% if is_state('states.climate.playroom.attributes.away_mode', 'on') %}
+            mdi:airplane-takeoff
+          {% else %}
+            mdi:airplane-landing
+          {% endif %}
+        value_template: "{{ states.climate.playroom.attributes.away_mode }}"
+
 ################################################
 ## Switch
 ################################################
 switch:
   - platform: template
     switches:
-      thermostat_fan_home:
+      ecobee_home_fan:
         friendly_name: "Thermostat Fan"
         value_template: "{{ states.climate.home.attributes.fan }}"
         turn_on:
@@ -80,7 +163,7 @@ switch:
 
   - platform: template
     switches:
-      thermostat_fan_playroom:
+      ecobee_playroom_fan:
         friendly_name: "Thermostat Fan" # [Playroom]
         value_template: "{{ states.climate.playroom.attributes.fan }}"
         turn_on:
@@ -101,50 +184,38 @@ switch:
         #  {% endif %}
 
 ################################################
-## Automations
+## Scripts
 ################################################
-automation:
-  - alias: Play Room Fan Run for default duration #Smart button single click
-    trigger:
-      platform: event
-      event_type: click
-      event_data:
-        entity_id: binary_sensor.playroom_fan_button
-        click_type: single
-    action:
-      - service: switch.turn_on
-        entity_id: switch.thermostat_fan_playroom
-      - delay: 0:15
-      - service: switch.turn_off
-        entity_id: switch.thermostat_fan_playroom
+script:
+  ecobee_away_and_hold:
+    sequence:
+      - service: climate.set_away_mode
+        data:
+          entity_id: climate.home
+          away_mode: true
+      - service: climate.set_away_mode
+        data:
+          entity_id: climate.playroom
+          away_mode: true
 
-  - alias: Play Room Fan Run for 60 minutes #Smart button long press
-    trigger:
-      platform: event
-      event_type: click
-      event_data:
-        entity_id: binary_sensor.playroom_fan_button
-        click_type: long_click_press
-    action:
-      - service: switch.turn_on
-        entity_id: switch.thermostat_fan_playroom
-      - delay: 0:15
-      - service: switch.turn_on
-        entity_id: switch.thermostat_fan_playroom
-      - delay: 0:15
-      - service: switch.turn_on
-        entity_id: switch.thermostat_fan_playroom
-      - delay: 0:15
-      - service: switch.turn_on
-        entity_id: switch.thermostat_fan_playroom
+  ecobee_resume_normal_operation:
+    sequence:
+      - service: climate.ecobee_resume_program
+        data:
+          entity_id: climate.home
+          resume_all: true
+      - service: climate.ecobee_resume_program
+        data:
+          entity_id: climate.playroom
+          resume_all: true
 
-  - alias: Play Room Fan Turn Off Now
-    trigger:
-      platform: event
-      event_type: click
-      event_data:
-        entity_id: binary_sensor.playroom_fan_button
-        click_type: double
-    action:
-      - service: switch.turn_off
-        entity_id: switch.thermostat_fan_playroom
+  ecobee_temporary_away:
+    sequence:
+      - service: climate.set_hold_mode
+        data:
+          entity_id: climate.home
+          hold_mode: "away"
+      - service: climate.set_hold_mode
+        data:
+          entity_id: climate.playroom
+          hold_mode: "away"
