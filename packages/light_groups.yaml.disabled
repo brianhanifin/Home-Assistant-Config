@@ -1,0 +1,148 @@
+################################################
+## Lights
+################################################
+light:
+  ## Light Room Groups
+  #######################
+  - platform: group
+    name: "Bedroom Lights"
+    entities:
+      - light.bedroom_light
+      - light.brians_light
+
+  - platform: group
+    name: "Family Room Lights"
+    entities:
+      - light.family_room_light
+      - light.family_room_table_lamp
+
+  - platform: group
+    name: "Living Room Lights"
+    entities:
+      - light.living_room_light
+      - light.living_room_corner_lamp
+
+  - platform: group
+    name: "Play Room Lights"
+    entities:
+      - light.play_room_light
+      - light.computer_desk_light
+
+################################################
+## Groups: Lights & Switches
+################################################
+group:
+  bedroom_lights:
+    entities:
+      - light.bedroom_light
+      - light.brians_light
+    name: Bed Room Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  downstairs_lights:
+    entities:
+      - light.entry_light
+      - switch.entry_step_light
+      - light.dining_room_light
+      - light.family_room_light
+      - light.family_room_table_lamp
+      - switch.kitchen_prep_light
+      - light.kitchen_sink_light
+      - switch.kitchen_stove_light
+      - light.living_room_light
+      - light.living_room_corner_lamp
+      - light.play_room_light
+      - light.computer_desk_light
+    name: Downstairs Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  entry_lights:
+    entities:
+      - light.entry_light
+      - switch.entry_step_light
+    name: Entry Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  family_room_lights:
+    entities:
+      - light.family_room_light
+      - light.family_room_table_lamp
+    name: Family Room Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  kitchen_lights:
+    entities:
+      - switch.kitchen_prep_light
+      - light.kitchen_sink_light
+      - switch.kitchen_stove_light
+    name: Kitchen Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+  
+  kitchen_light_switches:
+    entities:
+      - switch.kitchen_prep_light
+      - switch.kitchen_stove_light
+    name: Kitchen Light Switches
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  # excluding night lights (eg. Kid's Bathroom & Porch)
+  interior_lights:
+    entities:
+      - light.bedroom_light
+      - light.brians_light
+      - light.entry_light
+      - switch.entry_step_light
+      - light.dining_room_light
+      - light.family_room_light
+      - light.family_room_table_lamp
+      - switch.kitchen_prep_light
+      - light.kitchen_sink_light
+      - switch.kitchen_stove_light
+      - light.living_room_light
+      - light.living_room_corner_lamp
+      - light.play_room_light
+      - light.computer_desk_light
+    name: Interior Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  living_room_lights:
+    entities:
+      - light.living_room_light
+      - light.living_room_corner_lamp
+    name: Living Room Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  play_room_lights:
+    entities:
+      - light.play_room_light
+      - light.computer_desk_light
+    name: Play Room Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
+
+  upstairs_lights:
+    entities:
+      - light.bedroom_light
+      - light.brians_light
+      # The Bathroom Nightlight always stays on at night, so exclude it.
+    name: Upstairs Lights
+    icon: mdi:lightbulb
+    control: hidden
+    view: no
