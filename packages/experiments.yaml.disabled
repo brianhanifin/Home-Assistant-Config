@@ -119,6 +119,54 @@ script:
 ##############################################
 automation:
   ##############################################
+  ## Playroom Fan: Controlled by Xiaomi Button
+  ##############################################
+  - alias: Play Room Fan Run for default duration #Smart button single click
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.playroom_fan_button
+        click_type: single
+    action:
+      - service: switch.turn_on
+        entity_id: switch.ecobee_playroom_fan
+      - delay: 0:15
+      - service: switch.turn_off
+        entity_id: switch.ecobee_playroom_fan
+
+  - alias: Play Room Fan Run for 60 minutes #Smart button long press
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.playroom_fan_button
+        click_type: long_click_press
+    action:
+      - service: switch.turn_on
+        entity_id: switch.ecobee_playroom_fan
+      - delay: 0:15
+      - service: switch.turn_on
+        entity_id: switch.ecobee_playroom_fan
+      - delay: 0:15
+      - service: switch.turn_on
+        entity_id: switch.ecobee_playroom_fan
+      - delay: 0:15
+      - service: switch.turn_on
+        entity_id: switch.ecobee_playroom_fan
+
+  - alias: Play Room Fan Turn Off Now
+    trigger:
+      platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.playroom_fan_button
+        click_type: double
+    action:
+      - service: switch.turn_off
+        entity_id: switch.ecobee_playroom_fan
+
+  ##############################################
   ## Garage Entry Light Automations
   ##############################################
   - alias: Garage Door Opens When Someone Is Home
