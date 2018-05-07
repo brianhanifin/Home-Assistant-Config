@@ -1,9 +1,9 @@
 homeassistant:
   customize:
-    binary_sensor.glowforge_window:
-      device_class: window
+    binary_sensor.garage_entry_door:
+      device_class: door
       hide_if_away: true
-    binary_sensor.boys_bathroom_window:
+    binary_sensor.glowforge_window:
       device_class: window
       hide_if_away: true
     #binary_sensor.playroom_fan_button
@@ -24,14 +24,14 @@ xiaomi_aqara:
 ################################################
 automation:
   ##############################################
-  ##  Door Open Announcements
+  ##  Door or Window Open Announcements
   ##############################################
-  - alias: 'Door Opened'
+  - alias: 'Door or Window Opened'
     trigger:
       - platform: state
         entity_id:
           - binary_sensor.glowforge_window
-          - binary_sensor.boys_bathroom_window
+          - binary_sensor.garage_entry_door
         from: 'off'
     action:
       - service: script.notify_engine
