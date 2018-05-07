@@ -2,7 +2,7 @@ homeassistant:
   customize:
     binary_sensor.garage_state:
       device_class: garage_door
-    cover.garage_door_opener:
+    cover.garage_door:
       friendly_name: "Garage Door"
 
 ################################################
@@ -22,11 +22,9 @@ binary_sensor:
   - platform: template
     sensors:
       garage_door:
-        value_template: '{{ states.cover.garage_door.state }}'
+        value_template: "{{ is_state('cover.garage_door', 'open') }}"
         device_class: garage_door
-        friendly_name: 'Garage Door'
-        #icon_template: mdi:garage'{% if is_state(cover.garage_door == 'open' %}-open{% endif %}'
-        #icon: mdi:garage
+        friendly_name: Garage Door
 
 #input_text:
 #  - platform: template
@@ -41,17 +39,17 @@ binary_sensor:
 #scene:
 #  - name: Open the Garage Door
 #    entities:
-#      cover.garage_door_opener: on
+#      cover.garage_door: on
 #  - name: Open Garage
 #    entities:
-#      cover.garage_door_opener: on
+#      cover.garage_door: on
 
 #  - name: Close the Garage Door
 #    entities:
-#      cover.garage_door_opener: off
+#      cover.garage_door: off
 #  - name: Close Garage
 #    entities:
-#      cover.garage_door_opener: off
+#      cover.garage_door: off
 
 ##############################################
 ## Scripts
@@ -105,11 +103,12 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - cover.garage_door_opener
+          - cover.garage_door
         from: 'open'
         to: 'closed'
         for: '00:02:00'
     action:
+      - service: 
       - service: script.turn_on
         entity_id: script.garage_closed_status_light
       - service: script.speech_engine
@@ -121,7 +120,7 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - cover.garage_door_opener
+          - cover.garage_door
         from: 'closed'
         to: 'open'
         for: '00:02:30'
@@ -152,7 +151,7 @@ automation:
       seconds: 0
     condition:
       - condition: state
-        entity_id: cover.garage_door_opener
+        entity_id: cover.garage_door
         state: 'open'
     action:
       - service: script.turn_on
