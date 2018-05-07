@@ -68,19 +68,6 @@ script:
           - condition: state
             entity_id: input_boolean.guest_mode
             state: 'on'
-      # Turn the speaker(s) on to avoid missing the beginning of the message.
-      - service: media_player.turn_on
-        data_template:
-          entity_id: >-
-            {% if media_player | length == 0 %}
-              {% set media_player = [
-                'media_player.living_room_speaker'
-              ] %}
-            {% endif %}
-            {% if media_player is not string and media_player is sequence %}
-              {% set media_player = media_player|join(', ') %}
-            {% endif %}
-            {{ media_player }}
       - service: script.speech_processing
         data_template:
           media_player: >-
@@ -142,7 +129,7 @@ script:
               {%- endif -%}
             {%- endmacro -%}
             {%- macro garage_check() -%}
-              {% if states.cover.garage_door_opener.state !='closed' -%}
+              {% if states.cover.garage_door.state !='closed' -%}
                 The Garage Door needs to be closed.
               {%- endif -%}
             {%- endmacro -%}

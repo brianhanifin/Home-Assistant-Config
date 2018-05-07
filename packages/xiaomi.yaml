@@ -23,24 +23,41 @@ xiaomi_aqara:
 ## Automations
 ################################################
 automation:
-  ##############################################
-  ##  Door or Window Open Announcements
-  ##############################################
-  - alias: 'Door or Window Opened'
+  - alias: 'Xiaomi: Auto Nightlight On'  
+    hide_entity: True
+    initial_state: True
     trigger:
-      - platform: state
-        entity_id:
-          - binary_sensor.glowforge_window
-          - binary_sensor.garage_entry_door
-        from: 'off'
+      - platform: numeric_state
+        entity_id: sensor.xiaomi_gateway_illumination
+        below: '300'
+    condition:
+      condition: and
+      conditions:
+      - condition: state
+        entity_id: light.xiaomi_gateway_light
+        state: 'off'
+      #- condition: state
+      #  entity_id: input_boolean.auto_nightlight
+      #  state: 'on'
     action:
-      - service: script.notify_engine
-        data_template:
-          who: 'parents'
-          value1: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.alert_mode
-      - service: script.speech_engine
-        data_template:
-          call_window_check: 1
-          call_inside_weather: 1
+      - service: homeassistant.turn_on
+        data:
+          entity_id: light.xiaomi_gateway_light
+          brightness: 25
+          rgb_color: [175, 0, 0]
+
+  - alias: 'Xiaomi: Auto Nightlight Off'
+    hide_entity: True
+    initial_state: True
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.xiaomi_gateway_illumination
+        above: '400'
+    condition:
+      condition: state
+      entity_id: light.xiaomi_gateway_light
+      state: 'on'
+    action:
+      - service: homeassistant.turn_off
+        data:
+          entity_id: light.xiaomi_gateway_light
