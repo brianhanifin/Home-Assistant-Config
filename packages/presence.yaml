@@ -12,7 +12,7 @@ homeassistant:
       device_class: connectivity
 
     ##### Nerene's Devices
-    device_tracker.nerenes_iphone:
+    device_tracker.nerene:
       friendly_name: "Nerene"
       device_class: presence
     device_tracker.parrot_ck3100:
@@ -67,7 +67,7 @@ group:
   family:
     entities:
       - device_tracker.brian
-      - device_tracker.nerenes_iphone
+      - device_tracker.nerene
     name: "Is Anyone At Home?"
     icon: mdi:home
     view: no
@@ -76,6 +76,27 @@ group:
 ## Automation
 ################################################
 automation:
+  ######################################################################
+  ##  Some home facts when we get back home from being away.
+  ######################################################################
+  - alias: 'Home Stats'
+    trigger:
+      - platform: state
+        entity_id: input_boolean.home_stats
+        to: 'off'
+        from: 'on'
+    action:
+      - service: script.speech_engine
+        data:
+          call_inside_weather: 1
+          call_responsibilities: 1
+          call_outside_weather: 1
+          call_garage_check: 1
+          call_window_check: 1
+          call_light_check: 1
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.home_stats
+
   ##############################################################################
   ###  New Device has connected to the network.  let everyone know.
   ##############################################################################
@@ -99,11 +120,13 @@ automation:
       - platform: state
         entity_id:
           - device_tracker.brian
-          - device_tracker.nerenes_iphone
+          - device_tracker.nerene
         from: 'not_home'
         to: 'home'
-        for: '00:02:00'
+        #for: '00:02:00'
     action:
+      - wait_template: "{{ states.binary_sensor.garage_entry_door.state == 'open' }}"
+        timeout: '01:00:00'
       - service: script.speech_engine
         data_template:
           personarriving: >
@@ -113,7 +136,7 @@ automation:
             "Welcome back home " ~ person,
             "Guess who is home?" ~ person + " is!",
             person + " is now in the house.",
-            "Welcome Home " ~ person + ".  We have missed you. Or at least Molly did.",
+            "Welcome Home " ~ person + ".  We have missed you. Or at least Buddy and Pepper did.",
             "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person,
             "Life is like a song, you’re back where you belong. Welcome home " ~ person,
             "Hey there " ~ person + " Welcome Home!",
