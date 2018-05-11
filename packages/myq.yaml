@@ -99,7 +99,7 @@ automation:
   ######################################################################
   ##  Garage Status Announcements
   ######################################################################
-  - alias: 'Garage Door closed'
+  - alias: 'Garage Closed'
     trigger:
       - platform: state
         entity_id:
@@ -108,7 +108,6 @@ automation:
         to: 'closed'
         for: '00:02:00'
     action:
-      - service: 
       - service: script.turn_on
         entity_id: script.garage_closed_status_light
       - service: script.speech_engine
