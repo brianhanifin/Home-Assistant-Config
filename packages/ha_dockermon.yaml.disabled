@@ -29,6 +29,24 @@ homeassistant:
     switch.watch_tower:
       icon: mdi:tower-fire
 
+group:
+  panel_docker_status:
+    - switch.airconnect
+    - switch.dockermon
+#    - switch.grafana
+#    - switch.hass_playground
+    - switch.influxdb
+    - switch.mosquitto
+    - switch.nginx
+    - switch.nodered
+    - switch.portainerio
+    - switch.unifi_controller
+    - switch.watch_tower
+  name: Docker Status
+  icon: mdi:docker
+  control: hidden
+  view: no
+
 ################################################
 ## Sensors
 ################################################
@@ -36,7 +54,7 @@ binary_sensor:
   - platform: template
     sensors:
       docker_homeassistant:
-        value_template: "{{ is_state('switch.homeassistant', 'on') }}"
+        value_template: "{{ is_state('switch.home_assistant', 'on') }}"
         device_class: problem
         friendly_name: "Docker: Home Assistant"
 
@@ -50,6 +68,16 @@ binary_sensor:
 ################################################
 ## Switches
 ################################################
+
+
+### 2018-05-08 14:21:03 ERROR (MainThread) 
+### [homeassistant.helpers.template] Error parsing value: 'value_json' is undefined 
+### (value: container not found, template: {{ value_json is not none and 
+### value_json.state == "running" }})
+###
+### 2018-05-08 14:21:03 ERROR (MainThread) [homeassistant.components.switch.rest] 
+### Got non-ok response from resource: 404
+
 switch: 
   - platform: rest
     resource: http://10.0.0.56:8126/container/airconnect
@@ -128,6 +156,10 @@ switch:
   #  body_off: '{"state": "stop"}'
   #  is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
+
+  ### 2018-05-08 15:53:50 ERROR (SyncWorker_0) [homeassistant.util.yaml] YAML file 
+  ### /config/packages/ha_dockermon.yaml contains duplicate key "is_on_template". 
+  ### Check lines 159 and 167.
   - platform: rest
     resource: http://10.0.0.56:8126/container/portainer
     name: Portainer.io
