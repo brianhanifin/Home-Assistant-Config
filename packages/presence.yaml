@@ -18,6 +18,18 @@ homeassistant:
     device_tracker.parrot_ck3100:
       friendly_name: "Nerene's Car"
       device_class: connectivity
+    
+    ##### Guest Devices
+    device_tracker.cindy:
+      device_class: presence
+    device_tracker.eric:
+      device_class: presence
+    device_tracker.heather:
+      device_class: presence
+    device_tracker.melissa:
+      device_class: presence
+    device_tracker.sandy:
+      device_class: presence
 
     ##### Occupancy Sensors
     binary_sensor.bedroom_occupancy:
@@ -43,6 +55,7 @@ homeassistant:
       name: Porch
       device_class: motion
 
+    ##### Presence Mode toggles
     input_boolean.guest_mode:
       persistent: true
     input_boolean.school_mode:
@@ -72,12 +85,10 @@ input_boolean:
   guest_mode:
     name: Guest Mode
     icon: mdi:account-alert
-    initial: off
 
   school_mode:
     name: School Mode
     icon: mdi:school
-    #initial: on
 
 ################################################
 ## Groups
@@ -88,7 +99,19 @@ group:
       - device_tracker.brian
       - device_tracker.nerene
     name: "Is Anyone At Home?"
-    icon: mdi:home
+    icon: mdi:home-heart
+    view: no
+
+  guests:
+    entities:
+      - device_tracker.cindy
+      - device_tracker.eric
+      - device_tracker.heather
+      - device_tracker.melissa
+      - device_tracker.sandy
+      - device_tracker.sandy_oldphone
+    name: "Are Any Guests At Home?"
+    icon: mdi:account-alert
     view: no
 
 ################################################
@@ -164,6 +187,31 @@ automation:
         entity_id: scene.goodbye
       - service: script.turn_on
         entity_id: script.ecobee_temporary_away
+
+  ##############################################################################
+  ###  Known Guests Presence Detection
+  ##############################################################################
+  - alias: Known Guests Arrive
+    trigger:
+      - platform: state
+        entity_id: group.guests
+        from: 'not_home'
+        to: 'home'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.guest_mode
+      - service: script.turn_on
+        entity_id: script.ecobee_resume_normal_operation
+
+  - alias: Known Guests Leave
+    trigger:
+      - platform: state
+        entity_id: group.guests
+        from: 'home'
+        to: 'not_home'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.guest_mode
 
   ######################################################################
   ##  Some home facts when we get back home from being away.

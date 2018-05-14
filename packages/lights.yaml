@@ -65,7 +65,7 @@ automation:
         from: 'on'
         to: 'off'
     action:
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         data:
           entity_id: light.brians_light
   
@@ -76,7 +76,7 @@ automation:
         value_template: '{{ state.attributes.brightness }}'
         below: '190' # slightly less than 75%
     action:
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         entity_id: light.brians_light
 
   - alias: Bed Room Light gte 75pct
@@ -93,7 +93,7 @@ automation:
         entity_id: input_boolean.bedroom_light_sync_enabled
         state: 'on'
     action:
-      - service: homeassistant.turn_on
+      - service: light.turn_on
         entity_id: light.brians_light
  
   # This should only stay off long enough for the bedroom light to fade to 100%.
@@ -120,7 +120,7 @@ automation:
         from: 'on'
         to: 'off'
     action:
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         entity_id: light.family_room_table_lamp
 
   - alias: Family Room Light lt 75pct
@@ -130,7 +130,7 @@ automation:
         value_template: '{{ state.attributes.brightness }}'
         below: '190' # slightly less than 75%
     action:
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         entity_id: light.family_room_table_lamp
 
   - alias: Family Room Light gte 75pct
@@ -143,7 +143,7 @@ automation:
         for:
           seconds: 1
     action:
-      - service: homeassistant.turn_on
+      - service: light.turn_on
         entity_id: light.family_room_table_lamp
 
   ##############################################
@@ -156,7 +156,7 @@ automation:
         entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
         to: "on"
     action:
-      - service: homeassistant.turn_on
+      - service: light.turn_on
         entity_id: light.kitchen_sink_light
 
   - alias: Kitchen Light(s) Turn Off
@@ -166,7 +166,7 @@ automation:
         entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
         to: "off"
     action:
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         entity_id: light.kitchen_sink_light
 
   ##############################################
@@ -179,7 +179,7 @@ automation:
         from: 'on'
         to: 'off'
     action:
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         entity_id: light.living_room_corner_lamp
 
   - alias: Living Room Light lt 75pct
@@ -189,7 +189,7 @@ automation:
         value_template: '{{ state.attributes.brightness }}'
         below: '190'
     action:
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         entity_id: light.living_room_corner_lamp
       #- service: input_number.set_value
       #  data:
@@ -210,7 +210,7 @@ automation:
       #  data:
       #    entity_id: input_number.livingroom_corner_dimmer
       #    value: 50
-      - service: homeassistant.turn_on
+      - service: light.turn_on
         data:
           brightness_pct: '50'
           entity_id: light.living_room_corner_lamp
