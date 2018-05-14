@@ -56,11 +56,12 @@ homeassistant:
       device_class: motion
 
     ##### Presence Mode toggles
+    input_boolean.away_mode:
+      persistent: true
     input_boolean.guest_mode:
       persistent: true
     input_boolean.school_mode:
       persistent: true
-
 
 ################################################
 ## Component Settings
@@ -82,6 +83,10 @@ device_tracker:
 ## Switches
 ################################################
 input_boolean:
+  away_mode:
+    name: Away Mode
+    icon: mdi:home-outline
+
   guest_mode:
     name: Guest Mode
     icon: mdi:account-alert
@@ -98,7 +103,7 @@ group:
     entities:
       - device_tracker.brian
       - device_tracker.nerene
-    name: "Is Anyone At Home?"
+    name: "Any Family At Home?"
     icon: mdi:home-heart
     view: no
 
@@ -110,7 +115,7 @@ group:
       - device_tracker.melissa
       - device_tracker.sandy
       - device_tracker.sandy_oldphone
-    name: "Are Any Guests At Home?"
+    name: "Any Guests At Home?"
     icon: mdi:account-alert
     view: no
 
@@ -130,6 +135,38 @@ scene:
 ## Automation
 ################################################
 automation:
+  ##############################################################################
+  ###  Away Mode State Change
+  ##############################################################################
+  - alias: "Away Mode: At Home"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.away_mode
+        from: "on"
+        to: "off"
+    action:
+      - service: script.turn_on
+        entity_id: script.ecobee_resume_normal_operation
+
+  - alias: "Away Mode: Left Home"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.away_mode
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: group.family
+        state: 'not_home'
+    action:
+      - service: scene.turn_on
+        entity_id: scene.goodbye
+      - service: script.turn_on
+        entity_id: script.ecobee_temporary_away
+
+  ##############################################################################
+  ###  Family Presence Detection
+  ##############################################################################
   - alias: Arrive at Home
     trigger:
       - platform: state
@@ -139,8 +176,9 @@ automation:
         from: 'not_home'
         to: 'home'
     action:
-      - service: script.turn_on
-        entity_id: script.ecobee_resume_normal_operation
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.away_mode
+      
       # Greet the arriving person.
       - wait_template: "{{ states.binary_sensor.garage_entry_door.state == 'open' }}"
         timeout: '01:00:00'
@@ -183,10 +221,9 @@ automation:
         entity_id: input_boolean.guest_mode
         state: 'off'
     action:
-      - service: scene.turn_on
-        entity_id: scene.goodbye
-      - service: script.turn_on
-        entity_id: script.ecobee_temporary_away
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.away_mode
+
 
   ##############################################################################
   ###  Known Guests Presence Detection
@@ -200,8 +237,8 @@ automation:
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.guest_mode
-      - service: script.turn_on
-        entity_id: script.ecobee_resume_normal_operation
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.away_mode
 
   - alias: Known Guests Leave
     trigger:
@@ -209,9 +246,13 @@ automation:
         entity_id: group.guests
         from: 'home'
         to: 'not_home'
+        for:
+          minutes: 2
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.guest_mode
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.away_mode
 
   ######################################################################
   ##  Some home facts when we get back home from being away.
