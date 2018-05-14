@@ -1,0 +1,177 @@
+################################################################
+## Packages / Persistent States
+################################################################
+
+################################################################
+## Add `persistent: true` in the customize section to enable
+##   persistence on an entity.
+##
+## This currently supports: automation, input_boolean,
+##   input_select, input_number, light, and switch.
+##
+## Example Configuration:
+##
+## homeassistant:
+##   customize:
+##     automation.good_morning_lights:
+##       persistent: true
+##
+##     input_boolean.notify_arrival:
+##       persistent: true
+##
+##     input_select.light_color_1:
+##       persistent: true
+##
+##     input_number.bedroom_brightness:
+##       persistent: true
+##
+##     light.bedroom:
+##       persistent: true
+##
+##     switch.bedroom_fan:
+##       persistent: true
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'persistence'
+
+      expose: &expose
+        <<: *customize
+        haaska_hidden: false
+        homebridge_hidden: false
+
+    ################################################
+    ## Automation
+    ################################################
+
+    automation.persistence_enable_automations:
+      <<: *customize
+      friendly_name: "Persistence Enable Automations"
+
+    automation.persistence_publish:
+      <<: *customize
+      friendly_name: "Persistence Publish"
+
+    automation.persistence_subscribe_binary:
+      <<: *customize
+      friendly_name: "Persistence Subscribe (Binary)"
+
+    automation.persistence_subscribe_select_option:
+      <<: *customize
+      friendly_name: "Persistence Subscribe (Select Option)"
+
+    automation.persistence_subscribe_set_value:
+      <<: *customize
+      friendly_name: "Persistence from MQTT (Select Value)"
+
+################################################
+## Automation
+################################################
+
+automation:
+  ################################################
+  ## Persistent Publisher
+  ################################################
+
+  - alias: persistence_publish
+    initial_state: 'on'
+    hide_entity: true
+    trigger:
+      - platform: event
+        event_type: state_changed
+    condition:
+      - condition: template
+        value_template: "{{ trigger.event.data is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.new_state is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.new_state.attributes is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.new_state.attributes.persistent|default(false, true) }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.old_state is not none }}"
+      - condition: template
+        value_template: "{{ trigger.event.data.new_state.state != trigger.event.data.old_state.state }}"
+      - condition: or
+        conditions:
+          - condition: template
+            value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'automation' }}"
+          - condition: template
+            value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'input_boolean' }}"
+          - condition: template
+            value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'input_select' }}"
+          - condition: template
+            value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'input_number' }}"
+          - condition: template
+            value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'light' }}"
+          - condition: template
+            value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'switch' }}"
+    action:
+      - service: mqtt.publish
+        data_template:
+          topic: "home-assistant/{{ trigger.event.data.entity_id|replace('.', '/') }}"
+          payload: "{{ trigger.event.data.new_state.state }}"
+          retain: true
+
+  ################################################
+  ## Persistent Subscriptions
+  ################################################
+
+  - alias: persistence_subscribe_binary
+    initial_state: 'on'
+    hide_entity: true
+    trigger:
+      - platform: mqtt
+        topic: home-assistant/automation/+
+      - platform: mqtt
+        topic: home-assistant/input_boolean/+
+      - platform: mqtt
+        topic: home-assistant/light/+
+      - platform: mqtt
+        topic: home-assistant/switch/+
+    condition: &subscribe_condition
+      - condition: template
+        value_template: "{{ ((states[trigger.topic.split('/')[1]][trigger.topic.split('/')[2]]|default).attributes|default).persistent|default(false, true) }}"
+      - condition: template
+        value_template: "{{ not is_state(trigger.topic|replace('home-assistant/', '')|replace('/', '.'), trigger.payload) }}"
+    action: &subscribe_action
+      - service_template: "{{ trigger.topic.split('/')[1] }}.turn_{{ trigger.payload|lower }}"
+        data_template:
+          entity_id: "{{ trigger.topic|replace('home-assistant/', '')|replace('/', '.') }}"
+
+  - alias: persistence_subscribe_select_option
+    initial_state: 'on'
+    hide_entity: true
+    trigger:
+      - platform: mqtt
+        topic: home-assistant/input_select/+
+    condition: *subscribe_condition
+    action:
+      - service_template: "{{ trigger.topic.split('/')[1] }}.select_option"
+        data_template:
+          entity_id: "{{ trigger.topic|replace('home-assistant/', '')|replace('/', '.') }}"
+          option: "{{ trigger.payload }}"
+
+  - alias: persistence_subscribe_set_value
+    initial_state: 'on'
+    hide_entity: true
+    trigger:
+      - platform: mqtt
+        topic: home-assistant/input_number/+
+    condition: *subscribe_condition
+    action:
+      - service_template: "{{ trigger.topic.split('/')[1] }}.set_value"
+        data_template:
+          entity_id: "{{ trigger.topic|replace('home-assistant/', '')|replace('/', '.') }}"
+          value: "{{ trigger.payload }}"

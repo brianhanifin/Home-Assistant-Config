@@ -1,4 +1,3 @@
-
 automation:
   ##############################################
   ##  Door or Window Open Announcements
@@ -41,5 +40,8 @@ automation:
           entity_id: binary_sensor.glowforge_window
           state: 'on'
     action:
-      - service: script.turn_on
-        entity_id: script.door_window_open_notification
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.alert_mode
+      - service: script.speech_engine
+        data_template:
+          call_window_check: 1

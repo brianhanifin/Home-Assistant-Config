@@ -1,3 +1,8 @@
+homeassistant:
+  customize:
+    input_boolean.presence_lighting_enabled:
+      persistent: true
+
 ################################################
 ## Switches
 ################################################
@@ -5,12 +10,6 @@ input_boolean:
   presence_lighting_enabled:
     name: Presence Based Lighting
     icon: mdi:test-tube
-    initial: off
-
-  flashing_lights_enabled:
-    name: Flashing Lights Notify
-    icon: mdi:test-tube
-    initial: off
 
 ################################################
 ## Groups
@@ -45,74 +44,8 @@ group:
 ##############################################
 ## Scripts
 ##############################################
-script:
-  ############################################
-  ## Garage Entry Light Automations
-  ############################################
-  flashing_light:
-    alias: "Flashing Light: Start"
-    sequence:
-      - service: homeassistant.turn_on
-        data_template:
-          entity_id: "{{ thelight }}"
-      - service: homeassistant.turn_off
-        data_template:
-          entity_id: "{{ thelight }}"
-      - delay:
-          seconds: 1
-      - service: script.flashing_light
-        data:
-          thelight: "{{ thelight }}"
+#script:
 
-  flashing_light_stop:
-    alias: "Flashing Light: Stop"
-    sequence:
-      - service: script.turn_off
-        entity_id: script.flash_light
-
-  flashing_light_test:
-    alias: "Flashing Light: Test"
-    sequence:
-      - service: script.flash_light
-        data_template:
-          thelight: "light.garage_entry_light"
-      - delay:
-          seconds: 30
-      - service: script.turn_off
-        entity_id: script.flash_light
-
-  ############################################
-  ## [UNUSED] Light brightness adjusts based on time
-  ############################################
-  set_light_brightness_pct_by_time:
-    alias: "Function: Set Light Brightness By Time"
-    sequence:
-      - service: light.turn_on
-        data_template:
-          entity_id: "{{ trigger.event.data.entity_id }}"
-          brightness_pct: >
-            {%- macro brightnessPctByTime() -%}
-              {% set hour=states("sensor.time").split(':')[0] | int %}
-              {% set minutes=states("sensor.time").split(':')[1] | int %}
-              {%- if hour >= 5 and hour < 8  -%}
-                60
-              {%- elif hour >= 8 and hour < 19  -%}
-                100
-              {%- elif hour >= 19 and hour < 20 and minutes < 30 -%}
-                80
-              {%- elif hour >= 19 and hour < 20 and minutes > 30 -%}
-                60
-              {%- elif hour >= 20 and hour < 21 and minutes < 30 -%}
-                50
-              {%- elif hour >= 20 and hour < 21 and minutes > 30 -%}
-                40
-              {%- elif hour >= 21 or hour < 1 -%}
-                30
-              {%- else -%}
-                40
-              {%- endif %}
-            {%- endmacro -%}
-            {{ brightnessPctByTime() }}
 
 ##############################################
 ## Automations
@@ -167,101 +100,11 @@ automation:
         entity_id: switch.ecobee_playroom_fan
 
   ##############################################
-  ## Garage Entry Light Automations
-  ##############################################
-  - alias: Garage Door Opens When Someone Is Home
-    trigger:
-      - platform: state
-        entity_id: cover.garage_door
-        from: "closed"
-    # Flash the lights to notify the person inside
-    action:
-      - service: script.turn_on
-        entity_id: script.flashing_light
-        data_template:
-          thelight: light.garage_entry_light
-      - delay: 0:00:10
-      - service: script.turn_off
-        entity_id: script.flashing_light
-
-  ##############################################
-  ## Light brightness adjusts based on time
-  ##############################################
-  - alias: Adjust light brightness at night
-    trigger:
-      - platform: event
-        event_type: state_changed
-
-    condition:
-      # Only adjust light brightness if someone is home and the Dusk Dimmers are enabled.
-      - condition: state
-        entity_id: group.family
-        from: 'not_home'
-        to: 'home'
-        for: '00:03:00'
-      - condition: state
-        entity_id: input_boolean.dusk_dimmers_enabled
-        state: 'on'
-
-      # Only look at lights.
-      - condition: template
-        value_template: "{{ trigger.event.data is not none }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id is not none }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'light' }}"
-
-      # Don't change these lights.
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.living_room_corner_lamp' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.family_room_table_lamp' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.brians_light' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.boys_bathroom_nightlight' }}"
-
-      # Only when lights are going from off to on.
-      - condition: template
-        value_template: "{{ trigger.event.data.old_state.state == 'off' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.new_state.state == 'on' }}"
-
-    action:
-      - service: light.turn_on
-        data_template:
-          entity_id: "{{ trigger.event.data.entity_id }}"
-          brightness_pct: >
-            {%- macro brightnessPctByTime() -%}
-              {% set hour=states("sensor.time").split(':')[0] | int %}
-              {% set minutes=states("sensor.time").split(':')[1] | int %}
-              {%- if hour >= 5 and hour < 8  -%}
-                60
-              {%- elif hour >= 8 and hour < 19  -%}
-                100
-              {%- elif hour >= 19 and hour < 20 and minutes < 30 -%}
-                80
-              {%- elif hour >= 19 and hour < 20 and minutes > 30 -%}
-                60
-              {%- elif hour >= 20 and hour < 21 and minutes < 30 -%}
-                50
-              {%- elif hour >= 20 and hour < 21 and minutes > 30 -%}
-                40
-              {%- elif hour >= 21 or hour < 1 -%}
-                30
-              {%- else -%}
-                40
-              {%- endif %}
-            {%- endmacro -%}
-            {{ brightnessPctByTime() }}
-
-  ##############################################
   ## Presence based lighting
   ##############################################
   - alias: Turn Living Room Light On With Movement
     trigger:
       - platform: state
-        #entity_id: binary_sensor.living_room_motion
         entity_id: binary_sensor.living_room_occupancy
         to: 'on'
     condition:
