@@ -53,10 +53,10 @@ automation:
       - delay: 0:00:15
       - service: light.turn_off
         entity_id: light.garage_entry_light
-      #- service: script.speech_engine
-      #  data_template:
-      #    DoorClosed: "The {{ trigger.to_state.name }} is now {{ trigger.to_state.state }}."
-      #    call_garage_check: 1
+      - service: script.speech_engine
+        data_template:
+          DoorClosed: "The {{ trigger.to_state.name }} is now {{ trigger.to_state.state }}."
+          call_garage_check: 1
 
   - alias: 'Garage Opened'
     trigger:
@@ -69,7 +69,10 @@ automation:
         #for: '00:02:30'
     action:
       - service: light.turn_on
-        entity_id: light.garage_entry_light
+        data:
+          entity_id: light.garage_entry_light
+          brightness_pct: 75
+          effect: "colorloop"
       # If after 5 minutes the garage is still open, dim the light.
       - delay: 0:05:00
       - condition: state
@@ -79,6 +82,7 @@ automation:
         data:
           entity_id: light.garage_entry_light
           brightness_pct: 20
+          transition: 5
 
       #- service_template: >
       #   {% set hour=states("sensor.time").split(':')[0] | int %}
@@ -89,8 +93,10 @@ automation:
       #   {% endif %}
       - service: input_boolean.turn_on
         entity_id: input_boolean.alert_mode
+ 
       - service: script.speech_engine
         data_template:
+          value1: "The {{ trigger.entity_id.split('.')[1]|replace('_', ' ') }} is now {{ (trigger.to_state.state)|replace('_', ' ') }}."
           call_garage_check: 1
 
   ############################################

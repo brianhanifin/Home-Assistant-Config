@@ -1,7 +1,30 @@
 # Original: @mf-social https://github.com/mf-social/Home-Assistant/blob/master/packages/virtual_devices/alarm_clocks/nerene_alarm_clock.yaml
 homeassistant:
   customize:
+    input_boolean.nerene_alarm_clock_status:
+      persistent: true
+    input_number.nerene_alarm_clock_hour:
+      persistent: true
+    input_number.nerene_alarm_clock_minutes:
+      persistent: true
+    input_select.nerene_alarm_clock_light:
+      persistent: true
+    input_boolean.nerene_alarm_clock_mon:
+      persistent: true
+    input_boolean.nerene_alarm_clock_tue:
+      persistent: true
+    input_boolean.nerene_alarm_clock_wed:
+      persistent: true
+    input_boolean.nerene_alarm_clock_thu:
+      persistent: true
+    input_boolean.nerene_alarm_clock_fri:
+      persistent: true
+    input_boolean.nerene_alarm_clock_sat:
+      persistent: true
+    input_boolean.nerene_alarm_clock_sun:
+      persistent: true
     sensor.nerene_alarm_clock_light:
+      persistent: true
       state_card_mode: none
     sensor.nerene_alarm_clock_day_label:
       state_card_mode: none
@@ -133,9 +156,13 @@ scene:
       light.entry_light:
         state: on
         brightness_pct: '40'
-      light.kitchen_sink_light: on
+      light.kitchen_sink_light:
+        state: on
+        kelvin: 3500
+        brightness_pct: '40'
       light.garage_entry_light:
         state: on
+        kelvin: 3500
         brightness_pct: '5'
 
 ################################################
