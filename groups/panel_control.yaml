@@ -15,31 +15,40 @@ panel_control:
     - sensor.hline
 
     - group.panel_control_modes
+    - group.panel_control_overrides
     #- group.panel_control_scenes
-    - group.battery_alert
   name: Control Panel
   icon: mdi:file-document-box
   control: hidden
   view: no
 
-panel_control_modes:
+panel_control_overrides:
   entities:
-    - input_boolean.away_mode
-    - input_boolean.bedroom_light_sync_enabled
     - input_boolean.guest_mode
     - input_boolean.illumination_lighting_mode
     - input_boolean.movie_mode
-    - input_boolean.presence_lighting_mode
+    - input_boolean.motion_detection_mode
+    - input_boolean.motion_detection_playroom_mode
     - input_boolean.speech_notifications
     - input_boolean.text_notifications
     - input_boolean.time_based_dimmers_enabled
     - input_boolean.vacation
-    #- sensor.hline
+    - scene.goodbye
+    - scene.good_night
+  name: Mode Overrides
+  icon: mdi:home-alert
+  control: hidden
+  view: no
+
+panel_control_modes:
+  entities:
     - input_boolean.alert_mode
+    - input_boolean.away_mode
+    - input_boolean.bedroom_light_sync_enabled
     - input_boolean.lastmsg
     #- input_boolean.school_mode
     - sensor.last_message
-  name: House Modes
+  name: Mode Automations
   icon: mdi:power
   control: hidden
   view: no

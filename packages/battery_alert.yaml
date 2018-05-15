@@ -395,6 +395,7 @@ automation:
               {{ battery_level() }}
 
 - alias: battery_sensor_from_battery_level_attribute
+  initial_state: 'off'
   trigger:
     - platform: event
       event_type: state_changed
@@ -432,6 +433,7 @@ automation:
         payload: "{{ trigger.event.data.new_state.attributes.battery_level | int }}"
 
 - alias: battery_sensor_from_battery_attribute
+  initial_state: 'off'
   trigger:
     - platform: event
       event_type: state_changed
@@ -469,6 +471,7 @@ automation:
         payload: "{{ trigger.event.data.new_state.attributes.battery | int }}"
 
 - alias: battery_sensor_from_battery_numeric_attribute
+  initial_state: 'off'
   trigger:
     - platform: event
       event_type: state_changed

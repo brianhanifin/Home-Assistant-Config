@@ -65,14 +65,9 @@ script:
 ######################################################################################################
   speech_engine:
     sequence:
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: group.family
-            state: 'home'
-          - condition: state
-            entity_id: input_boolean.guest_mode
-            state: 'on'
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'off'
       - service: script.speech_processing
         data_template:
           media_player: >-
