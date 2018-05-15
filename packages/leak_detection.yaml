@@ -1,0 +1,26 @@
+homeassistant:
+  customize:
+    ##### Moisture Sensor
+    binary_sensor.kitchen_leak:
+      device_class: moisture
+
+################################################
+## Automation
+################################################
+automation:
+  - alias: Kitchen Sink Leak Detected
+    trigger:
+      platform: state
+      entity_id: binary_sensor.kitchen_leak
+      to: "on"
+    action:
+      - service: script.notify_ios_engine
+        data_template:
+          value1: "LEAK DETECTED!"
+          value2: "Kitchen Sink"
+          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          who: "parents"
+      - service: persistent_notification.create
+        data:
+          title: "LEAK DETECTED!"
+          message: "Kitchen Sink - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
