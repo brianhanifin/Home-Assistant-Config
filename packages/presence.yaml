@@ -31,31 +31,7 @@ homeassistant:
     device_tracker.sandy:
       device_class: presence
 
-    ##### Occupancy Sensors
-    binary_sensor.bedroom_occupancy:
-      device_class: occupancy
-    binary_sensor.home_occupancy:
-      device_class: occupancy
-    binary_sensor.living_room_occupancy:
-      device_class: occupancy
-    binary_sensor.lucas_bedroom_occupancy:
-      device_class: occupancy
-
-    ##### Motion Sensors
-    binary_sensor.kitchen_room_motion:
-      friendly_name: "Kitchen"
-      device_class: motion
-    binary_sensor.play_room_motion:
-      friendly_name: "Play Room"
-      device_class: motion
-    sensor.workbench_motion_detected:
-      friendly_name: Workbench
-      device_class: motion
-    binary_sensor.ring_front_door_motion:
-      name: Porch
-      device_class: motion
-
-    ##### Presence Mode toggles
+    ##### Mode toggles
     input_boolean.away_mode:
       persistent: true
     input_boolean.guest_mode:
@@ -179,7 +155,7 @@ automation:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
       
-      # Greet the arriving person.
+      # Greet the arriving person after they open the garage entry door.
       - wait_template: "{{ states.binary_sensor.garage_entry_door.state == 'open' }}"
         timeout: '01:00:00'
       - service: script.speech_engine

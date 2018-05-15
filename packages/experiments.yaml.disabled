@@ -11,35 +11,7 @@ input_boolean:
     name: Presence Based Lighting
     icon: mdi:test-tube
 
-################################################
-## Groups
-################################################
-group:
-  motion_inside_house:
-    entities:
-      - binary_sensor.home_occupancy
-      - binary_sensor.living_room_occupancy
-      - binary_sensor.kitchen_motion
-      - binary_sensor.play_room_motion
-      - sensor.workbench_motion_detected
-      - binary_sensor.bedroom_occupancy
-      - binary_sensor.lucas_bedroom_occupancy
-      # Front Door
-      #- binary_sensor.front_door_motion
-      #- binary_sensor.ring_front_door_motion
-    name: Motion Detected
-    icon: mdi:run
-    control: hidden
-    view: no
 
-  motion_outside_house:
-    entities:
-      - binary_sensor.front_door_motion
-      - binary_sensor.ring_front_door_motion
-    name: Outside Motion Detected
-    icon: mdi:run
-    control: hidden
-    view: no
 
 ##############################################
 ## Scripts
@@ -98,37 +70,3 @@ automation:
     action:
       - service: switch.turn_off
         entity_id: switch.ecobee_playroom_fan
-
-  ##############################################
-  ## Presence based lighting
-  ##############################################
-  - alias: Turn Living Room Light On With Movement
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.living_room_occupancy
-        to: 'on'
-    condition:
-      - condition: state
-        entity_id: input_boolean.presence_lighting_enabled
-        state: 'on'
-    action:
-      - service: homeassistant.turn_on
-        entity_id: light.living_room_corner_lamp
-      - delay: 0:00:02
-      - service: homeassistant.turn_off
-        entity_id: light.living_room_corner_lamp
-
-  - alias: Turn Living Room Light Off After Movement Ends
-    trigger:
-      platform: state
-      entity_id: binary_sensor.living_room_motion
-      to: 'off'
-      for:
-        seconds: 10
-    condition:
-      - condition: state
-        entity_id: input_boolean.presence_lighting_enabled
-        state: 'on'
-    action:
-      - service: homeassistant.turn_off
-        entity_id: light.living_room_corner_lamp
