@@ -9,8 +9,6 @@ homeassistant:
     ################################################
     cover.*:
       show_last_changed: true
-    cover.garage_door:
-      confirm_controls_show_lock: true
 
     ################################################
     ## Devices
@@ -23,6 +21,44 @@ homeassistant:
     ################################################
     group.*:
       show_last_changed: true
+
+    ################################################
+    ## Lights
+    ################################################
+    light.*:
+      show_last_changed: true
+
+    ################################################
+    ## Sensors
+    ################################################
+    binary_sensor.*:
+      show_last_changed: true
+      state_card_mode: badges
+
+    sensor.*:
+      show_last_changed: true
+      state_card_mode: badges
+
+    ################################################
+    ## Switches (+ input_boolean)
+    ################################################
+    input_boolean.*:
+      show_last_changed: true
+
+    switch.*:
+      show_last_changed: true
+
+
+  customize:
+    ################################################
+    ## Covers
+    ################################################
+    cover.garage_door:
+      confirm_controls_show_lock: true
+
+    ################################################
+    ## Groups
+    ################################################
     group.panel_downstairs_lights:
       confirm_controls_show_lock: true
     group.panel_raincloud_status:
@@ -31,14 +67,16 @@ homeassistant:
     ################################################
     ## Lights
     ################################################
-    light.*:
-      show_last_changed: true
     light.computer_desk_light:
       group:
         group.panel_play_room_lights:
           friendly_name: Computer Desk
     light.entry_light:
       confirm_controls_show_lock: true
+    light.family_room_light:
+      group:
+        group.panel_family_room_lights:
+          friendly_name: Switched
     light.family_room_table_lamp:
       group:
         group.panel_family_room_lights:
@@ -68,29 +106,11 @@ homeassistant:
       confirm_controls_show_lock: true
 
     ################################################
-    ## Sensors
-    ################################################
-    binary_sensor.*:
-      show_last_changed: true
-      state_card_mode: badges
-    sensor.*:
-      show_last_changed: true
-      state_card_mode: badges
-
-    ################################################
     ## Switches (+ input_boolean)
     ################################################
-    input_boolean.*:
-      show_last_changed: true
     input_boolean.nerene_wakeup_enabled:
       confirm_controls_show_lock: true
-    
-    switch.*:
-      show_last_changed: true
-    light.family_room_light:
-      group:
-        group.panel_family_room_lights:
-          friendly_name: Switched
+
     switch.kitchen_prep_light:
       group:
         group.panel_kitchen_lights:
@@ -109,3 +129,20 @@ homeassistant:
       group:
         group.panel_play_room_tv:
           friendly_name: TV
+
+    ################################################
+    ## Sensors
+    ################################################
+    #sensor.hline:
+    # custom_ui_state_card: state-card-hline
+    # config:
+    #   width: 90 #--> in percents
+    #   height: 0 #--> in pixels, adds to bordertop
+    #   backgroundcolor: black #white
+    #   bordertop: '2px solid black'
+
+#sensor:
+#  - platform: template
+#    sensors:
+#      hline:
+#        value_template: hline
