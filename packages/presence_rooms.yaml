@@ -168,7 +168,7 @@ automation:
         from: 'on'
         to: 'off'
         for:
-          minutes: 01
+          minutes: 10
           seconds: 00
     condition:
       - condition: state
@@ -193,7 +193,7 @@ automation:
         #from: 'off'
         to: 'on'
         for:
-          seconds: 5
+          seconds: 10
     condition:
       - condition: state
         entity_id: input_boolean.presence_lighting_mode
@@ -225,8 +225,8 @@ automation:
         from: 'on'
         to: 'off'
         for:
-          minutes: 00
-          seconds: 30
+          minutes: 10
+          seconds: 00
     condition:
       - condition: state
         entity_id: input_boolean.presence_lighting_mode
@@ -286,10 +286,12 @@ automation:
         entity_id: input_boolean.away_mode
         state: 'off'
     action:
-      - service: switch.turn_on
+      #- service: switch.turn_on
+      #  entity_id:
+      #    - switch.kitchen_prep_light
+      - service: light.turn_on
         entity_id:
-          - switch.kitchen_prep_light
-          - switch.kitchen_stove_light
+          - light.kitchen_sink_light
 
   - alias: "Kitchen: Absent"
     trigger:
