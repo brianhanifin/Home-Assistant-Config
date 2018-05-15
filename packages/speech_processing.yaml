@@ -15,29 +15,19 @@ script:
           payload: "This message is from {{ now().strftime('%-I') }}:{{ now().strftime('%M') }} {{ now().strftime('%p') }}. {{ speech_message | truncate(254)}}"
           retain: true
 
-      - condition: and
+      # All conditions must be true to continue.
+      - condition:
+        condition: and
         conditions:
-          - condition: or
-            conditions:
-              - condition: state
-                entity_id: group.family
-                state: 'home'
-              - condition: state
-                entity_id: input_boolean.guest_mode
-                state: 'on'
-          - condition: or
-            conditions:
-              - condition: and
-                conditions:
-                  #- condition: state
-                  #  entity_id: group.bed
-                  #  state: 'off'
-                  - condition: time
-                    after: '08:00:00'
-                    before: '20:00:00'
-              - condition: state
-                entity_id: input_boolean.alert_mode
-                state: 'on'
+          #- condition: state
+          #  entity_id: group.bed
+          #  state: 'off'
+          - condition: time
+            after: '08:00:00'
+            before: '20:00:00'
+          - condition: state
+            entity_id: input_boolean.alert_mode
+            state: 'on'
           - condition: state
             entity_id: input_boolean.speech_notifications
             state: 'on'

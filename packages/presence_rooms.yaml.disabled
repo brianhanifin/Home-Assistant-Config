@@ -32,12 +32,14 @@ homeassistant:
       friendly_name: Workbench
       device_class: motion
 
-    ##### Mode toggles
+    ##### Mode overrides
     input_boolean.illumination_lighting_mode:
       persistent: true
     input_boolean.movie_mode:
       persistent: true
-    input_boolean.presence_lighting_mode:
+    input_boolean.motion_detection_mode:
+      persistent: true
+    input_boolean.motion_detection_playroom_mode:
       persistent: true
 
 ################################################
@@ -52,8 +54,12 @@ input_boolean:
     name: Movie Mode
     icon: mdi:movie-roll
 
-  presence_lighting_mode:
-    name: Presence Lighting
+  motion_detection_mode:
+    name: Motion Detection
+    icon: mdi:account-search
+
+  motion_detection_playroom_mode:
+    name: Playroom Motion Detection
     icon: mdi:account-search
 
 ################################################
@@ -150,7 +156,7 @@ automation:
           seconds: 10
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -172,7 +178,7 @@ automation:
           seconds: 00
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -196,7 +202,7 @@ automation:
           seconds: 10
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_mode
@@ -229,7 +235,7 @@ automation:
           seconds: 00
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -253,7 +259,7 @@ automation:
           seconds: 10
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_mode
@@ -277,7 +283,7 @@ automation:
           seconds: 10
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_mode
@@ -304,7 +310,7 @@ automation:
           seconds: 00
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -331,7 +337,10 @@ automation:
           seconds: 10
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_playroom_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -353,7 +362,10 @@ automation:
           seconds: 00
     condition:
       - condition: state
-        entity_id: input_boolean.presence_lighting_mode
+        entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_playroom_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode

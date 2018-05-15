@@ -61,7 +61,7 @@ device_tracker:
 input_boolean:
   away_mode:
     name: Away Mode
-    icon: mdi:home-outline
+    icon: mdi:car-estate
 
   guest_mode:
     name: Guest Mode
@@ -123,6 +123,8 @@ automation:
     action:
       - service: script.turn_on
         entity_id: script.ecobee_resume_normal_operation
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.motion_detection_mode
 
   - alias: "Away Mode: Left Home"
     trigger:
@@ -130,16 +132,14 @@ automation:
         entity_id: input_boolean.away_mode
         from: "off"
         to: "on"
-    condition:
-      - condition: state
-        entity_id: group.family
-        state: 'not_home'
     action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.motion_detection_mode
       - service: scene.turn_on
         entity_id: scene.goodbye
       - service: script.turn_on
         entity_id: script.ecobee_temporary_away
-
+ 
   ##############################################################################
   ###  Family Presence Detection
   ##############################################################################
@@ -185,14 +185,17 @@ automation:
   - alias: Leave home
     trigger:
       - platform: state
-        entity_id:
-          - device_tracker.brian
-          - device_tracker.nerene
+        entity_id: group.family
         from: 'home'
         to: 'not_home'
         for:
           minutes: 2
     condition:
+      # Only take action if no known guests are present.
+      - condition: state
+        entity_id: group.guest
+        state: 'not_home'
+      # Also don't take action if kids or unknown guests are present (as indicated by Guest Mode Override.
       - condition: state
         entity_id: input_boolean.guest_mode
         state: 'off'
@@ -211,8 +214,6 @@ automation:
         from: 'not_home'
         to: 'home'
     action:
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.guest_mode
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
 
@@ -225,8 +226,6 @@ automation:
         for:
           minutes: 2
     action:
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.guest_mode
       - service: input_boolean.turn_on
         entity_id: input_boolean.away_mode
 
