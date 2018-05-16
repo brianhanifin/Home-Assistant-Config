@@ -137,16 +137,15 @@ automation:
       #- service: media_player.turn_on
       #  entity_id: media_player.play_room_speaker
 
-  - alias: Notify on Home Automation Updates
+  - alias: Notify on Home Assistant Updates
     trigger:
       platform: state
       entity_id: updater.updater
     action:
       - service: script.notify_ios_engine
         data_template:
-          value1: "Home Assistant Update Available"
-          value2: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
-          value3: ""
+          title: "Home Assistant Update Available"
+          message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
       - service: persistent_notification.create
         data:

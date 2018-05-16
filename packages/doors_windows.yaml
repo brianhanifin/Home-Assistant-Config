@@ -10,10 +10,10 @@ automation:
           - binary_sensor.garage_entry_door
         from: 'off'
     action:
-      - service: script.notify_engine
+      - service: script.notify_ios_engine
         data_template:
           who: 'parents'
-          value1: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
+          message: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
       - service: input_boolean.turn_on
         entity_id: input_boolean.alert_mode
       - service: script.speech_engine

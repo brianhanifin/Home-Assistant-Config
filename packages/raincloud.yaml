@@ -100,16 +100,14 @@ script:
 
       - service: script.notify_ios_engine
         data_template:
-          value1: 'Raincloud: Offline'
-          value2: 'Attempting to restart the Raincloud Base Station.'
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          title: "Raincloud: Offline"
+          message: "Attempting to restart the Raincloud Base Station. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
 
       - service: script.notify_web_engine
         data_template:
-          value1: 'Raincloud: Offline'
-          value2: 'Attempting to restart the Raincloud Base Station.'
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          title: "Raincloud: Offline"
+          message: "Attempting to restart the Raincloud Base Station. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
  
   raincloud_restart:
     alias: Restart Raincloud

@@ -2,20 +2,20 @@
 #######################
 panel_admin:
   entities:
+    - group.battery_alert
     - group.panel_admin_manage
+    - group.panel_admin_modes_automation
+    - group.panel_admin_illumination
+    - group.panel_admin_presence
+    #- sensor.hline
     - group.panel_admin_docker
     - group.panel_docker_status
     - group.panel_admin_projects
     - group.panel_admin_resources
-    #- sensor.hline
-    - group.battery_alert
-    - group.panel_admin_presence
-    - group.panel_admin_illumination
   name: Admin Panel
   icon: mdi:file-document-box
   control: hidden
   view: no
-
 
 
 panel_admin_docker:
@@ -31,6 +31,19 @@ panel_admin_docker:
     - weblink.unifi
   name: Docker
   icon: mdi:wrench
+  control: hidden
+  view: no
+
+panel_admin_modes_automation:
+  entities:
+    - input_boolean.alert_mode
+    - input_boolean.away_mode
+    - input_boolean.bedroom_light_sync_enabled
+    - input_boolean.lastmsg
+    #- input_boolean.school_mode
+    - sensor.last_message
+  name: Mode Automations
+  icon: mdi:power
   control: hidden
   view: no
 

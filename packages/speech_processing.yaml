@@ -14,24 +14,21 @@ script:
           topic: 'polly/lastmsg'
           payload: "This message is from {{ now().strftime('%-I') }}:{{ now().strftime('%M') }} {{ now().strftime('%p') }}. {{ speech_message | truncate(254)}}"
           retain: true
-
       # All conditions must be true to continue.
-      - condition:
-        condition: and
+      - condition: and
         conditions:
+          - condition: state
+            entity_id: input_boolean.speech_notifications
+            state: 'on'
+          - condition: state
+            entity_id: input_boolean.alert_mode
+            state: 'on'
           #- condition: state
           #  entity_id: group.bed
           #  state: 'off'
           - condition: time
             after: '08:00:00'
             before: '20:00:00'
-          - condition: state
-            entity_id: input_boolean.alert_mode
-            state: 'on'
-          - condition: state
-            entity_id: input_boolean.speech_notifications
-            state: 'on'
-
       # Turn the speaker(s) on to avoid missing the beginning of the message.
       - service: media_player.turn_on
         data_template:

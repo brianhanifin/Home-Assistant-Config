@@ -6,3 +6,15 @@ sensor:
     origin: 9316 Lake Country Drive, Santee, CA 92071
     destination: 8120 Arlette St, Santee, CA 92071
     region: 'US'
+
+automation:
+  - alias: School Travel Time Watchdog
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.waze_travel_time
+        above: 15
+    action:
+      - service: script.notify_ios_engine
+        data_template:
+          title: "Traffic warning"
+          message: "It would take {{ states.sensor.waze_travel_time.state }} minutes to get to school if we left now."

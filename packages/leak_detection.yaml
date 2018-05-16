@@ -16,9 +16,8 @@ automation:
     action:
       - service: script.notify_ios_engine
         data_template:
-          value1: "LEAK DETECTED!"
-          value2: "Kitchen Sink"
-          value3: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          title: "LEAK DETECTED!"
+          message: "Kitchen Sink {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "parents"
       - service: persistent_notification.create
         data:
