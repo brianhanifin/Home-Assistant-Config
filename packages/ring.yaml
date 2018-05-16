@@ -12,6 +12,10 @@ homeassistant:
       friendly_name: "Last Porch Activity"
       homebridge_hidden: false
 
+input_text:
+  fake_doorbell:
+    initial: "off"
+
 
 ################################################
 ## Component Settings
@@ -46,30 +50,19 @@ sensor:
     #  - wifi_signal_category
     #  - wifi_signal_strength
 
-################################################
-## Script
-################################################
-script:
-  doorbell_pressed:
-    sequence:
-      - service: logbook.log
-        data:
-          name: "Ring Doorbell:"
-          message: "Someone Pressed the Doorbell."
-      #- service: script.turn_on
-      #  entity_id: script.ring_video_download
-#      - service: xiaomi_aqara.play_ringtone
-#        data:
-#          gw_mac: !secret xiaomi_mac1
-#          ringtone_id: 10
 
-  ring_video_download:
+script:
+  test_doorbell:
     sequence:
-      - service: downloader.download_file
-        data_template:
-          url: ""
-          subdir: ""
-          filename: ""
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.fake_doorbell
+          value: "on"
+      - delay: "00:00:01"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.fake_doorbell
+          value: "off"
 
 ################################################
 ## Automation
@@ -78,8 +71,26 @@ automation:
   - alias: Doorbell Pressed
     trigger:
       - platform: state
-        entity_id: binary_sensor.ring_front_door_ding
-        from: 'off'
+        entity_id:
+          - binary_sensor.ring_front_door_ding
+          - input_text.fake_doorbell
+        from: "off"
+        to: "on"
     action:
-      - service: script.turn_on
-        entity_id: script.doorbell_pressed
+      - service: camera.snapshot
+        data_template:
+          entity_id: camera.front_door
+          filename: "/config/www/downloads/snapshot_front_doorbell.jpg"
+      - service: script.notify_ios_engine
+        data_template:
+          title: "Front Door"
+          message: "Someone is at the door"
+          image: "snapshot_front_doorbell.jpg"
+      - service: logbook.log
+        data:
+          name: "Ring Doorbell:"
+          message: "Someone Pressed the Doorbell."
+#      - service: xiaomi_aqara.play_ringtone
+#        data:
+#          gw_mac: !secret xiaomi_mac1
+#          ringtone_id: 10

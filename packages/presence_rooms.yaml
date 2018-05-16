@@ -39,6 +39,12 @@ homeassistant:
       persistent: true
     input_boolean.motion_detection_mode:
       persistent: true
+    input_boolean.motion_detection_familyroom_mode:
+      persistent: true
+    input_boolean.motion_detection_livingroom_mode:
+      persistent: true
+    input_boolean.motion_detection_kitchen_mode:
+      persistent: true
     input_boolean.motion_detection_playroom_mode:
       persistent: true
 
@@ -50,17 +56,25 @@ input_boolean:
     name: Illumination Based Lighting
     icon: mdi:account-search
 
-  movie_mode:
-    name: Movie Mode
-    icon: mdi:movie-roll
-
   motion_detection_mode:
     name: Motion Detection
     icon: mdi:account-search
-
-  motion_detection_playroom_mode:
-    name: Playroom Motion Detection
+  motion_detection_familyroom_mode:
+    name: Family Room Motion Detection
     icon: mdi:account-search
+  motion_detection_livingroom_mode:
+    name: Living Room Motion Detection
+    icon: mdi:account-search
+  motion_detection_kitchen_mode:
+    name: Kitchen Motion Detection
+    icon: mdi:account-search
+  motion_detection_playroom_mode:
+    name: Play Room Motion Detection
+    icon: mdi:account-search
+
+  movie_mode:
+    name: Movie Mode
+    icon: mdi:movie-roll
 
 ################################################
 ## Sensors
@@ -116,9 +130,9 @@ group:
 script:
   illumination_engine:
     sequence:
-      #- condition: state
-      #  entity_id: input_boolean.illumination_lighting_mode
-      #  state: 'on'
+      - condition: state
+        entity_id: input_boolean.illumination_lighting_mode
+        state: 'on'
       - service: light.turn_on
         data_template:
           entity_id: >
@@ -143,6 +157,33 @@ script:
 ## Automation
 ################################################
 automation:
+  ##############################################################################
+  ###  Away Mode State Change
+  ##############################################################################
+  - alias: "Movie Mode: On"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.movie_mode
+        from: "on"
+        to: "off"
+    action:
+      #- service: input_boolean.turn_off
+      #  entity_id: input_boolean.motion_detection_kitchen_mode
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.motion_detection_livingroom_mode
+
+  - alias: "Movie Mode: Off"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.movie_mode
+        from: "off"
+        to: "on"
+    action:
+      #- service: input_boolean.turn_on
+      #  entity_id: input_boolean.motion_detection_kitchen_mode
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.motion_detection_livingroom_mode
+
   ##############################################
   ###  Family Room
   ##############################################
@@ -157,6 +198,9 @@ automation:
     condition:
       - condition: state
         entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_familyroom_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -181,6 +225,9 @@ automation:
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
+        entity_id: input_boolean.motion_detection_familyroom_mode
+        state: 'on'
+      - condition: state
         entity_id: input_boolean.away_mode
         state: 'off'
     action:
@@ -203,6 +250,9 @@ automation:
     condition:
       - condition: state
         entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_livingroom_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_mode
@@ -238,6 +288,9 @@ automation:
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
+        entity_id: input_boolean.motion_detection_livingroom_mode
+        state: 'on'
+      - condition: state
         entity_id: input_boolean.away_mode
         state: 'off'
     action:
@@ -256,10 +309,13 @@ automation:
         #from: 'off'
         to: 'on'
         for:
-          seconds: 10
+          seconds: 5
     condition:
       - condition: state
         entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_kitchen_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_mode
@@ -268,12 +324,15 @@ automation:
         entity_id: input_boolean.away_mode
         state: 'off'
     action:
-      - service: switch.turn_on
+      #- service: switch.turn_on
+      #  entity_id:
+      #    - switch.kitchen_prep_light
+      #    - switch.kitchen_stove_light
+      - service: light.turn_on
         entity_id:
-          - switch.kitchen_prep_light
-          - switch.kitchen_stove_light
+          - light.kitchen_sink_light
 
-  - alias: "Kitchen: Present (Movie Mode)"
+  - alias: "Kitchen: Movie Mode"
     trigger:
       - platform: state
         entity_id: binary_sensor.kitchen_motion
@@ -284,6 +343,9 @@ automation:
     condition:
       - condition: state
         entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_kitchen_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_mode
@@ -311,6 +373,9 @@ automation:
     condition:
       - condition: state
         entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_kitchen_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode

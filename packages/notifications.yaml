@@ -89,9 +89,8 @@ script:
   #    - service: script.turn_on
   #      entity_id: notify_engine
   #      data_template:
-  #        value1: "Notify Engine"
-  #        value2: "Testing"
-  #        value3: "Testing... 1, 2, 3"
+  #        title: "{{ title }}"
+  #        message: "{{ message }}"
   #        engines: "web"
   
   #notify_engine:
@@ -100,53 +99,59 @@ script:
   #      data_template: 
   #        #entity_id: {% set add_comma = false %}{% if engines|select("ios") %}script.notify_ios_engine{% set add_comma = true %}{% endif %}{% if add_comma %}, {% end if %}{% if engines|select("web") %}script.notify_web_engine{% endif %}
   #        entity_id: {% set engine_list = (engines|replace(",","")).split() %}{% for item in engine_list %}{{ "notify_" ~ item ~ "_engine " }}{% endfor %}
-  #        value1: '{{ value1 }}'
-  #        value2: '{{ value2 }}'
-  #        value3: '{{ value3 }}'
+  #        title: "{{ title }}"
+  #        message: "{{ message }}"
 
   notify_web_engine:
     sequence:
       - service: persistent_notification.create
         data_template:
-          title: "{{ value1 }}"
-          message: "{{ value2 }} {{ value3 }}"
+          title: "{{ title }}"
+          message: "{{ message }}"
 
   notify_ios_engine:
     sequence:
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: input_boolean.ios_notifications
-            state: 'on'
-
+      - condition: state
+        entity_id: input_boolean.ios_notifications
+        state: 'on'
+      
+      #- service: script.notify_web_engine
+      #  data_template:
+      #    title: "test"
+      #    message: "https://home.brianhanifin.com/local/downloads/{{ image }}"
+      
       - service_template: >
-            {% if who == 'brian' %}
-              notify.notify_brian
-            {% elif who == 'family' %}
-              notify.notify_family
-            {% elif who == 'kyle' %}
-              notify.notify_kyle
-            {% elif who == 'lucas' %}
-              notify.notify_lucas
-            {% elif who == 'nerene' %}
-              notify.notify_nerene
-            {% elif who == 'parents' %}
-              notify.notify_parents
-            {% else %}
-              notify.notify_brian
-            {% endif %}
+          {% if who is not string %}{% set who = 'brian' %}{% endif %}
+          {% if who == 'brian' %}
+            notify.notify_brian
+          {% elif who == 'family' %}
+            notify.notify_family
+          {% elif who == 'kyle' %}
+            notify.notify_kyle
+          {% elif who == 'lucas' %}
+            notify.notify_lucas
+          {% elif who == 'nerene' %}
+            notify.notify_nerene
+          {% elif who == 'parents' %}
+            notify.notify_parents
+          {% else %}
+            notify.notify_brian
+          {% endif %}
         data_template:
-          title: "{{ value1 }}"
-          message: "{{ value2 }} {{ value3 }}"
-          #data:
-          #  subtitle: "Home Assistant Notify"
+          title: "{{ title }}"
+          message: "{{ message }}"
+          data:
+            attachment:
+              url: "https://home.brianhanifin.com/local/downloads/{{ image }}"
+          #  content-type: "{{ image.split('.')|last }}"
+          #  hide-thumbnail: false
 ######################################################################################################
 #### Call "notify_ios_engine" like this:
   # action:
     # service: script.notify_ios_engine
     # data_template:
-      # value1: 'Startup: Home Assistant is Up and Running!'
-      # value2: "{{ trigger.to_state.state }}"
-      # value3: ''
+      # title: 'Startup: Home Assistant is Up and Running!'
+      # message: "{{ trigger.to_state.state }}"
       # who: "brian | nerene | lucas | kyle | family | parents"
+      # image: "camera_image.jpg"
 ######################################################################################################
