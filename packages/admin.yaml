@@ -4,22 +4,22 @@ homeassistant:
       icon: mdi:restart
     script.reload_automations:
       icon: mdi:restart
+    script.reload_core:
+      icon: mdi:restart
     script.reload_groups:
       icon: mdi:restart
-    script.reload_hass:
       icon: mdi:restart
     script.reload_scripts:
       icon: mdi:restart
-    script.restart:
+    script.restart_hass:
       icon: mdi:restart
+    script.restart_hass_playground:
 
 ################################################
 ## Shell Commands
 ################################################
 shell_command:
   reboot_server: reboot
-  restart_hass: 'curl http://10.0.0.56:8126/container/homeassistant/restart'
-  restart_hass_playground: 'curl http://10.0.0.56:8126/container/playground/restart'
 
 ################################################
 ## Script
@@ -45,22 +45,21 @@ script:
     sequence:
       - service: group.reload
 
-  reload_hass:
-    alias: Reload Home Assistant
-    sequence:
-      #- service: homeassistant.restart
-      - service: shell_command.restart_hass
-
   reload_scripts:
     alias: Reload Scripts
     sequence:
       - service: script.reload
 
-  restart:
+  restart_hass:
     alias: Restart Home Assistant
     sequence:
       #- service: homeassistant.restart
       - service: shell_command.restart_hass
+
+  restart_hass_playground:
+    alias: Restart HA Playground
+    sequence:
+      - service: shell_command.restart_hass_playground
 
   wink_new_devices:
     alias: "Wink: Scan for New Devices"

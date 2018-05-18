@@ -1,0 +1,47 @@
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: mqtt
+    name: NodeRED Status
+    state_topic: "checkIn/nodeRED"
+    # After 5 minutes this status is set to "unknown".
+    expire_after: 300
+
+# NodeRED toggles this every minute to force the MQTT topic to be updated (I think).
+input_boolean:
+  nodered:
+    name: "NodeRed Watchdog Dummy"
+    initial: on
+
+################################################
+## Shell Commands
+################################################
+shell_command:
+  # Use HA-Dockerman to restart the service.
+  restart_nodered: 'curl http://10.0.0.56:8126/container/nodered/restart'
+
+################################################
+## Scripts
+################################################
+script:
+  restart_nodered:
+    alias: Reload NodeRed
+    sequence:
+      - service: shell_command.restart_nodered
+
+################################################
+## Automation
+################################################
+automation:
+  - alias: NodeRed Watchdog
+    trigger:
+      - platform: state
+      #  entity_id: sensor.nodered_status
+      #  from: "ok"
+      #  to: "unknown"
+        entity_id: switch.nodered_service
+        to: "off"
+    action:
+      - service: script.turn_on
+        entity_id: script.restart_nodered

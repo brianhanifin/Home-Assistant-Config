@@ -2,24 +2,24 @@ automation:
   ##############################################
   ##  Door or Window Open Announcements
   ##############################################
-  - alias: Announce Open Doors and Windows
-    trigger:
-      - platform: state
-        entity_id:
-          - binary_sensor.glowforge_window
-          - binary_sensor.garage_entry_door
-        from: 'off'
-    action:
-      - service: script.notify_ios_engine
-        data_template:
-          who: 'parents'
-          message: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.alert_mode
-      - service: script.speech_engine
-        data_template:
-          call_window_check: 1
-          call_inside_weather: 1
+  #- alias: Announce Open Doors and Windows
+  #  trigger:
+  #    - platform: state
+  #      entity_id:
+  #        - binary_sensor.glowforge_window
+  #        - binary_sensor.garage_entry_door
+  #      from: 'off'
+  #  action:
+  #    - service: script.notify_ios_engine
+  #      data_template:
+  #        who: 'parents'
+  #        message: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
+  #    - service: input_boolean.turn_on
+  #      entity_id: input_boolean.alert_mode
+  #    - service: script.speech_engine
+  #      data_template:
+  #        call_window_check: 1
+  #        call_inside_weather: 1
 
   ############################################
   ## Warn us if the garage door is still open

@@ -8,8 +8,8 @@ panel_admin:
     - group.panel_admin_illumination
     - group.panel_admin_presence
     #- sensor.hline
-    - group.panel_admin_docker
-    - group.panel_docker_status
+    - group.panel_admin_docker_links
+    - group.panel_admin_docker_services
     - group.panel_admin_projects
     - group.panel_admin_resources
   name: Admin Panel
@@ -18,7 +18,7 @@ panel_admin:
   view: no
 
 
-panel_admin_docker:
+panel_admin_docker_links:
   entities:
     - weblink.influxdb
     - weblink.hadockermon
@@ -29,8 +29,28 @@ panel_admin_docker:
     - weblink.organizr
     - weblink.portainerio
     - weblink.unifi
-  name: Docker
+  name: Docker Links
   icon: mdi:wrench
+  control: hidden
+  view: no
+
+panel_admin_docker_services:
+  entities:
+    - switch.airconnect_service
+    - switch.appdaemon_service
+    - switch.dockermon_service
+    - switch.grafana_service
+    - switch.home_assistant_service
+    - switch.ha_playground_service
+    - switch.influxdb_service
+    - switch.mosquitto_service
+    - switch.nginx_service
+    - switch.nodered_service
+    - switch.portainerio_service
+    - switch.unifi_service
+    - switch.watch_tower_service
+  name: Docker Services
+  icon: mdi:docker
   control: hidden
   view: no
 
@@ -66,8 +86,8 @@ panel_admin_manage:
     - script.reboot_server
     - script.restart_hass
     - script.restart_hass_playground
-    - script.reload_groups
-    - script.reload_hass
+    #- script.reload_groups
+    - script.restart_nodered
     - script.wink_new_devices
     - input_select.log_level
     - sensor.ha_version
