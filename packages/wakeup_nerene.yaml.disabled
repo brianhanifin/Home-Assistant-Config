@@ -186,13 +186,12 @@ script:
       entity_id: input_boolean.bedroom_light_sync_enabled
     - service: python_script.lightfade
       data_template:
-        # Go from 10%-100% up 2% every 13 seconds 
-        # to go to full brightness in about 10 minutes.
+        # Go from 10%-100% incrementing 1% every 10 seconds for 15 minutes.
         entity_id: "{{ states('input_select.nerene_alarm_clock_light') }}"
-        delay_in_sec: 13
+        delay_in_sec: 10
         start_level_pct: 10
         end_level_pct: 100
-        step_in_level_pct: 2
+        step_in_level_pct: 1
 
 ################################################
 ## Automations
