@@ -1,0 +1,544 @@
+[
+  {
+      "id": "e9c442c2.624cd",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Mosquitto",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.mosquitto_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 67.75543212890625,
+      "y": 275.96465492248535,
+      "wires": [
+          [
+              "444ddb44.e2c694"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "40d3ced5.400138",
+      "type": "debug",
+      "z": "377cbc4e.5de37c",
+      "name": "",
+      "active": true,
+      "tosidebar": true,
+      "console": true,
+      "tostatus": false,
+      "complete": "true",
+      "x": 443.7581787109375,
+      "y": 275.8260746002197,
+      "wires": []
+  },
+  {
+      "id": "444ddb44.e2c694",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/mosquitto/restart",
+      "tls": "",
+      "x": 239.76358032226562,
+      "y": 276.10051918029785,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "bd55b5c3.b57f08",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Air Connect",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.airconnect_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 78.1358642578125,
+      "y": 22.130434036254883,
+      "wires": [
+          [
+              "ed5a4056.3b693"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "ed5a4056.3b693",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/airconnect/restart",
+      "tls": "",
+      "x": 244.1358642578125,
+      "y": 21.130434036254883,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "6b841365.a2661c",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Appdaemon",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.appdaemon_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 77,
+      "y": 75.13043403625488,
+      "wires": [
+          [
+              "df9cae2c.15dc48"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "df9cae2c.15dc48",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/appdaemon/restart",
+      "tls": "",
+      "x": 244.1358642578125,
+      "y": 75.13043403625488,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "b17e4bb8.f6931",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/hass_playground/restart",
+      "tls": "",
+      "x": 243.1358642578125,
+      "y": 174.13042640686035,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "3849dcf3.aa82a4",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Playground",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.ha_playground_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 77.1358642578125,
+      "y": 176.13042640686035,
+      "wires": [
+          [
+              "b17e4bb8.f6931"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "de6b35d9.fa24c8",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "InfluxDB",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.influxdb_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 67,
+      "y": 224.13042640686035,
+      "wires": [
+          [
+              "2926a138.f97af6"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "2926a138.f97af6",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/influxdb/restart",
+      "tls": "",
+      "x": 241.1358642578125,
+      "y": 222.13042640686035,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "246ea1e4.4b959e",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Nginx",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.nginx_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 57.1358642578125,
+      "y": 324.1304340362549,
+      "wires": [
+          [
+              "1d0d45f3.888442"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "1d0d45f3.888442",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/nginx/restart",
+      "tls": "",
+      "x": 240.1358642578125,
+      "y": 325.1304340362549,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "cad70a2e.92a528",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Portainer.io",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.portainerio_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 75.1358642578125,
+      "y": 422.1304340362549,
+      "wires": [
+          [
+              "2705d99c.877c0e"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "2705d99c.877c0e",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/portainer/restart",
+      "tls": "",
+      "x": 240.1358642578125,
+      "y": 421.1304340362549,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "85d00719.47b3f",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Unifi",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.unifi_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 55,
+      "y": 472.1304340362549,
+      "wires": [
+          [
+              "6cb3353b.ac1cac"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "6cb3353b.ac1cac",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/unifi/restart",
+      "tls": "",
+      "x": 239.1358642578125,
+      "y": 469.1304340362549,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "216a3dbd.1c5082",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Watch Tower",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.watch_tower_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 75,
+      "y": 523.1304340362549,
+      "wires": [
+          [
+              "11d63bf5.e6ff9c"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "11d63bf5.e6ff9c",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/watchtower/restart",
+      "tls": "",
+      "x": 237.1358642578125,
+      "y": 522.1304340362549,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "13039f2e.843929",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Grafana",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.grafana_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 67,
+      "y": 126.13043212890625,
+      "wires": [
+          [
+              "43ddea18.3fbe44"
+          ],
+          []
+      ]
+  },
+  {
+      "id": "86b3b65d.2f21",
+      "type": "trigger-state",
+      "z": "377cbc4e.5de37c",
+      "name": "Organizr",
+      "server": "5e6f7bad.ab2234",
+      "entityid": "switch.organizr_service",
+      "debugenabled": false,
+      "constraints": [
+          {
+              "id": "dy2tx821ecc",
+              "targetType": "this_entity",
+              "targetValue": "",
+              "propertyType": "current_state",
+              "propertyValue": "new_state.state",
+              "comparatorType": "is",
+              "comparatorValueDatatype": "str",
+              "comparatorValue": "off"
+          }
+      ],
+      "constraintsmustmatch": "all",
+      "outputs": 2,
+      "customoutputs": [],
+      "x": 68,
+      "y": 373.13043212890625,
+      "wires": [
+          [],
+          []
+      ]
+  },
+  {
+      "id": "43ddea18.3fbe44",
+      "type": "http request",
+      "z": "377cbc4e.5de37c",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/grafana/restart",
+      "tls": "",
+      "x": 241.1358642578125,
+      "y": 126.13043212890625,
+      "wires": [
+          [
+              "40d3ced5.400138"
+          ]
+      ]
+  },
+  {
+      "id": "5e6f7bad.ab2234",
+      "type": "server",
+      "z": "",
+      "name": "Home Assistant",
+      "url": "http://10.0.0.56:8123",
+      "pass": "password"
+  }
+]

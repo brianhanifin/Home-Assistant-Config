@@ -1,0 +1,141 @@
+[
+  {
+      "id": "33432932.b799de",
+      "type": "light-scheduler",
+      "z": "574ccda3.dc3ca4",
+      "settings": "db9c78c1.f34928",
+      "events": "[]",
+      "topic": "",
+      "name": "Node-Red Watchdog Check-in",
+      "onPayload": "ok",
+      "onPayloadType": "str",
+      "offPayload": "ok",
+      "offPayloadType": "str",
+      "onlyWhenDark": true,
+      "sunElevationThreshold": 6,
+      "sunShowElevationInStatus": false,
+      "outputfreq": "output.minutely",
+      "x": 153.75814819335938,
+      "y": 57.6875,
+      "wires": [
+          [
+              "9dffd68c.59cb18"
+          ]
+      ]
+  },
+  {
+      "id": "9dffd68c.59cb18",
+      "type": "api-call-service",
+      "z": "574ccda3.dc3ca4",
+      "name": "Trigger Watchdog",
+      "server": "5e6f7bad.ab2234",
+      "service_domain": "input_boolean",
+      "service": "toggle",
+      "data": "{ \"entity_id\": \"input_boolean.nodered\" }",
+      "mergecontext": "",
+      "x": 493.7581787109375,
+      "y": 57.89945983886719,
+      "wires": [
+          []
+      ],
+      "icon": "node-red-contrib-home-assistant/trigger.png"
+  },
+  {
+      "id": "c4717502.bd4f8",
+      "type": "server-state-changed",
+      "z": "574ccda3.dc3ca4",
+      "name": "Node-Red Status",
+      "server": "5e6f7bad.ab2234",
+      "entityidfilter": "sensor.nodered_status",
+      "entityidfiltertype": "exact",
+      "haltifstate": "",
+      "x": 102.7608642578125,
+      "y": 107.42120742797852,
+      "wires": [
+          [
+              "a395b85b.70e2b8"
+          ]
+      ]
+  },
+  {
+      "id": "a395b85b.70e2b8",
+      "type": "change",
+      "z": "574ccda3.dc3ca4",
+      "name": "ok",
+      "rules": [
+          {
+              "t": "set",
+              "p": "payload",
+              "pt": "msg",
+              "to": "ok",
+              "tot": "str"
+          }
+      ],
+      "action": "",
+      "property": "",
+      "from": "",
+      "to": "",
+      "reg": false,
+      "x": 294.7608642578125,
+      "y": 106.68478775024414,
+      "wires": [
+          [
+              "fbe5a1d6.d9fa38"
+          ]
+      ]
+  },
+  {
+      "id": "fbe5a1d6.d9fa38",
+      "type": "mqtt out",
+      "z": "574ccda3.dc3ca4",
+      "name": "",
+      "topic": "checkIn/nodeRED",
+      "qos": "0",
+      "retain": "false",
+      "broker": "f75b718a.6b444",
+      "x": 492.76629638671875,
+      "y": 106.5000114440918,
+      "wires": []
+  },
+  {
+      "id": "db9c78c1.f34928",
+      "type": "light-scheduler-settings",
+      "z": "",
+      "name": "Home",
+      "latitude": "32.8541050",
+      "longitude": "-117.0029700"
+  },
+  {
+      "id": "5e6f7bad.ab2234",
+      "type": "server",
+      "z": "",
+      "name": "Home Assistant",
+      "url": "http://10.0.0.56:8123",
+      "pass": "password"
+  },
+  {
+      "id": "f75b718a.6b444",
+      "type": "mqtt-broker",
+      "z": "",
+      "name": "Mosquitto",
+      "broker": "http://10.0.0.56:1883",
+      "port": "1883",
+      "clientid": "",
+      "usetls": false,
+      "compatmode": true,
+      "keepalive": "60",
+      "cleansession": true,
+      "birthTopic": "",
+      "birthQos": "0",
+      "birthRetain": "false",
+      "birthPayload": "",
+      "closeTopic": "",
+      "closeQos": "0",
+      "closeRetain": "false",
+      "closePayload": "",
+      "willTopic": "",
+      "willQos": "0",
+      "willRetain": "false",
+      "willPayload": ""
+  }
+]

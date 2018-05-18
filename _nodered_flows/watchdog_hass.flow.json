@@ -1,0 +1,94 @@
+[
+  {
+      "id": "52fec25b.7849f4",
+      "type": "http request",
+      "z": "574ccda3.dc3ca4",
+      "name": "Home Assistant",
+      "method": "GET",
+      "ret": "obj",
+      "url": "http://10.0.0.56:8126/container/home-assistant",
+      "tls": "",
+      "x": 239.75543212890625,
+      "y": 215.10327529907227,
+      "wires": [
+          [
+              "828e0f11.1c1158",
+              "ea7f49d2.1482c8"
+          ]
+      ]
+  },
+  {
+      "id": "9febb3bd.fdfe18",
+      "type": "inject",
+      "z": "574ccda3.dc3ca4",
+      "name": "15s",
+      "topic": "",
+      "payload": "",
+      "payloadType": "date",
+      "repeat": "15",
+      "crontab": "",
+      "once": false,
+      "onceDelay": 0.1,
+      "x": 91.75814819335938,
+      "y": 214.97555923461914,
+      "wires": [
+          [
+              "52fec25b.7849f4"
+          ]
+      ]
+  },
+  {
+      "id": "828e0f11.1c1158",
+      "type": "switch",
+      "z": "574ccda3.dc3ca4",
+      "name": "!=\"running\"",
+      "property": "payload.state",
+      "propertyType": "msg",
+      "rules": [
+          {
+              "t": "neq",
+              "v": "running",
+              "vt": "str"
+          }
+      ],
+      "checkall": "true",
+      "repair": false,
+      "outputs": 1,
+      "x": 415.7581787109375,
+      "y": 193.55978775024414,
+      "wires": [
+          [
+              "5b897be8.f13224"
+          ]
+      ]
+  },
+  {
+      "id": "5b897be8.f13224",
+      "type": "http request",
+      "z": "574ccda3.dc3ca4",
+      "name": "Restart",
+      "method": "GET",
+      "ret": "txt",
+      "url": "http://10.0.0.56:8126/container/home-assistant/restart",
+      "tls": "",
+      "x": 565.1358642578125,
+      "y": 193.43478775024414,
+      "wires": [
+          []
+      ]
+  },
+  {
+      "id": "ea7f49d2.1482c8",
+      "type": "debug",
+      "z": "574ccda3.dc3ca4",
+      "name": "",
+      "active": false,
+      "tosidebar": true,
+      "console": true,
+      "tostatus": false,
+      "complete": "payload.state",
+      "x": 444.1358642578125,
+      "y": 234.43478775024414,
+      "wires": []
+  }
+]
