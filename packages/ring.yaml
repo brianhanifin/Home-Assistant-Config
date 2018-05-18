@@ -73,6 +73,7 @@ automation:
       - platform: state
         entity_id:
           - binary_sensor.ring_front_door_ding
+          - binary_sensor.ring_front_door_motion
           - input_text.fake_doorbell
         from: "off"
         to: "on"
@@ -84,12 +85,12 @@ automation:
       - service: script.notify_ios_engine
         data_template:
           title: "Front Door"
-          message: "Someone is at the door"
+          message: "Someone is at the front door."
           image: "snapshot_front_doorbell.jpg"
       - service: logbook.log
         data:
-          name: "Ring Doorbell:"
-          message: "Someone Pressed the Doorbell."
+          name: "Ring Camera:"
+          message: "someone is at the front door."
 #      - service: xiaomi_aqara.play_ringtone
 #        data:
 #          gw_mac: !secret xiaomi_mac1
