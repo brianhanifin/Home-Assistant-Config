@@ -1,0 +1,162 @@
+################################################
+## Automation
+################################################
+automation:
+  ##############################################
+  ## Bed Room Light Automations
+  ##############################################
+  ## Turn the lamp off when the main switch is turned off.
+  - alias: Bed Room Light Off
+    trigger:
+      - platform: state
+        entity_id: light.bedroom_light
+        from: 'on'
+        to: 'off'
+    action:
+      - service: light.turn_off
+        data:
+          entity_id: light.brians_light
+  
+  - alias: Bed Room Light lt 75pct
+    trigger:
+      - platform: numeric_state
+        entity_id: light.bedroom_light
+        value_template: '{{ state.attributes.brightness }}'
+        below: '190' # slightly less than 75%
+    action:
+      - service: light.turn_off
+        entity_id: light.brians_light
+
+  - alias: Bed Room Light gte 75pct
+    trigger:
+      - platform: numeric_state
+        entity_id: light.bedroom_light
+        value_template: '{{ state.attributes.brightness }}'
+        above: '190'
+        # Delay to avoid premature turn on flash.
+        for:
+          seconds: 2
+    condition:
+      - condition: state
+        entity_id: input_boolean.bedroom_light_sync_enabled
+        state: 'on'
+    action:
+      - service: light.turn_on
+        entity_id: light.brians_light
+ 
+  # This should only stay off long enough for the bedroom light to fade to 100%.
+  - alias: Bed Room Light Sync is Switched Off
+    trigger:
+      platform: state
+      entity_id: input_boolean.bedroom_light_sync_enabled
+      from: 'on'
+      to: 'off'
+      for:
+        minutes: 15
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.bedroom_light_sync_enabled
+
+  ##############################################
+  ## Family Room Light Automations
+  ##############################################
+  ## Turn the table lamp off when the main switch is turned off.
+  - alias: Family Room Light Off
+    trigger:
+      - platform: state
+        entity_id: light.family_room_light
+        from: 'on'
+        to: 'off'
+    action:
+      - service: light.turn_off
+        entity_id: light.family_room_table_lamp
+
+  - alias: Family Room Light lt 75pct
+    trigger:
+      - platform: numeric_state
+        entity_id: light.family_room_light
+        value_template: '{{ state.attributes.brightness }}'
+        below: '190' # slightly less than 75%
+    action:
+      - service: light.turn_off
+        entity_id: light.family_room_table_lamp
+
+  - alias: Family Room Light gte 75pct
+    trigger:
+      - platform: numeric_state
+        entity_id: light.family_room_light
+        value_template: '{{ state.attributes.brightness }}'
+        above: '190'
+        # Delay to avoid premature turn on flash.
+        for:
+          seconds: 1
+    action:
+      - service: light.turn_on
+        entity_id: light.family_room_table_lamp
+
+  ##############################################
+  ## Kitchen Light Automations
+  ##############################################
+  - alias: Kitchen Light(s) Turn On
+    trigger:
+      - platform: state
+        entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
+        to: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.kitchen_sink_light
+
+  - alias: Kitchen Light(s) Turn Off
+    trigger:
+      - platform: state
+        entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
+        to: "off"
+    action:
+      - service: light.turn_off
+        entity_id: light.kitchen_sink_light
+
+  ##############################################
+  ## Living Room Light Automations
+  ##############################################
+  - alias: Living Room Light Turns Off
+    trigger:
+      - platform: state
+        entity_id: light.living_room_light
+        from: 'on'
+        to: 'off'
+    action:
+      - service: light.turn_off
+        entity_id: light.living_room_corner_lamp
+
+  - alias: Living Room Light lt 75pct
+    trigger:
+      - platform: numeric_state
+        entity_id: light.living_room_light
+        value_template: '{{ state.attributes.brightness }}'
+        below: '190'
+    action:
+      - service: light.turn_off
+        entity_id: light.living_room_corner_lamp
+      #- service: input_number.set_value
+      #  data:
+      #    entity_id: input_number.livingroom_dimmer
+      #    value_template: '{{ state.light.living_room_light.attributes.brightness_pct }}'
+
+  - alias: Living Room Light gte 75pct
+    trigger:
+      - platform: numeric_state
+        entity_id: light.living_room_light
+        value_template: '{{ state.attributes.brightness }}'
+        above: '190'
+        # Delay to avoid premature turn on flash.
+        for:
+          seconds: 1
+    action:
+      #- service: input_number.set_value
+      #  data:
+      #    entity_id: input_number.livingroom_corner_dimmer
+      #    value: 50
+      - service: light.turn_on
+        data:
+          brightness_pct: '50'
+          entity_id: light.living_room_corner_lamp

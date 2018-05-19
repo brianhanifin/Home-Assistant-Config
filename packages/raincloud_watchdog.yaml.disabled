@@ -1,0 +1,75 @@
+################################################
+## Script
+################################################
+script:
+  raincloud_offline_notify:
+    alias: Raincloud Offline Notification
+    sequence:
+      - service: logbook.log
+        data:
+          name: "Raincloud Offline:"
+          message: "If this doesn't resolve itself in a few mintues, send a notification."
+
+      #- service: notify.brian
+      #  data:
+      #    title: "Raincloud Offline"
+      #    message: "Raincloud has been offline for 5 minutes as of {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+
+      - service: script.notify_ios_engine
+        data_template:
+          title: "Raincloud: Offline"
+          message: "Attempting to restart the Raincloud Base Station. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          who: "brian"
+
+      - service: script.notify_web_engine
+        data_template:
+          title: "Raincloud: Offline"
+          message: "Attempting to restart the Raincloud Base Station. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+ 
+  raincloud_restart:
+    alias: Restart Raincloud
+    sequence:
+      - service: logbook.log
+        data:
+          name: "Raincloud Restart:"
+          message: "Powering Raincloud Base Station off then on again."
+
+      - service: switch.turn_off
+        entity_id: switch.raincloud
+
+      # Wait a short time before restarting the Raincloud Base Station.
+      - delay: 00:00:30
+
+      - service: switch.turn_on
+        entity_id: switch.raincloud
+
+      - service: switch.turn_on
+        entity_id: script.raincloud_watchdog
+
+  raincloud_watchdog:
+    alias: Raincloud Watchdog
+    sequence:
+      # Wait 5 minutes and test again.
+      - delay: 00:05:00
+
+      - condition: state
+        entity_id: binary_sensor.aquatimer_control_unit_status
+        state: 'off'
+
+      #- service: script.turn_on
+      #  entity_id: script.raincloud_offline_notify
+      - service: script.turn_on
+        entity_id: script.raincloud_restart
+
+################################################
+## Automation
+################################################
+#automation:
+#  - alias: Raincloud Watchdog
+#    trigger:
+#      - platform: state
+#        entity_id: binary_sensor.aquatimer_control_unit_status
+#        from: 'on'
+#    action:
+#      - service: script.turn_on
+#        entity_id: script.raincloud_watchdog

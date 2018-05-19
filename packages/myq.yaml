@@ -3,6 +3,7 @@ homeassistant:
     binary_sensor.garage_state:
       device_class: garage_door
     cover.garage_door:
+      device_class: garage
       friendly_name: "Garage Door"
 
 ################################################
@@ -22,7 +23,7 @@ binary_sensor:
   - platform: template
     sensors:
       garage_door:
-        value_template: "{{ is_state('cover.garage_door', 'open') }}"
+        value_template: "{{ not is_state('cover.garage_door', 'closed') }}"
         device_class: garage_door
         friendly_name: Garage Door
 
