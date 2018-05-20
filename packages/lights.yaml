@@ -45,39 +45,6 @@ input_boolean:
     initial: on
 
 ################################################
-## Logical Groups
-################################################
-group:
-  # excluding night lights (eg. Kid's Bathroom & Porch)
-  interior_lights:
-    entities:
-      - light.bedroom_light
-      - light.brians_light
-      - light.entry_light
-      - light.dining_room_light
-      - light.family_room_light
-      - light.family_room_table_lamp
-      - light.kitchen_sink_light
-      - light.living_room_light
-      - light.living_room_corner_lamp
-      - light.play_room_light
-      - light.computer_desk_light
-    name: Interior Lights
-    icon: mdi:lightbulb
-    control: hidden
-    view: no
-
-  interior_switches:
-    entities:
-      - switch.entry_step_light
-      - switch.kitchen_prep_light
-      - switch.kitchen_stove_light
-    name: Interior Switches
-    icon: mdi:light-switch
-    control: hidden
-    view: no
-
-################################################
 ## Sensors
 ################################################
 sensor:
@@ -89,44 +56,46 @@ sensor:
             {% set comma = joiner(', ') -%}
             {%- for group in states.light|groupby('state') -%}
               {%- for entity in group.list -%}
-                {%- if entity.state == 'on' and 
-                    entity.entity_id.split('.')[0]|lower == 'light' and 
-                    entity.entity_id|lower != 'light.boys_bathroom_nightlight' and 
-                    entity.entity_id|lower != 'light.entry' and 
-                    entity.entity_id|lower != 'light.hue' and 
-                    entity.entity_id|lower != 'light.porch_light' and 
-                    entity.entity_id|lower != 'light.porch_light_color'  -%}
-                  {% if not loop.first %}{{ comma() }}{% endif %}
+                {%- if  entity.state == 'on'
+                    and entity.entity_id|lower != 'light.boys_bathroom_nightlight'
+                    and entity.entity_id|lower != 'light.entry' 
+                    and entity.entity_id|lower != 'light.hue'
+                    and entity.entity_id|lower != 'light.porch_light'
+                    and entity.entity_id|lower != 'light.porch_light_color'                    and entity.entity_id|lower != 'light.garage_entry_light'  -%}
+                  {%- if not loop.first %}{{ comma() }}{% endif -%}
+                  {{ entity.entity_id }}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endfor -%}
+            {%- for group in states.switch|groupby('state') -%}
+              {%- for entity in group.list -%}
+                {%- if  entity.state == 'on'
+                    and entity.entity_id.split('_')|last == 'light' -%}
+                  {%- if not loop.first %}{{ comma() }}{% endif -%}
                   {{ entity.entity_id }}
                 {%- endif -%}
               {%- endfor -%}
             {%- endfor -%}
           {%- endmacro %}
-          {{ get_lights_on() }}
+          {{ get_lights_on()|trim }}
 
   - platform: template
     sensors:
-      lights_on_friendly:
+      light_check:
         value_template: >
-          {% macro get_lights_on_friendly() -%}
-            {% set comma = joiner(', ') -%}
-            {%- for group in states.light|groupby('state') -%}
-              {%- for entity in group.list -%}
-                {%- if entity.state == 'on' and 
-                    entity.entity_id.split('.')[0]|lower == 'light' and 
-                    entity.entity_id|lower != 'light.boys_bathroom_nightlight' and 
-                    entity.entity_id|lower != 'light.entry' and 
-                    entity.entity_id|lower != 'light.hue' and 
-                    entity.entity_id|lower != 'light.porch_light' and 
-                    entity.entity_id|lower != 'light.porch_light_color'  -%}
-                  {{ ' and' if loop.last and not loop.first else comma() }}
-                  {{ entity.entity_id|replace('light.','')|replace('_',' ')|title }}
-                {%- endif -%}
-              {%- endfor -%}
-            {%- endfor -%}
-          {%- endmacro %}
-          {{ get_lights_on_friendly() }}
-          
+          {%- macro light_check() -%}
+            {%- set lights_on_count = states.sensor.lights_on.state.split(', ')|length -%}
+            {%- if lights_on_count > 0 -%}
+              {%- set lights_on_friendly = states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('_',' ')|trim|title -%}
+              {%- if lights_on_count == 1 -%}
+                The {{ lights_on_friendly }} light is on.
+              {%- else -%}
+                There are {{ lights_on_count }} lights on right now.
+                The {{ lights_on_friendly }} are on.
+              {%- endif -%}
+            {%- endif -%}
+          {%- endmacro -%}
+
 
 ################################################
 ## Lights

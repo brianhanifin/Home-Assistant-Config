@@ -111,15 +111,31 @@ script:
             {%- endmacro -%}
 
             {%- macro light_check() -%}
-              {% if states.group.all_lights.state != 'off' -%}
-                There are
-                {%- set lights_on_count = sensor.lights_on_friendly|length + 1 -%}
+              {%- set lights_on_count = states.sensor.lights_on.state.split(', ')|length -%}
+              {%- if lights_on_count > 0 -%}
+                {%- set lights_on_friendly = states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('_',' ')|trim|title -%}
                 {%- if lights_on_count == 1 -%}
-                  The {{ sensor.lights_on_friendly }} is the only light on right now.
+                  The {{ lights_on_friendly }} light is on.
                 {%- else -%}
                   There are {{ lights_on_count }} lights on right now.
-                  The {{ sensor.lights_on_friendly }} are on.
+                  The {{ lights_on_friendly }} are on.
                 {%- endif -%}
+              {%- endif -%}
+            {%- endmacro -%}
+
+            {%- macro window_check() -%}
+              {% if states.group.window_sensors.state != 'off' -%}
+                {% set comma = joiner(', ') %}
+                The
+                {% for state in states.binary_sensor if state.state == 'on' and state.attributes.device_class == 'opening' -%}
+                {%- endfor %}
+                {% for group in states.binary_sensor|groupby('state') -%}
+                  {%- for entity in group.list  if entity.state == 'on' and entity.attributes.device_class == 'opening'  -%}
+                    {{ ' and' if loop.last and not loop.first else comma() }}
+                    {{ entity.attributes.friendly_name }}
+                  {%- endfor -%}
+                {% endfor %}
+                 need to be closed.
               {%- endif -%}
             {%- endmacro -%}
 
