@@ -102,6 +102,12 @@ script:
   #        title: "{{ title }}"
   #        message: "{{ message }}"
 
+  debug:
+    sequence:
+      - service: persistent_notification.create
+        data_template:
+          text: "{{ message }}"
+
   notify_web_engine:
     sequence:
       - service: persistent_notification.create

@@ -1,0 +1,70 @@
+
+################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: mqtt
+    name: "Wakeup Brian"
+    state_topic: "overrides/wakeup/brian"
+    payload_on: "on"
+    payload_off: "off"
+    availability_topic: "overrides/wakeup/brian/availability"
+    payload_available: "online"
+    payload_not_available: "offline"
+    qos: 0
+    value_template: '{{ value.x }}'
+
+  - platform: mqtt
+    name: "Wakeup Nerene"
+    state_topic: "overrides/wakeup/nerene"
+    payload_on: "on"
+    payload_off: "off"
+    availability_topic: "overrides/wakeup/brian/availability"
+    payload_available: "online"
+    payload_not_available: "offline"
+    qos: 0
+    value_template: '{{ value.x }}'
+
+################################################
+## Switches
+################################################
+switch:
+  - platform: template
+    switches:
+      wakeup_brian:
+        friendly_name: "Wakeup Brian"
+        value_template: "{{ binary_sensor.wakeup_brian }}"
+        turn_on:
+          - service: mqtt.publish
+            data:
+              topic: "overrides/wakeup/brian"
+              payload: "on"
+              qos: 0
+              retain: true
+        turn_off:
+          - service: mqtt.publish
+            data:
+              topic: "overrides/wakeup/brian"
+              payload: "off"
+              qos: 0
+              retain: true
+
+  - platform: template
+    switches:
+      wakeup_nerene:
+        friendly_name: "Wakeup Nerene"
+        value_template: "{{ binary_sensor.wakeup_nerene }}"
+        turn_on:
+          - service: mqtt.publish
+            data:
+              topic: "overrides/wakeup/nerene"
+              payload: "on"
+              qos: 0
+              retain: true
+        turn_off:
+          - service: mqtt.publish
+            data:
+              topic: "overrides/wakeup/nerene"
+              payload: "off"
+              qos: 0
+              retain: true

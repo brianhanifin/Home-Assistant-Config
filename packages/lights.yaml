@@ -4,8 +4,8 @@ homeassistant:
       hidden: false
     #light.entry:
     #  hidden: true
-    light.hue:
-      hidden: true
+    #light.hue:
+    #  hidden: true
     #light.entry_light:
     #  friendly_name: "Entry"
     #light.porch_light:
@@ -82,15 +82,25 @@ sensor:
     sensors:
       light_check:
         value_template: >
+          {%- macro friendly_list(list) -%}
+            {%- set temp = list|replace('_',' ')|replace(' ,',',')|replace(',',', ')|trim|title -%}
+            {%- if list.split(',')|length > 1 -%}
+              {%- set temp = temp+'^' -%}
+              {%- set lastitem = temp.split(',')|last -%}
+              {{ temp|replace(lastitem, ' and' + lastitem)|replace('^','') }}
+            {%- else -%}
+              {{ temp }}
+            {%- endif -%}
+          {%- endmacro -%}
           {%- macro light_check() -%}
-            {%- set lights_on_count = states.sensor.lights_on.state.split(', ')|length -%}
-            {%- if lights_on_count > 0 -%}
-              {%- set lights_on_friendly = states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('_',' ')|trim|title -%}
+            {%- if states.sensor.lights_on.state|length != 0 -%}
+              {%- set lights_on_count = states.sensor.lights_on.state.split(',')|length -%}
+              {%- set lights_on_friendly = friendly_list(states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('lamp','')) -%}
               {%- if lights_on_count == 1 -%}
                 The {{ lights_on_friendly }} light is on.
               {%- else -%}
                 There are {{ lights_on_count }} lights on right now.
-                The {{ lights_on_friendly }} are on.
+                The {{ lights_on_friendly }} lights are on.
               {%- endif -%}
             {%- endif -%}
           {%- endmacro -%}

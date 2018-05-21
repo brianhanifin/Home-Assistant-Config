@@ -15,6 +15,7 @@ script:
     #   call_light_check
     #   call_inside_weather
     #   call_outside_weather
+    #   call_moon
 # # Original by @CCOSTAN modified by Brian Hanifin
 # Original Repo : https://github.com/CCOSTAN/Home-AssistantConfig
 # Brian's Repo : https://github.com/BrianHanifin/Home-AssistantConfig
@@ -49,9 +50,9 @@ script:
 
             {%- macro door_check() -%}
               {% if states.sensor.doors_open.state|length > 0 %}
-                {%- set doors_open_count = states.sensor.doors_open.state.split(', ')|length -%}
+                {%- set doors_open_count = states.sensor.doors_open.state.split(',')|length -%}
                 {%- if doors_open_count > 0 -%}
-                  {%- set doors_open_friendly = states.sensor.doors_open.state|replace('binary_sensor.','')|replace('_',' ')|trim|title -%}
+                  {%- set doors_open_friendly = friendly_list(states.sensor.doors_open.state|replace('binary_sensor.','')) -%}
                   {%- if doors_open_count == 1 -%}
                     The {{ doors_open_friendly }} is open.
                   {%- else -%}
@@ -63,9 +64,14 @@ script:
             {%- endmacro -%}
 
             {%- macro friendly_list(list) -%}
-                {%- set temp = list|replace('_',' ')|replace(' ,',',')|replace(',',', ')|trim|title -%}
+              {%- set temp = list|replace('_',' ')|replace(' ,',',')|replace(',',', ')|trim|title -%}
+              {%- if list.split(',')|length > 1 -%}
+                {%- set temp = temp+'^' -%}
                 {%- set lastitem = temp.split(',')|last -%}
                 {{ temp|replace(lastitem, ' and' + lastitem)|replace('^','') }}
+              {%- else -%}
+                {{ temp }}
+              {%- endif -%}
             {%- endmacro -%}
 
             {%- macro garage_check() -%}
@@ -101,17 +107,20 @@ script:
             {%- endmacro -%}
 
             {%- macro light_check() -%}
-              {%- set lights_on_count = states.sensor.lights_on.state.split(',')|length -%}
-              {%- if lights_on_count > 0 -%}
-                {%- set lights_on_friendly = friendly_list(states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('lamp','')) -%}
-                {%- if lights_on_count == 1 -%}
-                  The {{ lights_on_friendly }} light is on.
-                {%- else -%}
-                  There are {{ lights_on_count }} lights on right now.
-                  The {{ lights_on_friendly }} are on.
+              {%- if states.sensor.lights_on.state|length != 0 -%}
+                {%- set lights_on_count = lights_on.split(',')|length -%}
+                {%- if lights_on_count != 0 -%}
+                  {%- set lights_on_friendly = friendly_list(states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('lamp','')) -%}
+                  {%- if lights_on_count == 1 -%}
+                    The {{ lights_on_friendly }} light is on.
+                  {%- else -%}
+                    There are {{ lights_on_count }} lights on right now.
+                    The {{ lights_on_friendly }} lights are on.
+                  {%- endif -%}
                 {%- endif -%}
               {%- endif -%}
             {%- endmacro -%}
+            {{ light_check() }}
 
             {%- macro moon() -%}
               {%- if states.sensor.moon.state == 'Full moon' -%}
@@ -136,9 +145,9 @@ script:
 
             {%- macro window_check() -%}
               {% if states.sensor.doors_open.state|length > 0 %}
-                {%- set windows_open_count = states.sensor.windows_open.state.split(', ')|length -%}
+                {%- set windows_open_count = states.sensor.windows_open.state.split(',')|length -%}
                 {%- if windows_open_count > 0 -%}
-                  {%- set windows_open_friendly = states.sensor.windows_open.state|replace('binary_sensor.','')|replace('_',' ')|trim|title -%}
+                  {%- set windows_open_friendly = friendly_list(states.sensor.windows_open.state|replace('binary_sensor.','')) -%}
                   {%- if windows_open_count == 1 -%}
                     The {{ windows_friendly }} is open.
                   {%- else -%}

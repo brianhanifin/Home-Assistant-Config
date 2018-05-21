@@ -138,7 +138,7 @@ automation:
         entity_id: scene.goodbye
       - service: script.turn_on
         entity_id: script.ecobee_temporary_away
- 
+
   ##############################################################################
   ###  Family Presence Detection
   ##############################################################################
@@ -160,7 +160,7 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
-      
+
       # Greet the arriving person after they open the garage entry door.
       - wait_template: "{{ states.binary_sensor.garage_door.state == 'open' }}"
         timeout: '01:00:00'
@@ -174,6 +174,7 @@ automation:
           call_window_check: 1
           call_door_check: 1
           call_light_check: 1
+          call_moon: 1
 
   - alias: Leave home
     trigger:
@@ -195,7 +196,6 @@ automation:
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.away_mode
-
 
   ##############################################################################
   ###  Known Guests Presence Detection
