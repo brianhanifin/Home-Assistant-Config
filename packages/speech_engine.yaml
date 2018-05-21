@@ -62,6 +62,12 @@ script:
               {%- endif -%}
             {%- endmacro -%}
 
+            {%- macro friendly_list(list) -%}
+                {%- set temp = list|replace('_',' ')|replace(' ,',',')|replace(',',', ')|trim|title -%}
+                {%- set lastitem = temp.split(',')|last -%}
+                {{ temp|replace(lastitem, ' and' + lastitem)|replace('^','') }}
+            {%- endmacro -%}
+
             {%- macro garage_check() -%}
               {% if states.cover.garage_door.state !='closed' -%}
                 The Garage Door needs to be closed.
@@ -83,7 +89,7 @@ script:
                 "Knock Knock. Who is There? " ~ person + " is!",
                 person ~ "! You are home!",
                 "I know a secret! " ~ person + " is home!"
-              ] | random }}
+              ]|random }}
             {%- endmacro -%}
 
             {%- macro inside_weather() -%}
@@ -95,9 +101,9 @@ script:
             {%- endmacro -%}
 
             {%- macro light_check() -%}
-              {%- set lights_on_count = states.sensor.lights_on.state.split(', ')|length -%}
+              {%- set lights_on_count = states.sensor.lights_on.state.split(',')|length -%}
               {%- if lights_on_count > 0 -%}
-                {%- set lights_on_friendly = states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('_',' ')|trim|title -%}
+                {%- set lights_on_friendly = friendly_list(states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('lamp','')) -%}
                 {%- if lights_on_count == 1 -%}
                   The {{ lights_on_friendly }} light is on.
                 {%- else -%}
@@ -174,6 +180,10 @@ script:
               {{ inside_weather() }}
             {% endif %}
 
+            {% if call_moon == 1 %}
+              {{ moon() }}
+            {% endif %}
+
             {% if call_dark_outside == 1 %}
               {{ dark_outside() }}
             {% endif %}
@@ -204,4 +214,3 @@ script:
   #    data:
   #      addon: local_audio_player
   #      input: "http://localhost:8123/local/sounds/two-tone-chime.mp3"
-

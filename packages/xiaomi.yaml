@@ -7,7 +7,7 @@ homeassistant:
       device_class: window
       hide_if_away: true
     #binary_sensor.playroom_fan_button
-    #light.family_room_night_light
+    #light.family_room_nightlight
     #sensor.xiaomi_gateway_illumination
 
 ################################################
@@ -34,7 +34,7 @@ automation:
       condition: and
       conditions:
       - condition: state
-        entity_id: light.family_room_night_light
+        entity_id: light.family_room_nightlight
         state: 'off'
       #- condition: state
       #  entity_id: input_boolean.auto_nightlight
@@ -42,7 +42,7 @@ automation:
     action:
       - service: homeassistant.turn_on
         data:
-          entity_id: light.family_room_night_light
+          entity_id: light.family_room_nightlight
           brightness: 10
           rgb_color: [255, 255, 255]
 
@@ -55,9 +55,9 @@ automation:
         above: '400'
     condition:
       condition: state
-      entity_id: light.family_room_night_light
+      entity_id: light.family_room_nightlight
       state: 'on'
     action:
       - service: homeassistant.turn_off
         data:
-          entity_id: light.family_room_night_light
+          entity_id: light.family_room_nightlight
