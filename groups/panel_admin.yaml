@@ -5,6 +5,7 @@ panel_admin:
     - group.battery_alert
     - group.panel_admin_manage
     - group.panel_admin_modes_automation
+    - group.panel_admin_fake_sensors
     - group.panel_admin_illumination
     - group.panel_admin_presence
     #- sensor.hline
@@ -51,6 +52,14 @@ panel_admin_docker_services:
     - switch.watch_tower_service
   name: Docker Services
   icon: mdi:docker
+  control: hidden
+  view: no
+
+panel_admin_fake_sensors:
+  entities:
+    - input_boolean.garage_door_fake
+  name: Fake Sensor Toggles
+  icon: mdi:toggle-switch
   control: hidden
   view: no
 

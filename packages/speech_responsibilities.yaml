@@ -1,3 +1,9 @@
+input_boolean:
+  responsibilities:
+    name: Responsibilities
+    icon: mdi:delete-sweep
+    initial: off
+
 ################################################
 ## Automations
 ################################################
@@ -11,3 +17,5 @@ automation:
       - service: script.speech_engine
         data:
           call_responsibilities: 1
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.responsibilities

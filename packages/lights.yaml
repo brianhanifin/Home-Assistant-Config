@@ -53,7 +53,6 @@ sensor:
       lights_on:
         value_template: >
           {% macro get_lights_on() -%}
-            {% set comma = joiner(', ') -%}
             {%- for group in states.light|groupby('state') -%}
               {%- for entity in group.list -%}
                 {%- if  entity.state == 'on'
@@ -61,9 +60,9 @@ sensor:
                     and entity.entity_id|lower != 'light.entry' 
                     and entity.entity_id|lower != 'light.hue'
                     and entity.entity_id|lower != 'light.porch_light'
-                    and entity.entity_id|lower != 'light.porch_light_color'                    and entity.entity_id|lower != 'light.garage_entry_light'  -%}
-                  {%- if not loop.first %}{{ comma() }}{% endif -%}
-                  {{ entity.entity_id }}
+                    and entity.entity_id|lower != 'light.porch_light_color'
+                    and entity.entity_id|lower != 'light.garage_entry_light' -%}
+                  {{ entity.entity_id }}{{ ' ' }}
                 {%- endif -%}
               {%- endfor -%}
             {%- endfor -%}
@@ -71,13 +70,12 @@ sensor:
               {%- for entity in group.list -%}
                 {%- if  entity.state == 'on'
                     and entity.entity_id.split('_')|last == 'light' -%}
-                  {%- if not loop.first %}{{ comma() }}{% endif -%}
-                  {{ entity.entity_id }}
+                  {{ entity.entity_id }}{{ ' ' }}
                 {%- endif -%}
               {%- endfor -%}
             {%- endfor -%}
           {%- endmacro %}
-          {{ get_lights_on()|trim }}
+          {{ get_lights_on()|trim|replace(' ', ',') }}
 
   - platform: template
     sensors:
@@ -86,7 +84,7 @@ sensor:
           {%- macro light_check() -%}
             {%- set lights_on_count = states.sensor.lights_on.state.split(', ')|length -%}
             {%- if lights_on_count > 0 -%}
-              {%- set lights_on_friendly = states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('_',' ')|trim|title -%}
+              {%- set lights_on_friendly = states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('_',' ')|trim|title -%}
               {%- if lights_on_count == 1 -%}
                 The {{ lights_on_friendly }} light is on.
               {%- else -%}
@@ -95,6 +93,7 @@ sensor:
               {%- endif -%}
             {%- endif -%}
           {%- endmacro -%}
+          {{ light_check() }}
 
 
 ################################################

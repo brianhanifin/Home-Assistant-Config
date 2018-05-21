@@ -2,6 +2,8 @@ homeassistant:
   customize:
     binary_sensor.garage_state:
       device_class: garage_door
+    binary_sensor.garage_state_fake:
+      device_class: garage_door
     cover.garage_door:
       device_class: garage
       friendly_name: "Garage Door"
@@ -27,46 +29,46 @@ binary_sensor:
         device_class: garage_door
         friendly_name: Garage Door
 
-input_text:
-  fake_garage_door:
+  - platform: template
+    sensors:
+      garage_door_fake:
+        value_template: "{{ is_state('input_boolean.garage_door_fake', 'on') }}"
+        device_class: garage_door
+        friendly_name: "FAKE Garage Door"
+
+input_boolean:
+  garage_door_fake:
     name: Fake Garage Door
-    initial: "closed"
+    initial: off
 
 ##############################################
 ## Automations
 ##############################################
 automation:
   ######################################################################
-  ##  Garage Status Announcements
+  ##  Garage Status Light
   ######################################################################
   - alias: 'Garage Closed'
     trigger:
       - platform: state
         entity_id:
-          - cover.garage_door
-          - input_text.fake_garage_door
-        from: 'open'
-        to: 'closed'
-        #for: '00:02:00'
+          - binary_sensor.garage_door
+          - binary_sensor.garage_door_fake
+        from: 'on'
+        to: 'off'
     action:
-      #- wait_template: "{{ is_state('binary_sensor.garage_entry_door', 'on') }}"
-      #  timeout: '00:01:00'
       - delay: 0:00:15
       - service: light.turn_off
         entity_id: light.garage_entry_light
-      - service: script.speech_engine
-        data_template:
-          DoorClosed: "The {{ trigger.to_state.name }} is now {{ trigger.to_state.state }}."
-          call_garage_check: 1
 
   - alias: 'Garage Opened'
     trigger:
       - platform: state
         entity_id:
-          - cover.garage_door 
-          - input_text.fake_garage_door
-        from: 'closed'
-        to: 'open'
+          - binary_sensor.garage_door
+          - binary_sensor.garage_door_fake
+        from: 'off'
+        to: 'on'
         #for: '00:02:30'
     action:
       - service: light.turn_on
@@ -76,56 +78,39 @@ automation:
           effect: "colorloop"
       # If after 5 minutes the garage is still open, dim the light.
       - delay: 0:05:00
-      - condition: state
-        entity_id: light.garage_entry_light
-        state: 'on'
       - service: light.turn_on
         data:
           entity_id: light.garage_entry_light
           brightness_pct: 20
           transition: 5
 
-      #- service_template: >
-      #   {% set hour=states("sensor.time").split(':')[0] | int %}
-      #   {% if hour >= 7 and hour <= 9 %} #and states.input_boolean.school_mode.state == 'on' %}
-      #      input_boolean.turn_off
-      #   {% else %}
-      #      input_boolean.turn_on
-      #   {% endif %}
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.alert_mode
- 
-      - service: script.speech_engine
-        data_template:
-          value1: "The {{ trigger.entity_id.split('.')[1]|replace('_', ' ') }} is now {{ (trigger.to_state.state)|replace('_', ' ') }}."
-          call_garage_check: 1
-
   ############################################
   ## Warn us if the garage door is still open
   ############################################
-  - alias: Garage Door Watchdog
-    trigger:
-      platform: time
-      hours: 20
-      minutes: 0
-      seconds: 0
-    condition:
-      - condition: state
-        entity_id: cover.garage_door
-        state: 'open'
-    action:
-      - service: script.notify_ios_engine
-        data_template:
-          title: 'WARNING: Garage Door'
-          message: 'Your garage door is still open! You should probably close it.'
-          who: "parents"
-      - service: script.notify_web_engine
-        data_template:
-          title: 'WARNING: Garage Door'
-          message: 'Your garage door is still open! You should close it.'
-      
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.alert_mode
-      - service: script.speech_engine
-        data_template:
-          call_garage_check: 1
+  #- alias: Garage Door Watchdog
+  #  trigger:
+  #    platform: time
+  #    hours: 20
+  #    minutes: 0
+  #    seconds: 0
+  #  condition:
+  #    - condition: state
+  #      entity_id: cover.garage_door
+  #      state: 'open'
+  #  action:
+  #    - service: script.notify_ios_engine
+  #      data_template:
+  #        title: 'WARNING: Garage Door'
+  #        message: 'Your garage door is still open! You should probably close it.'
+  #        who: "parents"
+  #
+  #    - service: script.notify_web_engine
+  #      data_template:
+  #        title: 'WARNING: Garage Door'
+  #        message: 'Your garage door is still open! You should close it.'
+  #    
+  #    - service: input_boolean.turn_on
+  #      entity_id: input_boolean.alert_mode
+  #    - service: script.speech_engine
+  #      data_template:
+  #        call_garage_check: 1

@@ -1,0 +1,207 @@
+################################################
+## Script
+################################################
+script:
+######################################################################################################
+###Script to send notifications to the ChromeCast Audios during normal hours and only when we are home! Call like this:
+  # action:
+    # service: script.speech_engine
+    # data:
+    #   call_do_not_greet:
+    #   call_dark_outside:
+    #   call_window_check:
+    #   call_garage_check:
+    #   call_responsibilities
+    #   call_light_check
+    #   call_inside_weather
+    #   call_outside_weather
+# # Original by @CCOSTAN modified by Brian Hanifin
+# Original Repo : https://github.com/CCOSTAN/Home-AssistantConfig
+# Brian's Repo : https://github.com/BrianHanifin/Home-AssistantConfig
+######################################################################################################
+  speech_engine:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'off'
+      - service: script.speech_processing
+        data_template:
+          media_player: >-
+              {% if media_player | length == 0 %}
+                {% set media_player = [
+                  'media_player.living_room_speaker'
+                ] %}
+              {% endif %}
+              {% if media_player is not string and media_player is sequence %}
+                {% set media_player = media_player|join(', ') %}
+              {% endif %}
+              {{ media_player }}
+          delay: 00:00:05
+          speech_message: >-
+            {%- macro dark_outside() -%}
+              {{ [
+                'It is about to get dark outside. I will turn on the evening lights now.',
+                'It is almost sunset. Time to turn on the entry lights. I am on it.',
+                'I will switch on the outside lights. It is getting dark outside.',
+                'Time to turn on the entry lights. I will take care of it.'
+              ]|random }}
+            {%- endmacro -%}
+
+            {%- macro door_check() -%}
+              {% if states.sensor.doors_open.state|length > 0 %}
+                {%- set doors_open_count = states.sensor.doors_open.state.split(', ')|length -%}
+                {%- if doors_open_count > 0 -%}
+                  {%- set doors_open_friendly = states.sensor.doors_open.state|replace('binary_sensor.','')|replace('_',' ')|trim|title -%}
+                  {%- if doors_open_count == 1 -%}
+                    The {{ doors_open_friendly }} is open.
+                  {%- else -%}
+                    There are {{ doors_open_count }} doors open right now.
+                    The {{ doors_open_friendly }} are open.
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endmacro -%}
+
+            {%- macro garage_check() -%}
+              {% if states.cover.garage_door.state !='closed' -%}
+                The Garage Door needs to be closed.
+              {%- endif -%}
+              {% if states.binary_sensor.garage_door_fake.state !='off' -%}
+                The Fake Garage Door needs to be closed.
+              {%- endif -%}
+            {%- endmacro -%}
+
+            {%- macro greeting_sentence(person) -%}
+              {{ [
+                "Welcome back home " ~ person,
+                "Guess who is home?" ~ person + " is!",
+                person + " is now in the house.",
+                "Welcome Home " ~ person + ".  We have missed you. Or at least Buddy and Pepper did.",
+                "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person,
+                "Life is like a song, you’re back where you belong. Welcome home " ~ person,
+                "Hey there " ~ person + " Welcome Home!",
+                "Knock Knock. Who is There? " ~ person + " is!",
+                person ~ "! You are home!",
+                "I know a secret! " ~ person + " is home!"
+              ] | random }}
+            {%- endmacro -%}
+
+            {%- macro inside_weather() -%}
+              Inside the house, it is {{ states.climate.home.attributes['current_temperature'] }} degrees with around {{ states('sensor.home_humidity') }} percent humidity.
+            {%- endmacro -%}
+
+            {%- macro outside_weather() -%}
+              Outside, it is going to be {{ states('sensor.dark_sky_minutely_summary') }}
+            {%- endmacro -%}
+
+            {%- macro light_check() -%}
+              {%- set lights_on_count = states.sensor.lights_on.state.split(', ')|length -%}
+              {%- if lights_on_count > 0 -%}
+                {%- set lights_on_friendly = states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('_',' ')|trim|title -%}
+                {%- if lights_on_count == 1 -%}
+                  The {{ lights_on_friendly }} light is on.
+                {%- else -%}
+                  There are {{ lights_on_count }} lights on right now.
+                  The {{ lights_on_friendly }} are on.
+                {%- endif -%}
+              {%- endif -%}
+            {%- endmacro -%}
+
+            {%- macro moon() -%}
+              {%- if states.sensor.moon.state == 'Full moon' -%}
+                Check out the full moon tonight!
+              {%- endif -%}
+            {%- endmacro -%}
+
+            {%- macro responsibilities() -%}
+              {% if now().strftime('%a') == 'Sun' or now().strftime('%a') == 'Tue' or now().strftime('%a') == 'Fri' %}
+                #Today is {{ now().strftime('%A') }} and {{ now().strftime('%A') }} is garbage day.
+                Please clean up the dog yard.
+              {% endif %}
+              {% if now().strftime('%a') == 'Mon' %}
+                Please take both garbage cans to the curb tonight.
+              {% endif %}
+              {% if now().strftime('%j')|int % 2 != 0 %}
+                Today is Lucas's day to do a family contribution.
+              {% else %}
+                Today is Kyle's day to do a family contribution.
+              {% endif %}
+            {%- endmacro -%}
+
+            {%- macro window_check() -%}
+              {% if states.sensor.doors_open.state|length > 0 %}
+                {%- set windows_open_count = states.sensor.windows_open.state.split(', ')|length -%}
+                {%- if windows_open_count > 0 -%}
+                  {%- set windows_open_friendly = states.sensor.windows_open.state|replace('binary_sensor.','')|replace('_',' ')|trim|title -%}
+                  {%- if windows_open_count == 1 -%}
+                    The {{ windows_friendly }} is open.
+                  {%- else -%}
+                    There are {{ windows_count }} windows open right now.
+                    The {{ windows_friendly }} are open.
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endmacro -%}
+
+
+
+            {# ********************************************* #}
+            {#  ******** Start the Speech routines ********  #}
+            {# ********************************************* #}
+            {% if call_do_not_greet != 1 %}
+              {# Midnight to 10am == morning. #}
+              {% if now().strftime('%H')|int > 0 and now().strftime('%H')|int < 10  %}
+                Good morning.
+              {# 10am to 5pm == afternoon #}
+              {% elif now().strftime('%H')|int >= 10 and now().strftime('%H')|int < 17 %}
+                Good afternoon.
+              {# 5pm - Midnight == evening #}
+              {% else %}
+                Good evening.
+              {% endif %}
+            {% endif %}
+
+            {# Called from presence.yaml #}
+            {% if personarriving is not none %}
+              {{ greeting_sentence(personarriving) }}
+            {% endif %}
+
+            {% if call_outside_weather == 1 and is_state('sun.sun', 'above_horizon') %}
+              {{ outside_weather() }}
+            {% endif %}
+
+            {% if call_inside_weather == 1 %}
+              {{ inside_weather() }}
+            {% endif %}
+
+            {% if call_dark_outside == 1 %}
+              {{ dark_outside() }}
+            {% endif %}
+
+            {% if call_garage_check == 1 or is_state('sun.sun', 'below_horizon') %}
+              {{ garage_check() }}
+            {% endif %}
+
+            {% if call_door_check == 1 or is_state('sun.sun', 'below_horizon') %}
+              {{ door_check() }}
+            {% endif %}
+
+            {% if call_window_check == 1 or is_state('sun.sun', 'below_horizon') %}
+              {{ window_check() }}
+            {% endif %}
+
+            {% if call_light_check == 1 %}
+              {{ light_check() }}
+            {% endif %}
+
+            {% if message is not none %}
+              {{ message }}
+            {% endif %}
+
+
+  #test_cast_audio:
+  #  - service: hassio.addon_stdin
+  #    data:
+  #      addon: local_audio_player
+  #      input: "http://localhost:8123/local/sounds/two-tone-chime.mp3"
+

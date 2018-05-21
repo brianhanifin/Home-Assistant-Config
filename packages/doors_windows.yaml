@@ -28,38 +28,38 @@ sensor:
       doors_open:
         value_template: >
           {% macro get_doors_open() -%}
-            {% set comma = joiner(', ') -%}
             {%- for group in states.binary_sensor|groupby('state') -%}
               {%- for entity in group.list -%}
                 {%- if entity.state == 'on' and 
                       entity.entity_id.split('.')[0]|lower == 'binary_sensor' and
                       entity.entity_id.split('_')|last == 'door' -%}
-                  {% if not loop.first %}{{ comma() }}{% endif %}
+                  {% if not loop.first %}{{ ', ' }}{% endif %}
+                  {%- if loop.last %}{{ ' and ' }}{% endif -%}
                   {{ entity.entity_id }}
                 {%- endif -%}
               {%- endfor -%}
             {%- endfor -%}
           {%- endmacro %}
-          {{ get_doors_open() }}
+          {{ get_doors_open()|trim }}
 
   - platform: template
     sensors:
       windows_open:
         value_template: > 
           {% macro get_windows_open() -%}
-            {% set comma = joiner(', ') -%}
             {%- for group in states.binary_sensor|groupby('state') -%}
               {%- for entity in group.list -%}
                 {%- if entity.state == 'on' and 
                       entity.entity_id.split('.')[0]|lower == 'binary_sensor' and
                       entity.entity_id.split('_')|last == 'window' -%}
-                  {% if not loop.first %}{{ comma() }}{% endif %}
+                  {% if not loop.first %}{{ ', ' }}{% endif %}
+                  {%- if loop.last %}{{ ' and ' }}{% endif -%}
                   {{ entity.entity_id }}
                 {%- endif -%}
               {%- endfor -%}
             {%- endfor -%}
           {%- endmacro %}
-          {{ get_windows_open() }}
+          {{ get_windows_open()|trim }}
 
 #automation:
   ##############################################

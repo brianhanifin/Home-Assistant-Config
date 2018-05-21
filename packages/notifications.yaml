@@ -115,17 +115,14 @@ script:
         entity_id: input_boolean.ios_notifications
         state: 'on'
       
-      #- service: script.notify_web_engine
-      #  data_template:
-      #    title: "test"
-      #    message: "https://home.brianhanifin.com/local/downloads/{{ image }}"
-      
       - service_template: >
           {% if who is not string %}{% set who = 'brian' %}{% endif %}
           {% if who == 'brian' %}
             notify.notify_brian
           {% elif who == 'family' %}
             notify.notify_family
+          {% elif who == 'kids' %}
+            notify.notify_kids
           {% elif who == 'kyle' %}
             notify.notify_kyle
           {% elif who == 'lucas' %}
