@@ -5,15 +5,10 @@ cloud:
   alexa:
     filter:
       include_entities:
-        - group.downstairs_lights
-        - group.entry_lights
-        - group.interior_lights
-        - group.upstairs_lights
         - light.boys_bathroom_nightlight
-        - light.bedroom_lights  
-        - light.exterior_lights
-        - light.family_room_lights
-        - light.play_room_lights
+        - switch.cpap
+        - switch.entry_step_light
+        - switch.living_room_fan
     #  include_domains:
     #    - alert
     #    - cover
@@ -22,6 +17,11 @@ cloud:
     #    - script
     #    - switch
       exclude_entities:
+        - light.hue
+        - switch.sonoff
+
+        - input_boolean.bedroom_light_sync_enabled
+        - input_boolean.brian_alarm_clock_status
         - input_boolean.brian_alarm_clock_mon
         - input_boolean.brian_alarm_clock_tue
         - input_boolean.brian_alarm_clock_wed
@@ -29,6 +29,7 @@ cloud:
         - input_boolean.brian_alarm_clock_fri
         - input_boolean.brian_alarm_clock_sat
         - input_boolean.brian_alarm_clock_sun
+        - input_boolean.nerene_alarm_clock_status
         - input_boolean.nerene_alarm_clock_mon
         - input_boolean.nerene_alarm_clock_tue
         - input_boolean.nerene_alarm_clock_wed
@@ -75,10 +76,16 @@ cloud:
         name: Living Room Apple TV
         description: Apple TV in the Living Room.
         display_categories: MEDIA_PLAYER
+      switch.cpap:
+        display_categories: SMARTPLUG
+        name: CPAP
       switch.entry_step_light:
-        name: Entry Step Light
-        description: RGB light strip to highlight tripping hazard in entry way.
         display_categories: LIGHT
+        description: RGB light strip to highlight tripping hazard in entry way.
+        name: Entry Step Light
+      switch.living_room_fan:
+        display_categories: SMARTPLUG
+        name: Living Room Fan
       group.downstairs_lights:
         display_categories: LIGHT
       group.entry_lights:

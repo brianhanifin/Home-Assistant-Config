@@ -2,8 +2,6 @@ homeassistant:
   customize:
     group.all_lights:
       hidden: false
-    #light.entry:
-    #  hidden: true
     #light.hue:
     #  hidden: true
     #light.entry_light:
@@ -11,7 +9,7 @@ homeassistant:
     #light.porch_light:
     #  friendly_name: "Porch"
     switch.entry_step_light:
-      friendly_name: "Step Warning"
+      friendly_name: "Entry Step"
 
     #input_boolean.bedroom_light_sync_enabled:
     #  persistent: true
@@ -39,11 +37,6 @@ input_boolean:
     icon: mdi:lightbulb-outline
     initial: on
 
-  time_based_dimmers_enabled:
-    name: Time Based Lights
-    icon: mdi:weather-sunset
-    initial: on
-
 ################################################
 ## Sensors
 ################################################
@@ -56,12 +49,10 @@ sensor:
             {%- for group in states.light|groupby('state') -%}
               {%- for entity in group.list -%}
                 {%- if  entity.state == 'on'
-                    and entity.entity_id|lower != 'light.boys_bathroom_nightlight'
+                    and entity.entity_id.split('_')|last != 'nightlight'
                     and entity.entity_id|lower != 'light.entry'
-                    and entity.entity_id|lower != 'light.family_room_nightlight'
                     and entity.entity_id|lower != 'light.hue'
                     and entity.entity_id|lower != 'light.porch_light'
-                    and entity.entity_id|lower != 'light.porch_light_color'
                     and entity.entity_id|lower != 'light.garage_entry_light' -%}
                   {{ entity.entity_id }}{{ ' ' }}
                 {%- endif -%}
@@ -118,3 +109,37 @@ light:
 ################################################
 switch:
   platform: insteon_local
+
+################################################
+## Automations
+################################################
+automation:
+  #- alias: Shoe Closet
+  #  trigger:
+  #    platform: state
+  #    entity_id: binary_sensor.shoe_closet_door
+  #  action:
+  #    service_template: >
+  #      light.turn_{{ trigger.to_state.state }}
+  #    data:
+  #      entity_id: light.shoe_closet_light
+  
+  - alias: "Shoe Closet: Closed"
+    trigger:
+      platform: state
+      entity_id: binary_sensor.shoe_closet_door
+      #from: "on"
+      to: "off"
+    action:
+      service: light.turn_off
+      entity_id: light.shoe_closet_light
+  
+  - alias: "Shoe Closet: Open"
+    trigger:
+      platform: state
+      entity_id: binary_sensor.shoe_closet_door
+      #from: "off"
+      to: "on"
+    action:
+      service: light.turn_on
+      entity_id: light.shoe_closet_light

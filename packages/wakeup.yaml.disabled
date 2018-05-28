@@ -1,70 +1,62 @@
-
-################################################
-## Sensors
-################################################
-binary_sensor:
-  - platform: mqtt
-    name: "Wakeup Brian"
-    state_topic: "overrides/wakeup/brian"
-    payload_on: "on"
-    payload_off: "off"
-    availability_topic: "overrides/wakeup/brian/availability"
-    payload_available: "online"
-    payload_not_available: "offline"
-    qos: 0
-    value_template: '{{ value.x }}'
-
-  - platform: mqtt
-    name: "Wakeup Nerene"
-    state_topic: "overrides/wakeup/nerene"
-    payload_on: "on"
-    payload_off: "off"
-    availability_topic: "overrides/wakeup/brian/availability"
-    payload_available: "online"
-    payload_not_available: "offline"
-    qos: 0
-    value_template: '{{ value.x }}'
+homeassistant:
+  customize:
+    input_boolean.wakeup_brian:
+      persistent: true
+    input_boolean.wakeup_nerene:
+      persistent: true
+    input_select.wakeup_nerene_light:
+      persistent: true
 
 ################################################
 ## Switches
 ################################################
-switch:
-  - platform: template
-    switches:
-      wakeup_brian:
-        friendly_name: "Wakeup Brian"
-        value_template: "{{ binary_sensor.wakeup_brian }}"
-        turn_on:
-          - service: mqtt.publish
-            data:
-              topic: "overrides/wakeup/brian"
-              payload: "on"
-              qos: 0
-              retain: true
-        turn_off:
-          - service: mqtt.publish
-            data:
-              topic: "overrides/wakeup/brian"
-              payload: "off"
-              qos: 0
-              retain: true
+input_boolean:
+  wakeup_brian:
+    name: "Wakeup Brian"
+    icon: mdi:alarm-check
 
-  - platform: template
-    switches:
-      wakeup_nerene:
-        friendly_name: "Wakeup Nerene"
-        value_template: "{{ binary_sensor.wakeup_nerene }}"
-        turn_on:
-          - service: mqtt.publish
-            data:
-              topic: "overrides/wakeup/nerene"
-              payload: "on"
-              qos: 0
-              retain: true
-        turn_off:
-          - service: mqtt.publish
-            data:
-              topic: "overrides/wakeup/nerene"
-              payload: "off"
-              qos: 0
-              retain: true
+  wakeup_nerene:
+    name: "Wakeup Nerene"
+    icon: mdi:alarm-check
+
+################################################
+## Input Selectors
+################################################
+input_select:
+  wakeup_brian_light:
+    name: Wakeup Light
+    icon: mdi:lightbulb
+    options:
+      - light.bedroom_light
+      - light.brians_light
+      - light.garage_entry_light
+
+  wakeup_nerene_light:
+    name: Wakeup Light
+    icon: mdi:lightbulb
+    options:
+      - light.bedroom_light
+      - light.brians_light
+      - light.garage_entry_light
+
+################################################
+## Group
+################################################
+group:
+  wakeup_brian:
+    name: "Brian's Wakeup"
+    icon: mdi:weather-sunset-up
+    entities:
+      - input_boolean.wakeup_brian
+      - input_select.wakeup_brian_light
+    control: hidden
+    view: no
+
+  wakeup_nerene:
+    name: "Nerene's Wakeup"
+    icon: mdi:weather-sunset-up
+    entities:
+      - input_boolean.wakeup_nerene
+      - input_select.wakeup_nerene_light
+    control: hidden
+    view: no

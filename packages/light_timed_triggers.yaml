@@ -21,7 +21,7 @@ group:
       - light.boys_bathroom_nightlight          # Boys Bathroom Nightlight
       - light.entry_light
       #- light.porch_light
-      - light.porch_light_color
+      - light.porch_color_light
     name: Morning Devices
     view: no
 
@@ -42,7 +42,7 @@ script:
     alias: Dusk
     sequence:
       - service: light.turn_on
-        entity_id: light.porch_light_color
+        entity_id: light.porch_color_light
       - service: light.turn_on
         data:
           entity_id: light.entry_light
@@ -57,7 +57,7 @@ script:
     sequence:
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light_color{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_color_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           brightness_pct: '80'
 
   dusk_plus_15hrs:
@@ -69,7 +69,7 @@ script:
           - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light_color{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_color_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           brightness_pct: '60'
 
   dusk_plus_2hrs: 
@@ -81,7 +81,7 @@ script:
           - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light_color{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_color_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           brightness_pct: '50'
 
   dusk_plus_25hrs:
@@ -93,7 +93,7 @@ script:
           - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light_color{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_color_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           brightness_pct: '40'
 
   dusk_plus_3hrs:
@@ -105,7 +105,7 @@ script:
           - light.family_room_table_lamp
       - service: light.turn_on
         data_template:
-          entity_id: light.porch_light_color{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
+          entity_id: light.porch_color_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}
           brightness_pct: '30'
 
   ############################################
@@ -156,7 +156,7 @@ automation:
   #  action:
   #    - service: script.set_light_brightness_pct_by_time
   #      data_template:
-  #        trigger_entity_id: "light.porch_light_color{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}"
+  #        trigger_entity_id: "light.porch_color_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}"
 
   - alias: Adjust brightness as lights are turned on
     trigger:
@@ -184,7 +184,7 @@ automation:
       - condition: template
         value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.hue' }}"
       - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.porch_light_color' }}"
+        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.porch_color_light' }}"
       - condition: template
         value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.living_room_corner_lamp' }}"
       - condition: template

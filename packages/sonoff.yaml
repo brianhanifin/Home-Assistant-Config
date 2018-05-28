@@ -1,0 +1,195 @@
+homeassistant:
+  customize:
+    switch.sonoff:
+      hidden: true
+
+    # sonoff01
+    binary_sensor.sonoff01:
+      friendly_name: "Connection"
+    binary_sensor.sonoff02:
+      friendly_name: "Connection"
+
+    # sonoff_pow01
+    binary_sensor.sonoff_pow01:
+      friendly_name: "Connection"
+    sensor.sonoff_pow01_energy: 
+      friendly_name: "Energy"
+    sensor.sonoff_pow01_power: 
+      friendly_name: "Power"
+    sensor.sonoff_pow01_power_mean:
+      friendly_name: "Pwr Avg"
+    sensor.sonoff_pow01_voltage: 
+      friendly_name: "Voltage"
+
+    # sonoff_pow02
+    binary_sensor.sonoff_pow02:
+      friendly_name: "Connection"
+    sensor.sonoff_pow02_energy: 
+      friendly_name: "Energy"
+    sensor.sonoff_pow02_power: 
+      friendly_name: "Power"
+    sensor.sonoff_pow01_power_mean:
+      friendly_name: "Pwr Avg"
+    sensor.sonoff_pow02_voltage: 
+      friendly_name: "Voltage"
+
+################################################
+## Sensors
+################################################
+sensor:
+  # sonoff_pow01
+  - platform: mqtt
+    name: "sonoff_pow01 energy"
+    state_topic: "tele/sonoff_pow01/SENSOR"
+    value_template: "{{ value_json.ENERGY.Today }}"
+    unit_of_measurement: "kWh"
+  - platform: mqtt
+    name: "sonoff_pow01 power"
+    state_topic: "tele/sonoff_pow01/SENSOR"
+    value_template: "{{ value_json.ENERGY.Power }}"
+    unit_of_measurement: "W"
+  - platform: mqtt
+    name: "sonoff_pow01 voltage"
+    state_topic: "tele/sonoff_pow01/SENSOR"
+    value_template: "{{ value_json.ENERGY.Voltage }}"
+    unit_of_measurement: "V"
+
+  # sonoff_pow02
+  - platform: mqtt
+    name: "sonoff_pow02 energy"
+    state_topic: "tele/sonoff_pow02/SENSOR"
+    value_template: "{{ value_json.ENERGY.Today }}"
+    unit_of_measurement: "kWh"
+  - platform: mqtt
+    name: "sonoff_pow02 power"
+    state_topic: "tele/sonoff_pow02/SENSOR"
+    value_template: "{{ value_json.ENERGY.Power }}"
+    unit_of_measurement: "W"
+  - platform: mqtt
+    name: "sonoff_pow02 voltage"
+    state_topic: "tele/sonoff_pow02/SENSOR"
+    value_template: "{{ value_json.ENERGY.Voltage }}"
+    unit_of_measurement: "V"
+
+  - platform: statistics
+    entity_id: sensor.sonoff_pow01_power
+    name: "sonoff pow01 power"
+    icon: mdi:chart-histogram
+  - platform: statistics
+    entity_id: sensor.sonoff_pow02_power
+    name: "sonoff pow02 power"
+    icon: mdi:chart-histogram
+
+binary_sensor:
+  # sonoff01
+  - platform: mqtt
+    name: "sonoff01"
+    state_topic: "tele/sonoff01/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    device_class: connectivity
+
+  # sonoff02
+  - platform: mqtt
+    name: "sonoff02"
+    state_topic: "tele/sonoff02/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    device_class: connectivity
+
+  # sonoff_pow01
+  - platform: mqtt
+    name: "sonoff_pow01"
+    state_topic: "tele/sonoff_pow01/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    device_class: connectivity
+
+  # sonoff_pow02
+  - platform: mqtt
+    name: "sonoff_pow02"
+    state_topic: "tele/sonoff_pow02/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    device_class: connectivity
+
+################################################
+## Switches
+################################################
+switch:
+  # sonoff01
+  - platform: mqtt
+    name: "Entry Step Light"
+    state_topic: "stat/sonoff01/POWER"
+    command_topic: "cmnd/sonoff01/POWER"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+  # sonoff02
+  - platform: mqtt
+    name: "Living Room Fan"
+    state_topic: "stat/sonoff02/POWER"
+    command_topic: "cmnd/sonoff02/POWER"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+  
+  # sonoff_pow01
+  - platform: mqtt
+    name: "CPAP"
+    state_topic: "stat/sonoff_pow01/POWER"
+    command_topic: "cmnd/sonoff_pow01/POWER"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+  # sonoff_pow02
+  - platform: mqtt
+    name: "sonoff_pow02"
+    state_topic: "stat/sonoff_pow02/POWER"
+    command_topic: "cmnd/sonoff_pow02/POWER"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+
+################################################
+## Group
+################################################
+group:
+  sonoff:
+    entities:
+      # sonoff01
+      - switch.entry_step_light
+      - weblink.sonoff01
+      - binary_sensor.sonoff01
+      # sonoff02
+      - switch.living_room_fan
+      - weblink.sonoff02
+      - binary_sensor.sonoff02
+      # sonoff_pow01
+      - switch.cpap
+      - weblink.sonoff_pow01
+      - binary_sensor.sonoff_pow01
+      - sensor.sonoff_pow01_energy
+      - sensor.sonoff_pow01_power
+      - sensor.sonoff_pow01_power_mean
+      - sensor.sonoff_pow01_voltage
+      # sonoff_pow02
+      - switch.sonoff_pow02
+      - weblink.sonoff_pow02
+      - binary_sensor.sonoff_pow02
+      - sensor.sonoff_pow02_energy
+      - sensor.sonoff_pow02_power
+      - sensor.sonoff_pow02_power_mean
+      - sensor.sonoff_pow02_voltage
+    name: Sonoff
+    icon: mdi:toggle-switch-off
+    control: hidden
+    view: no

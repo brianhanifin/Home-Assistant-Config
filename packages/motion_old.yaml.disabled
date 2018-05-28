@@ -35,7 +35,7 @@ homeassistant:
     ##### Mode overrides
     input_boolean.illumination_lighting_mode:
       persistent: true
-    input_boolean.movie_mode:
+    input_boolean.movie_night:
       persistent: true
     input_boolean.motion_detection_mode:
       persistent: true
@@ -72,8 +72,8 @@ input_boolean:
     name: Play Room Motion Detection
     icon: mdi:account-search
 
-  movie_mode:
-    name: Movie Mode
+  movie_night:
+    name: Movie Night
     icon: mdi:movie-roll
 
 ################################################
@@ -158,12 +158,12 @@ script:
 ################################################
 automation:
   ##############################################################################
-  ###  Away Mode State Change
+  ###  Movie Night Mode State Change
   ##############################################################################
-  - alias: "Movie Mode: On"
+  - alias: "Movie Nighe Mode: On"
     trigger:
       - platform: state
-        entity_id: input_boolean.movie_mode
+        entity_id: input_boolean.movie_night
         from: "on"
         to: "off"
     action:
@@ -172,10 +172,10 @@ automation:
       - service: input_boolean.turn_off
         entity_id: input_boolean.motion_detection_livingroom_mode
 
-  - alias: "Movie Mode: Off"
+  - alias: "Movie Night Mode: Off"
     trigger:
       - platform: state
-        entity_id: input_boolean.movie_mode
+        entity_id: input_boolean.movie_night
         from: "off"
         to: "on"
     action:
@@ -255,7 +255,7 @@ automation:
         entity_id: input_boolean.motion_detection_livingroom_mode
         state: 'on'
       - condition: state
-        entity_id: input_boolean.movie_mode
+        entity_id: input_boolean.movie_night
         state: 'off'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -318,7 +318,7 @@ automation:
         entity_id: input_boolean.motion_detection_kitchen_mode
         state: 'on'
       - condition: state
-        entity_id: input_boolean.movie_mode
+        entity_id: input_boolean.movie_night
         state: 'off'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -348,7 +348,7 @@ automation:
         entity_id: input_boolean.motion_detection_kitchen_mode
         state: 'on'
       - condition: state
-        entity_id: input_boolean.movie_mode
+        entity_id: input_boolean.movie_night
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode

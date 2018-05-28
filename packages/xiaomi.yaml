@@ -20,44 +20,59 @@ xiaomi_aqara:
       key: !secret xiaomi_key1
 
 ################################################
+## Sensors
+################################################
+#sensor:
+#  - platform: miflora
+#    name: Flower Sensor
+#    mac: "C4:7C:8D:64:3B:0E"
+#    median: true
+#    monitored_conditions:
+#      - moisture     # Moisture in the soil.
+#      - light        # Brightness at the sensor’s location.
+#      - temperature  # Temperature at the sensor’s location.
+#      - conductivity # Conductivity in the soil.
+#      - battery      # Battery details.
+
+################################################
 ## Automations
 ################################################
-automation:
-  - alias: 'Xiaomi: Auto Nightlight On'  
-    hide_entity: True
-    initial_state: True
-    trigger:
-      - platform: numeric_state
-        entity_id: sensor.xiaomi_gateway_illumination
-        below: '300'
-    condition:
-      condition: and
-      conditions:
-      - condition: state
-        entity_id: light.family_room_nightlight
-        state: 'off'
+#automation:
+#  - alias: 'Xiaomi: Auto Nightlight On'  
+#    hide_entity: True
+#    initial_state: True
+#    trigger:
+#      - platform: numeric_state
+#        entity_id: sensor.xiaomi_gateway_illumination
+#        below: '300'
+#    condition:
+#      condition: and
+#      conditions:
+#      - condition: state
+#        entity_id: light.family_room_nightlight
+#        state: 'off'
       #- condition: state
       #  entity_id: input_boolean.auto_nightlight
       #  state: 'on'
-    action:
-      - service: homeassistant.turn_on
-        data:
-          entity_id: light.family_room_nightlight
-          brightness: 10
-          rgb_color: [255, 255, 255]
+#    action:
+#      - service: homeassistant.turn_on
+#        data:
+#          entity_id: light.family_room_nightlight
+#          brightness: 10
+#          rgb_color: [255, 255, 255]#
 
-  - alias: 'Xiaomi: Auto Nightlight Off'
-    hide_entity: True
-    initial_state: True
-    trigger:
-      - platform: numeric_state
-        entity_id: sensor.xiaomi_gateway_illumination
-        above: '400'
-    condition:
-      condition: state
-      entity_id: light.family_room_nightlight
-      state: 'on'
-    action:
-      - service: homeassistant.turn_off
-        data:
-          entity_id: light.family_room_nightlight
+#  - alias: 'Xiaomi: Auto Nightlight Off'
+#    hide_entity: True
+#    initial_state: True
+#    trigger:
+#      - platform: numeric_state
+#        entity_id: sensor.xiaomi_gateway_illumination
+#        above: '400'
+#    condition:
+#      condition: state
+#      entity_id: light.family_room_nightlight
+#      state: 'on'
+#    action:
+#      - service: homeassistant.turn_off
+#        data:
+#          entity_id: light.family_room_nightlight

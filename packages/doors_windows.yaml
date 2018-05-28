@@ -5,7 +5,7 @@ group:
   door_sensors:
     entities:
       - binary_sensor.garage_door       # mirrors cover.garage_door
-      - binary_sensor.shoe_closet_door
+      #- binary_sensor.shoe_closet_door
     name: Door Sensors
     icon: mdi:door
     control: hidden
@@ -30,11 +30,12 @@ sensor:
           {% macro get_doors_open() -%}
             {%- for group in states.binary_sensor|groupby('state') -%}
               {%- for entity in group.list -%}
-                {%- if entity.state == 'on' and 
-                      entity.entity_id.split('.')[0]|lower == 'binary_sensor' and
-                      entity.entity_id.split('_')|last == 'door' -%}
-                  {% if not loop.first %}{{ ', ' }}{% endif %}
-                  {%- if loop.last %}{{ ' and ' }}{% endif -%}
+                {%- if  entity.state == 'on' 
+                    and entity.entity_id.split('.')[0]|lower == 'binary_sensor'
+                    and entity.entity_id.split('_')|last     == 'door'
+                    and entity.entity_id|lower != 'binary_sensory.shoe_closet_door' -%}
+                  {%- if not loop.first -%}{{ ', ' }}{%- endif -%}
+                  {%- if loop.last -%}{{ ' and ' }}{%- endif -%}
                   {{ entity.entity_id }}
                 {%- endif -%}
               {%- endfor -%}
@@ -52,8 +53,8 @@ sensor:
                 {%- if entity.state == 'on' and 
                       entity.entity_id.split('.')[0]|lower == 'binary_sensor' and
                       entity.entity_id.split('_')|last == 'window' -%}
-                  {% if not loop.first %}{{ ', ' }}{% endif %}
-                  {%- if loop.last %}{{ ' and ' }}{% endif -%}
+                  {%- if not loop.first -%}{{ ', ' }}{%- endif -%}
+                  {%- if loop.last -%}{{ ' and ' }}{%- endif -%}
                   {{ entity.entity_id }}
                 {%- endif -%}
               {%- endfor -%}
@@ -61,50 +62,50 @@ sensor:
           {%- endmacro %}
           {{ get_windows_open()|trim }}
 
-#automation:
+automation:
   ##############################################
   ##  Door or Window Open Announcements
   ##############################################
-  #- alias: Announce Open Doors and Windows
-  #  trigger:
-  #    - platform: state
-  #      entity_id:
-  #        - binary_sensor.glowforge_window
-  #        - binary_sensor.shoe_closet_door
-  #      from: 'off'
-  #  action:
-  #    - service: script.notify_ios_engine
-  #      data_template:
-  #        who: 'parents'
-  #        message: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
-  #    - service: input_boolean.turn_on
-  #      entity_id: input_boolean.alert_mode
-  #    - service: script.speech_engine
-  #      data_template:
-  #        call_window_check: 1
-  #        call_inside_weather: 1
+  - alias: Announce Open Doors and Windows
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.glowforge_window
+          - binary_sensor.shoe_closet_door
+        from: 'off'
+    action:
+      #- service: script.notify_ios_engine
+      #  data_template:
+      #    who: 'parents'
+      #    message: "The {{ trigger.to_state.attributes.friendly_name }} has been {{ (trigger.to_state.state)|replace('_', ' ') }}."
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.alert_mode
+      - service: script.speech_engine
+        data_template:
+          call_window_check: 1
+          call_inside_weather: 1
 
   ############################################
   ## Warn us if the garage door is still open
   ############################################
-  #- alias: Doors and Windows Watchdog
-  #  trigger:
-  #    platform: time
-  #    hours: 20
-  #    minutes: 0
-  #    seconds: 0
-  #  condition:
-  #    condition: or
-  #    conditions:
-  #      - condition: state
-  #        entity_id: binary_sensor.shoe_closet_door
-  #        state: 'on'
-  #      - condition: state
-  #        entity_id: binary_sensor.glowforge_window
-  #        state: 'on'
-  #  action:
-  #    - service: input_boolean.turn_on
-  #      entity_id: input_boolean.alert_mode
-  #    - service: script.speech_engine
-  #      data_template:
-  #        call_window_check: 1
+  - alias: Doors and Windows Watchdog
+    trigger:
+      platform: time
+      hours: 20
+      minutes: 0
+      seconds: 0
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: binary_sensor.shoe_closet_door
+          state: 'on'
+        - condition: state
+          entity_id: binary_sensor.glowforge_window
+          state: 'on'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.alert_mode
+      - service: script.speech_engine
+        data_template:
+          call_window_check: 1
