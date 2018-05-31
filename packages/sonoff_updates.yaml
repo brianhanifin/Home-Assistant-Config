@@ -1,0 +1,66 @@
+# Just an example how to check and upgrade the sonoff-tasmota from the Home Assistant
+# Twitter link: https://goo.gl/e3y7pa
+# 
+# 1. Open your sonoff webinterface and add in the "Firmware Upgrade" menu following OTA Url, save! Example: https://goo.gl/6ZMjzA
+# OTA Url: http://sonoff.maddox.co.uk/tasmota/sonoff.bin
+#
+# 2. Below the Home Assistant configuration:
+
+script:   
+  check_sonoffs_version:
+      sequence:
+        - service: mqtt.publish
+          data_template:
+            topic: "cmnd/sonoffs/status"
+            payload: 2
+
+  update_sonoffs:
+      sequence:
+        - service: mqtt.publish
+          data_template:
+            topic: "cmnd/sonoffs/upgrade"
+            payload: 1
+
+
+sensor:  
+  - platform: rest
+    name: Sonoff latest release
+    resource: https://api.github.com/repos/arendst/Sonoff-Tasmota/releases/latest
+    value_template: '{{ value_json.tag_name }}'
+    headers:
+      Accept: application/vnd.github.v3+json
+      Content-Type: application/json
+      User-Agent: Home Assistant REST sensor 
+  - platform: mqtt
+    name: Sonoff01 Version
+    state_topic: "stat/sonoff01/STATUS2"
+    value_template: "{{ value_json['StatusFWR'].Version }}"
+  - platform: mqtt
+    name: Sonoff02 Version
+    state_topic: "stat/sonoff02/STATUS2"
+    value_template: "{{ value_json['StatusFWR'].Version }}"
+  - platform: mqtt
+    name: Sonoff Pow01 Version
+    state_topic: "stat/sonoff_pow01/STATUS2"
+    value_template: "{{ value_json['StatusFWR'].Version }}"
+  - platform: mqtt
+    name: Sonoff 02 Version
+    state_topic: "stat/sonoff_pow02/STATUS2"
+    value_template: "{{ value_json['StatusFWR'].Version }}"
+
+
+group:
+  sonoff_versions:
+    entities:
+      - sensor.sonoff_latest_release
+      - sensor.sonoff01_version
+      - sensor.sonoff02_version
+      - sensor.sonoff_pow01_version
+      - sensor.sonoff_pow02_version
+      - script.check_sonoffs_version
+      - weblink.tasmoadmin
+      #- script.update_sonoffs
+    name: Sonoff Update
+    icon: mdi:toggle-switch-off
+    control: hidden
+    view: no

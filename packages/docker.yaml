@@ -24,6 +24,8 @@ homeassistant:
       icon: mdi:open-in-new
     switch.portainerio_service:
       icon: mdi:docker
+    switch.tasmoadmin_service:
+      icon: mdi:power-plug
     switch.unifi_service:
       icon: mdi:router-wireless
     switch.watch_tower_service:
@@ -42,12 +44,12 @@ shell_command:
 ################################################
 # HA Dockermon's version of monitoring NodeRED's status.
 switch:
-  - platform: rest
-    resource: http://10.0.0.56:8126/container/airconnect
-    name: Air-Connect Service
-    body_on: '{"state": "start"}'
-    body_off: '{"state": "stop"}'
-    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
+  #- platform: rest
+  #  resource: http://10.0.0.56:8126/container/airconnect
+  #  name: Air-Connect Service
+  #  body_on: '{"state": "start"}'
+  #  body_off: '{"state": "stop"}'
+  #  is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
   - platform: rest
     resource: http://10.0.0.56:8126/container/appdaemon
@@ -122,6 +124,13 @@ switch:
   - platform: rest
     resource: http://10.0.0.56:8126/container/portainer
     name: Portainer.io Service
+    body_on: '{"state": "start"}'
+    body_off: '{"state": "stop"}'
+    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
+
+  - platform: rest
+    resource: http://10.0.0.56:8126/container/tasmoadmin
+    name: TasmoAdmin Service
     body_on: '{"state": "start"}'
     body_off: '{"state": "stop"}'
     is_on_template: '{{ value_json is not none and value_json.state == "running" }}'

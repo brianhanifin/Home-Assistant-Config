@@ -56,6 +56,38 @@ device_tracker:
       hide_if_away: true
 
 ################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: template
+    sensors:
+      presence_brian:
+        value_template: "{{ is_state('device_tracker.brian', 'home') }}"
+        device_class: presence
+        friendly_name: Brian
+
+  - platform: template
+    sensors:
+      presence_family:
+        value_template: "{{ is_state('group.family', 'home') }}"
+        device_class: presence
+        friendly_name: Family
+
+  - platform: template
+    sensors:
+      presence_guests:
+        value_template: "{{ is_state('group.guests', 'home') }}"
+        device_class: presence
+        friendly_name: Guests
+
+  - platform: template
+    sensors:
+      presence_nerene:
+        value_template: "{{ is_state('device_tracker.nerene', 'home') }}"
+        device_class: presence
+        friendly_name: Nerene
+
+################################################
 ## Switches
 ################################################
 input_boolean:
@@ -63,17 +95,9 @@ input_boolean:
     name: Away Mode
     icon: mdi:car-estate
 
-  brians_in_bed:
-    name: "Brian's In Bed"
-    icon: mdi:hotel
-
   guest_mode:
     name: Guest Mode
     icon: mdi:account-alert
-  
-  nerenes_in_bed:
-    name: "Nerene's In Bed"
-    icon: mdi:hotel
 
   school_mode:
     name: School Mode
@@ -165,10 +189,12 @@ automation:
           - device_tracker.sandy
         from: 'not_home'
         to: 'home'
+        for:
+          minutes: 0
+          seconds: 5
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
-
       # Greet the arriving person after they open the garage entry door.
       - wait_template: "{{ states.binary_sensor.garage_door.state == 'open' }}"
         timeout: '01:00:00'
@@ -192,12 +218,13 @@ automation:
         to: 'not_home'
         for:
           minutes: 2
+          seconds: 0
     condition:
       # Only take action if no known guests are present.
       - condition: state
         entity_id: group.guest
         state: 'not_home'
-      # Also don't take action if kids or unknown guests are present (as indicated by Guest Mode Override.
+      # Also don't take action if kids or unknown guests are present (as indicated by Guest Mode Override).
       - condition: state
         entity_id: input_boolean.guest_mode
         state: 'off'
@@ -229,41 +256,3 @@ automation:
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.away_mode
-
-  ######################################################################
-  ##  Some home facts when we get back home from being away.
-  ######################################################################
-  - alias: 'Home Stats'
-    trigger:
-      - platform: state
-        entity_id:
-          - group.family
-        from: 'not_home'
-        to: 'home'
-    action:
-      - wait_template: >-
-          {{ is_state('cover.garage_door', 'closed') }}
-        timeout: 00:05:30
-      - service: script.speech_engine
-        data:
-          call_inside_weather: 1
-          call_responsibilities: 1
-          call_outside_weather: 1
-          call_garage_check: 1
-          call_door_check: 1
-          call_window_check: 1
-          call_light_check: 1
-
-  ##############################################################################
-  ###  New Device has connected to the network.  let everyone know.
-  ##############################################################################
-  - alias: "New device connected"
-    trigger:
-      - platform: event
-        event_type: device_tracker_new_device
-    action:
-      - wait_template: >-
-          {{ not is_state('media_player.living_room_speaker', 'playing') }}
-      - service: script.speech_engine
-        data_template:
-          message: "There has been a new device detected on the network.  Be sure to appropriately catagorize {{trigger.event.data.host_name}} within Circle."

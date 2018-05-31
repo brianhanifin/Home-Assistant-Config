@@ -1,0 +1,164 @@
+homeassistant:
+  customize:
+    binary_sensor.brians_in_bed:
+      device_class: occupancy
+    binary_sensor.nerenes_in_bed:
+      device_class: occupancy
+
+################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: template
+    sensors:
+      brians_in_bed:
+        #value_template: "{{ is_state('input_boolean.brians_in_bed', 'on') }}"
+        value_template: "{{ states('sensor.sonoff_pow01_power_mean')|int > 8 }}"
+        delay_on:
+          minutes: 5
+        device_class: presence
+        friendly_name: "Brian's In Bed"
+        icon_template: mdi:hotel
+
+  - platform: template
+    sensors:
+      nerenes_in_bed:
+        #value_template: "{{ is_state('input_boolean.nerenes_in_bed', 'on') }}"
+        value_template: "{{ states('sensor.sonoff_pow02_power_mean')|int >= 16 }}"
+        delay_on:
+          minutes: 5
+        device_class: presence
+        friendly_name: "Nerene's In Bed"
+        icon_template: mdi:hotel
+
+################################################
+## Switches
+################################################
+#input_boolean:
+  #brians_in_bed:
+  #  name: "Brian's In Bed"
+  #  icon: mdi:hotel
+  #nerenes_in_bed:
+  #  name: "Nerene's In Bed"
+  #  icon: mdi:hotel
+
+################################################
+## Automation
+################################################
+automation:
+  ##############################################################################
+  ###  In Bed Presence Detection
+  ##############################################################################
+  - alias: Hide empty bed states
+    trigger:
+      - platform: state
+        entity_id:
+          - sensors.brians_in_bed
+          - sensors.nerenes_in_bed
+        to: 'off'
+    action:
+      - service: group.set_visibility
+        data_template:
+          entity_id: "group.panel_control_{{ trigger.entity_id.split('.')[1] }}"
+          visible: False
+      - service: group.set_visibility
+        data_template:
+          entity_id: >
+            {%- if  states('binary_sensor.brians_in_bed')  == 'off'
+                and states('binary_sensor.nerenes_in_bed') == 'off' -%}
+              group.panel_control
+            {%- elif states('binary_sensor.brians_in_bed')  == 'on' -%}
+              group.panel_control_brians_in_bed
+            {%- elif states('binary_sensor.nerenes_in_bed')  == 'on' -%}
+              group.panel_control_nerenes_in_bed
+            {%- endif -%}
+          visible: True
+
+  - alias: Reveal bed presence
+    trigger:
+      - platform: state
+        entity_id:
+          - sensors.brians_in_bed
+          - sensors.nerenes_in_bed
+        to: 'on'
+    action:
+      - service: group.set_visibility
+        data_template:
+          entity_id: >
+            {%- if  states('binary_sensor.brians_in_bed')  == 'on'
+                and states('binary_sensor.nerenes_in_bed') == 'on' -%}
+              group.panel_control_in_bed
+            {%- elif states('binary_sensor.brians_in_bed')  == 'on' -%}
+              group.panel_control_brians_in_bed
+            {%- elif states('binary_sensor.nerenes_in_bed')  == 'on' -%}
+              group.panel_control_nerenes_in_bed
+            {%- endif -%}
+          visible: True
+
+  #- alias: "Brian's CPAP Power Usage Stays High"
+  #  trigger:
+  #    - platform: numeric_state
+  #      entity_id: sensor.sonoff_pow01_power_mean
+  #      above: 8
+  #  action:
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow01_power_mean
+  #      above: 8
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow01_power_mean
+  #      above: 8
+  #    - service: input_boolean.turn_on
+  #      entity_id: input_boolean.brians_in_bed
+
+  #- alias: "Brian's CPAP Power Usage Stays Low"
+  #  trigger:
+  #    - platform: numeric_state
+  #      entity_id: sensor.sonoff_pow01_power_mean
+  #      below: 5
+  #  action:
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow01_power_mean
+  #      below: 5
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow01_power_mean
+  #      below: 5
+  #    - service: input_boolean.turn_off
+  #      entity_id: input_boolean.brians_in_bed
+
+  #- alias: "Nerene's Bedside Power Usage Stays High"
+  #  trigger:
+  #    - platform: numeric_state
+  #      entity_id: sensor.sonoff_pow02_power_mean
+  #      above: 16
+  #  action:
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow02_power_mean
+  #      above: 16
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow02_power_mean
+  #      above: 16
+  #    - service: input_boolean.turn_on
+  #      entity_id: input_boolean.nerenes_in_bed
+
+  #- alias: "Nerene's Bedside Power Usage Stays Low"
+  #  trigger:
+  #    - platform: numeric_state
+  #      entity_id: sensor.sonoff_pow02_power_mean
+  #      below: 15
+  #  action:
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow02_power_mean
+  #      below: 15
+  #    - delay: 00:02:30  # Waits 2m 30s
+  #    - condition: numeric_state
+  #      entity_id: sensor.sonoff_pow01_power_mean
+  #      below: 15
+  #    - service: input_boolean.turn_off
+  #      entity_id: input_boolean.nerenes_in_bed

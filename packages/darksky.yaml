@@ -53,7 +53,7 @@ script:
     sequence:
       - service: group.set
         data_template:
-          object_id: weather
+          object_id: outside
           icon: mdi:{% if is_state('sensor.dark_sky_icon', 'clear-day') %}weather-sunny{% endif %}{% if is_state('sensor.dark_sky_icon', 'clear-night') %}weather-night{% endif %}{% if is_state('sensor.dark_sky_icon', 'rain') %}weather-rainy{% endif %}{% if is_state('sensor.dark_sky_icon', 'snow') %}weather-snowy{% endif %}{% if is_state('sensor.dark_sky_icon', 'sleet') %}weather-snowy-rainy{% endif %}{% if is_state('sensor.dark_sky_icon', 'wind') %}weather-windy-variant{% endif %}{% if is_state('sensor.dark_sky_icon', 'fog') %}weather-fog{% endif %}{% if is_state('sensor.dark_sky_icon', 'cloudy') %}weather-cloudy{% endif %}{% if is_state('sensor.dark_sky_icon', 'partly-cloudy-day') or is_state('sensor.dark_sky_icon', 'partly-cloudy-night') %}weather-partlycloudy{% endif %}{% if is_state('sensor.dark_sky_icon', 'hail') %}weather-hail{% endif %}{% if is_state('sensor.dark_sky_icon', 'thunderstorm') %}weather-lightning{% endif %}
 
 ################################################
@@ -65,7 +65,6 @@ automation:
     trigger:
       - platform: state
         entity_id: sensor.dark_sky_icon
-
     action:
       - service: script.turn_on
         entity_id: script.weather_group_icon
@@ -75,7 +74,6 @@ automation:
     trigger:
       platform: homeassistant
       event: start
-
     action:      
       - service: script.turn_on
         entity_id: script.weather_group_icon
