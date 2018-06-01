@@ -2,14 +2,12 @@ homeassistant:
   customize:
     group.all_lights:
       hidden: false
-    #light.hue:
-    #  hidden: true
-    #light.entry_light:
-    #  friendly_name: "Entry"
-    #light.porch_light:
-    #  friendly_name: "Porch"
+    light.entry_light:
+      friendly_name: "Entry"
+    light.porch_light:
+      friendly_name: "Porch"
     switch.entry_step_light:
-      friendly_name: "Entry Step"
+      friendly_name: "Step"
 
     #input_boolean.bedroom_light_sync_enabled:
     #  persistent: true
@@ -122,15 +120,15 @@ group:
 ## Automations
 ################################################
 automation:
-  - alias: Update Lights_On Group
-    trigger:
-      platform: state
-      entity_id: sensor.lights_on
-    action:
-      - service: group.set
-        data_template:
-          entity_id: group.lights_on
-          add_entities: "{{ states.sensor.lights_on.state }}"
+  #- alias: Update Lights_On Group
+  #  trigger:
+  #    platform: state
+  #    entity_id: sensor.lights_on
+  #  action:
+  #    - service: group.set
+  #      data_template:
+  #        entity_id: group.lights_on
+  #        add_entities: "{{ states.sensor.lights_on.state }}"
 
   - alias: Shoe Closet
     trigger:
