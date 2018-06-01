@@ -98,7 +98,6 @@ automation:
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:
-          #trigger_entity_id: "light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}"
           trigger_entity_id: "{{ states('sensor.lights_on') }}"
 
   - alias: Adjust brightness as lights are turned on
@@ -126,13 +125,12 @@ automation:
       - condition: template
         value_template: "{{ trigger.event.data.entity_id != 'light.entry' 
                         and trigger.event.data.entity_id != 'light.hue'
-                        and trigger.event.data.entity_id != 'light.porch_light'
-                        and trigger.event.data.entity_id != 'light.garage_entry_light'
-                        and trigger.event.data.entity_id != 'light.shoe_closet_light'
-                        and trigger.event.data.entity_id != 'light.living_room_corner_lamp'
-                        and trigger.event.data.entity_id != 'light.family_room_table_lamp'
+                        and trigger.event.data.entity_id != 'light.boys_bathroom_nightlight'
                         and trigger.event.data.entity_id != 'light.brians_light'
-                        and trigger.event.data.entity_id != 'light.boys_bathroom_nightlight' }}"
+                        and trigger.event.data.entity_id != 'light.family_room_table_lamp'
+                        and trigger.event.data.entity_id != 'light.garage_entry_light'
+                        and trigger.event.data.entity_id != 'light.living_room_corner_lamp'
+                        and trigger.event.data.entity_id != 'light.shoe_closet_light' }}"
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:
@@ -148,9 +146,8 @@ automation:
         event: sunrise
         offset: '+1:30:00'
     action:
-      - service: homeassistant.turn_off
-        data:
-          entity_id: group.morning_devices
+      - service: scene.turn_on
+        entity_id: scene.morning_devices_off
       #- service: script.notify_engine
       - service: script.notify_ios_engine
         data_template:

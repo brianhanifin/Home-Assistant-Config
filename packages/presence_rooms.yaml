@@ -1,0 +1,156 @@
+homeassistant:
+  customize:
+    ##### Ecobee Occupancy Sensors
+    binary_sensor.bedroom_occupancy:
+      device_class: occupancy
+    binary_sensor.home_occupancy:
+      device_class: occupancy
+    binary_sensor.living_room_occupancy:
+      device_class: occupancy
+    binary_sensor.lucas_bedroom_occupancy:
+      device_class: occupancy
+
+    ##### Motion Sensors
+    binary_sensor.family_room_motion:
+      friendly_name: "Family Room"
+      device_class: motion
+    binary_sensor.kitchen_motion:
+      friendly_name: Kitchen
+      device_class: motion
+    binary_sensor.living_room_motion:
+      friendly_name: "Living Room"
+      device_class: motion
+    binary_sensor.play_room_motion:
+      friendly_name: "Play Room"
+      device_class: motion
+
+    ##### Camera Motion Sensors
+    binary_sensor.ring_front_door_motion:
+      friendly_name: Porch
+      device_class: motion
+    sensor.workbench_motion_detected:
+      friendly_name: Workbench
+      device_class: motion
+
+    ##### Mode overrides
+    input_boolean.motion_detection_mode:
+      persistent: true
+    input_boolean.motion_detection_kitchen_mode:
+      persistent: true
+
+################################################
+## Switches
+################################################
+input_boolean:
+  motion_detection_mode:
+    name: Motion Detection
+    icon: mdi:account-search
+  motion_detection_kitchen_mode:
+    name: Kitchen Motion Detection
+    icon: mdi:account-search
+
+################################################
+## Sensors
+################################################
+sensor:
+  - platform: statistics
+    entity_id: sensor.family_room_illumination
+    name: "Family Room Lx"
+    icon: mdi:chart-histogram
+
+  - platform: statistics
+    entity_id: sensor.living_room_illumination
+    name: "Living Room Lx"
+    icon: mdi:chart-histogram
+
+  - platform: statistics
+    entity_id: sensor.xiaomi_gateway_illumination
+    name: "Xiaomi Gateway Lm"
+    icon: mdi:chart-histogram
+
+################################################
+## Automation
+################################################
+automation:
+  ##############################################
+  ###  Kitchen
+  ##############################################
+  - alias: "Kitchen: Present"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion
+        #from: 'off'
+        to: 'on'
+        for:
+          seconds: 5
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_kitchen_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.movie_mode
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'off'
+    action:
+      - service: light.turn_on
+        entity_id:
+          - light.kitchen_sink_light
+
+  - alias: "Kitchen: Movie Mode"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion
+        #from: 'off'
+        to: 'on'
+        for:
+          seconds: 10
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_kitchen_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.movie_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'off'
+    action:
+      - service: light.turn_on
+        entity_id:
+          - light.kitchen_sink_light
+
+  - alias: "Kitchen: Absent"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion
+        from: 'on'
+        to: 'off'
+        for:
+          minutes: 01
+          seconds: 00
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_detection_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.motion_detection_kitchen_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'off'
+    action:
+      - service: switch.turn_off
+        entity_id:
+          - switch.kitchen_prep_light
+          - switch.kitchen_stove_light
+      - service: light.turn_off
+        entity_id:
+          - light.kitchen_sink_light

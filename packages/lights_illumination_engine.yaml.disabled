@@ -1,0 +1,47 @@
+#### This code is incomplete.
+#### I broke this out of presence_room.yaml when I trimmed it down.
+
+
+
+homeassistant:
+  customize:
+    ##### Mode overrides
+    input_boolean.illumination_lighting_mode:
+      persistent: true
+
+################################################
+## Switches
+################################################
+input_boolean:
+  illumination_lighting_mode:
+    name: Illumination Based Lighting
+    icon: mdi:account-search
+
+################################################
+## Scripts
+################################################
+script:
+  illumination_engine:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.illumination_lighting_mode
+        state: 'on'
+      - service: light.turn_on
+        data_template:
+          entity_id: >
+            {{ lights }}
+          brightness_pct: >
+            {% if room   == "livingroom" %}
+              {% set lux = states.sensor.living_room_lx_mean.state | int %}
+            {% elif room == "familyroom" %}
+              {% set lux = states.sensor.family_room_lx_mean.state | int %}
+            {% else %}
+              {% set lux = 1000 %}
+            {% endif %}
+            {% if   lux <   20  %}50
+            {% elif lux <   50  %}60
+            {% elif lux <  100  %}70
+            {% elif lux <  150  %}80
+            {% elif lux <  200  %}90
+            {% elif lux >= 200 %}100
+            {% endif %}
