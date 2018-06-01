@@ -18,7 +18,7 @@ input_boolean:
 group:
   morning_devices:
     entities:
-      - light.boys_bathroom_nightlight          # Boys Bathroom Nightlight
+      - light.boys_bathroom_nightlight
       - light.entry_light
       - light.porch_light
     name: Morning Devices
@@ -59,7 +59,6 @@ script:
     sequence:
       - service: light.turn_on
         data_template:
-          #entity_id: "{{ trigger.event.data.entity_id }}"
           entity_id: "{{ trigger_entity_id }}"
           ##########################
           # START  | END    | BRI  #
@@ -73,8 +72,8 @@ script:
           # 9pm    | 5am    |  30% #
           ##########################
           brightness_pct: >
-            {% set hour    = states("sensor.time").split(':')[0] | int %}
-            {% set minutes = states("sensor.time").split(':')[1] | int %}
+            {%- set hour    = states("sensor.time").split(':')[0] | int -%}
+            {%- set minutes = states("sensor.time").split(':')[1] | int -%}
             {%- if   hour >=  5 and hour <  8                   -%}60
             {%- elif hour >=  8 and hour < 19                  -%}100
             {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}80
@@ -82,7 +81,7 @@ script:
             {%- elif hour >= 20 and minutes < 30 and hour < 21  -%}50
             {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}40
             {%- else                                            -%}30
-            {%- endif %}
+            {%- endif -%}
 
 ################################################
 ## Automations
@@ -99,14 +98,13 @@ automation:
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:
-          trigger_entity_id: "light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}"
-
+          #trigger_entity_id: "light.porch_light{% if is_state('light.entry_light', 'on') %}, light.entry_light{% endif %}{% if is_state('light.living_room_light', 'on') %}, light.living_room_light{% endif %}{% if is_state('light.family_room_light', 'on') %}, light.family_room_light{% endif %}{% if is_state('light.play_room_light', 'on') %}, light.play_room_light{% endif %}{% if is_state('light.computer_desk_light', 'on') %}, light.computer_desk_light{% endif%}{% if is_state('light.bed_room_light', 'on') %}, light.bed_room_light{% endif %}"
+          trigger_entity_id: "{{ states('sensor.lights_on') }}"
 
   - alias: Adjust brightness as lights are turned on
     trigger:
       - platform: event
         event_type: state_changed
-
     condition:
       # Only adjust light brightness if someone is home and the Dusk Dimmers are enabled.
       - condition: state
@@ -115,35 +113,26 @@ automation:
       - condition: state
         entity_id: input_boolean.time_based_dimmers_enabled
         state: 'on'
-
       # Only look at lights.
       - condition: template
-        value_template: "{{ trigger.event.data is not none }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id is not none }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('.')[0] == 'light' }}"
-
-      # Don't change these lights.
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.hue' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.porch_light' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.living_room_corner_lamp' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.family_room_table_lamp' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.brians_light' }}"
-      - condition: template
-        value_template: "{{ trigger.event.data.entity_id.split('_')[0] != 'light.boys_bathroom_nightlight' }}"
-
+        value_template: "{{ trigger.event.data is not none 
+                        and trigger.event.data.entity_id is not none
+                        and trigger.event.data.entity_id.split('.')[0] == 'light' }}"
       # Only when lights are going from off to on.
       - condition: template
-        value_template: "{{ trigger.event.data.old_state.state == 'off' }}"
+        value_template: "{{ trigger.event.data.old_state.state == 'off' 
+                        and trigger.event.data.new_state.state == 'on' }}"
+      # Don't change these lights.
       - condition: template
-        value_template: "{{ trigger.event.data.new_state.state == 'on' }}"
-
+        value_template: "{{ trigger.event.data.entity_id != 'light.entry' 
+                        and trigger.event.data.entity_id != 'light.hue'
+                        and trigger.event.data.entity_id != 'light.porch_light'
+                        and trigger.event.data.entity_id != 'light.garage_entry_light'
+                        and trigger.event.data.entity_id != 'light.shoe_closet_light'
+                        and trigger.event.data.entity_id != 'light.living_room_corner_lamp'
+                        and trigger.event.data.entity_id != 'light.family_room_table_lamp'
+                        and trigger.event.data.entity_id != 'light.brians_light'
+                        and trigger.event.data.entity_id != 'light.boys_bathroom_nightlight' }}"
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:
