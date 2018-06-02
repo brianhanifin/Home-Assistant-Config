@@ -25,7 +25,7 @@ binary_sensor:
   - platform: template
     sensors:
       garage_door:
-        value_template: "{{ not is_state('cover.garage_door', 'closed') }}"
+        value_template: "{{ is_state('cover.garage_door', 'open') }}"
         device_class: garage_door
         friendly_name: Garage Door
 
@@ -51,10 +51,10 @@ automation:
   - alias: 'Garage Closed'
     trigger:
       - platform: state
-        entity_id:
-          - binary_sensor.garage_door
-          - binary_sensor.garage_door_fake
-        from: 'on'
+        entity_id: cover.garage_door
+        to: 'closed'
+      - platform: state
+        entity_id: input_boolean.garage_door_fake
         to: 'off'
     action:
       - delay: 0:00:15
@@ -64,12 +64,11 @@ automation:
   - alias: 'Garage Opened'
     trigger:
       - platform: state
-        entity_id:
-          - binary_sensor.garage_door
-          - binary_sensor.garage_door_fake
+        entity_id: cover.garage_door
+        from: 'closed'
+      - platform: state
+        entity_id: input_boolean.garage_door_fake
         from: 'off'
-        to: 'on'
-        #for: '00:02:30'
     action:
       - service: light.turn_on
         data:
