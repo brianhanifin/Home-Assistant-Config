@@ -42,7 +42,7 @@ sensor:
       {% set is_flag_day = False -%}
       {%- for day_val in value_json -%}
         {% set now_string = now().strftime('%Y-%m-%d') -%}
-        {%- if day_val.date == now_string and day_val.flag_day == 1-%}
+        {%- if day_val.date == now_string and day_val.flag_day == 1 -%}
           {%- set is_flag_day = True -%}
         {%- endif -%}
       {%- endfor %}
@@ -55,8 +55,9 @@ sensor:
           {% set holiday_scene = states('sensor.holiday') -%}
           {%- if  holiday_scene is not none
               and holiday_scene != "" -%}
-            {%- set holiday_scene = holiday_scene|lower|replace("'","")|replace(" ","_")|replace("eve","day") -%}
+            {%- set holiday_scene = holiday_scene|lower|trim|replace("'","")|replace(" ","_")|replace("eve","day") -%}
             {%- set holiday_scene = holiday_scene|replace("mothers_day","valentine")|replace("earth_day","st_patty") -%}
+            {%- if holiday_scene.split('_')|last == 'birthday' -%}{%- set holiday_scene = "birthday" -%}{%- endif %}
             {{ holiday_scene }}
           {%- else -%}
             {{ "standard" }}
@@ -75,123 +76,14 @@ automation:
           - sensor.holiday
     condition:
       - condition: template
-        value_template: "{{ states('sensor.holiday') != 'unknown' }}"
-      - condition: template
-        value_template: "{{ states.sensor.holiday.state | trim != '' }}"
+        value_template: "{{ trigger.to_state.state is not none
+                        and trigger.to_state.state|trim != 'unknown'
+                        and trigger.to_state.state|trim != '' }}"
     action:
-      service: script.notify_ios_engine
-      data_template:
-        title: '{{ states.sensor.holiday.state }}'
-        message: 'Today is {{ states.sensor.holiday.state }}.'
-
-
-
-
-# http://www.calendar-365.com/holidays/2018.html
-# 213 Mardi Gras (purple, green, gold )
-# 330 Good Friday
-# 401 Easter
-# 513 Mother's Day (pink, red) - Same as Valentine
-# 617 Fathers day (Orange, Blue)
-# 1122 Thanksgiving
-# 1202 Hanukkah start 8 days.
-
-
-
-#Color Table
-# http://www.colorhexa.com/color-names
-
-#    service: scene.turn_on
-#    entity_id: scene.month_standard_colors
-scene:
-  - name: month_standard_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        kelvin: 3500
-
-  - name: front_full_brightness
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'White'
-        brightness: 250
-
-  - name: month_RWB_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        #color_name: 'Red'
-        rgb_color: [204,0,0]
-
-  - name: month_valentine_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'Crimson'
-
-  - name: month_marti_gras_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'Purple'
-
-  - name: month_st_patty_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        #color_name: 'Dark Spring Green'
-        #rgb_color: [23,114,69]
-        rgb_color: [76,187,23] #kelly green
-
-  - name: month_pi_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        rgb_color: [3,14,159] #blue
-
-  - name: month_easter_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        #color_name: 'Bubble Gum'
-        rgb_color: [255,193,204]
-
-  - name: month_starwars_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        # color_name: 'Red'
-        rgb_color: [204,0,0]
-
-  - name: month_fathers_day_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'Orange'
-
-  - name: month_halloween_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        #color_name: 'orange'
-        rgb_color: [127,14,0]
-
-  - name: month_thanksgiving_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'orange'
-
-  - name: month_christmas_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'green'
-        effect: green_fade
-
-  - name: month_new_years_day_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'violet'
+      - service: script.notify_ios_engine
+        data_template:
+          title: '{{ trigger.to_state.state }}'
+          message: 'Today is {{ trigger.to_state.state }}.'
+      - service: scene.turn_on
+        data_template:
+          entity_id: 'scene.month_{{ states(sensor.holiday_scene) }}_colors'
