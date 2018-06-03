@@ -106,12 +106,6 @@ sensor:
         icon_template: mdi:calendar-range
         value_template: ""
 
-      wakeup_nerene_light:
-        friendly_name: "Light"
-        icon_template: mdi:lightbulb
-        value_template: >-
-          {{ states('input_select.wakeup_nerene_light') }}
-
 ################################################
 ## Switches
 ################################################
@@ -186,12 +180,13 @@ script:
       entity_id: input_boolean.bedroom_light_sync_enabled
     - service: python_script.lightfade
       data_template:
-        # Go from 10%-100% incrementing 1% every 10 seconds for 15 minutes.
+        # Go from 10%-100% up 2% every 13 seconds 
+        # to go to full brightness in about 10 minutes.
         entity_id: "{{ states('input_select.wakeup_nerene_light') }}"
-        delay_in_sec: 10
+        delay_in_sec: 13
         start_level_pct: 10
         end_level_pct: 100
-        step_in_level_pct: 1
+        step_in_level_pct: 2
 
 ################################################
 ## Automations
@@ -210,17 +205,18 @@ automation:
       - condition: state
         entity_id: input_boolean.wakeup_nerene_status
         state: 'on'
-      # Is this one of the selected 
+      # Is today one of the selected days?
       - condition: template
         value_template: >
-          {% if   now().day == 0 and states.input_boolean.wakeup_nerene_mon.state == 'on' %}{{true}}
-          {% elif now().day == 1 and states.input_boolean.wakeup_nerene_tue.state == 'on' %}{{true}}
-          {% elif now().day == 2 and states.input_boolean.wakeup_nerene_wed.state == 'on' %}{{true}}
-          {% elif now().day == 3 and states.input_boolean.wakeup_nerene_thu.state == 'on' %}{{true}}
-          {% elif now().day == 4 and states.input_boolean.wakeup_nerene_fri.state == 'on' %}{{true}}
-          {% elif now().day == 5 and states.input_boolean.wakeup_nerene_sat.state == 'on' %}{{true}}
-          {% elif now().day == 6 and states.input_boolean.wakeup_nerene_sun.state == 'on' %}{{true}}
-          {% else %}{{false}}{% endif %}
+          {% set day_name = now().strftime("%A")|lower -%}
+          {%- if   day_name == 'monday'    and states.input_boolean.wakeup_nerene_mon.state == 'on' -%}{{true}}
+          {%- elif day_name == 'tuesday'   and states.input_boolean.wakeup_nerene_tue.state == 'on' -%}{{true}}
+          {%- elif day_name == 'wednesday' and states.input_boolean.wakeup_nerene_wed.state == 'on' -%}{{true}}
+          {%- elif day_name == 'thursday'  and states.input_boolean.wakeup_nerene_thu.state == 'on' -%}{{true}}
+          {%- elif day_name == 'friday'    and states.input_boolean.wakeup_nerene_fri.state == 'on' -%}{{true}}
+          {%- elif day_name == 'saturday'  and states.input_boolean.wakeup_nerene_sat.state == 'on' -%}{{true}}
+          {%- elif day_name == 'sunday'    and states.input_boolean.wakeup_nerene_sun.state == 'on' -%}{{true}}
+          {%- else -%}{{false}}{%- endif %}
   action:
     service: script.turn_on
     entity_id: script.wakeup_nerene_activate

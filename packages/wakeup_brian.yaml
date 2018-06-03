@@ -65,7 +65,7 @@ input_select:
     options:
       - light.bedroom_light
       - light.brians_light
-      #- light.garage_entry_light
+      - light.garage_entry_light
 
 ################################################
 ## Sliders
@@ -140,15 +140,12 @@ input_boolean:
 ## Scenes
 ################################################
 scene:
-  - name: brian Wake Up
+  - name: Brian Wake Up
     entities:
       light.entry_light:
         state: on
         brightness_pct: '40'
       light.kitchen_sink_light: on
-      light.garage_entry_light:
-        state: on
-        brightness_pct: '5'
 
 ################################################
 ## Scripts
@@ -158,14 +155,11 @@ script:
     sequence:
     - service: script.turn_on
       entity_id: script.wakeup_brian_light_fade
-    #- service: scene.turn_on
-    #  entity_id: scene.brian_wake_up
+    - service: scene.turn_on
+      entity_id: scene.brian_wake_up
     #- delay: 00:10:00
     #- service: script.turn_on
     #  entity_id: script.wakeup_brian_ios_alarm
-    #- delay: 00:30:00
-    #  service: light.turn_off
-    #  entity_id: light.kitchen_sink_light
 
   wakeup_brian_ios_alarm:
     sequence:
@@ -197,7 +191,7 @@ script:
 ## Automations
 ################################################
 automation:
-  alias: "Alarm Clock: brian"
+  alias: "Alarm Clock: Brian"
   trigger:
     platform: template
     value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
@@ -213,24 +207,15 @@ automation:
       # Is today one of the selected days?
       - condition: template
         value_template: >
-          {% if now().day == 0 and states.input_boolean.wakeup_brian_mon.state == 'on' %}{{true}}
-          {% elif now().day == 1 and states.input_boolean.wakeup_brian_tue.state == 'on' %}{{true}}
-          {% elif now().day == 2 and states.input_boolean.wakeup_brian_wed.state == 'on' %}{{true}}
-          {% elif now().day == 3 and states.input_boolean.wakeup_brian_thu.state == 'on' %}{{true}}
-          {% elif now().day == 4 and states.input_boolean.wakeup_brian_fri.state == 'on' %}{{true}}
-          {% elif now().day == 5 and states.input_boolean.wakeup_brian_sat.state == 'on' %}{{true}}
-          {% elif now().day == 6 and states.input_boolean.wakeup_brian_sun.state == 'on' %}{{true}}
-          {% else %}{{false}}{% endif %}
+          {% set day_name = now().strftime("%A")|lower -%}
+          {%- if   day_name == 'monday'    and states.input_boolean.wakeup_brian_mon.state == 'on' -%}{{true}}
+          {%- elif day_name == 'tuesday'   and states.input_boolean.wakeup_brian_tue.state == 'on' -%}{{true}}
+          {%- elif day_name == 'wednesday' and states.input_boolean.wakeup_brian_wed.state == 'on' -%}{{true}}
+          {%- elif day_name == 'thursday'  and states.input_boolean.wakeup_brian_thu.state == 'on' -%}{{true}}
+          {%- elif day_name == 'friday'    and states.input_boolean.wakeup_brian_fri.state == 'on' -%}{{true}}
+          {%- elif day_name == 'saturday'  and states.input_boolean.wakeup_brian_sat.state == 'on' -%}{{true}}
+          {%- elif day_name == 'sunday'    and states.input_boolean.wakeup_brian_sun.state == 'on' -%}{{true}}
+          {%- else -%}{{false}}{%- endif %}
   action:
     service: script.turn_on
     entity_id: script.wakeup_brian_activate
-
-
-#          {% set i = 0 %}
-#          {% if input_boolean.wakeup_brian_mon %}{% if i > 0 %}, {% endif %}mon{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.wakeup_brian_tue %}{% if i > 0 %}, {% endif %}tue{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.wakeup_brian_wed %}{% if i > 0 %}, {% endif %}wed{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.wakeup_brian_thu %}{% if i > 0 %}, {% endif %}thu{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.wakeup_brian_fri %}{% if i > 0 %}, {% endif %}fri{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.wakeup_brian_sat %}{% if i > 0 %}, {% endif %}sat{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.wakeup_brian_sun %}{% if i > 0 %}, {% endif %}sun{% set i = i + 1 %}{% endif %}
