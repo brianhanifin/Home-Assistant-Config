@@ -43,7 +43,7 @@ homeassistant:
       persistent: true
     input_boolean.motion_detection_livingroom_mode:
       persistent: true
-    input_boolean.motion_detection_kitchen_mode:
+    input_boolean.motion_detection_kitchen:
       persistent: true
     input_boolean.motion_detection_playroom_mode:
       persistent: true
@@ -168,7 +168,7 @@ automation:
         to: "off"
     action:
       #- service: input_boolean.turn_off
-      #  entity_id: input_boolean.motion_detection_kitchen_mode
+      #  entity_id: input_boolean.motion_detection_kitchen
       - service: input_boolean.turn_off
         entity_id: input_boolean.motion_detection_livingroom_mode
 
@@ -180,7 +180,7 @@ automation:
         to: "on"
     action:
       #- service: input_boolean.turn_on
-      #  entity_id: input_boolean.motion_detection_kitchen_mode
+      #  entity_id: input_boolean.motion_detection_kitchen
       - service: input_boolean.turn_on
         entity_id: input_boolean.motion_detection_livingroom_mode
 
@@ -315,7 +315,7 @@ automation:
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
-        entity_id: input_boolean.motion_detection_kitchen_mode
+        entity_id: input_boolean.motion_detection_kitchen
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_night
@@ -345,7 +345,7 @@ automation:
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
-        entity_id: input_boolean.motion_detection_kitchen_mode
+        entity_id: input_boolean.motion_detection_kitchen
         state: 'on'
       - condition: state
         entity_id: input_boolean.movie_night
@@ -375,7 +375,7 @@ automation:
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
-        entity_id: input_boolean.motion_detection_kitchen_mode
+        entity_id: input_boolean.motion_detection_kitchen
         state: 'on'
       - condition: state
         entity_id: input_boolean.away_mode
@@ -414,7 +414,7 @@ automation:
       - service: light.turn_on
         entity_id:
           - light.play_room_light
-          - light.computer_desk_light
+          - light.computer_light
 
   - alias: "Play Room: Absent"
     trigger:
@@ -439,4 +439,4 @@ automation:
       - service: light.turn_off
         entity_id:
           - light.play_room_light
-          - light.computer_desk_light
+          - light.computer_light

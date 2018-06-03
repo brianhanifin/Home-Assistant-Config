@@ -36,6 +36,7 @@ binary_sensor:
         device_class: garage_door
         friendly_name: "FAKE Garage Door"
 
+
 input_boolean:
   garage_door_fake:
     name: Fake Garage Door
@@ -54,7 +55,9 @@ automation:
         entity_id: cover.garage_door
         to: 'closed'
       - platform: state
-        entity_id: input_boolean.garage_door_fake
+        entity_id:
+          - binary_sensor.garage_door
+          - input_boolean.garage_door_fake
         to: 'off'
     action:
       - delay: 0:00:15
@@ -67,8 +70,10 @@ automation:
         entity_id: cover.garage_door
         from: 'closed'
       - platform: state
-        entity_id: input_boolean.garage_door_fake
-        from: 'off'
+        entity_id:
+          - binary_sensor.garage_door
+          - input_boolean.garage_door_fake
+        to: 'on'
     action:
       - service: light.turn_on
         data:

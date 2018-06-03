@@ -10,41 +10,36 @@ homeassistant:
       friendly_name: RainCloud (Base)
       device_class: connectivity
       #icon: mdi:server-network
-      homebridge_hidden: false
     binary_sensor.side_yard_status:
       friendly_name: RainCloud (Remote)
       device_class: connectivity
       #icon: mdi:water-pump
-      homebridge_hidden: false
     sensor.side_yard_battery:
       friendly_name: RainCloud (Battery)
       device_class: battery
-      homebridge_hidden: false
 
     #### Watering Sensors
     binary_sensor.front_yard_watering:
       device_class: moisture
-      homebridge_hidden: false
     binary_sensor.pool_filler_watering:
       device_class: moisture
-      homebridge_hidden: false
 
     #### Watering Automatic/Manual Disable
-    switch.front_yard_automatic_watering:
-      homebridge_hidden: false
+    #switch.front_yard_automatic_watering:
+    #  homebridge_hidden: false
     switch.front_yard_manual_watering:
-      homebridge_hidden: false
+      friendly_name: Activated
+  
     switch.pool_filler_automatic_watering:
       homebridge_hidden: false
     switch.pool_filler_manual_watering:
-      homebridge_hidden: false
+      friendly_name: Activated
     
     #### Raincloud Base Power
-    switch.raincloud:
-      homebridge_hidden: true
+    #switch.raincloud:
+    #  homebridge_hidden: true
     script.raincloud_restart:
       can_cancel: false
-      homebridge_hidden: false
 
 
 ################################################
@@ -70,6 +65,18 @@ sensor:
       - next_cycle
       - rain_delay
       - watering_time
+
+  - platform: template
+    sensors:
+      front_yard_last_ran:
+        value_template: "{{ states.binary_sensor.front_yard_watering.last_changed }}"
+        friendly_name: Last Watered
+
+  - platform: template
+    sensors:
+      pool_filler_last_ran:
+        value_template: "{{ states.binary_sensor.pool_filler_watering.last_changed }}"
+        friendly_name: Last Filled
 
 ################################################
 ## Switches

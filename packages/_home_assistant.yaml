@@ -119,6 +119,10 @@ script:
       - delay: '00:00:15'
       - service: input_boolean.turn_on
         entity_id: input_boolean.speech_notifications
+      #- service: media_player.turn_on
+      #  entity_id: media_player.living_room_speaker
+      #- service: media_player.turn_on
+      #  entity_id: media_player.play_room_speaker
 
 #########################################
 ## Automation
@@ -136,10 +140,15 @@ automation:
         data:
           variable: ha_laststartup
           value_template: "{{ as_timestamp(now()) }}"
-      #- service: media_player.turn_on
-      #  entity_id: media_player.living_room_speaker
-      #- service: media_player.turn_on
-      #  entity_id: media_player.play_room_speaker
+      # Sometimes the garage entry light turns on at startup, 
+      # so turn it back off if the door is closed.
+      - condition: state
+        entity_id: cover.garage_door
+        state: "closed"
+      - service: light.turn_off
+        data:
+          entity_id: light.garage_entry_light
+
 
   - alias: Notify on Home Assistant Updates
     trigger:

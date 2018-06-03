@@ -108,27 +108,27 @@ light:
 switch:
   platform: insteon_local
 
-group:
-  lights_on:
-    entities:
-      - sensor.lights_on
-    name: "Lights On"
-    #icon: mdi:home-heart
-    view: no
+
+#group:
+#  lights_on:
+#    entities:
+#      - switch.pihole_switch
+#    name: "Lights On"
+#    view: no
 
 ################################################
 ## Automations
 ################################################
 automation:
-  #- alias: Update Lights_On Group
-  #  trigger:
-  #    platform: state
-  #    entity_id: sensor.lights_on
-  #  action:
-  #    - service: group.set
-  #      data_template:
-  #        entity_id: group.lights_on
-  #        add_entities: "{{ states.sensor.lights_on.state }}"
+#  - alias: Update Lights_On Group
+#    trigger:
+#      platform: state
+#      entity_id: sensor.lights_on
+#    action:
+#      - service: group.set
+#        data_template:
+#          entity_id: group.lights_on
+#          add_entities: "{{ states('sensor.lights_on') }}"
 
   - alias: Shoe Closet
     trigger:
@@ -154,4 +154,5 @@ automation:
         minutes: 5
     action:
       service: light.turn_off
-      entity_id: light.shoe_closet_light
+      data:
+        entity_id: light.shoe_closet_light

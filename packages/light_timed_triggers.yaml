@@ -125,12 +125,12 @@ automation:
       - condition: template
         value_template: "{{ trigger.event.data.entity_id != 'light.entry' 
                         and trigger.event.data.entity_id != 'light.hue'
-                        and trigger.event.data.entity_id != 'light.boys_bathroom_nightlight'
                         and trigger.event.data.entity_id != 'light.brians_light'
                         and trigger.event.data.entity_id != 'light.family_room_table_lamp'
                         and trigger.event.data.entity_id != 'light.garage_entry_light'
                         and trigger.event.data.entity_id != 'light.living_room_corner_lamp'
-                        and trigger.event.data.entity_id != 'light.shoe_closet_light' }}"
+                        and trigger.event.data.entity_id != 'light.shoe_closet_light'
+                        and trigger.event.data.entity_id.split('_')|last != 'nightlight' }}"
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:

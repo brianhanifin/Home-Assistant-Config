@@ -1,57 +1,57 @@
 # Original: @mf-social https://github.com/mf-social/Home-Assistant/blob/master/packages/virtual_devices/alarm_clocks/
 homeassistant:
   customize:
-    input_boolean.brian_alarm_clock_status:
+    input_boolean.wakeup_brian_status:
       persistent: true
-    input_number.brian_alarm_clock_hour:
+    input_number.wakeup_brian_hour:
       persistent: true
-    input_number.brian_alarm_clock_minutes:
+    input_number.wakeup_brian_minutes:
       persistent: true
-    input_select.brian_alarm_clock_light:
+    input_select.wakeup_brian_light:
       persistent: true
-    input_boolean.brian_alarm_clock_mon:
+    input_boolean.wakeup_brian_mon:
       persistent: true
-    input_boolean.brian_alarm_clock_tue:
+    input_boolean.wakeup_brian_tue:
       persistent: true
-    input_boolean.brian_alarm_clock_wed:
+    input_boolean.wakeup_brian_wed:
       persistent: true
-    input_boolean.brian_alarm_clock_thu:
+    input_boolean.wakeup_brian_thu:
       persistent: true
-    input_boolean.brian_alarm_clock_fri:
+    input_boolean.wakeup_brian_fri:
       persistent: true
-    input_boolean.brian_alarm_clock_sat:
+    input_boolean.wakeup_brian_sat:
       persistent: true
-    input_boolean.brian_alarm_clock_sun:
+    input_boolean.wakeup_brian_sun:
       persistent: true
-    sensor.brian_alarm_clock_light:
+    sensor.wakeup_brian_light:
       persistent: true
       state_card_mode: none
-    sensor.brian_alarm_clock_day_label:
+    sensor.wakeup_brian_day_label:
       state_card_mode: none
 
 ################################################
 ## Group
 ################################################
 group:
-  brian_alarm_clock:
+  wakeup_brian:
     name: "Brian's Wakeup Light"
     entities:
-      - input_boolean.brian_alarm_clock_status
-      - input_number.brian_alarm_clock_hour
-      - input_number.brian_alarm_clock_minutes
-      - input_select.brian_alarm_clock_light
-      - sensor.brian_alarm_clock_day_label
-      - input_boolean.brian_alarm_clock_mon
-      - input_boolean.brian_alarm_clock_tue
-      - input_boolean.brian_alarm_clock_wed
-      - input_boolean.brian_alarm_clock_thu
-      - input_boolean.brian_alarm_clock_fri
-      - input_boolean.brian_alarm_clock_sat
-      - input_boolean.brian_alarm_clock_sun
+      - input_boolean.wakeup_brian_status
+      - input_number.wakeup_brian_hour
+      - input_number.wakeup_brian_minutes
+      - input_select.wakeup_brian_light
+      - sensor.wakeup_brian_day_label
+      - input_boolean.wakeup_brian_mon
+      - input_boolean.wakeup_brian_tue
+      - input_boolean.wakeup_brian_wed
+      - input_boolean.wakeup_brian_thu
+      - input_boolean.wakeup_brian_fri
+      - input_boolean.wakeup_brian_sat
+      - input_boolean.wakeup_brian_sun
 
       #- sensor.time
-      #- sensor.nerene_alarm_clock_time
-      #- sensor.nerene_alarm_clock_light
+      #- sensor.wakeup_nerene_time
+      #- sensor.wakeup_nerene_light
     control: hidden
     view: no
 
@@ -59,7 +59,7 @@ group:
 ## Input Selectors
 ################################################
 input_select:
-  brian_alarm_clock_light:
+  wakeup_brian_light:
     name: Wakeup Light
     icon: mdi:lightbulb
     options:
@@ -71,7 +71,7 @@ input_select:
 ## Sliders
 ################################################
 input_number:
-  brian_alarm_clock_hour:
+  wakeup_brian_hour:
     name: Hour
     icon: mdi:timer
     mode: slider
@@ -79,7 +79,7 @@ input_number:
     max: 23
     step: 1
 
-  brian_alarm_clock_minutes:
+  wakeup_brian_minutes:
     name: Minutes
     icon: mdi:clock-outline
     mode: slider
@@ -94,14 +94,14 @@ input_number:
 sensor:
   - platform: template
     sensors:
-      brian_alarm_clock_time:
+      wakeup_brian_time:
         friendly_name: "Alarm"
         icon_template: mdi:clock-outline
         value_template: >-
-          {% set brian_alarm_clock_time = "%0.02d:%0.02d" | format(states('input_number.brian_alarm_clock_hour')|int, states('input_number.brian_alarm_clock_minutes')|int) %}
-          {{ brian_alarm_clock_time | timestamp_custom('%H:%M', false) }}
+          {% set wakeup_brian_time = "%0.02d:%0.02d" | format(states('input_number.wakeup_brian_hour')|int, states('input_number.wakeup_brian_minutes')|int) %}
+          {{ wakeup_brian_time | timestamp_custom('%H:%M', false) }}
       
-      brian_alarm_clock_day_label:
+      wakeup_brian_day_label:
         friendly_name: "Select days:"
         icon_template: mdi:calendar-range
         value_template: ""
@@ -110,29 +110,29 @@ sensor:
 ## Switches
 ################################################
 input_boolean:
-  brian_alarm_clock_status:
+  wakeup_brian_status:
     name: Activate Alarm
     icon: mdi:alarm-check
 
-  brian_alarm_clock_mon:
+  wakeup_brian_mon:
     name: Monday
     icon: mdi:blank
-  brian_alarm_clock_tue:
+  wakeup_brian_tue:
     name: Tuesday
     icon: mdi:blank
-  brian_alarm_clock_wed:
+  wakeup_brian_wed:
     name: Wednesday
     icon: mdi:blank
-  brian_alarm_clock_thu:
+  wakeup_brian_thu:
     name: Thursday
     icon: mdi:blank
-  brian_alarm_clock_fri:
+  wakeup_brian_fri:
     name: Friday
     icon: mdi:blank
-  brian_alarm_clock_sat:
+  wakeup_brian_sat:
     name: Saturday
     icon: mdi:blank
-  brian_alarm_clock_sun:
+  wakeup_brian_sun:
     name: Sunday
     icon: mdi:blank
 
@@ -154,20 +154,20 @@ scene:
 ## Scripts
 ################################################
 script:
-  brian_alarm_clock_activate:
+  wakeup_brian_activate:
     sequence:
     - service: script.turn_on
-      entity_id: script.brian_alarm_clock_light_fade
+      entity_id: script.wakeup_brian_light_fade
     #- service: scene.turn_on
     #  entity_id: scene.brian_wake_up
     #- delay: 00:10:00
     #- service: script.turn_on
-    #  entity_id: script.brian_alarm_clock_ios_alarm
+    #  entity_id: script.wakeup_brian_ios_alarm
     #- delay: 00:30:00
     #  service: light.turn_off
     #  entity_id: light.kitchen_sink_light
 
-  brian_alarm_clock_ios_alarm:
+  wakeup_brian_ios_alarm:
     sequence:
     - service: notify.brian
       data:
@@ -179,7 +179,7 @@ script:
             badge: 0
             category: 'alarmclock'
 
-  brian_alarm_clock_light_fade:
+  wakeup_brian_light_fade:
     sequence:
     - service: input_boolean.turn_off
       entity_id: input_boolean.bedroom_light_sync_enabled
@@ -187,7 +187,7 @@ script:
       data_template:
         # Go from 10%-100% up 2% every 13 seconds 
         # to go to full brightness in about 10 minutes.
-        entity_id: "{{ states('input_select.brian_alarm_clock_light') }}"
+        entity_id: "{{ states('input_select.wakeup_brian_light') }}"
         delay_in_sec: 13
         start_level_pct: 10
         end_level_pct: 100
@@ -200,7 +200,7 @@ automation:
   alias: "Alarm Clock: brian"
   trigger:
     platform: template
-    value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.brian_alarm_clock_time')|timestamp_custom('%H:%M', false) }}"
+    value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
   condition:
     condition: and
     conditions:
@@ -208,29 +208,29 @@ automation:
       #    entity_id: device_tracker.brian
       #    state: home
       - condition: state
-        entity_id: input_boolean.brian_alarm_clock_status
+        entity_id: input_boolean.wakeup_brian_status
         state: 'on'
       # Is today one of the selected days?
       - condition: template
         value_template: >
-          {% if now().day == 0 and states.input_boolean.brian_alarm_clock_mon.state == 'on' %}{{true}}
-          {% elif now().day == 1 and states.input_boolean.brian_alarm_clock_tue.state == 'on' %}{{true}}
-          {% elif now().day == 2 and states.input_boolean.brian_alarm_clock_wed.state == 'on' %}{{true}}
-          {% elif now().day == 3 and states.input_boolean.brian_alarm_clock_thu.state == 'on' %}{{true}}
-          {% elif now().day == 4 and states.input_boolean.brian_alarm_clock_fri.state == 'on' %}{{true}}
-          {% elif now().day == 5 and states.input_boolean.brian_alarm_clock_sat.state == 'on' %}{{true}}
-          {% elif now().day == 6 and states.input_boolean.brian_alarm_clock_sun.state == 'on' %}{{true}}
+          {% if now().day == 0 and states.input_boolean.wakeup_brian_mon.state == 'on' %}{{true}}
+          {% elif now().day == 1 and states.input_boolean.wakeup_brian_tue.state == 'on' %}{{true}}
+          {% elif now().day == 2 and states.input_boolean.wakeup_brian_wed.state == 'on' %}{{true}}
+          {% elif now().day == 3 and states.input_boolean.wakeup_brian_thu.state == 'on' %}{{true}}
+          {% elif now().day == 4 and states.input_boolean.wakeup_brian_fri.state == 'on' %}{{true}}
+          {% elif now().day == 5 and states.input_boolean.wakeup_brian_sat.state == 'on' %}{{true}}
+          {% elif now().day == 6 and states.input_boolean.wakeup_brian_sun.state == 'on' %}{{true}}
           {% else %}{{false}}{% endif %}
   action:
     service: script.turn_on
-    entity_id: script.brian_alarm_clock_activate
+    entity_id: script.wakeup_brian_activate
 
 
 #          {% set i = 0 %}
-#          {% if input_boolean.brian_alarm_clock_mon %}{% if i > 0 %}, {% endif %}mon{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.brian_alarm_clock_tue %}{% if i > 0 %}, {% endif %}tue{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.brian_alarm_clock_wed %}{% if i > 0 %}, {% endif %}wed{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.brian_alarm_clock_thu %}{% if i > 0 %}, {% endif %}thu{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.brian_alarm_clock_fri %}{% if i > 0 %}, {% endif %}fri{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.brian_alarm_clock_sat %}{% if i > 0 %}, {% endif %}sat{% set i = i + 1 %}{% endif %}
-#          {% if input_boolean.brian_alarm_clock_sun %}{% if i > 0 %}, {% endif %}sun{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.wakeup_brian_mon %}{% if i > 0 %}, {% endif %}mon{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.wakeup_brian_tue %}{% if i > 0 %}, {% endif %}tue{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.wakeup_brian_wed %}{% if i > 0 %}, {% endif %}wed{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.wakeup_brian_thu %}{% if i > 0 %}, {% endif %}thu{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.wakeup_brian_fri %}{% if i > 0 %}, {% endif %}fri{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.wakeup_brian_sat %}{% if i > 0 %}, {% endif %}sat{% set i = i + 1 %}{% endif %}
+#          {% if input_boolean.wakeup_brian_sun %}{% if i > 0 %}, {% endif %}sun{% set i = i + 1 %}{% endif %}
