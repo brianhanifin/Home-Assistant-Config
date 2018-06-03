@@ -80,10 +80,19 @@ automation:
                         and trigger.to_state.state|trim != 'unknown'
                         and trigger.to_state.state|trim != '' }}"
     action:
+      - service: script.notify_web_engine
+        data_template:
+          title: '{{ trigger.to_state.state }}'
+          message: 'Today is {{ trigger.to_state.state }}.'
       - service: script.notify_ios_engine
         data_template:
           title: '{{ trigger.to_state.state }}'
           message: 'Today is {{ trigger.to_state.state }}.'
-      - service: scene.turn_on
-        data_template:
-          entity_id: 'scene.month_{{ states(sensor.holiday_scene) }}_colors'
+          who: "family"
+
+
+# service: script.notify_ios_engine
+# data_template:
+  # title: 'Startup: Home Assistant is Up and Running!'
+  # message: "{{ trigger.to_state.state }}"
+  # who: "brian | nerene | lucas | kyle | family | parents"
