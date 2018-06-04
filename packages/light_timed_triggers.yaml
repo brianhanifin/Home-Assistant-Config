@@ -13,27 +13,6 @@ input_boolean:
     initial: on
 
 ################################################
-## Group
-################################################
-group:
-  morning_devices:
-    entities:
-      - light.boys_bathroom_nightlight
-      - light.entry_light
-      - light.porch_light
-    name: Morning Devices
-    view: no
-
-################################################
-## Scenes
-################################################
-scene:
-  ## Time Based Scenes
-  - name: Morning Devices Off
-    entities:
-      group.morning_devices: off
-
-################################################
 ## Scripts
 ################################################
 script:
@@ -41,7 +20,7 @@ script:
     alias: Dusk
     sequence:
       - service: script.turn_on
-        data_template:
+        data:
           entity_id: script.outdoor_lighting
       - service: light.turn_on
         data:
@@ -51,6 +30,15 @@ script:
         data:
           entity_id: light.boys_bathroom_nightlight
           brightness_pct: '30'
+
+  morning_devices_off:
+    alias: Morning Devices Off
+    sequence:
+      - service: light.turn_off
+        entity_id:
+          - light.boys_bathroom_nightlight
+          - light.entry_light
+          - light.porch_light
 
   ############################################
   ## Light brightness adjusts based on time
@@ -148,7 +136,7 @@ automation:
         offset: '+1:30:00'
     action:
       - service: scene.turn_on
-        entity_id: scene.morning_devices_off
+        entity_id: script.morning_devices_off
       #- service: script.notify_engine
       - service: script.notify_ios_engine
         data_template:

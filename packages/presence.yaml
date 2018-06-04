@@ -195,9 +195,9 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
-      # Greet the arriving person after they open the garage entry door.
-      - wait_template: "{{ states.binary_sensor.garage_door.state == 'open' }}"
-        timeout: '01:00:00'
+      # Greet the arriving person after they close the garage door.
+      - wait_template: "{{ states.binary_sensor.garage_door.state == 'closed' }}"
+        timeout: '00:05:00'
       - service: script.speech_engine
         data_template:
           call_do_not_greet: 1

@@ -30,6 +30,36 @@ panel_control_bed_presence:
   icon: mdi:file-document-box
   control: hidden
   view: no
+panel_control_bed_presence:
+  entities:
+    - device_tracker.brian
+    - device_tracker.nerene
+    - binary_sensor.brians_bed_presence
+    - binary_sensor.glowforge_window
+    - binary_sensor.garage_door
+    - group.wakeup_brian
+    - group.wakeup_nerene
+    #- sensor.hline
+    - group.panel_control_overrides
+  name: Control Panel
+  icon: mdi:file-document-box
+  control: hidden
+  view: no
+panel_control_nerenes_bed_presence:
+  entities:
+    - device_tracker.brian
+    - device_tracker.nerene
+    - binary_sensor.nerenes_bed_presence
+    - binary_sensor.glowforge_window
+    - binary_sensor.garage_door
+    - group.wakeup_brian
+    - group.wakeup_nerene
+    #- sensor.hline
+    - group.panel_control_overrides
+  name: Control Panel
+  icon: mdi:file-document-box
+  control: hidden
+  view: no
 
 panel_control_overrides:
   entities:
@@ -47,6 +77,7 @@ panel_control_overrides:
     - input_boolean.vacation
     - scene.goodbye
     - scene.good_night
+    - input_select.theme
   name: Mode Overrides
   icon: mdi:home-alert
   control: hidden

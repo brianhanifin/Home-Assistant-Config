@@ -21,7 +21,7 @@ binary_sensor:
   - platform: template
     sensors:
       brians_bed_presence:
-        value_template: "{{ states.device_tracker.brian.state              == 'home'
+        value_template: "{{ states.device_tracker.brian.state == 'home'
                         and states.input_boolean.brians_bed_presence.state == 'on' }}"
         device_class: presence
         friendly_name: "Brian's Bed Presence"
@@ -30,7 +30,7 @@ binary_sensor:
   - platform: template
     sensors:
       nerenes_bed_presence:
-        value_template: "{{ states.device_tracker.nerene.state              == 'home'
+        value_template: "{{ states.device_tracker.nerene.state == 'home'
                         and states.input_boolean.nerenes_bed_presence.state == 'on' }}"
         device_class: presence
         friendly_name: "Nerene's Bed Presence"
@@ -47,36 +47,47 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.brians_bed_presence
-          - binary_sensor.nerenes_bed_presence
+          - sensors.brians_in_bed
+          - sensors.nerenes_in_bed
         to: 'off'
     action:
       - service: group.set_visibility
-        data:
-          entity_id: group.panel_control_bed_presence
-          visible: false
+        data_template:
+          entity_id: "group.panel_control_{{ trigger.entity_id.split('.')[1] }}"
+          visible: False
       - service: group.set_visibility
-        data:
-          entity_id: group.panel_control
-          visible: true
+        data_template:
+          entity_id: >
+            {%- if  states('binary_sensor.brians_in_bed')  == 'off'
+                and states('binary_sensor.nerenes_in_bed') == 'off' -%}
+              group.panel_control
+            {%- elif states('binary_sensor.brians_in_bed')  == 'on' -%}
+              group.panel_control_brians_in_bed
+            {%- elif states('binary_sensor.nerenes_in_bed')  == 'on' -%}
+              group.panel_control_nerenes_in_bed
+            {%- endif -%}
+          visible: True
 
   - alias: Reveal bed presence
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.brians_bed_presence
-          - binary_sensor.nerenes_bed_presence
-        from: 'off'
+          - sensors.brians_in_bed
+          - sensors.nerenes_in_bed
         to: 'on'
     action:
       - service: group.set_visibility
-        data:
-          entity_id: group.panel_control
-          visible: false
-      - service: group.set_visibility
-        data:
-          entity_id: group.panel_control_bed_presence
-          visible: true
+        data_template:
+          entity_id: >
+            {%- if  states('binary_sensor.brians_in_bed')  == 'on'
+                and states('binary_sensor.nerenes_in_bed') == 'on' -%}
+              group.panel_control_bed_presence
+            {%- elif states('binary_sensor.brians_in_bed')  == 'on' -%}
+              group.panel_control_brians_bed_presence
+            {%- elif states('binary_sensor.nerenes_in_bed')  == 'on' -%}
+              group.panel_control_nerenes_bed_presence
+            {%- endif -%}
+          visible: True
 
   - alias: "Brian's CPAP Power Usage Stays High"
     trigger:
