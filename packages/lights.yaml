@@ -2,12 +2,8 @@ homeassistant:
   customize:
     group.all_lights:
       hidden: false
-    light.entry_light:
-      friendly_name: "Entry"
-    light.porch_light:
-      friendly_name: "Porch"
-    switch.entry_step_light:
-      friendly_name: "Step"
+    light.dining_room_light:
+      friendly_name: "Dining Room"
 
     #input_boolean.bedroom_light_sync_enabled:
     #  persistent: true
@@ -67,35 +63,6 @@ sensor:
           {%- endmacro %}
           {{ get_lights_on()|trim|replace(' ', ',') }}
 
-  - platform: template
-    sensors:
-      light_check:
-        value_template: >
-          {%- macro friendly_list(list) -%}
-            {%- set temp = list|replace('_',' ')|replace(' ,',',')|replace(',',', ')|trim|title -%}
-            {%- if list.split(',')|length > 1 -%}
-              {%- set temp = temp+'^' -%}
-              {%- set lastitem = temp.split(',')|last -%}
-              {{ temp|replace(lastitem, ' and' + lastitem)|replace('^','') }}
-            {%- else -%}
-              {{ temp }}
-            {%- endif -%}
-          {%- endmacro -%}
-          {%- macro light_check() -%}
-            {%- if states.sensor.lights_on.state|length != 0 -%}
-              {%- set lights_on_count = states.sensor.lights_on.state.split(',')|length -%}
-              {%- set lights_on_friendly = friendly_list(states.sensor.lights_on.state|replace('light.','')|replace('switch.','')|replace('light','')|replace('lamp','')) -%}
-              {%- if lights_on_count == 1 -%}
-                The {{ lights_on_friendly }} light is on.
-              {%- else -%}
-                There are {{ lights_on_count }} lights on right now.
-                The {{ lights_on_friendly }} lights are on.
-              {%- endif -%}
-            {%- endif -%}
-          {%- endmacro -%}
-          {{ light_check() }}
-
-
 ################################################
 ## Lights
 ################################################
@@ -107,14 +74,6 @@ light:
 ################################################
 switch:
   platform: insteon_local
-
-
-#group:
-#  lights_on:
-#    entities:
-#      - switch.pihole_switch
-#    name: "Lights On"
-#    view: no
 
 ################################################
 ## Automations
@@ -130,19 +89,23 @@ automation:
 #          entity_id: group.lights_on
 #          add_entities: "{{ states('sensor.lights_on') }}"
 
-  - alias: Shoe Closet
+  - alias: "Shoe Closet: Open"
     trigger:
       platform: state
       entity_id: binary_sensor.shoe_closet_door
+      to: "on"
     action:
-      service_template: >
-        {%- if trigger.to_state.state == "on" -%}
-          light.turn_on
-        {%- else -%}
-          light.turn_off
-        {%- endif -%}
-      data:
-        entity_id: light.shoe_closet_light
+      service: light.turn_on
+      entity_id: light.shoe_closet_light
+
+  - alias: "Shoe Closet: Closed"
+    trigger:
+      platform: state
+      entity_id: binary_sensor.shoe_closet_door
+      to: "off"
+    action:
+      service: light.turn_off
+      entity_id: light.shoe_closet_light
 
   - alias: Shoe Closet Timeout
     trigger:
@@ -154,5 +117,4 @@ automation:
         minutes: 5
     action:
       service: light.turn_off
-      data:
-        entity_id: light.shoe_closet_light
+      entity_id: light.shoe_closet_light

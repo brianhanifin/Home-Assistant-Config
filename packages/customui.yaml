@@ -1,34 +1,30 @@
 homeassistant:
   customize_glob:
-    # Custom UI: https://github.com/andrey-git/home-assistant-custom-ui/
+    ## Custom UI: https://github.com/andrey-git/home-assistant-custom-ui/
+    ################################################
     "*.*":
       custom_ui_state_card: state-card-custom-ui
 
-    ################################################
     ## Covers
     ################################################
     cover.*:
       show_last_changed: true
 
-    ################################################
     ## Devices
     ################################################
     device_tracker.*:
       state_card_mode: badges
 
-    ################################################
     ## Groups
     ################################################
     group.*:
       show_last_changed: true
 
-    ################################################
     ## Lights
     ################################################
     light.*:
       show_last_changed: true
 
-    ################################################
     ## Sensors
     ################################################
     binary_sensor.*:
@@ -39,8 +35,7 @@ homeassistant:
       show_last_changed: true
       state_card_mode: badges
 
-    ################################################
-    ## Switches (+ input_boolean)
+    ## Switches
     ################################################
     input_boolean.*:
       show_last_changed: true
@@ -50,13 +45,11 @@ homeassistant:
 
 
   customize:
-    ################################################
     ## Covers
     ################################################
     cover.garage_door:
       confirm_controls_show_lock: true
 
-    ################################################
     ## Groups
     ################################################
     group.panel_downstairs_lights:
@@ -64,15 +57,8 @@ homeassistant:
     group.panel_raincloud_status:
       state_card_mode: badges
 
+    ## Family Room Lights
     ################################################
-    ## Lights
-    ################################################
-    light.computer_light:
-      group:
-        group.panel_play_room_lights:
-          friendly_name: Computer
-    light.entry_light:
-      confirm_controls_show_lock: true
     light.family_room_light:
       group:
         group.panel_family_room_lights:
@@ -81,45 +67,27 @@ homeassistant:
       group:
         group.panel_family_room_lights:
           friendly_name: Table
+
+    ## Entry Lights
+    ################################################
+    light.entry_light:
+      confirm_controls_show_lock: true
+      group:
+        group.panel_entry_lighting:
+          friendly_name: Front Door
     light.garage_entry_light:
       confirm_controls_show_lock: true
       group:
         group.panel_entry_lighting:
           friendly_name: Garage Entry
-    light.kitchen_sink_light:
-      group:
-        group.panel_kitchen_lights:
-          friendly_name: Sink
-    light.living_room_light:
-      group:
-        group.panel_living_room_lights:
-          friendly_name: Light
-    light.living_room_corner_light:
-      group:
-        group.panel_living_room_lights:
-          friendly_name: Corner
-    light.play_room_light:
-      group:
-        group.panel_play_room_lights:
-          friendly_name: Light
-    light.play_room_corner_light:
-      group:
-        group.panel_play_room_lights:
-          friendly_name: Corner
-    light.porch_light:
+    switch.entry_step_light:
       confirm_controls_show_lock: true
+      group:
+        group.panel_entry_lighting:
+          friendly_name: Step
 
+    ## Kitchen Lights
     ################################################
-    ## Switches (+ input_boolean)
-    ################################################
-    input_boolean.nerene_wakeup_enabled:
-      confirm_controls_show_lock: true
-
-    switch.cpap:
-      confirm_controls_show_lock: true
-    switch.nerenes_power_strip:
-      confirm_controls_show_lock: true
-
     switch.kitchen_prep_light:
       group:
         group.panel_kitchen_lights:
@@ -128,6 +96,51 @@ homeassistant:
       group:
         group.panel_kitchen_lights:
           friendly_name: Stove
+    light.kitchen_sink_light:
+      group:
+        group.panel_kitchen_lights:
+          friendly_name: Sink
+
+    ## Living Room Lights
+    ################################################
+    light.living_room_light:
+      group:
+        group.panel_living_room_lights:
+          friendly_name: Light
+    light.living_room_corner_light:
+      group:
+        group.panel_living_room_lights:
+          friendly_name: Corner
+
+    ## Play Room Lights
+    ################################################
+    light.computer_light:
+      group:
+        group.panel_play_room_lights:
+          friendly_name: Computer
+    light.play_room_light:
+      group:
+        group.panel_play_room_lights:
+          friendly_name: Light
+    light.play_room_corner_light:
+      group:
+        group.panel_play_room_lights:
+          friendly_name: Corner
+
+    light.porch_light:
+      confirm_controls_show_lock: true
+      friendly_name: Porch
+
+    input_boolean.nerene_wakeup_enabled:
+      confirm_controls_show_lock: true
+
+    switch.cpap:
+      confirm_controls_show_lock: true
+    switch.nerenes_power_strip:
+      confirm_controls_show_lock: true
+
+    ## Televisions
+    ################################################
     switch.livingroom_tv:
       confirm_controls_show_lock: true
       group:
@@ -139,7 +152,6 @@ homeassistant:
         group.panel_play_room_tv:
           friendly_name: TV
 
-    ################################################
     ## Sensors
     ################################################
     #sensor.hline:

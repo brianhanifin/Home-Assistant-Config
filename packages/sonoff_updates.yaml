@@ -44,8 +44,15 @@ sensor:
     state_topic: "stat/sonoff_pow01/STATUS2"
     value_template: "{{ value_json['StatusFWR'].Version }}"
   - platform: mqtt
-    name: Sonoff 02 Version
+    name: Sonoff Pow02 Version
     state_topic: "stat/sonoff_pow02/STATUS2"
+    value_template: "{{ value_json['StatusFWR'].Version }}"
+    name: SonoffS31 01 Version
+    state_topic: "stat/sonoffs31_01/STATUS2"
+    value_template: "{{ value_json['StatusFWR'].Version }}"
+  - platform: mqtt
+    name: SonoffS31 02 Version
+    state_topic: "stat/sonoffs31_02/STATUS2"
     value_template: "{{ value_json['StatusFWR'].Version }}"
 
 
@@ -57,6 +64,8 @@ group:
       - sensor.sonoff02_version
       - sensor.sonoff_pow01_version
       - sensor.sonoff_pow02_version
+      - sensor.sonoffs31_01_version
+      - sensor.sonoffs31_02_version
       - script.check_sonoffs_version
       - weblink.tasmoadmin
       #- script.update_sonoffs

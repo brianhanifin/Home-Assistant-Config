@@ -35,10 +35,11 @@ script:
     alias: Morning Devices Off
     sequence:
       - service: light.turn_off
-        entity_id:
-          - light.boys_bathroom_nightlight
-          - light.entry_light
-          - light.porch_light
+        entity_id: light.porch_light
+      - service: light.turn_off
+        entity_id: light.entry_light
+      - service: light.turn_off
+        entity_id: light.boys_bathroom_nightlight
 
   ############################################
   ## Light brightness adjusts based on time
@@ -94,7 +95,7 @@ automation:
       - platform: event
         event_type: state_changed
     condition:
-      # Only adjust light brightness if someone is home and the Dusk Dimmers are enabled.
+      # Only adjust light brightness if someone is home and the Time Based Dimmers are enabled.
       - condition: state
         entity_id: input_boolean.away_mode
         state: 'off'
@@ -120,6 +121,13 @@ automation:
                         and trigger.event.data.entity_id != 'light.living_room_corner_lamp'
                         and trigger.event.data.entity_id != 'light.shoe_closet_light'
                         and trigger.event.data.entity_id.split('_')|last != 'nightlight' }}"
+      # Don't dim these lights when guests are visiting.
+      - condition: template
+        value_template: "{{ (  states.group.guests.state == 'home'
+                            or states.input_boolean.guest_mode.state == 'on'
+                        ) and (trigger.event.data.entity_id != 'light.entry_light'
+                            or trigger.event.data.entity_id != 'light.porch_light'
+                        ) }}"
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:
@@ -135,18 +143,16 @@ automation:
         event: sunrise
         offset: '+1:30:00'
     action:
-      - service: scene.turn_on
+      - service: script.turn_on
         entity_id: script.morning_devices_off
-      #- service: script.notify_engine
       - service: script.notify_ios_engine
         data_template:
-          title: 'Scene: Morning Devices'
+          title: 'Script: Morning Devices'
           message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
-          #engines: "persistent, ios"
       - service: persistent_notification.create
         data:
-          message: "Scene: Morning Devices activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          message: "Script: Morning Devices activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
 
   ## 45 minutes before sunset = "Dusk"
   - alias: Dusk
@@ -163,9 +169,9 @@ automation:
         entity_id: script.dusk
       - service: script.notify_ios_engine
         data_template:
-          title: 'Scene: Dusk'
+          title: 'Script: Dusk'
           message: "Activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
       - service: persistent_notification.create
         data:
-          message: "Scene: Dusk activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          message: "Script: Dusk activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

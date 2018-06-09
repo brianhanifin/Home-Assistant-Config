@@ -9,18 +9,17 @@ automation:
   - alias: Bed Room Light Off
     trigger:
       - platform: state
-        entity_id: light.bedroom_light
+        entity_id: light.nerenes_light
         from: 'on'
         to: 'off'
     action:
       - service: light.turn_off
-        data:
-          entity_id: light.brians_light
+        entity_id: light.brians_light
   
   - alias: Bed Room Light lt 75pct
     trigger:
       - platform: numeric_state
-        entity_id: light.bedroom_light
+        entity_id: light.nerenes_light
         value_template: '{{ state.attributes.brightness }}'
         below: '190' # slightly less than 75%
     action:
@@ -30,7 +29,7 @@ automation:
   - alias: Bed Room Light gte 75pct
     trigger:
       - platform: numeric_state
-        entity_id: light.bedroom_light
+        entity_id: light.nerenes_light
         value_template: '{{ state.attributes.brightness }}'
         above: '190'
         # Delay to avoid premature turn on flash.

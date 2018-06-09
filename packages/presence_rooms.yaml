@@ -45,28 +45,10 @@ input_boolean:
   motion_detection_mode:
     name: Motion Detection
     icon: mdi:account-search
+
   motion_detection_kitchen_mode:
     name: Kitchen Motion Detection
     icon: mdi:account-search
-
-################################################
-## Sensors
-################################################
-sensor:
-  - platform: statistics
-    entity_id: sensor.family_room_illumination
-    name: "Family Room Lx"
-    icon: mdi:chart-histogram
-
-  - platform: statistics
-    entity_id: sensor.living_room_illumination
-    name: "Living Room Lx"
-    icon: mdi:chart-histogram
-
-  - platform: statistics
-    entity_id: sensor.xiaomi_gateway_illumination
-    name: "Xiaomi Gateway Lm"
-    icon: mdi:chart-histogram
 
 ################################################
 ## Automation
@@ -84,38 +66,18 @@ automation:
         for:
           seconds: 5
     condition:
+      # Only trigger between 6pm-7am.
+      - condition: time
+        after: '18:00:00'
+        before: '07:00:00'
+      # We need both motion detection overrides to be enabled.
       - condition: state
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.motion_detection_kitchen
         state: 'on'
-      - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'off'
-    action:
-      - service: light.turn_on
-        entity_id:
-          - light.kitchen_sink_light
-
-  - alias: "Kitchen: Movie Mode"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.kitchen_motion
-        #from: 'off'
-        to: 'on'
-        for:
-          seconds: 10
-    condition:
-      - condition: state
-        entity_id: input_boolean.motion_detection_mode
-        state: 'on'
-      - condition: state
-        entity_id: input_boolean.motion_detection_kitchen
-        state: 'on'
-      - condition: state
-        entity_id: input_boolean.movie_mode
-        state: 'on'
+      # We don't need to turn on the light is the dogs are alone.
       - condition: state
         entity_id: input_boolean.away_mode
         state: 'off'
@@ -134,12 +96,18 @@ automation:
           minutes: 01
           seconds: 00
     condition:
+      # Only trigger between 6pm-7am.
+      - condition: time
+        after: '18:00:00'
+        before: '07:00:00'
       - condition: state
+      # We need both motion detection overrides to be enabled.
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
       - condition: state
         entity_id: input_boolean.motion_detection_kitchen
         state: 'on'
+      # We don't need to turn on the light is the dogs are alone.
       - condition: state
         entity_id: input_boolean.away_mode
         state: 'off'

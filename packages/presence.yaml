@@ -196,8 +196,10 @@ automation:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
       # Greet the arriving person after they close the garage door.
-      - wait_template: "{{ states.binary_sensor.garage_door.state == 'closed' }}"
-        timeout: '00:05:00'
+      #- wait_template: "{{ states.binary_sensor.garage_door.state == 'closed' }}"
+      #  timeout: '00:05:00'
+      - delay:
+          minutes: 2
       - service: script.speech_engine
         data_template:
           call_do_not_greet: 1
@@ -220,14 +222,10 @@ automation:
           minutes: 2
           seconds: 0
     condition:
-      # Only take action if no known guests are present.
-      - condition: state
-        entity_id: group.guest
-        state: 'not_home'
-      # Also don't take action if kids or unknown guests are present (as indicated by Guest Mode Override).
-      - condition: state
-        entity_id: input_boolean.guest_mode
-        state: 'off'
+      # Only turn on Away Mode if no guests are present and the guest mode override is off.
+      - condition: template
+        value_template: "{{ states.group.guests.state == 'not_home' 
+                        and states.input_boolean.guest_mode.state == 'off' }}"
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.away_mode
@@ -241,6 +239,9 @@ automation:
         entity_id: group.guests
         from: 'not_home'
         to: 'home'
+        for:
+          minutes: 0
+          seconds: 5
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
@@ -253,6 +254,11 @@ automation:
         to: 'not_home'
         for:
           minutes: 2
+          seconds: 0
     action:
+      # Only turn on Away Mode if no family is present and the guest mode override is off.
+      - condition: template
+        value_template: "{{ states.group.family.state == 'not_home' 
+                        and states.input_boolean.guest_mode.state == 'off' }}"
       - service: input_boolean.turn_on
         entity_id: input_boolean.away_mode
