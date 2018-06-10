@@ -302,7 +302,7 @@ switch:
   ##############################################
   # sonoffs31_01
   - platform: mqtt
-    name: "SonoffS31_01"
+    name: "Washer"
     state_topic: "stat/sonoffs31_01/POWER"
     command_topic: "cmnd/sonoffs31_01/POWER"
     qos: 1
@@ -311,7 +311,7 @@ switch:
     retain: true
   # sonoffs31_02
   - platform: mqtt
-    name: "SonoffS31_02"
+    name: "Dryer"
     state_topic: "stat/sonoffs31_02/POWER"
     command_topic: "cmnd/sonoffs31_02/POWER"
     qos: 1
@@ -358,7 +358,7 @@ group:
       - sensor.sonoff_pow02_voltage
 
       # sonoffs31_01
-      - switch.sonoffs31_01
+      - switch.washer
       - weblink.sonoffs31_01
       - binary_sensor.sonoffs31_01
       - sensor.sonoffs31_01_energy
@@ -366,7 +366,7 @@ group:
       - sensor.sonoffs31_01_power_mean
       - sensor.sonoffs31_01_voltage
       # sonoffs31_02
-      - switch.sonoffs31_02
+      - switch.dryer
       - weblink.sonoffs31_02
       - binary_sensor.sonoffs31_02
       - sensor.sonoffs31_02_energy
