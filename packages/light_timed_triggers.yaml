@@ -102,6 +102,11 @@ automation:
       - condition: state
         entity_id: input_boolean.time_based_dimmers_enabled
         state: 'on'
+      # Only dim lights when guests are NOT present. (We don't want to
+      # them to fall because the porch light is too dim.)
+      - condition: state
+        entity_id: sensor.presence_guests
+        state: 'off'
       # Only look at lights.
       - condition: template
         value_template: "{{ trigger.event.data is not none 
