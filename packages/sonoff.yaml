@@ -3,12 +3,20 @@ homeassistant:
     switch.sonoff:
       hidden: true
 
-    # sonoff01
+    ## Sonoff Basic
+    ############################################
     binary_sensor.sonoff01:
       friendly_name: "Connection"
     binary_sensor.sonoff02:
       friendly_name: "Connection"
 
+    ## Sonoff Dual
+    ############################################
+    binary_sensor.sonoff_dual01:
+      friendly_name: "Connection"
+
+    ## Sonoff POW
+    ############################################
     # sonoff_pow01
     binary_sensor.sonoff_pow01:
       friendly_name: "Connection"
@@ -33,11 +41,37 @@ homeassistant:
     sensor.sonoff_pow02_voltage:
       friendly_name: "Voltage"
 
+    ## Sonoff S31
+    ############################################
+    # sonoffs31_01
+    binary_sensor.sonoffs31_01:
+      friendly_name: "Connection"
+    sensor.sonoffs31_01_energy:
+      friendly_name: "Energy"
+    sensor.sonoffs31_01_power:
+      friendly_name: "Power"
+    sensor.sonoffs31_01_power_mean:
+      friendly_name: "Pwr Avg"
+    sensor.sonoffs31_01_voltage:
+      friendly_name: "Voltage"
+
+    # sonoffs31_pow02
+    binary_sensor.sonoffs31_02:
+      friendly_name: "Connection"
+    sensor.sonoffs31_02_energy:
+      friendly_name: "Energy"
+    sensor.sonoffs31_02_power:
+      friendly_name: "Power"
+    sensor.sonoffs31_02_power_mean:
+      friendly_name: "Pwr Avg"
+    sensor.sonoffs31_02_voltage:
+      friendly_name: "Voltage"
+
 ################################################
 ## Sensors
 ################################################
 sensor:
-  ## Sonoff POWs
+  ## Sonoff POW
   ##############################################
   # sonoff_pow01
   - platform: mqtt
@@ -81,7 +115,7 @@ sensor:
     name: "sonoff pow02 power"
     icon: mdi:chart-histogram
 
-  ## Sonoff S31s
+  ## Sonoff S31
   ##############################################
   # sonoffs31_01
   - platform: mqtt
@@ -126,7 +160,7 @@ sensor:
     icon: mdi:chart-histogram
 
 binary_sensor:
-  ## Sonoff Basics
+  ## Sonoff Basic
   ##############################################
   # sonoff01
   - platform: mqtt
@@ -146,7 +180,18 @@ binary_sensor:
     payload_off: "Offline"
     device_class: connectivity
 
-  ## Sonoff POWs
+  ## Sonoff Dual
+  ##############################################
+  # sonoff_dual01
+  - platform: mqtt
+    name: "sonoff_dual01"
+    state_topic: "tele/sonoff_dual01_1/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    device_class: connectivity
+
+  ## Sonoff POW
   ##############################################
   # sonoff_pow01
   - platform: mqtt
@@ -190,7 +235,7 @@ binary_sensor:
 ## Switches
 ################################################
 switch:
-  ## Sonoff Basics
+  ## Sonoff Basic
   ##############################################
   # sonoff01
   - platform: mqtt
@@ -211,7 +256,28 @@ switch:
     payload_off: "OFF"
     retain: true
 
-  ## Sonoff POWs
+  ## Sonoff Dual
+  ##############################################
+  # sonoff_dual01_1
+  - platform: mqtt
+    name: "Laser Printer"
+    state_topic: "stat/sonoff_dual01/POWER1"
+    command_topic: "cmnd/sonoff_dual01/POWER1"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+  # sonoff_dual01_2
+  - platform: mqtt
+    name: "Inkjet Printer"
+    state_topic: "stat/sonoff_dual01/POWER2"
+    command_topic: "cmnd/sonoff_dual01/POWER2"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+
+  ## Sonoff POW
   ##############################################
   # sonoff_pow01
   - platform: mqtt
@@ -232,7 +298,7 @@ switch:
     payload_off: "OFF"
     retain: true
 
-  ## Sonoff S31s
+  ## Sonoff S31
   ##############################################
   # sonoffs31_01
   - platform: mqtt
@@ -267,6 +333,12 @@ group:
       - switch.living_room_fan
       - weblink.sonoff02
       - binary_sensor.sonoff02
+
+      # sonoff_dual01
+      - switch.laser_printer
+      - switch.inkjet_printer
+      - weblink.sonoff_dual01
+      - binary_sensor.sonoff_dual01
 
       # sonoff_pow01
       - switch.cpap

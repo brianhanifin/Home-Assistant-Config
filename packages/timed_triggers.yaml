@@ -1,0 +1,41 @@
+automation:
+  ############################################
+  ## Warn us if the garage door is still open
+  ############################################
+  - alias: Garage Door Watchdog
+    trigger:
+      platform: time
+      hours: 20
+      minutes: 0
+      seconds: 0
+    condition:
+      - condition: state
+        entity_id: cover.garage_door
+        state:     'open'
+    action:
+      - service: script.notify_ios_engine
+        data_template:
+          title: 'WARNING: Garage Door'
+          message: 'Your garage door is still open! You should probably close it.'
+          who: "parents"
+      - service: script.notify_web_engine
+        data_template:
+          title: 'WARNING: Garage Door'
+          message: 'Your garage door is still open! You should close it.'
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.alert_mode
+      - service: script.speech_engine
+        data_template:
+          call_garage_check: 1
+
+  - alias: Printers Off
+    trigger:
+      platform: time
+      hours: 22
+      minutes: 0
+      seconds: 0
+    action:
+      - service: switch.turn_off
+        entity_id: switch.laser_printer
+      - service: switch.turn_off
+        entity_id: switch.inkjet_printer
