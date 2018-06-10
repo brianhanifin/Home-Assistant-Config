@@ -19,8 +19,7 @@ panel_downstairs_devices:
     #- sensor.hline
     - group.panel_living_room_tv
     - group.panel_play_room_tv
-    - switch.living_room_fan
-    - switch.laser_printer
+    - group.panel_printers
     - switch.inkjet_printer
     - group.panel_home_thermostat
     - group.panel_playroom_thermostat
@@ -91,5 +90,14 @@ panel_play_room_tv:
     - binary_sensor.play_room_motion
   name: Play Room
   icon: mdi:television
+  control: hidden
+  view: no
+
+panel_printers:
+  entities:
+    - switch.living_room_fan
+    - switch.laser_printer
+  name: Printers
+  icon: mdi:printer
   control: hidden
   view: no
