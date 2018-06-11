@@ -9,6 +9,7 @@ admin:
     - group.panel_admin_modes_automation
     - group.panel_admin_fake_sensors
     - group.panel_admin_illumination
+    - group.panel_admin_power_monitor
     - group.panel_admin_presence
     #- sensor.hline
     - group.weblink_management
@@ -133,6 +134,27 @@ panel_admin_pihole:
     - sensor.pihole_domains_blocked
   name: Pi.hole
   icon: mdi:raspberrypi
+  control: hidden
+  view: no
+
+panel_admin_power_monitor:
+  entities:
+    ## Bedside Power
+    - binary_sensor.brians_bed_presence
+    - sensor.sonoff_pow01_power
+    - sensor.sonoff_pow01_power_mean
+    - binary_sensor.nerenes_bed_presence
+    - sensor.sonoff_pow02_power
+    - sensor.sonoff_pow02_power_mean
+    ## Washer/Dryer Power
+    - binary_sensor.dryer_running
+    - sensor.sonoffs31_01_power
+    - sensor.sonoffs31_01_power_mean
+    - binary_sensor.washer_running
+    - sensor.sonoffs31_02_power
+    - sensor.sonoffs31_02_power_mean
+  name: Power Monitoring
+  icon: mdi:power
   control: hidden
   view: no
 

@@ -1,0 +1,70 @@
+homeassistant:
+  customize:
+    binary_sensor.dryer_running:
+      device_class: power
+    binary_sensor.washer_running:
+      device_class: power
+
+################################################
+## Sensors
+################################################
+binary_sensor:
+  - platform: template
+    sensors:
+      dryer_running:
+        #value_template: "{{ states.input_boolean.dryer_running.state == 'on' }}"
+        value_template: "{{ states.sensor.sonoffs31_01_power.state|int > 0 }}"
+        device_class: presence
+        friendly_name: "Dryer Running"
+        icon_template: mdi:tumble-dryer
+
+  - platform: template
+    sensors:
+      washer_running:
+        #value_template: "{{ states.input_boolean.washer_running.state == 'on' }}"
+        value_template: "{{ states.sensor.sonoffs31_02_power.state|int > 0 }}"
+        device_class: presence
+        friendly_name: "Washer Running"
+        icon_template: mdi:washing-machine
+
+################################################
+## Automation
+################################################
+automation:
+  - alias: "Dryer Stops"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.dryer_running
+        from: 'on'
+        to: 'off'
+        for:
+          seconds: 15
+    action:
+      - service: script.notify_ios_engine
+        data_template:
+          title: "Clothes Dryer"
+          message: "Clothes are dry! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          who: "brian"
+      - service: script.notify_web_engine
+        data_template:
+          title: "Clothes Dryer"
+          message: "Clothes are dry! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+
+  - alias: "Washer Stops"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.washer_running
+        from: 'on'
+        to: 'off'
+        for:
+          seconds: 15
+    action:
+      - service: script.notify_ios_engine
+        data_template:
+          title: "Washing Machine"
+          message: "Clothes are clean! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+          who: "brian"
+      - service: script.notify_web_engine
+        data_template:
+          title: "Washing Machine"
+          message: "Clothes are clean! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
