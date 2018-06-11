@@ -1,17 +1,17 @@
 homeassistant:
   customize:
-    binary_sensor.brians_bed_presence:
-      device_class: presence
-    binary_sensor.nerenes_bed_presence:
-      device_class: presence
+    binary_sensor.brians_bed_occupancy:
+      device_class: occupancy
+    binary_sensor.nerenes_bed_occupancy:
+      device_class: occupancy
 
 ################################################
 ## Automation Switches
 ################################################
 input_boolean:
-  brians_bed_presence:
+  brians_bed_occupancy:
     initial: "off"
-  nerenes_bed_presence:
+  nerenes_bed_occupancy:
     initial: "off"
 
 ################################################
@@ -20,18 +20,18 @@ input_boolean:
 binary_sensor:
   - platform: template
     sensors:
-      brians_bed_presence:
+      brians_bed_occupancy:
         value_template: "{{ states.device_tracker.brian.state == 'home'
-                        and states.input_boolean.brians_bed_presence.state == 'on' }}"
+                        and states.input_boolean.brians_bed_occupancy.state == 'on' }}"
         device_class: presence
         friendly_name: "Brian's Bed Presence"
         icon_template: mdi:hotel
 
   - platform: template
     sensors:
-      nerenes_bed_presence:
+      nerenes_bed_occupancy:
         value_template: "{{ states.device_tracker.nerene.state == 'home'
-                        and states.input_boolean.nerenes_bed_presence.state == 'on' }}"
+                        and states.input_boolean.nerenes_bed_occupancy.state == 'on' }}"
         device_class: presence
         friendly_name: "Nerene's Bed Presence"
         icon_template: mdi:hotel
@@ -81,11 +81,11 @@ automation:
           entity_id: >
             {%- if  states('binary_sensor.brians_in_bed')  == 'on'
                 and states('binary_sensor.nerenes_in_bed') == 'on' -%}
-              group.panel_control_bed_presence
+              group.panel_control_bed_occupancy
             {%- elif states('binary_sensor.brians_in_bed')  == 'on' -%}
-              group.panel_control_brians_bed_presence
+              group.panel_control_brians_bed_occupancy
             {%- elif states('binary_sensor.nerenes_in_bed')  == 'on' -%}
-              group.panel_control_nerenes_bed_presence
+              group.panel_control_nerenes_bed_occupancy
             {%- endif -%}
           visible: True
 
@@ -104,7 +104,7 @@ automation:
         entity_id: sensor.sonoff_pow01_power_mean
         above: 8
       - service: input_boolean.turn_on
-        entity_id: input_boolean.brians_bed_presence
+        entity_id: input_boolean.brians_bed_occupancy
 
   - alias: "Brian's CPAP Power Usage Stays Low"
     trigger:
@@ -121,7 +121,7 @@ automation:
         entity_id: sensor.sonoff_pow01_power_mean
         below: 5
       - service: input_boolean.turn_off
-        entity_id: input_boolean.brians_bed_presence
+        entity_id: input_boolean.brians_bed_occupancy
 
   - alias: "Nerene's Bedside Power Usage Stays High"
     trigger:
@@ -138,7 +138,7 @@ automation:
         entity_id: sensor.sonoff_pow02_power_mean
         above: 16
       - service: input_boolean.turn_on
-        entity_id: input_boolean.nerenes_bed_presence
+        entity_id: input_boolean.nerenes_bed_occupancy
 
   - alias: "Nerene's Bedside Power Usage Stays Low"
     trigger:
@@ -155,4 +155,4 @@ automation:
         entity_id: sensor.sonoff_pow02_power_mean
         below: 15
       - service: input_boolean.turn_off
-        entity_id: input_boolean.nerenes_bed_presence
+        entity_id: input_boolean.nerenes_bed_occupancy
