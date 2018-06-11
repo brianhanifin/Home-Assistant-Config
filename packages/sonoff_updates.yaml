@@ -1,27 +1,6 @@
-# Just an example how to check and upgrade the sonoff-tasmota from the Home Assistant
-# Twitter link: https://goo.gl/e3y7pa
-# 
-# 1. Open your sonoff webinterface and add in the "Firmware Upgrade" menu following OTA Url, save! Example: https://goo.gl/6ZMjzA
-# OTA Url: http://sonoff.maddox.co.uk/tasmota/sonoff.bin
-#
-# 2. Below the Home Assistant configuration:
-
-script:   
-  check_sonoffs_version:
-      sequence:
-        - service: mqtt.publish
-          data_template:
-            topic: "cmnd/sonoffs/status"
-            payload: 2
-
-  update_sonoffs:
-      sequence:
-        - service: mqtt.publish
-          data_template:
-            topic: "cmnd/sonoffs/upgrade"
-            payload: 1
-
-
+#########################################
+## Sensors
+#########################################
 sensor:  
   - platform: rest
     name: Sonoff latest release
@@ -59,7 +38,9 @@ sensor:
     state_topic: "stat/sonoffs31_02/STATUS2"
     value_template: "{{ value_json['StatusFWR'].Version }}"
 
-
+#########################################
+## Groups
+#########################################
 group:
   sonoff_versions:
     entities:
@@ -78,3 +59,74 @@ group:
     icon: mdi:toggle-switch-off
     control: hidden
     view: no
+
+#########################################
+## Scripts
+#########################################
+script:   
+  check_sonoffs_version:
+      sequence:
+        - service: mqtt.publish
+          data_template:
+            topic: "cmnd/sonoffs/status"
+            payload: 2
+
+  update_sonoffs:
+      sequence:
+        - service: mqtt.publish
+          data_template:
+            topic: "cmnd/sonoffs/upgrade"
+            payload: 1
+
+  sonoff_check_for_update:
+    sequence:
+      # Retrieve the current version from the Sonoff devices.
+      - service: script.turn_on
+        entity_id: script.check_sonoffs_version
+      # Compare version numbers.
+      - condition: template
+        value_template: >
+          {% if  states.sensor.sonoff_latest_release.state is not none
+             and states.sensor.sonoff_latest_release.state != ''  -%}
+            {%- set latest_release  = states.sensor.sonoff_latest_release.state|replace('v','')|replace('a','')|replace('b','') -%}
+            {%- set current_release = states.sensor.sonoff01_version.state|replace('v','')|replace('a','')|replace('b','') -%}
+            {%- set release_major = latest_release.split('.')[0] -%}
+            {%- set release_minor = latest_release.split('.')[1] -%}
+            {%- set release_patch = latest_release.split('.')[2] -%}
+            {%- set current_major = current_release.split('.')[0] -%}
+            {%- set current_minor = current_release.split('.')[1] -%}
+            {%- set current_patch = current_release.split('.')[2] -%}
+            {%- if release_major > current_major
+                or (release_major == current_major and release_minor > current_minor)
+                or (release_major == current_major and release_minor == current_minor and release_patch > current_patch) -%}
+              True
+            {%- else -%}
+              False
+            {%- endif -%}
+          {%- else -%}
+            False
+          {%- endif %}
+      # Send notifications when an update is available.
+      - service: script.notify_ios_engine
+        data_template:
+          title: "Sonoff Update Available"
+          message: "{{ states.sensor.sonoff_latest_release.state }}"
+          who: "brian"
+      - service: script.notify_web_engine
+        data_template:
+          title: "Sonoff Update Available"
+          message: "{{ states.sensor.sonoff_latest_release.state }} @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+
+#########################################
+## Automations
+#########################################
+automation:
+  - alias: Sonoff Updates Available Notificaiton
+    trigger:
+      platform: time
+      hours: 20
+      minutes: 0
+      seconds: 0
+    action:
+      service: script.turn_on
+      entity_id: script.sonoff_check_for_update
