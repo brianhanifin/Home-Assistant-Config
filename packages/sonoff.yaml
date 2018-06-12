@@ -67,6 +67,18 @@ homeassistant:
     sensor.sonoffs31_02_voltage:
       friendly_name: "Voltage"
 
+    # sonoffs31_pow03
+    binary_sensor.sonoffs31_03:
+      friendly_name: "Connection"
+    sensor.sonoffs31_03_energy:
+      friendly_name: "Energy"
+    sensor.sonoffs31_03_power:
+      friendly_name: "Power"
+    sensor.sonoffs31_03_mean:
+      friendly_name: "Pwr Avg"
+    sensor.sonoffs31_03_voltage:
+      friendly_name: "Voltage"
+
 ################################################
 ## Sensors
 ################################################
@@ -159,6 +171,27 @@ sensor:
   #  name: "sonoffs31 02 power"
   #  icon: mdi:chart-histogram
 
+  # sonoffs31_03
+  - platform: mqtt
+    name: "sonoffs31_03 energy"
+    state_topic: "tele/sonoffs31_03/SENSOR"
+    value_template: "{{ value_json.ENERGY.Today }}"
+    unit_of_measurement: "kWh"
+  - platform: mqtt
+    name: "sonoffs31_03 power"
+    state_topic: "tele/sonoffs31_03/SENSOR"
+    value_template: "{{ value_json.ENERGY.Power }}"
+    unit_of_measurement: "W"
+  - platform: mqtt
+    name: "sonoffs31_03 voltage"
+    state_topic: "tele/sonoffs31_03/SENSOR"
+    value_template: "{{ value_json.ENERGY.Voltage }}"
+    unit_of_measurement: "V"
+  #- platform: statistics
+  #  entity_id: sensor.sonoffs31_03_power
+  #  name: "sonoffs31 03 power"
+  #  icon: mdi:chart-histogram
+
 binary_sensor:
   ## Sonoff Basic
   ##############################################
@@ -226,6 +259,15 @@ binary_sensor:
   - platform: mqtt
     name: "sonoffs31_02"
     state_topic: "tele/sonoffs31_02/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    device_class: connectivity
+
+  # sonoffs31_03
+  - platform: mqtt
+    name: "sonoffs31_03"
+    state_topic: "tele/sonoffs31_03/LWT"
     value_template: "{{ value }}"
     payload_on: "Online"
     payload_off: "Offline"
@@ -318,6 +360,19 @@ switch:
     payload_on: "ON"
     payload_off: "OFF"
     retain: true
+  # sonoffs31_03
+  - platform: mqtt
+    name: "sonoffs31_03"
+    state_topic: "stat/sonoffs31_03/POWER"
+    command_topic: "cmnd/sonoffs31_03/POWER"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+
+#weblink:
+#  entities:
+
 
 ################################################
 ## Group
@@ -373,6 +428,14 @@ group:
       - sensor.sonoffs31_02_power
       - sensor.sonoffs31_02_power_mean
       - sensor.sonoffs31_02_voltage
+      # sonoffs31_03
+      - switch.dryer
+      - weblink.sonoffs31_03
+      - binary_sensor.sonoffs31_03
+      - sensor.sonoffs31_03_energy
+      - sensor.sonoffs31_03_power
+      - sensor.sonoffs31_03_power_mean
+      - sensor.sonoffs31_03_voltage
     name: Sonoff
     icon: mdi:toggle-switch-off
     control: hidden
