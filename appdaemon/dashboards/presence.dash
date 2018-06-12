@@ -1,0 +1,85 @@
+##
+## Main arguments, all optional
+##
+title: Presence
+widget_dimensions: [120, 120]
+widget_size: [1, 1]
+widget_margins: [5, 5]
+columns: 3
+global_parameters:
+  namespace: default
+  precision: 1
+  use_comma: 0
+  use_hass_icon: 1
+  widget_style: 'background: #333;'
+
+label:
+  text: Presence
+  widget_style: 'background: #444;'
+  widget_type: label
+
+##
+## Layout
+##
+layout:
+  - include: _header
+  - presence_brian, presence_nerene, presence_guests
+  - brians_bed_presence, nerenes_bed_presence
+  - include: _navigation
+
+##
+## Widgets
+##
+brians_bed_presence:
+  title: "Brian's Bed"
+  title2: "Occupancy"
+  entity: binary_sensor.brians_bed_occupancy
+  icons:
+    icon_on: fa-bed
+    icon_off: fa-bed
+  #icon_style_active: "color: greenyellow"
+  icon_style_active: "color: lightblue"
+  widget_type: binary_sensor
+
+nerenes_bed_presence:
+  title: "Nerene's Bed"
+  title2: "Occupancy"
+  entity: binary_sensor.nerenes_bed_occupancy
+  icons:
+    icon_on: fa-bed
+    icon_off: fa-bed
+  #icon_style_active: "color: greenyellow"
+  icon_style_active: "color: pink"
+  widget_type: binary_sensor
+
+presence_brian:
+  title: "Brian"
+  title2: "Presence"
+  entity: binary_sensor.presence_brian
+  icons:
+    icon_on: fa-male
+    icon_off: fa-male
+  #icon_style_active: "color: greenyellow"
+  icon_style_active: "color: lightblue"
+  widget_type: binary_sensor
+
+presence_guests:
+  title: "Guest"
+  title2: "Presence"
+  entity: binary_sensor.presence_guests
+  icons:
+    icon_on: fa-users
+    icon_off: fa-users
+  icon_style_active: "color: greenyellow"
+  widget_type: binary_sensor
+
+presence_nerene:
+  title: "Nerene"
+  title2: "Presence"
+  entity: binary_sensor.presence_nerene
+  icons:
+    icon_on: fa-female
+    icon_off: fa-female
+  #icon_style_active: "color: greenyellow"
+  icon_style_active: "color: pink"
+  widget_type: binary_sensor

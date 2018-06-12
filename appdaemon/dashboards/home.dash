@@ -1,0 +1,40 @@
+##
+## Main arguments, all optional
+##
+title: Home
+widget_dimensions: [120, 120]
+widget_size: [1, 1]
+widget_margins: [5, 5]
+columns: 3
+global_parameters:
+  namespace: default
+  precision: 1
+  use_comma: 0
+  use_hass_icon: 1
+  widget_style: 'background: #333;'
+
+label:
+  text: Home
+  widget_style: 'background: #444;'
+  widget_type: label
+
+##
+## Layout
+##
+layout:
+  - include: _header
+  - fan_living_room,   living_room_light, family_room_light
+  - fan_master_bedroom, brians_light,     bedroom_light
+  - good_night
+  - include: _navigation
+
+##
+## Widgets
+##
+good_night:
+  title: Good Night
+  entity: scene.good_night
+  icons:
+    icon_on: mdi-weather-night
+    icon_off: mdi-weather-night
+  widget_type: scene

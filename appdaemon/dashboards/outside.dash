@@ -1,0 +1,38 @@
+##
+## Main arguments, all optional
+##
+title: Outside
+widget_dimensions: [120, 120]
+widget_size: [1, 1]
+widget_margins: [5, 5]
+columns: 3
+global_parameters:
+  namespace: default
+  precision: 1
+  use_comma: 0
+  use_hass_icon: 1
+  widget_style: 'background: #333;'
+
+label:
+  text: Outside
+  widget_style: 'background: #444;'
+  widget_type: label
+
+##
+## Layout
+##
+layout:
+    - include: _header
+    - sensor.front_yard_next_cycle,  binary_sensor.front_yard_watering,  switch.front_yard_manual_watering
+    - sensor.pool_filler_next_cycle, binary_sensor.pool_filler_watering, switch.pool_filler_manual_watering
+    #- switch.front_yard_automatic_watering, switch.pool_filler_automatic_watering
+    - weather(3x2)
+    - spacer(3x1)
+    - include: _navigation
+
+##
+## Widgets
+##
+weather:
+    widget_type: weather
+    units: "&deg;F"
