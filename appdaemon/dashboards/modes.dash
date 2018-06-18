@@ -14,7 +14,7 @@ global_parameters:
   widget_style: 'background: #333;'
 
 label:
-  text: Modes
+  text: Mode Overrides
   widget_style: 'background: #444;'
   widget_type: label
 
@@ -23,7 +23,8 @@ label:
 ##
 layout:
   - include: _header
-  - guest_mode
+  - guest_mode, speech_notifications, time_based_dimmers_enabled
+  - vacation,   good_night,           goodbye
   - include: _navigation
 
 ##
@@ -37,16 +38,35 @@ guest_mode:
   use_hass_icon: 0
   widget_type: switch
 
+speech_notifications:
+  title: Speech Notifications
+  entity: input_boolean.speech_notifications
+  icon_on: fa-toggle-on
+  icon_off: fa-toggle-off
+  use_hass_icon: 0
+  widget_type: switch
 
-  #  - input_boolean.speech_notifications
-  #  - input_boolean.text_notifications
-  #  - input_boolean.time_based_dimmers_enabled
-  #  - input_boolean.vacation
-  #  - scene.goodbye
-  #  - scene.good_night
+text_notifications:
+  title: Text Notifications
+  entity: input_boolean.text_notifications
+  icon_on: fa-toggle-on
+  icon_off: fa-toggle-off
+  use_hass_icon: 0
+  widget_type: switch
 
-  #  - input_boolean.motion_detection
-  #  - input_boolean.motion_detection_familyroom
-  #  - input_boolean.motion_detection_livingroom
-  #  - input_boolean.motion_detection_kitchen
-  #  - input_boolean.motion_detection_playroom
+time_based_dimmers_enabled:
+  title: Time Based
+  title2: Dimmers
+  entity: input_boolean.time_based_dimmers_enabled
+  icon_on: fa-toggle-on
+  icon_off: fa-toggle-off
+  use_hass_icon: 0
+  widget_type: switch
+
+vacation:
+  title: Vacation
+  entity: input_boolean.vacation
+  icon_on: fa-toggle-on
+  icon_off: fa-toggle-off
+  use_hass_icon: 0
+  widget_type: switch

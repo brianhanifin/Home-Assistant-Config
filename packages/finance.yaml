@@ -1,0 +1,30 @@
+sensor:
+  - platform: alpha_vantage
+    scan_interval: 600
+    api_key: !secret alpha_vantage_key
+    symbols:
+      - name: Amazon
+        currency: USD
+        symbol: AMZN
+      - name: Apple
+        currency: USD
+        symbol: AAPL
+      - name: Disney
+        currency: USD
+        symbol: DIS
+      - name: Tesla
+        currency: USD
+        symbol: TSLA
+      - name: Weight Watchers
+        currency: USD
+        symbol: WTW
+
+group:
+  investments:
+    entities:
+      - sensor.amazon
+      - sensor.apple
+      - sensor.disney
+      - sensor.tesla
+      - sensor.weight_watchers
+    name: Investments
