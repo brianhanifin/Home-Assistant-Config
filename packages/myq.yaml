@@ -24,11 +24,12 @@ binary_sensor:
     sensors:
       garage_door:
         value_template: >
-          {% if is_state('cover.garage_door', 'closed')
-             or is_state('input_boolean.garage_door_fake', 'off') -%}
-            {{ "false" }}
-          {%- else %}
+          {#% if is_state('cover.garage_door', 'closed')
+             or is_state('input_boolean.garage_door_fake', 'off') -%#}
+          {% if is_state('cover.garage_door', 'open') -%}
             {{ "true" }}
+          {%- else -%}
+            {{ "false" }}
           {%- endif %}
         device_class: garage_door
         friendly_name: Garage Door
@@ -71,6 +72,9 @@ automation:
           effect: "colorloop"
       # If after 5 minutes the garage is still open, dim the light.
       - delay: "0:05:00"
+      - condition: state
+        entity_id: cover.garage_door
+        state:     'open'
       - service: light.turn_on
         data:
           entity_id: light.garage_entry_light
@@ -85,6 +89,6 @@ automation:
     action:
       - condition: state
         entity_id: cover.garage_door
-        state:    'closed'
+        state:     'closed'
       - service:   light.turn_off
         entity_id: light.garage_entry_light

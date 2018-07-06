@@ -69,9 +69,9 @@ sensor:
 script:
   outdoor_lighting:
     sequence:
-      - condition: state
-        entity_id: sun.sun
-        state: 'below_horizon'
+      #- condition: state
+      #  entity_id: sun.sun
+      #`  state: 'below_horizon'
       - service: scene.turn_on
         data_template:
           entity_id: >
@@ -98,18 +98,19 @@ script:
 ## Screnes
 ################################################
 scene:
-  - name: holiday_standard_colors
-    entities:
-      light.porch_light:
-        state: 'on'
-        color_name: 'Gold'
-
   - name: front_full_brightness
     entities:
       light.porch_light:
         state: 'on'
         color_name: 'White'
         brightness: 250
+
+  - name: holiday_standard_colors
+    entities:
+      light.porch_light:
+        state: 'on'
+        #color_name: 'Gold'
+        kelvin: 3500
 
   - name: holiday_RWB_colors
     entities:
