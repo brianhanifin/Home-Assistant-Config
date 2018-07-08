@@ -4,10 +4,10 @@ homeassistant:
     device_tracker.brian:
       friendly_name: "Brian"
       device_class: presence
-    device_tracker.brian_bluetooth:
+    device_tracker.brians_iphone_bluetooth:
       friendly_name: "Brian's Phone"
       device_class: connectivity
-    devices.automatic:
+    device_tracker.automatic:
       friendly_name: "Brian's Car"
       device_class: connectivity
 
@@ -72,7 +72,8 @@ binary_sensor:
   - platform: template
     sensors:
       presence_brian:
-        value_template: "{{ is_state('device_tracker.brian', 'home') }}"
+        value_template: "{{ is_state('device_tracker.brian', 'home')
+                         or is_state('device_tracker.brians_iphone_bluetooth', 'home') }}"
         device_class: presence
         friendly_name: Brian
 

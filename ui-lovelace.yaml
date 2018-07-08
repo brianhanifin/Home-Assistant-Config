@@ -1,32 +1,28 @@
 views:
-- name: Downstairs
-  tab_icon: mdi:sofa
+- title: Downstairs
+  icon: mdi:sofa
   cards:
-    - card_config:
-        title: Status
-      card: glance
-      type: entity-filter
-      filter:
-        - entity_id: 'device_tracker.brian'
-          state: 'home'
-        - entity_id: 'device_tracker.nerene'
-          state: 'home'
-        - entity_id: 'device_tracker.cindy'
-          state: 'home'
-        - entity_id: 'device_tracker.eric'
-          state: 'home'
-        - entity_id: 'device_tracker.heather'
-          state: 'home'
-        - entity_id: 'device_tracker.melissa'
-          state: 'home'
-        - entity_id: 'device_tracker.sandy'
-          state: 'home'
-        - entity_id: 'binary_sensor.*bed_occupancy'
-          state: 'on'
-        - entity_id: 'binary_sensor.*_door'
-          state: 'on'
-        - entity_id: 'binary_sensor.*_window'
-          state: 'on'
+    - type: entity-filter
+      card: 
+        type: glance
+        #title: Status
+      entities:
+        - device_tracker.brian
+        - device_tracker.nerene
+        - device_tracker.cindy
+        - device_tracker.eric
+        - device_tracker.heather
+        - device_tracker.melissa
+        - device_tracker.sandy
+        - binary_sensor.brians_bed_occupancy
+        - binary_sensor.nerenes_bed_occupancy
+        - binary_sensor.garage_door
+        - binary_sensor.shoe_closet_door
+        - binary_sensor.glowforge_window
+      state_filter:
+        - 'home'
+        - 'on'
+      show_empty: false
 
     - title: Control Panel
       type: glance
@@ -89,19 +85,18 @@ views:
         - sensor.tesla
         - sensor.weight_watchers
 
-- name: Cameras
-  tab_icon: mdi:cctv
+- title: Cameras
+  icon: mdi:cctv
   cards:
-    - type: camera-preview
+    - type: picture-entity
       entity: camera.front_door
-    - type: camera-preview
+    - type: picture-entity
       entity: camera.workbench
 
-- name: Outside
-  tab_icon: mdi:white-balance-sunny
+- title: Outside
+  icon: mdi:white-balance-sunny
   cards:
-    - title: Status
-      type: glance
+    - type: glance
       entities:
         - sensor.dark_sky_temperature
         - sensor.dark_sky_cloud_coverage
@@ -139,10 +134,6 @@ views:
         - sensor.pool_filler_last_ran
         #- sensor.pool_filler_rain_delay
 
-    - title: Plant Soil
-      type: plant-status
-      entity: plant.plant1
-
     - title: Lights
       type: entities
       entities:
@@ -168,8 +159,13 @@ views:
         - sensor.dark_sky_wind_bearing
         - sensor.dark_sky_wind_speed
 
-- name: Admin
-  tab_icon: mdi:settings
+    - type: plant-status
+      card:
+        title: Plant Soil
+      entity: plant.plant1
+
+- title: Admin
+  icon: mdi:settings
   cards:
     - title: Manage
       type: entities
@@ -225,15 +221,32 @@ views:
         - sensor.sonoffs31_02_power
         - sensor.sonoffs31_02_power_mean
 
-    - card_config:
+    - type: entity-filter
+      card:
+        type: glance
         title: Presence Inspector
-      card: glance
-      type: entity-filter
-      filter:
-        - entity_id: group.family
-        - entity_id: group.guests
-        - entity_id: binary_sensor.*occupancy
-        - entity_id: binary_sensor.*motion
-        - entity_id: sensor.*motion*
-        - entity_id: devices.automatic
-        - entity_id: device_tracker.parrot_ck3100
+      entities:
+        - group.family
+        - group.guests
+        - binary_sensor.bedroom_occupancy
+        - binary_sensor.brians_bed_occupancy
+        - binary_sensor.home_occupancy
+        - binary_sensor.lucas_bedroom_occupancy
+        - binary_sensor.nerenes_bed_occupancy
+        - binary_sensor.family_room_motion
+        - binary_sensor.front_door_motion
+        - binary_sensor.kitchen_motion
+        - binary_sensor.living_room_motion
+        - binary_sensor.play_room_motion
+        - binary_sensor.ring_front_door_motion
+        - binary_sensor.family_room_motion
+        - binary_sensor.front_door_motion
+        - binary_sensor.kitchen_motion
+        - binary_sensor.living_room_motion
+        - binary_sensor.play_room_motion
+        - binary_sensor.ring_front_door_motion
+        - device_tracker.automatic
+        - device_tracker.parrot_ck3100
+      state_filter:
+        - 'home'
+        - 'on'

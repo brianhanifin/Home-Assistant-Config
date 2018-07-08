@@ -13,7 +13,7 @@ binary_sensor:
     sensors:
       dryer_running:
         #value_template: "{{ states.input_boolean.dryer_running.state == 'on' }}"
-        value_template: "{{ states.sensor.sonoffs31_01_power.state|int > 0 }}"
+        value_template: "{{ states.sensor.sonoffs31_01_power.state|int > 1 }}"
         device_class: presence
         friendly_name: "Dryer Running"
         icon_template: mdi:tumble-dryer
@@ -22,7 +22,7 @@ binary_sensor:
     sensors:
       washer_running:
         #value_template: "{{ states.input_boolean.washer_running.state == 'on' }}"
-        value_template: "{{ states.sensor.sonoffs31_02_power.state|int > 0 }}"
+        value_template: "{{ states.sensor.sonoffs31_02_power.state|int > 1 }}"
         device_class: presence
         friendly_name: "Washer Running"
         icon_template: mdi:washing-machine
