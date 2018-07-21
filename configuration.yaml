@@ -1,4 +1,8 @@
 homeassistant:
+  auth_providers:
+    - type: homeassistant
+    - type: legacy_api_password
+
   name: Home
   latitude: !secret hass_latitude
   longitude: !secret hass_longitude
@@ -7,5 +11,8 @@ homeassistant:
   time_zone: !secret hass_timezone
 
   packages: !include_dir_named packages
+
+# Enable user authentication
+auth:
 
 group: !include_dir_merge_named groups

@@ -13,12 +13,12 @@ script:
       #  data:
       #    title: "Raincloud Offline"
       #    message: "Raincloud has been offline for 5 minutes as of {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
-      - service: script.notify_ios_engine
+      - service: script.notify_ios
         data_template:
           title: "Raincloud: Offline"
           message: "Attempting to restart the Raincloud Base Station. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
-      - service: script.notify_web_engine
+      - service: script.notify_web
         data_template:
           title: "Raincloud: Offline"
           message: "Attempting to restart the Raincloud Base Station. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

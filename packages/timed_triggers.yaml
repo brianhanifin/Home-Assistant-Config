@@ -13,20 +13,31 @@ automation:
         entity_id: cover.garage_door
         state:     'open'
     action:
-      - service: script.notify_ios_engine
+      - service: script.notify_speech
+        data_template:
+          media_player: >-
+            "media_player.echo_master_bedroom,
+             media_player.echo_living_room,
+             media_player.echo_kitchen,
+             media_player.echo_family_room"
+          message: "Your garage door is still open! You should probably close it."
+
+      - service: script.notify_ios
         data_template:
           title: 'WARNING: Garage Door'
           message: 'Your garage door is still open! You should probably close it.'
           who: "parents"
-      - service: script.notify_web_engine
+
+      - service: script.notify_web
         data_template:
           title: 'WARNING: Garage Door'
           message: 'Your garage door is still open! You should close it.'
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.alert_mode
-      - service: script.speech_engine
-        data_template:
-          call_garage_check: 1
+
+      #- service: input_boolean.turn_on
+      #  entity_id: input_boolean.alert_mode
+      #- service: script.speech_engine
+      #  data_template:
+      #    call_garage_check: 1
 
   - alias: Printers Off
     trigger:

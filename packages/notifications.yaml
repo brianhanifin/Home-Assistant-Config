@@ -40,12 +40,12 @@ notify:
 
   ## Notification Groups
   #######################
-  - name: notify_brian
+  - name: brian
     platform: group
     services:
       - service: ios_brians_iphone
 
-  - name: notify_family
+  - name: family
     platform: group
     services:
       - service: ios_brians_iphone
@@ -53,28 +53,28 @@ notify:
       - service: ios_lucas_ipad
       - service: ios_kyles_ipad
 
-  - name: notify_kids
+  - name: kids
     platform: group
     services:
       - service: ios_lucas_ipad
       - service: ios_kyles_ipad
 
-  - name: notify_kyle
+  - name: kyle
     platform: group
     services:
       - service: ios_kyles_ipad
 
-  - name: notify_lucas
+  - name: lucas
     platform: group
     services:
       - service: ios_lucas_ipad
 
-  - name: notify_nerene
+  - name: nerene
     platform: group
     services:
       - service: ios_nerenes_iphone
 
-  - name: notify_parents
+  - name: parents
     platform: group
     services:
       - service: ios_brians_iphone
@@ -104,15 +104,15 @@ script:
 #    - sequence:
 #      - service: script.turn_on
 #        data_template: 
-#          #entity_id: {% set add_comma = false %}{% if engines|select("ios") %}script.notify_ios_engine{% set add_comma = true %}{% endif %}{% if add_comma %}, {% end if %}{% if engines|select("web") %}script.notify_web_engine{% endif %}
+#          #entity_id: {% set add_comma = false %}{% if engines|select("ios") %}script.notify_ios{% set add_comma = true %}{% endif %}{% if add_comma %}, {% end if %}{% if engines|select("web") %}script.notify_web{% endif %}
 #          entity_id: {% macro get_notification_engines(engines) -%}
 #              {%- set engines = engines.split(",") -%}
 #              {%- for engine in engines -%}
 #                {%- if engine|trim|lower == "ios" -%}
-#                  {{ "script.notify_ios_engine " }}
+#                  {{ "script.notify_ios " }}
 #                {%- endif -%}
 #                {%- if engine|trim|lower == "web" -%}
-#                  {{ "script.notify_web_engine " }}
+#                  {{ "script.notify_web " }}
 #                {%- endif -%}
 #              {%- endfor -%}
 #            {%- endmacro -%}
@@ -121,7 +121,7 @@ script:
 #          message: "{{ message }}"
 #          who: "{{ who }}"
 
-  notify_ios_engine:
+  notify_ios:
     sequence:
       - condition: state
         entity_id: input_boolean.ios_notifications
@@ -129,21 +129,21 @@ script:
       - service_template: >
           {% if who is not string %}{% set who = 'brian' %}{% endif %}
           {% if who == 'brian' %}
-            notify.notify_brian
+            notify.brian
           {% elif who == 'family' %}
-            notify.notify_family
+            notify.family
           {% elif who == 'kids' %}
-            notify.notify_kids
+            notify.kids
           {% elif who == 'kyle' %}
-            notify.notify_kyle
+            notify.kyle
           {% elif who == 'lucas' %}
-            notify.notify_lucas
+            notify.lucas
           {% elif who == 'nerene' %}
-            notify.notify_nerene
+            notify.nerene
           {% elif who == 'parents' %}
-            notify.notify_parents
+            notify.parents
           {% else %}
-            notify.notify_brian
+            notify.brian
           {% endif %}
         data_template:
           title: "{{ title }}"
@@ -154,7 +154,27 @@ script:
           #  content-type: "{{ image.split('.')|last }}"
           #  hide-thumbnail: false
 
-  notify_web_engine:
+  notify_speech:
+    sequence:
+      #- condition: state
+      #  entity_id: input_boolean.speech_notifications
+      #  state: 'on'
+      - service: media_player.alexa_tts
+        data_template:
+          entity_id: >-
+            {%- macro entity_list(entities) -%}
+              {%- if entities is not string -%}
+                {%- set temp = 'media_player.echo_living_room' -%}
+              {%- else -%}
+                {%- set temp = entities|trim|replace(' ', '') -%}
+              {%- endif -%}
+              {{ temp|replace(' ,',',')|replace(',',', ')|trim }}
+            {%- endmacro -%}
+            {{ entity_list(media_player) }}
+          message: >-
+            {{ message }}
+
+  notify_web:
     sequence:
       - service: persistent_notification.create
         data_template:
@@ -162,9 +182,9 @@ script:
           message: "{{ message }}"
 
 ######################################################################################################
-#### Call "notify_ios_engine" like this:
+#### Call "notify_ios" like this:
   # action:
-    # service: script.notify_ios_engine
+    # service: script.notify_ios
     # data_template:
       # title: 'Startup: Home Assistant is Up and Running!'
       # message: "{{ trigger.to_state.state }}"

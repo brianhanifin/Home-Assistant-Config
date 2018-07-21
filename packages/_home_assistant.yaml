@@ -50,6 +50,8 @@ homeassistant:
     group.panel_upstairs:
       order: 4
 
+
+
 ################################################
 ## Component Settings
 ################################################
@@ -162,7 +164,7 @@ automation:
       platform: state
       entity_id: updater.updater
     action:
-      - service: script.notify_ios_engine
+      - service: script.notify_ios
         data_template:
           title: "Home Assistant Update Available"
           message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

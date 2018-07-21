@@ -1,3 +1,7 @@
+resources:
+  - url: /local/custom_ui/weather-card.js
+    type: js
+
 views:
 - title: Downstairs
   icon: mdi:sofa
@@ -103,6 +107,15 @@ views:
         - sensor.dark_sky_minutely_summary
         - sensor.side_yard_battery
 
+    - title: Weather
+      id: weather
+      icon: mdi:weather-cloudy
+      garage_door_tilt_sensor_alarm_level: Weather
+      cards:
+        - type: "custom:weather-card"
+          entity_weather: weather.yweather
+          entity_sun: sun.sun
+
     - title:  Front Yard Drip System
       type: entities
       entities:
@@ -124,7 +137,7 @@ views:
         - sun.sun
         - weblink.pvoutput
 
-    - title: Pool Fillter
+    - title: Pool Filler
       type: entities
       entities:
         - switch.pool_filler_automatic_watering

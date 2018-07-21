@@ -63,8 +63,8 @@ homekit:
       - script.livingroom_mediaplayer_disable
       - script.mediaplayer_livingroom_showhide
       - script.morning_devices_off
-      - script.notify_ios_engine
-      - script.notify_web_engine
+      - script.notify_ios
+      - script.notify_web
       - script.raincloud_watchdog
       - script.turn_off_livingroom_tv
       - script.turn_on_livingroom_tv
@@ -104,7 +104,7 @@ automation:
     action:
       - delay: 00:02  # Waits 2 minutes
       - service: homekit.start
-      - service: script.notify_web_engine
+      - service: script.notify_web
         data_template:
           title: 'Homekit is starting...'
           message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

@@ -14,7 +14,13 @@ automation:
         entity_id: sensor.waze_travel_time
         above: 15
     action:
-      - service: script.notify_ios_engine
+      - service: script.notify_ios
         data_template:
           title: "Traffic warning"
           message: "It would take {{ states.sensor.waze_travel_time.state }} minutes to get to school if we left now."
+
+      - service: script.notify_speech
+        data_template:
+          media_player: >-
+            "media_player.echo_living_room"
+          message: "Traffic is heavy this morning. It would take {{ states.sensor.waze_travel_time.state }} minutes to get to school if we left now."

@@ -53,8 +53,7 @@ sensor:
       holiday_scene:
         value_template: >
           {% set holiday_scene = states('sensor.holiday') -%}
-          {%- if  holiday_scene is not none
-              and holiday_scene != "" -%}
+          {%- if holiday_scene is not none and holiday_scene != "" -%}
             {%- set holiday_scene = holiday_scene|lower|trim|replace("'","")|replace(" ","_")|replace("eve","day") -%}
             {%- set holiday_scene = holiday_scene|replace("mothers_day","valentine")|replace("earth_day","st_patty") -%}
             {%- if holiday_scene.split('_')|last == 'birthday' -%}{%- set holiday_scene = "birthday" -%}{%- endif %}
@@ -76,10 +75,10 @@ script:
         data_template:
           entity_id: >
             scene.holiday_
-            {%- if states(sensor.flag) == "True" -%}
+            {%- if states.sensor.flag.state == "True" -%}
               RWB
-            {%- elif states(sensor.holiday_scene) != "" -%}
-              {{ states(sensor.holiday_scene) }}
+            {%- elif states.sensor.holiday_scene.state != "" -%}
+              {{ states.sensor.holiday_scene.state }}
             {%- else -%}
               standard
             {%- endif -%}_colors
@@ -229,18 +228,18 @@ automation:
                         and trigger.to_state.state|trim != 'unknown'
                         and trigger.to_state.state|trim != '' }}"
     action:
-      - service: script.notify_web_engine
+      - service: script.notify_web
         data_template:
           title: '{{ trigger.to_state.state }}'
           message: 'Today is {{ trigger.to_state.state }}.'
-      - service: script.notify_ios_engine
+      - service: script.notify_ios
         data_template:
           title: '{{ trigger.to_state.state }}'
           message: 'Today is {{ trigger.to_state.state }}.'
           who: "family"
 
 
-# service: script.notify_ios_engine
+# service: script.notify_ios
 # data_template:
   # title: 'Startup: Home Assistant is Up and Running!'
   # message: "{{ trigger.to_state.state }}"

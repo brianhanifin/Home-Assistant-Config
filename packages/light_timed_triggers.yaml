@@ -47,9 +47,17 @@ script:
   set_light_brightness_pct_by_time:
     alias: "Function: Set Light Brightness By Time"
     sequence:
+      # Only adjust light brightness if someone is home and the Time Based Dimmers are enabled.
+      - condition: template
+        value_template: "{{ states.input_boolean.away_mode.state == 'off'
+                        and states.input_boolean.time_based_dimmers_enabled.state == 'on' }}"
+      # Only dim lights when guests are NOT present.
+      - condition: template
+        value_template: "{{ states.binary_sensor.presence_guests.state == 'off'
+                        and states.input_boolean.guest_mode.state      == 'off' }}"
       - service: light.turn_on
         data_template:
-          entity_id: "{{ trigger_entity_id }}"
+          entity_id: "{{ entity }}"
           ##########################
           # START  | END    | BRI  #
           # ------ | ------ | ---- #
@@ -88,58 +96,38 @@ automation:
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:
-          trigger_entity_id: "{{ states('sensor.lights_on') }}"
+          entity: "{{ states('sensor.lights_on') }}"
 
   - alias: Adjust brightness as lights are turned on
     trigger:
       - platform: event
         event_type: state_changed
     condition:
-      # Only adjust light brightness if someone is home and the Time Based Dimmers are enabled.
-      - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'off'
-      - condition: state
-        entity_id: input_boolean.time_based_dimmers_enabled
-        state: 'on'
-      # Only dim lights when guests are NOT present. (We don't want to
-      # them to fall because the porch light is too dim.)
-      - condition: state
-        entity_id: sensor.presence_guests
-        state: 'off'
-      - condition: state
-        entity_id: input_boolean.guest_mode
-        state: 'off'
       # Only look at lights.
       - condition: template
         value_template: "{{ trigger.event.data is not none 
                         and trigger.event.data.entity_id is not none
-                        and trigger.event.data.entity_id.split('.')[0] == 'light' }}"
+                        and 'light' in trigger.event.data.entity_id|lower }}"
       # Only when lights are going from off to on.
       - condition: template
         value_template: "{{ trigger.event.data.old_state.state == 'off' 
                         and trigger.event.data.new_state.state == 'on' }}"
       # Don't change these lights.
       - condition: template
-        value_template: "{{ trigger.event.data.entity_id != 'light.entry' 
+        value_template: "{{ trigger.event.data.entity_id != 'light.brians_light'
+                        and trigger.event.data.entity_id != 'light.entry'
                         and trigger.event.data.entity_id != 'light.hue'
-                        and trigger.event.data.entity_id != 'light.brians_light'
-                        and trigger.event.data.entity_id != 'light.family_room_table_lamp'
-                        and trigger.event.data.entity_id != 'light.garage_entry_light'
-                        and trigger.event.data.entity_id != 'light.living_room_corner_lamp'
-                        and trigger.event.data.entity_id != 'light.shoe_closet_light'
-                        and trigger.event.data.entity_id.split('_')|last != 'nightlight' }}"
-      # Don't dim these lights when guests are visiting.
-      - condition: template
-        value_template: "{{ (  states.group.guests.state == 'home'
-                            or states.input_boolean.guest_mode.state == 'on'
-                        ) and (trigger.event.data.entity_id != 'light.entry_light'
-                            or trigger.event.data.entity_id != 'light.porch_light'
-                        ) }}"
+                        and trigger.event.data.entity_id != 'light.living_room'
+                        and trigger.event.data.entity_id != 'light.porch'
+                        and not ('garage_entry' in trigger.event.data.entity_id|lower)
+                        and not ('shoe_closet'  in trigger.event.data.entity_id|lower)
+                        and not ('lamp'         in trigger.event.data.entity_id|lower)
+                        and not (trigger.event.data.entity_id|lower).endswith('lamp')
+                        and not (trigger.event.data.entity_id|lower).endswith('nightlight') }}"
     action:
       - service: script.set_light_brightness_pct_by_time
         data_template:
-          trigger_entity_id: "{{ trigger.event.data.entity_id }}"
+          entity: "{{ trigger.event.data.entity_id }}"
 
   ##############################################
   ## Sunrise & Sunset Automations
@@ -153,7 +141,7 @@ automation:
     action:
       - service: script.turn_on
         entity_id: script.morning_devices_off
-      - service: script.notify_ios_engine
+      - service: script.notify_ios
         data_template:
           title: 'Script: Morning Devices'
           message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
@@ -175,7 +163,7 @@ automation:
     action:
       - service: script.turn_on
         entity_id: script.dusk
-      - service: script.notify_ios_engine
+      - service: script.notify_ios
         data_template:
           title: 'Script: Dusk'
           message: "Activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

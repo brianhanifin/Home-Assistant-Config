@@ -52,7 +52,7 @@ device_tracker:
       #- 10.0.0.0/24
       - 10.0.0.100-254
     new_device_defaults:
-      track_new_devices: false
+      track_new_devices: true
       hide_if_away: true
 
   #- platform: unifi
@@ -206,22 +206,27 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.away_mode
-      # Greet the arriving person after they close the garage door.
-      #- wait_template: "{{ states.binary_sensor.garage_door.state == 'closed' }}"
-      #  timeout: '00:05:00'
       - delay:
           minutes: 2
-      - service: script.speech_engine
+
+      #- service: script.speech_engine
+      #  data_template:
+      #    call_do_not_greet: 1
+      #    personarriving: >
+      #      {{ trigger.entity_id.split('.')[1]|replace('_', ' ') }}
+      #    call_inside_weather: 1
+      #    call_garage_check: 1
+      #    call_window_check: 1
+      #    call_door_check: 1
+      #    call_light_check: 1
+      #    call_moon: 1
+
+      - service: script.notify_speech
         data_template:
-          call_do_not_greet: 1
-          personarriving: >
-            {{ trigger.entity_id.split('.')[1]|replace('_', ' ') }}
-          call_inside_weather: 1
-          call_garage_check: 1
-          call_window_check: 1
-          call_door_check: 1
-          call_light_check: 1
-          call_moon: 1
+          media_player: >-
+            "media_player.echo_living_room"
+          message: >-
+            {{ "Welcome home " ~ trigger.entity_id.split('.')[1]|replace('_', ' ') }}
 
   - alias: Leave home
     trigger:
@@ -233,9 +238,10 @@ automation:
           minutes: 2
           seconds: 0
     condition:
-      # Only turn on Away Mode if no guests are present and the guest mode override is off.
+      # Only turn on Away Mode if no family are present, no guests are present, and the guest mode override is off.
       - condition: template
-        value_template: "{{ states.group.guests.state == 'not_home' 
+        value_template: "{{ states.group.family.state == 'not_home'
+                        and states.group.guests.state == 'not_home' 
                         and states.input_boolean.guest_mode.state == 'off' }}"
     action:
       - service: input_boolean.turn_on

@@ -109,12 +109,12 @@ script:
             False
           {%- endif %}
       # Send notifications when an update is available.
-      - service: script.notify_ios_engine
+      - service: script.notify_ios
         data_template:
           title: "Sonoff Update Available"
           message: "{{ states.sensor.sonoff_latest_release.state }}"
           who: "brian"
-      - service: script.notify_web_engine
+      - service: script.notify_web
         data_template:
           title: "Sonoff Update Available"
           message: "{{ states.sensor.sonoff_latest_release.state }} @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

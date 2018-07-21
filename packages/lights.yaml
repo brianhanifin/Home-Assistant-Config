@@ -47,12 +47,13 @@ sensor:
           {% macro get_lights_on() -%}
             {%- for group in states.light|groupby('state') -%}
               {%- for entity in group.list -%}
-                {%- if  entity.state == 'on'
-                    and entity.entity_id.split('_')|last != 'nightlight'
+                {%- if entity.state == 'on'
                     and entity.entity_id|lower != 'light.entry'
-                    and entity.entity_id|lower != 'light.hue'
-                    and entity.entity_id|lower != 'light.garage_entry_light'
-                    and entity.entity_id|lower != 'light.shoe_closet_light' -%}
+                    and entity.entity_id|lower != 'light.porch'
+                    and not ('garage_entry' in entity.entity_id|lower)
+                    and not ('shoe_closet'  in entity.entity_id|lower)
+                    and not (entity.entity_id|lower).startswith('light.hue')
+                    and not (entity.entity_id|lower).endswith('nightlight') -%}
                   {{ entity.entity_id }}{{ ' ' }}
                 {%- endif -%}
               {%- endfor -%}
@@ -60,7 +61,7 @@ sensor:
             {%- for group in states.switch|groupby('state') -%}
               {%- for entity in group.list -%}
                 {%- if  entity.state == 'on'
-                    and entity.entity_id.split('_')|last == 'light' -%}
+                    and (entity.entity_id|lower).endswith('light') -%}
                   {{ entity.entity_id }}{{ ' ' }}
                 {%- endif -%}
               {%- endfor -%}
