@@ -4,7 +4,7 @@
 #-------------------------------------------
 homeassistant:
   customize:
-    input_boolean.lastmsg:
+    input_boolean.last_message:
       friendly_name: 'Repeat Message'
       icon: mdi:repeat-once
       hidden: False
@@ -13,13 +13,13 @@ homeassistant:
 
 #-------------------------------------------
 input_boolean:
-  lastmsg:
+  last_message:
     name: Last Message
     initial: off
 #-------------------------------------------
 sensor:
   - platform: mqtt
-    state_topic: "polly/lastmsg"
+    state_topic: "speech/last_message"
     name: "Last Message"
 
 ##############################################################################
@@ -29,17 +29,18 @@ automation:
   - alias: 'Repeat Last Message'
     trigger:
       - platform: state
-        entity_id: input_boolean.lastmsg
+        entity_id: input_boolean.last_message
         to: 'on'
     action:
-      - service: tts.amazon_polly_say
+      #- service: tts.amazon_polly_say
+      - service: media_player.alexa_tts
         entity_id:
           - media_player.living_room_speaker
-          - media_player.play_room_speaker
+          #- media_player.play_room_speaker
         data_template:
           message: >
             {{states.sensor.last_message.state}}
           cache: true
       - service: input_boolean.turn_off
         entity_id:
-          - input_boolean.lastmsg
+          - input_boolean.last_message
