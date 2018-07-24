@@ -149,6 +149,21 @@ scene:
     entities:
       group.goodnight_devices: off
 
+script:
+  good_night_routine:
+    sequence:
+      - service: scene.turn_on
+        entity_id: scene.good_night
+      - service: script.say
+        data_template:
+          media_player: "media_player.echo_living_room"
+          say_goodnight: "true"
+
+  good_night_routine_slient:
+    sequence:
+      - service: scene.turn_on
+        entity_id: scene.good_night
+
 ################################################
 ## Automation
 ################################################
