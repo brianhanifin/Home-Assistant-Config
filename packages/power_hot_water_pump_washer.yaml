@@ -11,15 +11,6 @@ homeassistant:
 binary_sensor:
   - platform: template
     sensors:
-      dryer_running:
-        #value_template: "{{ states.input_boolean.dryer_running.state == 'on' }}"
-        value_template: "{{ states.sensor.sonoffs31_01_power.state|int > 50 }}"
-        device_class: presence
-        friendly_name: "Dryer Running"
-        icon_template: mdi:tumble-dryer
-
-  - platform: template
-    sensors:
       washer_running:
         #value_template: "{{ states.input_boolean.washer_running.state == 'on' }}"
         value_template: "{{ states.sensor.sonoffs31_02_power.state|int > 5 }}"
@@ -31,30 +22,17 @@ binary_sensor:
 ## Automation
 ################################################
 automation:
-  - alias: "Dryer Cycle Is Complete"
+  - alias: Hot Water Pump Timeout
     trigger:
-      - platform: state
-        entity_id: binary_sensor.dryer_running
-        from: 'on'
-        to: 'off'
-        for:
-          seconds: 15
+      platform: state
+      entity_id: switch.sonoffs31_01
+      from: "off"
+      to: "on"
+      for:
+        minutes: 5
     action:
-      - service: script.notify_speech
-        data_template:
-          media_player: "media_player.echo_living_room"
-          message: "The drying cycle is complete."
-
-      - service: script.notify_ios
-        data_template:
-          title: "Clothes Dryer"
-          message: "Clothes are dry! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
-          who: "brian"
-
-      #- service: script.notify_web
-      #  data_template:
-      #    title: "Clothes Dryer"
-      #    message: "Clothes are dry! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      - service: switch.turn_off
+        entity_id: switch.sonoffs31_01
 
   - alias: "Washing Cycle Is Complete"
     trigger:

@@ -28,7 +28,7 @@ script:
           brightness_pct: '60'
       - service: light.turn_on
         data:
-          entity_id: light.boys_bathroom_nightlight
+          entity_id: light.3a542c #light.boys_bathroom_nightlight
           brightness_pct: '30'
 
   morning_devices_off:
@@ -39,7 +39,7 @@ script:
       - service: light.turn_off
         entity_id: light.entry_light
       - service: light.turn_off
-        entity_id: light.boys_bathroom_nightlight
+        entity_id: light.3a542c #light.boys_bathroom_nightlight
 
   ############################################
   ## Light brightness adjusts based on time
@@ -114,7 +114,10 @@ automation:
                         and trigger.event.data.new_state.state == 'on' }}"
       # Don't change these lights.
       - condition: template
-        value_template: "{{ trigger.event.data.entity_id != 'light.brians_light'
+        value_template: "{{ trigger.event.data.entity_id != 'light.3a4f5b'
+                        and trigger.event.data.entity_id != 'light.3a542c'
+                        and trigger.event.data.entity_id != 'light.3a5e44'
+                        and trigger.event.data.entity_id != 'light.3a76dc'
                         and trigger.event.data.entity_id != 'light.entry'
                         and trigger.event.data.entity_id != 'light.hue'
                         and trigger.event.data.entity_id != 'light.living_room'
@@ -146,9 +149,9 @@ automation:
           title: 'Script: Morning Devices'
           message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
-      - service: persistent_notification.create
-        data:
-          message: "Script: Morning Devices activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      #- service: persistent_notification.create
+      #  data:
+      #    message: "Script: Morning Devices activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
 
   ## 45 minutes before sunset = "Dusk"
   - alias: Dusk
@@ -168,6 +171,6 @@ automation:
           title: 'Script: Dusk'
           message: "Activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
-      - service: persistent_notification.create
-        data:
-          message: "Script: Dusk activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      #- service: persistent_notification.create
+      #  data:
+      #    message: "Script: Dusk activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

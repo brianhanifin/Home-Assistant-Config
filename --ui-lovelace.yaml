@@ -1,0 +1,265 @@
+resources:
+  - url: /local/custom_ui/weather-card.js
+    type: js
+
+views:
+- title: Downstairs
+  icon: mdi:sofa
+  cards:
+    - type: entity-filter
+      card: 
+        type: glance
+        #title: Status
+      entities:
+        - device_tracker.brian
+        - device_tracker.nerene
+        - device_tracker.cindy
+        - device_tracker.eric
+        - device_tracker.heather
+        - device_tracker.melissa
+        - device_tracker.sandy
+        - binary_sensor.brians_bed_occupancy
+        - binary_sensor.nerenes_bed_occupancy
+        - binary_sensor.garage_door
+        - binary_sensor.shoe_closet_door
+        - binary_sensor.glowforge_window
+      state_filter:
+        - 'home'
+        - 'on'
+      show_empty: false
+
+    - title: Control Panel
+      type: glance
+      entities:
+        - input_boolean.guest_mode
+        - input_boolean.illumination_lighting_mode
+        - input_boolean.movie_night
+        - input_boolean.motion_detection
+        - input_boolean.motion_detection_familyroom
+        - input_boolean.motion_detection_livingroom
+        - input_boolean.motion_detection_kitchen
+        - input_boolean.motion_detection_playroom
+        - input_boolean.shoe_closet_timeout
+        - input_boolean.speech_notifications
+        - input_boolean.text_notifications
+        - input_boolean.time_based_dimmers_enabled
+        - input_boolean.vacation
+        - scene.goodbye
+        - scene.good_night
+        - input_select.theme
+
+    - title: Downstairs Lights
+      type: entities
+      entities:
+        - light.dining_room_light
+        - group.panel_entry_lighting
+        - group.panel_family_room_lights
+        - group.panel_kitchen_lights
+        - group.panel_living_room_lights
+        - group.panel_play_room_lights
+
+    - title: Downstairs Devices
+      type: entities
+      entities:
+        - cover.garage_door
+        - group.panel_doorbell
+        - group.panel_living_room_tv
+        - group.panel_play_room_tv
+        - switch.living_room_fan
+        - group.printers
+        - group.panel_home_thermostat
+        - group.panel_playroom_thermostat
+
+    - title: Upstairs
+      type: entities
+      entities:
+        - group.panel_master_bedroom
+        - group.panel_lucas_bedroom
+        - group.panel_boys_bathroom
+        - group.wakeup_brian
+        - group.wakeup_nerene
+
+    - title: Investments
+      type: glance
+      entities:
+        - sensor.amazon
+        - sensor.amd
+        - sensor.apple
+        - sensor.disney
+        - sensor.tesla
+        - sensor.weight_watchers
+
+- title: Cameras
+  icon: mdi:cctv
+  cards:
+    - type: picture-entity
+      entity: camera.front_door
+    - type: picture-entity
+      entity: camera.workbench
+
+- title: Outside
+  icon: mdi:white-balance-sunny
+  cards:
+    - type: glance
+      entities:
+        - sensor.dark_sky_temperature
+        - sensor.dark_sky_cloud_coverage
+        - sensor.dark_sky_minutely_summary
+        - sensor.side_yard_battery
+
+    - title: Weather
+      id: weather
+      icon: mdi:weather-cloudy
+      garage_door_tilt_sensor_alarm_level: Weather
+      cards:
+        - type: "custom:weather-card"
+          entity_weather: weather.yweather
+          entity_sun: sun.sun
+
+    - title:  Front Yard Drip System
+      type: entities
+      entities:
+        - switch.front_yard_automatic_watering
+        - switch.front_yard_manual_watering
+        #- binary_sensor.front_yard_watering
+        - sensor.front_yard_next_cycle
+        - sensor.front_yard_last_ran
+        #- sensor.front_yard_rain_delay
+
+    - title: Solar
+      type: glance
+      entities:
+        #- sensor.power_consumption
+        #- sensor.energy_consumption
+        - sensor.power_generation
+        - sensor.energy_generation
+        #- sensor.pvoutput
+        - sun.sun
+        - weblink.pvoutput
+
+    - title: Pool Filler
+      type: entities
+      entities:
+        - switch.pool_filler_automatic_watering
+        - switch.pool_filler_manual_watering
+        #- binary_sensor.pool_filler_watering
+        - sensor.pool_filler_next_cycle
+        - sensor.pool_filler_last_ran
+        #- sensor.pool_filler_rain_delay
+
+    - title: Lights
+      type: entities
+      entities:
+        - light.porch_light
+
+    - title: 'Weather: Dark Sky'
+      type: glance
+      entities:
+        #- sensor.dark_sky_temperature
+        - sensor.dark_sky_daily_high_apparent_temperature
+        - sensor.dark_sky_daily_low_apparent_temperature
+        - sensor.dark_sky_daily_summary
+        #- sensor.dark_sky_minutely_summary
+        - sensor.dark_sky_hourly_summary
+        - sensor.dark_sky_summary
+        #- sensor.dark_sky_cloud_coverage
+        - sensor.dark_sky_humidity
+        - sensor.dark_sky_nearest_storm_distance
+        - sensor.dark_sky_precip
+        - sensor.dark_sky_daily_max_precip_intensity
+        - sensor.dark_sky_precip_intensity
+        - sensor.dark_sky_precip_probability
+        - sensor.dark_sky_wind_bearing
+        - sensor.dark_sky_wind_speed
+
+    - type: plant-status
+      card:
+        title: Plant Soil
+      entity: plant.plant1
+
+- title: Admin
+  icon: mdi:settings
+  cards:
+    - title: Manage
+      type: entities
+      entities:
+        #- script.raincloud_restart
+        #- script.reboot
+        - script.restart_hass
+        #- script.restart_hass_playground
+        #- script.reload_groups
+        - script.restart_nodered
+        #- script.wink_new_devices
+        - input_select.log_level
+
+    - title: Stats
+      type: glance
+      entities:
+        - sensor.ha_version
+        - sensor.ha_laststartup
+        - sensor.since_last_boot
+        - sensor.processor_use
+        - sensor.memory_use_percent
+        - sensor.load_15m
+
+    - title: Docker Links
+      type: entities
+      entities:
+        - weblink.influxdb
+        - weblink.hadockermon
+        - weblink.hass_playground
+        - weblink.hadockermon
+        - weblink.mosquitto
+        - weblink.nodered
+        #- weblink.organizr
+        - weblink.portainerio
+        - weblink.tasmoadmin
+        - weblink.unifi
+    
+    - title: Power Montior
+      type: glance
+      entities:
+        ## Bedside Power
+        - binary_sensor.brians_bed_occupancy
+        - sensor.sonoff_pow01_power
+        - sensor.sonoff_pow01_power_mean
+        - binary_sensor.nerenes_bed_occupancy
+        - sensor.sonoff_pow02_power
+        - sensor.sonoff_pow02_power_mean
+        ## Washer/Dryer Power
+        - binary_sensor.dryer_running
+        - sensor.sonoffs31_01_power
+        - sensor.sonoffs31_01_power_mean
+        - binary_sensor.washer_running
+        - sensor.sonoffs31_02_power
+        - sensor.sonoffs31_02_power_mean
+
+    - type: entity-filter
+      card:
+        type: glance
+        title: Presence Inspector
+      entities:
+        - group.family
+        - group.guests
+        - binary_sensor.bedroom_occupancy
+        - binary_sensor.brians_bed_occupancy
+        - binary_sensor.home_occupancy
+        - binary_sensor.lucas_bedroom_occupancy
+        - binary_sensor.nerenes_bed_occupancy
+        - binary_sensor.family_room_motion
+        - binary_sensor.front_door_motion
+        - binary_sensor.kitchen_motion
+        - binary_sensor.living_room_motion
+        - binary_sensor.play_room_motion
+        - binary_sensor.ring_front_door_motion
+        - binary_sensor.family_room_motion
+        - binary_sensor.front_door_motion
+        - binary_sensor.kitchen_motion
+        - binary_sensor.living_room_motion
+        - binary_sensor.play_room_motion
+        - binary_sensor.ring_front_door_motion
+        - device_tracker.automatic
+        - device_tracker.parrot_ck3100
+      state_filter:
+        - 'home'
+        - 'on'

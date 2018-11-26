@@ -16,7 +16,8 @@ homeassistant:
 
 ## Insteon Dimmer Plugs
 #######################
-insteon_local:
+#insteon_local:
+insteon:
   host: 10.0.0.30
   username: !secret insteon_user
   password: !secret insteon_pass
@@ -50,6 +51,7 @@ sensor:
                 {%- if entity.state == 'on'
                     and entity.entity_id|lower != 'light.entry'
                     and entity.entity_id|lower != 'light.porch'
+                    and entity.entity_id|lower != 'light.3a542c'
                     and not ('garage_entry' in entity.entity_id|lower)
                     and not ('shoe_closet'  in entity.entity_id|lower)
                     and not (entity.entity_id|lower).startswith('light.hue')
@@ -73,13 +75,13 @@ sensor:
 ## Lights
 ################################################
 light:
-  platform: insteon_local
+  platform: insteon
 
 ################################################
 ## Switches
 ################################################
 switch:
-  platform: insteon_local
+  platform: insteon
 
 ################################################
 ## Automations
