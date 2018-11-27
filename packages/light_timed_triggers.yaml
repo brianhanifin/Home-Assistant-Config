@@ -51,10 +51,9 @@ script:
       - condition: template
         value_template: "{{ states.input_boolean.away_mode.state == 'off'
                         and states.input_boolean.time_based_dimmers_enabled.state == 'on' }}"
-      # Only dim lights when guests are NOT present.
+      # Only dim lights when guest mode is NOT active.
       - condition: template
-        value_template: "{{ states.binary_sensor.presence_guests.state == 'off'
-                        and states.input_boolean.guest_mode.state      == 'off' }}"
+        value_template: "{{ states.input_boolean.guest_mode.state == 'off' }}"
       - service: light.turn_on
         data_template:
           entity_id: "{{ entity }}"

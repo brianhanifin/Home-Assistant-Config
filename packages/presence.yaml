@@ -19,7 +19,7 @@ homeassistant:
       friendly_name: "Nerene's Car"
       device_class: connectivity
     
-    ##### Guest Devices
+    ##### Other Family Devices
     device_tracker.cindy:
       device_class: presence
     device_tracker.eric:
@@ -86,13 +86,6 @@ binary_sensor:
 
   - platform: template
     sensors:
-      presence_guests:
-        value_template: "{{ is_state('group.guests', 'home') }}"
-        device_class: presence
-        friendly_name: Guests
-
-  - platform: template
-    sensors:
       presence_nerene:
         value_template: "{{ is_state('device_tracker.nerene', 'home') }}"
         device_class: presence
@@ -122,19 +115,15 @@ group:
     entities:
       - device_tracker.brian
       - device_tracker.nerene
-    name: "Any Family At Home?"
-    icon: mdi:home-heart
-    view: no
-
-  guests:
-    entities:
+      - device_tracker.kyle
+      - device_tracker.lucas
       - device_tracker.cindy
       - device_tracker.eric
       - device_tracker.heather
       - device_tracker.melissa
       - device_tracker.sandy
-    name: "Any Guests At Home?"
-    icon: mdi:account-alert
+    name: "Any Family At Home?"
+    icon: mdi:home-heart
     view: no
 
 ################################################
@@ -250,47 +239,13 @@ automation:
         from: 'home'
         to: 'not_home'
         for:
-          minutes: 2
+          minutes: 5
           seconds: 0
     condition:
-      # Only turn on Away Mode if no family are present, no guests are present, and the guest mode override is off.
+      # Only turn on Away Mode if no family are present and the guest mode override is off.
       - condition: template
         value_template: "{{ states.group.family.state == 'not_home'
-                        and states.group.guests.state == 'not_home' 
                         and states.input_boolean.guest_mode.state == 'off' }}"
     action:
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.away_mode
-
-  ##############################################################################
-  ###  Known Guests Presence Detection
-  ##############################################################################
-  - alias: Known Guests Arrive
-    trigger:
-      - platform: state
-        entity_id: group.guests
-        from: 'not_home'
-        to: 'home'
-        for:
-          minutes: 0
-          seconds: 5
-    action:
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.away_mode
-
-  - alias: Known Guests Leave
-    trigger:
-      - platform: state
-        entity_id: group.guests
-        from: 'home'
-        to: 'not_home'
-        for:
-          minutes: 2
-          seconds: 0
-    action:
-      # Only turn on Away Mode if no family is present and the guest mode override is off.
-      - condition: template
-        value_template: "{{ states.group.family.state == 'not_home' 
-                        and states.input_boolean.guest_mode.state == 'off' }}"
       - service: input_boolean.turn_on
         entity_id: input_boolean.away_mode
