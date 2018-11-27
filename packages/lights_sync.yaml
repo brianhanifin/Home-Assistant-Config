@@ -68,7 +68,7 @@ automation:
         to: 'off'
     action:
       - service: light.turn_off
-        entity_id: light.family_room_table_lamp
+        entity_id: light.3a5e44
 
   - alias: Family Room Light lt 75pct
     trigger:
@@ -78,7 +78,7 @@ automation:
         below: '190' # slightly less than 75%
     action:
       - service: light.turn_off
-        entity_id: light.family_room_table_lamp
+        entity_id: light.3a5e44
 
   - alias: Family Room Light gte 75pct
     trigger:
@@ -91,30 +91,7 @@ automation:
           seconds: 1
     action:
       - service: light.turn_on
-        entity_id: light.family_room_table_lamp
-
-  ##############################################
-  ## Kitchen Light Automations
-  ##############################################
-  - alias: Kitchen Light(s) Turn On
-    trigger:
-      - platform: state
-        entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
-        to: "on"
-    action:
-      - service: light.turn_on
-        data:
-          entity_id: light.kitchen_sink_light
-          brightness: 255
-
-  - alias: Kitchen Light(s) Turn Off
-    trigger:
-      - platform: state
-        entity_id: switch.kitchen_prep_light, switch.kitchen_stove_light
-        to: "off"
-    action:
-      - service: light.turn_off
-        entity_id: light.kitchen_sink_light
+        entity_id: light.3a5e44
 
   ##############################################
   ## Living Room Light Automations
