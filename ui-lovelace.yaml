@@ -1,7 +1,18 @@
 title: My Lovely Home Automation
+
+resources:
+  - url: /local/tracker-card.js?v=0
+    type: js
+
 views:
   - title: Home
     cards:
+      - type: custom:tracker-card
+        title:
+        trackers:
+          - sensor.custom_card_tracker
+          - sensor.custom_component_tracker
+
       - type: picture-entity
         title: Porch
         entity: camera.front_door
@@ -55,7 +66,6 @@ views:
           - automation.dark_sky_startup_actions
           - automation.doorbell_pressed
           - automation.doors_and_windows_watchdog
-          - automation.dryer_cycle_is_complete
           - automation.dusk
           - automation.family_room_light_gte_75pct
           - automation.family_room_light_lt_75pct
@@ -66,8 +76,6 @@ views:
           - automation.hide_empty_bed_states
           - automation.home_assistant_startup_actions
           - automation.kitchen_absent
-          - automation.kitchen_lights_turn_off
-          - automation.kitchen_lights_turn_on
           - automation.kitchen_present
           - automation.kitchen_sink_leak_detected
           - automation.leave_home
@@ -93,7 +101,6 @@ views:
           - automation.shoe_closet_closed
           - automation.shoe_closet_open
           - automation.shoe_closet_timeout
-          - automation.sonoff_updates_available_notificaiton
           - automation.theme_change_selection
           - automation.theme_time_of_day_change
           - automation.update_battery_status_group_members
@@ -112,10 +119,8 @@ views:
           - binary_sensor.bedroom_occupancy
           - binary_sensor.brian_or_nerene
           - binary_sensor.brians_bed_occupancy
-          - binary_sensor.dryer_running
           - binary_sensor.eric_or_sandy
           - binary_sensor.family_room_motion
-          - binary_sensor.front_door_button_pressed
           - binary_sensor.front_door_motion
           - binary_sensor.front_yard_watering
           - binary_sensor.garage_door
@@ -129,9 +134,6 @@ views:
           - binary_sensor.play_room_motion
           - binary_sensor.playroom_fan_button
           - binary_sensor.pool_filler_watering
-          - binary_sensor.presence_brian
-          - binary_sensor.presence_family
-          - binary_sensor.presence_nerene
           - binary_sensor.ring_front_door_ding
           - binary_sensor.ring_front_door_motion
           - binary_sensor.shoe_closet_door
@@ -273,7 +275,7 @@ views:
           - group.panel_wunderground
           - group.printers
           - group.sonoff
-          - group.sonoff_versions
+          #- group.sonoff_versions
           - group.system_monitor
           - group.wakeup_brian
           - group.wakeup_nerene
@@ -359,18 +361,13 @@ views:
           - light.entry
           - light.entry_light
           - light.family_room_light
-          - light.family_room_nightlight
           - light.garage_entry_light
-          - light.hue
-          - light.hue_color_lamp_2
-          - light.huezapper_target
-          - light.huezapper_zone
-          - light.light_strip
-          - light.living_room
+          #- light.huezapper_target
+          #- light.huezapper_zone
+          - light.kitchen_undercabinet
           - light.living_room_light
           - light.nerenes_light
           - light.play_room_light
-          - light.porch
           - light.porch_light
           - light.shoe_closet_light
 
@@ -385,9 +382,9 @@ views:
         show_header_toggle: true
         entities:
           - remote.living_room_2
-          - remote.photo_frame_2
+          #- remote.photo_frame_2
           - remote.play_room_2
-          - remote.play_room_3
+          #- remote.play_room_3
 
       - type: entities
         title: Scenes
@@ -419,7 +416,7 @@ views:
         show_header_toggle: true
         entities:
           - script.alexa_tts_test
-          - script.check_sonoffs_version
+          #- script.check_sonoffs_version
           - script.debug
           - script.disable_speech_at_startup
           - script.dusk
@@ -447,14 +444,14 @@ views:
           - script.say
           - script.say_test
           - script.set_light_brightness_pct_by_time
-          - script.sonoff_check_for_update
+          #- script.sonoff_check_for_update
           - script.test_doorbell
           - script.theme_selection_changed
           - script.turn_off_livingroom_tv
           - script.turn_off_playroom_tv
           - script.turn_on_livingroom_tv
           - script.turn_on_playroom_tv
-          - script.update_sonoffs
+          #- script.update_sonoffs
           - script.wakeup_brian_activate
           - script.wakeup_brian_ios_alarm
           - script.wakeup_brian_light_fade
@@ -489,7 +486,7 @@ views:
           - sensor.dark_sky_cloud_coverage_5
           - sensor.dark_sky_cloud_coverage_6
           - sensor.dark_sky_cloud_coverage_7
-          - sensor.dark_sky_daily_high_apparent_temperature
+          #- sensor.dark_sky_daily_high_apparent_temperature
           - sensor.dark_sky_daily_high_apparent_temperature_1
           - sensor.dark_sky_daily_high_apparent_temperature_2
           - sensor.dark_sky_daily_high_apparent_temperature_3
@@ -497,7 +494,7 @@ views:
           - sensor.dark_sky_daily_high_apparent_temperature_5
           - sensor.dark_sky_daily_high_apparent_temperature_6
           - sensor.dark_sky_daily_high_apparent_temperature_7
-          - sensor.dark_sky_daily_low_apparent_temperature
+          #- sensor.dark_sky_daily_low_apparent_temperature
           - sensor.dark_sky_daily_low_apparent_temperature_1
           - sensor.dark_sky_daily_low_apparent_temperature_2
           - sensor.dark_sky_daily_low_apparent_temperature_3
@@ -505,7 +502,7 @@ views:
           - sensor.dark_sky_daily_low_apparent_temperature_5
           - sensor.dark_sky_daily_low_apparent_temperature_6
           - sensor.dark_sky_daily_low_apparent_temperature_7
-          - sensor.dark_sky_daily_max_precip_intensity
+          #- sensor.dark_sky_daily_max_precip_intensity
           - sensor.dark_sky_daily_max_precip_intensity_1
           - sensor.dark_sky_daily_max_precip_intensity_2
           - sensor.dark_sky_daily_max_precip_intensity_3
@@ -541,7 +538,7 @@ views:
           - sensor.dark_sky_precip_5
           - sensor.dark_sky_precip_6
           - sensor.dark_sky_precip_7
-          - sensor.dark_sky_precip_accumulation
+          #- sensor.dark_sky_precip_accumulation
           - sensor.dark_sky_precip_accumulation_1
           - sensor.dark_sky_precip_accumulation_2
           - sensor.dark_sky_precip_accumulation_3
@@ -601,8 +598,8 @@ views:
           - sensor.ecobee_playroom_hold_mode
           - sensor.energy_generation
           - sensor.family_room_battery
-          - sensor.family_room_illumination
-          - sensor.family_room_illumination_battery
+          #- sensor.family_room_illumination
+          #- sensor.family_room_illumination_battery
           - sensor.flag
           - sensor.front_door_battery
           - sensor.front_yard_last_ran
@@ -623,8 +620,8 @@ views:
           - sensor.last_message
           - sensor.lights_on
           - sensor.living_room_battery
-          - sensor.living_room_illumination
-          - sensor.living_room_illumination_battery
+          #- sensor.living_room_illumination
+          #- sensor.living_room_illumination_battery
           - sensor.load_15m
           - sensor.lucas_bedroom_temperature
           - sensor.memory_use_percent
@@ -650,27 +647,27 @@ views:
           - sensor.soil_sensor_1_light_intensity
           - sensor.soil_sensor_1_moisture
           - sensor.soil_sensor_1_temperature
-          - sensor.sonoff01_version
-          - sensor.sonoff02_version
-          - sensor.sonoff_dual01_version
-          - sensor.sonoff_latest_release
+          #- sensor.sonoff01_version
+          #- sensor.sonoff02_version
+          #- sensor.sonoff_dual01_version
+          #- sensor.sonoff_latest_release
           - sensor.sonoff_pow01_energy
           - sensor.sonoff_pow01_power
           - sensor.sonoff_pow01_power_mean
-          - sensor.sonoff_pow01_version
+          #- sensor.sonoff_pow01_version
           - sensor.sonoff_pow01_voltage
           - sensor.sonoff_pow02_energy
           - sensor.sonoff_pow02_power
           - sensor.sonoff_pow02_power_mean
-          - sensor.sonoff_pow02_version
+          #- sensor.sonoff_pow02_version
           - sensor.sonoff_pow02_voltage
           - sensor.sonoffs31_01_energy
           - sensor.sonoffs31_01_power
-          - sensor.sonoffs31_01_version
+          #- sensor.sonoffs31_01_version
           - sensor.sonoffs31_01_voltage
           - sensor.sonoffs31_02_energy
           - sensor.sonoffs31_02_power
-          - sensor.sonoffs31_02_version
+          #- sensor.sonoffs31_02_version
           - sensor.sonoffs31_02_voltage
           - sensor.sonoffs31_03_energy
           - sensor.sonoffs31_03_power
@@ -684,7 +681,7 @@ views:
           - sensor.windows_open
           - sensor.workbench_motion_detected
           - sensor.workbench_ptz_preset
-          - sensor.xiaomi_gateway_illumination
+          #- sensor.xiaomi_gateway_illumination
           - sensor.xiaomi_smart_button_battery
 
       - type: entities
@@ -704,7 +701,6 @@ views:
           - switch.appdaemon_service
           - switch.cpap
           - switch.dockermon_service
-          - switch.dryer
           - switch.ecobee_home_fan
           - switch.ecobee_playroom_fan
           - switch.entry_step_light

@@ -66,6 +66,16 @@ customizer:
   #  - value_index
   #columns: 350, 700, 1050, 1400, 1850, 2100
 
+# Source: https://github.com/pnbruckner/homeassistant-config
+custom_updater:
+  track:
+    - components
+    - python_scripts
+  component_urls:
+    - https://raw.githubusercontent.com/pnbruckner/homeassistant-config/master/custom_components.json
+  python_script_urls:
+    - https://raw.githubusercontent.com/pnbruckner/homeassistant-config/master/python_scripts.json
+
 # Discover some devices automatically
 discovery:
   #enable:
@@ -143,13 +153,21 @@ automation:
       platform: homeassistant
       event: start
     action:
-      # Disable speech message that occurs everytime I restart HASS.
-      - service: script.turn_on
-        entity_id: script.disable_speech_at_startup
       - service: variable.set_variable
         data:
           variable: ha_laststartup
           value_template: "{{ as_timestamp(now()) }}"
+
+      # Disable speech message that occurs everytime I restart HASS.
+      #- service: script.turn_on
+      #  entity_id: script.disable_speech_at_startup
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.speech_notifications
+
+      # Make sure the Hot Water Pump is turned off at startup.
+      - service: switch.turn_off
+        entity_id: switch.sonoffs31_01
+
       # Sometimes the garage entry light turns on at startup, 
       # so turn it back off if the door is closed.
       - condition: state

@@ -5,7 +5,10 @@ homeassistant:
       friendly_name: "Brian"
       device_class: presence
     device_tracker.brians_iphone_bluetooth:
-      friendly_name: "Brian's Phone"
+      friendly_name: "Brian's iPhone"
+      device_class: connectivity
+    device_tracker.brians_iphone_nmap:
+      friendly_name: "Brian's iPhone"
       device_class: connectivity
     device_tracker.automatic:
       friendly_name: "Brian's Car"
@@ -14,6 +17,9 @@ homeassistant:
     ##### Nerene's Devices
     device_tracker.nerene:
       friendly_name: "Nerene"
+      device_class: presence
+    device_tracker.nerenes_iphone_nmap:
+      friendly_name: "Nerene's iPhone"
       device_class: presence
     device_tracker.parrot_ck3100:
       friendly_name: "Nerene's Car"
@@ -52,7 +58,7 @@ device_tracker:
       #- 10.0.0.0/24
       - 10.0.0.100-254
     new_device_defaults:
-      track_new_devices: true
+      track_new_devices: false
       hide_if_away: true
 
   #- platform: unifi
@@ -65,31 +71,37 @@ device_tracker:
   #    track_new_devices: false
   #    hide_if_away: true
 
-################################################
-## Sensors
-################################################
-binary_sensor:
-  - platform: template
-    sensors:
-      presence_brian:
-        value_template: "{{ is_state('device_tracker.brian', 'home')
-                         or is_state('device_tracker.brians_iphone_bluetooth', 'home') }}"
-        device_class: presence
-        friendly_name: Brian
+  - platform: life360
+    username: !secret email1
+    password: !secret life360_pass
+    prefix: life360
+    show_as_state: driving, moving, places
+    driving_speed: 18
+    max_gps_accuracy: 200
+    max_update_wait:
+      minutes: 45
 
-  - platform: template
-    sensors:
-      presence_family:
-        value_template: "{{ is_state('group.family', 'home') }}"
-        device_class: presence
-        friendly_name: Family
 
-  - platform: template
-    sensors:
-      presence_nerene:
-        value_template: "{{ is_state('device_tracker.nerene', 'home') }}"
-        device_class: presence
-        friendly_name: Nerene
+  - platform: composite
+    name: brian
+    entity_id:
+      - device_tracker.brians_iphone_bluetooth
+      - device_tracker.brians_iphone_nmap
+      - device_tracker.life360_brian
+
+  - platform: composite
+    name: family_phone
+    entity_id:
+      - device_tracker.family_phone_bluetooth
+      - device_tracker.family_phone_nmap
+      - device_tracker.life360_family_phone
+
+  - platform: composite
+    name: nerene
+    entity_id:
+      - device_tracker.nerenes_iphone_bluetooth
+      - device_tracker.nerenes_iphone_nmap
+      - device_tracker.life360_nerene
 
 ################################################
 ## Switches
