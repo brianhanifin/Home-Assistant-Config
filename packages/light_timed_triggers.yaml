@@ -28,7 +28,7 @@ script:
           brightness_pct: '60'
       - service: light.turn_on
         data:
-          entity_id: light.3a542c #light.boys_bathroom_nightlight
+          entity_id: light.3a542c #switch.boys_bathroom_nightlight
           brightness_pct: '30'
 
   morning_devices_off:
@@ -39,7 +39,7 @@ script:
       - service: light.turn_off
         entity_id: light.entry_light
       - service: light.turn_off
-        entity_id: light.3a542c #light.boys_bathroom_nightlight
+        entity_id: light.3a542c #switch.boys_bathroom_nightlight
 
   ############################################
   ## Light brightness adjusts based on time
@@ -123,7 +123,6 @@ automation:
                         and trigger.event.data.entity_id != 'light.porch'
                         and not ('garage_entry' in trigger.event.data.entity_id|lower)
                         and not ('shoe_closet'  in trigger.event.data.entity_id|lower)
-                        and not ('lamp'         in trigger.event.data.entity_id|lower)
                         and not (trigger.event.data.entity_id|lower).endswith('lamp')
                         and not (trigger.event.data.entity_id|lower).endswith('nightlight') }}"
     action:

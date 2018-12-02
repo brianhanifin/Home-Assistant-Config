@@ -70,7 +70,7 @@ script:
     sequence:
       #- condition: state
       #  entity_id: sun.sun
-      #`  state: 'below_horizon'
+      #  state: 'below_horizon'
       - service: scene.turn_on
         data_template:
           entity_id: >
@@ -237,10 +237,3 @@ automation:
           title: '{{ trigger.to_state.state }}'
           message: 'Today is {{ trigger.to_state.state }}.'
           who: "family"
-
-
-# service: script.notify_ios
-# data_template:
-  # title: 'Startup: Home Assistant is Up and Running!'
-  # message: "{{ trigger.to_state.state }}"
-  # who: "brian | nerene | lucas | kyle | family | parents"

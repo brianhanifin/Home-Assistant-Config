@@ -344,7 +344,7 @@ switch:
   ##############################################
   # sonoffs31_01
   - platform: mqtt
-    name: "Hot Water Pump"
+    name: "SonoffS31 01"
     state_topic: "stat/sonoffs31_01/POWER"
     command_topic: "cmnd/sonoffs31_01/POWER"
     qos: 1
@@ -370,9 +370,6 @@ switch:
     payload_off: "OFF"
     retain: true
 
-#weblink:
-#  entities:
-
 
 ################################################
 ## Group
@@ -390,12 +387,13 @@ group:
       - binary_sensor.sonoff02
 
       # sonoff_dual01
-      - switch.laser_printer
-      - switch.inkjet_printer
-      - weblink.sonoff_dual01
-      - binary_sensor.sonoff_dual01
+      #- switch.laser_printer
+      #- switch.inkjet_printer
+      #- weblink.sonoff_dual01
+      #- binary_sensor.sonoff_dual01
 
       # sonoff_pow01
+      - switch.sonoff_pow01
       - weblink.sonoff_pow01
       - binary_sensor.sonoff_pow01
       - sensor.sonoff_pow01_energy
@@ -403,7 +401,7 @@ group:
       - sensor.sonoff_pow01_power_mean
       - sensor.sonoff_pow01_voltage
       # sonoff_pow02
-      - switch.nerenes_power_strip
+      - switch.sonoff_pow02
       - weblink.sonoff_pow02
       - binary_sensor.sonoff_pow02
       - sensor.sonoff_pow02_energy

@@ -25,14 +25,14 @@ automation:
   - alias: Hot Water Pump Timeout
     trigger:
       platform: state
-      entity_id: switch.sonoffs31_01
+      entity_id: switch.sonoff_pow01
       from: "off"
       to: "on"
       for:
         minutes: 5
     action:
       - service: switch.turn_off
-        entity_id: switch.sonoffs31_01
+        entity_id: switch.sonoff_pow01
 
   - alias: "Washing Cycle Is Complete"
     trigger:
@@ -45,7 +45,7 @@ automation:
     action:
       - service: script.notify_speech
         data_template:
-          media_player: "media_player.echo_living_room"
+          media_player: "media_player.living_room"
           message: "The washing cycle is complete."
 
       - service: script.notify_ios

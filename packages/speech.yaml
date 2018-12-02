@@ -11,13 +11,13 @@ media_player:
     email: !secret email1
     password: !secret amazon_pass
     url: "amazon.com"
-#media_player.echo_living_room
-#media_player.echo_family_room
-#media_player.echo_kitchen
-#media_player.echo_play_room
-#media_player.echo_master_bedroom
-#media_player.echo_lucas_room
-#media_player.echo_kyles_room
+#media_player.living_room
+#media_player.family_room
+#media_player.kitchen
+#media_player.play_room
+#media_player.master_bedroom
+#media_player.lucas_room
+#media_player.kyles_room
 
 ################################################
 ## Switches
@@ -36,14 +36,14 @@ script:
     sequence:
       - service: media_player.alexa_tts
         data_template:
-          entity_id: "media_player.echo_living_room"
+          entity_id: "media_player.living_room"
           message: "TTS test"
 
   say_test:
     sequence:
       - service: script.say
         data_template:
-          media_player: "media_player.echo_living_room"
+          media_player: "media_player.living_room"
           message: "Speak Script Test"
           say_greeting: "true"
 
@@ -62,7 +62,7 @@ script:
           entity_id: >-
             {%- macro entity_list(entities) -%}
               {%- if entities is not string -%}
-                {%- set temp = 'media_player.echo_living_room' -%}
+                {%- set temp = 'media_player.living_room' -%}
               {%- else -%}
                 {%- set temp = entities|trim|replace(' ', '') -%}
               {%- endif -%}
