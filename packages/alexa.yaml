@@ -5,11 +5,12 @@ cloud:
   alexa:
     filter:
       include_entities:
-        - switch.master_bedroom_fan
-        - switch.entry_step_light
+        - switch.boys_bathroom_nightlight
+        - switch.christmas_tree_light
+        #- switch.entry_step_light
+        - switch.hot_water_pump
         - switch.living_room_fan
-        - switch.laser_printer
-        - switch.inkjet_printer
+        - switch.master_bedroom_fan
     #  include_domains:
     #    - alert
     #    - cover
@@ -18,14 +19,13 @@ cloud:
     #    - script
     #    - switch
       exclude_entities:
-        # Exclude light & switch aliases
+        - binary_sensor.shoe_closet_door
+
+        # Exclude light aliases.
         - light.brians_light
         - light.computer_light
         - light.family_room_table_lamp
         - light.play_room_corner_light
-        - switch.boys_bathroom_nightlight
-        - switch.christmas_tree
-        - switch.hot_water_pump
 
         - light.3a542c #switch.boys_bathroom_nightlight
 
@@ -34,9 +34,9 @@ cloud:
         - light.hue_color_lamp_2
         - light.hue_color_lamp_3
         - light.hue_color_lamp_4
-        - switch.sonoff
-        - switch.sonoffs31_02
-        - switch.sonoffs31_03
+        #- switch.sonoff
+        #- switch.sonoffs31_02
+        #- switch.sonoffs31_03
 
         - input_boolean.alert_mode
         - input_boolean.away_mode
@@ -102,7 +102,6 @@ cloud:
         - script.janet_notification_hub
         - script.janet_speech_processing
         - script.janet_speech_engine
-
       exclude_domains:
         - automation
         - group
@@ -113,17 +112,11 @@ cloud:
         - sensor
         - switch
     entity_config:
-      remote.living_room_2:
-        name: Living Room Apple TV
-        description: Apple TV in the Living Room.
-        display_categories: MEDIA_PLAYER
-      switch.entry_step_light:
-        display_categories: LIGHT
-        description: RGB light strip to highlight tripping hazard in entry way.
-        name: Entry Step Light
-      switch.living_room_fan:
-        display_categories: SMARTPLUG
-        name: Living Room Fan
+      binary_sensor.garage_door:
+        display_categories: CONTACT_SENSOR
+        name: Garage
+      binary_sensor.glowforge_window:
+        display_categories: CONTACT_SENSOR
       group.downstairs_lights:
         display_categories: LIGHT
       group.entry_lights:
@@ -132,3 +125,14 @@ cloud:
         display_categories: LIGHT
       group.upstairs_lights:
         display_categories: LIGHT
+      remote.living_room_2:
+        name: Living Room Apple TV
+        description: Apple TV in the Living Room.
+        display_categories: TV
+      switch.entry_step_light:
+        display_categories: LIGHT
+        description: RGB light strip to highlight tripping hazard in entry way.
+        name: Entry Step Light
+      switch.living_room_fan:
+        display_categories: SMARTPLUG
+        name: Living Room Fan
