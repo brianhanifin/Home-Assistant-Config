@@ -174,32 +174,31 @@ scene:
 script:
   goodbye_routine:
     sequence:
+      # Run the shutdown/goodbye routine.
       - service: script.turn_on
-        entity_id: script.goodbye_routine_slient
+        entity_id: script.shutdown_routine
 
       - service: script.say
         data_template:
           media_player: "media_player.living_room"
           say_goodbye: "true"
 
-  goodbye_routine_slient:
+  goodnight_routine:
     sequence:
-      - service: lock.lock
-        entity_id: lock.front_door
-      - service: scene.turn_on
-        entity_id: scene.goodbye
-
-  good_night_routine:
-    sequence:
+      # Make sure the garage door is closed.
+      - service: cover.close_cover
+        entity_id: cover.garage_door
+      
+      # Run the shutdown/goodbye routine.
       - service: script.turn_on
-        entity_id: script.good_night_routine_slient
+        entity_id: script.shutdown_routine
 
       - service: script.say
         data_template:
           media_player: "media_player.kitchen"
           say_goodnight: "true"
 
-  good_night_routine_slient:
+  shutdown_routine:
     sequence:
       - service: lock.lock
         entity_id: lock.front_door
@@ -232,10 +231,17 @@ automation:
         from: "off"
         to: "on"
     action:
+      # Make sure the garage door is closed.
+      - service: cover.close_cover
+        entity_id: cover.garage_door
+      
+      # Run the shutdown/goodbye routine.
+      - service: script.turn_on
+        entity_id: script.shutdown_routine
+
+      # Set a few more unecessary functions to away mode.
       - service: input_boolean.turn_off
         entity_id: input_boolean.motion_detection_mode
-      - service: scene.turn_on
-        entity_id: scene.goodbye
       - service: script.turn_on
         entity_id: script.ecobee_temporary_away
 
