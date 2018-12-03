@@ -50,6 +50,14 @@ binary_sensor:
         friendly_name: "Nerene's Phone Charge State"
         icon_template: mdi:hotel
 
+  - platform: template
+    sensors:
+      parents_in_bed:
+        value_template: "{{ is_state('input_boolean.brians_bed_occupancy', 'true')
+                            and is_state('input_boolean.nerenes_bed_occupancy', 'true') }}"
+        device_class: presence
+        friendly_name: "Parents in bed"
+
 ################################################
 ## Automation
 ################################################
@@ -134,3 +142,12 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.nerenes_bed_occupancy
+
+  #- alias: "Parent's in bed"
+  #  trigger:
+  #    - platform: state
+  #      entity_id: binary_sensor.parents_in_bed
+  #      to: 'on'
+  #  action:
+  #    - service: script.turn_on
+  #      entity_id: script.good_night_routine_silent

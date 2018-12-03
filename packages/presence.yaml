@@ -172,17 +172,37 @@ scene:
       group.goodnight_devices: off
 
 script:
-  good_night_routine:
+  goodbye_routine:
     sequence:
-      - service: scene.turn_on
-        entity_id: scene.good_night
+      - service: script.turn_on
+        entity_id: script.goodbye_routine_slient
+
       - service: script.say
         data_template:
           media_player: "media_player.living_room"
+          say_goodbye: "true"
+
+  goodbye_routine_slient:
+    sequence:
+      - service: lock.lock
+        entity_id: lock.front_door
+      - service: scene.turn_on
+        entity_id: scene.goodbye
+
+  good_night_routine:
+    sequence:
+      - service: script.turn_on
+        entity_id: script.good_night_routine_slient
+
+      - service: script.say
+        data_template:
+          media_player: "media_player.kitchen"
           say_goodnight: "true"
 
   good_night_routine_slient:
     sequence:
+      - service: lock.lock
+        entity_id: lock.front_door
       - service: scene.turn_on
         entity_id: scene.good_night
 

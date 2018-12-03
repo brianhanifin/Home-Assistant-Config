@@ -19,7 +19,7 @@ switch:
   # Sonoff S31 01
   - platform: template
     switches:
-      christmas_tree:
+      christmas_tree_lights:
         friendly_name: Christmas Tree
         value_template: "{{ is_state('switch.sonoffs31_01', 'on') }}"
         turn_on:
@@ -45,3 +45,18 @@ switch:
           service: switch.turn_off
           data:
             entity_id: switch.sonoff_pow01
+
+  # Sonoff POW 02
+  - platform: template
+    switches:
+      landscape_lights:
+        friendly_name: Landscape Lights
+        value_template: "{{ is_state('switch.sonoff_pow02', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.sonoff_pow02
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.sonoff_pow02
