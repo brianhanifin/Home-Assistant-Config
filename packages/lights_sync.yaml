@@ -94,6 +94,62 @@ automation:
         entity_id: light.3a5e44
 
   ##############################################
+  ## Kitchen Light Automations
+  ##############################################
+  ## Set the kitchen cabinet lights to full brightness when one of the main light turns on..
+  - alias: Kitchen Lights Off
+    trigger:
+      - platform: template
+        value_template: "{% if is_state('switch.kitchen_light', 'off') 
+                           and is_state('switch.kitchen_prep_light', 'off') %}true{% endif %}"
+      # - platform: state
+      #  entity_id:
+      #    - switch.kitchen_light
+      #    - switch.kitchen_prep_light
+      #  from: 'on'
+      #  to: 'off'
+    condition:
+      - condition: state
+        entity_id: light.kitchen_undercabinet
+        state: 'on'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_undercabinet
+          brightness: 63
+
+  ## Set the kitchen cabinet lights to full brightness when one of the main light turns on..
+  - alias: Kitchen Lights On
+    trigger:
+      - platform: state
+        entity_id:
+          - switch.kitchen_light
+          - switch.kitchen_prep_light
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: light.kitchen_undercabinet
+        state: 'on'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_undercabinet
+          brightness: 254
+
+  - alias: Kitchen Cabinet Lights On
+    trigger:
+       - platform: state
+         entity_id: light.kitchen_undercabinet
+         from: 'off'
+         to: 'on'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_undercabinet
+          color_temp: 200
+          brightness: 254
+
+  ##############################################
   ## Living Room Light Automations
   ##############################################
   - alias: Living Room Light Turns Off
@@ -130,7 +186,7 @@ automation:
         for:
           seconds: 1
     action:
-      #- service: input_number.set_value
+      # - service: input_number.set_value
       #  data:
       #    entity_id: input_number.livingroom_corner_dimmer
       #    value: 50

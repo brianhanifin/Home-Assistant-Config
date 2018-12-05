@@ -3,9 +3,7 @@ homeassistant:
   customize:
     input_boolean.wakeup_brian_status:
       persistent: true
-    input_number.wakeup_brian_hour:
-      persistent: true
-    input_number.wakeup_brian_minutes:
+    input_datetime.wakeup_brian_time:
       persistent: true
     input_select.wakeup_brian_light:
       persistent: true
@@ -23,37 +21,44 @@ homeassistant:
       persistent: true
     input_boolean.wakeup_brian_sun:
       persistent: true
-    sensor.wakeup_brian_light:
-      persistent: true
-      state_card_mode: none
     sensor.wakeup_brian_day_label:
       state_card_mode: none
 
 ################################################
 ## Group
 ################################################
-group:
-  wakeup_brian:
-    name: "Brian's Wakeup Light"
-    entities:
-      - input_boolean.wakeup_brian_status
-      - input_number.wakeup_brian_hour
-      - input_number.wakeup_brian_minutes
-      - input_select.wakeup_brian_light
-      - sensor.wakeup_brian_day_label
-      - input_boolean.wakeup_brian_mon
-      - input_boolean.wakeup_brian_tue
-      - input_boolean.wakeup_brian_wed
-      - input_boolean.wakeup_brian_thu
-      - input_boolean.wakeup_brian_fri
-      - input_boolean.wakeup_brian_sat
-      - input_boolean.wakeup_brian_sun
+# group:
+#   wakeup_brian:
+#     name: "Brian's Wakeup Light"
+#     entities:
+#       - input_boolean.wakeup_brian_status
+#       - input_number.wakeup_brian_hour
+#       - input_number.wakeup_brian_minutes
+#       - input_select.wakeup_brian_light
+#       - sensor.wakeup_brian_day_label
+#       - input_boolean.wakeup_brian_mon
+#       - input_boolean.wakeup_brian_tue
+#       - input_boolean.wakeup_brian_wed
+#       - input_boolean.wakeup_brian_thu
+#       - input_boolean.wakeup_brian_fri
+#       - input_boolean.wakeup_brian_sat
+#       - input_boolean.wakeup_brian_sun
 
-      #- sensor.time
-      #- sensor.wakeup_nerene_time
-      #- sensor.wakeup_nerene_light
-    control: hidden
-    view: no
+#       #- sensor.time
+#       #- sensor.wakeup_nerene_time
+#       #- sensor.wakeup_nerene_light
+#     control: hidden
+#     view: no
+
+################################################
+## Date/Time Inputs
+################################################
+input_datetime:
+  wakeup_brian_time:
+    name: Start Time
+    has_date: false
+    has_time: true
+    #initial: "00:00"
 
 ################################################
 ## Input Selectors
@@ -69,39 +74,11 @@ input_select:
       - light.garage_entry_light
 
 ################################################
-## Sliders
-################################################
-input_number:
-  wakeup_brian_hour:
-    name: Hour
-    icon: mdi:timer
-    mode: slider
-    min: 0
-    max: 23
-    step: 1
-
-  wakeup_brian_minutes:
-    name: Minutes
-    icon: mdi:clock-outline
-    mode: slider
-    min: 0
-    max: 59
-    #step: 5
-    step: 1
-
-################################################
 ## Sensors
 ################################################
 sensor:
   - platform: template
     sensors:
-      wakeup_brian_time:
-        friendly_name: "Alarm"
-        icon_template: mdi:clock-outline
-        value_template: >-
-          {% set wakeup_brian_time = "%0.02d:%0.02d" | format(states('input_number.wakeup_brian_hour')|int, states('input_number.wakeup_brian_minutes')|int) %}
-          {{ wakeup_brian_time | timestamp_custom('%H:%M', false) }}
-      
       wakeup_brian_day_label:
         friendly_name: "Select days:"
         icon_template: mdi:calendar-range
@@ -194,31 +171,39 @@ script:
 ## Automations
 ################################################
 automation:
-  alias: "Alarm Clock: Brian"
-  trigger:
-    platform: template
-    value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
-  condition:
-    condition: and
-    conditions:
-      #  - condition: state
-      #    entity_id: device_tracker.brian
-      #    state: home
-      - condition: state
-        entity_id: input_boolean.wakeup_brian_status
-        state: 'on'
-      # Is today one of the selected days?
-      - condition: template
-        value_template: >
-          {% set day_name = now().strftime("%A")|lower -%}
-          {%- if   day_name == 'monday'    and states.input_boolean.wakeup_brian_mon.state == 'on' -%}{{true}}
-          {%- elif day_name == 'tuesday'   and states.input_boolean.wakeup_brian_tue.state == 'on' -%}{{true}}
-          {%- elif day_name == 'wednesday' and states.input_boolean.wakeup_brian_wed.state == 'on' -%}{{true}}
-          {%- elif day_name == 'thursday'  and states.input_boolean.wakeup_brian_thu.state == 'on' -%}{{true}}
-          {%- elif day_name == 'friday'    and states.input_boolean.wakeup_brian_fri.state == 'on' -%}{{true}}
-          {%- elif day_name == 'saturday'  and states.input_boolean.wakeup_brian_sat.state == 'on' -%}{{true}}
-          {%- elif day_name == 'sunday'    and states.input_boolean.wakeup_brian_sun.state == 'on' -%}{{true}}
-          {%- else -%}{{false}}{%- endif %}
-  action:
-    service: script.turn_on
-    entity_id: script.wakeup_brian_activate
+  - alias: "Alarm Clock: Brian"
+    trigger:
+      platform: template
+      value_template: "{{ now().strftime('%H:%M:00') == states.input_datetime.wakeup_brian_time.state }}"
+    condition:
+      condition: and
+      conditions:
+        #  - condition: state
+        #    entity_id: device_tracker.brian
+        #    state: home
+        - condition: state
+          entity_id: input_boolean.wakeup_brian_status
+          state: 'on'
+        # Is today one of the selected days?
+        - condition: template
+          value_template: >
+            {% set   day_name = now().strftime("%A")|lower -%}
+            {%- if   day_name == 'monday'    and states.input_boolean.wakeup_brian_mon.state == 'on' -%}{{true}}
+            {%- elif day_name == 'tuesday'   and states.input_boolean.wakeup_brian_tue.state == 'on' -%}{{true}}
+            {%- elif day_name == 'wednesday' and states.input_boolean.wakeup_brian_wed.state == 'on' -%}{{true}}
+            {%- elif day_name == 'thursday'  and states.input_boolean.wakeup_brian_thu.state == 'on' -%}{{true}}
+            {%- elif day_name == 'friday'    and states.input_boolean.wakeup_brian_fri.state == 'on' -%}{{true}}
+            {%- elif day_name == 'saturday'  and states.input_boolean.wakeup_brian_sat.state == 'on' -%}{{true}}
+            {%- elif day_name == 'sunday'    and states.input_boolean.wakeup_brian_sun.state == 'on' -%}{{true}}
+            {%- else -%}{{false}}{%- endif %}
+    action:
+      service: script.turn_on
+      entity_id: script.wakeup_brian_activate
+
+  - alias: "Alarm Clock: Brian Start Time Changes"
+    trigger:
+      platform: state
+      entity_id: input_select.wakeup_brian_light
+    action:
+      - service: homeassistant.update_entity
+        entity_id: sensor.wakeup_brian_light

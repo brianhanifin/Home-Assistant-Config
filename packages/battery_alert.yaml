@@ -85,6 +85,61 @@
 ##   - Moved group.update_battery_status_group_members to Battery
 ##     Alert group
 ##
+## 1.1.0 (2018-08-09)
+##   Added
+##   - Added Batteries view
+##   - Added Telegram notification automation
+##   - Added Pushover notification automation
+##   - Added attributes to battery entities created via mqtt:
+##     entity_id, attribute, mqtt_config_topic, and mqtt_state_topic
+##   Changed
+##   - Simplified trigger for update_battery_status_group_members
+##     automation
+##   - Refactored conditions on automations to rely on
+##     group.battery_status members
+##   Breaking Changes
+##   - The attribute additions requires restarting Home Assistant
+##     after the first state change or clearing retained MQTT topics
+##
+## 1.1.1 (2018-08-11)
+##   Added
+##   - Added input text box named `MQTT Topic to Clear`, which can be used
+##     to clear MQTT topics with retained messages
+##   - Set initial_state to on for all automations to ensure they are enabled
+##     on startup
+##   Changed
+##   - Consider entities with battery in their entity_id or friendly_name a
+##     battery sensor if neither an icon nor a device class is defined
+##   - Consolidated the battery_sensor_from_* automations into a single
+##     automation
+##
+## 1.1.2 (2018-08-23)
+##   Fixed
+##   - Fixed issue where non-battery sensors with Battery in their name are
+##     added to group.battery_status
+##
+## 1.1.3 (2018-11-17)
+##   Fixed
+##   - Filter out trigger=none from automation.battery_sensor_from_attributes
+##   - Don't convert float to int in mqtt payload
+##
+## 1.1.4 (2018-11-17)
+##   Fixed
+##   - Ignore entities with null states
+##   - Fix issue causing TypeError: object of type 'NoneType' has no len()
+##
+## 1.1.5 (2018-11-18)
+##   Added
+##   - Add support for defining battery_template_string attibute to
+##     support templates that return strings
+##
+## 1.1.6 (2018-11-21)
+##   Removed
+##   - Removed attribute named attribute on the sensors
+##   Added
+##   - Added attribute to the MQTT sensors with the same name and value as the
+##     original entity
+##
 ################################################################
 
 ################################################################
@@ -140,17 +195,20 @@
 ##         sensor.sensor_with_battery_attibute:
 ##           battery_sensor_creation_disabled: true
 ##
-## 10. If a battery attribute requires a template to convert it into a usable percent
-##     or string, use customize to add `battery_template` with the necessary template.
-##     The template should result in either a percentage or a string ("Low" will
-##     trigger low battery notification).
+## 10. If a battery attribute requires a template to convert it into a usable percent, use customize
+##     to add `battery_template` with the necessary template. The template result must be a number
+##     that represents a percentage.
 ##
 ##     This example will create a battery sensor with the value of battery_level * 2
 ##
 ##     homeassistant:
 ##       customize:
 ##         sensor.sensor_with_battery_attibute_template:
-##           battery_template: "{{ value | int * 2 }}"
+##           battery_template: "{{ value_json.value | int * 2 }}"
+##
+## 11. If a battery attribute requires a template to convert it into a string, use customize to add
+##     `battery_template_string` with the necessary template. The template result must be a string.
+##     For example, "Low" will trigger low battery notification).
 ##
 ##     This example will create a battery sensor that contains "Low" if battery_level
 ##     is less than 2
@@ -158,7 +216,7 @@
 ##     homeassistant:
 ##       customize:
 ##         sensor.sensor_with_battery_attibute_template:
-##           battery_template: >-
+##           battery_template_string: >-
 ##             {%- if value < 2 -%}
 ##             "Low"
 ##             {%- else -%}
@@ -170,13 +228,11 @@
 ################################################
 ## Customize
 ################################################
-
 homeassistant:
   customize:
     ################################################
     ## Node Anchors
     ################################################
-
     package.node_anchors:
       customize: &customize
         package: 'battery_alert'
@@ -184,22 +240,26 @@ homeassistant:
     ################################################
     ## Group
     ################################################
+    group.battery_view:
+      <<: *customize
+      friendly_name: "Batteries"
+      icon: mdi:battery-alert
 
     group.battery_alert:
       <<: *customize
       friendly_name: "Battery Alert"
       icon: mdi:steam
-      
+      control: hidden
+
     group.battery_status:
       <<: *customize
       friendly_name: "Battery Status"
-      icon: mdi:battery-charging     
+      icon: mdi:battery-charging
       control: hidden
 
     ################################################
     ## Automation
     ################################################
-
     automation.battery_notification:
       <<: *customize
       friendly_name: "Battery Notification"
@@ -215,19 +275,19 @@ homeassistant:
       friendly_name: "Battery Notification Slack"
       icon: mdi:comment-alert-outline
 
-    automation.battery_sensor_from_battery_level_attribute:
+    automation.battery_notification_telegram:
       <<: *customize
-      friendly_name: "Battery Sensor from battery_level Attribute"
-      icon: mdi:battery-charging-wireless-outline
+      friendly_name: "Battery Notification Telegram"
+      icon: mdi:comment-alert-outline
 
-    automation.battery_sensor_from_battery_attribute:
+    automation.battery_notification_pushover:
       <<: *customize
-      friendly_name: "Battery Sensor from battery Attribute"
-      icon: mdi:battery-charging-wireless-outline
+      friendly_name: "Battery Notification Pushover"
+      icon: mdi:comment-alert-outline
 
-    automation.battery_sensor_from_battery_numeric_attribute:
+    automation.battery_sensor_from_attributes:
       <<: *customize
-      friendly_name: "Battery Sensor from battery numeric Attribute"
+      friendly_name: "Create Battery Sensor from Attributes"
       icon: mdi:battery-charging-wireless-outline
 
     automation.update_battery_status_group_members:
@@ -235,28 +295,39 @@ homeassistant:
       friendly_name: "Update Battery Status Group Members"
       icon: mdi:group
 
+    automation.clear_mqtt_topic:
+      <<: *customize
+      friendly_name: "Clear a Retained MQTT Topic"
+      icon: mdi:server-remove
+
 ################################################
 ## Group
 ################################################
-
 group:
+  battery_view:
+    view: yes
+    entities:
+      - group.battery_status
+      - group.battery_alert
+
   battery_alert:
     control: hidden
     entities:
       - input_number.battery_alert_threshold_min
       - input_number.battery_alert_threshold_max
+      - input_text.clear_mqtt_topic
       - automation.battery_notification
       - automation.battery_notification_clear
       - automation.battery_notification_slack
-      - automation.battery_sensor_from_battery_level_attribute
-      - automation.battery_sensor_from_battery_attribute
-      - automation.battery_sensor_from_battery_numeric_attribute
+      - automation.battery_notification_telegram
+      - automation.battery_notification_pushover
+      - automation.battery_sensor_from_attributes
       - automation.update_battery_status_group_members
+      - automation.clear_mqtt_topic
 
 ################################################
 ## Input Number
 ################################################
-
 input_number:
   battery_alert_threshold_max:
     name: "Max Alert Threshold"
@@ -275,11 +346,20 @@ input_number:
     # initial: -1
 
 ################################################
+## Input Text
+################################################
+input_text:
+  clear_mqtt_topic:
+    name: MQTT Topic to Clear
+    mode: text
+    initial: ''
+
+################################################
 ## Automation
 ################################################
-
 automation:
 - alias: battery_notification
+  initial_state: 'on'
   trigger:
     - platform: time
       minutes: '/15'
@@ -288,103 +368,61 @@ automation:
       entity_id:
         - input_number.battery_alert_threshold_min
         - input_number.battery_alert_threshold_max
-  condition:
-    - condition: template
-      value_template: "{{ not is_state('persistent_notification.low_battery_alert', 'notifying') }}"
   action:
     - condition: template
       value_template: &low_battery_check >
         {% macro battery_level() %}
-        {%- for item in states.sensor if (
-          (
-            not is_state_attr(item.entity_id, 'battery_alert_disabled', true)
-          ) and (
-            is_state_attr(item.entity_id, 'device_class', 'battery')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery-alert')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery-unknown')
-            ) or (
-              'battery' in item.entity_id | lower
-              and item.attributes.icon is defined
-              and 'battery' in item.attributes.icon | lower
-            ) or (
-              'battery' in item.name | lower
-              and item.attributes.icon is defined
-              and 'battery' in item.attributes.icon | lower
-            ) or (
-              (item.entity_id | lower).endswith('_bat')
-            ) or (
-              (item.name | lower).endswith('_bat')
-            )
-          ) and (
+        {% for entity_id in states.group.battery_status.attributes.entity_id if (
+          not is_state_attr(entity_id, 'battery_alert_disabled', true)
+          and states(entity_id) is not none
+          and (
             (
               (
-                item.state is number
-                or item.state | length == item.state | int | string | length
-                or item.state | length == item.state | float | string | length
+                states(entity_id) is number
+                or states(entity_id) | length == states(entity_id)| int | string | length
+                or states(entity_id) | length == states(entity_id)| float | string | length
               )
-              and item.state | int < states.input_number.battery_alert_threshold_max.state | int
-              and item.state | int > states.input_number.battery_alert_threshold_min.state | int
+              and states(entity_id) | int < states.input_number.battery_alert_threshold_max.state | int
+              and states(entity_id) | int > states.input_number.battery_alert_threshold_min.state | int
             )
-            or item.state | lower == 'low'
-            or item.state | lower == 'unknown'
-          ) -%}
-          {{ item.name }} ({{ item.state }})
+            or states(entity_id) | lower == 'low'
+            or states(entity_id) | lower == 'unknown'
+          )
+        ) -%}
+          {{ state_attr(entity_id, "friendly_name") }} ({{ states(entity_id) }})
         {% endfor -%}
         {% endmacro %}
         {{ battery_level() | trim != "" }}
     - service: persistent_notification.create
       data_template:
-        title: "Low Battery levels"
+        title: "Low Battery Levels"
         notification_id: low_battery_alert
         message: &message >
           {% macro battery_level() %}
-          {%- for item in states.sensor if (
-            (
-              not is_state_attr(item.entity_id, 'battery_alert_disabled', true)
-            ) and (
-              is_state_attr(item.entity_id, 'device_class', 'battery')
-              ) or (
-                is_state_attr(item.entity_id, 'icon', 'mdi:battery')
-              ) or (
-                is_state_attr(item.entity_id, 'icon', 'mdi:battery-alert')
-              ) or (
-                is_state_attr(item.entity_id, 'icon', 'mdi:battery-unknown')
-              ) or (
-                'battery' in item.entity_id | lower
-                and item.attributes.icon is defined
-                and 'battery' in item.attributes.icon | lower
-              ) or (
-                'battery' in item.name | lower
-                and item.attributes.icon is defined
-                and 'battery' in item.attributes.icon | lower
-              ) or (
-                (item.entity_id | lower).endswith('_bat')
-              ) or (
-                (item.name | lower).endswith('_bat')
-              )
-            ) and (
+          {% for entity_id in states.group.battery_status.attributes.entity_id if (
+            not is_state_attr(entity_id, 'battery_alert_disabled', true)
+            and states(entity_id) is not none
+            and (
               (
                 (
-                  item.state is number
-                  or item.state | length == item.state | int | string | length
-                  or item.state | length == item.state | float | string | length
+                  states(entity_id) is number
+                  or states(entity_id) | length == states(entity_id)| int | string | length
+                  or states(entity_id) | length == states(entity_id)| float | string | length
                 )
-                and item.state | int < states.input_number.battery_alert_threshold_max.state | int
-                and item.state | int > states.input_number.battery_alert_threshold_min.state | int
+                and states(entity_id) | int < states.input_number.battery_alert_threshold_max.state | int
+                and states(entity_id) | int > states.input_number.battery_alert_threshold_min.state | int
               )
-              or item.state | lower == 'low'
-              or item.state | lower == 'unknown'
-            ) -%}
-            {{ item.name }} ({{ item.state }})
+              or states(entity_id) | lower == 'low'
+              or states(entity_id) | lower == 'unknown'
+            )
+          ) -%}
+            {{ state_attr(entity_id, "friendly_name") }} ({{ states(entity_id) }})
           {% endfor -%}
           {% endmacro %}
           {{ battery_level() }}
 
 - alias: battery_notification_clear
+  initial_state: 'on'
   trigger:
     - platform: time
       minutes: '/15'
@@ -397,44 +435,24 @@ automation:
     - condition: template
       value_template: &low_battery_clear >
         {% macro battery_level() %}
-        {%- for item in states.sensor if (
-          (
-            not is_state_attr(item.entity_id, 'battery_alert_disabled', true)
-          ) and (
-            is_state_attr(item.entity_id, 'device_class', 'battery')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery-alert')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery-unknown')
-            ) or (
-              'battery' in item.entity_id | lower
-              and item.attributes.icon is defined
-              and 'battery' in item.attributes.icon | lower
-            ) or (
-              'battery' in item.name | lower
-              and item.attributes.icon is defined
-              and 'battery' in item.attributes.icon | lower
-            ) or (
-              (item.entity_id | lower).endswith('_bat')
-            ) or (
-              (item.name | lower).endswith('_bat')
-            )
-          ) and (
+        {% for entity_id in states.group.battery_status.attributes.entity_id if (
+          not is_state_attr(entity_id, 'battery_alert_disabled', true)
+          and states(entity_id) is not none
+          and (
             (
               (
-                item.state is number
-                or item.state | length == item.state | int | string | length
-                or item.state | length == item.state | float | string | length
+                states(entity_id) is number
+                or states(entity_id) | length == states(entity_id)| int | string | length
+                or states(entity_id) | length == states(entity_id)| float | string | length
               )
-              and item.state | int < states.input_number.battery_alert_threshold_max.state | int
-              and item.state | int > states.input_number.battery_alert_threshold_min.state | int
+              and states(entity_id) | int < states.input_number.battery_alert_threshold_max.state | int
+              and states(entity_id) | int > states.input_number.battery_alert_threshold_min.state | int
             )
-            or item.state | lower == 'low'
-            or item.state | lower == 'unknown'
-          ) -%}
-          {{ item.name }} ({{ item.state }})
+            or states(entity_id) | lower == 'low'
+            or states(entity_id) | lower == 'unknown'
+          )
+        ) -%}
+          {{ state_attr(entity_id, "friendly_name") }} ({{ states(entity_id) }})
         {% endfor -%}
         {% endmacro %}
         {{ battery_level() | trim == "" }}
@@ -443,6 +461,7 @@ automation:
         notification_id: low_battery_alert
 
 - alias: battery_notification_slack
+  initial_state: 'on'
   trigger:
     - platform: time
       at: '10:00:00'
@@ -464,27 +483,74 @@ automation:
             title: "These devices have low battery levels"
             text: *message
 
-- alias: battery_sensor_from_battery_level_attribute
+- alias: battery_notification_telegram
+  initial_state: 'on'
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '18:00:00'
+    - platform: state
+      entity_id:
+        - input_number.battery_alert_threshold_min
+        - input_number.battery_alert_threshold_max
+  action:
+    - condition: template
+      value_template: *low_battery_check
+    - service: notify.telegram
+      data_template:
+        title: "Low Battery Levels"
+        message: *message
+
+- alias: battery_notification_pushover
+  initial_state: 'on'
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '18:00:00'
+    - platform: state
+      entity_id:
+        - input_number.battery_alert_threshold_min
+        - input_number.battery_alert_threshold_max
+  action:
+    - condition: template
+      value_template: *low_battery_check
+    - service: notify.pushover
+      data_template:
+        title: "Low Battery Levels"
+        message: *message
+
+- alias: battery_sensor_from_attributes
+  initial_state: 'on'
   trigger:
     - platform: event
       event_type: state_changed
   condition:
     - condition: template
+      value_template: "{{ trigger is not none }}"
+    - condition: template
       value_template: "{{ trigger.event.data is not none }}"
+    - condition: template
+      value_template: "{{ trigger.event.data.old_state is not none }}"
     - condition: template
       value_template: "{{ trigger.event.data.new_state is not none }}"
     - condition: template
       value_template: "{{ trigger.event.data.new_state.attributes is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.old_state is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state.attributes.battery_level is defined }}"
     - condition: template
       value_template: "{{ 'battery' not in trigger.event.data.new_state.name | lower }}"
     - condition: template
       value_template: "{{ not is_state_attr(trigger.event.data.entity_id, 'device_class', 'battery') }}"
     - condition: template
       value_template: "{{ not is_state_attr(trigger.event.data.entity_id, 'battery_sensor_creation_disabled', true) }}"
+    - condition: or
+      conditions:
+        - condition: template
+          value_template: "{{ trigger.event.data.new_state.attributes.battery_level is defined }}"
+        - condition: template
+          value_template: "{{ trigger.event.data.new_state.attributes.battery is defined }}"
+        - condition: template
+          value_template: "{{ trigger.event.data.new_state.attributes['Battery numeric'] is defined }}"
   action:
     - service: mqtt.publish
       data_template:
@@ -492,151 +558,78 @@ automation:
         retain: true
         payload: &config_payload >-
           {
-            "device_class": "battery",
+            {% if trigger.event.data.new_state.attributes.battery_level is defined -%}
+              {%- set attribname = 'battery_level' -%}
+            {%- elif trigger.event.data.new_state.attributes.battery is defined -%}
+              {%- set attribname = 'battery' -%}
+            {%- elif trigger.event.data.new_state.attributes['Battery numeric'] is defined -%}
+              {%- set attribname = 'Battery numeric' -%}
+            {%- endif -%}
             "name": "{{ trigger.event.data.new_state.name }} Battery",
             "state_topic": "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/state",
-            "unit_of_measurement": "%",
             {% if trigger.event.data.new_state.attributes.battery_template is defined -%}
             "value_template": "{{ trigger.event.data.new_state.attributes.battery_template }}",
-            {%- endif %}
+            "unit_of_measurement": "%",
+            "device_class": "battery",
+            {% elif trigger.event.data.new_state.attributes.battery_template_string is defined -%}
+            "value_template": "{{ trigger.event.data.new_state.attributes.battery_template_string }}",
+            "icon": "mdi:battery",
+            {% else -%}
+            "value_template": "{{ "{{" }} value_json.value | int {{ "}}" }}",
+            "unit_of_measurement": "%",
+            "device_class": "battery",
+            {% endif -%}
             "unique_id": "{{ trigger.event.data.entity_id.split('.')[1] }}_battery",
-            "source_entity_id": "{{ trigger.event.data.entity_id }}",
-            {% if trigger.event.data.new_state.attributes.battery_level is defined -%}
-            "source_attribute": "battery_level"
-            {%- elif trigger.event.data.new_state.attributes.battery is defined -%}
-            "source_attribute": "battery"
-            {%- elif trigger.event.data.new_state.attributes['Battery numeric'] is defined -%}
-            "source_attribute": "Battery numeric"
-            {%- else -%}
-            "source_attribute": "unknown"
-            {%- endif %}
+            "json_attributes": [
+              "entity_id",
+              "{{ attribname }}",
+              "mqtt_config_topic",
+              "mqtt_state_topic"
+            ]
           }
     - service: mqtt.publish
       data_template:
         topic: "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/state"
         retain: true
         payload: >-
-          {%- set attrib = trigger.event.data.new_state.attributes.battery_level -%}
-          {%- if attrib is number
-              or attrib | length == attrib | int | string | length
-              or attrib | length == attrib | float | string | length
-          -%}
-            {{ attrib | int }}
-          {%- else -%}
-            {{ attrib }}
-          {%- endif -%}
-- alias: battery_sensor_from_battery_attribute
-  trigger:
-    - platform: event
-      event_type: state_changed
-  condition:
-    - condition: template
-      value_template: "{{ trigger.event.data is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state.attributes is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.old_state is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state.attributes.battery is defined }}"
-    - condition: template
-      value_template: "{{ 'battery' not in trigger.event.data.new_state.name | lower }}"
-    - condition: template
-      value_template: "{{ not is_state_attr(trigger.event.data.entity_id, 'device_class', 'battery') }}"
-    - condition: template
-      value_template: "{{ not is_state_attr(trigger.event.data.entity_id, 'battery_sensor_creation_disabled', true) }}"
-  action:
-    - service: mqtt.publish
-      data_template:
-        topic: "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/config"
-        retain: true
-        payload: *config_payload
-    - service: mqtt.publish
-      data_template:
-        topic: "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/state"
-        retain: true
-        payload: >-
-          {%- set attrib = trigger.event.data.new_state.attributes.battery -%}
-          {%- if attrib is number
-              or attrib | length == attrib | int | string | length
-              or attrib | length == attrib | float | string | length
-          -%}
-            {{ attrib | int }}
-          {%- else -%}
-            {{ attrib }}
-          {%- endif -%}
-- alias: battery_sensor_from_battery_numeric_attribute
-  trigger:
-    - platform: event
-      event_type: state_changed
-  condition:
-    - condition: template
-      value_template: "{{ trigger.event.data is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state.attributes is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.old_state is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state.attributes['Battery numeric'] is defined }}"
-    - condition: template
-      value_template: "{{ 'battery' not in trigger.event.data.new_state.name | lower }}"
-    - condition: template
-      value_template: "{{ not is_state_attr(trigger.event.data.entity_id, 'device_class', 'battery') }}"
-    - condition: template
-      value_template: "{{ not is_state_attr(trigger.event.data.entity_id, 'battery_sensor_creation_disabled', true) }}"
-  action:
-    - service: mqtt.publish
-      data_template:
-        topic: "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/config"
-        retain: true
-        payload: *config_payload
-    - service: mqtt.publish
-      data_template:
-        topic: "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/state"
-        retain: true
-        payload: "{{ (trigger.event.data.new_state.attributes['Battery numeric'] | int + 1) * 10 }}"
+          {
+            {% if trigger.event.data.new_state.attributes.battery_level is defined -%}
+              {%- set attribval = trigger.event.data.new_state.attributes.battery_level -%}
+              {%- set attribname = 'battery_level' -%}
+            {%- elif trigger.event.data.new_state.attributes.battery is defined -%}
+              {%- set attribval = trigger.event.data.new_state.attributes.battery -%}
+              {%- set attribname = 'battery' -%}
+            {%- elif trigger.event.data.new_state.attributes['Battery numeric'] is defined -%}
+              {%- set attribval = (trigger.event.data.new_state.attributes['Battery numeric'] | int + 1) * 10 -%}
+              {%- set attribname = 'Battery numeric' -%}
+            {%- endif -%}
+            "value": {%- if attribval | int == attribval -%}
+              {{ attribval }}
+            {%- elif attribval | float == attribval -%}
+              {{ attribval }}
+            {%- elif attribval | length == attribval | float | string | length -%}
+              {{ attribval | float }}
+            {%- elif attribval | length == attribval | int | string | length -%}
+              {{ attribval | int }}
+            {%- else -%}
+              "{{ attribval }}"
+            {%- endif %},
+            "entity_id": "{{ trigger.event.data.entity_id }}",
+            {% if attribname is defined -%}
+            "{{ attribname }}": "{{ attribval }}",
+            {%- endif %}
+            "mqtt_config_topic": "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/config",
+            "mqtt_state_topic": "homeassistant/sensor/{{ trigger.event.data.entity_id.split('.')[1] }}_battery/state"
+          }
+
 - alias: update_battery_status_group_members
+  initial_state: 'on'
   trigger:
-    - platform: event
-      event_type: state_changed
-  condition:
-    - condition: template
-      value_template: "{{ trigger.event.data is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.new_state.attributes is not none }}"
-    - condition: template
-      value_template: "{{ trigger.event.data.old_state is not none }}"
-    - condition: or
-      conditions:
-        - condition: template
-          value_template: "{{ is_state_attr(trigger.event.data.entity_id, 'device_class', 'battery') }}"
-        - condition: template
-          value_template: "{{ is_state_attr(trigger.event.data.entity_id, 'icon', 'mdi:battery') }}"
-        - condition: template
-          value_template: "{{ is_state_attr(trigger.event.data.entity_id, 'icon', 'mdi:battery-alert') }}"
-        - condition: template
-          value_template: "{{ is_state_attr(trigger.event.data.entity_id, 'icon', 'mdi:battery-unknown') }}"
-        - condition: and
-          conditions:
-          - condition: template
-            value_template: "{{ trigger.event.data.new_state.attributes.icon is defined }}"
-          - condition: template
-            value_template: "{{ 'battery' in trigger.event.data.new_state.attributes.icon | lower }}"
-          - condition: or
-            conditions:
-            - condition: template
-              value_template: "{{ 'battery' in trigger.event.data.entity_id | lower }}"
-            - condition: template
-              value_template: "{{ 'battery' in trigger.event.data.new_state.name | lower }}"
-        - condition: template
-          value_template: "{{ (trigger.event.data.entity_id | lower).endswith('_bat') }}"
-        - condition: template
-          value_template: "{{ (trigger.event.data.new_state.name | lower).endswith('_bat') }}"
+    - platform: homeassistant
+      event: start
+    - platform: time
+      minutes: '/5'
+      seconds: 00
   action:
     - service: group.set
       data_template:
@@ -644,25 +637,34 @@ automation:
         entities: >-
           {%- for item in states.sensor if (
             is_state_attr(item.entity_id, 'device_class', 'battery')
+            or 'battery' in item.attributes.icon | lower
+            or (item.entity_id | lower).endswith('_bat')
+            or (item.name | lower).endswith('_bat')
             ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery-alert')
-            ) or (
-              is_state_attr(item.entity_id, 'icon', 'mdi:battery-unknown')
-            ) or (
-              'battery' in item.entity_id | lower
-              and item.attributes.icon is defined
-              and 'battery' in item.attributes.icon | lower
-            ) or (
-              'battery' in item.name | lower
-              and item.attributes.icon is defined
-              and 'battery' in item.attributes.icon | lower
-            ) or (
-              (item.entity_id | lower).endswith('_bat')
-            ) or (
-              (item.name | lower).endswith('_bat')
+              (
+                'battery' in item.entity_id | lower
+                or 'battery' in item.name | lower
+              ) and (
+                item.attributes.icon is not defined
+              ) and (
+                not is_state_attr(item.entity_id, 'battery_alert_disabled', true)
+              )
             )
           -%}
             {{ item.entity_id }}{% if not loop.last %}, {% endif %}
           {%- endfor -%}
+
+- alias: clear_mqtt_topic
+  initial_state: 'on'
+  trigger:
+    - platform: state
+      entity_id:
+        - input_text.clear_mqtt_topic
+  condition:
+    - condition: template
+      value_template: "{{ 'homeassistant/sensor/' in states.input_text.clear_mqtt_topic.state }}"
+  action:
+    - service: mqtt.publish
+      data_template:
+        topic: "{{ states.input_text.clear_mqtt_topic.state }}"
+        retain: true

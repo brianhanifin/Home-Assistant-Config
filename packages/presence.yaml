@@ -74,6 +74,16 @@ homeassistant:
 device_tracker:
   - platform: bluetooth_tracker
 
+  - platform: life360
+    username: !secret email1
+    password: !secret life360_pass
+    prefix: life360
+    show_as_state: driving, moving, places
+    driving_speed: 18
+    max_gps_accuracy: 200
+    max_update_wait:
+      minutes: 45
+
   - platform: nmap_tracker
     hosts:
       - 10.0.0.10   # Brian's iPhone
@@ -93,16 +103,6 @@ device_tracker:
   #  new_device_defaults:
   #    track_new_devices: false
   #    hide_if_away: true
-
-  - platform: life360
-    username: !secret email1
-    password: !secret life360_pass
-    prefix: life360
-    show_as_state: driving, moving, places
-    driving_speed: 18
-    max_gps_accuracy: 200
-    max_update_wait:
-      minutes: 45
 
   ## Device Tracker Smart "Groups"
   - platform: composite
@@ -155,7 +155,7 @@ group:
       - device_tracker.heather
       - device_tracker.melissa
       - device_tracker.sandy
-    name: "Any Family At Home?"
+    name: "Who's at home?"
     icon: mdi:home-heart
     view: no
 
@@ -239,7 +239,7 @@ automation:
       - service: script.turn_on
         entity_id: script.shutdown_routine
 
-      # Set a few more unecessary functions to away mode.
+      # Set a few more unnecessary functions to away mode.
       - service: input_boolean.turn_off
         entity_id: input_boolean.motion_detection_mode
       - service: script.turn_on

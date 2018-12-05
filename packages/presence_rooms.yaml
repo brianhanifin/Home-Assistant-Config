@@ -4,7 +4,7 @@ homeassistant:
     binary_sensor.bedroom_occupancy:
       device_class: occupancy
     binary_sensor.home_occupancy:
-      device_class: occupancy
+      device_class: occupancy 
     binary_sensor.living_room_occupancy:
       device_class: occupancy
     binary_sensor.lucas_bedroom_occupancy:
@@ -17,11 +17,14 @@ homeassistant:
     binary_sensor.kitchen_motion:
       friendly_name: Kitchen
       device_class: motion
+    binary_sensor.kitchen_1_motion:
+      friendly_name: "Kitchen Motion #1"
+      device_class: motion
+    binary_sensor.kitchen_2_motion:
+      friendly_name: "Kitchen Motion #2"
+      device_class: motion
     binary_sensor.living_room_motion:
       friendly_name: "Living Room"
-      device_class: motion
-    binary_sensor.play_room_motion:
-      friendly_name: "Play Room"
       device_class: motion
 
     ##### Camera Motion Sensors
@@ -39,15 +42,24 @@ homeassistant:
       persistent: true
 
 ################################################
+## Binary Sensor Groups
+################################################
+binary_sensor:
+  - platform: template
+    sensors:
+      kitchen_motion:
+        friendly_name: Kitchen Motion
+        device_class: motion
+        value_template: >-
+          {{ is_state('binary_sensor.kitchen_1_motion', 'on')
+          or is_state('binary_sensor.kitchen_2_motion', 'on') }}
+
+################################################
 ## Switches
 ################################################
 input_boolean:
   motion_detection_mode:
     name: Motion Detection
-    icon: mdi:account-search
-
-  motion_detection_kitchen_mode:
-    name: Kitchen Motion Detection
     icon: mdi:account-search
 
 ################################################
@@ -57,65 +69,46 @@ automation:
   ##############################################
   ###  Kitchen
   ##############################################
-  - alias: "Kitchen: Present"
+  - alias: "Kitchen Motion Light On"
     trigger:
       - platform: state
         entity_id: binary_sensor.kitchen_motion
         #from: 'off'
         to: 'on'
-        for:
-          seconds: 5
     condition:
-      # Only trigger between 6pm-7am.
-      - condition: time
-        after: '18:00:00'
-        before: '07:00:00'
-      # We need both motion detection overrides to be enabled.
       - condition: state
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
-      - condition: state
-        entity_id: input_boolean.motion_detection_kitchen
-        state: 'on'
-      # We don't need to turn on the light is the dogs are alone.
+      # We don't need to turn on the light when the dogs are alone.
       - condition: state
         entity_id: input_boolean.away_mode
         state: 'off'
     action:
       - service: light.turn_on
-        entity_id:
-          - light.kitchen_prep_light
+        entity_id: light.kitchen_undercabinet
+        data_template:
+          brightness: >-
+            {% if is_state("sun.sun", "above_horizon")
+               or is_state('switch.kitchen_light', 'on')
+               or is_state('switch.kitchen_prep_light', 'on') -%}
+              254
+            {%- else -%}
+              63
+            {%- endif %}
 
-  - alias: "Kitchen: Absent"
+  - alias: "Kitchen Motion: Light Timeout"
     trigger:
       - platform: state
         entity_id: binary_sensor.kitchen_motion
         from: 'on'
         to: 'off'
         for:
-          minutes: 01
+          minutes: 05
           seconds: 00
     condition:
-      # Only trigger between 6pm-7am.
-      - condition: time
-        after: '18:00:00'
-        before: '07:00:00'
       - condition: state
-      # We need both motion detection overrides to be enabled.
         entity_id: input_boolean.motion_detection_mode
         state: 'on'
-      - condition: state
-        entity_id: input_boolean.motion_detection_kitchen
-        state: 'on'
-      # We don't need to turn on the light is the dogs are alone.
-      - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'off'
     action:
-      - service: switch.turn_off
-        entity_id:
-          - switch.kitchen_prep_light
-          - switch.kitchen_light
       - service: light.turn_off
-        entity_id:
-          - light.kitchen_prep_light
+        entity_id: light.kitchen_undercabinet

@@ -69,8 +69,11 @@ customizer:
 # Source: https://github.com/pnbruckner/homeassistant-config
 custom_updater:
   track:
+    - cards
     - components
     - python_scripts
+  # card_urls:
+  #   - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-alarm-clock-card/master/custom_updater.json
   component_urls:
     - https://raw.githubusercontent.com/pnbruckner/homeassistant-config/master/custom_components.json
   python_script_urls:
@@ -161,8 +164,8 @@ automation:
       # Disable speech message that occurs everytime I restart HASS.
       #- service: script.turn_on
       #  entity_id: script.disable_speech_at_startup
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.speech_notifications
+      #- service: input_boolean.turn_off
+      #  entity_id: input_boolean.speech_notifications
 
       # Make sure the Hot Water Pump is turned off at startup.
       - service: switch.turn_off

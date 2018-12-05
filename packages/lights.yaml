@@ -48,13 +48,14 @@ sensor:
             {%- for group in states.light|groupby('state') -%}
               {%- for entity in group.list -%}
                 {%- if entity.state == 'on'
+                    and entity.entity_id|lower != 'light.3a4e12'
                     and entity.entity_id|lower != 'light.3a4f5b'
                     and entity.entity_id|lower != 'light.3a542c'
                     and entity.entity_id|lower != 'light.3a5e44'
                     and entity.entity_id|lower != 'light.3a76dc'
+                    and entity.entity_id|lower != 'light.3a7703'
                     and entity.entity_id|lower != 'light.entry'
                     and entity.entity_id|lower != 'light.hue'
-                    and entity.entity_id|lower != 'light.porch'
                     and entity.entity_id|lower != 'switch.boys_bathroom_nightlight'
                     and not ('garage_entry'  in entity.entity_id|lower)
                     and not ('shoe_closet'   in entity.entity_id|lower)
@@ -91,15 +92,19 @@ switch:
 ## Automations
 ################################################
 automation:
-#  - alias: Update Lights_On Group
-#    trigger:
-#      platform: state
-#      entity_id: sensor.lights_on
-#    action:
-#      - service: group.set
-#        data_template:
-#          entity_id: group.lights_on
-#          add_entities: "{{ states('sensor.lights_on') }}"
+  - alias: sensor.lights_on force update
+    trigger:
+      platform: event
+      event_type: state_changed
+    condition:
+      # Only when the change was to the lights.
+      - condition: template
+        value_template: "{{ trigger.event.data is not none 
+                        and trigger.event.data.entity_id is not none
+                        and 'light' in trigger.event.data.entity_id|lower }}"
+    action:
+      service: homeassistant.update_entity
+      entity_id: sensor.lights_on
 
   - alias: "Shoe Closet: Open"
     trigger:
