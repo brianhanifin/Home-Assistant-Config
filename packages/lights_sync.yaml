@@ -96,29 +96,30 @@ automation:
   ##############################################
   ## Kitchen Light Automations
   ##############################################
-  ## Set the kitchen cabinet lights to full brightness when one of the main light turns on..
+  # Set the kitchen cabinet lights to full brightness when 
+  # the overhead lights turn off.
   - alias: Kitchen Lights Off
     trigger:
       - platform: template
         value_template: "{% if is_state('switch.kitchen_light', 'off') 
                            and is_state('switch.kitchen_prep_light', 'off') %}true{% endif %}"
-      # - platform: state
-      #  entity_id:
-      #    - switch.kitchen_light
-      #    - switch.kitchen_prep_light
-      #  from: 'on'
-      #  to: 'off'
     condition:
       - condition: state
         entity_id: light.kitchen_undercabinet
         state: 'on'
     action:
       - service: light.turn_on
-        data:
+        data_template:
           entity_id: light.kitchen_undercabinet
-          brightness: 63
+          brightness: >-
+            {% if is_state('sun.sun' , 'above_horizon') -%}
+              254
+            {% else -%}
+              63
+            {% endif -%}
 
-  ## Set the kitchen cabinet lights to full brightness when one of the main light turns on..
+  # Set the kitchen cabinet lights to full brightness when 
+  # the overhead lights turn on.
   - alias: Kitchen Lights On
     trigger:
       - platform: state
@@ -136,6 +137,8 @@ automation:
           entity_id: light.kitchen_undercabinet
           brightness: 254
 
+  # Reset the kitchen cabinet lights to warm white light, 
+  # and adjust the brightness based on the defined conditions.
   - alias: Kitchen Cabinet Lights On
     trigger:
        - platform: state
@@ -144,10 +147,17 @@ automation:
          to: 'on'
     action:
       - service: light.turn_on
-        data:
+        data_template:
           entity_id: light.kitchen_undercabinet
           color_temp: 200
-          brightness: 254
+          brightness: >-
+           {% if is_state('sun.sun' , 'above_horizon')
+               or is_state('switch.kitchen_light', 'on')
+               or is_state('switch.kitchen_prep_light', 'on') -%}
+              254
+            {% else -%}
+              63
+            {% endif -%}
 
   ##############################################
   ## Living Room Light Automations

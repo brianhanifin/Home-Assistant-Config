@@ -73,7 +73,7 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.kitchen_motion
-        #from: 'off'
+        from: 'off'
         to: 'on'
     condition:
       - condition: state
@@ -86,15 +86,6 @@ automation:
     action:
       - service: light.turn_on
         entity_id: light.kitchen_undercabinet
-        data_template:
-          brightness: >-
-            {% if is_state("sun.sun", "above_horizon")
-               or is_state('switch.kitchen_light', 'on')
-               or is_state('switch.kitchen_prep_light', 'on') -%}
-              254
-            {%- else -%}
-              63
-            {%- endif %}
 
   - alias: "Kitchen Motion: Light Timeout"
     trigger:

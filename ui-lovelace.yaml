@@ -1,106 +1,16 @@
-#title: "Home"
+title: "Home"
 
 resources:
   - url: /local/lovelace/fold-entity-row.js?v=0
     type: js
-  # - url: /local/lovelace/popup-card.js?v=0
-  #   type: js
   - url: /local/lovelace/time-input-row.js?v=0
     type: js
+  # - url: /local/lovelace/popup-card.js?v=0
+  #   type: js
   # - url: /local/lovelace/tracker-card.js?v=0
   #   type: js
 
 views:
-  ## HOME
-  - title: Home
-    icon: mdi:home-variant
-    cards:
-      - type: entities
-        title: Control Panel
-        entities:
-          - type: custom:fold-entity-row
-            head:
-              type: section
-              label: Brian's Wakeup Light
-            items:
-              - input_boolean.wakeup_brian_status
-              - type: custom:time-input-row
-                entity: input_datetime.wakeup_brian_time
-              - input_select.wakeup_brian_light
-              - sensor.wakeup_brian_day_label
-              - input_boolean.wakeup_brian_mon
-              - input_boolean.wakeup_brian_tue
-              - input_boolean.wakeup_brian_wed
-              - input_boolean.wakeup_brian_thu
-              - input_boolean.wakeup_brian_fri
-              - input_boolean.wakeup_brian_sat
-              - input_boolean.wakeup_brian_sun
-          - type: custom:fold-entity-row
-            head:
-              type: section
-              label: Nerene's Wakeup Light
-            items:
-              - input_boolean.wakeup_nerene_status
-              - type: custom:time-input-row
-                entity: input_datetime.wakeup_nerene_time
-              - input_select.wakeup_nerene_light
-              - sensor.wakeup_nerene_day_label
-              - input_boolean.wakeup_nerene_mon
-              - input_boolean.wakeup_nerene_tue
-              - input_boolean.wakeup_nerene_wed
-              - input_boolean.wakeup_nerene_thu
-              - input_boolean.wakeup_nerene_fri
-              - input_boolean.wakeup_nerene_sat
-              - input_boolean.wakeup_nerene_sun
-
-          - type: custom:fold-entity-row
-            head:
-              type: section
-              label: Admin
-            items:
-              - script.restart_hass
-              - input_select.log_level
-              - type: divider
-              - sensor.ha_version
-              #- sensor.ha_laststartup
-              - sensor.since_last_boot
-              - sensor.processor_use
-              - sensor.memory_use_percent
-              - sensor.load_15m
-
-      - type: entity-filter
-        title: Presence
-        entities:
-          - device_tracker.brian
-          - device_tracker.cindy
-          - device_tracker.eric
-          - device_tracker.family_phone
-          - device_tracker.heather
-          - device_tracker.melissa
-          - device_tracker.nerene
-          - device_tracker.sandy
-        state_filter:
-          - home
-        card:
-          type: glance
-          #title: Presence
-          #show_name: false
-          show_state: false
-      
-      - type: glance
-        #title: Doors + Windows
-        show_state: false
-        entities:
-          - binary_sensor.garage_door
-          - binary_sensor.glowforge_window
-
-      - type: horizontal-stack
-        cards:
-          - type: thermostat
-            entity: climate.home
-          - type: thermostat
-            entity: climate.playroom
-
   ## DOWNSTAIRS
   - title: Downstairs
     icon: mdi:sofa
@@ -167,105 +77,115 @@ views:
             icon: mdi:ceiling-light
           - entity: switch.landscape_lights
             icon: mdi:pine-tree
-        camera_image: camera.front_door
+        #camera_image: camera.front_door
+        image: /local/ui/rooms/porch.jpg
 
+      - type: picture-glance
+        title: Garage
+        entities:
+          - cover.garage_door
+          - entity: binary_sensor.washer_running
+            icon: mdi:washing-machine
+          - entity: switch.hot_water_pump
+            icon: mdi:water-pump
+        image: /local/ui/rooms/garage.jpg
+              
   ## DOWNSTAIRS ALT
-  - title: Downstairs Alt
-    icon: mdi:sofa
-    cards:
-      - type: vertical-stack
-        cards:
-          - type: markdown
-            content: >
-              ### Family Room
-          - type: horizontal-stack
-            cards:
-              - type: entity-button
-                entity: light.family_room_light
-                hold_action: more-info
-                icon: mdi:floor-lamp
-                name: Floor Lamp
-                tap_action: toggle
-              - type: entity-button
-                entity: light.family_room_table_lamp
-                hold_action: more-info
-                icon: mdi:lamp
-                name: Table Lamp
-                tap_action: toggle
-              #- type: light
-              #  entity: light.family_room_light
-              #- type: light
-              #  entity: light.family_room_table_lamp
-                #icon: mdi:lamp
-              - type: entity-button
-                entity: switch.christmas_tree_lights
-                icon: mdi:pine-tree
-                tap_action: toggle
+  # - title: Downstairs Alt
+  #   icon: mdi:sofa
+  #   cards:
+  #     - type: vertical-stack
+  #       cards:
+  #         - type: markdown
+  #           content: >
+  #             ### Family Room
+  #         - type: horizontal-stack
+  #           cards:
+  #             - type: entity-button
+  #               entity: light.family_room_light
+  #               hold_action: more-info
+  #               icon: mdi:floor-lamp
+  #               name: Floor Lamp
+  #               tap_action: toggle
+  #             - type: entity-button
+  #               entity: light.family_room_table_lamp
+  #               hold_action: more-info
+  #               icon: mdi:lamp
+  #               name: Table Lamp
+  #               tap_action: toggle
+  #             #- type: light
+  #             #  entity: light.family_room_light
+  #             #- type: light
+  #             #  entity: light.family_room_table_lamp
+  #               #icon: mdi:lamp
+  #             - type: entity-button
+  #               entity: switch.christmas_tree_lights
+  #               icon: mdi:pine-tree
+  #               tap_action: toggle
+  #
+  #     - type: vertical-stack
+  #       cards:
+  #         - type: markdown
+  #           content: >
+  #             ### Other
+  #         - type: horizontal-stack
+  #           cards:
+  #             - type: entity-button
+  #               entity: light.dining_room_light
+  #               hold_action: more-info
+  #               icon: mdi:ceiling-light
+  #               name: Dining Room
+  #               tap_action: toggle
+  #             - type: entity-button
+  #               entity: light.entry
+  #               hold_action: more-info
+  #               icon: mdi:ceiling-light
+  #               name: Entry Light
+  #               tap_action: toggle
+  #             - type: entity-button
+  #               entity: light.garage_entry_light
+  #               hold_action: more-info
+  #               icon: mdi:ceiling-light
+  #               name: Garage Entry
+  #               tap_action: toggle
+  #         - type: horizontal-stack
+  #           cards:
+  #             - type: entity-button
+  #               entity: light.living_room_light
+  #               hold_action: more-info
+  #               icon: mdi:floor-lamp
+  #               name: Living Room
+  #               tap_action: toggle
+  #             - type: entity-button
+  #               entity: switch.entry_step_light
+  #               hold_action: more-info
+  #               icon: mdi:floor-lamp
+  #               name: Entry Step Light
+  #               tap_action: toggle
 
-
-      - type: vertical-stack
-        cards:
-          - type: markdown
-            content: >
-              ### Other
-          - type: horizontal-stack
-            cards:
-              - type: entity-button
-                entity: light.dining_room_light
-                hold_action: more-info
-                icon: mdi:ceiling-light
-                name: Dining Room
-                tap_action: toggle
-              - type: entity-button
-                entity: light.entry
-                hold_action: more-info
-                icon: mdi:ceiling-light
-                name: Entry Light
-                tap_action: toggle
-              - type: entity-button
-                entity: light.garage_entry_light
-                hold_action: more-info
-                icon: mdi:ceiling-light
-                name: Garage Entry
-                tap_action: toggle
-          - type: horizontal-stack
-            cards:
-              - type: entity-button
-                entity: light.living_room_light
-                hold_action: more-info
-                icon: mdi:floor-lamp
-                name: Living Room
-                tap_action: toggle
-              - type: entity-button
-                entity: switch.entry_step_light
-                hold_action: more-info
-                icon: mdi:floor-lamp
-                name: Entry Step Light
-                tap_action: toggle
-
-      - type: vertical-stack
-        cards:
-          - type: markdown
-            content: >
-              ### Kitchen
-          - type: horizontal-stack
-            cards:
-              - type: entity-button
-                entity: switch.kitchen_light
-                icon: mdi:lightbulb
-                name: "Lights"
-                tap_action: toggle
-              - type: entity-button
-                entity: switch.kitchen_prep_light
-                icon: mdi:lightbulb
-                name: Prep Lights
-                tap_action: toggle
-              - type: entity-button
-                entity: light.kitchen_undercabinet
-                #hold_action: more-info
-                icon: mdi:led-strip
-                name: Cabinet Lights
-                tap_action: toggle
+  #     - type: vertical-stack
+  #       cards:
+  #         - type: markdown
+  #           content: >
+  #             ### Kitchen
+  #         - type: horizontal-stack
+  #           cards:
+  #             - type: entity-button
+  #               entity: switch.kitchen_light
+  #               icon: mdi:lightbulb
+  #               name: "Lights"
+  #               tap_action: toggle
+  #             - type: entity-button
+  #               entity: switch.kitchen_prep_light
+  #               icon: mdi:lightbulb
+  #               name: Prep Lights
+  #               tap_action: toggle
+  #             - type: entity-button
+  #               entity: light.kitchen_undercabinet
+  #               #hold_action: more-info
+  #               icon: mdi:led-strip
+  #               name: Cabinet Lights
+  #               tap_action: toggle
 
   ## UPSTAIRS
 #  - title: Upstairs
@@ -276,802 +196,210 @@ views:
 #          type: markdown
 #          content: ### Master Bedroom
 
-  ## CAMERAS
-  - title: Cameras
-    icon: mdi:cctv
+  # ## CAMERAS
+  # - title: Cameras
+  #   icon: mdi:cctv
+  #   cards:
+  #     - type: vertical-stack
+  #       cards:
+  #         - type: picture-entity
+  #           title: Porch
+  #           entity: camera.front_door
+  #           camera_image: camera.front_door
+  #           show_info: true
+  #           tap_action: dialog
+  #         - type: picture-entity
+  #           title: Workbench
+  #           entity: camera.workbench
+  #           camera_image: camera.workbench
+  #           show_info: true
+  #           tap_action: dialog
+
+  # ## MEDIA PLAYERS
+  # - title: Media Players
+  #   icon: mdi:volume-high
+  #   cards:
+  #     - type: entities
+  #       title: Alexas
+  #       entities:
+  #         - media_player.downstairs
+  #         - media_player.family_room
+  #         - media_player.kitchen
+  #         - media_player.living_room
+  #         - media_player.play_room
+  #         - type: divider
+  #         - media_player.upstairs
+  #         - media_player.kyles_room
+  #         - media_player.lucas_room
+  #         - media_player.master_bedroom
+
+  ## Alarms
+  - title: Alarms
+    icon: mdi:alarm
+    cards:
+      - type: entities
+        title: Brian's Wakeup Light
+        show_header_toggle: false
+        entities:
+          - input_boolean.wakeup_brian_status
+          - type: custom:time-input-row
+            entity: input_datetime.wakeup_brian_time
+          - input_select.wakeup_brian_light
+          - sensor.wakeup_brian_day_label
+          - input_boolean.wakeup_brian_mon
+          - input_boolean.wakeup_brian_tue
+          - input_boolean.wakeup_brian_wed
+          - input_boolean.wakeup_brian_thu
+          - input_boolean.wakeup_brian_fri
+          - input_boolean.wakeup_brian_sat
+          - input_boolean.wakeup_brian_sun
+
+      - type: entities
+        title: Nerene's Wakeup Light
+        show_header_toggle: false
+        entities:
+          - input_boolean.wakeup_nerene_status
+          - type: custom:time-input-row
+            entity: input_datetime.wakeup_nerene_time
+          - input_select.wakeup_nerene_light
+          - sensor.wakeup_nerene_day_label
+          - input_boolean.wakeup_nerene_mon
+          - input_boolean.wakeup_nerene_tue
+          - input_boolean.wakeup_nerene_wed
+          - input_boolean.wakeup_nerene_thu
+          - input_boolean.wakeup_nerene_fri
+          - input_boolean.wakeup_nerene_sat
+          - input_boolean.wakeup_nerene_sun
+ 
+  ## Admin
+  - title: Admin
+    icon: mdi:file-document-box
     cards:
       - type: vertical-stack
         cards:
-          - type: picture-entity
-            title: Porch
-            entity: camera.front_door
-            camera_image: camera.front_door
-            show_info: true
-            tap_action: dialog
-          - type: picture-entity
-            title: Workbench
-            entity: camera.workbench
-            camera_image: camera.workbench
-            show_info: true
-            tap_action: dialog
+          - type: entity-filter
+            entities:
+              - device_tracker.brian
+              - device_tracker.cindy
+              - device_tracker.eric
+              #- device_tracker.family_phone
+              - device_tracker.heather
+              - device_tracker.melissa
+              - device_tracker.nerene
+              - device_tracker.sandy
+              - binary_sensor.brians_bed_occupancy
+              - binary_sensor.nerenes_bed_occupancy
+            state_filter:
+              - home
+            card:
+              type: glance
+              #title: Who's home?
+              #show_name: false
+              show_state: false
+          
+          - type: glance
+            #title: Doors + Windows
+            show_state: false
+            entities:
+              - binary_sensor.garage_door
+              - binary_sensor.glowforge_window
 
-  ## MEDIA PLAYERS
-  - title: Media Players
-    icon: mdi:volume-high
-    cards:
+      # - type: horizontal-stack
+      #   cards:
+      #     - type: thermostat
+      #       entity: climate.home
+      #     - type: thermostat
+      #       entity: climate.playroom
+      - type: thermostat
+        entity: climate.home
+        
+      - type: thermostat
+        entity: climate.playroom
+
+
       - type: entities
-        title: Alexas
+        title: Mode Overrides
+        show_header_toggle: false
+        show_state: false
         entities:
-          - media_player.downstairs
-          - media_player.family_room
-          - media_player.kitchen
-          - media_player.living_room
-          - media_player.play_room
-          - type: divider
-          - media_player.upstairs
-          - media_player.kyles_room
-          - media_player.lucas_room
-          - media_player.master_bedroom
+          - input_boolean.guest_mode
+          - input_boolean.motion_detection_mode
+          - input_boolean.shoe_closet_timeout
+          - input_boolean.speech_notifications
+          - input_boolean.time_based_dimmers_enabled
+          - input_boolean.vacation
+          - scene.goodbye
+          - scene.good_night
 
+      - type: entities
+        #title: Admin
+        entities:
+          - type: custom:fold-entity-row
+            head:
+              type: section
+              label: Admin
+            items:
+              - script.restart_hass
+              - input_select.log_level
+              - type: divider
+              - sensor.ha_version
+              #- sensor.ha_laststartup
+              - sensor.since_last_boot
+              - sensor.processor_use
+              - sensor.memory_use_percent
+              - sensor.load_15m
 
-
-  # - title: Generated 12/3/2018
-  #   cards:
-  #     - type: entities
-  #       title: Automations
-  #       show_header_toggle: true
-  #       entities:
-  #         - automation.adjust_brightness_as_lights_are_turned_on
-  #         - automation.adjust_brightness_every_half_hour
-  #         - automation.alarm_clock_brian
-  #         - automation.alarm_clock_nerene
-  #         - automation.announce_open_doors_and_windows
-  #         - automation.arrive_at_home
-  #         - automation.away_mode_at_home
-  #         - automation.away_mode_left_home
-  #         - automation.battery_notification
-  #         - automation.battery_notification_clear
-  #         - automation.battery_notification_slack
-  #         - automation.battery_sensor_from_battery_attribute
-  #         - automation.battery_sensor_from_battery_level_attribute
-  #         - automation.battery_sensor_from_battery_numeric_attribute
-  #         - automation.bed_room_light_gte_75pct
-  #         - automation.bed_room_light_lt_75pct
-  #         - automation.bed_room_light_off
-  #         - automation.bed_room_light_sync_is_switched_off
-  #         - automation.bedtime_end_brian
-  #         - automation.bedtime_end_nerene
-  #         - automation.bedtime_start_brian
-  #         - automation.bedtime_start_nerene
-  #         - automation.dark_sky_startup_actions
-  #         - automation.doorbell_pressed
-  #         - automation.doors_and_windows_watchdog
-  #         - automation.dusk
-  #         - automation.family_room_light_gte_75pct
-  #         - automation.family_room_light_lt_75pct
-  #         - automation.family_room_light_off
-  #         - automation.garage_closed
-  #         - automation.garage_door_watchdog
-  #         - automation.garage_opened
-  #         - automation.home_assistant_startup_actions
-  #         - automation.hot_water_pump_timeout
-  #         - automation.kitchen_absent
-  #         - automation.kitchen_present
-  #         - automation.kitchen_sink_leak_detected
-  #         - automation.leave_home
-  #         - automation.living_room_light_gte_75pct
-  #         - automation.living_room_light_lt_75pct
-  #         - automation.living_room_light_turns_off
-  #         - automation.log_level
-  #         - automation.make_sure_light_doesnt_stay_on_after_garage_is_closed
-  #         - automation.morning_15hrs
-  #         - automation.notify_on_home_assistant_updates
-  #         - automation.on_holiday_state_change
-  #         - automation.persistence_publish
-  #         - automation.persistence_subscribe_binary
-  #         - automation.persistence_subscribe_select_option
-  #         - automation.persistence_subscribe_set_value
-  #         - automation.printers_off
-  #         - automation.repeat_last_message
-  #         - automation.school_travel_time_watchdog
-  #         - automation.send_notification_of_rss_feed_title_when_updated
-  #         - automation.shoe_closet_closed
-  #         - automation.shoe_closet_open
-  #         - automation.shoe_closet_timeout
-  #         - automation.theme_change_selection
-  #         - automation.theme_change_selection_2
-  #         - automation.theme_time_of_day_change
-  #         - automation.update_battery_status_group_members
-  #         - automation.vacation_mode_end
-  #         - automation.vacation_mode_start
-  #         - automation.washing_cycle_is_complete
-  #         - automation.weather_group_icon_update
-
-  #     - type: entities
-  #       title: Binary Sensors
-  #       show_header_toggle: true
-  #       entities:
-  #         - binary_sensor._watering
-  #         - binary_sensor._watering_2
-  #         - binary_sensor.aquatimer_control_unit_status
-  #         - binary_sensor.bedroom_occupancy
-  #         - binary_sensor.brian_charge_state
-  #         - binary_sensor.brian_or_nerene
-  #         - binary_sensor.brians_bed_occupancy
-  #         - binary_sensor.eric_or_sandy
-  #         - binary_sensor.front_door_motion
-  #         - binary_sensor.front_yard_watering
-  #         - binary_sensor.garage_door
-  #         - binary_sensor.glowforge_window
-  #         - binary_sensor.home_occupancy
-  #         - binary_sensor.kitchen_leak
-  #         - binary_sensor.lucas_bedroom_occupancy
-  #         - binary_sensor.motion_sensor_158d00012f54ef
-  #         - binary_sensor.motion_sensor_158d00015a8692
-  #         - binary_sensor.motion_sensor_158d0001f9cdb8
-  #         - binary_sensor.motion_sensor_158d0001f9ce72
-  #         - binary_sensor.nerene_charge_state
-  #         - binary_sensor.nerenes_bed_occupancy
-  #         - binary_sensor.parents_in_bed
-  #         - binary_sensor.pool_filler_watering
-  #         - binary_sensor.ring_front_door_ding
-  #         - binary_sensor.ring_front_door_motion
-  #         - binary_sensor.shoe_closet_door
-  #         - binary_sensor.side_yard_status
-  #         - binary_sensor.sonoff01
-  #         - binary_sensor.sonoff02
-  #         - binary_sensor.sonoff_dual01
-  #         - binary_sensor.sonoff_pow01
-  #         - binary_sensor.sonoff_pow02
-  #         - binary_sensor.sonoffs31_01
-  #         - binary_sensor.sonoffs31_02
-  #         - binary_sensor.sonoffs31_03
-  #         - binary_sensor.switch_158d00012dd7c3
-  #         - binary_sensor.washer_running
-  #         - binary_sensor.wink
-
-  #     - type: entities
-  #       title: Climates
-  #       show_header_toggle: true
-  #       entities:
-  #         - climate.home
-  #         - climate.playroom
-
-  #     - type: entities
-  #       title: Cover
-  #       show_header_toggle: true
-  #       entities:
-  #         - cover.garage_door
-
-  #     - type: entities
-  #       title: Customizer
-  #       show_header_toggle: true
-  #       entities:
-  #         - customizer.customizer
-
-  #     - type: entity-filter
-  #       title: Device Trackers
-  #       show_header_toggle: true
-  #       entities:
-  #         - device_tracker.brian
-  #         - device_tracker.cindy
-  #         - device_tracker.eric
-  #         - device_tracker.family_phone
-  #         - device_tracker.heather
-  #         - device_tracker.melissa
-  #         - device_tracker.nerene
-  #         - device_tracker.sandy
-  #       state_filter:
-  #         - 'home'
-  #       card:
-  #         type: glance
-  #         title: My Device Trackers
-
-
-  #     - type: entities
-  #       title: Groups
-  #       show_header_toggle: true
-  #       entities:
-  #         - group.admin
-  #         - group.all_automations
-  #         - group.all_covers
-  #         - group.all_devices
-  #         - group.all_lights
-  #         - group.all_locks
-  #         - group.all_remotes
-  #         - group.all_scripts
-  #         - group.all_switches
-  #         - group.battery_alert
-  #         - group.battery_status
-  #         - group.cameras
-  #         - group.christmas_lights
-  #         - group.default_view
-  #         - group.door_sensors
-  #         - group.family
-  #         - group.goodbye_devices
-  #         - group.goodnight_devices
-  #         - group.media_players
-  #         - group.mediaplayer_livingroom
-  #         - group.mediaplayer_playroom
-  #         - group.outdoor_lighting
-  #         - group.outside
-  #         - group.panel_admin_docker_links
-  #         - group.panel_admin_docker_services
-  #         - group.panel_admin_fake_sensors
-  #         - group.panel_admin_illumination
-  #         - group.panel_admin_manage
-  #         - group.panel_admin_modes_automation
-  #         - group.panel_admin_pihole
-  #         - group.panel_admin_power_monitor
-  #         - group.panel_admin_presence
-  #         - group.panel_admin_projects
-  #         - group.panel_admin_resources
-  #         - group.panel_boys_bathroom
-  #         - group.panel_control
-  #         - group.panel_control_bed_occupancy
-  #         - group.panel_control_brians_bed_occupancy
-  #         - group.panel_control_nerenes_bed_occupancy
-  #         - group.panel_control_overrides
-  #         - group.panel_darksky
-  #         - group.panel_downstairs_devices
-  #         - group.panel_downstairs_lights
-  #         - group.panel_echo
-  #         - group.panel_entry_lighting
-  #         - group.panel_family_room_lights
-  #         - group.panel_home_thermostat
-  #         - group.panel_kitchen_lights
-  #         - group.panel_living_room_lights
-  #         - group.panel_living_room_tv
-  #         - group.panel_lucas_bedroom
-  #         - group.panel_master_bedroom
-  #         - group.panel_play_room_lights
-  #         - group.panel_play_room_tv
-  #         - group.panel_playroom_thermostat
-  #         - group.panel_raincloud_drip
-  #         - group.panel_raincloud_poolfill
-  #         - group.panel_soil_sensor_1
-  #         - group.panel_solar
-  #         - group.panel_upstairs
-  #         - group.panel_wunderground
-  #         - group.printers
-  #         - group.sonoff
-  #         - group.system_monitor
-  #         - group.wakeup_brian
-  #         - group.wakeup_nerene
-  #         - group.weblink_management
-  #         - group.weblink_projects
-  #         - group.weblink_resources
-  #         - group.window_sensors
-
-  #     - type: entities
-  #       title: Input Booleans
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_boolean.away_mode
-  #         - input_boolean.bedroom_light_sync_enabled
-  #         - input_boolean.brians_bed_occupancy
-  #         - input_boolean.garage_door_fake
-  #         - input_boolean.guest_mode
-  #         - input_boolean.ios_notifications
-  #         - input_boolean.last_message
-  #         - input_boolean.motion_detection_mode
-  #         - input_boolean.nerenes_bed_occupancy
-  #         - input_boolean.shoe_closet_timeout
-  #         - input_boolean.speech_notifications
-  #         - input_boolean.time_based_dimmers_enabled
-  #         - input_boolean.vacation
-  #         - input_boolean.wakeup_brian_fri
-  #         - input_boolean.wakeup_brian_mon
-  #         - input_boolean.wakeup_brian_sat
-  #         - input_boolean.wakeup_brian_status
-  #         - input_boolean.wakeup_brian_sun
-  #         - input_boolean.wakeup_brian_thu
-  #         - input_boolean.wakeup_brian_tue
-  #         - input_boolean.wakeup_brian_wed
-  #         - input_boolean.wakeup_nerene_fri
-  #         - input_boolean.wakeup_nerene_mon
-  #         - input_boolean.wakeup_nerene_sat
-  #         - input_boolean.wakeup_nerene_status
-  #         - input_boolean.wakeup_nerene_sun
-  #         - input_boolean.wakeup_nerene_thu
-  #         - input_boolean.wakeup_nerene_tue
-  #         - input_boolean.wakeup_nerene_wed
-
-  #     - type: entities
-  #       title: Input Numbers
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_number.battery_alert_threshold_max
-  #         - input_number.battery_alert_threshold_min
-  #         - input_number.wakeup_brian_hour
-  #         - input_number.wakeup_brian_minutes
-  #         - input_number.wakeup_nerene_hour
-  #         - input_number.wakeup_nerene_minutes
-
-  #     - type: entities
-  #       title: Input Selects
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_select.log_level
-  #         - input_select.theme
-  #         - input_select.wakeup_brian_light
-  #         - input_select.wakeup_nerene_light
-
-  #     - type: entities
-  #       title: Input Texts
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_text.current_icon
-  #         - input_text.fake_doorbell
-
-  #     - type: entities
-  #       title: Lights
-  #       show_header_toggle: true
-  #       entities:
-  #         - light.3a4e12
-  #         - light.3a4f5b
-  #         - light.3a542c
-  #         - light.3a5e44
-  #         - light.3a76dc
-  #         - light.3a7703
-  #         - light.brians_light
-  #         - light.computer_light
-  #         - light.dining_room_light
-  #         - light.entry
-  #         - light.entry_light
-  #         - light.family_room_light
-  #         - light.family_room_table_lamp
-  #         - light.garage_entry_light
-  #         - light.gateway_light_286c0785bc94
-  #         - light.hue
-  #         - light.hue_color_lamp_2
-  #         - light.hue_color_lamp_3
-  #         - light.kitchen_undercabinet
-  #         - light.living_room
-  #         - light.living_room_light
-  #         - light.nerenes_light
-  #         - light.play_room_corner_light
-  #         - light.play_room_light
-  #         - light.porch_light
-  #         - light.shoe_closet_light
-
-  #     - type: entities
-  #       title: Lock
-  #       show_header_toggle: true
-  #       entities:
-  #         - lock.front_door
-
-  #     - type: entities
-  #       title: Persistent Notification
-  #       show_header_toggle: true
-  #       entities:
-  #         - persistent_notification.low_battery_alert
-
-  #     - type: entities
-  #       title: Remotes
-  #       show_header_toggle: true
-  #       entities:
-  #         - remote.living_room
-  #         - remote.living_room_2
-  #         - remote.play_room
-  #         - remote.play_room_2
-
-  #     - type: entities
-  #       title: Scenes
-  #       show_header_toggle: true
-  #       entities:
-  #         - scene.brian_wake_up
-  #         - scene.front_full_brightness
-  #         - scene.good_night
-  #         - scene.goodbye
-  #         - scene.holiday_birthday_colors
-  #         - scene.holiday_christmas_colors
-  #         - scene.holiday_easter_colors
-  #         - scene.holiday_fathers_day_colors
-  #         - scene.holiday_halloween_colors
-  #         - scene.holiday_marti_gras_colors
-  #         - scene.holiday_new_years_day_colors
-  #         - scene.holiday_pi_colors
-  #         - scene.holiday_rwb_colors
-  #         - scene.holiday_st_patty_colors
-  #         - scene.holiday_standard_colors
-  #         - scene.holiday_starwars_colors
-  #         - scene.holiday_thanksgiving_colors
-  #         - scene.holiday_valentine_colors
-  #         - scene.nerene_leaves
-  #         - scene.nerene_wake_up
-
-  #     - type: entities
-  #       title: Scripts
-  #       show_header_toggle: true
-  #       entities:
-  #         - script.alexa_tts_test
-  #         - script.debug
-  #         - script.disable_speech_at_startup
-  #         - script.dusk
-  #         - script.ecobee_away_and_hold
-  #         - script.ecobee_resume_normal_operation
-  #         - script.ecobee_temporary_away
-  #         - script.goodbye_routine
-  #         - script.goodnight_routine
-  #         - script.livingroom_mediaplayer_disable
-  #         - script.livingroom_mediaplayer_enable
-  #         - script.mediaplayer_livingroom_showhide
-  #         - script.mediaplayer_playroom_showhide
-  #         - script.morning_devices_off
-  #         - script.notify_ios
-  #         - script.notify_speech
-  #         - script.notify_web
-  #         - script.outdoor_light_holiday_coloring
-  #         - script.reboot
-  #         - script.reload_automations
-  #         - script.reload_core
-  #         - script.reload_groups
-  #         - script.reload_scripts
-  #         - script.restart_hass
-  #         - script.restart_hass_playground
-  #         - script.say
-  #         - script.say_test
-  #         - script.set_light_brightness_pct_by_time
-  #         - script.shutdown_routine
-  #         - script.test_doorbell
-  #         - script.theme_selection_changed
-  #         - script.turn_off_livingroom_tv
-  #         - script.turn_off_playroom_tv
-  #         - script.turn_on_livingroom_tv
-  #         - script.turn_on_playroom_tv
-  #         - script.wakeup_brian_activate
-  #         - script.wakeup_brian_ios_alarm
-  #         - script.wakeup_brian_light_fade
-  #         - script.wakeup_nerene_activate
-  #         - script.wakeup_nerene_light_fade
-  #         - script.weather_group_icon
-  #         - script.wink_new_devices
-
-  #     - type: entities
-  #       title: Sensors
-  #       show_header_toggle: true
-  #       entities:
-  #         - sensor._next_cycle
-  #         - sensor._next_cycle_2
-  #         - sensor._rain_delay
-  #         - sensor._rain_delay_2
-  #         - sensor._remaining_watering_time
-  #         - sensor._remaining_watering_time_2
-  #         - sensor.bedroom_temperature
-  #         - sensor.brian_battery
-  #         - sensor.brians_iphone_battery
-  #         - sensor.brians_iphone_battery_level
-  #         - sensor.brians_iphone_battery_level_2
-  #         - sensor.brians_iphone_battery_state
-  #         - sensor.brians_iphone_battery_state_2
-  #         - sensor.custom_component_tracker
-  #         - sensor.custom_python_script_tracker
-  #         - sensor.dark_sky_apparent_temperature
-  #         - sensor.dark_sky_cloud_coverage
-  #         - sensor.dark_sky_cloud_coverage_1
-  #         - sensor.dark_sky_cloud_coverage_2
-  #         - sensor.dark_sky_cloud_coverage_3
-  #         - sensor.dark_sky_cloud_coverage_4
-  #         - sensor.dark_sky_cloud_coverage_5
-  #         - sensor.dark_sky_cloud_coverage_6
-  #         - sensor.dark_sky_cloud_coverage_7
-  #         - sensor.dark_sky_daily_high_apparent_temperature_1
-  #         - sensor.dark_sky_daily_high_apparent_temperature_2
-  #         - sensor.dark_sky_daily_high_apparent_temperature_3
-  #         - sensor.dark_sky_daily_high_apparent_temperature_4
-  #         - sensor.dark_sky_daily_high_apparent_temperature_5
-  #         - sensor.dark_sky_daily_high_apparent_temperature_6
-  #         - sensor.dark_sky_daily_high_apparent_temperature_7
-  #         - sensor.dark_sky_daily_low_apparent_temperature_1
-  #         - sensor.dark_sky_daily_low_apparent_temperature_2
-  #         - sensor.dark_sky_daily_low_apparent_temperature_3
-  #         - sensor.dark_sky_daily_low_apparent_temperature_4
-  #         - sensor.dark_sky_daily_low_apparent_temperature_5
-  #         - sensor.dark_sky_daily_low_apparent_temperature_6
-  #         - sensor.dark_sky_daily_low_apparent_temperature_7
-  #         - sensor.dark_sky_daily_max_precip_intensity_1
-  #         - sensor.dark_sky_daily_max_precip_intensity_2
-  #         - sensor.dark_sky_daily_max_precip_intensity_3
-  #         - sensor.dark_sky_daily_max_precip_intensity_4
-  #         - sensor.dark_sky_daily_max_precip_intensity_5
-  #         - sensor.dark_sky_daily_max_precip_intensity_6
-  #         - sensor.dark_sky_daily_max_precip_intensity_7
-  #         - sensor.dark_sky_daily_summary
-  #         - sensor.dark_sky_hourly_summary
-  #         - sensor.dark_sky_humidity
-  #         - sensor.dark_sky_humidity_1
-  #         - sensor.dark_sky_humidity_2
-  #         - sensor.dark_sky_humidity_3
-  #         - sensor.dark_sky_humidity_4
-  #         - sensor.dark_sky_humidity_5
-  #         - sensor.dark_sky_humidity_6
-  #         - sensor.dark_sky_humidity_7
-  #         - sensor.dark_sky_icon
-  #         - sensor.dark_sky_icon_1
-  #         - sensor.dark_sky_icon_2
-  #         - sensor.dark_sky_icon_3
-  #         - sensor.dark_sky_icon_4
-  #         - sensor.dark_sky_icon_5
-  #         - sensor.dark_sky_icon_6
-  #         - sensor.dark_sky_icon_7
-  #         - sensor.dark_sky_minutely_summary
-  #         - sensor.dark_sky_nearest_storm_distance
-  #         - sensor.dark_sky_precip
-  #         - sensor.dark_sky_precip_1
-  #         - sensor.dark_sky_precip_2
-  #         - sensor.dark_sky_precip_3
-  #         - sensor.dark_sky_precip_4
-  #         - sensor.dark_sky_precip_5
-  #         - sensor.dark_sky_precip_6
-  #         - sensor.dark_sky_precip_7
-  #         - sensor.dark_sky_precip_accumulation_1
-  #         - sensor.dark_sky_precip_accumulation_2
-  #         - sensor.dark_sky_precip_accumulation_3
-  #         - sensor.dark_sky_precip_accumulation_4
-  #         - sensor.dark_sky_precip_accumulation_5
-  #         - sensor.dark_sky_precip_accumulation_6
-  #         - sensor.dark_sky_precip_accumulation_7
-  #         - sensor.dark_sky_precip_intensity
-  #         - sensor.dark_sky_precip_intensity_1
-  #         - sensor.dark_sky_precip_intensity_2
-  #         - sensor.dark_sky_precip_intensity_3
-  #         - sensor.dark_sky_precip_intensity_4
-  #         - sensor.dark_sky_precip_intensity_5
-  #         - sensor.dark_sky_precip_intensity_6
-  #         - sensor.dark_sky_precip_intensity_7
-  #         - sensor.dark_sky_precip_probability
-  #         - sensor.dark_sky_precip_probability_1
-  #         - sensor.dark_sky_precip_probability_2
-  #         - sensor.dark_sky_precip_probability_3
-  #         - sensor.dark_sky_precip_probability_4
-  #         - sensor.dark_sky_precip_probability_5
-  #         - sensor.dark_sky_precip_probability_6
-  #         - sensor.dark_sky_precip_probability_7
-  #         - sensor.dark_sky_pressure
-  #         - sensor.dark_sky_pressure_1
-  #         - sensor.dark_sky_pressure_2
-  #         - sensor.dark_sky_pressure_3
-  #         - sensor.dark_sky_pressure_4
-  #         - sensor.dark_sky_pressure_5
-  #         - sensor.dark_sky_pressure_6
-  #         - sensor.dark_sky_pressure_7
-  #         - sensor.dark_sky_summary
-  #         - sensor.dark_sky_summary_1
-  #         - sensor.dark_sky_summary_2
-  #         - sensor.dark_sky_summary_3
-  #         - sensor.dark_sky_summary_4
-  #         - sensor.dark_sky_summary_5
-  #         - sensor.dark_sky_summary_6
-  #         - sensor.dark_sky_summary_7
-  #         - sensor.dark_sky_temperature
-  #         - sensor.dark_sky_temperature_1
-  #         - sensor.dark_sky_temperature_2
-  #         - sensor.dark_sky_temperature_3
-  #         - sensor.dark_sky_temperature_4
-  #         - sensor.dark_sky_temperature_5
-  #         - sensor.dark_sky_temperature_6
-  #         - sensor.dark_sky_temperature_7
-  #         - sensor.dark_sky_wind_bearing
-  #         - sensor.dark_sky_wind_bearing_1
-  #         - sensor.dark_sky_wind_bearing_2
-  #         - sensor.dark_sky_wind_bearing_3
-  #         - sensor.dark_sky_wind_bearing_4
-  #         - sensor.dark_sky_wind_bearing_5
-  #         - sensor.dark_sky_wind_bearing_6
-  #         - sensor.dark_sky_wind_bearing_7
-  #         - sensor.dark_sky_wind_speed
-  #         - sensor.dark_sky_wind_speed_1
-  #         - sensor.dark_sky_wind_speed_2
-  #         - sensor.dark_sky_wind_speed_3
-  #         - sensor.dark_sky_wind_speed_4
-  #         - sensor.dark_sky_wind_speed_5
-  #         - sensor.dark_sky_wind_speed_6
-  #         - sensor.dark_sky_wind_speed_7
-  #         - sensor.date
-  #         - sensor.door_window_sensor_158d000129229c_battery
-  #         - sensor.door_window_sensor_158d0001835276_battery
-  #         - sensor.doors_open
-  #         - sensor.ecobee_home_away_mode
-  #         - sensor.ecobee_home_fan
-  #         - sensor.ecobee_home_hold_mode
-  #         - sensor.ecobee_playroom_away_mode
-  #         - sensor.ecobee_playroom_fan
-  #         - sensor.ecobee_playroom_hold_mode
-  #         - sensor.energy_generation
-  #         - sensor.family_phone_battery
-  #         - sensor.family_room_battery
-  #         - sensor.family_room_illumination_battery
-  #         - sensor.flag
-  #         - sensor.front_door_battery
-  #         - sensor.front_yard_last_ran
-  #         - sensor.front_yard_next_cycle
-  #         - sensor.front_yard_rain_delay
-  #         - sensor.front_yard_remaining_watering_time
-  #         - sensor.glowforge_window_battery
-  #         - sensor.ha_uptime
-  #         - sensor.ha_version
-  #         - sensor.harmony_livingroom_activity
-  #         - sensor.harmony_playroom_activity
-  #         - sensor.holiday
-  #         - sensor.holiday_scene
-  #         - sensor.home_humidity
-  #         - sensor.home_temperature
-  #         - sensor.illumination_158d0001f9cdb8
-  #         - sensor.illumination_158d0001f9cdb8_battery
-  #         - sensor.illumination_158d0001f9ce72
-  #         - sensor.illumination_158d0001f9ce72_battery
-  #         - sensor.illumination_286c0785bc94
-  #         - sensor.kitchen_battery
-  #         - sensor.kitchen_leak_sensor_battery
-  #         - sensor.last_message
-  #         - sensor.life360_brian_battery
-  #         - sensor.life360_family_phone_battery
-  #         - sensor.lights_on
-  #         - sensor.living_room_battery
-  #         - sensor.living_room_illumination_battery
-  #         - sensor.load_15m
-  #         - sensor.lucas_bedroom_temperature
-  #         - sensor.memory_use_percent
-  #         - sensor.moon
-  #         - sensor.motion_sensor_158d00012f54ef_battery
-  #         - sensor.motion_sensor_158d00015a8692_battery
-  #         - sensor.motion_sensor_158d0001f9cdb8_battery
-  #         - sensor.motion_sensor_158d0001f9ce72_battery
-  #         - sensor.play_room_battery
-  #         - sensor.playroom_humidity
-  #         - sensor.playroom_temperature
-  #         - sensor.pool_filler_last_ran
-  #         - sensor.pool_filler_next_cycle
-  #         - sensor.pool_filler_rain_delay
-  #         - sensor.pool_filler_remaining_watering_time
-  #         - sensor.power_generation
-  #         - sensor.processor_use
-  #         - sensor.pvoutput
-  #         - sensor.ring_front_door_last_activity
-  #         - sensor.ring_front_door_last_ding
-  #         - sensor.ring_front_door_last_motion
-  #         - sensor.shoe_closet_door_battery
-  #         - sensor.side_yard_battery
-  #         - sensor.since_last_boot
-  #         - sensor.sonoff_pow01_energy
-  #         - sensor.sonoff_pow01_power
-  #         - sensor.sonoff_pow01_power_mean
-  #         - sensor.sonoff_pow01_voltage
-  #         - sensor.sonoff_pow02_energy
-  #         - sensor.sonoff_pow02_power
-  #         - sensor.sonoff_pow02_power_mean
-  #         - sensor.sonoff_pow02_voltage
-  #         - sensor.sonoffs31_01_energy
-  #         - sensor.sonoffs31_01_power
-  #         - sensor.sonoffs31_01_voltage
-  #         - sensor.sonoffs31_02_energy
-  #         - sensor.sonoffs31_02_power
-  #         - sensor.sonoffs31_02_voltage
-  #         - sensor.sonoffs31_03_energy
-  #         - sensor.sonoffs31_03_power
-  #         - sensor.sonoffs31_03_voltage
-  #         - sensor.switch_158d00012dd7c3_battery
-  #         - sensor.time
-  #         - sensor.wakeup_brian_day_label
-  #         - sensor.wakeup_brian_time
-  #         - sensor.wakeup_nerene_day_label
-  #         - sensor.wakeup_nerene_time
-  #         - sensor.water_leak_sensor_158d00023aa1bf_battery
-  #         - sensor.waze_travel_time
-  #         - sensor.windows_open
-  #         - sensor.workbench_motion_detected
-  #         - sensor.workbench_ptz_preset
-  #         - sensor.xiaomi_smart_button_battery
-
-  #     - type: entities
-  #       title: Sun
-  #       show_header_toggle: true
-  #       entities:
-  #         - sun.sun
-
-  #     - type: entities
-  #       title: Switchs
-  #       show_header_toggle: true
-  #       entities:
-  #         - switch._automatic_watering
-  #         - switch._automatic_watering_2
-  #         - switch._manual_watering
-  #         - switch._manual_watering_2
-  #         - switch.appdaemon_service
-  #         - switch.boys_bathroom_nightlight
-  #         - switch.christmas_tree_lights
-  #         - switch.dockermon_service
-  #         - switch.ecobee_home_fan
-  #         - switch.ecobee_playroom_fan
-  #         - switch.entry_step_light
-  #         - switch.front_yard_automatic_watering
-  #         - switch.front_yard_manual_watering
-  #         - switch.grafana_service
-  #         - switch.home_assistant_service
-  #         - switch.hot_water_pump
-  #         - switch.influxdb_service
-  #         - switch.inkjet_printer
-  #         - switch.kitchen
-  #         - switch.kitchen_light
-  #         - switch.kitchen_prep_light
-  #         - switch.landscape_lights
-  #         - switch.landscapeholiday_lights
-  #         - switch.laser_printer
-  #         - switch.living_room_fan
-  #         - switch.livingroom_tv
-  #         - switch.master_bedroom_fan
-  #         - switch.mosquitto_service
-  #         - switch.motion_detection_workbench
-  #         - switch.motion_recording_workbench
-  #         - switch.organizr_service
-  #         - switch.playroom_tv
-  #         - switch.pool_filler_automatic_watering
-  #         - switch.pool_filler_manual_watering
-  #         - switch.portainerio_service
-  #         - switch.sonoff_01
-  #         - switch.sonoff_02
-  #         - switch.sonoff_dual01_power1
-  #         - switch.sonoff_dual01_power2
-  #         - switch.sonoff_pow01
-  #         - switch.sonoff_pow01_2
-  #         - switch.sonoff_pow02
-  #         - switch.sonoff_s31_03
-  #         - switch.sonoffs31_01
-  #         - switch.sonoffs31_01_2
-  #         - switch.sonoffs31_02
-  #         - switch.tasmoadmin_service
-  #         - switch.unifi_service
-  #         - switch.washer
-
-  #     - type: entities
-  #       title: Variable
-  #       show_header_toggle: true
-  #       entities:
-  #         - variable.ha_laststartup
-
-  #     - type: entities
-  #       title: Weathers
-  #       show_header_toggle: true
-  #       entities:
-  #         - weather.home
-  #         - weather.playroom
-  #         - weather.weather
-
-  #     - type: entities
-  #       title: Weblinks
-  #       show_header_toggle: true
-  #       entities:
-  #         - weblink.alexa
-  #         - weblink.grafana
-  #         - weblink.ha_devices
-  #         - weblink.ha_resources
-  #         - weblink.hass_playground
-  #         - weblink.icons
-  #         - weblink.influxdb
-  #         - weblink.mosquitto
-  #         - weblink.new_features
-  #         - weblink.nodered
-  #         - weblink.organizr
-  #         - weblink.pihole
-  #         - weblink.portainerio
-  #         - weblink.pvoutput
-  #         - weblink.research
-  #         - weblink.router
-  #         - weblink.sonoff01
-  #         - weblink.sonoff02
-  #         - weblink.sonoff_dual01
-  #         - weblink.sonoff_pow01
-  #         - weblink.sonoff_pow02
-  #         - weblink.sonoffs31_01
-  #         - weblink.sonoffs31_02
-  #         - weblink.sonoffs31_03
-  #         - weblink.tasmoadmin
-  #         - weblink.unifi
-  #         - weblink.voice_control
-
-  #     - type: entities
-  #       title: Zone
-  #       show_header_toggle: true
-  #       entities:
-  #         - zone.home
+      # - type: entities
+      #   #title: Control Panel
+      #   entities:
+      #     - type: custom:fold-entity-row
+      #       head:
+      #         type: section
+      #         label: Mode Overrides
+      #         icon: mdi:home-alert
+      #       items:
+      #       entities:
+      #         - input_boolean.guest_mode
+      #         - input_boolean.illumination_lighting_mode
+      #         - input_boolean.motion_detection_mode
+      #         - input_boolean.shoe_closet_timeout
+      #         - input_boolean.speech_notifications
+      #         - input_boolean.text_notifications
+      #         - input_boolean.time_based_dimmers_enabled
+      #         - input_boolean.vacation
+      #         - scene.goodbye
+      #         - scene.good_night
+      #     - type: custom:fold-entity-row
+      #       head:
+      #         type: section
+      #         label: Brian's Wakeup Light
+      #       items:
+      #         - input_boolean.wakeup_brian_status
+      #         - type: custom:time-input-row
+      #           entity: input_datetime.wakeup_brian_time
+      #         - input_select.wakeup_brian_light
+      #         - sensor.wakeup_brian_day_label
+      #         - input_boolean.wakeup_brian_mon
+      #         - input_boolean.wakeup_brian_tue
+      #         - input_boolean.wakeup_brian_wed
+      #         - input_boolean.wakeup_brian_thu
+      #         - input_boolean.wakeup_brian_fri
+      #         - input_boolean.wakeup_brian_sat
+      #         - input_boolean.wakeup_brian_sun
+      #     - type: custom:fold-entity-row
+      #       head:
+      #         type: section
+      #         label: Nerene's Wakeup Light
+      #       items:
+      #         - input_boolean.wakeup_nerene_status
+      #         - type: custom:time-input-row
+      #           entity: input_datetime.wakeup_nerene_time
+      #         - input_select.wakeup_nerene_light
+      #         - sensor.wakeup_nerene_day_label
+      #         - input_boolean.wakeup_nerene_mon
+      #         - input_boolean.wakeup_nerene_tue
+      #         - input_boolean.wakeup_nerene_wed
+      #         - input_boolean.wakeup_nerene_thu
+      #         - input_boolean.wakeup_nerene_fri
+      #         - input_boolean.wakeup_nerene_sat
+      #         - input_boolean.wakeup_nerene_sun
