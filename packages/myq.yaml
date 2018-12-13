@@ -1,7 +1,5 @@
 homeassistant:
   customize:
-    binary_sensor.garage_state:
-      device_class: garage_door
     cover.garage_door:
       device_class: garage
       friendly_name: "Garage Door"
@@ -16,30 +14,6 @@ cover:
     name: garage_door
     type: liftmaster
 
-################################################
-## Sensors
-################################################
-binary_sensor:
-  - platform: template
-    sensors:
-      garage_door:
-        value_template: >
-          {#% if is_state('cover.garage_door', 'closed')
-             or is_state('input_boolean.garage_door_fake', 'off') -%#}
-          {% if is_state('cover.garage_door', 'open') -%}
-            {{ "true" }}
-          {%- else -%}
-            {{ "false" }}
-          {%- endif %}
-        device_class: garage_door
-        friendly_name: Garage Door
-
-
-input_boolean:
-  garage_door_fake:
-    name: Fake Garage Door
-    initial: off
-
 ##############################################
 ## Automations
 ##############################################
@@ -50,9 +24,9 @@ automation:
   - alias: 'Garage Closed'
     trigger:
       - platform: state
-        entity_id: binary_sensor.garage_door
-        from: 'on'
-        to: 'off'
+        entity_id: cover.garage_door
+        from: 'open'
+        to: 'closed'
     action:
       - delay: "0:00:15"
       - service: light.turn_off
@@ -61,9 +35,9 @@ automation:
   - alias: 'Garage Opened'
     trigger:
       - platform: state
-        entity_id: binary_sensor.garage_door
-        from: 'off'
-        to: 'on'
+        entity_id: cover.garage_door
+        from: 'closed'
+        to: 'open'
     action:
       - service: light.turn_on
         data:

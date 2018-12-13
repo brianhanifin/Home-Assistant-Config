@@ -44,13 +44,6 @@ shell_command:
 ################################################
 # HA Dockermon's version of monitoring NodeRED's status.
 switch:
-  #- platform: rest
-  #  resource: http://10.0.0.56:8126/container/airconnect
-  #  name: Air-Connect Service
-  #  body_on: '{"state": "start"}'
-  #  body_off: '{"state": "stop"}'
-  #  is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
-
   - platform: rest
     resource: http://10.0.0.56:8126/container/appdaemon
     name: Appdaemon Service
@@ -94,32 +87,32 @@ switch:
     is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
   - platform: rest
+    resource: http://10.0.0.56:8126/container/nginx
+    name: LetsEncrypt Service
+    body_on: '{"state": "start"}'
+    body_off: '{"state": "stop"}'
+    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
+
+  - platform: rest
     resource: http://10.0.0.56:8126/container/mosquitto
     name: Mosquitto Service
     body_on: '{"state": "start"}'
     body_off: '{"state": "stop"}'
     is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
-  - platform: rest
-    resource: http://10.0.0.56:8126/container/nginx
-    name: Nginx Service
-    body_on: '{"state": "start"}'
-    body_off: '{"state": "stop"}'
-    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
+  # - platform: rest
+  #   resource: http://10.0.0.56:8126/container/nodered
+  #   name: NodeRed Service
+  #   body_on: '{"state": "start"}'
+  #   body_off: '{"state": "stop"}'
+  #   is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
-  - platform: rest
-    resource: http://10.0.0.56:8126/container/nodered
-    name: NodeRed Service
-    body_on: '{"state": "start"}'
-    body_off: '{"state": "stop"}'
-    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
-
-  - platform: rest
-    resource: http://10.0.0.56:8126/container/organizr
-    name: Organizr Service
-    body_on: '{"state": "start"}'
-    body_off: '{"state": "stop"}'
-    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
+  # - platform: rest
+  #   resource: http://10.0.0.56:8126/container/organizr
+  #   name: Organizr Service
+  #   body_on: '{"state": "start"}'
+  #   body_off: '{"state": "stop"}'
+  #   is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
   - platform: rest
     resource: http://10.0.0.56:8126/container/portainer
@@ -128,23 +121,16 @@ switch:
     body_off: '{"state": "stop"}'
     is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
-  - platform: rest
-    resource: http://10.0.0.56:8126/container/tasmoadmin
-    name: TasmoAdmin Service
-    body_on: '{"state": "start"}'
-    body_off: '{"state": "stop"}'
-    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
+  # - platform: rest
+  #   resource: http://10.0.0.56:8126/container/tasmoadmin
+  #   name: TasmoAdmin Service
+  #   body_on: '{"state": "start"}'
+  #   body_off: '{"state": "stop"}'
+  #   is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
   - platform: rest
     resource: http://10.0.0.56:8126/container/unifi
     name: Unifi Service
-    body_on: '{"state": "start"}'
-    body_off: '{"state": "stop"}'
-    is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
-
-  - platform: rest
-    resource: http://10.0.0.56:8126/container/watchtower
-    name: Watch Tower Service
     body_on: '{"state": "start"}'
     body_off: '{"state": "stop"}'
     is_on_template: '{{ value_json is not none and value_json.state == "running" }}'

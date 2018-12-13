@@ -5,6 +5,10 @@ homeassistant:
       persistent: true
     input_datetime.wakeup_nerene_time:
       persistent: true
+    input_number.wakeup_nerene_hour:
+      persistent: true
+    input_number.wakeup_nerene_minutes:
+      persistent: true
     input_select.wakeup_nerene_light:
       persistent: true
     input_boolean.wakeup_nerene_mon:
@@ -21,6 +25,8 @@ homeassistant:
       persistent: true
     input_boolean.wakeup_nerene_sun:
       persistent: true
+    input_text.wakeup_nerene_time:
+      icon: "mdi:clock"
     sensor.wakeup_nerene_day_label:
       state_card_mode: none
 
@@ -29,7 +35,7 @@ homeassistant:
 ################################################
 # group:
 #   wakeup_nerene:
-#     name: "Nerene's Wakeup Light"
+#     name: "nerene's Wakeup Light"
 #     entities:
 #       - input_boolean.wakeup_nerene_status
 #       - input_number.wakeup_nerene_hour
@@ -60,6 +66,11 @@ input_datetime:
     has_time: true
     #initial: "00:00"
 
+input_text:
+  wakeup_nerene_time:
+    name: Start Time
+    pattern: "(^([0-9]|[0-1][0-9]|[2][0-3]):([0-5][0-9])$)|(^([0-9]|[1][0-9]|[2][0-3])$)"
+
 ################################################
 ## Input Selectors
 ################################################
@@ -74,11 +85,39 @@ input_select:
       - light.garage_entry_light
 
 ################################################
+## Sliders
+################################################
+input_number:
+  wakeup_nerene_hour:
+    name: Hour
+    icon: mdi:timer
+    mode: slider
+    min: 0
+    max: 23
+    step: 1
+
+  wakeup_nerene_minutes:
+    name: Minutes
+    icon: mdi:clock-outline
+    mode: slider
+    min: 0
+    max: 59
+    #step: 5
+    step: 1
+
+################################################
 ## Sensors
 ################################################
 sensor:
   - platform: template
     sensors:
+      wakeup_nerene_time:
+        friendly_name: "Alarm"
+        icon_template: mdi:clock-outline
+        value_template: >-
+          {% set wakeup_nerene_time = "%0.02d:%0.02d" | format(states('input_number.wakeup_nerene_hour')|int, states('input_number.wakeup_nerene_minutes')|int) %}
+          {{ wakeup_nerene_time | timestamp_custom('%H:%M', false) }}
+
       wakeup_nerene_day_label:
         friendly_name: "Select days:"
         icon_template: mdi:calendar-range
@@ -174,7 +213,7 @@ automation:
   - alias: "Alarm Clock: Nerene"
     trigger:
       platform: template
-      value_template: "{{ now().strftime('%H:%M:00') == states.input_datetime.wakeup_nerene_time.state }}"
+      value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
     condition:
       condition: and
       conditions:
@@ -200,10 +239,13 @@ automation:
       service: script.turn_on
       entity_id: script.wakeup_nerene_activate
 
-  # - alias: "Alarm Clock: Nerene Start Time Changes"
-  #   trigger:
-  #     platform: state
-  #     entity_id: input_datetime.wakeup_nerene_light
-  #   action:
-  #     - service: homeassistant.update_entity
-  #       entity_id: sensor.wakeup_nerene_light
+  # Start Time storage and recall.
+  - alias: "Alarm Clock: Nerene Start Time Changes"
+    trigger:
+      platform: state
+      entity_id:
+        - input_datetime.wakeup_nerene_hour
+        - input_datetime.wakeup_nerene_minutes
+    action:
+      - service: homeassistant.update_entity
+        entity_id: sensor.wakeup_nerene_time

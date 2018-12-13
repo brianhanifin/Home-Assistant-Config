@@ -1,11 +1,11 @@
 homeassistant:
   customize_glob:
     # Hides UI Panels from smart hubs.
-    "group.panel_*":
-      hidden: false
-      alexa_hidden: true
-      emulated_hue_hidden: true
-      homebridge_hidden: true
+    # "group.panel_*":
+    #   hidden: false
+    #   alexa_hidden: true
+    #   emulated_hue_hidden: true
+    #   homebridge_hidden: true
     
     # Hide unwanted items from smart hubs.
     "input_boolean.*_alarm_clock_*":
@@ -29,26 +29,26 @@ homeassistant:
       emulated_hue_hidden: true
       homebridge_hidden: true
 
-  customize:
-    # Influence tab layout order.
-    group.home:
-      order: 1
-    group.cameras:
-      order: 2
-    group.outside:
-      order: 3
-    group.admin:
-      order: 99
+  # customize:
+  #   # Influence tab layout order.
+  #   group.home:
+  #     order: 1
+  #   group.cameras:
+  #     order: 2
+  #   group.outside:
+  #     order: 3
+  #   group.admin:
+  #     order: 99
 
-    # Attempting to influence panel layout order.
-    group.panel_control:
-      order: 1
-    group.panel_downstairs_lights:
-      order: 2
-    group.panel_downstairs_devices:
-      order: 3
-    group.panel_upstairs:
-      order: 4
+  #   # Attempting to influence panel layout order.
+  #   group.panel_control:
+  #     order: 1
+  #   group.panel_downstairs_lights:
+  #     order: 2
+  #   group.panel_downstairs_devices:
+  #     order: 3
+  #   group.panel_upstairs:
+  #     order: 4
 
 
 
@@ -59,25 +59,6 @@ homeassistant:
 config:
 
 customizer:
-  # Custom UI: https://github.com/andrey-git/home-assistant-custom-ui/
-  #custom_ui: hosted #debug #Only use (debug) for reporting readable Javascript errors!
-  #hide_attributes:
-  #  - node_id
-  #  - value_index
-  #columns: 350, 700, 1050, 1400, 1850, 2100
-
-# Source: https://github.com/pnbruckner/homeassistant-config
-# custom_updater:
-#   track:
-#     - cards
-#     - components
-#     - python_scripts
-#   # card_urls:
-#   #   - https://raw.githubusercontent.com/rdehuyss/homeassistant-lovelace-alarm-clock-card/master/custom_updater.json
-#   component_urls:
-#     - https://raw.githubusercontent.com/pnbruckner/homeassistant-config/master/custom_components.json
-#   python_script_urls:
-#     - https://raw.githubusercontent.com/pnbruckner/homeassistant-config/master/python_scripts.json
 
 # Discover some devices automatically
 discovery:
@@ -105,6 +86,9 @@ logger:
   default: error
   #logs:
   #  custom_components.influxdb: debug
+
+lovelace:
+  #mode: yaml
 
 python_script:
 
@@ -147,17 +131,6 @@ automation:
       platform: homeassistant
       event: start
     action:
-      # - service: variable.set_variable
-      #   data:
-      #     variable: ha_laststartup
-      #     value_template: "{{ as_timestamp(now()) }}"
-
-      # Disable speech message that occurs everytime I restart HASS.
-      #- service: script.turn_on
-      #  entity_id: script.disable_speech_at_startup
-      #- service: input_boolean.turn_off
-      #  entity_id: input_boolean.speech_notifications
-
       # Make sure the Hot Water Pump is turned off at startup.
       - service: switch.turn_off
         entity_id: switch.sonoff_pow01

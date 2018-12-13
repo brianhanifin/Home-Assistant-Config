@@ -1,6 +1,6 @@
 homeassistant:
   customize:
-    camera.front_door:
+    camera.porch:
       friendly_name: "Porch"
       homebridge_hidden: false
 
@@ -11,10 +11,6 @@ homeassistant:
     sensor.ring_front_door_last_activity:
       friendly_name: "Last Porch Activity"
       homebridge_hidden: false
-
-input_text:
-  fake_doorbell:
-    initial: "off"
 
 
 ################################################
@@ -51,19 +47,6 @@ sensor:
     #  - wifi_signal_strength
 
 
-script:
-  test_doorbell:
-    sequence:
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.fake_doorbell
-          value: "on"
-      - delay: "00:00:01"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.fake_doorbell
-          value: "off"
-
 ################################################
 ## Automation
 ################################################
@@ -74,13 +57,12 @@ automation:
         entity_id:
           - binary_sensor.ring_front_door_ding
           - binary_sensor.ring_front_door_motion
-          - input_text.fake_doorbell
         from: "off"
         to: "on"
     action:
       #- service: camera.snapshot
       #  data_template:
-      #    entity_id: camera.front_door
+      #    entity_id: camera.porch
       #    filename: "/config/www/downloads/snapshot_front_doorbell.jpg"
       #- service: script.notify_ios
       #  data_template:
@@ -90,7 +72,7 @@ automation:
       - service: logbook.log
         data:
           name: "Ring Camera:"
-          message: "someone is at the front door."
+          message: "Someone is at the front door."
 #      - service: xiaomi_aqara.play_ringtone
 #        data:
 #          gw_mac: !secret xiaomi_mac1

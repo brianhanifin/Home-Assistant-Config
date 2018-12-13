@@ -4,7 +4,7 @@
 group:
   door_sensors:
     entities:
-      - binary_sensor.garage_door       # mirrors cover.garage_door
+      - cover.garage_door
       #- binary_sensor.shoe_closet_door
     name: Door Sensors
     icon: mdi:door
@@ -71,8 +71,16 @@ automation:
       - platform: state
         entity_id:
           - binary_sensor.glowforge_window
-          - binary_sensor.garage_door
-        from: 'off'
+          - cover.garage_door
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: cover.garage_door
+          state: 'open'
+        - condition: state
+          entity_id: binary_sensor.glowforge_window
+          state: 'on'
     action:
       - service: script.notify_ios
         data_template:
@@ -105,8 +113,8 @@ automation:
       condition: or
       conditions:
         - condition: state
-          entity_id: binary_sensor.garage_door
-          state: 'on'
+          entity_id: cover.garage_door
+          state: 'open'
         - condition: state
           entity_id: binary_sensor.glowforge_window
           state: 'on'
