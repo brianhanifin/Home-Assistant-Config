@@ -10,7 +10,7 @@ cloud:
         #- switch.entry_step_light
         - switch.hot_water_pump
         - switch.landscape_lights
-        - switch.living_room_fan
+        - switch.family_room_fan
         - switch.master_bedroom_fan
     #  include_domains:
     #    - alert
@@ -20,6 +20,13 @@ cloud:
     #    - script
     #    - switch
       exclude_entities:
+        - binary_sensor.family_room_motion
+        - binary_sensor.front_door_motion_2
+        - binary_sensor.kitchen_motion
+        - binary_sensor.kitchen_1_motion
+        - binary_sensor.kitchen_2_motion
+        - binary_sensor.living_room_motion
+        - binary_sensor.ring_front_door_motion  
         - binary_sensor.shoe_closet_door
 
         # Exclude light aliases.
@@ -125,7 +132,7 @@ cloud:
         display_categories: LIGHT
       group.upstairs_lights:
         display_categories: LIGHT
-      remote.living_room_2:
+      remote.living_room:
         name: Living Room Apple TV
         description: Apple TV in the Living Room.
         display_categories: TV
@@ -133,6 +140,6 @@ cloud:
         display_categories: LIGHT
         description: RGB light strip to highlight tripping hazard in entry way.
         name: Entry Step Light
-      switch.living_room_fan:
+      switch.family_room_fan:
         display_categories: SMARTPLUG
-        name: Living Room Fan
+        name: Family Room Fan

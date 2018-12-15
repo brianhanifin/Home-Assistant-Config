@@ -196,15 +196,18 @@ script:
     sequence:
     - service: input_boolean.turn_off
       entity_id: input_boolean.bedroom_light_sync_enabled
-    - service: python_script.lightfade
+    # - service: python_script.lightfade
+    #   data_template:
+    #     # Go from 10%-100% up 2% every 13 seconds 
+    #     # to go to full brightness in about 10 minutes.
+    #     entity_id: "{{ states('input_select.wakeup_nerene_light') }}"
+    #     delay_in_sec: 13
+    #     start_level_pct: 10
+    #     end_level_pct: 100
+    #     step_in_level_pct: 2
+    - service: homeassistant.turn_on
       data_template:
-        # Go from 10%-100% up 2% every 13 seconds 
-        # to go to full brightness in about 10 minutes.
         entity_id: "{{ states('input_select.wakeup_nerene_light') }}"
-        delay_in_sec: 13
-        start_level_pct: 10
-        end_level_pct: 100
-        step_in_level_pct: 2
 
 ################################################
 ## Automations

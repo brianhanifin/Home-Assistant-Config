@@ -1,64 +1,30 @@
 homeassistant:
   customize_glob:
-    # Hides UI Panels from smart hubs.
-    # "group.panel_*":
-    #   hidden: false
-    #   alexa_hidden: true
-    #   emulated_hue_hidden: true
-    #   homebridge_hidden: true
-    
     # Hide unwanted items from smart hubs.
     "input_boolean.*_alarm_clock_*":
       hidden: true
       alexa_hidden: true
-      emulated_hue_hidden: true
-      homebridge_hidden: true
     "script.*_alarm_clock_*":
       hidden: true
       alexa_hidden: true
-      emulated_hue_hidden: true
-      homebridge_hidden: true
     "script.speech_*":
       hidden: true
       alexa_hidden: true
-      emulated_hue_hidden: true
-      homebridge_hidden: true
     "script.*_speech_*":
       hidden: true
       alexa_hidden: true
-      emulated_hue_hidden: true
-      homebridge_hidden: true
-
-  # customize:
-  #   # Influence tab layout order.
-  #   group.home:
-  #     order: 1
-  #   group.cameras:
-  #     order: 2
-  #   group.outside:
-  #     order: 3
-  #   group.admin:
-  #     order: 99
-
-  #   # Attempting to influence panel layout order.
-  #   group.panel_control:
-  #     order: 1
-  #   group.panel_downstairs_lights:
-  #     order: 2
-  #   group.panel_downstairs_devices:
-  #     order: 3
-  #   group.panel_upstairs:
-  #     order: 4
-
 
 
 ################################################
 ## Component Settings
 ################################################
+# Enable user authentication
+#auth:
+
 # Enables configuration UI
 config:
 
-customizer:
+#customizer:
 
 # Discover some devices automatically
 discovery:
@@ -74,13 +40,13 @@ discovery:
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
 
-frontend:
+#frontend:
   #themes: !include_dir_merge_named /config/themes/
 
-history: !include /config/recorder.yaml
+#history: !include /config/recorder.yaml
 
 # View all events in a logbook
-logbook: !include /config/logbook.yaml
+#logbook: !include /config/logbook.yaml
 
 logger:
   default: error
@@ -90,9 +56,9 @@ logger:
 lovelace:
   #mode: yaml
 
-python_script:
+#python_script:
 
-recorder: !include /config/recorder.yaml
+#recorder: !include /config/recorder.yaml
 
 # Checks for available updates
 # Note: This component will send some information about your system to
@@ -103,7 +69,7 @@ updater:
   # Optional, allows Home Assistant developers to focus on popular components.
   include_used_components: true
 
-zeroconf:
+#zeroconf:
 
 
 script:
