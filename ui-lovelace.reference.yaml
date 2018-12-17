@@ -1,9 +1,41 @@
+# Shortcuts
+# - title: Shortcuts
+#   icon: mdi:dialpad
+#type: horizontal-stack
+cards:
+  - type: custom:button-card
+    action: toggle
+    color_type: card
+    color: rgb(66, 134, 244)
+    entity: light.christmas_lights
+    icon: mdi:pine-tree
+    name: Christmas
+  - type: custom:button-card
+    action: toggle
+    color_type: card
+    color: rgb(66, 134, 244)
+    entity: light.family_room_lights
+    icon: mdi:floor-lamp
+    name: Family Room
+  - type: custom:button-card
+    action: toggle
+    color_type: card
+    color: rgb(66, 134, 244)
+    entity: light.kitchen_lights
+    icon: mdi:wall-sconce-flat
+    name: Kitchen
+  - type: custom:button-card
+    action: toggle
+    color_type: card
+    color: rgb(66, 134, 244)
+    entity: light.living_room_light
+    icon: mdi:floor-lamp
+    name: Living Room
 
 # DOWNSTAIRS
 # - title: Downstairs
 #   icon: mdi:sofa
 #   cards:
-# Porch / Entry
 # - type: vertical-stack
 cards:
   - type: custom:button-card
@@ -266,8 +298,8 @@ cards:
 # - type: entity-filter
 card:
   type: entities
-  title: Alexa
-  #show_name: false
+  title: Amazon Echos
+  show_header_toggle: false
   show_state: false
 entities:
   # Downstairs
@@ -383,29 +415,19 @@ cards:
 # cards:
 # - type: vertical-stack
 cards:
-  - type: entity-filter
-    card:
-      type: glance
-      #title: Who's home?
-      #show_name: false
-      show_state: false
+  - type: glance
     entities:
       - device_tracker.brian
       - device_tracker.cindy
       - device_tracker.eric
-      #- device_tracker.family_phone
       - device_tracker.heather
       - device_tracker.melissa
       - device_tracker.nerene
       - device_tracker.sandy
-      - binary_sensor.brians_bed_occupancy
-      - binary_sensor.nerenes_bed_occupancy
-    state_filter:
-      - home
+      #- binary_sensor.brians_bed_occupancy
+      #- binary_sensor.nerenes_bed_occupancy
   
   - type: glance
-    #title: Doors + Windows
-    show_state: false
     entities:
       - cover.garage_door
       - binary_sensor.glowforge_window
@@ -414,16 +436,16 @@ cards:
     title: Mode Overrides
     show_header_toggle: false
     show_state: false
-  entities:
-    - input_boolean.guest_mode
-    - input_boolean.motion_detection_mode
-    - input_boolean.shoe_closet_timeout
-    - input_boolean.speech_notifications
-    - input_boolean.time_based_dimmers_enabled
-    - input_boolean.vacation
-    - scene.goodbye
-    - scene.good_night
-    - type: divider
-    - script.restart_hass
-    - script.reboot
-    - input_select.log_level
+    entities:
+      - input_boolean.guest_mode
+      - input_boolean.motion_detection_mode
+      - input_boolean.shoe_closet_timeout
+      - input_boolean.speech_notifications
+      - input_boolean.time_based_dimmers_enabled
+      - input_boolean.vacation
+      - scene.goodbye
+      - scene.good_night
+      - type: divider
+      - script.restart_hass
+      - script.reboot
+      - input_select.log_level

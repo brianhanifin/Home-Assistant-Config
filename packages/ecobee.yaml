@@ -11,51 +11,11 @@ homeassistant:
       friendly_name: Hallway Occupancy
       icon: mdi:run
 
-    switch.ecobee_home_fan:
-      homebridge_hidden: false
-    switch.ecobee_playroom_fan:
-      homebridge_hidden: false
-
 ################################################
 ## Component Settings
 ################################################
 ecobee:
   api_key: !secret ecobee_apikey
-
-################################################
-## Thermostat Display Panels
-################################################
-group:
-  panel_home_thermostat:
-    entities:
-      - climate.home
-      - switch.ecobee_home_fan
-      - sensor.home_temperature
-      - sensor.living_room_temperature
-      - sensor.home_humidity
-      - sensor.ecobee_home_hold_mode
-      - sensor.ecobee_home_away_mode
-      - binary_sensor.home_occupancy
-      - binary_sensor.living_room_motion
-    name: Home Thermostat
-    icon: mdi:thermometer-lines
-    control: hidden
-    view: no
-
-  panel_playroom_thermostat:
-    entities:
-      - climate.playroom
-      - switch.ecobee_playroom_fan
-      - sensor.playroom_temperature
-      - sensor.playroom_humidity
-      - sensor.ecobee_playroom_hold_mode
-      - sensor.ecobee_playroom_away_mode
-      - binary_sensor.playroom_occupancy
-      - binary_sensor.play_room_motion
-    name: Play Room Thermostat
-    icon: mdi:thermometer-lines
-    control: hidden
-    view: no
 
 ################################################
 ## Sensors

@@ -1,0 +1,199 @@
+################################################
+## Light Aliases
+################################################
+light:
+  #light.3a76dc = light.brians_light
+  - platform: template
+    lights:
+      brians_light:
+        friendly_name: Brian's Light
+        value_template: "{{ is_state('light.3a76dc', 'on') }}"
+        level_template: >
+          {% if is_state("light.3a76dc", "on") %}
+            {{ state_attr("light.3a76dc", "brightness")|int }}
+          {% else %}
+            0
+          {% endif %}
+        set_level:
+          service: light.turn_on
+          data_template:
+            entity_id: light.3a76dc
+            brightness: "{{ brightness }}"
+        turn_on:
+          service: light.turn_on
+          data:
+            entity_id: light.3a76dc
+        turn_off:
+          service: light.turn_off
+          data:
+            entity_id: light.3a76dc
+
+  #light.3a4e12 = light.computer_light
+  - platform: template
+    lights:
+      computer_light:
+        friendly_name: Computer Light
+        value_template: "{{ is_state('light.3a4e12', 'on') }}"
+        level_template: >
+          {% if is_state("light.3a4e12", "on") %}
+            {{ state_attr("light.3a4e12", "brightness")|int }}
+          {% else %}
+            0
+          {% endif %}
+        set_level:
+          service: light.turn_on
+          data_template:
+            entity_id: light.3a4e12
+            brightness: "{{ brightness }}"
+        turn_on:
+          service: light.turn_on
+          data:
+            entity_id: light.3a4e12
+        turn_off:
+          service: light.turn_off
+          data:
+            entity_id: light.3a4e12
+
+  #light.3a5e44 = light.family_room_table_lamp
+  - platform: template
+    lights:
+      family_room_table_lamp:
+        friendly_name: Family Room Table Lamp
+        value_template: "{{ is_state('light.3a5e44', 'on') }}"
+        level_template: >
+          {% if is_state("light.3a5e44", "on") %}
+            {{ state_attr("light.3a5e44", "brightness")|int }}
+          {% else %}
+            0
+          {% endif %}
+        set_level:
+          service: light.turn_on
+          data_template:
+            entity_id: light.3a5e44
+            brightness: "{{ brightness }}"
+        turn_on:
+          service: light.turn_on
+          data:
+            entity_id: light.3a5e44
+        turn_off:
+          service: light.turn_off
+          data:
+            entity_id: light.3a5e44
+
+  #light.kitchen_light = switch.kitchen_light
+  - platform: template
+    lights:
+      kitchen_light:
+        friendly_name: Kitchen Light
+        value_template: "{{ is_state('switch.kitchen_light', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          entity_id: switch.kitchen_light
+        turn_off:
+          service: switch.turn_on
+          entity_id: switch.kitchen_light
+
+  #light.kitchen_prep_light = switch.kitchen_prep_light
+  - platform: template
+    lights:
+      kitchen_prep_light:
+        friendly_name: Kitchen Light
+        value_template: "{{ is_state('switch.kitchen_prep_light', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          entity_id: switch.kitchen_prep_light
+        turn_off:
+          service: switch.turn_on
+          entity_id: switch.kitchen_prep_light
+
+  #light.3a7703 = light.play_room_corner_light
+  - platform: template
+    lights:
+      play_room_corner_light:
+        friendly_name: Family Room Table Lamp
+        value_template: "{{ is_state('light.3a7703', 'on') }}"
+        level_template: >
+          {% if is_state("light.3a7703", "on") %}
+            {{ state_attr("light.3a7703", "brightness")|int }}
+          {% else %}
+            0
+          {% endif %}
+        set_level:
+          service: light.turn_on
+          data_template:
+            entity_id: light.3a7703
+            brightness: "{{ brightness }}"
+        turn_on:
+          service: light.turn_on
+          data:
+            entity_id: light.3a7703
+        turn_off:
+          service: light.turn_off
+          data:
+            entity_id: light.3a7703
+
+################################################
+## Switch Aliases
+################################################
+switch:
+  # Fake on/off switch to only allow this nightlight 
+  # to be dim or off (no longer should be come on at 100%).
+  - platform: template
+    switches:
+      boys_bathroom_nightlight:
+        friendly_name: Boys Bathroom Night Light
+        value_template: "{{ is_state('light.3a542c', 'on') }}"
+        turn_on:
+          service: light.turn_on
+          data:
+            entity_id: light.3a542c
+            brightness_pct: '30'
+        turn_off:
+          service: light.turn_off
+          data:
+            entity_id: light.3a542c
+
+  # Sonoff S31 01
+  - platform: template
+    switches:
+      christmas_tree_lights:
+        friendly_name: Christmas Tree
+        value_template: "{{ is_state('switch.sonoffs31_01', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.sonoffs31_01
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.sonoffs31_01
+
+  # Sonoff POW 01
+  - platform: template
+    switches:
+      hot_water_pump:
+        friendly_name: Hot Water Pump
+        value_template: "{{ is_state('switch.sonoff_pow01', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.sonoff_pow01
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.sonoff_pow01
+
+  # Sonoff POW 02
+  - platform: template
+    switches:
+      landscape_lights:
+        friendly_name: Landscape Lights
+        value_template: "{{ is_state('switch.sonoff_pow02', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.sonoff_pow02
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.sonoff_pow02

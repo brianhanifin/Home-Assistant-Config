@@ -1,19 +1,15 @@
-homeassistant:
-  customize:
-    group.all_lights:
-      hidden: false
-    light.dining_room_light:
-      friendly_name: "Dining Room"
-
-    #input_boolean.bedroom_light_sync_enabled:
-    #  persistent: true
-    #input_boolean.time_based_dimmers_enabled:
-    #  persistent: true
+# homeassistant:
+#   customize:
+#     group.all_lights:
+#       hidden: false
+    # light.dining_room_light:
+    #   friendly_name: "Dining Room"
 
 ################################################
 ## Component Settings
 ################################################
-
+## Hue Light Hub
+#######################
 # hue:
 #   bridges:
 #     - host: 10.0.0.37
@@ -27,6 +23,12 @@ insteon:
   username: !secret insteon_user
   password: !secret insteon_pass
   timeout: 300
+
+## Wink Z-Wave Devices
+#######################
+wink:
+  #local_control: true
+
 
 ################################################
 ## Switches
@@ -86,7 +88,31 @@ sensor:
 ## Lights
 ################################################
 light:
-  platform: insteon
+  - platform: group
+    name: Bedroom Lights
+    entities:
+      - light.nerenes_light
+      - light.brians_lamp
+
+  - platform: group
+    name: Family Room Lights
+    entities:
+      - light.family_room_light
+      - light.family_room_table_lamp
+
+  - platform: group
+    name: Kitchen Lights
+    entities:
+      - light.kitchen_light
+      - light.kitchen_prep_light
+
+  - platform: group
+    name: Outdoor Lighting
+    entities:
+      - light.porch_light
+      - light.landscape_lights
+
+  - platform: insteon
 
 ################################################
 ## Switches

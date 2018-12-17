@@ -1,18 +1,30 @@
 homeassistant:
   customize_glob:
     # Hide unwanted items from smart hubs.
-    "input_boolean.*_alarm_clock_*":
-      hidden: true
+    "scene.month_*_colors":
       alexa_hidden: true
+      hidden: true
+    "sensor.dark_sky_*":
+      alexa_hidden: true
+      hidden: true
     "script.*_alarm_clock_*":
-      hidden: true
       alexa_hidden: true
+      hidden: true
     "script.speech_*":
-      hidden: true
       alexa_hidden: true
+      hidden: true
     "script.*_speech_*":
-      hidden: true
       alexa_hidden: true
+      hidden: true
+    "input_boolean.*_mode":
+      alexa_hidden: true
+      hidden: true
+    "input_boolean.*_occupancy":
+      alexa_hidden: true
+      hidden: true
+    "input_boolean.wakeup_*":
+      alexa_hidden: true
+      hidden: true
 
 
 ################################################
@@ -23,8 +35,6 @@ homeassistant:
 
 # Enables configuration UI
 config:
-
-#customizer:
 
 # Discover some devices automatically
 discovery:
@@ -40,25 +50,49 @@ discovery:
 ffmpeg:
   ffmpeg_bin: /usr/bin/ffmpeg
 
+# Enables the frontend
 #frontend:
+  #javascript_version: latest
   #themes: !include_dir_merge_named /config/themes/
 
+group:
+  default_view:
+    entities:
+      - weblink.lovelace_home
+    view: yes
+
 #history: !include /config/recorder.yaml
+
+http:
+  api_password: !secret http_pass
+  ip_ban_enabled: false
+  #login_attempts_threshold: 5
+  trusted_networks:
+    - 127.0.0.1
+    - 172.0.0.0/24
+    - 10.0.0.0/24
+
+ios:
 
 # View all events in a logbook
 #logbook: !include /config/logbook.yaml
 
 logger:
-  default: error
-  #logs:
-  #  custom_components.influxdb: debug
+  default: error`
 
 lovelace:
   #mode: yaml
 
+mqtt:
+  broker: 10.0.0.56
+  port: 1883
+  client_id: home-assistant
+  discovery: true
+  discovery_prefix: homeassistant
+
 #python_script:
 
-#recorder: !include /config/recorder.yaml
+recorder: !include /config/recorder.yaml
 
 # Checks for available updates
 # Note: This component will send some information about your system to
@@ -120,7 +154,7 @@ automation:
           title: "Home Assistant Update Available"
           message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
           who: "brian"
-      - service: persistent_notification.create
-        data:
-          title: "Update Available"
-          message: "Home Assistant {{ states('updater.updater') }} is available. - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+      #- service: persistent_notification.create
+      #  data:
+      #    title: "Update Available"
+      #    message: "Home Assistant {{ states('updater.updater') }} is available. - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"

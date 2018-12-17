@@ -10,9 +10,9 @@ homeassistant:
       friendly_name: "Brian's iPhone"
       device_class: presence
     # Local Device Pings
-    device_tracker.brians_iphone_bluetooth:
-      friendly_name: "Brian's iPhone"
-      device_class: connectivity
+    # device_tracker.brians_iphone_bluetooth:
+    #   friendly_name: "Brian's iPhone"
+    #   device_class: connectivity
     device_tracker.brians_iphone_nmap:
       friendly_name: "Brian's iPhone"
       device_class: connectivity
@@ -21,9 +21,9 @@ homeassistant:
       friendly_name: "Brian's iPhone"
       device_class: presence
     # Car Bluetooth Devices
-    device_tracker.automatic:
-      friendly_name: "Brian's Car"
-      device_class: connectivity
+    # device_tracker.automatic:
+    #   friendly_name: "Brian's Car"
+    #   device_class: connectivity
 
     ##### Nerene's Devices
     # Composite device tracker group
@@ -35,9 +35,9 @@ homeassistant:
       friendly_name: "Nerene's iPhone"
       device_class: presence
     # Local Device Pings
-    device_tracker.nerenes_iphone_bluetooth:
-      friendly_name: "Nerene's iPhone"
-      device_class: connectivity
+    # device_tracker.nerenes_iphone_bluetooth:
+    #   friendly_name: "Nerene's iPhone"
+    #   device_class: connectivity
     device_tracker.nerenes_iphone_nmap:
       friendly_name: "Nerene's iPhone"
       device_class: connectivity
@@ -46,9 +46,9 @@ homeassistant:
       friendly_name: "Nerene's iPhone"
       device_class: presence
     # Car Bluetooth Devices
-    device_tracker.parrot_ck3100:
-      friendly_name: "Nerene's Car"
-      device_class: connectivity
+    # device_tracker.parrot_ck3100:
+    #   friendly_name: "Nerene's Car"
+    #   device_class: connectivity
     
     ##### Other Family Devices
     device_tracker.cindy:
@@ -72,17 +72,18 @@ homeassistant:
 ## Component Settings
 ################################################
 device_tracker:
-  - platform: bluetooth_tracker
+  #- platform: bluetooth_tracker
 
   - platform: life360
     username: !secret email1
     password: !secret life360_pass
-    prefix: life360
-    show_as_state: driving, moving, places
+    add_zones: true
     driving_speed: 18
+    prefix: life360
     max_gps_accuracy: 200
     max_update_wait:
       minutes: 45
+    show_as_state: driving, moving, places
 
   - platform: nmap_tracker
     hosts:
@@ -94,29 +95,19 @@ device_tracker:
       track_new_devices: false
       hide_if_away: true
 
-  #- platform: unifi
-  #  host: 10.0.0.56
-  #  username: !secret unifi_controller_user
-  #  password: !secret unifi_controller_pass
-    #ssid_filter:
-    #  - !secret unifi_controller_ssid
-  #  new_device_defaults:
-  #    track_new_devices: false
-  #    hide_if_away: true
-
   ## Device Tracker Smart "Groups"
   - platform: composite
     name: brian
     entity_id:
       #- device_tracker.brians_iphone
-      - device_tracker.brians_iphone_bluetooth
+      #- device_tracker.brians_iphone_bluetooth
       - device_tracker.brians_iphone_nmap
       - device_tracker.life360_brian
 
   - platform: composite
     name: family_phone
     entity_id:
-      - device_tracker.family_phone_bluetooth
+      #- device_tracker.family_phone_bluetooth
       - device_tracker.family_phone_nmap
       - device_tracker.life360_family_phone
 
@@ -124,7 +115,7 @@ device_tracker:
     name: nerene
     entity_id:
       #- device_tracker.nerenes_iphone
-      - device_tracker.nerenes_iphone_bluetooth
+      #- device_tracker.nerenes_iphone_bluetooth
       - device_tracker.nerenes_iphone_nmap
       - device_tracker.life360_nerene
 
@@ -158,6 +149,57 @@ group:
     name: "Who's at home?"
     icon: mdi:home-heart
     view: no
+
+#######################
+# Automation Groups
+#######################
+goodbye_devices:
+  entities:
+    - switch.family_room_fan
+    - light.living_room_light
+    - light.3a4f5b #light.living_room_corner_lamp
+    - switch.kitchen_prep_light
+    - switch.kitchen_light
+    - light.dining_room_light
+    - light.family_room_light
+    - light.3a5e44
+    - light.3a4e12 #light.computer_light
+    - light.play_room_light
+    - light.nerenes_light
+    - light.3a76dc #light.brians_light
+    - switch.entry_step_light
+    #- light.entry_light
+    - light.garage_entry_light
+    - remote.living_room_2
+    - remote.play_room
+    - switch.laser_printer
+    - switch.inkjet_printer
+  name: Goodbye Devices
+  view: no
+
+goodnight_devices:
+  entities:
+    - light.nerenes_light
+    - light.3a76dc #light.brians_light
+    - switch.family_room_fan
+    - light.living_room_light
+    - light.3a4f5b #light.living_room_corner_lamp
+    - light.family_room_light
+    - light.3a5e44
+    - switch.kitchen_prep_light
+    - switch.kitchen_light
+    - light.dining_room_light
+    - light.play_room_light
+    - light.3a4e12 #light.computer_light
+    - remote.living_room_2
+    - remote.play_room
+    - light.garage_entry_light
+    - switch.entry_step_light
+    - light.entry_light
+    - switch.laser_printer
+    - switch.inkjet_printer
+  name: Goodnight Devices
+  view: no
 
 ################################################
 ## Scenes
@@ -287,7 +329,7 @@ automation:
       - service: script.notify_speech
         data_template:
           media_player: >-
-            "media_player.living_room"
+            "media_player.kitchen"
           message: >-
             {{ "Welcome home " ~ trigger.entity_id.split('.')[1]|replace('_', ' ') }}
 

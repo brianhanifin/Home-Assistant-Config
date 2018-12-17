@@ -1,0 +1,125 @@
+remote:
+  - platform: harmony
+    name: Family Room Hub
+    host: 10.0.0.22
+    activity: Apple TV
+
+  - platform: harmony
+    name: Living Room Hub
+    host: 10.0.0.23
+    activity: Apple TV
+
+
+################################################
+## Script 
+################################################
+script:
+  # Activities
+  #   -1 - PowerOff
+  #   18768213 - Apple TV
+  #   34587914 - Computer
+  #   18768214 - Movie Disc
+  tv_family_room_off:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.family_room_hub
+          activity: >
+            -1
+
+  tv_family_room_apple_tv:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.family_room_hub
+          activity: >
+            18768213
+
+  tv_family_room_bluray:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.family_room_hub
+          activity: >
+            18768214
+
+  tv_family_room_computer:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.family_room_hub
+          activity: >
+            34587914
+
+  # Activities
+  #   -1 - PowerOff
+  #   21376139 - Apple-TV
+  #   37115912 - Cable Box
+  #   33712514 - Computer
+  #   33118400 - Switch
+  #   32647377 - Wii-
+  #   19139116 - Wii-U
+  #   19138947 - Xbox 360
+  tv_living_room_off:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            -1
+
+  tv_living_room_apple_tv:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            21376139
+
+  tv_living_room_computer:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            33712514
+
+  tv_living_room_dvr:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            37115912
+
+  tv_living_room_switch:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            33118400
+
+  tv_living_room_wii:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            32647377
+
+  tv_living_room_wii_u:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            19139116
+
+  tv_living_room_xbox:
+    sequence:
+      - service: remote.turn_on
+        data_template:
+          entity_id: remote.living_room_hub
+          activity: >
+            19138947

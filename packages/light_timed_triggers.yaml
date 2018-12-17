@@ -1,8 +1,3 @@
-homeassistant:
-  customize:
-    input_boolean.time_based_dimmers_enabled:
-      persistent: true
-
 ################################################
 ## Switches
 ################################################
@@ -20,9 +15,9 @@ script:
     alias: Dusk
     sequence:
       - service: homeassistant.turn_on
-        entity_id: group.christmas_lights
+        entity_id: light.christmas_lights
       - service: homeassistant.turn_on
-        entity_id: group.outdoor_lighting
+        entity_id: light.outdoor_lighting
       - service: script.turn_on
         data:
           entity_id: script.outdoor_light_holiday_coloring
@@ -37,7 +32,7 @@ script:
     alias: Morning Devices Off
     sequence:
       - service: homeassistant.turn_off
-        entity_id: group.outdoor_lighting
+        entity_id: light.outdoor_lighting
       - service: light.turn_off
         entity_id: light.entry_light
       - service: switch.turn_off
@@ -75,7 +70,7 @@ script:
             {%- set minutes = states("sensor.time").split(':')[1] | int -%}
             {%- if   hour >=  5 and hour <  8                   -%}60
             {%- elif hour >=  8 and hour < 19                  -%}100
-            {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}80
+            {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}70
             {%- elif hour >= 19 and minutes > 30 and hour < 20  -%}60
             {%- elif hour >= 20 and minutes < 30 and hour < 21  -%}50
             {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}40
