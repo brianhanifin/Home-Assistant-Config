@@ -1,0 +1,19 @@
+---
+# Connects to my MQTT broker, for which I use the Community add-on:
+# "MQTT Server & Web Client".
+#
+# https://www.home-assistant.io/docs/mqtt/broker#run-your-own
+# https://www.home-assistant.io/docs/mqtt/birth_will/
+#
+mqtt:
+  broker: 10.0.0.56
+  port: 1883
+  client_id: home-assistant
+  discovery: true
+  discovery_prefix: homeassistant
+  birth_message:
+    topic: 'homeassistant/status'
+    payload: 'online'
+  will_message:
+    topic: 'homeassistant/status'
+    payload: 'offline'

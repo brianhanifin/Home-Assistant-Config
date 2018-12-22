@@ -1,9 +1,27 @@
+# I've adopted Frenk's style of layout. Most automations, components, 
+# scripts, etc. are broken up into individual files in a logical
+# folder structure (e.g. Automations are in /automations, 
+# components like virtual and actual lights are in /components/lights).
+#
+# While this may seem excessive I believe this will simplify 
+# troubleshooting because I will know exactly where to find the 
+# reference to the switch.boys_bathroom_nightlight
+# (/components/switches/aliases/boys_bathroom_nightlight.yaml). It will
+# be much quick to locate each automation and script (/scripts) and
+# there won't be any distracting code floating around above or below the
+# code I am reviewing.
+#
+# Look for the following paths:
+# * /automations
+# * /components
+# * /customize
+# * /lovelace
+# * /packages
+# * /scripts
+#
+# Reference: https://github.com/frenck/home-assistant-config/
+#
 homeassistant:
-  auth_providers:
-    - type: homeassistant
-    - type: legacy_api_password
-    - type: trusted_networks
-
   name: Home
   latitude: !secret hass_latitude
   longitude: !secret hass_longitude
@@ -11,8 +29,9 @@ homeassistant:
   unit_system: !secret hass_units
   time_zone: !secret hass_timezone
 
+  auth_providers:
+    - type: homeassistant
+    - type: legacy_api_password
+    - type: trusted_networks
+
   packages: !include_dir_named packages
-
-  customize: !include customize.yaml
-
-#group: !include_dir_merge_named groups
