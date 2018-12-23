@@ -88,19 +88,47 @@ cards:
       - type: horizontal-stack
         cards:
           - type: custom:button-card
-            action: toggle
+            action: service
             color_type: card
             color: rgb(66, 134, 244)
             entity: lock.front_door
             icon: mdi:lock-smart
-            name: Door
+            service:
+              domain: script
+              action: turn_on
+              data:
+                entity_id: script.toggle_front_door_lock
+            show_state: true
+            state:
+              - value: 'locked'
+                color: var(--disabled-text-color)
+              - value: 'unlocked'
+                color: rgb(66, 134, 244)
           - type: custom:button-card
-            action: toggle
+            action: service
             color_type: card
             color: rgb(66, 134, 244)
             entity: cover.garage_door
             icon: mdi:garage
-            name: Garage
+            service:
+              domain: script
+              action: turn_on
+              data:
+                entity_id: script.toggle_garage_door
+            show_state: true
+            state:
+              - value: 'closed'
+                color: var(--disabled-text-color)
+                icon: mdi:garage
+              - value: 'closing'
+                color: rgb(66, 134, 244)
+                icon: mdi:garage-open
+              - value: 'open'
+                color: rgb(66, 134, 244)
+                icon: mdi:garage-open
+              - value: 'opening'
+                color: rgb(66, 134, 244)
+                icon: mdi:garage-open
           - type: custom:button-card
             action: toggle
             color_type: card
@@ -115,6 +143,22 @@ cards:
             entity: switch.family_room_fan
             icon: mdi:fan
             name: Family
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            action: more_info
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: climate.home
+            icon: mdi:thermostat
+            name: House
+          - type: custom:button-card
+            action: more_info
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: climate.playroom
+            icon: mdi:thermostat
+            name: Goez
 
   - type: vertical-stack
     cards:
