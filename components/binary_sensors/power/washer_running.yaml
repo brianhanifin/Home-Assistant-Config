@@ -1,0 +1,9 @@
+---
+platform: template
+sensors:
+  washer_running:
+    #value_template: "{{ states.input_boolean.washer_running.state == 'on' }}"
+    value_template: "{{ states.sensor.sonoffs31_02_power.state|int > 5 }}"
+    device_class: power
+    friendly_name: "Washer Running"
+    icon_template: mdi:washing-machine

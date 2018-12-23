@@ -1,0 +1,10 @@
+---
+alias: watchdog_shoe_closet_closed
+initial_state: True
+trigger:
+  platform: state
+  entity_id: binary_sensor.shoe_closet_door
+  to: "off"
+action:
+  service: light.turn_off
+  entity_id: light.shoe_closet_light

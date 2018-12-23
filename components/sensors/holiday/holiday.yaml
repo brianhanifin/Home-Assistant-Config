@@ -1,0 +1,19 @@
+---
+# Sensor updates once every 4 hours (14400 seconds) & runs 6 times in 24 hours.
+platform: rest
+resource: https://raw.githubusercontent.com/brianhanifin/Home-AssistantConfig/master/json_data/holidays.json
+name: Holiday
+scan_interval: 14400
+value_template: >
+  {% set today = now().month  ~ '/' ~ now().day  -%}
+  {%- set personal = value_json.PERSONAL[ today ]|trim -%}
+  {%- set holiday = value_json.MAJOR_US.static[ today ]|trim -%}
+  {%- if holiday == "" -%}
+    {%- set today = now().month  ~ '/' ~ now().day ~ '/' ~ now().year -%}
+    {%- set holiday = value_json.MAJOR_US.dynamic[ today ]|trim -%}
+  {%- endif -%}
+  {%- if personal != '' -%}
+    {{ personal }}
+    {%- if holiday != '' -%}{{ ' and ' }}{%- endif -%}
+  {%- endif -%}
+  {{ holiday }}

@@ -1,0 +1,19 @@
+##############################################
+###  Kitchen
+##############################################
+# Kitchen Motion: Light Timeout
+alias: kitchen_motion_stop
+trigger:
+  - platform: template
+    value_template: "{% if is_state('binary_sensor.kitchen_1_motion', 'off') 
+                       and is_state('binary_sensor.kitchen_2_motion', 'off') %}true{% else %}false{% endif %}"
+    # for:
+    #   minutes: 2
+    #   seconds: 00
+condition:
+  - condition: state
+    entity_id: input_boolean.motion_detection_mode
+    state: 'on'
+action:
+  - service: light.turn_off
+    entity_id: light.kitchen_undercabinet

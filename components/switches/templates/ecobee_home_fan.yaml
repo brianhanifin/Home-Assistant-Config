@@ -1,0 +1,22 @@
+---
+platform: template
+switches:
+  ecobee_home_fan:
+    friendly_name: "Thermostat Fan"
+    value_template: "{{ states.climate.home.attributes.fan }}"
+    turn_on:
+      - service: climate.set_fan_mode
+        data:
+          entity_id: climate.home
+          fan_mode: "on"
+    turn_off:
+      - service: climate.ecobee_resume_program
+        data:
+          entity_id: climate.home
+          resume_all: true
+    #icon_template: >-
+    #  {% if is_state_attr('climate.home', 'fan', 'on') %}
+    #    mdi:fan
+    #  {% else %}
+    #    mdi:fan-off
+    #  {% endif %}

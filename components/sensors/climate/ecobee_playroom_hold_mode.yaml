@@ -1,0 +1,12 @@
+---
+platform: template
+sensors:
+  ecobee_playroom_hold_mode:
+    friendly_name: "Temp Hold Mode"
+    icon_template: >-
+      {% if is_state('states.climate.playroom.attributes.away_mode', 'on') %}
+        mdi:airplane-takeoff
+      {% else %}
+        mdi:airplane-landing
+      {% endif %}
+    value_template: "{{ states.climate.playroom.attributes.away_mode }}"

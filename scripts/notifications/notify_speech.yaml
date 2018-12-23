@@ -1,0 +1,12 @@
+---
+notify_speech:
+  sequence:
+    - condition: state
+      entity_id: input_boolean.speech_notifications
+      state: 'on'
+    - service: script.say
+      data_template:
+        media_player: media_player.kitchen
+        say_greeting: "false"
+        message: >-
+          {{ message }}

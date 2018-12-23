@@ -1,0 +1,21 @@
+---
+# The group of lights over the prep station counter. This uses a
+# Z-Wave Light Switch.
+#
+platform: template
+lights:
+  kitchen_prep_light:
+    friendly_name: Kitchen Prep Light
+    level_template: >
+      {% if is_state('switch.kitchen_prep_light', 'on') %}
+        255
+      {% else %}
+        0
+      {% endif %}
+    turn_on:
+      service: switch.turn_on
+      entity_id: switch.kitchen_prep_light
+    turn_off:
+      service: switch.turn_off
+      entity_id: switch.kitchen_prep_light
+    value_template: "{{ is_state('switch.kitchen_prep_light', 'on') }}"

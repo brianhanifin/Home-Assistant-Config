@@ -1,0 +1,37 @@
+---
+##############################################
+## Turn certain lights on at Dusk
+##############################################
+alias: lights_adjust_at_dusk
+initial_state: True
+trigger:
+  - platform: sun
+    event: sunset
+    offset: "-00:45:00"
+condition:
+  - condition: state
+    entity_id: input_boolean.time_based_dimmers_enabled
+    state: 'on'
+action:
+  - service: homeassistant.turn_on
+    entity_id: light.christmas_lights
+  - service: homeassistant.turn_on
+    entity_id: light.outdoor_lighting
+  - service: script.turn_on
+    data:
+      entity_id: script.outdoor_light_holiday_coloring
+  - service: light.turn_on
+    data:
+      entity_id: light.entry_light
+      brightness_pct: '60'
+  - service: switch.turn_on
+    entity_id: switch.boys_bathroom_nightlight
+
+  - service: script.notify_ios
+    data_template:
+      title: 'Script: Dusk'
+      message: "Activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      who: "brian"
+  # - service: persistent_notification.create
+  #   data:
+  #     message: "Script: Dusk activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

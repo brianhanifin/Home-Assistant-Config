@@ -1,0 +1,14 @@
+---
+platform: template
+sensors:
+  holiday_scene:
+    value_template: >
+      {% set holiday_scene = states('sensor.holiday') -%}
+      {%- if holiday_scene is not none and holiday_scene != "" -%}
+        {%- set holiday_scene = holiday_scene|lower|trim|replace("'","")|replace(" ","_")|replace(",_eve","")|replace("eve","day") -%}
+        {%- set holiday_scene = holiday_scene|replace("mothers_day","valentine")|replace("earth_day","st_patty") -%}
+        {%- if holiday_scene.split('_')|last == 'birthday' -%}{%- set holiday_scene = "birthday" -%}{%- endif %}
+        {{ holiday_scene }}
+      {%- else -%}
+        {{ "standard" }}
+      {%- endif %}

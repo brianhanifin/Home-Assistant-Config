@@ -1,0 +1,16 @@
+---
+##############################################################################
+###  Away Mode State Change
+##############################################################################
+alias: away_mode_off
+initial_state: True
+trigger:
+  - platform: state
+    entity_id: input_boolean.away_mode
+    from: "on"
+    to: "off"
+action:
+  - service: script.turn_on
+    entity_id: script.ecobee_resume_normal_operation
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.motion_detection_mode

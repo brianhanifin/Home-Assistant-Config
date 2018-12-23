@@ -1,0 +1,12 @@
+---
+alias: watchdog_garage_door_closed
+initial_state: True
+trigger:
+  - platform: state
+    entity_id: cover.garage_door
+    from: 'open'
+    to: 'closed'
+action:
+  - delay: "0:00:15"
+  - service: light.turn_off
+    entity_id: light.garage_entry_light

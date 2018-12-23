@@ -1,0 +1,23 @@
+---
+# Reset the kitchen cabinet lights to warm white light, 
+# and adjust the brightness based on the defined conditions.
+alias: watchdog_kitchen_cabinet_lights_on
+initial_state: True
+trigger:
+  - platform: state
+    entity_id: light.kitchen_undercabinet
+    from: 'off'
+    to: 'on'
+action:
+  - service: light.turn_on
+    data_template:
+      entity_id: light.kitchen_undercabinet
+      color_temp: 200
+      brightness: >-
+       {% if is_state('sun.sun' , 'above_horizon')
+           or is_state('switch.kitchen_light', 'on')
+           or is_state('switch.kitchen_prep_light', 'on') -%}
+          254
+        {% else -%}
+          63
+        {% endif -%}

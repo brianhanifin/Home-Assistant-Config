@@ -1,0 +1,22 @@
+---
+##############################################################################
+###  Family Member Departure
+##############################################################################
+alias: family_departure
+initial_state: True
+trigger:
+  - platform: state
+    entity_id: group.family
+    from: 'home'
+    to: 'not_home'
+    for:
+      minutes: 5
+      seconds: 0
+condition:
+  # Only turn on Away Mode if no family members are present and the guest mode override is off.
+  - condition: template
+    value_template: "{{ states.group.family.state == 'not_home'
+                    and states.input_boolean.guest_mode.state == 'off' }}"
+action:
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.away_mode

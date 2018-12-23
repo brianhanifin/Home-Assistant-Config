@@ -1,0 +1,40 @@
+---
+############################################
+## Warn us if the garage door is still open
+############################################
+alias: watchdog_doors_and_windows_at_2000
+initial_state: True
+trigger:
+  platform: time
+  hours: 20
+  minutes: 0
+  seconds: 0
+condition:
+  condition: or
+  conditions:
+    - condition: state
+      entity_id: cover.garage_door
+      state: 'open'
+    - condition: state
+      entity_id: binary_sensor.glowforge_window
+      state: 'on'
+action:
+  - service: script.notify_ios
+    data_template:
+      #who: 'parents'
+      message: "Check your windows and doors. One of them may have been left open."
+
+  #- service: input_boolean.turn_on
+  #  entity_id: input_boolean.alert_mode
+  #- service: script.speech_engine
+  #  data_template:
+  #    call_window_check: 1
+
+  - service: script.notify_speech
+    data_template:
+      media_player: >-
+        "media_player.living_room,
+         media_player.kitchen,
+         media_player.family_room,
+         media_player.play_room"
+      message: "Check your windows and doors. One of them may have been left open."

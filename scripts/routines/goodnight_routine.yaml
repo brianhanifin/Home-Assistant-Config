@@ -1,0 +1,15 @@
+---
+goodnight_routine:
+  sequence:
+    # Make sure the garage door is closed.
+    - service: cover.close_cover
+      entity_id: cover.garage_door
+    
+    # Run the shutdown/goodbye routine.
+    - service: script.turn_on
+      entity_id: script.shutdown_routine
+
+    - service: script.say
+      data_template:
+        media_player: "media_player.kitchen"
+        say_goodnight: "true"

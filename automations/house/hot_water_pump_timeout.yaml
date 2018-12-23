@@ -1,0 +1,14 @@
+---
+# Turn the hot water pump off after the defined amount of time.
+#
+alias: hot_water_pump_timeout
+trigger:
+  platform: state
+  entity_id: switch.sonoff_pow01
+  from: "off"
+  to: "on"
+  for:
+    minutes: 5
+action:
+  - service: switch.turn_off
+    entity_id: switch.sonoff_pow01

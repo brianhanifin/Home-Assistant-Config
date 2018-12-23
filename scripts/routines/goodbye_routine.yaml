@@ -1,0 +1,11 @@
+---
+goodbye_routine:
+  sequence:
+    # Run the shutdown/goodbye routine.
+    - service: script.turn_on
+      entity_id: script.shutdown_routine
+
+    - service: script.say
+      data_template:
+        media_player: "media_player.living_room"
+        say_goodbye: "true"

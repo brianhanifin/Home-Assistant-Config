@@ -1,0 +1,15 @@
+---
+############################################
+## Update the holiday sensors every morning.
+############################################
+alias: watchdog_update_todays_holiday
+initial_state: True
+trigger:
+  platform: time
+  hours: 6
+  minutes: 29
+  seconds: 0
+action:
+  # Update the holiday sensors.
+  - service: script.turn_on
+    entity_id: script.holiday_sensors_update

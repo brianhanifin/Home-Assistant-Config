@@ -1,0 +1,603 @@
+title: "Home"
+
+resources:
+  - url: /local/lovelace/fold-entity-row.js?v=0636ee
+    type: js
+  - url: /local/lovelace/button-card.js?v=0.0.3
+    type: module
+  - url: /local/lovelace/gauge-card.js?v=0.2.0
+    type: js
+  - url: /local/lovelace/mini-media-player.js?v=0.9.7
+    type: module
+  - url: /local/lovelace/tracker-card.js?v=0.1.5
+    type: js
+
+views:
+  # DOWNSTAIRS
+  - title: Downstairs
+    icon: mdi:sofa
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: conditional
+            conditions:
+              - entity: group.all_devices
+                state: home
+            card:
+              type: entity-filter
+              card:
+                type: glance
+                title: Who's home?
+                show_state: false
+              entities:
+                - device_tracker.brian
+                - device_tracker.cindy
+                - device_tracker.eric
+                #- device_tracker.family_phone
+                - device_tracker.heather
+                - device_tracker.melissa
+                - device_tracker.nerene
+                - device_tracker.sandy
+              state_filter:
+                - home
+
+          - type: conditional
+            conditions:
+              - entity:
+                  - cover.garage_door
+                  - binary_sensor.glowforge_window
+                state:
+                  - "open"
+                  - "on"
+            card:
+              type: entity-filter
+              card:
+                type: glance
+                title: Open Windows + Doors
+                show_state: false
+              entities:
+                - cover.garage_door
+                - binary_sensor.glowforge_window
+              state_filter:
+                - "open"
+                - "on"
+        
+      # Family Room
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color_type: label-card
+            color: rgb(44, 109, 214)
+            name: Family Room
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: light.family_room_light
+            icon: mdi:floor-lamp
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: light.family_room_table_lamp
+            icon: mdi:lamp
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: switch.christmas_tree_lights
+            icon: mdi:pine-tree
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: switch.living_room_fan
+            icon: mdi:fan
+  
+      # Dining / Kitchen
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color_type: label-card
+            color: rgb(44, 109, 214)
+            name: Dining / Kitchen
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: light.dining_room_light
+                icon: mdi:ceiling-light
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: switch.kitchen_light
+                icon: mdi:wall-sconce-flat
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: switch.kitchen_prep_light
+                icon: mdi:wall-sconce-flat
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: light.kitchen_undercabinet
+                icon: mdi:led-strip
+
+      # Living Room / Garage
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color_type: label-card
+            color: rgb(44, 109, 214)
+            name: Living Room
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: light.living_room_light
+                icon: mdi:floor-lamp
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: light.garage_entry_light
+                icon: mdi:wall-sconce-flat
+              - type: custom:button-card
+                action: more_info
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: climate.home
+                icon: mdi:thermostat
+              - type: "custom:button-card"
+                color_type: blank-card
+
+      # 2nd Master
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color_type: label-card
+            color: rgb(44, 109, 214)
+            #name: Eric + Sandy's Wing
+            name: Play Room
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: light.play_room_light
+                icon: mdi:ceiling-light
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: light.play_room_corner_light
+                icon: mdi:lightbulb
+                style:
+                  - transform: rotate(180deg)
+              - type: custom:button-card
+                action: toggle
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: light.computer_light
+                icon: mdi:floor-lamp
+              - type: custom:button-card
+                action: more_info
+                color_type: card
+                color: rgb(66, 134, 244)
+                entity: climate.playroom
+                icon: mdi:thermostat
+
+      # Porch
+- type: vertical-stack
+cards:
+  - type: custom:button-card
+    color_type: label-card
+    color: rgb(44, 109, 214)
+    name: Porch / Entry
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        action: toggle
+        color_type: card
+        color: rgb(66, 134, 244)
+        entity: light.porch_light
+        icon: mdi:ceiling-light
+      - type: custom:button-card
+        action: toggle
+        color_type: card
+        color: rgb(66, 134, 244)
+        entity: switch.landscape_lights
+        icon: mdi:pine-tree
+      - type: custom:button-card
+        action: toggle
+        color_type: card
+        color: rgb(66, 134, 244)
+        entity: light.entry_light
+        icon: mdi:ceiling-light
+
+
+  ## DOWNSTAIRS PHOTOS
+  # - title: Downstairs
+  #   icon: mdi:sofa
+  #   cards:
+  #     - type: picture-glance
+  #       title: Family Room
+  #       entities:
+  #         - binary_sensor.family_room_motion
+  #         - entity: light.family_room_light
+  #           icon: mdi:floor-lamp
+  #         - entity: light.family_room_table_lamp
+  #           icon: mdi:lamp
+  #         - entity: switch.christmas_tree_lights
+  #           icon: mdi:pine-tree
+  #       image: /local/ui/rooms/family_room.jpg
+
+  #     - type: picture-glance
+  #       title: Dining Room
+  #       entities:
+  #         - entity: light.dining_room_light
+  #           icon: mdi:ceiling-light
+  #       image: /local/ui/rooms/dining_room.jpg
+
+  #     - type: picture-glance
+  #       title: Kitchen
+  #       entities:
+  #         - binary_sensor.kitchen_leak
+  #         #- binary_sensor.kitchen_1_motion
+  #         #- binary_sensor.kitchen_2_motion
+  #         - binary_sensor.kitchen_motion
+  #         - entity: switch.kitchen_light
+  #           icon: mdi:wall-sconce-flat
+  #         - entity: switch.kitchen_prep_light
+  #           icon: mdi:wall-sconce-flat
+  #         - entity: light.kitchen_undercabinet
+  #           icon: mdi:led-strip
+  #       image: /local/ui/rooms/kitchen.jpg
+
+  #     - type: picture-glance
+  #       title: Living Room
+  #       entities:
+  #         - binary_sensor.living_room_motion
+  #         - entity: light.living_room_light
+  #           icon: mdi:floor-lamp
+  #         - entity: light.garage_entry_light
+  #           icon: mdi:wall-sconce-flat
+  #       image: /local/ui/rooms/living_room.jpg
+
+  #     - type: picture-glance
+  #       title: Entry
+  #       entities:
+  #         - climate.home
+  #         - entity: light.entry_light
+  #           icon: mdi:ceiling-light
+  #         #- entity: switch.entry_step_light
+  #         #  icon: mdi:led-strip
+  #       image: /local/ui/rooms/entryway.jpg
+
+  #     - type: picture-glance
+  #       title: Porch
+  #       entities:
+  #         - binary_sensor.front_door_motion
+  #         - entity: light.porch_light
+  #           icon: mdi:ceiling-light
+  #         - entity: switch.landscape_lights
+  #           icon: mdi:pine-tree
+  #       #camera_image: camera.porch
+  #       image: /local/ui/rooms/porch.jpg
+
+  #     - type: picture-glance
+  #       title: Garage
+  #       entities:
+  #         - cover.garage_door
+  #         - entity: binary_sensor.washer_running
+  #           icon: mdi:washing-machine
+  #         - entity: switch.hot_water_pump
+  #           icon: mdi:water-pump
+  #       image: /local/ui/rooms/garage.jpg
+
+  ## UPSTAIRS
+#  - title: Upstairs
+#    icon: mdi:hotel
+#    cards:
+#      - type: horizontal-stack
+#        cards:
+#          type: markdown
+#          content: ### Master Bedroom
+
+  ## CAMERAS
+  - title: Cameras
+    icon: mdi:cctv
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: picture-entity
+            title: Porch
+            entity: camera.porch
+            camera_image: camera.porch
+            show_info: true
+            tap_action: dialog
+
+          - type: picture-entity
+            title: Workbench
+            entity: camera.workbench
+            camera_image: camera.workbench
+            show_info: true
+            tap_action: dialog
+
+  ## MEDIA PLAYERS
+  - title: Media Players
+    icon: mdi:volume-high
+    cards:
+      - type: entity-filter
+        card:
+          type: entities
+          title: Alexa
+          #show_name: false
+          show_state: false
+        entities:
+          # Downstairs
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.downstairs
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.family_room
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.kitchen
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.living_room
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.play_room
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          # Upstairs
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.upstairs
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.kyles_room
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.lucas_room
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+          - type: custom:mini-media-player
+            artwork: cover
+            entity: media_player.master_bedroom
+            hide_icon: true
+            hide_power: true
+            short_info: true
+            volume_stateless: true
+        state_filter:
+          - paused
+          - playing
+
+  ## Alarms
+  - title: Alarms
+    icon: mdi:alarm
+    cards:
+      - type: entities
+        title: Brian's Wakeup Light
+        show_header_toggle: false
+        entities: 
+          - input_boolean.wakeup_brian_status
+          - input_number.wakeup_brian_hour
+          - input_number.wakeup_brian_minutes
+          - input_select.wakeup_brian_light
+          - sensor.wakeup_brian_day_label
+          - input_boolean.wakeup_brian_mon
+          - input_boolean.wakeup_brian_tue
+          - input_boolean.wakeup_brian_wed
+          - input_boolean.wakeup_brian_thu
+          - input_boolean.wakeup_brian_fri
+          - input_boolean.wakeup_brian_sat
+          - input_boolean.wakeup_brian_sun
+
+      - type: entities
+        title: Nerene's Wakeup Light
+        show_header_toggle: false
+        entities:
+          - input_boolean.wakeup_nerene_status
+          - input_number.wakeup_nerene_hour
+          - input_number.wakeup_nerene_minutes
+          - input_select.wakeup_nerene_light
+          - sensor.wakeup_nerene_day_label
+          - input_boolean.wakeup_nerene_mon
+          - input_boolean.wakeup_nerene_tue
+          - input_boolean.wakeup_nerene_wed
+          - input_boolean.wakeup_nerene_thu
+          - input_boolean.wakeup_nerene_fri
+          - input_boolean.wakeup_nerene_sat
+          - input_boolean.wakeup_nerene_sun
+ 
+  ## Admin
+  - title: Admin
+    icon: mdi:file-document-box
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: entity-filter
+            card:
+              type: glance
+              #title: Who's home?
+              #show_name: false
+              show_state: false
+            entities:
+              - device_tracker.brian
+              - device_tracker.cindy
+              - device_tracker.eric
+              #- device_tracker.family_phone
+              - device_tracker.heather
+              - device_tracker.melissa
+              - device_tracker.nerene
+              - device_tracker.sandy
+              - binary_sensor.brians_bed_occupancy
+              - binary_sensor.nerenes_bed_occupancy
+            state_filter:
+              - home
+          
+          - type: glance
+            #title: Doors + Windows
+            show_state: false
+            entities:
+              - cover.garage_door
+              - binary_sensor.glowforge_window
+
+      - type: entities
+        title: Mode Overrides
+        show_header_toggle: false
+        show_state: false
+        entities:
+          - input_boolean.guest_mode
+          - input_boolean.motion_detection_mode
+          - input_boolean.shoe_closet_timeout
+          - input_boolean.speech_notifications
+          - input_boolean.time_based_dimmers_enabled
+          - input_boolean.vacation
+          - scene.goodbye
+          - scene.good_night
+
+      - type: entities
+        #title: Admin
+        entities:
+          - type: custom:fold-entity-row
+            head:
+              type: section
+              label: Admin
+            items:
+              - script.restart_hass
+              - input_select.log_level
+              - type: divider
+              - sensor.ha_version
+              #- sensor.ha_laststartup
+              # - sensor.processor_use
+              # - sensor.memory_use_percent
+              # - sensor.load_15m
+              # - sensor.load_15m
+              # #- type: gauge
+              # - type: custom:gauge-card
+              #   entity: sensor.processor_use
+              #   severity:
+              #     green: 0
+              #     amber: 70
+              #     red: 90
+              #   title: Processor
+              # #- type: gauge
+              # - type: custom:gauge-card
+              #   entity: sensor.memory_use_percent
+              #   severity:
+              #     green: 0
+              #     amber: 70
+              #     red: 90
+              #   title: Memory
+
+      - type: entities
+        #title: Admin
+        entities:
+          - type: custom:fold-entity-row
+            head:
+              type: section
+              label: Tracker
+            items:
+              - type: custom:tracker-card
+                title:
+                trackers:
+                  - sensor.custom_card_tracker
+                  - sensor.custom_component_tracker
+
+      # - type: entities
+      #   #title: Control Panel
+      #   entities:
+      #     - type: custom:fold-entity-row
+      #       head:
+      #         type: section
+      #         label: Mode Overrides
+      #         icon: mdi:home-alert
+      #       items:
+      #       entities:
+      #         - input_boolean.guest_mode
+      #         - input_boolean.illumination_lighting_mode
+      #         - input_boolean.motion_detection_mode
+      #         - input_boolean.shoe_closet_timeout
+      #         - input_boolean.speech_notifications
+      #         - input_boolean.text_notifications
+      #         - input_boolean.time_based_dimmers_enabled
+      #         - input_boolean.vacation
+      #         - scene.goodbye
+      #         - scene.good_night
+      #     - type: custom:fold-entity-row
+      #       head:
+      #         type: section
+      #         label: Brian's Wakeup Light
+      #       items:
+      #         - input_boolean.wakeup_brian_status
+      #         - type: custom:time-input-row
+      #           entity: input_datetime.wakeup_brian_time
+      #         - input_select.wakeup_brian_light
+      #         - sensor.wakeup_brian_day_label
+      #         - input_boolean.wakeup_brian_mon
+      #         - input_boolean.wakeup_brian_tue
+      #         - input_boolean.wakeup_brian_wed
+      #         - input_boolean.wakeup_brian_thu
+      #         - input_boolean.wakeup_brian_fri
+      #         - input_boolean.wakeup_brian_sat
+      #         - input_boolean.wakeup_brian_sun
+      #     - type: custom:fold-entity-row
+      #       head:
+      #         type: section
+      #         label: Nerene's Wakeup Light
+      #       items:
+      #         - input_boolean.wakeup_nerene_status
+      #         - type: custom:time-input-row
+      #           entity: input_datetime.wakeup_nerene_time
+      #         - input_select.wakeup_nerene_light
+      #         - sensor.wakeup_nerene_day_label
+      #         - input_boolean.wakeup_nerene_mon
+      #         - input_boolean.wakeup_nerene_tue
+      #         - input_boolean.wakeup_nerene_wed
+      #         - input_boolean.wakeup_nerene_thu
+      #         - input_boolean.wakeup_nerene_fri
+      #         - input_boolean.wakeup_nerene_sat
+      #         - input_boolean.wakeup_nerene_sun

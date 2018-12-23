@@ -1,0 +1,12 @@
+---
+platform: template
+sensors:
+  ecobee_playroom_fan:
+    friendly_name: "Fan"
+    icon_template: >-
+      {% if is_state('states.climate.playroom.attributes.fan', 'on') %}
+        mdi:fan
+      {% else %}
+        mdi:fan-off
+      {% endif %}
+    value_template: "{{ states.climate.playroom.attributes.fan }}"

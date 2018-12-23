@@ -1,0 +1,25 @@
+---
+##############################################
+## Adjust brightness every half hour
+##############################################
+alias: light_adjust_by_time
+initial_state: True
+trigger:
+  - platform: time
+    minutes: '/30'
+    seconds: 00
+condition:
+  # Only when this mode is enabled
+  - condition: state
+    entity_id: input_boolean.time_based_dimmers_enabled
+    state: 'on'
+action:
+  # Retrive the list of lights to be adjusted.
+  - service: homeassistant.update_entity
+    entity_id: sensor.lights_on
+  - delay:
+      seconds: 10
+  # Adjust the light brightness.
+  - service: script.set_light_brightness_pct_by_time
+    data_template:
+      entity: "{{ states('sensor.lights_on') }}"

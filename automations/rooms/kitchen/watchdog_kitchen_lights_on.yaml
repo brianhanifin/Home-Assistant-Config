@@ -1,0 +1,15 @@
+---
+# Brighten the kitchen cabinet lights when the overhead lights turn on.
+alias: watchdog_kitchen_lights_turn_on
+initial_state: True
+trigger:
+  - platform: state
+    entity_id:
+      - switch.kitchen_light
+      - switch.kitchen_prep_light
+    to: 'on'
+action:
+  - service: light.turn_on
+    data:
+      entity_id: light.kitchen_undercabinet
+      brightness: 254

@@ -1,0 +1,25 @@
+---
+alias: wash_cycle_complete
+trigger:
+  - platform: state
+    entity_id: binary_sensor.washer_running
+    from: 'on'
+    to: 'off'
+    for:
+      seconds: 15
+action:
+  - service: script.notify_speech
+    data_template:
+      media_player: "media_player.kitchen"
+      message: "The washing cycle is complete."
+
+  - service: script.notify_ios
+    data_template:
+      title: "Washing Machine"
+      message: "Clothes are clean! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      who: "brian"
+
+  #- service: script.notify_web
+  #  data_template:
+  #    title: "Washing Machine"
+  #    message: "Clothes are clean! Finshed @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"

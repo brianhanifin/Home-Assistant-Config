@@ -1,0 +1,25 @@
+---
+##############################################################################
+###  Away Mode State Change
+##############################################################################
+alias: away_mode_on
+initial_state: True
+trigger:
+  - platform: state
+    entity_id: input_boolean.away_mode
+    from: "off"
+    to: "on"
+action:
+  # Close the garage door (if it was inadvertantly left open)
+  - service: cover.close_cover
+    entity_id: cover.garage_door
+  
+  # Run the shutdown/goodbye routine (without the verbal confirmation).
+  - service: script.turn_on
+    entity_id: script.shutdown_routine
+
+  # Set a few more unnecessary functions to away mode.
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.motion_detection_mode
+  - service: script.turn_on
+    entity_id: script.ecobee_temporary_away

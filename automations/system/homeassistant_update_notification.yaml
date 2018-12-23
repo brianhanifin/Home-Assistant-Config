@@ -1,0 +1,18 @@
+---
+# Sends alerts when a new release is available.
+#
+alias: homeassistant_update_notification
+initial_state: True
+trigger:
+  platform: state
+  entity_id: updater.updater
+action:
+  - service: script.notify_ios
+    data_template:
+      title: "Home Assistant Update Available"
+      message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      who: "brian"
+  #- service: persistent_notification.create
+  #  data:
+  #    title: "Update Available"
+  #    message: "Home Assistant {{ states('updater.updater') }} is available. - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"

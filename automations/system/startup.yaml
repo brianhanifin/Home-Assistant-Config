@@ -1,0 +1,20 @@
+---
+# Actions to run every restart.
+#
+alias: startup
+initial_state: True
+trigger:
+  platform: homeassistant
+  event: start
+action:
+  # Make sure the Hot Water Pump is turned off at startup.
+  - service: switch.turn_off
+    entity_id: switch.sonoff_pow01
+
+  # Sometimes the garage entry light turns on at startup, 
+  # so turn it back off if the door is closed.
+  - condition: state
+    entity_id: cover.garage_door
+    state: "closed"
+  - service: light.turn_off
+    entity_id: light.garage_entry_light

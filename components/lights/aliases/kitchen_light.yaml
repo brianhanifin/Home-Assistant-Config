@@ -1,0 +1,21 @@
+---
+# The primary group of lights in the Kitchen. This uses a
+# Z-Wave Light Switch.
+#
+platform: template
+lights:
+  kitchen_light:
+    friendly_name: Kitchen Prep Light
+    level_template: >
+      {% if is_state('switch.kitchen_light', 'on') %}
+        255
+      {% else %}
+        0
+      {% endif %}
+    turn_on:
+      service: switch.turn_on
+      entity_id: switch.kitchen_light
+    turn_off:
+      service: switch.turn_off
+      entity_id: switch.kitchen_light
+    value_template: "{{ is_state('switch.kitchen_light', 'on') }}"

@@ -1,0 +1,18 @@
+---
+# Close the garage door if Brian or Nerene leave home.
+alias: watchdog_garage_left_open
+initial_state: True
+trigger:
+  - platform: state
+    entity_id:
+      - device_tracker.brian
+      - device_tracker.nerene
+    from: 'home'
+    to: 'not_home'
+condition:
+  - condition: state
+    entity_id: cover.garage_door
+    state:     'open'
+action:
+  - service: cover.close_cover
+    entity_id: cover.garage_door

@@ -1,0 +1,43 @@
+---
+##############################################
+## Adjust brightness of each light as it is 
+## turned on.
+##############################################
+alias: lights_adjust_as_turned_on
+initial_state: True
+trigger:
+  - platform: event
+    event_type: state_changed
+condition:
+  # Only when this mode is enabled
+  - condition: state
+    entity_id: input_boolean.time_based_dimmers_enabled
+    state: 'on'
+  # Only look at lights.
+  - condition: template
+    value_template: "{{ trigger.event.data is not none 
+                    and trigger.event.data.entity_id is not none
+                    and 'light' in trigger.event.data.entity_id|lower }}"
+  # Only when lights are going from off to on.
+  - condition: template
+    value_template: "{{ trigger.event.data.old_state.state == 'off' 
+                    and trigger.event.data.new_state.state == 'on' }}"
+  # Don't change these lights.
+  - condition: template
+    # value_template: "{{ trigger.event.data.entity_id|lower != 'light.3a4f5b'
+    #                 and trigger.event.data.entity_id|lower != 'light.3a542c'
+    #                 and trigger.event.data.entity_id|lower != 'light.3a5e44'
+    #                 and trigger.event.data.entity_id|lower != 'light.3a76dc'
+    #                 and trigger.event.data.entity_id|lower != 'light.entry'
+    value_template: "{{ trigger.event.data.entity_id|lower != 'light.entry'
+                    and trigger.event.data.entity_id|lower != 'light.hue'
+                    and trigger.event.data.entity_id|lower != 'light.porch'
+                    and not ('garage_entry'  in trigger.event.data.entity_id|lower)
+                    and not ('shoe_closet'   in trigger.event.data.entity_id|lower)
+                    and not ('gateway_light' in trigger.event.data.entity_id|lower)
+                    and not (trigger.event.data.entity_id|lower).endswith('lamp')
+                    and not (trigger.event.data.entity_id|lower).endswith('nightlight') }}"
+action:
+  - service: script.set_light_brightness_pct_by_time
+    data_template:
+      entity: "{{ trigger.event.data.entity_id }}"

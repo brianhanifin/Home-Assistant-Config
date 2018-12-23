@@ -1,0 +1,39 @@
+---
+############################################
+## Light brightness adjusts based on time
+############################################
+set_light_brightness_pct_by_time:
+  alias: "Function: Set Light Brightness By Time"
+  sequence:
+    # Only adjust light brightness if someone is home and the Time Based Dimmers are enabled.
+    - condition: template
+      value_template: "{{ states.input_boolean.away_mode.state == 'off'
+                      and states.input_boolean.time_based_dimmers_enabled.state == 'on' }}"
+    # Only dim lights when guest mode is NOT active.
+    - condition: template
+      value_template: "{{ states.input_boolean.guest_mode.state == 'off' }}"
+    - service: light.turn_on
+      data_template:
+        entity_id: "{{ entity }}"
+        ##########################
+        # START  | END    | BRI  #
+        # ------ | ------ | ---- #
+        # 5am    | 8am    |  60% #
+        # 8am    | 7pm    | 100% #
+        # 7pm    | 7:30pm |  80% #
+        # 7:30pm | 8pm    |  60% #
+        # 8pm    | 8:30pm |  50% #
+        # 8:30pm | 9pm    |  40% #
+        # 9pm    | 5am    |  30% #
+        ##########################
+        brightness_pct: >
+          {%- set hour    = states("sensor.time").split(':')[0] | int -%}
+          {%- set minutes = states("sensor.time").split(':')[1] | int -%}
+          {%- if   hour >=  5 and hour <  8                   -%}60
+          {%- elif hour >=  8 and hour < 19                  -%}100
+          {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}70
+          {%- elif hour >= 19 and minutes > 30 and hour < 20  -%}60
+          {%- elif hour >= 20 and minutes < 30 and hour < 21  -%}50
+          {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}40
+          {%- else                                            -%}30
+          {%- endif -%}

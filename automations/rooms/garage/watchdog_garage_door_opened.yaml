@@ -1,0 +1,25 @@
+---
+alias: watchdog_garage_door_opened
+initial_state: True
+trigger:
+  - platform: state
+    entity_id: cover.garage_door
+    from: 'closed'
+    to: 'open'
+action:
+  - service: light.turn_on
+    data:
+      entity_id: light.garage_entry_light
+      brightness_pct: 75
+      effect: "colorloop"
+
+  # If after 5 minutes the garage is still open, dim the light.
+  - delay: "0:05:00"
+  - condition: state
+    entity_id: cover.garage_door
+    state:     'open'
+  - service: light.turn_on
+    data:
+      entity_id: light.garage_entry_light
+      brightness_pct: 20
+      transition: 5

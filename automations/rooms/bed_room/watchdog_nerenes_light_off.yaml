@@ -1,0 +1,15 @@
+---
+##############################################
+## Bed Room Light Automations
+##############################################
+## Turn the lamp off when the main switch is turned off.
+alias: watchdog_nerenes_light_off
+initial_state: True
+trigger:
+  - platform: state
+    entity_id: light.nerenes_light
+    from: 'on'
+    to: 'off'
+action:
+  - service: light.turn_off
+    entity_id: light.3a76dc #light.brians_light

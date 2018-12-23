@@ -1,0 +1,23 @@
+---
+############################################
+## Update the travel time at helpful times.
+############################################
+alias: watchdog_school_travel_time_update_0700
+initial_state: True
+trigger:
+  platform: time
+  hours: 7
+  minutes: 0
+  seconds: 30
+condition:
+  condition: time
+  weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+action:
+  # Update the school travel time sensor.
+  - service: homeassistant.update_entity
+    entity_id: sensor.school_travel_time

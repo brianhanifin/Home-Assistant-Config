@@ -1,0 +1,86 @@
+---
+title: Admin
+path: admin
+icon: mdi:file-document-box
+cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:button-card
+        color_type: label-card
+        color: rgb(44, 109, 214)
+        name: Mode Overrides
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: input_boolean.guest_mode
+            icon: mdi:account-supervisor-circle
+            name: Guest.Mode
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: input_boolean.motion_detection_mode
+            icon: mdi:exit-run
+            name: Detection
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: input_boolean.shoe_closet_timeout
+            icon: mdi:shoe-formal
+            name: Shoe.Closet
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: input_boolean.speech_notifications
+            icon: mdi:speaker-wireless
+            name: Notifications
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: input_boolean.time_based_dimmers_enabled
+            icon: mdi:brightness-auto
+            name: Lights.Dim
+          - type: custom:button-card
+            action: toggle
+            color_type: card
+            color: rgb(66, 134, 244)
+            entity: input_boolean.vacation
+            icon: mdi:car-estate
+            name: On Vacation!
+
+
+  - type: vertical-stack
+    cards:
+      - type: entities
+        title: System
+        show_header_toggle: false
+        show_state: false
+        entities:
+          - group.family
+          - type: divider
+          - script.restart_hass
+          - script.reboot
+          #- input_select.log_level
+
+      - type: markdown
+        content: >
+          [config](https://hass.home.brianhanifin.com/config)
+          * [dev-service](https://hass.home.brianhanifin.com/dev-service)
+          * [dev-state](https://hass.home.brianhanifin.com/dev-state)
+          * [dev-templates](https://hass.home.brianhanifin.com/dev-template)
+          * [dev-events](https://hass.home.brianhanifin.com/dev-event)
+          * [dev-mqtt](https://hass.home.brianhanifin.com/dev-mqtt)
+          * [dev-info](https://hass.home.brianhanifin.com/dev-info)
+
+
+  - type: "custom:compact-custom-header"
+    clock: options
+    clock_format: 24

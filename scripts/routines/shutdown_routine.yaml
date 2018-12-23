@@ -1,0 +1,32 @@
+---
+shutdown_routine:
+  sequence:
+    - service: lock.lock
+      entity_id: lock.front_door
+
+    - service: light.turn_off
+      entity_id:
+        - light.brians_light
+        - light.computer_light
+        - light.dining_room_light
+        - light.entry_light
+        - light.family_room_light
+        - light.family_room_table_lamp
+        - light.garage_entry_light
+        - light.living_room_light
+        - light.nerenes_light
+        - light.play_room_light
+        - light.play_room_corner_light
+
+    - service: switch.turn_off
+      entity_id:
+        - switch.christmas_tree_lights
+        - switch.family_room_fan
+        - switch.hot_water_pump
+        - switch.kitchen_prep_light
+        - switch.kitchen_light
+    
+    - service: script.turn_on
+      entity_id:
+        - script.tv_family_room_off
+        - script.tv_living_room_off

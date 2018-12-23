@@ -1,0 +1,14 @@
+---
+alias: watchdog_family_room_over_75_percent
+initial_state: True
+trigger:
+  - platform: numeric_state
+    entity_id: light.family_room_light
+    value_template: '{{ state.attributes.brightness }}'
+    above: '190'
+    # Delay to avoid premature turn on flash.
+    for:
+      seconds: 1
+action:
+  - service: light.turn_on
+    entity_id: light.3a5e44

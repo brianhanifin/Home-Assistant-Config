@@ -1,0 +1,12 @@
+---
+platform: template
+sensors:
+  ecobee_home_fan:
+    friendly_name: "Fan"
+    icon_template: >-
+      {% if is_state('states.climate.home.attributes.fan', 'on') %}
+        mdi:fan
+      {% else %}
+        mdi:fan-off
+      {% endif %}
+    value_template: "{{ states.climate.home.attributes.fan }}"

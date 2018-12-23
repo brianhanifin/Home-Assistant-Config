@@ -1,0 +1,11 @@
+---
+alias: Bed Room Light lt 75pct
+initial_state: True
+trigger:
+  - platform: numeric_state
+    entity_id: light.nerenes_light
+    value_template: '{{ state.attributes.brightness }}'
+    below: '190' # slightly less than 75%
+action:
+  - service: light.turn_off
+    entity_id: light.3a76dc #light.brians_light

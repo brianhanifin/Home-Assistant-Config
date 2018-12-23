@@ -1,0 +1,23 @@
+##############################################
+###  Kitchen
+##############################################
+# Kitchen Motion Light On
+alias: kitchen_motion_start
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.kitchen_1_motion
+      - binary_sensor.kitchen_2_motion
+    from: 'off'
+    to: 'on'
+condition:
+  - condition: state
+    entity_id: input_boolean.motion_detection_mode
+    state: 'on'
+  # We don't need to turn on the light when the dogs are alone.
+  - condition: state
+    entity_id: input_boolean.away_mode
+    state: 'off'
+action:
+  - service: light.turn_on
+    entity_id: light.kitchen_undercabinet
