@@ -13,8 +13,15 @@ wakeup_brian_activate:
     - service: scene.turn_on
       entity_id: scene.wakeup_brian
 
+    # Alexa, wake me up!
+    - delay: 00:10:00
+    - service: script.turn_on
+      entity_id: script.notify_speech
+      data:
+        media_player: "media_player.master_bedroom"
+        message: "Good morning, Brian. It is time to get the boys to school."
+
     # Restore bedroom light sync and time based dimmers after a delay.
-    - delay: 00:20:00
     - service: input_boolean.turn_on
       entity_id: input_boolean.bedroom_light_sync_enabled
     - service: input_boolean.turn_on
