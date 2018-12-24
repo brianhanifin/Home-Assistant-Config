@@ -1,0 +1,21 @@
+---
+wakeup_brian_activate:
+  sequence:
+    # Disable bedroom light sync and time based dimmers temporarily.
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.bedroom_light_sync_enabled
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.time_based_dimmers_enabled
+
+    # Time to turn on the lights!
+    - service: script.turn_on
+      entity_id: script.wakeup_brian_light_start
+    - service: scene.turn_on
+      entity_id: scene.wakeup_brian
+
+    # Restore bedroom light sync and time based dimmers after a delay.
+    - delay: 00:20:00
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.bedroom_light_sync_enabled
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.time_based_dimmers_enabled

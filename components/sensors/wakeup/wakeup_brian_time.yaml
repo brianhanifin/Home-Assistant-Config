@@ -1,0 +1,9 @@
+---
+platform: template
+sensors:
+  wakeup_brian_time:
+    friendly_name: "Alarm"
+    icon_template: mdi:clock-outline
+    value_template: >-
+      {% set wakeup_brian_time = "%0.02d:%0.02d" | format(states('input_number.wakeup_brian_hour')|int, states('input_number.wakeup_brian_minutes')|int) %}
+      {{ wakeup_brian_time | timestamp_custom('%H:%M', false) }}

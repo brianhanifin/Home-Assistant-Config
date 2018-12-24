@@ -1,0 +1,11 @@
+---
+# Start Time storage and recall.
+alias: wake_brian_update_chosen_time
+trigger:
+  platform: state
+  entity_id:
+    - input_number.wakeup_brian_hour
+    - input_number.wakeup_brian_minutes
+action:
+  - service: homeassistant.update_entity
+    entity_id: sensor.wakeup_brian_time

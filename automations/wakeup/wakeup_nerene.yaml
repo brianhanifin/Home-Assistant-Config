@@ -1,0 +1,37 @@
+---
+alias: wakeup_nerene
+trigger:
+  platform: template
+  value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
+condition:
+  condition: and
+  conditions:
+    #  - condition: state
+    #    entity_id: device_tracker.nerene
+    #    state: home
+
+    # Is the alarm enabled.
+    - condition: state
+      entity_id: input_boolean.wakeup_nerene_status
+      state: 'on'
+    
+    # Is today one of the selected days?
+    - condition: template
+      value_template: >
+        {% set   day_name = now().strftime("%A")|lower -%}
+        {%- if   day_name == 'monday'    and states.input_boolean.wakeup_nerene_mon.state == 'on' -%}{{true}}
+        {%- elif day_name == 'tuesday'   and states.input_boolean.wakeup_nerene_tue.state == 'on' -%}{{true}}
+        {%- elif day_name == 'wednesday' and states.input_boolean.wakeup_nerene_wed.state == 'on' -%}{{true}}
+        {%- elif day_name == 'thursday'  and states.input_boolean.wakeup_nerene_thu.state == 'on' -%}{{true}}
+        {%- elif day_name == 'friday'    and states.input_boolean.wakeup_nerene_fri.state == 'on' -%}{{true}}
+        {%- elif day_name == 'saturday'  and states.input_boolean.wakeup_nerene_sat.state == 'on' -%}{{true}}
+        {%- elif day_name == 'sunday'    and states.input_boolean.wakeup_nerene_sun.state == 'on' -%}{{true}}
+        {%- else -%}{{false}}{%- endif %}
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "DEBUG"
+  #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
+
+  - service: script.turn_on
+    entity_id: script.wakeup_nerene_activate

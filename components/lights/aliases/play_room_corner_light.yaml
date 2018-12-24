@@ -8,11 +8,11 @@ lights:
     friendly_name: Play Room Corner Light
     value_template: "{{ is_state('light.3a7703', 'on') }}"
     level_template: >
-      {% if is_state("light.3a7703", "on") %}
-        {{ state_attr("light.3a7703", "brightness")|int }}
-      {% else %}
+      {% if is_state('light.3a7703', 'on') -%}
+        {{ state_attr('light.3a7703', 'brightness')|int }}
+      {%- else -%}
         0
-      {% endif %}
+      {%- endif %}
     set_level:
       service: light.turn_on
       data_template:

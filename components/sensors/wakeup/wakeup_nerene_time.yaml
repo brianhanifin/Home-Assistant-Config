@@ -1,0 +1,9 @@
+---
+platform: template
+sensors:
+  wakeup_nerene_time:
+    friendly_name: "Alarm"
+    icon_template: mdi:clock-outline
+    value_template: >-
+      {% set wakeup_nerene_time = "%0.02d:%0.02d" | format(states('input_number.wakeup_nerene_hour')|int, states('input_number.wakeup_nerene_minutes')|int) %}
+      {{ wakeup_nerene_time | timestamp_custom('%H:%M', false) }}
