@@ -1,23 +1,7 @@
 ---
 wakeup_nerene_light_start:
   sequence:
-    # - service: python_script.lightfade
-    #   data_template:
-    #     # Go from 10%-100% up 2% every 13 seconds 
-    #     # to go to full brightness in about 10 minutes.
-    #     entity_id: "{{ states('light.nerenes_light') }}"
-    #     transition: 600     # 60 sec * 10 = 10 minutes
-    #     brightness: 254
-
-    - service: light.turn_on
-      data:
-        entity_id: light.nerenes_light
-        brightness: 25
-
-    - delay: 00:01:00
-    - condition: state
-      entity_id: light.nerenes_light
-      state: 'on'
+    # Start lights at ~20% and increment by ~10% every minute for 9 minutes.
     - service: light.turn_on
       data:
         entity_id: light.nerenes_light
