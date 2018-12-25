@@ -13,19 +13,27 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle is complete (thanks to the help of a power monitoring smart plug).
 
+### Harmony Ultimate Hub
+We have two TV areas and both have hubs to manage switching inputs to all of the devices hooked up to them. I have setup scripts to give Alexa access to start activities or turn them off. "Alexa, turn on the Living Room TV."
+
 ### Insteon
 I started with HomeKit compatible *Insteon* in-wall dimmer switches and in-wall wireless remotes. The remotes are installed in several locations that otherwise would not have a light switch. Somehow our living room never had a light switch installed, now it does.
-
-### Z-Wave
-I have decided that I prefer the look of the GE Z-Wave in-wall dimmers and switches over the four button Insteon dimmers because they are easier for guests to understand.
 
 ### Philips Hue
 Hue color bulbs for Porch Light and Garage Door Entry downlight. The former changes color based on the current national holiday (or family birthday/anniversary) while the later pulses changing colors to give us a heads up that the garage door is open. Two of my remaining six Hue bulbs are reserved for an additional two porch/entryway hanging lamps.
 
-### ZigBee/Hue Compabile Light Strips
+### Philips Hue Compabile Light Strips
 I followed [this guide][hue-strip-guide] to build an inexpensive color changing light strip that is installed under our kitchen cabinets. This light is motion controlled, so we can fill our cup with water at night. The light gets brighter when either of the kitchen lights are turned on, and dim again when they are off.
 
 I plan to build one more strip to light the inside of our pantry. I will be using a wireless contact sensor to turn the lights on and off.
+
+### Presence detection
+I maintain a list of close and extended family member's phones to track using NMAP pings. Unfortunately, it appears some phones go to sleep for too long so it keeps thinking they leave and come back. My mother-in-law doesn't appreciate Alexa welcoming her home 4 times per hour. So I had to disable that feature for her phone.
+
+Based on DrZzs recommendation I switch presence tracking for my and my wife's phones to Life360. This has made me comfortable enough to do things like having Home Assistant close the garage door if one of us leaves the home zone. This covers us for those few times we may forget to close the door before driving away! :)
+
+### SonOff with Tasmota
+I replaced my HomeKit smart plugs with various SonOff plugs with Tasmota installed.
 
 ### Xiaomi
 This Chinese company makes a lot of very useful and inexpensive wireless smart home products. I use their Zigbee smart hub to get these devices to talk to Home Assistant.
@@ -38,8 +46,17 @@ As soon as we finished our Kitchen remodel I set one of these wireless little di
 
 I ordered a few more so I could have better leak coverage around the house, including the water heater tray. We had a water heater leak slowly over the summer and we didn't realize it until it got worse. I would also use one of these senors in reverse to have Alexa let us know when it is time to refill the dog's water bowl.
 
-### SonOff with Tasmota
-I replaced my HomeKit smart plugs with various SonOff plugs with Tasmota installed. 
+### Ubiquiti Unifi WiFi
+Eventually you outgrow even the fanciest home WiFi setup. There were just too many devices for my Netgear Orbi mesh networking system to handle, so I had to upgrade to a business grade solution.
+
+Pros:
+* Rock solid WiFi all throughout the downstairs.
+* Wife and kids don't complain about the WiFi anymore!
+Cons:
+* Requires a long Ethernet cable run to each Access Point.
+
+### Z-Wave
+I have decided that I prefer the look of the GE Z-Wave in-wall dimmers and switches over the four button Insteon dimmers because they are easier for guests to understand.
 
 ## Inspiration
 The following are just some of the people that have inspired my smart home.
