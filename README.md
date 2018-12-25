@@ -5,6 +5,9 @@
 [![Discord][discord-shield]][discord]
 [![Community Forum][forum-shield]][forum]
 
+## Lovelace Interface
+![home][lovelace-0] ![wakeup][lovelace-3]
+
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs, I eventually moved away from the platform altogether.
 
@@ -58,26 +61,28 @@ I just learned of Franck recently, but he is a long time member of the community
 * YouTube: [Frenk's Channel][frenk-youtube]
 
 
+[lovelace-0]: ./README-images/IMG_0365.png
+[lovelace-3]: ./README-images/IMG_0367.png
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/brianhanifin/Home-AssistantConfig.svg
 [commits]: https://github.com/brianhanifin/Home-AssistantConfig/commits/master
-[github-last-commit]:https://img.shields.io/github/last-commit/BrianHanifin/Home-AssistantConfig.svg?style=plasticr
-[github-master]:https://github.com/BrianHanifin/Home-AssistantConfig/commits/master
+[github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-AssistantConfig.svg?style=plasticr
+[github-master]: https://github.com/BrianHanifin/Home-AssistantConfig/commits/master
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg
 [discord]: https://discord.gg/c5DvZ4e
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg
-[forum]: https://community.home-assistant.io/?u=BrianHanifin
+[forum]: https://community.home-assistant.io/u/brianhanifin/summary
 [hue-strip-guide]:https://char.gd/blog/2018/building-better-cheaper-philips-hue-led-strips
-[travis-build-status]:https://travis-ci.org/brianhanifin/Home-AssistantConfig
-[travis-build-status-shield]:https://travis-ci.org/brianhanifin/Home-AssistantConfig.svg?branch=master
+[travis-build-status]: https://travis-ci.org/brianhanifin/Home-AssistantConfig
+[travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-AssistantConfig.svg?branch=master
 
-[carlo-blog]:https://www.vcloudinfo.com
-[carlo-github]:https://github.com/CCOSTAN/Home-AssistantConfig
-[carlo-youtube]:https://YouTube.com/vCloudInfo
+[carlo-blog]: https://www.vcloudinfo.com
+[carlo-github]: https://github.com/CCOSTAN/Home-AssistantConfig
+[carlo-youtube]: https://YouTube.com/vCloudInfo
 
-[drzzs-github]:https://github.com/Snipercaine
-[drzzs-youtube]:https://www.youtube.com/channel/UC7G4tLa4Kt6A9e3hJ-HO8ng
+[drzzs-github]: https://github.com/Snipercaine
+[drzzs-youtube]: https://www.youtube.com/channel/UC7G4tLa4Kt6A9e3hJ-HO8ng
 
-[frenk-github]:https://github.com/frenck/home-assistant-config/
-[frenk-youtube]:https://www.youtube.com/user/Frenck
-[frenk-youtube-config]:https://youtu.be/lndeybw21PY
+[frenk-github]: https://github.com/frenck/home-assistant-config/
+[frenk-youtube]: https://www.youtube.com/user/Frenck
+[frenk-youtube-config]: https://youtu.be/lndeybw21PY
