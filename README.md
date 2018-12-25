@@ -6,7 +6,7 @@
 [![Community Forum][forum-shield]][forum]
 
 ## Lovelace Interface
-![home][lovelace-0] ![wakeup][lovelace-3]
+![home][lovelace-0] ![wakeup][lovelace-2]
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs, I eventually moved away from the platform altogether.
@@ -61,8 +61,8 @@ I just learned of Franck recently, but he is a long time member of the community
 * YouTube: [Frenk's Channel][frenk-youtube]
 
 
-[lovelace-0]: ./README-images/IMG_0365.png
-[lovelace-3]: ./README-images/IMG_0367.png
+[lovelace-0]: ./README-images/0.png
+[lovelace-2]: ./README-images/2.png
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/brianhanifin/Home-AssistantConfig.svg
 [commits]: https://github.com/brianhanifin/Home-AssistantConfig/commits/master
