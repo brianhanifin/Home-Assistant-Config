@@ -8,6 +8,8 @@
 ## Lovelace Interface
 ![home][lovelace-0] ![wakeup][lovelace-2]
 
+---
+
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs, I eventually moved away from the platform altogether.
 
@@ -58,6 +60,8 @@ Cons:
 ### Z-Wave
 I have decided that I prefer the look of the GE Z-Wave in-wall dimmers and switches over the four button Insteon dimmers because they are easier for guests to understand.
 
+---
+
 ## Inspiration
 The following are just some of the people that have inspired my smart home.
 
@@ -76,6 +80,10 @@ I wish I could be more like this guy. He is just so darn positive and happy all 
 I just learned of Franck recently, but he is a long time member of the community. I just refactored my code to be similar to his config ([as discussed in this video][frenk-youtube-config]).
 * Github: [Frenck's Home Assistant Configuration][frenk-github]
 * YouTube: [Frenk's Channel][frenk-youtube]
+
+---
+
+All of my configuration files are tested against the most stable version of home-assistant using [Travis][travis-build-status].
 
 
 [lovelace-0]: ./README-images/0.png
