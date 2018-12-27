@@ -2,13 +2,12 @@
 # Turn the hot water pump off after the defined amount of time.
 #
 alias: hot_water_pump_timeout
+initial_state: true
 trigger:
-  platform: state
-  entity_id: switch.sonoff_pow01
-  from: "off"
-  to: "on"
-  # for:
-  #   minutes: 5
+  # switch.sonoff_pow01
+  platform: mqtt
+  topic: "stat/sonoff_pow01/POWER"
+  payload: "ON"
 action:
   - delay: 00:05:00
   - service: switch.turn_off
