@@ -12,12 +12,17 @@ cards:
       - type: horizontal-stack
         cards:
           - type: custom:button-card
-            action: toggle
+            action: service
             color_type: card
             color: rgb(66, 134, 244)
-            entity: light.bedroom_lights_group
+            entity: light.nerenes_light
             icon: mdi:hotel
             name: Bedroom
+            service:
+              domain: script
+              action: turn_on
+              data:
+                entity_id: script.toggle_bedroom_lights
           - type: custom:button-card
             action: toggle
             color_type: card
@@ -38,23 +43,28 @@ cards:
             action: toggle
             color_type: card
             color: rgb(66, 134, 244)
-            entity: light.family_room_lights_group
+            entity: light.family_room_light
             icon: mdi:television
             name: Family
           - type: custom:button-card
             action: toggle
             color_type: card
             color: rgb(66, 134, 244)
-            entity: light.granny_flat_lights_group
+            entity: light.granny_flat_light
             icon: mdi:account-supervisor
             name: Granny
           - type: custom:button-card
-            action: toggle
+            action: service
             color_type: card
             color: rgb(66, 134, 244)
-            entity: light.kitchen_lights_group
+            entity: switch.kitchen_light
             icon: mdi:stove
             name: Kitchen
+            service:
+              domain: script
+              action: turn_on
+              data:
+                entity_id: script.toggle_kitchen_lights
       - type: horizontal-stack
         cards:
           - type: custom:button-card
@@ -68,9 +78,9 @@ cards:
             action: toggle
             color_type: card
             color: rgb(66, 134, 244)
-            entity: light.outdoor_lighting_group
+            entity: switch.landscape_lights
             icon: mdi:tree
-            name: Outdoor
+            name: Landscape
           - type: custom:button-card
             action: toggle
             color_type: card
