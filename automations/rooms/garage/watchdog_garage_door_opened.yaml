@@ -9,9 +9,16 @@ trigger:
 action:
   - service: light.turn_on
     data:
-      entity_id: light.garage_entry_light
+      entity_id: light.garage_entry
       brightness_pct: 75
       effect: "colorloop"
+      flash: "long"
+  - service: light.turn_on
+    data:
+      entity_id: light.family_room_table_lamp
+      brightness_pct: 100
+      effect: "colorloop"
+      flash: "long"
 
   # If after 5 minutes the garage is still open, dim the light.
   - delay: "0:05:00"
@@ -20,6 +27,6 @@ action:
     state:     'open'
   - service: light.turn_on
     data:
-      entity_id: light.garage_entry_light
+      entity_id: light.alert_group
       brightness_pct: 20
       transition: 5
