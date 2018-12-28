@@ -1,0 +1,12 @@
+---
+platform: template
+sensors:
+  wakeup_nerene_10min_early:
+    friendly_name: Light Fade-in Start
+    icon_template: mdi:lightbulb-on-outline
+    value_template: >-
+      {%if (states("input_number.wakeup_nerene_minutes") | int >= 10) %}
+       {{ "%0.02d:%0.02d" | format(states("input_number.wakeup_nerene_hour") | int, states("input_number.wakeup_nerene_minutes") | int -10) }}
+      {% else %}
+       {{ "%0.02d:%0.02d" | format(states("input_number.wakeup_nerene_hour") | int -1, states("input_number.wakeup_nerene_minutes") | int +50) }}
+      {% endif %}

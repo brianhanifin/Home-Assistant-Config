@@ -2,7 +2,8 @@
 alias: wakeup_nerene
 trigger:
   platform: template
-  value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
+  #value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
+  value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_nerene_10min_early')|timestamp_custom('%H:%M', false) }}"
 condition:
   condition: and
   conditions:
@@ -31,7 +32,7 @@ action:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "DEBUG"
-  #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
+  #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_nerene_10min_early')|timestamp_custom('%H:%M', false) }}"
 
   - service: script.turn_on
     entity_id: script.wakeup_nerene_activate
