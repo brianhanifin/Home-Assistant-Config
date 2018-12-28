@@ -75,12 +75,17 @@ cards:
             icon: mdi:gamepad-variant
             name: Living
           - type: custom:button-card
-            action: toggle
+            action: service
             color_type: card
             color: rgb(66, 134, 244)
             entity: switch.landscape_lights
             icon: mdi:tree
-            name: Landscape
+            name: Outdoor
+            service:
+              domain: script
+              action: turn_on
+              data:
+                entity_id: script.toggle_outdoor_lights
           - type: custom:button-card
             action: toggle
             color_type: card
