@@ -5,8 +5,11 @@ sensors:
     friendly_name: Light Fade-in Start
     icon_template: mdi:lightbulb-on-outline
     value_template: >-
-      {%if (states("input_number.wakeup_nerene_minutes") | int >= 10) %}
-       {{ "%0.02d:%0.02d" | format(states("input_number.wakeup_nerene_hour") | int, states("input_number.wakeup_nerene_minutes") | int -10) }}
-      {% else %}
-       {{ "%0.02d:%0.02d" | format(states("input_number.wakeup_nerene_hour") | int -1, states("input_number.wakeup_nerene_minutes") | int +50) }}
-      {% endif %}
+      {%  set wakeup_nerene_time    = states("input_datetime.wakeup_nerene_time") -%}
+      {%- set wakeup_nerene_hour    = wakeup_nerene_time.split(':')[0] -%}
+      {%- set wakeup_nerene_minutes = wakeup_nerene_time.split(':')[1] -%}
+      {%- if (wakeup_nerene_minutes | int >= 10) -%}
+       {{ "%0.02d:%0.02d"|format(wakeup_nerene_hour|int, wakeup_nerene_minutes|int -10) }}
+      {%- else -%}
+       {{ "%0.02d:%0.02d"|format(wakeup_nerene_hour|int -1, wakeup_nerene_minutes|int +50) }}
+      {%- endif -%}

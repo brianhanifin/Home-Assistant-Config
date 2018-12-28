@@ -2,6 +2,7 @@
 title: Wakeup
 path: wakeup
 icon: mdi:alarm
+#icon: fas:stopwatch
 cards:
   - type: vertical-stack
     cards:
@@ -14,12 +15,13 @@ cards:
           - type: entities
             show_header_toggle: false
             entities:
-              - input_boolean.wakeup_nerene_status
-              - input_number.wakeup_nerene_hour
-              - input_number.wakeup_nerene_minutes
-              - type: divider
-              - sensor.wakeup_nerene_time
-              - sensor.wakeup_nerene_10min_early
+              - entity: input_boolean.wakeup_nerene_status
+                icon: fas:bell
+              - type: custom:time-input-row
+                entity: input_datetime.wakeup_nerene_time
+                icon: fas:clock
+              - entity: sensor.wakeup_nerene_10min_early
+                icon: far:lightbulb
 
       - type: horizontal-stack
         cards:
@@ -79,12 +81,13 @@ cards:
           - type: entities
             show_header_toggle: false
             entities:
-              - input_boolean.wakeup_brian_status
-              - input_number.wakeup_brian_hour
-              - input_number.wakeup_brian_minutes
-              - type: divider
-              - sensor.wakeup_brian_time
-              - sensor.wakeup_brian_10min_early
+              - entity: input_boolean.wakeup_brian_status
+                icon: fas:bell
+              - type: custom:time-input-row
+                entity: input_datetime.wakeup_brian_time
+                icon: fas:clock
+              - entity: sensor.wakeup_brian_10min_early
+                icon: far:lightbulb
 
       - type: horizontal-stack
         cards:

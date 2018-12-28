@@ -5,5 +5,7 @@ sensors:
     friendly_name: Wakeup Time
     icon_template: mdi:clock-outline
     value_template: >-
-      {% set wakeup_nerene_time = "%0.02d:%0.02d" | format(states('input_number.wakeup_nerene_hour')|int, states('input_number.wakeup_nerene_minutes')|int) %}
-      {{ wakeup_nerene_time | timestamp_custom('%H:%M', false) }}
+      {%  set wakeup_nerene_time    = states("input_datetime.wakeup_nerene_time") -%}
+      {%- set wakeup_nerene_hour    = wakeup_nerene_time.split(':')[0] -%}
+      {%- set wakeup_nerene_minutes = wakeup_nerene_time.split(':')[1] -%}
+      {{ "%0.02d:%0.02d" | format(wakeup_nerene_hour|int, wakeup_nerene_minutes|int) }}
