@@ -1,14 +1,15 @@
 ---
 ######################################################################################################
-#  Call "notify_ios" like this:
+#  Call "notify_ios_attachment" like this:
 #    action:
-#      service: script.notify_ios
+#      service: script.notify_ios_attachment
 #      data_template:
-#        title: 'Startup: Home Assistant is Up and Running!'
-#        message: "{{ trigger.to_state.state }}"
-#        who: "brian | nerene | lucas | kyle | family | parents"
+#        title: 'Front Door Motion'
+#        message: "Here's a photo."
+#        who: "brian"
+#        file: "/local/downloads/snapshot_front_doorbell.jpg"
 ######################################################################################################
-notify_ios:
+notify_ios_attachment:
   sequence:
     - condition: state
       entity_id: input_boolean.ios_notifications
@@ -34,4 +35,7 @@ notify_ios:
         {% endif %}
       data_template:
         title: "{{ title }}"
-        message: "{{ message }}"
+        message: "{{ message }} https://hass.home.brianhanifin.com{{ file }}"
+        data:
+          attachment:
+            url: "https://hass.home.brianhanifin.com{{ file }}"
