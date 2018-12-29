@@ -1,8 +1,9 @@
 ---
-alias: wakeup_brian
+alias: wakeup_brian_10min_early
 trigger:
   platform: template
-  value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
+  #value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
+  value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_10min_early')|timestamp_custom('%H:%M', false) }}"
 condition:
   condition: and
   conditions:
@@ -31,17 +32,16 @@ action:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "DEBUG"
-  #     message: "automation.wakeup_brian {{ states('sensor.wakeup_brian')|timestamp_custom('%H:%M', false) }}"
+  #     message: "automation.wakeup_brian_10min_early {{ states('sensor.wakeup_brian_10min_early')|timestamp_custom('%H:%M', false) }}"
 
-  # Alexa, wake me up!
-  - service: script.turn_on
-    entity_id: script.notify_speech
-    data:
-      media_player: "media_player.master_bedroom"
-      message: "Good morning, Brian. It is time to get the boys to school."
-
-  # Restore bedroom light sync and time based dimmers after a delay.
-  - service: input_boolean.turn_on
+  # Disable bedroom light sync and time based dimmers temporarily.
+  - service: input_boolean.turn_off
     entity_id: input_boolean.bedroom_light_sync_enabled
-  - service: input_boolean.turn_on
+  - service: input_boolean.turn_off
     entity_id: input_boolean.time_based_dimmers_enabled
+
+  # Time to turn on the lights!
+  - service: script.turn_on
+    entity_id: script.wakeup_brian_light_start
+  - service: scene.turn_on
+    entity_id: scene.wakeup_brian
