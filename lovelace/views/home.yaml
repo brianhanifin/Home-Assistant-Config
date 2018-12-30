@@ -12,88 +12,88 @@ cards:
         name: Lights
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: service
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.nerenes_light
             icon: mdi:hotel
             name: Bedroom
-            service:
-              domain: script
-              action: turn_on
-              data:
-                entity_id: script.toggle_bedroom_lights
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: service
+              service: script.turn_on
+              service_data: script.toggle_bedroom_lights
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: light.dining_room_light
             icon: mdi:food
             name: Dining
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: light.entry_light
             icon: mdi:door
             name: Entry
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.family_room_light
             icon: mdi:television
             name: Family
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: light.granny_flat_light
             icon: mdi:account-supervisor
             name: Granny
-          - type: custom:button-card
-            action: service
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: switch.kitchen_light
             icon: mdi:stove
             name: Kitchen
-            service:
-              domain: script
-              action: turn_on
-              data:
-                entity_id: script.toggle_kitchen_lights
+            tap_action:
+              action: service
+              service: script.turn_on
+              service_data: script.toggle_kitchen_lights
+            hold_action:
+              action: more-info
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.living_room_light
             icon: mdi:gamepad-variant
             name: Living
-          - type: custom:button-card
-            action: service
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: switch.landscape_lights
             icon: mdi:tree
             name: Outdoor
-            service:
-              domain: script
-              action: turn_on
-              data:
-                entity_id: script.toggle_outdoor_lights
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: service
+              service: script.turn_on
+              service_data: script.toggle_outdoor_lights
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: light.christmas_tree_lights
             icon: mdi:pine-tree
-            name: Xmas.Tree
+            name: Xmas
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
 
   - type: vertical-stack
     cards:
@@ -103,87 +103,66 @@ cards:
         name: Devices
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: service
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: lock.front_door
             icon: mdi:lock-smart
-            service:
-              domain: script
-              action: turn_on
-              data:
-                entity_id: script.toggle_front_door_lock
-            show_state: true
-            state:
-              - value: 'locked'
-                color: var(--disabled-text-color)
-              - value: 'unlocked'
-                color: rgb(66, 134, 244)
-          - type: custom:button-card
-            action: service
-            color_type: card
-            color: rgb(66, 134, 244)
+            name: Lock
+            tap_action:
+              action: service
+              service: script.turn_on
+              service_data: script.toggle_front_door_lock
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: cover.garage_door
             icon: mdi:garage
-            service:
-              domain: script
-              action: turn_on
-              data:
-                entity_id: script.toggle_garage_door
-            show_state: true
-            state:
-              - value: 'closed'
-                color: var(--disabled-text-color)
-                icon: mdi:garage
-              - value: 'closing'
-                color: rgb(66, 134, 244)
-                icon: mdi:garage-open
-              - value: 'open'
-                color: rgb(66, 134, 244)
-                icon: mdi:garage-open
-              - value: 'opening'
-                color: rgb(66, 134, 244)
-                icon: mdi:garage-open
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            name: Garage
+            tap_action:
+              action: service
+              service: script.turn_on
+              service_data: script.toggle_garage_door
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: switch.master_bedroom_fan
             icon: mdi:fan 
             name: Bedroom
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: switch.family_room_fan
             icon: mdi:fan
             name: Family
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: switch.hot_water_pump
             icon: mdi:hot-tub
             name: Hot.Water
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
           - type: "custom:button-card"
             color_type: blank-card
-          - type: custom:button-card
-            action: more_info
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: climate.home
             icon: mdi:thermostat
             name: House
-          - type: custom:button-card
-            action: more_info
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: more-info
+          - type: entity-button
             entity: climate.goez
             icon: mdi:thermostat
             name: Granny
+            tap_action:
+              action: more-info
 
   - type: vertical-stack
     cards:
@@ -195,20 +174,26 @@ cards:
         cards:
           - type: "custom:button-card"
             color_type: blank-card
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: script.goodbye_routine
             icon: mdi:exit-run
             name: Bye
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: service
+              service: script.turn_on
+              service_data: script.goodbye_routine
+            hold_action:
+              action: more-info
+          - type: entity-button
             entity: script.goodnight_routine
             icon: mdi:weather-night
             name: Night
+            tap_action:
+              action: service
+              service: script.turn_on
+              service_data: script.goodnight_routine
+            hold_action:
+              action: more-info
           - type: "custom:button-card"
             color_type: blank-card
   
