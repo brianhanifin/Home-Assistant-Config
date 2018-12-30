@@ -16,12 +16,17 @@ action:
     data:
       entity_id: light.family_room_table_lamp 
       brightness_pct: 100
-      color_name: red
+      color_name: green
   - delay: "0:00:05"
   - service: light.turn_on
     data:
       entity_id: "light.family_room_table_lamp, light.garage_entry_light"
-      flash: "long"
+      flash: "short"
+  - delay: "0:00:01"
+  - service: light.turn_on
+    data:
+      entity_id: "light.family_room_table_lamp, light.garage_entry_light"
+      flash: "short"
 
   # If after 5 minutes the garage is still open, dim the light.
   - delay: "0:05:00"
