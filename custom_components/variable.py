@@ -11,7 +11,7 @@ from homeassistant.exceptions import TemplateError
 from homeassistant.loader import bind_hass
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_component import EntityComponent
-from homeassistant.helpers.restore_state import async_get_last_state
+from homeassistant.helpers.restore_state import RestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,8 +62,7 @@ def set_variable(hass, variable, value, value_template, attributes, attributes_t
         ATTR_REPLACE_ATTRIBUTES: replace_attributes,
     })
 
-@asyncio.coroutine
-def async_setup(hass, config):
+async def async_setup(hass, config):
     """Set up variables."""
     component = EntityComponent(_LOGGER, DOMAIN, hass)
 
@@ -106,10 +105,10 @@ def async_setup(hass, config):
         DOMAIN, SERVICE_SET_VARIABLE, async_set_variable_service,
         schema=SERVICE_SET_VARIABLE_SCHEMA)
 
-    yield from component.async_add_entities(entities)
+    await component.async_add_entities(entities)
     return True
 
-class Variable(Entity):
+class Variable(RestoreEntity):
     """Representation of a variable."""
 
     def __init__(self, variable_id, name, value, attributes, restore):
@@ -120,11 +119,11 @@ class Variable(Entity):
         self._attributes = attributes
         self._restore = restore
 
-    @asyncio.coroutine
-    def async_added_to_hass(self):
+    async def async_added_to_hass(self):
         """Run when entity about to be added."""
+        await super().async_added_to_hass()
         if self._restore == True:
-            state = yield from async_get_last_state(self.hass, self.entity_id)
+            state = await self.async_get_last_state()
             if state:
                 self._value = state.state
 
