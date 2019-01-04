@@ -4,15 +4,13 @@ initial_state: True
 trigger:
   - platform: state
     entity_id: cover.garage_door
-    #from: 'open'
+    from: 'open'
     to: 'closed'
 action:
-  - service: light.turn_on
-    data:
-      entity_id: light.family_room_table_lamp
-      brightness_pct: 100
-      kelvin: 5000
-  - delay: "0:00:15"
+  # Restore previous light state.
+  # - service: script.turn_on
+  #   data_template:
+  #     entity_id: "script.family_room_table_lamp_{{ states('variable.family_room_table_lamp_previous_state') }}"
   - service: light.turn_off
     entity_id: light.garage_entry_light
   - service: light.turn_off

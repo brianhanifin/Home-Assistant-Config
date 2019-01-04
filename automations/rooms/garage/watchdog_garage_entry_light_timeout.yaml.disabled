@@ -1,6 +1,7 @@
 ---
 # Make sure light doesn't stay on after garage is closed
 alias: watchdog_garage_entry_light_timeout
+initial_state: True
 trigger:
   platform: time
   minutes: '/05'
@@ -11,5 +12,5 @@ action:
     state:     'closed'
   - service: light.turn_off
     entity_id: light.garage_entry_light
-  - service: light.turn_off
-    entity_id: light.family_room_table_lamp
+  # - service: light.turn_off
+  #   entity_id: light.family_room_table_lamp

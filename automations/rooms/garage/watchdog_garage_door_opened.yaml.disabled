@@ -7,6 +7,16 @@ trigger:
     #from: 'closed'
     to: 'opening'
 action:
+  # Store current light states.
+  - service: variable.set_variable
+    data_template:
+      variable: family_room_table_lamp_previous_state
+      value_template: "{{ states('light.family_room_table_lamp') }}"
+      attributes:
+        brightness: "{{ state_attr('light.family_room_table_lamp', 'brightness') }}"
+        color_temp: "{{ state_attr('light.family_room_table_lamp', 'color_temp') }}"
+        rgb_color: "{{ state_attr('light.family_room_table_lamp', 'rgb_color') }}"
+
   - service: light.turn_on
     data:
       entity_id: light.garage_entry_light
