@@ -34,6 +34,11 @@ I maintain a list of close and extended family member's phones to track using NM
 
 Based on DrZzs recommendation I switch presence tracking for my and my wife's phones to Life360. This has made me comfortable enough to do things like having Home Assistant close the garage door if one of us leaves the home zone. This covers us for those few times we may forget to close the door before driving away! :)
 
+### Smoke + Carbon Monoxide Detectors
+Thanks to Carlo's article "[PSA: CHECK OUT YOUR SMOKE DETECTORS (ONCE EVERY 10 YEARS)][carlo-blog-smoke]" I realized that I have lived in my house for almost 11 years now, and we're due for new smoke detectors.
+
+I have added 6 of these around the house and setup an iOS alert to alert my and my wife's phones should the Smoke or CO sensor be triggered anywhere in the house. As they are interconnected they all appear as one device in Wink and Home Assistant! :)
+
 ### SonOff with Tasmota
 I replaced my HomeKit smart plugs with various SonOff plugs with Tasmota installed.
 
@@ -57,6 +62,9 @@ Pros:
 Cons:
 * Requires a long Ethernet cable run to each Access Point.
 
+### Wink Hub
+I picked up an inexpensive version 1 Wink Hub so I could add Z-Wave devices and replace my Lutron Hub. I have now added Kidee Smoke + Carbon Monoxide detectors as well.
+
 ### Z-Wave
 I have decided that I prefer the look of the GE Z-Wave in-wall dimmers and switches over the four button Insteon dimmers because they are easier for guests to understand.
 
@@ -77,9 +85,9 @@ I wish I could be more like this guy. He is just so darn positive and happy all 
 * YouTube: [DrZzs Channel][drzzs-youtube]
 
 ### Frenk
-I just learned of Franck recently, but he is a long time member of the community. I just refactored my code to be similar to his config ([as discussed in this video][frenk-youtube-config]).
-* Github: [Frenck's Home Assistant Configuration][frenk-github]
-* YouTube: [Frenk's Channel][frenk-youtube]
+I just learned of Franck recently, but he is a long time member of the community. I just refactored my code to be similar to his config ([as discussed in this video][frenck-youtube-config]).
+* Github: [Frenck's Home Assistant Configuration][frenck-github]
+* YouTube: [Frenck's Channel][frenck-youtube]
 
 ---
 
@@ -104,10 +112,11 @@ All of my configuration files are tested against the most stable version of home
 [carlo-blog]: https://www.vcloudinfo.com
 [carlo-github]: https://github.com/CCOSTAN/Home-AssistantConfig
 [carlo-youtube]: https://YouTube.com/vCloudInfo
+[carlo-blog-smoke]: https://www.vcloudinfo.com/2017/06/psa-check-out-your-smoke-detectors-once.html
 
 [drzzs-github]: https://github.com/Snipercaine
 [drzzs-youtube]: https://www.youtube.com/channel/UC7G4tLa4Kt6A9e3hJ-HO8ng
 
-[frenk-github]: https://github.com/frenck/home-assistant-config/
-[frenk-youtube]: https://www.youtube.com/user/Frenck
-[frenk-youtube-config]: https://youtu.be/lndeybw21PY
+[frenck-github]: https://github.com/frenck/home-assistant-config/
+[frenck-youtube]: https://www.youtube.com/user/Frenck
+[frenck-youtube-config]: https://youtu.be/lndeybw21PY
