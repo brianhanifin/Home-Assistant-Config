@@ -1,0 +1,121 @@
+  >
+  {# BRIEFING MACROS #}
+  {%- macro goodbye_line() -%}
+    {{ [
+      "Adios! ",
+      "Bye Guys! ",
+      "See ya! " ,
+      "See you later. ",
+      "Until next time!",
+      "How lucky I am to have something that makes saying Goodbye so hard. ",
+      "Good friends never say goodbye, they simply say, see you soon! "
+    ]|random }}
+  {%- endmacro -%}
+
+  {%- macro goodnight_line() -%}
+    {{ [
+      "Goodnight, talk to you tomorrow. ",
+      "Goodnight sweetheart, now its time to go. "
+    ]|random }}
+  {%- endmacro -%}
+
+  {%- macro greeting_line() -%}
+    {%- set hour = now().strftime('%H')|int -%}
+    {# Midnight to 10am #}
+    {%- if hour > 0 and hour < 10  %}
+      Good morning.
+    {# 10am to 5pm #}
+    {%- elif hour >= 10 and hour < 17 %}
+      Good afternoon.
+    {# 5pm - Midnight #}
+    {%- else %}
+      Good evening.
+    {%- endif %}
+  {%- endmacro -%}
+
+  {%- macro greeting_sentence(person) -%}
+    {{ [
+    "Welcome back home " ~ person,
+    "Guess who is home?" ~ person +" is!",
+    person + " is now in the house.",
+    "Welcome Home " ~ person + ".  We have missed you. Or at least Pepper did.",
+    "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person,
+    "Life is like a song, you’re back where you belong. Welcome home " ~ person,
+    "Hey there " ~ person + " Welcome Home!",
+    "Knock Knock. Who is There? "   ~ person +" is!",
+    "The garage door opener just told me that "   ~ person +" is home.",
+    person + " can not hide from the system. Welcome home.",
+    person ~ "! You are home!",
+    "I know a secret! "  ~ person +" is home!",
+    "Hey "  ~ person +". Your arrival has been recorded by the Smartest house on the block.",
+    "Take note Pepper! "  ~ person +" is home.",
+    "I am sensing a disturbance in the force. "  ~ person +" must be home!",
+    "And the house becomes a home. Welcome back " ~ person,
+    person + " is now here.  Hash tag Welcome Home.",
+    person + " is now here.  Hash tag Home.",
+    person + " is now here.  Hash tag Smart Home.",
+    "Just a quick announcement. " ~ person +" has arrived!",
+    "Pardon the interruption but " ~ person +" is home!",
+    "My systems are picking up the presence of additional humans. " ~ person +" has been identified as home."
+    ] | random }}
+  {%- endmacro -%}
+
+  {%- macro inside_weather() -%}
+    Inside the house, it is {{ state_attr('weather.home', 'temperature') }} degrees with around {{ state_attr('weather.home', 'humidity') }} percent humidity.
+  {%- endmacro -%}
+
+  {%- macro outside_weather() -%}
+    Outside, it is going to be {{ state_attr('weather.home', 'forecast')[0]['temperature'] }}
+  {%- endmacro -%}
+
+
+  {# Initialize variables #}
+  {%- if personarriving is string -%}
+    {%- set say_greeting = "false" -%}
+  {%- endif -%}
+
+  {%- if say_goodbye == "true" -%}
+    {%- set say_greeting = "false" -%}
+  {%- else -%}
+    {%- set say_goodbye = "false" -%}
+  {%- endif -%}
+
+  {%- if say_goodnight == "true" -%}
+    {%- set say_greeting = "false" -%}
+  {%- else -%}
+    {%- set say_goodnight = "false" -%}
+  {%- endif -%}
+
+  {%- if say_greeting != "false" -%}
+    {%- set say_greeting = "true" -%}
+  {%- endif -%}
+
+
+  {# BRIEFING TEMPLATE #}
+  {%- if say_greeting == "true" -%}
+     {{ greeting_line() + " " }}
+  {%- endif -%}
+
+  {%- if personarriving is string -%}
+    {{ greeting_sentence(personarriving) }}
+  {%- endif -%}
+
+  {%- if message is string -%}
+    {{ message }}
+  {%- endif -%}
+
+  {%- if say_inside_weather == "true" -%}
+    inside_weather()
+  {%- endif -%}
+
+  {%- if say_outside_weather == "true" -%}
+    outside_weather()
+  {%- endif -%}
+
+  {%- if say_goodbye == "true" -%}
+     {{ ". " + goodbye_line() }}
+  {%- endif -%}
+
+  {%- if say_goodnight == "true" -%}
+    {{ ". " + goodnight_line() }}
+  {%- endif -%}
