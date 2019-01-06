@@ -1,0 +1,17 @@
+---
+############################################
+## Update the holiday sensors every morning.
+############################################
+alias: watchdog_smoke_alarm
+trigger:
+  platform: state
+  entity_id:
+    - binary_sensor.alarm_smoke_detected
+    - binary_sensor.alarm_co_detected
+  to: "on"
+action:
+  service: script.notify_ios
+  data_template:
+    title: "ALARM: {{ trigger.to_state.attributes.friendly_name }}"
+    message: "{{ trigger.to_state.attributes.friendly_name }}"
+    who: "parents"

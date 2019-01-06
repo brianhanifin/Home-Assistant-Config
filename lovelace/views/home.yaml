@@ -4,6 +4,25 @@ path: home
 icon: mdi:apps
 #icon: fas:th
 cards:
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.alarm_smoke_detected
+        state: "on"
+    card:
+      type: glance
+      title: SMOKE DETECTED!
+      entities:
+        - binary_sensor.alarm_smoke_detected
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.alarm_co_detected
+        state: "on"
+    card:
+      type: glance
+      title: CARBON MONOXIDE DETECTED!
+      entities:
+        - binary_sensor.alarm_co_detected
+
   - type: vertical-stack
     cards:
       - type: custom:button-card
