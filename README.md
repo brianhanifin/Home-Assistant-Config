@@ -11,7 +11,7 @@
 ---
 
 ## About our smart home
-I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs, I eventually moved away from the platform altogether.
+I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle is complete (thanks to the help of a power monitoring smart plug).
 
@@ -19,10 +19,13 @@ Home Assistant now manages our smart home devices with lots of intelligence hand
 We have two TV areas and both have hubs to manage switching inputs to all of the devices hooked up to them. I have setup scripts to give Alexa access to start activities or turn them off. "Alexa, turn on the Living Room TV."
 
 ### Insteon
-I started with HomeKit compatible *Insteon* in-wall dimmer switches and in-wall wireless remotes. The remotes are installed in several locations that otherwise would not have a light switch. Somehow our living room never had a light switch installed, now it does.
+I started with HomeKit compatible *Insteon* lamp dimmer modules. I plug a few... er... lamps into them. :)
+
+### Lutron
+Along with Inteon dimmer modules I also started installing *Lutron* in-wall dimmer switches and in-wall wireless remotes. The remotes are installed in several locations that otherwise would not have a light switch. Somehow our living room never had a light switch installed, now it does.
 
 ### Philips Hue
-Hue color bulbs for Porch Light and Garage Door Entry downlight. The former changes color based on the current national holiday (or family birthday/anniversary) while the later pulses changing colors to give us a heads up that the garage door is open. Two of my remaining six Hue bulbs are reserved for an additional two porch/entryway hanging lamps.
+Hue color bulbs for Porch Light, Garage Entry Light, and my Family Room Table Lamp. The Porch bulb changes color based on the current national holiday (or family birthday/anniversary) while the Garage Entry Light and Family Room Table Lamp flash briefly, then stay on to indicate certain events: such as the garage door is open, or Alexa is announcing it is time for the boys to go to bed. Two of my remaining five Hue bulbs are reserved for an additional two porch/entryway hanging lamps, so I can set 3 colors for each holiday! :)
 
 ### Philips Hue Compabile Light Strips
 I followed [this guide][hue-strip-guide] to build an inexpensive color changing light strip that is installed under our kitchen cabinets. This light is motion controlled, so we can fill our cup with water at night. The light gets brighter when either of the kitchen lights are turned on, and dim again when they are off.
