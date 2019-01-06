@@ -1,0 +1,17 @@
+---
+alias: guest_mode_on
+initial_state: True
+trigger:
+  - platform: state
+    entity_id:
+      - input_boolean.guest_mode
+    from: 'off'
+    to: 'on'
+action:
+  - service: script.say
+    data_template:
+      message: >
+        {{ [
+        "Guest Mode has been enabled for the rest of the day.",
+        "System Guest Mode has been enabled. I will minimize the amount of automation for today."
+        ] | random }}
