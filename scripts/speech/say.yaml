@@ -4,12 +4,21 @@ say:
     - condition: state
       entity_id: input_boolean.speech_notifications
       state: 'on'
-    - service: mqtt.publish
+
+    # - condition: time
+    #   after: '06:00:00'
+    #   before: '22:00:00'
+
+    - condition: or
+      conditions:
+        - condition: state
+          entity_id: group.family
+          state: 'home'
+        - condition: state
+          entity_id: input_boolean.guest_mode
+          state: 'on'
+
+    - service: script.speech_processing
       data_template:
-        topic: 'speech/last_message'
-        payload: "This message is from {{ now().strftime('%-I') }}:{{ now().strftime('%M') }} {{ now().strftime('%p') }}. {{ speech_message | truncate(254)}}"
-        retain: true
-    - service: media_player.alexa_tts
-      data_template:
-        entity_id: !include ../../templates/say/media_player.yaml
-        message: !include ../../templates/say/briefing.yaml
+        media_player: !include ../../templates/speech/media_player.yaml
+        briefing: !include ../../templates/speech/briefing.yaml

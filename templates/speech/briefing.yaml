@@ -21,19 +21,24 @@
 
   {%- macro greeting_line() -%}
     {%- set hour = now().strftime('%H')|int -%}
-    {# Midnight to 10am #}
     {%- if hour > 0 and hour < 10  %}
       Good morning.
-    {# 10am to 5pm #}
     {%- elif hour >= 10 and hour < 17 %}
       Good afternoon.
-    {# 5pm - Midnight #}
     {%- else %}
       Good evening.
     {%- endif %}
   {%- endmacro -%}
 
-  {%- macro greeting_sentence(person) -%}
+  {%- macro inside_weather() -%}
+    ... Inside the house, it is {{ state_attr('weather.home', 'temperature') }} degrees with around {{ state_attr('weather.home', 'humidity') }} percent humidity
+  {%- endmacro -%}
+
+  {%- macro outside_weather() -%}
+    ... Outside, the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature'] }} degrees
+  {%- endmacro -%}
+
+  {%- macro welcome_home(person) -%}
     {{ [
     "Welcome back home " ~ person,
     "Guess who is home?" ~ person +" is!",
@@ -60,62 +65,65 @@
     ] | random }}
   {%- endmacro -%}
 
-  {%- macro inside_weather() -%}
-    Inside the house, it is {{ state_attr('weather.home', 'temperature') }} degrees with around {{ state_attr('weather.home', 'humidity') }} percent humidity.
-  {%- endmacro -%}
 
-  {%- macro outside_weather() -%}
-    Outside, it is going to be {{ state_attr('weather.home', 'forecast')[0]['temperature'] }}
+  {# BRIEFING TEMPLATE #}
+  {%- macro get_briefing() -%}
+    {%- if say_greeting == "true" -%}
+       {{ greeting_line() + " " }}
+    {%- endif -%}
+
+    {%- if personarriving is not undefined -%}
+      {{ welcome_home(personarriving) }}
+    {%- endif -%}
+
+    {{ message }}
+
+    {%- if say_inside_weather == "true" -%}
+      {{ inside_weather() }}
+    {%- endif -%}
+
+    {%- if say_outside_weather == "true" -%}
+      {{ outside_weather() }}
+    {%- endif -%}
+
+    {%- if say_goodbye == "true" -%}
+       {{ " " + goodbye_line() }}
+    {%- endif -%}
+
+    {%- if say_goodnight == "true" -%}
+      {{ " " + goodnight_line() }}
+    {%- endif -%}
   {%- endmacro -%}
 
 
   {# Initialize variables #}
-  {%- if personarriving is string -%}
-    {%- set say_greeting = "false" -%}
-  {%- endif -%}
-
-  {%- if say_goodbye == "true" -%}
-    {%- set say_greeting = "false" -%}
-  {%- else -%}
+  {%- if say_goodbye is undefined -%}
     {%- set say_goodbye = "false" -%}
   {%- endif -%}
 
-  {%- if say_goodnight == "true" -%}
-    {%- set say_greeting = "false" -%}
-  {%- else -%}
+  {%- if say_goodnight is undefined -%}
     {%- set say_goodnight = "false" -%}
   {%- endif -%}
 
-  {%- if say_greeting != "false" -%}
-    {%- set say_greeting = "true" -%}
+  {%- if say_greeting is undefined -%}
+    {%- set say_greeting = "false" -%}
   {%- endif -%}
 
-
-  {# BRIEFING TEMPLATE #}
-  {%- if say_greeting == "true" -%}
-     {{ greeting_line() + " " }}
+  {%- if say_inside_weather is undefined -%}
+    {%- set say_inside_weather = "false" -%}
   {%- endif -%}
 
-  {%- if personarriving is string -%}
-    {{ greeting_sentence(personarriving) }}
-  {%- endif -%}
-
-  {%- if message is string -%}
-    {{ message }}
-  {%- endif -%}
-
-  {%- if say_inside_weather == "true" -%}
-    inside_weather()
-  {%- endif -%}
-
-  {%- if say_outside_weather == "true" -%}
-    outside_weather()
-  {%- endif -%}
-
-  {%- if say_goodbye == "true" -%}
-     {{ ". " + goodbye_line() }}
+  {%- if say_outside_weather is undefined -%}
+    {%- set say_outside_weather = "false" -%}
   {%- endif -%}
 
   {%- if say_goodnight == "true" -%}
-    {{ ". " + goodnight_line() }}
+    {%- set say_greeting = "false" -%}
   {%- endif -%}
+
+  {%- if personarriving is not undefined -%}
+    {%- set say_greeting = "false" -%}
+  {%- endif -%}
+
+  {#- Get briefing -#}
+  {{ get_briefing() }}

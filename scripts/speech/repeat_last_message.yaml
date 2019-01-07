@@ -1,0 +1,9 @@
+repeat_last_message:
+  sequence:
+    - service: homeassistant.update_entity
+      entity_id: sensor.last_message
+
+    - service: media_player.alexa_tts
+      data_template:
+        entity_id: !include ../../templates/speech/media_player.yaml
+        message: "{{ states('sensor.last_message') }}"

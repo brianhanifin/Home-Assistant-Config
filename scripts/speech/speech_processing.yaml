@@ -1,0 +1,12 @@
+speech_processing:
+  sequence:
+    - service: mqtt.publish
+      data_template:
+        topic: 'speech/last_message'
+        payload: "This message is from {{ now().strftime('%-I') }}:{{ now().strftime('%M') }} {{ now().strftime('%p') }}. {{ briefing | truncate(254)}}"
+        retain: true
+
+    - service: media_player.alexa_tts
+      data_template:
+        entity_id: "{{ media_player }}"
+        message: "{{ briefing }}"
