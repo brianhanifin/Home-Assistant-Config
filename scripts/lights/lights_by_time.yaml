@@ -3,7 +3,7 @@
 ## Light brightness adjusts based on time
 ############################################
 lights_by_time:
-  alias: "Function: Set Light Brightness By Time Smartly"
+  #alias: "Set Light Brightness By Time Smartly"
   sequence:
     # Only adjust light brightness if someone is home and the Time Based Dimmers are enabled.
     - condition: template
@@ -14,18 +14,25 @@ lights_by_time:
       value_template: "{{ states.input_boolean.guest_mode.state == 'off' }}"
 
     # Update the brightness sensor.
-    - service: homeassistant.update_entity
-      entity_id: sensor.light_brightness
+    # - service: homeassistant.update_entity
+    #   entity_id: sensor.light_brightness
+    
+    # Update the brightness value.
+    - service: script.turn_on
+      entity_id: script.light_brightness_update
     
     # Adjust the brightness.
     - service: light.turn_on
       data_template:
+        # brightness: >
+        #   {{ states('sensor.light_brightness') }}
         brightness: >
-          {{ states('sensor.light_brightness') }}
+          {{ states('variable.light_brightness') }}
         entity_id: >
           {% macro get_lights_to_change(brightness) -%}
             {%- for group in states.light|groupby('state') -%}
               {%- for entity in group.list -%}
+                {#- Omit light if its brightness is already lower than current setting. -#}
                 {%- if entity.state == 'on'
                     and state_attr(entity.entity_id, 'brightness') >= brightness|int
                     and entity.entity_id|lower != 'light.3a4e12'
@@ -51,8 +58,10 @@ lights_by_time:
           {%- if entity is string -%}
             {{ entity }}
           {%- else -%}
-            {%- set brightness = states('sensor.light_brightness') -%}
+            {#%- set brightness = states('sensor.light_brightness') -%#}
+            {%- set brightness = states('variable.light_brightness') -%}
             {%- set lights = get_lights_to_change(brightness)|trim|replace(' ', ',') -%}
+            {#- To avoid an error: set a dummy light in case no lights are returned. -#}
             {%- if lights|trim != "" -%}{%- set entity_id = lights -%}
             {%- else -%}{%- set entity_id = 'light.dummy' -%}
             {%- endif -%}
