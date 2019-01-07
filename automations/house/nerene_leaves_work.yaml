@@ -1,0 +1,22 @@
+---
+# Notify when Nerene leaves work.
+alias: nerene_leaves_work
+trigger:
+  platform: zone
+  event: leave
+  zone: zone.work
+  entity_id: device_tracker.nerene
+condition:
+  condition: time
+  after: '14:00'
+action:
+  - service: script.say
+    data_template:
+      media_player: "media_player.kitchen"
+      message: >
+        {{ [
+          "Just a head's up, mom is heading home from work.",
+          "Now would be a good time to straighten up. Your mom has just left work. ",
+          "Shhh... don't tell your brother... but mom is on her way home from work."
+        ]|random }}
+      say_greeting: "false"

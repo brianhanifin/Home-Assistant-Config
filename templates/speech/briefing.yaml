@@ -1,5 +1,14 @@
   >
   {# BRIEFING MACROS #}
+  {%- macro dark_outside() -%}
+    {{ [
+      'It is pretty dark outside. I will turn on the outside lights now.',
+      'It is a little past Sunset. Time to turn on the outside lights. I am on it.',
+      'I will switch on the outside lights. It is getting dark outside.',
+      'Time to turn on the front lights. I will take care of it.'
+    ]|random }}
+  {%- endmacro -%}
+
   {%- macro goodbye_line() -%}
     {{ [
       "Adios! ",
@@ -35,7 +44,21 @@
   {%- endmacro -%}
 
   {%- macro outside_weather() -%}
-    ... Outside, the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature'] }} degrees
+    ... Outside, today will be {{ state_attr('weather.home', 'forecast')[0]['condition'] }} ... the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature'] }} degrees
+  {%- endmacro -%}
+
+  {%- macro responsibilities() -%}
+    {% if now().strftime('%a') == 'Wed' or now().strftime('%a') == 'Sun' %}
+      Today is {{ now().strftime('%A') }} and {{ now().strftime('%A') }} is garbage day.
+    {% endif %}
+    {% if now().strftime('%a') == 'Wed' %}
+      Both Recycling and regular Garbage goes out. Please take out all of the garbage cans tonight.
+    {% endif %}
+    {% if now().strftime('%j')|int % 2 != 0 %}
+      Today is Justin's day to do the chores.
+    {% else %}
+      Today is Paige's day to do the chores.
+    {% endif %}
   {%- endmacro -%}
 
   {%- macro welcome_home(person) -%}
@@ -78,6 +101,10 @@
 
     {{ message }}
 
+    {%- if say_dark_outside == "true" -%}
+      {{ dark_outside() }}
+    {%- endif -%}
+
     {%- if say_inside_weather == "true" -%}
       {{ inside_weather() }}
     {%- endif -%}
@@ -85,6 +112,11 @@
     {%- if say_outside_weather == "true" -%}
       {{ outside_weather() }}
     {%- endif -%}
+
+    {%- if say_responsibilities == "true" -%}
+      {{ responsibilities() }}
+    {%- endif -%}
+
 
     {%- if say_goodbye == "true" -%}
        {{ " " + goodbye_line() }}
@@ -97,6 +129,10 @@
 
 
   {# Initialize variables #}
+  {%- if say_dark_outside is undefined -%}
+    {%- set say_dark_outside = "false" -%}
+  {%- endif -%}
+
   {%- if say_goodbye is undefined -%}
     {%- set say_goodbye = "false" -%}
   {%- endif -%}
@@ -113,8 +149,16 @@
     {%- set say_inside_weather = "false" -%}
   {%- endif -%}
 
+  {%- if say_light_check is undefined -%}
+    {%- set say_light_check = "false" -%}
+  {%- endif -%}
+
   {%- if say_outside_weather is undefined -%}
     {%- set say_outside_weather = "false" -%}
+  {%- endif -%}
+
+  {%- if say_responsibilities is undefined -%}
+    {%- set say_responsibilities = "false" -%}
   {%- endif -%}
 
   {%- if say_goodnight == "true" -%}

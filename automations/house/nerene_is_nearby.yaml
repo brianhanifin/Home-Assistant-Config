@@ -1,0 +1,22 @@
+---
+# Notify when Nerene is almost home!
+alias: nerene_is_nearby
+trigger:
+  platform: zone
+  event: enter
+  zone: zone.home
+  entity_id: device_tracker.nerene
+condition:
+  condition: time
+  after: '14:00'
+action:
+  - service: script.say
+    data_template:
+      media_player: "media_player.kitchen"
+      message: >
+        {{ [
+          "Mom is almost home. Be ready to give her a big hug after her long day! ",
+          "One of your favorite people is almost here! No, not aunt Melissa.  ",
+          "Guess what? ... Chicken butt. ... Oh, and mom is almost home. "
+        ]|random }}
+      say_greeting: "false"
