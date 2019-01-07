@@ -13,50 +13,16 @@ lights_by_time:
     - condition: template
       value_template: "{{ states.input_boolean.guest_mode.state == 'off' }}"
 
+    # Update the brightness sensor.
+    - service: homeassistant.update_entity
+      entity_id: sensor.light_brightness
+    
+    # Adjust the brightness.
     - service: light.turn_on
       data_template:
-        ##########################
-        # START  | END    | BRI  #
-        # ------ | ------ | ---- #
-        # 5am    | 8am    |  60% #
-        # 8am    | 7pm    | 100% #
-        # 7pm    | 7:30pm |  80% #
-        # 7:30pm | 8pm    |  60% #
-        # 8pm    | 8:30pm |  50% #
-        # 8:30pm | 9pm    |  40% #
-        # 9pm    | 5am    |  30% #
-        ##########################
         brightness: >
-          {% macro get_brightness() -%}
-            {%- set hour    = states("sensor.time").split(':')[0] | int -%}
-            {%- set minutes = states("sensor.time").split(':')[1] | int -%}
-            {%- if   hour >=  5 and hour <  8                   -%}{%- set brightness_pct = 60 -%}
-            {%- elif hour >=  8 and hour < 19                  -%}{%-  set brightness_pct = 100 -%}
-            {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}{%- set brightness_pct = 70 -%}
-            {%- elif hour >= 19 and minutes > 30 and hour < 20  -%}{%- set brightness_pct = 60 -%}
-            {%- elif hour >= 20 and minutes < 30 and hour < 21  -%}{%- set brightness_pct = 50 -%}
-            {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}{%- set brightness_pct = 40 -%}
-            {%- else                                            -%}{%- set brightness_pct = 30 -%}
-            {%- endif -%}
-            {%- set brightness = brightness_pct * 255 / 100 -%}
-            {{ brightness|int }}
-          {%- endmacro -%}
-          {{ get_brightness() }}
+          {{ states('sensor.light_brightness') }}
         entity_id: >
-          {% macro get_brightness() -%}
-            {%- set hour    = states("sensor.time").split(':')[0] | int -%}
-            {%- set minutes = states("sensor.time").split(':')[1] | int -%}
-            {%- if   hour >=  5 and hour <  8                   -%}{%- set brightness_pct = 60 -%}
-            {%- elif hour >=  8 and hour < 19                  -%}{%-  set brightness_pct = 100 -%}
-            {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}{%- set brightness_pct = 70 -%}
-            {%- elif hour >= 19 and minutes > 30 and hour < 20  -%}{%- set brightness_pct = 60 -%}
-            {%- elif hour >= 20 and minutes < 30 and hour < 21  -%}{%- set brightness_pct = 50 -%}
-            {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}{%- set brightness_pct = 40 -%}
-            {%- else                                            -%}{%- set brightness_pct = 30 -%}
-            {%- endif -%}
-            {%- set brightness = brightness_pct * 255 / 100 -%}
-            {{ brightness|int }}
-          {%- endmacro -%}
           {% macro get_lights_to_change(brightness) -%}
             {%- for group in states.light|groupby('state') -%}
               {%- for entity in group.list -%}
@@ -81,9 +47,14 @@ lights_by_time:
                 {%- endif -%}
               {%- endfor -%}
             {%- endfor -%}
-          {%- endmacro %}
-          {%- set lights = get_lights_to_change(get_brightness())|trim|replace(' ', ',') -%}
-          {%- if lights|trim != "" -%}{%- set entity_id = lights -%}
-          {%- else -%}{%- set entity_id = 'light.dummy' -%}
+          {%- endmacro -%}
+          {%- if entity is string -%}
+            {{ entity }}
+          {%- else -%}
+            {%- set brightness = states('sensor.light_brightness') -%}
+            {%- set lights = get_lights_to_change(brightness)|trim|replace(' ', ',') -%}
+            {%- if lights|trim != "" -%}{%- set entity_id = lights -%}
+            {%- else -%}{%- set entity_id = 'light.dummy' -%}
+            {%- endif -%}
+            {{ entity_id }}
           {%- endif %}
-          {{ entity_id }}

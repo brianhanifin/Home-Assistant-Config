@@ -8,11 +8,16 @@ trigger:
     above: '190'
     # Delay to avoid premature turn on flash.
     for:
-      seconds: 2
+      seconds: 5
 condition:
   - condition: state
     entity_id: input_boolean.bedroom_light_sync_enabled
     state: 'on'
+  # Verify it is still over 75% in case the time based dimmer routine activates.
+  - condition: numeric_state
+    entity_id: light.nerenes_light
+    value_template: '{{ state.attributes.brightness }}'
+    above: '190'
 action:
   - service: light.turn_on
     entity_id: light.3a76dc #light.brians_light

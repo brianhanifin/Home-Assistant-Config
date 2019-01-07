@@ -4,15 +4,11 @@
 ## turned on.
 ##############################################
 alias: lights_adjust_as_turned_on
-initial_state: False
+initial_state: off
 trigger:
   - platform: event
     event_type: state_changed
 condition:
-  # Only when this mode is enabled
-  - condition: state
-    entity_id: input_boolean.time_based_dimmers_enabled
-    state: 'on'
   # Only look at lights.
   - condition: template
     value_template: "{{ trigger.event.data is not none 
@@ -24,11 +20,6 @@ condition:
                     and trigger.event.data.new_state.state == 'on' }}"
   # Don't change these lights.
   - condition: template
-    # value_template: "{{ trigger.event.data.entity_id|lower != 'light.3a4f5b'
-    #                 and trigger.event.data.entity_id|lower != 'light.3a542c'
-    #                 and trigger.event.data.entity_id|lower != 'light.3a5e44'
-    #                 and trigger.event.data.entity_id|lower != 'light.3a76dc'
-    #                 and trigger.event.data.entity_id|lower != 'light.entry'
     value_template: "{{ trigger.event.data.entity_id|lower != 'light.entry'
                     and trigger.event.data.entity_id|lower != 'light.hue'
                     and trigger.event.data.entity_id|lower != 'light.porch'
@@ -38,6 +29,7 @@ condition:
                     and not (trigger.event.data.entity_id|lower).endswith('lamp')
                     and not (trigger.event.data.entity_id|lower).endswith('nightlight') }}"
 action:
-  - service: script.set_light_brightness_pct_by_time
+  - service: script.lights_by_time
     data_template:
-      entity: "{{ trigger.event.data.entity_id }}"
+      entity: >
+        {{ trigger.event.data.entity_id }}
