@@ -2,10 +2,10 @@
   {# BRIEFING MACROS #}
   {%- macro dark_outside() -%}
     {{ [
-      'It is pretty dark outside. I will turn on the outside lights now.',
-      'It is a little past Sunset. Time to turn on the outside lights. I am on it.',
-      'I will switch on the outside lights. It is getting dark outside.',
-      'Time to turn on the front lights. I will take care of it.'
+      'It is pretty dark outside.  ...  I will turn on the outside lights now.',
+      'It is a little past Sunset.  Time to turn on the outside lights.  ...  I am on it.',
+      'I will switch on the outside lights.  ...  It is getting dark outside.',
+      'Time to turn on the front lights.  ...  I will take care of it.'
     ]|random }}
   {%- endmacro -%}
 
@@ -48,43 +48,39 @@
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
-    {% if now().strftime('%a') == 'Wed' or now().strftime('%a') == 'Sun' %}
-      Today is {{ now().strftime('%A') }} and {{ now().strftime('%A') }} is garbage day.
-    {% endif %}
-    {% if now().strftime('%a') == 'Wed' %}
-      Both Recycling and regular Garbage goes out. Please take out all of the garbage cans tonight.
-    {% endif %}
-    {% if now().strftime('%j')|int % 2 != 0 %}
-      Today is Justin's day to do the chores.
+    {# Alternate poop pickup every other day. Give them Christmas Off. #}
+    {% if now().strftime('%j')|int % 2 != 0
+      and now().strftime('%j')|int != 358 %}
+      Today is Lucas' day to pickup the dookie.
     {% else %}
-      Today is Paige's day to do the chores.
+      Today is Kyle's day to pickup the dookie.
     {% endif %}
   {%- endmacro -%}
 
   {%- macro welcome_home(person) -%}
     {{ [
     "Welcome back home " ~ person,
-    "Guess who is home?" ~ person +" is!",
+    "Guess who is home?  ...  " ~ person +" is!",
     person + " is now in the house.",
-    "Welcome Home " ~ person + ".  We have missed you. Or at least Pepper did.",
-    "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person,
-    "Life is like a song, you’re back where you belong. Welcome home " ~ person,
-    "Hey there " ~ person + " Welcome Home!",
-    "Knock Knock. Who is There? "   ~ person +" is!",
+    "Welcome Home " ~ person + ".  ...  We have missed you.  ...  Or at least Pepper did.",
+    "Our home is now complete, Rest your head and relax your feet!  ...  Welcome Back " ~ person,
+    "Life is like a song, you’re back where you belong.  ...  Welcome home " ~ person,
+    "Hey there " ~ person + "  ...  Welcome Home!",
+    "Knock Knock.  ...  Who is There?  ... "   ~ person +" is!",
     "The garage door opener just told me that "   ~ person +" is home.",
-    person + " can not hide from the system. Welcome home.",
-    person ~ "! You are home!",
-    "I know a secret! "  ~ person +" is home!",
+    person + " can not hide from the system.  ... Welcome home.",
+    person ~ "!  ... You are home!",
+    "I know a secret! ... "  ~ person +" is home!",
     "Hey "  ~ person +". Your arrival has been recorded by the Smartest house on the block.",
-    "Take note Pepper! "  ~ person +" is home.",
-    "I am sensing a disturbance in the force. "  ~ person +" must be home!",
-    "And the house becomes a home. Welcome back " ~ person,
-    person + " is now here.  Hash tag Welcome Home.",
-    person + " is now here.  Hash tag Home.",
-    person + " is now here.  Hash tag Smart Home.",
+    "Take note Pepper!  ...  "  ~ person +" is home.",
+    "I am sensing a disturbance in the force.  ... "  ~ person +" must be home!",
+    "And the house becomes a home.  ...  Welcome back " ~ person,
+    person + " is now here.  ...  Hash tag Welcome Home.",
+    person + " is now here.  ...  Hash tag Home.",
+    person + " is now here.  ...  Hash tag Smart Home.",
     "Just a quick announcement. " ~ person +" has arrived!",
     "Pardon the interruption but " ~ person +" is home!",
-    "My systems are picking up the presence of additional humans. " ~ person +" has been identified as home."
+    "My systems are picking up the presence of additional humans.  ...  " ~ person +" has been identified as home."
     ] | random }}
   {%- endmacro -%}
 
