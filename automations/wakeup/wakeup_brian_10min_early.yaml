@@ -1,5 +1,6 @@
 ---
 alias: wakeup_brian_10min_early
+initial_state: on
 trigger:
   platform: template
   #value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
@@ -29,10 +30,10 @@ condition:
         {%- elif day_name == 'sunday'    and states.input_boolean.wakeup_brian_sun.state == 'on' -%}{{true}}
         {%- else -%}{{false}}{%- endif %}
 action:
-  # - service: persistent_notification.create
-  #   data_template:
-  #     title: "DEBUG"
-  #     message: "automation.wakeup_brian_10min_early {{ states('sensor.wakeup_brian_10min_early')|timestamp_custom('%H:%M', false) }}"
+  - service: persistent_notification.create
+    data_template:
+      title: "DEBUG"
+      message: "automation.wakeup_brian_10min_early {{ states('sensor.wakeup_brian_10min_early')|timestamp_custom('%H:%M', false) }}"
 
   # Disable bedroom light sync and time based dimmers temporarily.
   - service: input_boolean.turn_off
