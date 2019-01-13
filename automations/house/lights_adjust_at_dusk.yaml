@@ -14,12 +14,11 @@ condition:
     state: 'on'
 action:
   - service: homeassistant.turn_on
-    entity_id: light.christmas_lights
-  - service: homeassistant.turn_on
     entity_id: light.outdoor_lighting
+  - service: light.turn_on
+    entity_id: light.porch_light
   - service: script.turn_on
-    data:
-      entity_id: script.outdoor_light_holiday_coloring
+    entity_id: script.holiday_color_change
   - service: light.turn_on
     data:
       entity_id: light.entry_light
