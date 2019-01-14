@@ -3,7 +3,7 @@ Support to interface with Alexa Devices.
 
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
-VERSION 0.9.5
+VERSION 0.9.6
 """
 import logging
 
@@ -54,12 +54,16 @@ ALEXA_TTS_SCHEMA = MEDIA_PLAYER_SCHEMA.extend({
 })
 
 CONF_DEBUG = 'debug'
+CONF_INCLUDE_DEVICES = 'include_devices'
+CONF_EXCLUDE_DEVICES = 'exclude_devices'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
     vol.Required(CONF_URL): cv.string,
     vol.Optional(CONF_DEBUG, default=False): cv.boolean,
+    vol.Optional(CONF_INCLUDE_DEVICES, default=[]): vol.All(cv.ensure_list, [cv.string]),
+    vol.Optional(CONF_EXCLUDE_DEVICES, default=[]): vol.All(cv.ensure_list, [cv.string]),
 })
 
 
@@ -195,6 +199,8 @@ def setup_alexa(hass, config, add_devices_callback, login_obj):
     track_utc_time_change(hass, lambda now: update_devices(), second=30)
 
     url = config.get(CONF_URL)
+    include = config.get(CONF_INCLUDE_DEVICES)
+    exclude = config.get(CONF_EXCLUDE_DEVICES)
 
     @util.Throttle(MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_FORCED_SCANS)
     def update_devices():
@@ -210,6 +216,10 @@ def setup_alexa(hass, config, add_devices_callback, login_obj):
         new_alexa_clients = []
         available_client_ids = []
         for device in devices:
+            if include and device['accountName'] not in include:
+                continue
+            elif exclude and device['accountName'] in exclude:
+                continue
 
             for b_state in bluetooth['bluetoothStates']:
                 if device['serialNumber'] == b_state['deviceSerialNumber']:
@@ -264,11 +274,17 @@ class AlexaClient(MediaPlayerDevice):
         # Class info
         self.alexa_api = AlexaAPI(self, session, url)
 
+        # Supports get_last_device_serial()
+        self.alexa_api_session = session
+        self.alexa_api_url = url
+        
         self.update_devices = update_devices
         # Device info
         self._device = None
         self._device_name = None
         self._device_serial_number = None
+        self._last_device_serial_number = None
+        self._last_called = None
         self._device_type = None
         self._device_family = None
         self._device_owner_customer_id = None
@@ -319,6 +335,8 @@ class AlexaClient(MediaPlayerDevice):
         self._source = self._get_source()
         self._source_list = self._get_source_list()
         session = self.alexa_api.get_state()
+        self._last_device_serial_number = self._get_last_device_serial()
+        self._last_called = self._get_last_called()
 
         self._clear_media_details()
         # update the session if it exists; not doing relogin here
@@ -407,10 +425,25 @@ class AlexaClient(MediaPlayerDevice):
                 sources.append(devices['friendlyName'])
         return ['Local Speaker'] + sources
 
+    def _get_last_device_serial(self):
+        last_device_serial = self.alexa_api.get_last_device_serial(self.alexa_api_url, self.alexa_api_session)
+        #last_device_serial = ""
+        return last_device_serial
+    
+    def _get_last_called(self):
+        if self._device_serial_number == self._last_device_serial_number:
+            return True
+        return False
+
     @property
     def available(self):
         """Return the availability of the client."""
         return self._available
+
+    @property
+    def last_device_serial(self):
+        """Return the last activity of the client."""
+        return self._last_device_serial_number
 
     @property
     def unique_id(self):
@@ -584,6 +617,7 @@ class AlexaClient(MediaPlayerDevice):
         """Return the scene state attributes."""
         attr = {
             'available': self._available,
+            'last_called': self._last_called
         }
         return attr
 
@@ -1067,6 +1101,7 @@ class AlexaAPI():
         try:
             response = session.get('https://alexa.' + url +
                                    '/api/devices-v2/device')
+
             return response.json()['devices']
         except Exception as ex:
             template = ("An exception of type {0} occurred."
@@ -1074,4 +1109,28 @@ class AlexaAPI():
             message = template.format(type(ex).__name__, ex.args)
             _LOGGER.error("An error occured accessing the API: {}".format(
                 message))
+            return None
+
+    @staticmethod
+    def get_last_device_serial(url, session):
+        """Identify the last device's serial number."""
+        try:
+            response = session.get('https://alexa.' + url +
+                                   '/api/activities?startTime=&size=1&offset=1')
+        except Exception as ex:
+            template = ("An exception of type {0} occurred."
+                        " Arguments:\n{1!r}")
+            message = template.format(type(ex).__name__, ex.args)
+            _LOGGER.error("An error occured accessing the API: {}".format(
+                message))
+            return None
+        
+        try:
+            return response.json()['activities'][0]['sourceDeviceIds'][0]['serialNumber']
+        except (JSONDecodeError, SimpleJSONDecodeError) as ex:
+            # ValueError is necessary for Python 3.5 for some reason
+            template = ("An exception of type {0} occurred."
+                        " Arguments:\n{1!r}")
+            message = template.format(type(ex).__name__, ex.args)
+            _LOGGER.debug("An error occured accessing the API: {}".format(message))
             return None
