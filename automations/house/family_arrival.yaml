@@ -46,10 +46,10 @@ action:
       media_player: "media_player.kitchen"
       personarriving: "{{ trigger.entity_id.split('.')[1]|replace('_', ' ') }}"
       say_inside_weather: "true"
-      # say_responsibilities: >
-      #   {% if now().strftime('%-H')|int == 14 -%}true
-      #   {%- else -%}false
-      #   {%- endif -%}
+      say_responsibilities: >
+        {% if now().strftime('%-H')|int == 14 -%}true
+        {%- else -%}false
+        {%- endif -%}
 
   # - service: script.notify_speech
   #   data_template:
