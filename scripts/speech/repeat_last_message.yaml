@@ -1,9 +1,14 @@
 repeat_last_message:
   sequence:
     - service: homeassistant.update_entity
+      entity_id: sensor.last_alexa
+    - service: homeassistant.update_entity
       entity_id: sensor.last_message
+    
+    - delay:
+        seconds: 5
 
     - service: media_player.alexa_tts
       data_template:
-        entity_id:  !include ../../templates/speech/last_alexa.yaml
+        entity_id: "{{ states('sensor.last_alexa') }}"
         message: "{{ states('sensor.last_message') }}"
