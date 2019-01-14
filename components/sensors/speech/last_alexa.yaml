@@ -1,0 +1,10 @@
+---
+platform: template
+sensors:
+  last_alexa:
+    value_template: >
+      {%- for entity in states.media_player -%}
+        {%- if entity.attributes.last_called == True -%}
+          {{ entity.entity_id }}
+        {%- endif -%}
+      {%- endfor -%}
