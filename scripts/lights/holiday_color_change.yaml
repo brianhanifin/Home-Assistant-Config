@@ -12,6 +12,20 @@ holiday_color_change:
     #- condition: state
     #  entity_id: sun.sun
     #  state: 'below_horizon'
+
+    # - service: persistent_notification.create
+    #   data:
+    #     title: "holiday_color_change"
+    #     message: >
+    #       scene.holiday_
+    #       {%- if states.sensor.flag.state == "True" -%}
+    #         RWB
+    #       {%- elif states.sensor.holiday_scene.state != "" -%}
+    #         {{ states.sensor.holiday_scene.state }}
+    #       {%- else -%}
+    #         standard
+    #       {%- endif -%}_colors
+
     - service: scene.turn_on
       data_template:
         entity_id: >

@@ -16,7 +16,10 @@ action:
   - service: homeassistant.turn_on
     entity_id: light.outdoor_lighting
   - service: light.turn_on
-    entity_id: light.porch_light
+    data:
+      entity_id: light.porch_light
+      kelvin: 3500
+      brightness: 255
   - service: script.turn_on
     entity_id: script.holiday_color_change
   - service: light.turn_on
