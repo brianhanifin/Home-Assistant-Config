@@ -315,7 +315,6 @@ class AlexaClient(MediaPlayerDevice):
         self._source_list = []
         self.refresh(device)
         # Last Device
-        self._last_device_serial_number = None
         self._last_called = None
 
     def _clear_media_details(self):
@@ -354,7 +353,6 @@ class AlexaClient(MediaPlayerDevice):
         self._source = self._get_source()
         self._source_list = self._get_source_list()
         session = self.alexa_api.get_state()
-        self._last_device_serial_number = self._get_last_device_serial()
         self._last_called = self._get_last_called()
 
         self._clear_media_details()
@@ -443,13 +441,10 @@ class AlexaClient(MediaPlayerDevice):
             for devices in self._bluetooth_state['pairedDeviceList']:
                 sources.append(devices['friendlyName'])
         return ['Local Speaker'] + sources
-
-    def _get_last_device_serial(self):
-        last_device_serial = self.alexa_api.get_last_device_serial(self.alexa_api_url, self.alexa_api_session)
-        return last_device_serial
     
     def _get_last_called(self):
-        if self._device_serial_number == self._last_device_serial_number:
+        last_device_serial = self.alexa_api.get_last_device_serial(self.alexa_api_url, self.alexa_api_session)
+        if self._device_serial_number == last_device_serial:
             return True
         return False
 
@@ -1163,13 +1158,12 @@ class AlexaAPI():
             _LOGGER.error("An error occured accessing the API: {}".format(
                 message))
             return None
-        
         try:
-            return response.json()['activities'][0]['sourceDeviceIds'][0]['serialNumber']
+            response.json()
         except (JSONDecodeError, SimpleJSONDecodeError) as ex:
-            # ValueError is necessary for Python 3.5 for some reason
             template = ("An exception of type {0} occurred."
                         " Arguments:\n{1!r}")
             message = template.format(type(ex).__name__, ex.args)
             _LOGGER.debug("An error occured accessing the API: {}".format(message))
             return None
+        return response.json()['activities'][0]['sourceDeviceIds'][0]['serialNumber']
