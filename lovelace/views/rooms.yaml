@@ -1,9 +1,5 @@
 ---
 # Define Anchors
-blank-card: &blank-card
-- type: "custom:button-card"
-  color_type: blank-card
-
 compact-header: &compact-header
 - type: custom:compact-custom-header
   clock_format: 24
@@ -11,178 +7,164 @@ compact-header: &compact-header
 
 title: Verbose Control Panel
 path: rooms
-icon: mdi:dip-switch
-#icon: fas:sliders-h
+#icon: mdi:dip-switch
+icon: fas:sliders-h
 cards:
   - type: vertical-stack
     cards:
-      - type: custom:button-card
-        color_type: label-card
-        color: rgb(44, 109, 214)
-        name: Porch / Entry
+      - type: markdown
+        content: >
+          ## Porch / Entry
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.porch_light
             icon: mdi:ceiling-light
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: switch.landscape_lights
             icon: mdi:tree
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: light.entry_light
             icon: mdi:ceiling-light
-            long_press_action: more_info
-          - <<: *blank-card
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
 
   # Family Room
   - type: vertical-stack
     cards:
-      - type: custom:button-card
-        color_type: label-card
-        color: rgb(44, 109, 214)
-        name: Family Room
+      - type: markdown
+        content: >
+          ## Family Room
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.family_room_light
             icon: mdi:floor-lamp
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: light.family_room_floor_lamp
             icon: mdi:floor-lamp
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: light.family_room_table_lamp
             icon: mdi:lamp
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: switch.family_room_fan
             icon: mdi:fan
+            tap_action:
+              action: toggle
 
   # Dining / Kitchen
   - type: vertical-stack
     cards:
-      - type: custom:button-card
-        color_type: label-card
-        color: rgb(44, 109, 214)
-        name: Dining / Kitchen
+      - type: markdown
+        content: >
+          ## Dining / Kitchen
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.dining_room_light
             icon: mdi:ceiling-light
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: switch.kitchen_light
             icon: mdi:wall-sconce-flat
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: switch.kitchen_prep_light
             icon: mdi:wall-sconce-flat
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: light.kitchen_undercabinet
             icon: mdi:led-strip
-            long_press_action: more_info
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
 
   # Living Room / Garage
   - type: vertical-stack
     cards:
-      - type: custom:button-card
-        color_type: label-card
-        color: rgb(44, 109, 214)
-        name: Living Room
+      - type: markdown
+        content: >
+          ## Living Room
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.living_room_light
             icon: mdi:floor-lamp
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: light.garage_entry_light
             icon: mdi:wall-sconce-flat
-            long_press_action: more_info
-          - type: custom:button-card
-            action: more_info
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: climate.home
             icon: mdi:thermostat
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: switch.living_room_fan
             icon: mdi:fan
+            tap_action:
+              action: toggle
 
   # Bedroom
   - type: vertical-stack
     cards:
-      - type: custom:button-card
-        color_type: label-card
-        color: rgb(44, 109, 214)
-        name: Bedroom
+      - type: markdown
+        content: >
+          ## Bedroom
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: light.nerenes_light
             icon: mdi:floor-lamp
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: light.brians_light
             icon: mdi:floor-lamp
-            long_press_action: more_info
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more_info
+          - type: entity-button
             entity: switch.bed_room_fan
             icon: mdi:fan
-          - <<: *blank-card
+            tap_action:
+              action: toggle
 
   
   - <<: *compact-header

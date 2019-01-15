@@ -7,61 +7,55 @@ compact-header: &compact-header
 
 title: Admin
 path: admin
-icon: mdi:wrench
-#icon: fas:wrench
+#icon: mdi:wrench
+icon: fas:wrench
 cards:
   - type: vertical-stack
     cards:
-      - type: custom:button-card
-        color_type: label-card
-        color: rgb(44, 109, 214)
-        name: Mode Overrides
+      - type: markdown
+        content: >
+          ## Mode Overrides
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
+            #color: rgb(66, 134, 244)
             entity: input_boolean.guest_mode
             icon: mdi:account-supervisor-circle
             name: Guest
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: input_boolean.motion_detection_mode
             icon: mdi:exit-run
             name: Detection
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: input_boolean.shoe_closet_timeout
             icon: mdi:shoe-formal
             name: Timeout
+            tap_action:
+              action: toggle
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+          - type: entity-button
             entity: input_boolean.speech_notifications
             icon: mdi:speaker-wireless
             name: Notifications
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: input_boolean.time_based_dimmers_enabled
             icon: mdi:brightness-auto
             name: Lights.Dim
-          - type: custom:button-card
-            action: toggle
-            color_type: card
-            color: rgb(66, 134, 244)
+            tap_action:
+              action: toggle
+          - type: entity-button
             entity: input_boolean.vacation
             icon: mdi:car-estate
             name: Vacation
+            tap_action:
+              action: toggle
 
 
   - type: vertical-stack
