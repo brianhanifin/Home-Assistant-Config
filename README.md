@@ -1,6 +1,6 @@
 # Hanifin Smart Home
 
-[![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits]
+[![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m781778026-6d060136ab5e0b0b72139815.svg)](https://uptimerobot.com/dashboard.php#tvMode)
 
 [![Discord][discord-shield]][discord]
 [![Community Forum][forum-shield]][forum]
