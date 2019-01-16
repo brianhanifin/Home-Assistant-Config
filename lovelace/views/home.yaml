@@ -1,15 +1,18 @@
 ---
 # Define Anchors
 blank-button: &blank-button
-- type: entity-button
-  entity: input_boolean.blank
-  icon: mdi:circle-small
-  name: "."
-  #theme: Dark-Nightz
-  tap_action:
-    action: none
-  hold_action:
-    action: none
+- type: "custom:button-card"
+  color_type: blank-card
+
+# - type: entity-button
+#   entity: input_boolean.blank
+#   icon: mdi:circle-small
+#   name: "."
+#   #theme: Dark-Nightz
+#   tap_action:
+#     action: none
+#   hold_action:
+#     action: none
 
 compact-header: &compact-header
 - type: custom:compact-custom-header
@@ -21,30 +24,28 @@ path: home
 #icon: mdi:apps
 icon: fas:th
 cards:
-  - type: vertical-stack
-    cards:
-      - type: conditional
-        conditions:
-          - entity: binary_sensor.alarm_smoke_detected
-            state: "on"
-        card:
-          type: glance
-          title: SMOKE DETECTED!
-          entities:
-            - binary_sensor.alarm_smoke_detected
-          snow_name: false
-          show_state: false
-      - type: conditional
-        conditions:
-          - entity: binary_sensor.alarm_co_detected
-            state: "on"
-        card:
-          type: glance
-          title: CARBON MONOXIDE DETECTED!
-          entities:
-            - binary_sensor.alarm_co_detected
-          snow_name: false
-          show_state: false
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.alarm_smoke_detected
+        state: "on"
+    card:
+      type: glance
+      title: SMOKE DETECTED!
+      entities:
+        - binary_sensor.alarm_smoke_detected
+      snow_name: false
+      show_state: false
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.alarm_co_detected
+        state: "on"
+    card:
+      type: glance
+      title: CARBON MONOXIDE DETECTED!
+      entities:
+        - binary_sensor.alarm_co_detected
+      snow_name: false
+      show_state: false
 
 
   - type: vertical-stack
