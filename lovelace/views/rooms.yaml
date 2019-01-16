@@ -1,11 +1,21 @@
 ---
 # Define Anchors
+blank-button: &blank-button
+- type: entity-button
+  entity: input_boolean.blank
+  icon: mdi:circle-small
+  name: "."
+  tap_action:
+    action: none
+  hold_action:
+    action: none
+
 compact-header: &compact-header
 - type: custom:compact-custom-header
   clock_format: 24
   menu: false
 
-title: Verbose Control Panel
+title: Rooms
 path: rooms
 #icon: mdi:dip-switch
 icon: fas:sliders-h
@@ -20,6 +30,7 @@ cards:
           - type: entity-button
             entity: light.porch_light
             icon: mdi:ceiling-light
+            name: Porch
             tap_action:
               action: toggle
             hold_action:
@@ -27,15 +38,18 @@ cards:
           - type: entity-button
             entity: switch.landscape_lights
             icon: mdi:tree
+            name: Landscape
             tap_action:
               action: toggle
           - type: entity-button
             entity: light.entry_light
             icon: mdi:ceiling-light
+            name: Entry
             tap_action:
               action: toggle
             hold_action:
               action: more_info
+          - <<: *blank-button
 
   # Family Room
   - type: vertical-stack
@@ -48,6 +62,7 @@ cards:
           - type: entity-button
             entity: light.family_room_light
             icon: mdi:floor-lamp
+            name: Switched
             tap_action:
               action: toggle
             hold_action:
@@ -55,6 +70,7 @@ cards:
           - type: entity-button
             entity: light.family_room_floor_lamp
             icon: mdi:floor-lamp
+            name: Floor
             tap_action:
               action: toggle
             hold_action:
@@ -62,6 +78,7 @@ cards:
           - type: entity-button
             entity: light.family_room_table_lamp
             icon: mdi:lamp
+            name: Table
             tap_action:
               action: toggle
             hold_action:
@@ -69,6 +86,7 @@ cards:
           - type: entity-button
             entity: switch.family_room_fan
             icon: mdi:fan
+            name: Fan
             tap_action:
               action: toggle
 
@@ -83,23 +101,27 @@ cards:
           - type: entity-button
             entity: light.dining_room_light
             icon: mdi:ceiling-light
+            name: Dining
             tap_action:
               action: toggle
             hold_action:
               action: more_info
           - type: entity-button
             entity: switch.kitchen_light
+            name: Kitchen
             icon: mdi:wall-sconce-flat
             tap_action:
               action: toggle
           - type: entity-button
             entity: switch.kitchen_prep_light
+            name: Prep
             icon: mdi:wall-sconce-flat
             tap_action:
               action: toggle
           - type: entity-button
             entity: light.kitchen_undercabinet
             icon: mdi:led-strip
+            name: Cabinet
             tap_action:
               action: toggle
             hold_action:
@@ -116,6 +138,7 @@ cards:
           - type: entity-button
             entity: light.living_room_light
             icon: mdi:floor-lamp
+            name: Living
             tap_action:
               action: toggle
             hold_action:
@@ -123,6 +146,7 @@ cards:
           - type: entity-button
             entity: light.garage_entry_light
             icon: mdi:wall-sconce-flat
+            name: Entry
             tap_action:
               action: toggle
             hold_action:
@@ -130,11 +154,13 @@ cards:
           - type: entity-button
             entity: climate.home
             icon: mdi:thermostat
+            name: Home
             tap_action:
               action: toggle
           - type: entity-button
             entity: switch.living_room_fan
             icon: mdi:fan
+            name: Fan
             tap_action:
               action: toggle
 
@@ -149,6 +175,7 @@ cards:
           - type: entity-button
             entity: light.nerenes_light
             icon: mdi:floor-lamp
+            name: Nerene
             tap_action:
               action: toggle
             hold_action:
@@ -156,6 +183,7 @@ cards:
           - type: entity-button
             entity: light.brians_light
             icon: mdi:floor-lamp
+            name: Brian
             tap_action:
               action: toggle
             hold_action:
@@ -163,8 +191,10 @@ cards:
           - type: entity-button
             entity: switch.bed_room_fan
             icon: mdi:fan
+            name: Fan
             tap_action:
               action: toggle
+          - <<: *blank-button
 
   
   - <<: *compact-header

@@ -1,0 +1,16 @@
+---
+# Time Based Dimmers: Alias
+#
+platform: template
+switches:
+  time_based_dimmers_enabled:
+    friendly_name: Time Based Dimmers
+    turn_on:
+      service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.time_based_dimmers_enabled
+    turn_off:
+      service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.time_based_dimmers_enabled
+    value_template: "{{ is_state('input_boolean.time_based_dimmers_enabled', 'on') }}"

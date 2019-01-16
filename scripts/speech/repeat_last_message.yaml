@@ -1,14 +1,23 @@
 repeat_last_message:
   sequence:
-    - service: homeassistant.update_entity
-      entity_id: sensor.last_alexa
-    - service: homeassistant.update_entity
-      entity_id: sensor.last_message
-    
-    - delay:
-        seconds: 5
+    # Update the last_message.
+    # - service: homeassistant.update_entity
+    #   entity_id: sensor.last_message
 
+    # # Lookup the last device called.
+    # - service: input_text.set_value
+    #   data_template:
+    #     entity_id: input_text.last_alexa
+    #     value: >
+    #       {%- for entity in states.media_player -%}
+    #         {%- if state_attr(entity.entity_id, 'last_called') == True -%}
+    #           {{ entity.entity_id }}
+    #         {%- endif -%}
+    #       {%- endfor -%}
+
+    # Say the previous message on the last Alexa device that was spoken to.
     - service: media_player.alexa_tts
       data_template:
-        entity_id: "{{ states('sensor.last_alexa') }}"
+        #media_player: "{{ states('input_text.last_alexa')|trim }}"
+        media_player: "media_player.kitchen"
         message: "{{ states('sensor.last_message') }}"

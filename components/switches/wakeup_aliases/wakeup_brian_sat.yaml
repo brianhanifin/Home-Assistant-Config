@@ -1,0 +1,16 @@
+---
+# Wakeup Day: Alias
+#
+platform: template
+switches:
+  wakeup_brian_sat:
+    friendly_name: Sat
+    turn_on:
+      service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.wakeup_brian_sat
+    turn_off:
+      service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.wakeup_brian_sat
+    value_template: "{{ is_state('input_boolean.wakeup_brian_sat', 'on') }}"

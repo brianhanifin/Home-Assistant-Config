@@ -1,0 +1,16 @@
+---
+# Shoe Closet Timeout: Alias
+#
+platform: template
+switches:
+  shoe_closet_timeout:
+    friendly_name: Shoe Closet Light Timeout
+    turn_on:
+      service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.shoe_closet_timeout
+    turn_off:
+      service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.shoe_closet_timeout
+    value_template: "{{ is_state('input_boolean.shoe_closet_timeout', 'on') }}"
