@@ -65,7 +65,7 @@ cards:
               service_data:
                 entity_id: script.toggle_bedroom_lights
             hold_action:
-              action: more_info
+              action: more-info
           - type: entity-button
             entity: light.dining_room_light
             icon: mdi:food
@@ -73,7 +73,7 @@ cards:
             tap_action:
               action: toggle
             hold_action:
-              action: more_info
+              action: more-info
           - type: entity-button
             entity: light.entry_light
             icon: mdi:door
@@ -81,7 +81,7 @@ cards:
             tap_action:
               action: toggle
             hold_action:
-              action: more_info
+              action: more-info
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -91,7 +91,7 @@ cards:
             tap_action:
               action: toggle
             hold_action:
-              action: more_info
+              action: more-info
           - type: entity-button
             entity: switch.kitchen_light
             icon: mdi:stove
@@ -108,7 +108,7 @@ cards:
             tap_action:
               action: toggle
             hold_action:
-              action: more_info
+              action: more-info
       # - type: horizontal-stack
       #   cards:
       #     - type: entity-button
@@ -170,6 +170,15 @@ cards:
               service: script.turn_on
               service_data:
                 entity_id: script.toggle_garage_door
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            entities:
+              - type: thermostat
+                entity: climate.home
+              - type: thermostat
+                entity: climate.goez
+                name: Goez
 
   - type: vertical-stack
     cards:
@@ -198,16 +207,10 @@ cards:
               service_data:
                 entity_id: script.goodnight_routine
           - <<: *blank-button
-
-
-  - type: horizontal-stack
-    cards:
-    - type: entities
-      entities:
-        - type: thermostat
-          entity: climate.home
-        - type: thermostat
-          entity: climate.goez
-          name: Goez
+          # - type: entity-button
+          #   entity: cover.test
+          #   icon: mdi:garage
+          #   tap_action:
+          #     action: toggle
 
   - <<: *compact-header

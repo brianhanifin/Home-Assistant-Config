@@ -1,5 +1,19 @@
 ---
-# Compact Header 'Anchor'
+# Define Anchors
+blank-button: &blank-button
+- type: "custom:button-card"
+  color_type: blank-card
+
+# - type: entity-button
+#   entity: input_boolean.blank
+#   icon: mdi:circle-small
+#   name: "."
+#   #theme: Dark-Nightz
+#   tap_action:
+#     action: none
+#   hold_action:
+#     action: none
+
 compact-header: &compact-header
 - type: custom:compact-custom-header
   clock_format: 24
@@ -62,6 +76,7 @@ cards:
               action: toggle
       - type: horizontal-stack
         cards:
+          - <<: *blank-button
           - type: entity-button
             entity: switch.wakeup_nerene_sat
             icon: mdi:checkbox-marked-circle
@@ -74,6 +89,7 @@ cards:
             name: Sun
             tap_action:
               action: toggle
+          - <<: *blank-button
 
   - type: vertical-stack
     cards:
@@ -127,6 +143,7 @@ cards:
               action: toggle
       - type: horizontal-stack
         cards:
+          - <<: *blank-button
           - type: entity-button
             entity: switch.wakeup_brian_sat
             icon: mdi:checkbox-marked-circle
@@ -139,6 +156,7 @@ cards:
             name: Sun
             tap_action:
               action: toggle
+          - <<: *blank-button
 
 
   - <<: *compact-header
