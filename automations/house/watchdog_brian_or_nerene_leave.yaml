@@ -1,6 +1,6 @@
 ---
-# Close the garage door if Brian or Nerene leave home.
-alias: watchdog_garage_left_open
+# Close the garage door + lock the front door if Brian or Nerene leave home.
+alias: watchdog_brian_or_nerene_leave
 initial_state: on
 trigger:
   - platform: state
@@ -9,10 +9,12 @@ trigger:
       - device_tracker.nerene
     from: 'home'
     to: 'not_home'
-condition:
+action:
+  - service: lock.lock
+    entity_id: lock.front_door
+
   - condition: state
     entity_id: cover.garage_door
     state:     'open'
-action:
   - service: cover.close_cover
     entity_id: cover.garage_door
