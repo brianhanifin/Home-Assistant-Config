@@ -207,6 +207,7 @@ def setup_alexa(hass, config, add_devices_callback, login_obj):
         """Update the devices objects."""
         devices = AlexaAPI.get_devices(url, login_obj._session)
         bluetooth = AlexaAPI.get_bluetooth(url, login_obj._session)
+        authentication = AlexaAPI.get_authentication(url, login_obj._session)
 
         if ((devices is None or bluetooth is None)
                 and len(_CONFIGURING) == 0):
@@ -229,7 +230,7 @@ def setup_alexa(hass, config, add_devices_callback, login_obj):
 
             if device['serialNumber'] not in alexa_clients:
                 new_client = AlexaClient(config, login_obj._session, device,
-                                         update_devices, url)
+                                         update_devices, url, authentication)
                 alexa_clients[device['serialNumber']] = new_client
                 new_alexa_clients.append(new_client)
             elif device['online']:
@@ -258,6 +259,7 @@ def setup_alexa(hass, config, add_devices_callback, login_obj):
             add_devices_callback(new_alexa_clients)
 
     update_devices()
+
     # Clear configurator. We delay till here to avoid leaving a modal orphan
     global _CONFIGURING
     for config_id in _CONFIGURING:
@@ -269,22 +271,28 @@ def setup_alexa(hass, config, add_devices_callback, login_obj):
 class AlexaClient(MediaPlayerDevice):
     """Representation of a Alexa device."""
 
-    def __init__(self, config, session, device, update_devices, url):
+    def __init__(self, config, session, device, update_devices, url,
+                 authentication):
         """Initialize the Alexa device."""
         # Class info
         self.alexa_api = AlexaAPI(self, session, url)
-
-        # Supports get_last_device_serial()
+        self.auth = authentication
         self.alexa_api_session = session
         self.alexa_api_url = url
         
+        # Logged in info
+        self._authenticated = None
+        self._can_access_prime_music = None
+        self._customer_email = None
+        self._customer_id = None
+        self._customer_name = None
+        self._set_authentication_details(self.auth)
+
         self.update_devices = update_devices
         # Device info
         self._device = None
         self._device_name = None
         self._device_serial_number = None
-        self._last_device_serial_number = None
-        self._last_called = None
         self._device_type = None
         self._device_family = None
         self._device_owner_customer_id = None
@@ -306,6 +314,8 @@ class AlexaClient(MediaPlayerDevice):
         self._source = None
         self._source_list = []
         self.refresh(device)
+        # Last Device
+        self._last_called = None
 
     def _clear_media_details(self):
         """Set all Media Items to None."""
@@ -319,6 +329,14 @@ class AlexaClient(MediaPlayerDevice):
         self._media_player_state = None
         self._media_is_muted = None
         self._media_vol_level = None
+
+    def _set_authentication_details(self, auth):
+        """Set Authentication based off auth."""
+        self._authenticated = auth['authenticated']
+        self._can_access_prime_music = auth['canAccessPrimeMusicContent']
+        self._customer_email = auth['customerEmail']
+        self._customer_id = auth['customerId']
+        self._customer_name = auth['customerName']
 
     def refresh(self, device):
         """Refresh key device data."""
@@ -335,7 +353,6 @@ class AlexaClient(MediaPlayerDevice):
         self._source = self._get_source()
         self._source_list = self._get_source_list()
         session = self.alexa_api.get_state()
-        self._last_device_serial_number = self._get_last_device_serial()
         self._last_called = self._get_last_called()
 
         self._clear_media_details()
@@ -424,14 +441,10 @@ class AlexaClient(MediaPlayerDevice):
             for devices in self._bluetooth_state['pairedDeviceList']:
                 sources.append(devices['friendlyName'])
         return ['Local Speaker'] + sources
-
-    def _get_last_device_serial(self):
-        last_device_serial = self.alexa_api.get_last_device_serial(self.alexa_api_url, self.alexa_api_session)
-        #last_device_serial = ""
-        return last_device_serial
     
     def _get_last_called(self):
-        if self._device_serial_number == self._last_device_serial_number:
+        last_device_serial = self.alexa_api.get_last_device_serial(self.alexa_api_url, self.alexa_api_session)
+        if self._device_serial_number == last_device_serial:
             return True
         return False
 
@@ -602,7 +615,7 @@ class AlexaClient(MediaPlayerDevice):
 
     def send_tts(self, message):
         """Send TTS to Device NOTE: Does not work on WHA Groups."""
-        self.alexa_api.send_tts(message)
+        self.alexa_api.send_tts(message, customer_id=self._customer_id)
 
     def play_media(self, media_type, media_id, **kwargs):
         """Send the play_media command to the media player."""
@@ -610,7 +623,8 @@ class AlexaClient(MediaPlayerDevice):
             self.alexa_api.send_tts("Sorry, text to speech can only be called "
                                     " with the media player alexa tts service")
         else:
-            self.alexa_api.play_music(media_type, media_id)
+            self.alexa_api.play_music(media_type, media_id,
+                                      customer_id=self._customer_id)
 
     @property
     def device_state_attributes(self):
@@ -982,7 +996,7 @@ class AlexaAPI():
                 message))
             return None
 
-    def play_music(self, provider_id, search_phrase):
+    def play_music(self, provider_id, search_phrase, customer_id=None):
         """Play Music based on search."""
         data = {
             "behaviorId": "PREVIEW",
@@ -994,16 +1008,19 @@ class AlexaAPI():
             {\"deviceType\":\"" + self._device._device_type + "\", \
             \"deviceSerialNumber\":\"" + self._device.unique_id +
             "\",\"locale\":\"en-US\", \
-            \"customerId\":\"" + self._device._device_owner_customer_id +
+            \"customerId\":\"" + (customer_id
+                                  if customer_id is not None
+                                  else self._device_owner_customer_id) +
             "\", \"searchPhrase\": \"" + search_phrase + "\", \
              \"sanitizedSearchPhrase\": \"" + search_phrase + "\", \
              \"musicProviderId\": \"" + provider_id + "\"}}}",
             "status": "ENABLED"
         }
+
         self._post_request('/api/behaviors/preview',
                            data=data)
 
-    def send_tts(self, message):
+    def send_tts(self, message, customer_id=None):
         """Send message for TTS at speaker."""
         data = {
             "behaviorId": "PREVIEW",
@@ -1015,7 +1032,9 @@ class AlexaAPI():
             {\"deviceType\":\"" + self._device._device_type + "\", \
             \"deviceSerialNumber\":\"" + self._device.unique_id +
             "\",\"locale\":\"en-US\", \
-            \"customerId\":\"" + self._device._device_owner_customer_id +
+            \"customerId\":\"" + (customer_id
+                                  if customer_id is not None
+                                  else self._device_owner_customer_id) +
             "\", \"textToSpeak\": \"" + message + "\"}}}",
             "status": "ENABLED"
         }
@@ -1101,7 +1120,6 @@ class AlexaAPI():
         try:
             response = session.get('https://alexa.' + url +
                                    '/api/devices-v2/device')
-
             return response.json()['devices']
         except Exception as ex:
             template = ("An exception of type {0} occurred."
@@ -1110,6 +1128,22 @@ class AlexaAPI():
             _LOGGER.error("An error occured accessing the API: {}".format(
                 message))
             return None
+
+    @staticmethod
+    def get_authentication(url, session):
+        """Get authentication json."""
+        try:
+            response = session.get('https://alexa.' + url +
+                                   '/api/bootstrap')
+            return response.json()['authentication']
+        except Exception as ex:
+            template = ("An exception of type {0} occurred."
+                        " Arguments:\n{1!r}")
+            message = template.format(type(ex).__name__, ex.args)
+            _LOGGER.error("An error occured accessing the API: {}".format(
+                message))
+            return None
+
 
     @staticmethod
     def get_last_device_serial(url, session):
@@ -1124,13 +1158,12 @@ class AlexaAPI():
             _LOGGER.error("An error occured accessing the API: {}".format(
                 message))
             return None
-        
         try:
-            return response.json()['activities'][0]['sourceDeviceIds'][0]['serialNumber']
-        except (JSONDecodeError, SimpleJSONDecodeError) as ex:
-            # ValueError is necessary for Python 3.5 for some reason
+            response.json()
+        except Exception as ex:
             template = ("An exception of type {0} occurred."
                         " Arguments:\n{1!r}")
             message = template.format(type(ex).__name__, ex.args)
             _LOGGER.debug("An error occured accessing the API: {}".format(message))
             return None
+        return response.json()['activities'][0]['sourceDeviceIds'][0]['serialNumber']
