@@ -1,0 +1,15 @@
+alias: boys_nightlight_turn_on_brightness
+trigger:
+  platform: event
+  event_type: light_toggle
+  event_data:
+    entity_id: light.3a542c
+condition:
+  condition: state
+  entity_id: light.3a542c
+  state: 'on'
+action:
+  service: light.turn_on
+  entity_id: light.3a542c
+  data:
+    brightness: 76
