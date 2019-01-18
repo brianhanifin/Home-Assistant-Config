@@ -61,8 +61,10 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string,
     vol.Required(CONF_URL): cv.string,
     vol.Optional(CONF_DEBUG, default=False): cv.boolean,
-    vol.Optional(CONF_INCLUDE_DEVICES, default=[]): vol.All(cv.ensure_list, [cv.string]),
-    vol.Optional(CONF_EXCLUDE_DEVICES, default=[]): vol.All(cv.ensure_list, [cv.string]),
+    vol.Optional(CONF_INCLUDE_DEVICES, default=[]):
+        vol.All(cv.ensure_list, [cv.string]),
+    vol.Optional(CONF_EXCLUDE_DEVICES, default=[]):
+        vol.All(cv.ensure_list, [cv.string]),
 })
 
 
