@@ -5,7 +5,7 @@ sensors:
     friendly_name: "Took My Medicine"
     value_template: >-
       {% set script = states.script.took_my_medicine %}
-      {% set reset = 60 * 60 * 4 %}
+      {% set reset = 60 * 60 * 10 %}
       {% if script and script.attributes.last_triggered %}
         {% set time_now = utcnow().strftime('%s')|int %}
         {% set time_ran = script.attributes.last_triggered.strftime('%s')|int %}
