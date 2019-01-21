@@ -26,10 +26,11 @@ lights_by_time:
               {%- for entity in group.list -%}
                 {#- Omit light if its brightness is already lower than current setting. -#}
                 {%- if entity.state == 'on'
-                    and state_attr(entity.entity_id, 'brightness') >= brightness|int
+                    and state_attr(entity.entity_id, 'brightness')|int >= brightness|int
                     and entity.entity_id|lower != 'light.dummy'
                     and entity.entity_id|lower != 'light.entry'            
                     and entity.entity_id|lower != 'light.hue'
+                    and entity.entity_id|lower != 'light.landscape_lights'
                     and entity.entity_id|lower != 'light.living_room'
                     and not ('garage_entry'  in entity.entity_id|lower)
                     and not ('shoe_closet'   in entity.entity_id|lower)
@@ -48,8 +49,8 @@ lights_by_time:
             {%- set brightness = states('variable.light_brightness') -%}
             {%- set lights = get_lights_to_change(brightness)|trim|replace(' ', ',') -%}
             {#- To avoid an error: set a dummy light in case no lights are returned. -#}
-            {%- if lights|trim != "" -%}{%- set entity_id = lights -%}
-            {%- else -%}{%- set entity_id = 'light.dummy' -%}
+            {%- if lights|trim == "" -%}
+              {%- set lights = 'light.dummy' -%}
             {%- endif -%}
-            {{ entity_id }}
+            {{ lights }}
           {%- endif %}
