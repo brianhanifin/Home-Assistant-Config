@@ -7,25 +7,17 @@ lights_by_time:
   sequence:
     # Only adjust light brightness if someone is home and the Time Based Dimmers are enabled.
     - condition: template
-      value_template: "{{ states.input_boolean.away_mode.state == 'off'
-                      and states.input_boolean.time_based_dimmers_enabled.state == 'on' }}"
-    # Only dim lights when guest mode is NOT active.
-    - condition: template
-      value_template: "{{ states.input_boolean.guest_mode.state == 'off' }}"
+      value_template: "{{ states.input_boolean.time_based_dimmers_enabled.state == 'on'
+                      and states.input_boolean.away_mode.state == 'off'
+                      and states.input_boolean.guest_mode.state == 'off' }}"
 
-    # Update the brightness sensor.
-    # - service: homeassistant.update_entity
-    #   entity_id: sensor.light_brightness
-    
     # Update the brightness value.
     - service: script.turn_on
       entity_id: script.light_brightness_update
-    
+
     # Adjust the brightness.
     - service: light.turn_on
       data_template:
-        # brightness: >
-        #   {{ states('sensor.light_brightness') }}
         brightness: >
           {{ states('variable.light_brightness') }}
         entity_id: >
@@ -53,7 +45,6 @@ lights_by_time:
           {%- if entity is string -%}
             {{ entity }}
           {%- else -%}
-            {#%- set brightness = states('sensor.light_brightness') -%#}
             {%- set brightness = states('variable.light_brightness') -%}
             {%- set lights = get_lights_to_change(brightness)|trim|replace(' ', ',') -%}
             {#- To avoid an error: set a dummy light in case no lights are returned. -#}
