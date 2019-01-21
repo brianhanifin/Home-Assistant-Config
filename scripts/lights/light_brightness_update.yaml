@@ -28,7 +28,7 @@ light_brightness_update:
           {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}{%- set brightness_pct = 40 -%}
           {%- else                                            -%}{%- set brightness_pct = 30 -%}
           {%- endif -%}
-          {%- set brightness = brightness_pct * 255 / 100 -%}
+          {%- set brightness = brightness_pct / 100 * 255 -%}
           {{ brightness|int }}
         {%- endmacro -%}
         {{ get_brightness() }}

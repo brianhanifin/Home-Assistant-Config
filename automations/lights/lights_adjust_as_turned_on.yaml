@@ -22,12 +22,13 @@ condition:
   - condition: template
     value_template: "{{ trigger.event.data.entity_id|lower != 'light.entry'
                     and trigger.event.data.entity_id|lower != 'light.hue'
+                    and trigger.event.data.entity_id|lower != 'light.landscape_lights'
                     and trigger.event.data.entity_id|lower != 'light.porch'
                     and not ('garage_entry'  in trigger.event.data.entity_id|lower)
                     and not ('shoe_closet'   in trigger.event.data.entity_id|lower)
                     and not ('gateway_light' in trigger.event.data.entity_id|lower)
-                    and not (trigger.event.data.entity_id|lower).endswith('lamp')
                     and not (trigger.event.data.entity_id|lower).endswith('nightlight') }}"
+                    #and not (trigger.event.data.entity_id|lower).endswith('lamp') }}"
 action:
   - service: script.lights_by_time
     data_template:
