@@ -62,8 +62,11 @@ Eventually you outgrow even the fanciest home WiFi setup. There were just too ma
 Pros:
 * Rock solid WiFi all throughout the downstairs.
 * Wife and kids don't complain about the WiFi anymore!
+* Long Ethernet cable runs make all access points equally fast!
+
 Cons:
-* Requires a long Ethernet cable run to each Access Point.
+* Requires a long Ethernet cable run to each Access Point. (But also a "Pro"... see the last point above.)
+
 
 ### Wink Hub
 I picked up an inexpensive version 1 Wink Hub so I could add Z-Wave devices and replace my Lutron Hub. I have now added Kidee Smoke + Carbon Monoxide detectors as well.
@@ -100,17 +103,21 @@ All of my configuration files are tested against the most stable version of home
 [lovelace-0]: ./README-images/0.png
 [lovelace-2]: ./README-images/2.png
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/brianhanifin/Home-AssistantConfig.svg
-[commits]: https://github.com/brianhanifin/Home-AssistantConfig/commits/master
-[github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-AssistantConfig.svg?style=plasticr
-[github-master]: https://github.com/BrianHanifin/Home-AssistantConfig/commits/master
+[commits-shield]: https://img.shields.io/github/commit-activity/y/brianhanifin/Home-Assistant-Config.svg
+[commits]: https://github.com/brianhanifin/Home-Assistant-Config/commits/master
+[github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?style=plasticr
+[github-master]: https://github.com/BrianHanifin/Home-Assistant-Config/commits/master
+
+[travis-build-status]: https://travis-ci.org/brianhanifin/Home-Assistant-Config
+[travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-Assistant-Config.svg?branch=master
+
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg
 [discord]: https://discord.gg/c5DvZ4e
+
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg
 [forum]: https://community.home-assistant.io/u/brianhanifin/summary
+
 [hue-strip-guide]:https://char.gd/blog/2018/building-better-cheaper-philips-hue-led-strips
-[travis-build-status]: https://travis-ci.org/brianhanifin/Home-AssistantConfig
-[travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-AssistantConfig.svg?branch=master
 
 [carlo-blog]: https://www.vcloudinfo.com
 [carlo-github]: https://github.com/CCOSTAN/Home-AssistantConfig
