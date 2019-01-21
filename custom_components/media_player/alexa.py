@@ -1,5 +1,6 @@
 """
 Support to interface with Alexa Devices.
+
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
 VERSION 0.9.6
@@ -278,7 +279,9 @@ class AlexaClient(MediaPlayerDevice):
         # Class info
         self.alexa_api = AlexaAPI(self, session, url)
         self.auth = authentication
-
+        self.alexa_api_session = session
+        self.alexa_api_url = url
+        
         # Logged in info
         self._authenticated = None
         self._can_access_prime_music = None
@@ -313,6 +316,8 @@ class AlexaClient(MediaPlayerDevice):
         self._source = None
         self._source_list = []
         self.refresh(device)
+        # Last Device
+        self._last_called = None
 
     def _clear_media_details(self):
         """Set all Media Items to None."""
@@ -350,6 +355,7 @@ class AlexaClient(MediaPlayerDevice):
         self._source = self._get_source()
         self._source_list = self._get_source_list()
         session = self.alexa_api.get_state()
+        self._last_called = self._get_last_called()
 
         self._clear_media_details()
         # update the session if it exists; not doing relogin here
@@ -437,11 +443,22 @@ class AlexaClient(MediaPlayerDevice):
             for devices in self._bluetooth_state['pairedDeviceList']:
                 sources.append(devices['friendlyName'])
         return ['Local Speaker'] + sources
+    
+    def _get_last_called(self):
+        last_device_serial = self.alexa_api.get_last_device_serial()
+        if self._device_serial_number == last_device_serial:
+            return True
+        return False
 
     @property
     def available(self):
         """Return the availability of the client."""
         return self._available
+
+    @property
+    def last_device_serial(self):
+        """Return the last activity of the client."""
+        return self._last_device_serial_number
 
     @property
     def unique_id(self):
@@ -547,6 +564,7 @@ class AlexaClient(MediaPlayerDevice):
 
     def mute_volume(self, mute):
         """Mute the volume.
+
         Since we can't actually mute, we'll:
         - On mute, store volume and set volume to 0
         - On unmute, set volume to previously stored volume
@@ -615,6 +633,7 @@ class AlexaClient(MediaPlayerDevice):
         """Return the scene state attributes."""
         attr = {
             'available': self._available,
+            'last_called': self._last_called
         }
         return attr
 
@@ -682,6 +701,7 @@ class AlexaLogin():
 
     def test_loggedin(self, cookies=None):
         """Function that will test the connection is logged in.
+
         Attempts to get device list, and if unsuccessful login failed
         """
         if self._session is None:
@@ -977,6 +997,27 @@ class AlexaAPI():
             _LOGGER.error("An error occured accessing the API: {}".format(
                 message))
             return None
+
+    def get_last_device_serial(self):
+        """Identify the last device's serial number."""
+        try:
+            response = self._get_request('/api/activities?startTime=&size=1&offset=1')
+        except Exception as ex:
+            template = ("An exception of type {0} occurred."
+                        " Arguments:\n{1!r}")
+            message = template.format(type(ex).__name__, ex.args)
+            _LOGGER.error("An error occured accessing the API: {}".format(
+                message))
+            return None
+        try:
+            response.json()
+        except Exception as ex:
+            template = ("An exception of type {0} occurred."
+                        " Arguments:\n{1!r}")
+            message = template.format(type(ex).__name__, ex.args)
+            _LOGGER.debug("An error occured accessing the API: {}".format(message))
+            return None
+        return response.json()['activities'][0]['sourceDeviceIds'][0]['serialNumber']
 
     def play_music(self, provider_id, search_phrase, customer_id=None):
         """Play Music based on search."""
