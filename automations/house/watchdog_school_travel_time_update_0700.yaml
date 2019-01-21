@@ -6,9 +6,7 @@ alias: watchdog_school_travel_time_update_0700
 initial_state: on
 trigger:
   platform: time
-  hours: 7
-  minutes: 0
-  seconds: 30
+  at: "7:00:00"
 condition:
   condition: time
   weekday:
@@ -18,6 +16,31 @@ condition:
     - thu
     - fri
 action:
+  # Wake the watchdog.
+  - service: automation.turn_on
+    entity_id: automation.watchdog_school_travel_time_alert
+
   # Update the school travel time sensor.
+  - delay:
+      seconds: 30
   - service: homeassistant.update_entity
     entity_id: sensor.school_travel_time
+
+  # Update the school travel time sensor at 7:05.
+  - delay:
+      minutes: 4
+      seconds: 30
+  - service: homeassistant.update_entity
+    entity_id: sensor.school_travel_time
+
+  # Update the school travel time sensor at 7:10.
+  - delay:
+      minutes: 5
+  - service: homeassistant.update_entity
+    entity_id: sensor.school_travel_time
+  
+  # Sleep the watchdog.
+  - delay:
+      minutes: 1
+  - service: automation.turn_off
+    entity_id: automation.watchdog_school_travel_time_alert

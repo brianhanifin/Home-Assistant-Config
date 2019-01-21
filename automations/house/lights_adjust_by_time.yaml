@@ -8,6 +8,11 @@ trigger:
   - platform: time
     minutes: '/30'
     seconds: 00
+# Don't bother between 8am - 7pm.
+condition:
+  condition: time
+  before: '8:01' # <= 8am
+  after: '18:59' # >= 7pm
 action:
   - service: script.turn_on
     entity_id: script.lights_by_time
