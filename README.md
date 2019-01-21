@@ -1,9 +1,8 @@
 # Hanifin Smart Home
 
-[![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m781778026-6d060136ab5e0b0b72139815.svg)](https://uptimerobot.com/dashboard.php#tvMode)
-
-[![Discord][discord-shield]][discord]
-[![Community Forum][forum-shield]][forum]
+| Information | Community |
+| :--- | ---: |
+| [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status][uptime-status-shield]][uptime-robot] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] | 
 
 ## Lovelace Interface
 ![home][lovelace-0] ![wakeup][lovelace-2]
@@ -110,6 +109,9 @@ All of my configuration files are tested against the most stable version of home
 
 [travis-build-status]: https://travis-ci.org/brianhanifin/Home-Assistant-Config
 [travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-Assistant-Config.svg?branch=master
+
+[uptime-status-shield]: https://img.shields.io/uptimerobot/status/m781778026-6d060136ab5e0b0b72139815.svg
+[uptime-robot]: https://uptimerobot.com/dashboard.php#tvMode
 
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg
 [discord]: https://discord.gg/c5DvZ4e
