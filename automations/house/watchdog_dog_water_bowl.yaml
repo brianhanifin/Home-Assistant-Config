@@ -4,9 +4,12 @@
 alias: watchdog_dog_water_bowl
 initial_state: on
 trigger:
-  platform: state
-  entity_id: binary_sensor.dog_water_bowl
-  to: "off"
+  - platform: state
+    entity_id: binary_sensor.dog_water_bowl
+    to: "dry"
+  - platform: state
+    entity_id: binary_sensor.dog_water_bowl
+    to: "off"
 action:
   - service: script.notify_speech
     data_template:
