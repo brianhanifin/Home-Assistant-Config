@@ -1,6 +1,11 @@
 ---
 shutdown_routine:
   sequence:
+    - service: script.turn_on
+      entity_id:
+        - script.tv_family_room_off
+        - script.tv_living_room_off
+
     - service: lock.lock
       entity_id: lock.front_door
 
@@ -23,8 +28,3 @@ shutdown_routine:
         - switch.hot_water_pump
         - switch.kitchen_light
         - switch.kitchen_prep_light
-    
-    - service: script.turn_on
-      entity_id:
-        - script.tv_family_room_off
-        - script.tv_living_room_off
