@@ -1,11 +1,10 @@
   >
-  {%- macro get_media_player(media_player) -%}
-    {%- if media_player is string -%}
-      {{ media_player|trim|replace(' ', '') }}
-    {%- elif media_player is sequence -%}
-      {{ media_player|join(', ') }}
+  {% macro get_media_player() -%}
+    {%- if media_player is not string -%}
+      {%- set media_player = 'media_player.kitchen' -%}
     {%- else -%}
-      {{ 'media_player.kitchen' }}
+      {%- set media_player = media_player|trim|replace(' ', '') -%}
     {%- endif -%}
+    {{ media_player|replace(' ,',',')|replace(',',', ')|trim }}
   {%- endmacro -%}
-  {{ get_media_player(media_player) }}
+  {{ get_media_player() }}
