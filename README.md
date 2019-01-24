@@ -1,7 +1,7 @@
 # Hanifin Smart Home
 
 | Information | Community |
-| :--- | ---: |
+| :--- | :--- |
 | [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status][uptime-status-shield]][uptime-robot] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] | 
 
 ## Lovelace Interface
