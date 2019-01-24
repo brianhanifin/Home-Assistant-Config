@@ -5,7 +5,17 @@ goodbye_routine:
     - service: script.turn_on
       entity_id: script.shutdown_routine
 
+    # Update the last_alexa.
+    - service: homeassistant.update_entity
+      entity_id: sensor.last_alexa
+
+    #- wait_template: "states(sensor.last_alexa_updated) is not states(sensor.last_alexa_last_updated)"
+    #- wait_template: "state_attr('automation.last_alexa_updated','last_triggered') > state_attr('script.goodbye_routine','last_triggered')"
+      # timeout: '00:00:05'
+      # continue_on_timeout: 'true'
+
     - service: script.say
       data_template:
+        #media_player: "{{ states('sensor.last_alexa')|trim }}"
         media_player: "media_player.kitchen, media_player.garage"
         say_goodbye: "true"
