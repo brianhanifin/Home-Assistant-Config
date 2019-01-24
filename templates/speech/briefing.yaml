@@ -9,6 +9,12 @@
     ]|random }}
   {%- endmacro -%}
 
+  {%- macro dog_water_bowl() -%}
+    {%- if states('binary_sensor.dog_water_bowl') == "off" -%}
+      Buddy and Pepper's water bowl is empty ... please refill it for them.
+    {%- endif -%}
+  {%- endmacro -%}
+
   {%- macro goodbye_line() -%}
     {{ [
       "Adios! ",
@@ -102,17 +108,20 @@
     {%- endif -%}
 
     {%- if say_inside_weather == "true" -%}
-      {{ inside_weather() }}
+      {#{ inside_weather() }#}
     {%- endif -%}
 
     {%- if say_outside_weather == "true" -%}
       {{ outside_weather() }}
     {%- endif -%}
 
+    {%- if say_dog_water == "true" -%}
+      {{ dog_water_bowl() }}
+    {%- endif -%}
+
     {%- if say_responsibilities == "true" -%}
       {{ responsibilities() }}
     {%- endif -%}
-
 
     {%- if say_goodbye == "true" -%}
        {{ " " + goodbye_line() }}
@@ -139,6 +148,10 @@
 
   {%- if say_greeting is undefined -%}
     {%- set say_greeting = "false" -%}
+  {%- endif -%}
+
+  {%- if say_greeting == "true" and say_dog_water is undefined -%}
+    {%- set say_dog_water = "true" -%}
   {%- endif -%}
 
   {%- if say_inside_weather is undefined -%}
