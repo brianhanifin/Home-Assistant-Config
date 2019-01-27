@@ -1,0 +1,14 @@
+alias: watchdog_family_room_2tap_on
+trigger:
+  # Trigger on double tap off
+  - platform: event
+    event_type: zwave.scene_activated
+    event_data:
+      entity_id: zwave.living_room_light
+      scene_id: 2
+action:
+  - service: light.turn_on
+    entity_id:
+      #- light.family_room_light
+      - light.family_room_floor_lamp
+      #- light.family_room_table_lamp
