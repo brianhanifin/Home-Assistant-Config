@@ -5,10 +5,21 @@ compact-header: &compact-header
   clock_format: 24
   menu: false
 
+action_more_info: &action_more_info
+  tap_action:
+    action: more-info
+
 title: Tools
 path: tools
 #icon: mdi:wrench
 icon: fas:wrench
+badges:
+  - group.family
+  - device_tracker.brian
+  - device_tracker.nerene
+  - device_tracker.eric
+  - device_tracker.sandy
+  - device_tracker.heather
 cards:
   - type: vertical-stack
     cards:
@@ -63,6 +74,32 @@ cards:
             tap_action:
               action: toggle
 
+      - type: markdown
+        content: >
+          ## Extended Presence
+      - type: horizontal-stack
+        cards:
+        - type: glance
+          columns: 5
+          show_name: False
+          entities:
+            - entity: input_select.brian
+              <<: *action_more_info
+            - entity: input_select.nerene
+              <<: *action_more_info
+            - entity: input_select.eric
+              <<: *action_more_info
+            - entity: input_select.sandy
+              <<: *action_more_info
+            - entity: input_select.heather
+              <<: *action_more_info
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            entities:
+              - input_boolean.residents_home
+              - input_boolean.residents_away
+              - input_boolean.residents_extended_away
 
   - type: vertical-stack
     cards:
@@ -71,12 +108,12 @@ cards:
         show_header_toggle: false
         show_state: false
         entities:
-          #- type: divider
-          - group.family
-          - type: divider
-          - script.restart_hass
-          - script.reboot
-          #- input_select.log_level
+        #- type: divider
+        - group.family
+        - type: divider
+        - script.restart_hass
+        - script.reboot
+        #- input_select.log_level
 
       - type: markdown
         content: >
