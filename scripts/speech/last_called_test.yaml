@@ -1,0 +1,30 @@
+---
+last_called_test:
+  sequence:
+    # Store the time of the last update.
+    - service: input_text.set_value
+      entity_id: input_text.last_alexa_previously_updated
+      data_template:
+        value: "{{ states('sensor.last_alexa_updated') }}"
+    
+    - delay:
+        seconds: 2
+        #milliseconds: 200
+
+    # Lookup the last device called.
+    - service: homeassistant.update_entity
+      entity_id: sensor.last_alexa
+    
+    - delay:
+        seconds: 2
+
+    # Wait for last_alexa to be updated.
+    #- wait_template: "{{ states('sensor.last_alexa_updated')|float > states('input_text.last_alexa_previously_updated')|float }}"
+    #  timeout: '00:00:30'
+    #  continue_on_timeout: 'false'
+
+    # Speak your message.
+    - service: media_player.alexa_tts
+      data_template:
+        entity_id: "{{ states('sensor.last_alexa') }}"
+        message: "This is a test"

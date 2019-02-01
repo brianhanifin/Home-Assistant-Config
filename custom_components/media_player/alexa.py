@@ -3,7 +3,7 @@ Support to interface with Alexa Devices.
 
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
-VERSION 0.9.6
+VERSION 0.10.1
 """
 import logging
 
@@ -443,10 +443,9 @@ class AlexaClient(MediaPlayerDevice):
             for devices in self._bluetooth_state['pairedDeviceList']:
                 sources.append(devices['friendlyName'])
         return ['Local Speaker'] + sources
-    
+
     def _get_last_called(self):
-        last_device_serial = self.alexa_api.get_last_device_serial()
-        if self._device_serial_number == last_device_serial:
+        if self._device_serial_number == self.alexa_api.get_last_device_serial():
             return True
         return False
 
@@ -454,11 +453,6 @@ class AlexaClient(MediaPlayerDevice):
     def available(self):
         """Return the availability of the client."""
         return self._available
-
-    @property
-    def last_device_serial(self):
-        """Return the last activity of the client."""
-        return self._last_device_serial_number
 
     @property
     def unique_id(self):
@@ -1002,22 +996,19 @@ class AlexaAPI():
         """Identify the last device's serial number."""
         try:
             response = self._get_request('/api/activities?startTime=&size=1&offset=1')
-        except Exception as ex:
-            template = ("An exception of type {0} occurred."
-                        " Arguments:\n{1!r}")
-            message = template.format(type(ex).__name__, ex.args)
-            _LOGGER.error("An error occured accessing the API: {}".format(
-                message))
-            return None
-        try:
-            response.json()
+            last_activity = response.json()['activities'][0]
         except Exception as ex:
             template = ("An exception of type {0} occurred."
                         " Arguments:\n{1!r}")
             message = template.format(type(ex).__name__, ex.args)
             _LOGGER.debug("An error occured accessing the API: {}".format(message))
             return None
-        return response.json()['activities'][0]['sourceDeviceIds'][0]['serialNumber']
+
+        # Ignore discarded activity records
+        if last_activity['activityStatus'][0] != 'DISCARDED_NON_DEVICE_DIRECTED_INTENT':
+            return last_activity['sourceDeviceIds'][0]['serialNumber']
+        else:
+            return None
 
     def play_music(self, provider_id, search_phrase, customer_id=None):
         """Play Music based on search."""
@@ -1166,3 +1157,4 @@ class AlexaAPI():
             _LOGGER.error("An error occured accessing the API: {}".format(
                 message))
             return None
+            

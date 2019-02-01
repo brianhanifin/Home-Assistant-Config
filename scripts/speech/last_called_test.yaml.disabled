@@ -1,0 +1,42 @@
+---
+last_called_test:
+  sequence:
+    # Clear the last device called.
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.last_alexa
+        value: ""
+    
+    # Lookup the last device called.
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.last_alexa
+        value: >
+          {%- macro get_last_alexa() -%}
+            {%- set last_alexa = get_last_called_entity() -%}
+            {%- if last_alexa == "" -%}
+              {{ get_last_alexa() }}
+            {%- else -%}
+              {{ last_alexa }}
+            {%- endif -%}
+          {%- endmacro -%}
+          {%- macro get_last_called_entity() -%}
+            {%- for entity in states.media_player -%}
+              {%- if state_attr(entity.entity_id, 'last_called') == True -%}
+                {{ entity.entity_id }}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endmacro -%}
+          {{ get_last_alexa() }}
+
+    # Speak your message.
+    - service: media_player.alexa_tts
+      data_template:
+        entity_id: "{{ states('input_text.last_alexa') }}"
+        message: "This is a test"
+
+    # Clear the last device called.
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.last_alexa
+        value: ""
