@@ -1,0 +1,12 @@
+---
+logging_critical:
+  sequence:
+    - service: logger.set_level
+      data_template:
+        homeassistant.components: critical
+        custom_components.media_player.alexa: critical
+        custom_components.media_player.alexa_media: critical
+    - service: logbook.log
+      data:
+        name: Logging
+        message: "log_level: critical"
