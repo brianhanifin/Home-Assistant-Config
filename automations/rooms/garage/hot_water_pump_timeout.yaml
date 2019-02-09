@@ -4,11 +4,9 @@
 alias: hot_water_pump_timeout
 initial_state: on
 trigger:
-  # switch.sonoff_pow01
-  platform: mqtt
-  topic: "stat/sonoff_pow01/POWER"
-  payload: "ON"
+  - platform: state
+    entity_id: switch.hot_water_pump
 action:
   - delay: 00:05:00
   - service: switch.turn_off
-    entity_id: switch.sonoff_pow01
+    entity_id: switch.hot_water_pump
