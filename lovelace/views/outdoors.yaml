@@ -1,0 +1,102 @@
+---
+# Define Anchors
+compact-header: &compact-header
+- type: custom:compact-custom-header
+  clock_format: 24
+  menu: false
+
+title: Outdoors
+path: outdoors
+icon: fas:seedling
+cards:
+  # Garden
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Plant Monitor
+      - type: horizontal-stack
+        cards:
+          # - type: plant-status
+          #   entity: plant.plant1
+          - type: picture-elements
+            image: /local/plants.jpg
+            elements:
+              - type: state-badge
+                entity: sensor.xiaomi_miflora_moisture
+                style:
+                  top: 75%
+                  left: 10%
+                  --ha-label-badge-font-size: 1em
+              - type: state-badge
+                entity: sensor.xiaomi_miflora_soil_conductivity
+                style:
+                  top: 75%
+                  left: 25%
+                  --ha-label-badge-font-size: 1em
+              - type: state-badge
+                entity: sensor.xiaomi_miflora_temperature
+                style:
+                  top: 75%
+                  left: 40%
+                  --ha-label-badge-font-size: 1em
+              - type: state-badge
+                entity: sensor.xiaomi_miflora_illuminance
+                style:
+                  top: 75%
+                  left: 55%
+                  --ha-label-badge-font-size: 1em
+
+      - type: markdown
+        content: >
+          ## Irrigation Controller
+      - type: vertical-stack
+        cards:
+          - type: glance
+            entities:
+              - binary_sensor.aquatimer_control_unit_status
+              - binary_sensor.side_yard_status
+              - sensor.side_yard_battery
+      - type: markdown
+        content: >
+          ## Garden
+      - type: vertical-stack
+        cards:
+          - type: entities
+            entities:
+              - entity: switch.front_yard_automatic_watering
+                name: Scheduled
+              - entity: sensor.front_yard_next_cycle
+                name: Next Schedule
+              - type: call-service
+                name: Run for 15 minutes
+                action_name: Start Now
+                service: switch.toggle
+                service_data:
+                  entity_id: switch.front_yard_manual_watering
+              - binary_sensor.front_yard_watering
+              - entity: sensor.front_yard_remaining_watering_time
+                name: Time Remaining
+
+      - type: markdown
+        content: >
+          ## Pool Filler
+      - type: vertical-stack
+        cards:
+          - type: entities
+            entities:
+              - entity: switch.pool_filler_automatic_watering
+                name: Scheduled
+              - entity: sensor.pool_filler_next_cycle
+                name: Next Schedule
+              - type: call-service
+                name: Run for 15 minutes
+                action_name: Start Now
+                service: switch.toggle
+                service_data:
+                  entity_id: switch.pool_filler_manual_watering
+              - binary_sensor.pool_filler_watering
+              - entity: sensor.pool_filler_remaining_watering_time
+                name: Time Remaining
+  
+  - <<: *compact-header
