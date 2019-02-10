@@ -6,7 +6,7 @@ initial_state: on
 trigger:
   - platform: state
     entity_id: binary_sensor.dog_water_bowl
-    #to: "dry"
+    from: "on"
     to: "off"
 action:
   - service: script.notify_speech
@@ -18,7 +18,7 @@ action:
     data_template:
       title: "WATER BOWL EMPTY"
       message: "The dogs water bowl is empty! ... Please refill it soon."
-      who: "parents"
+      #who: "parents"
 
   # - service: persistent_notification.create
   #   data_template:
