@@ -9,9 +9,12 @@ title: Outdoors
 path: outdoors
 icon: fas:seedling
 cards:
-  # Garden
   - type: vertical-stack
     cards:
+      - type: custom:weather-card
+        entity: weather.dark_sky
+        #name: Santee
+
       - type: markdown
         content: >
           ## Plant Monitor
@@ -20,7 +23,7 @@ cards:
           # - type: plant-status
           #   entity: plant.plant1
           - type: picture-elements
-            image: /local/plants.jpg
+            image: /local/ui/bg/plants.jpg
             elements:
               - type: state-badge
                 entity: sensor.xiaomi_miflora_moisture
@@ -35,18 +38,20 @@ cards:
                   left: 25%
                   --ha-label-badge-font-size: 1em
               - type: state-badge
-                entity: sensor.xiaomi_miflora_temperature
+                entity: sensor.xiaomi_miflora_illuminance
                 style:
                   top: 75%
                   left: 40%
                   --ha-label-badge-font-size: 1em
               - type: state-badge
-                entity: sensor.xiaomi_miflora_illuminance
+                entity: sensor.xiaomi_miflora_temperature
                 style:
                   top: 75%
                   left: 55%
                   --ha-label-badge-font-size: 1em
 
+  - type: vertical-stack
+    cards:
       - type: markdown
         content: >
           ## Irrigation Controller
@@ -57,6 +62,7 @@ cards:
               - binary_sensor.aquatimer_control_unit_status
               - binary_sensor.side_yard_status
               - sensor.side_yard_battery
+
       - type: markdown
         content: >
           ## Garden
@@ -68,15 +74,20 @@ cards:
                 name: Scheduled
               - entity: sensor.front_yard_next_cycle
                 name: Next Schedule
-              - type: call-service
-                name: Run for 15 minutes
-                action_name: Start Now
-                service: switch.toggle
-                service_data:
-                  entity_id: switch.front_yard_manual_watering
-              - binary_sensor.front_yard_watering
-              - entity: sensor.front_yard_remaining_watering_time
-                name: Time Remaining
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: More Info
+                items:
+                  - type: call-service
+                    name: Run for 15 minutes
+                    action_name: Start Now
+                    service: switch.toggle
+                    service_data:
+                      entity_id: switch.front_yard_manual_watering
+                  - binary_sensor.front_yard_watering
+                  - entity: sensor.front_yard_remaining_watering_time
+                    name: Time Remaining
 
       - type: markdown
         content: >
@@ -89,14 +100,19 @@ cards:
                 name: Scheduled
               - entity: sensor.pool_filler_next_cycle
                 name: Next Schedule
-              - type: call-service
-                name: Run for 15 minutes
-                action_name: Start Now
-                service: switch.toggle
-                service_data:
-                  entity_id: switch.pool_filler_manual_watering
-              - binary_sensor.pool_filler_watering
-              - entity: sensor.pool_filler_remaining_watering_time
-                name: Time Remaining
+              - type: custom:fold-entity-row
+                head:
+                  type: section
+                  label: More Info
+                items:
+                  - type: call-service
+                    name: Run for 15 minutes
+                    action_name: Start Now
+                    service: switch.toggle
+                    service_data:
+                      entity_id: switch.pool_filler_manual_watering
+                  - binary_sensor.pool_filler_watering
+                  - entity: sensor.pool_filler_remaining_watering_time
+                    name: Time Remaining
   
   - <<: *compact-header

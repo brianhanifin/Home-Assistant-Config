@@ -170,6 +170,16 @@ cards:
               service: script.turn_on
               service_data:
                 entity_id: script.toggle_garage_door
+      # - type: horizontal-stack
+      #   cards:
+      #     - type: entity-button
+      #       entity: switch.hot_water_pump
+      #       icon: mdi:thermostat-box
+      #       name: Thermostats
+      #       tap_action:
+      #         action: toggle
+      #     - <<: *blank-button
+      #     - <<: *blank-button
       - type: horizontal-stack
         cards:
           - type: entities
@@ -207,11 +217,6 @@ cards:
               service_data:
                 entity_id: script.goodnight_routine
           - <<: *blank-button
-          # - type: entity-button
-          #   entity: cover.test
-          #   icon: mdi:garage
-          #   tap_action:
-          #     action: toggle
 
   - type: vertical-stack
     cards:
@@ -223,8 +228,8 @@ cards:
           - type: entities
             entities:
               - binary_sensor.dog_water_bowl
-              - entity: sensor.medicine_buddy
+              - entity: sensor.medicine_buddy_given_today
                 icon: mdi:pill
-                name: Buddy's Medicine
+                name: Buddy's Medicine Last Given
 
   - <<: *compact-header

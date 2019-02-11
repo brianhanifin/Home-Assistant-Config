@@ -1,0 +1,172 @@
+---
+# Compact Header 'Anchor'
+compact-header: &compact-header
+- type: custom:compact-custom-header
+  clock_format: 24
+  menu: false
+
+action_more_info: &action_more_info
+  tap_action:
+    action: more-info
+
+title: Test
+path: test
+icon: fas:blank
+cards:
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Extended Presence
+      - type: horizontal-stack
+        cards:
+        - type: glance
+          columns: 2
+          show_name: False
+          entities:
+            - entity: input_select.brian
+              <<: *action_more_info
+            - entity: input_select.nerene
+              <<: *action_more_info
+      - type: horizontal-stack
+        cards:
+        - type: glance
+          columns: 3
+          show_name: False
+          entities:
+            - entity: input_select.eric
+              <<: *action_more_info
+            - entity: input_select.sandy
+              <<: *action_more_info
+            - entity: input_select.heather
+              <<: *action_more_info
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            entities:
+              - input_boolean.residents_home
+              - input_boolean.residents_away
+              - input_boolean.residents_extended_away
+
+
+  # - type: lists
+  #   #title: To Do List
+
+  # - type: custom:list-card
+  #   entity: sensor.engineering_feed
+  #   title: Engineering Feed
+  #   columns:
+  #     - title: ''
+  #       type: image
+  #       add_link: link
+  #       field: image
+  #     - title: Title
+  #       field: title
+  #       style:
+  #         - white-space: nowrap
+  #     - title: Description
+  #       field: description
+
+  - type: entities
+    title: auto-entities
+    entities:
+      - type: custom:auto-entities
+        card:
+          type: custom:fold-entity-row
+          head:
+            type: section
+            label: All lights
+        filter:
+          include:
+            - domain: light
+      - type: custom:auto-entities
+        show_empty: false
+        card:
+          type: custom:fold-entity-row
+          head:
+            type: section
+            label: Lights that are on
+        filter:
+          include:
+            - domain: light
+              state: "on"
+      - type: custom:auto-entities
+        show_empty: false
+        card:
+          type: custom:fold-entity-row
+          head:
+            type: section
+            label: Lights that are dimmed below 50%
+        filter:
+          include:
+            - domain: light
+              attributes:
+                brightness: "< 125"
+      - type: custom:auto-entities
+        show_empty: false
+        card:
+          type: custom:fold-entity-row
+          head:
+            type: section
+            label: Lights that are kinda blue-ish
+        filter:
+          include:
+            - domain: light
+              attributes:
+                hs_color 1: "0:> 195"
+                hs_color 2: "0:< 255"
+
+  - type: entities
+    title: light-entity-row + slider-entity-row
+    show_header_toggle: false
+    entities:
+      - entity: light.family_room_light
+        icon: mdi:floor-lamp
+        name: Switched
+      - type: custom:slider-entity-row
+        entity: light.family_room_light
+        full_row: true
+        toggle: false
+      - type: custom:slider-entity-row
+        entity: light.family_room_floor_lamp
+        icon: mdi:floor-lamp
+        name: Floor Lamp
+        toggle: true
+      - type: "custom:light-entity-row"
+        entity: light.family_room_table_lamp
+        icon: mdi:floor-lamp
+        name: Table Lamp
+        showColorPicker: true
+        showColorSliders: true
+        buttons:
+          - name: Red
+            service_data:
+              color_name: red
+          - name: Blue
+            service_data:
+              color_name: blue
+          - name: Teal
+            service_data:
+              color_name: teal
+
+  - type: entities
+    title: button-entity-row
+    show_header_toggle: false
+    entities:
+      - type: "custom:button-entity-row"
+        buttons:
+          - icon: mdi:floor-lamp
+            icon_color: yellow
+            name: "Corner Lamp"
+            entity: light.family_room_light
+          - icon: mdi:lamp
+            icon_color: yellow
+            name: "Table Lamp"
+            entity: light.family_room_table_lamp
+          - icon: mdi:floor-lamp
+            icon_color: yellow
+            name: "Floor Lamp"
+            entity: light.family_room_floor_lamp
+
+
+  - <<: *compact-header
