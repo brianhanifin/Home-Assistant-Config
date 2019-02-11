@@ -5,7 +5,9 @@
 | [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status][uptime-status-shield]][uptime-robot] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] | 
 
 ## User Interface
-[![home][lovelace-01t]][lovelace-01] [![rooms][lovelace-02t]][lovelace-02] [![outside][lovelace-03t]][lovelace-03] [![wakeup][lovelace-04t]][lovelace-04] [![tools][lovelace-05t]][lovelace-05]
+| | | | | |
+| --- | --- | --- | --- | --- |
+| [![home][lovelace-01t]][lovelace-01] | [![rooms][lovelace-02t]][lovelace-02] | [![outside][lovelace-03t]][lovelace-03] | [![wakeup][lovelace-04t]][lovelace-04] | [![tools][lovelace-05t]][lovelace-05] |
 
 ### Lovelace
 
@@ -119,13 +121,13 @@ I just learned of Franck recently, but he is a long time member of the community
 All of my configuration files are tested against the most stable version of home-assistant using [Travis][travis-build-status].
 
 
-[lovelace-01t]: ./README-images/01_home_t.png
+[lovelace-01t]: ./README-images/01_home_t.jpeg
 [lovelace-02t]: ./README-images/02_rooms_t.jpeg
 [lovelace-03t]: ./README-images/03_outside_t.jpeg
 [lovelace-04t]: ./README-images/04_wakeup_t.jpeg
 [lovelace-05t]: ./README-images/05_tools_t.jpeg
 
-[lovelace-01]: ./README-images/01_home.png
+[lovelace-01]: ./README-images/01_home.jpeg
 [lovelace-02]: ./README-images/02_rooms.jpeg
 [lovelace-03]: ./README-images/03_outside.jpeg
 [lovelace-04]: ./README-images/04_wakeup.jpeg
