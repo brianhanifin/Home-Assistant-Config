@@ -30,9 +30,6 @@ wget https://raw.githubusercontent.com/thomasloven/lovelace-fold-entity-row/mast
 cd /config/www/custom-lovelace/light-entity-row
 wget https://raw.githubusercontent.com/custom-cards/light-entity-row/master/light-entity-row.js
 
-cd /config/www/custom-lovelace/list-card
-wget https://raw.githubusercontent.com/custom-cards/list-card/master/list-card.js
-
 cd /config/www/custom-lovelace/popup-card
 wget https://raw.githubusercontent.com/thomasloven/lovelace-popup-card/master/popup-card.js
 
