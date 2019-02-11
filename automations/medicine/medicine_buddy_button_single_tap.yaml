@@ -23,3 +23,7 @@ action:
       topic: "medicine/buddy/last_given"
       payload: "{{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}"
       retain: true
+  - delay:
+      minutes: 1
+  - service: homeassistant.update_entity
+    entity_id: sensor.medicine_buddy_given_today
