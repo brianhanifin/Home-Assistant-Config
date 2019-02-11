@@ -4,20 +4,25 @@
 | :--- | :--- |
 | [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status][uptime-status-shield]][uptime-robot] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] | 
 
-## User Interface
-| | | | | |
-| --- | --- | --- | --- | --- |
-| [![home][lovelace-01t]][lovelace-01] | [![rooms][lovelace-02t]][lovelace-02] | [![outside][lovelace-03t]][lovelace-03] | [![wakeup][lovelace-04t]][lovelace-04] | [![tools][lovelace-05t]][lovelace-05] |
-
-### Lovelace
-
-
----
-
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle is complete (thanks to the help of a power monitoring smart plug).
+
+## User Interface
+### Amazon Alexa
+<span style="float:left">![amazon echo][amazon-echo]</span> Our primary way we interact with Alexa is via Echo devices in all of the major rooms of the house. Alexa makes announcments when something needs our immediate attention: such as when it is time to leave for school, or the dog's water bowl needs to be refilled.
+
+### Physical Buttons
+<span style="float:left">![medicine button][button-medicine]</span> Recently I stuck a wireless push button inside the cabinet where we keep our dog's seizure medicine. When we prepare his pill treats for the day, and give him his first dose a press of the button logs today's date. Around 9am an automation runs that announces that the dog's medicine needs his medicine. However, if the button was pressed earlier in the day the announcement is not made.
+
+My wife is really happy with how this is working and I am considering incorporating more of these into our daily routine. Maybe Home Assistant could take over more of our household reminders from apps on our Phones?
+
+### Lovelace
+
+| | | | | |
+| --- | --- | --- | --- | --- |
+| [![home][lovelace-01t]][lovelace-01] | [![rooms][lovelace-02t]][lovelace-02] | [![outside][lovelace-03t]][lovelace-03] | [![wakeup][lovelace-04t]][lovelace-04] | [![tools][lovelace-05t]][lovelace-05] |
 
 ---
 
@@ -132,6 +137,9 @@ All of my configuration files are tested against the most stable version of home
 [lovelace-03]: ./README-images/03_outside.jpeg
 [lovelace-04]: ./README-images/04_wakeup.jpeg
 [lovelace-05]: ./README-images/05_tools.jpeg
+
+[amazon-echo]: ./README-images/echo.jpeg
+[button-medicine]: ./README-images/button_medicine.jpeg
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/brianhanifin/Home-Assistant-Config.svg
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/commits/master
