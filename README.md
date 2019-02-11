@@ -1,11 +1,14 @@
 # Hanifin Smart Home
 
-| Information | Community |
+| Repository Status | Home Assistant Community |
 | :--- | :--- |
 | [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status][uptime-status-shield]][uptime-robot] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] | 
 
-## Lovelace Interface
-![home][lovelace-0] ![wakeup][lovelace-2]
+## User Interface
+[![home][lovelace-01t]][lovelace-01] [![rooms][lovelace-02t]][lovelace-02] [![outside][lovelace-03t]][lovelace-03] [![wakeup][lovelace-04t]][lovelace-04] [![tools][lovelace-05t]][lovelace-05]
+
+### Lovelace
+
 
 ---
 
@@ -14,8 +17,28 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle is complete (thanks to the help of a power monitoring smart plug).
 
+---
+
+## Hardware
+
+### ESPHome
+I am inspired to finally find uses for the bag full of random ESP boards I purchased about a year ago, when I thought I was going to create my own sensors to work with Homebridge. *While waiting for them to arrive on a slow boat from China, I discovered Home Assistant and decided to go a different way!*
+#### ESP32
+**Bluetooth Low Energy Device Hub**:
+[Using the example code from esphome.io][esphome-ble-hub] I deployed a bridge in my Garage to pass along the data from the Xiaomi MiFlora sensor I stuck in one of our plant pots in the Front Yard. I had this for over almost a year and was unable to get the data into Home Assistant, until now! :smile:
+#### ESP8266 + ESP8285
+**Water Bowl Sensor**: [Using the Sonoff Basic button press binary sensor][esphome-sonoff-basic] as a starting point, I deployed a ESP8285 with two simple jumper wires attached to sense when the dog's water bowl becomes empty. If the sensor still reads the bowl as empty after 5 minutes then Alexa announces it is time to fill the bowl.
+#### SonOff Plugs
+**Basic, S31, POW R2**:
+These plugs control a hot water circulation pump, floor fans, landscape lighting, Christmas light strings, etc. One monitors the power usage of the Washing Machine so Alexa can announce when the clothes are ready to be moved to the dryer.
+
+I replaced my HomeKit smart plugs with various SonOff plugs. First with Tasmota installed, then I replaced the Tasmota firmware with ESPHome firmware which loses the MQTT layer in favor of native Home Assistant integration (and I suspect speed).
+
 ### Harmony Ultimate Hub
-We have two TV areas and both have hubs to manage switching inputs to all of the devices hooked up to them. I have setup scripts to give Alexa access to start activities or turn them off. "Alexa, turn on the Living Room TV."
+We have become an almost controller-free house! Our two TV areas and both have hubs to manage switching inputs to all of the devices hooked up to them. The Harmony Alexa skill handles most of the voice commands, and setup Alexa Routines to handle the two commands that overlap on the two TVs.
+* "Alexa, turn on the " *Living Room or Family Room* " Computer."
+* "Alexa, turn on the " *Living Room or Family Room* " TV."
+* "Alexa, turn off the " *Living Room or Family Room* " TV."
 
 ### Insteon
 I started with HomeKit compatible *Insteon* lamp dimmer modules. I plug a few... er... lamps into them. :)
@@ -41,19 +64,16 @@ Thanks to Carlo's article "[PSA: CHECK OUT YOUR SMOKE DETECTORS (ONCE EVERY 10 Y
 
 I have added 6 of these around the house and setup an iOS alert to alert my and my wife's phones should the Smoke or CO sensor be triggered anywhere in the house. As they are interconnected they all appear as one device in Wink and Home Assistant! :)
 
-### SonOff with Tasmota
-I replaced my HomeKit smart plugs with various SonOff plugs with Tasmota installed.
-
 ### Xiaomi
 This Chinese company makes a lot of very useful and inexpensive wireless smart home products. I use their Zigbee smart hub to get these devices to talk to Home Assistant.
-#### Motion Sensor
-Two motion sensors watch for people to enter the kitchen so they can turn on the undercabinet light strip.
-#### Contact Sensor
+#### Contact Sensors
 I use their door/window sensors to turn the light in the shoe closet on and off, and remind us when we leave the Glowforge vent window open.
-#### Leak Sensor
+#### Motion Sensors
+Two motion sensors watch for people to enter the kitchen so they can turn on the undercabinet light strip.
+#### Leak Sensors
 As soon as we finished our Kitchen remodel I set one of these wireless little dics under the sink. Should water pool and activate the senor a Home Assistant "Watch Dog" will instantly have Alexa announce there is a water leak all over the house, and an alert will be sent to my phone!
 
-I ordered a few more so I could have better leak coverage around the house, including the water heater tray. We had a water heater leak slowly over the summer and we didn't realize it until it got worse. I would also use one of these senors in reverse to have Alexa let us know when it is time to refill the dog's water bowl.
+I ordered a few more so I could have better leak coverage around the house, including the water heater tray. We had a water heater leak slowly over the summer and we didn't realize it until it got worse.
 
 ### Ubiquiti Unifi WiFi
 Eventually you outgrow even the fanciest home WiFi setup. There were just too many devices for my Netgear Orbi mesh networking system to handle, so I had to upgrade to a business grade solution.
@@ -71,7 +91,7 @@ Cons:
 I picked up an inexpensive version 1 Wink Hub so I could add Z-Wave devices and replace my Lutron Hub. I have now added Kidee Smoke + Carbon Monoxide detectors as well.
 
 ### Z-Wave
-I have decided that I prefer the look of the GE Z-Wave in-wall dimmers and switches over the four button Insteon dimmers because they are easier for guests to understand.
+I have added some GE Z-Wave in-wall switches in the kitchen since we don't care to dim the overhead lights in there. I also have a few dimmers as well.
 
 ---
 
@@ -99,8 +119,17 @@ I just learned of Franck recently, but he is a long time member of the community
 All of my configuration files are tested against the most stable version of home-assistant using [Travis][travis-build-status].
 
 
-[lovelace-0]: ./README-images/0.png
-[lovelace-2]: ./README-images/2.png
+[lovelace-01t]: ./README-images/01_home_t.png
+[lovelace-02t]: ./README-images/02_rooms_t.jpeg
+[lovelace-03t]: ./README-images/03_outside_t.jpeg
+[lovelace-04t]: ./README-images/04_wakeup_t.jpeg
+[lovelace-05t]: ./README-images/05_tools_t.jpeg
+
+[lovelace-01]: ./README-images/01_home.png
+[lovelace-02]: ./README-images/02_rooms.jpeg
+[lovelace-03]: ./README-images/03_outside.jpeg
+[lovelace-04]: ./README-images/04_wakeup.jpeg
+[lovelace-05]: ./README-images/05_tools.jpeg
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/brianhanifin/Home-Assistant-Config.svg
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/commits/master
@@ -118,6 +147,10 @@ All of my configuration files are tested against the most stable version of home
 
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg
 [forum]: https://community.home-assistant.io/u/brianhanifin/summary
+
+
+[esphome-ble-hub]:https://esphome.io/components/esp32_ble_tracker.html
+[esphome-sonoff-basic]:https://esphome.io/devices/sonoff_basic.html
 
 [hue-strip-guide]:https://char.gd/blog/2018/building-better-cheaper-philips-hue-led-strips
 
