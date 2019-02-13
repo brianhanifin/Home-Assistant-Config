@@ -155,31 +155,15 @@ cards:
             tap_action:
               action: toggle
           - type: entity-button
-            entity: lock.front_door
-            icon: mdi:lock-smart
+            entity: switch.toggle_front
+            name: Front Door
             tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_front_door_lock
+              action: toggle
           - type: entity-button
-            entity: cover.garage_door
-            icon: mdi:garage
+            entity: switch.toggle_garage
+            name: Garage Door
             tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_garage_door
-      # - type: horizontal-stack
-      #   cards:
-      #     - type: entity-button
-      #       entity: switch.hot_water_pump
-      #       icon: mdi:thermostat-box
-      #       name: Thermostats
-      #       tap_action:
-      #         action: toggle
-      #     - <<: *blank-button
-      #     - <<: *blank-button
+              action: toggle
       - type: horizontal-stack
         cards:
           - type: entities
