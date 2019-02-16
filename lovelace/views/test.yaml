@@ -15,13 +15,38 @@ icon: fas:blank
 cards:
   - type: vertical-stack
     cards:
-      - type: picture-glance
-        title: Porch
-        entities:
-          - binary_sensor.ring_porch_motion
-          - binary_sensor.ring_porch_ding
-        camera_image: camera.porch
 
+      - type: custom:popup-card
+        entity: light.family_room_table_lamp
+        title: Table Lamp
+        card:
+          type: entities
+          entities:
+            - type: custom:light-entity-row
+              entity: light.family_room_table_lamp
+              icon: mdi:lamp
+              name: "Advanced Settings"
+              showBrightness: false
+              #showColorSliders: true
+              buttons:
+                - name: Red
+                  service_data:
+                    color_name: red
+                - name: Blue
+                  service_data:
+                    color_name: blue
+                - name: Teal
+                  service_data:
+                    color_name: teal
+                - name: Violet
+                  service_data:
+                    color_name: violet
+      - type: entities
+        entities:
+          - type: custom:slider-entity-row
+            entity: light.family_room_table_lamp
+            icon: mdi:lamp
+            name: Table Lamp
 
       - type: markdown
         content: >
@@ -77,6 +102,7 @@ cards:
 
   - type: entities
     title: auto-entities
+    show_header_toggle: false
     entities:
       - type: custom:auto-entities
         card:
