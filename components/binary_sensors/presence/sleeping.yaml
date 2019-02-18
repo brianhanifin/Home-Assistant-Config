@@ -4,10 +4,10 @@
 #
 platform: bayesian
 prior: 0.5
-name: Sleeping
+name: sleeping
 probability_threshold: 0.85
 observations:
-  - entity_id: group.parents
+  - entity_id: binary_sensor.both_parents_are_home
     prob_given_true: 0.99
     prob_given_false: 0.5
     platform: state
@@ -27,12 +27,17 @@ observations:
     prob_given_false: 0.4
     platform: state
     to_state: true
-  # - entity_id: variable.last_motion
-  #   prob_given_true: 0.9
-  #   prob_given_false: 0.3
-  #   platform: state
-  #   to_state: Bedroom
+  - entity_id: variable.last_motion
+    prob_given_true: 0.9
+    prob_given_false: 0.3
+    platform: state
+    to_state: Bedroom
   - entity_id: binary_sensor.brians_phone_charging
+    prob_given_true: 0.95
+    prob_given_false: 0.5
+    platform: state
+    to_state: true
+  - entity_id: binary_sensor.nerenes_phone_charging
     prob_given_true: 0.95
     prob_given_false: 0.5
     platform: state
