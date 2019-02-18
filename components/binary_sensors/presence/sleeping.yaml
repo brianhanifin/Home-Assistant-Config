@@ -1,0 +1,39 @@
+---
+# Bayesian Sleeping Sensor
+# https://diyfuturism.com/index.php/2017/12/29/useful-sensor-bayesian-sleep-detection-in-home-assistant/
+#
+platform: bayesian
+prior: 0.5
+name: Sleeping
+probability_threshold: 0.85
+observations:
+  - entity_id: group.parents
+    prob_given_true: 0.99
+    prob_given_false: 0.5
+    platform: state
+    to_state: home
+  - entity_id: sensor.sun
+    prob_given_true: 0.9
+    prob_given_false: 0.2
+    platform: state
+    to_state: below_horizon
+  - entity_id: variable.lights_on
+    prob_given_true: 0.9
+    prob_given_false: 0.4
+    platform: 'state'
+    to_state: ''
+  - entity_id: binary_sensor.tvs_off
+    prob_given_true: 0.8
+    prob_given_false: 0.4
+    platform: state
+    to_state: true
+  # - entity_id: variable.last_motion
+  #   prob_given_true: 0.9
+  #   prob_given_false: 0.3
+  #   platform: state
+  #   to_state: Bedroom
+  - entity_id: binary_sensor.brians_phone_charging
+    prob_given_true: 0.95
+    prob_given_false: 0.5
+    platform: state
+    to_state: true

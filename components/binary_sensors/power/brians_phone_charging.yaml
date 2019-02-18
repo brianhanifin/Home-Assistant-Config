@@ -1,0 +1,6 @@
+---
+platform: template
+sensors:
+  brians_phone_charging:
+    entity_id: binary_sensor.sleeping
+    value_template: "{{ ( is_state_attr('device_tracker.life360_brian', 'battery_charging', true) or is_state_attr('device_tracker.brian', 'battery_charging', true) ) }}"
