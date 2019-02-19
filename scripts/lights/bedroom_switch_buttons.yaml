@@ -1,0 +1,26 @@
+bedroom_switch_buttons:
+  sequence:
+    # - service: persistent_notification.create
+    #   data_template:
+    #     title: "bedroom_switch_buttons"
+    #     message: "type: {{ type }}\nside: {{ side }}"
+
+    - service_template: >
+        {%- if type == "single" -%}
+          light.toggle
+        {%- else -%}
+          switch.toggle
+        {%- endif %}
+      data_template:
+        entity_id: >
+          {# single #}
+          {%- if type == "single" -%}
+            {%- if side == "right" -%}
+              light.brians_light
+            {%- else -%}
+              light.nerenes_light
+            {%- endif -%}
+          {# long_click_press, both, double, long_click_both, both_double #}
+          {%- else -%}
+            switch.bedroom_fan
+          {%- endif %}
