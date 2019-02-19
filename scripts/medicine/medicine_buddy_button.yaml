@@ -1,0 +1,30 @@
+medicine_buddy_button:
+  sequence:
+    # - service: persistent_notification.create
+    #   data_template:
+    #     title: "medicine_buddy_button"
+    #     message: "type: {{ type }}"
+
+    - service: logbook.log
+      data_template:
+        name: "Buddy's Medicine"
+        message: >
+          {# single #}
+          {%- if type == "single" -%}
+            "was given"
+          {# double #}
+          {%- else -%}
+            "was cleared"
+          {%- endif %}
+    - service: mqtt.publish
+      data_template:
+        topic: "medicine/buddy/last_given"
+        payload: >
+          {%- if type == "single" -%}
+            {{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}
+          {%- endif %}
+        retain: true
+    - delay:
+        minutes: 1
+    - service: homeassistant.update_entity
+      entity_id: sensor.medicine_buddy_given_today

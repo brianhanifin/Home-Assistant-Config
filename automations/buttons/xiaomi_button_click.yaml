@@ -1,0 +1,18 @@
+alias: xiaomi_button_click
+initial_state: on
+trigger:
+  platform: event
+  event_type: xiaomi_aqara.click
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "xiaomi_button_click"
+  #     message: "button: {{ trigger.event.data.entity_id }}\ntype: {{ trigger.event.data.click_type }}"
+
+  #click_types: single, double, long, both, double_both, long_both
+  - service: script.xiaomi_button_handler
+    data_template:
+      button: >
+        {{ trigger.event.data.entity_id }}
+      type: >
+        {{ trigger.event.data.click_type }}
