@@ -21,17 +21,18 @@ lights_on_update:
           {%- for group in states.light|groupby('state') -%}
             {%- for entity in group.list -%}
               {%- if entity.state == 'on'
-                  and entity.entity_id|lower != 'light.dummy'
-                  and entity.entity_id|lower != 'light.entry'
-                  and entity.entity_id|lower != 'light.hue'
-                  and entity.entity_id|lower != 'light.living_room'
-                  and not ('garage_entry'  in entity.entity_id|lower)
-                  and not ('gateway_light' in entity.entity_id|lower)
-                  and not ('shoe_closet'   in entity.entity_id|lower)
-                  and not (entity.entity_id|lower).endswith('_led')
-                  and not (entity.entity_id|lower).endswith('_group')
-                  and not (entity.entity_id|lower).endswith('nightlight')
-                  and not (entity.entity_id|lower).startswith('light.3a') -%}
+                  and entity.entity_id != 'light.dummy'
+                  and entity.entity_id != 'light.garage_entry_light'
+                  and entity.entity_id != 'light.hue'
+                  and entity.entity_id != 'light.living_room'
+                  and entity.entity_id != 'light.kitchen_undercabinet'
+                  and entity.entity_id != 'light.porch_light'
+                  and entity.entity_id != 'light.shoe_closet_light'
+                  and not ('gateway_light' in entity.entity_id)
+                  and not ('hub'           in entity.entity_id)
+                  and not (entity.entity_id).endswith('_led')
+                  and not (entity.entity_id).endswith('nightlight')
+                  and not (entity.entity_id).startswith('light.lamplinc') -%}
                 {{ entity.entity_id }}{{ ' ' }}
               {%- endif -%}
             {%- endfor -%}
