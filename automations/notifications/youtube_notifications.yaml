@@ -1,0 +1,16 @@
+---
+alias: youtube_notifications
+initial_state: on
+trigger:
+  platform: state
+  entity_id:
+    - sensor.drzzs
+    - sensor.franck_nijhof
+action:
+  - service: script.notify_ios
+    data_template:
+      title: "YouTube: {{ trigger.event.data.friendly_name }}"
+      message: "{{ trigger.to_state.state }}"
+      image: "{{ trigger.event.data.entity_picture }}"
+      url: "{{ trigger.event.data.url }}"
+      who: "brian"

@@ -7,6 +7,8 @@
 #        title: 'Startup: Home Assistant is Up and Running!'
 #        message: "{{ trigger.to_state.state }}"
 #        who: "brian | nerene | lucas | kyle | family | parents"
+#        image: "{{ trigger.event.data.entity_picture }}"
+#        url: "{{ trigger.event.data.url }}"
 ######################################################################################################
 notify_ios:
   sequence:
@@ -35,3 +37,8 @@ notify_ios:
       data_template:
         title: "{{ title }}"
         message: "{{ message }}"
+        data:
+          url: "{{ url }}"
+          attachment:
+            url: "{{ image }}"
+            hide-thumbnail: false
