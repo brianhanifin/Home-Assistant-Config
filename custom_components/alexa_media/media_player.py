@@ -6,15 +6,16 @@ https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers
 VERSION 1.0.0
 """
 import logging
-
 import voluptuous as vol
 
 from homeassistant.components.media_player import (
+    MediaPlayerDevice, MEDIA_PLAYER_SCHEMA)
+from homeassistant.components.media_player.const import (
     MEDIA_TYPE_MUSIC, SUPPORT_NEXT_TRACK,
     SUPPORT_PAUSE, SUPPORT_PLAY, SUPPORT_PREVIOUS_TRACK,
     SUPPORT_STOP, SUPPORT_TURN_OFF, SUPPORT_TURN_ON,
-    SUPPORT_VOLUME_MUTE, SUPPORT_PLAY_MEDIA, SUPPORT_VOLUME_SET, DOMAIN,
-    MediaPlayerDevice, MEDIA_PLAYER_SCHEMA,
+    SUPPORT_VOLUME_MUTE, SUPPORT_PLAY_MEDIA, SUPPORT_VOLUME_SET,
+    DOMAIN,
     SUPPORT_SELECT_SOURCE)
 from homeassistant.const import (
     STATE_IDLE, STATE_STANDBY, STATE_PAUSED,
@@ -33,7 +34,9 @@ except ImportError:
         DOMAIN as ALEXA_DOMAIN,
         DATA_ALEXAMEDIA,
         MIN_TIME_BETWEEN_SCANS, MIN_TIME_BETWEEN_FORCED_SCANS)
-
+from .const import (
+    ATTR_MESSAGE, SERVICE_ALEXA_TTS, PLAY_SCAN_INTERVAL
+)
 SUPPORT_ALEXA = (SUPPORT_PAUSE | SUPPORT_PREVIOUS_TRACK |
                  SUPPORT_NEXT_TRACK | SUPPORT_STOP |
                  SUPPORT_VOLUME_SET | SUPPORT_PLAY |
@@ -42,10 +45,8 @@ SUPPORT_ALEXA = (SUPPORT_PAUSE | SUPPORT_PREVIOUS_TRACK |
                  SUPPORT_SELECT_SOURCE)
 _LOGGER = logging.getLogger(__name__)
 
-DEPENDENCIES = ['alexa_media']
+DEPENDENCIES = [ALEXA_DOMAIN]
 
-SERVICE_ALEXA_TTS = 'alexa_tts'
-ATTR_MESSAGE = 'message'
 ALEXA_TTS_SCHEMA = MEDIA_PLAYER_SCHEMA.extend({
     vol.Required(ATTR_MESSAGE): cv.string,
 })
@@ -136,6 +137,7 @@ class AlexaClient(MediaPlayerDevice):
         self._last_called = None
         # Polling state
         self._should_poll = True
+        self._last_update = 0
         self.refresh(device)
         # Register event handler on bus
         hass.bus.listen('{}_{}'.format(ALEXA_DOMAIN,
@@ -359,12 +361,18 @@ class AlexaClient(MediaPlayerDevice):
         every update. However, this quickly floods the network for every new
         device added. This should only call refresh() to call the AlexaAPI.
         """
+        import time
         if (self._device is None or self.entity_id is None):
             # Device has not initialized yet
             return
-        self.refresh()
+        self.refresh(no_throttle=True)
         if (self.state in [STATE_PLAYING]):
-            self._should_poll = True
+            self._should_poll = False  # disable polling since manual update
+            if(time.time() - self._last_update > PLAY_SCAN_INTERVAL):
+                _LOGGER.debug("%s playing; scheduling update in %s seconds",
+                              self.name, PLAY_SCAN_INTERVAL)
+                call_later(self.hass, PLAY_SCAN_INTERVAL, lambda _:
+                           self.schedule_update_ha_state(force_refresh=True))
         elif self._should_poll:  # Not playing, one last poll
             self._should_poll = False
             _LOGGER.debug("Disabling polling and scheduling last update in 300"
@@ -372,6 +380,7 @@ class AlexaClient(MediaPlayerDevice):
                           self.name)
             call_later(self.hass, 300, lambda _:
                        self.schedule_update_ha_state(force_refresh=True))
+        self._last_poll = time.time()
 
     @property
     def media_content_type(self):
@@ -421,6 +430,7 @@ class AlexaClient(MediaPlayerDevice):
             return
         self.alexa_api.set_volume(volume)
         self._media_vol_level = volume
+        self.update()
 
     @property
     def volume_level(self):
@@ -453,6 +463,7 @@ class AlexaClient(MediaPlayerDevice):
                 self.alexa_api.set_volume(self._previous_volume)
             else:
                 self.alexa_api.set_volume(50)
+        self.update()
 
     def media_play(self):
         """Send play command."""

@@ -15,12 +15,20 @@ bedroom_switch_buttons:
         entity_id: >
           {# single #}
           {%- if type == "single" -%}
-            {%- if side == "right" -%}
-              light.brians_light
-            {%- else -%}
+            {%- if side == "left" -%}
               light.nerenes_light
+            {%- elif side == "right" -%}
+              light.brians_light
+            {%- else -%}{# both buttons #}
+              light.nerenes_light, light.brians_light
             {%- endif -%}
           {# long_click_press, both, double, long_click_both, both_double #}
           {%- else -%}
-            switch.bedroom_fan
+            {%- if side == "left" -%}
+              switch.sound_machine
+            {%- elif side == "right" -%}
+              switch.bedroom_fan
+            {%- else -%}{# both buttons #}
+              switch.bedroom_fan, switch.sound_machine
+            {%- endif -%}
           {%- endif %}
