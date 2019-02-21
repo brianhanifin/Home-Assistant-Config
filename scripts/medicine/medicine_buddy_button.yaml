@@ -10,7 +10,7 @@ medicine_buddy_button:
         name: "Buddy's Medicine"
         message: >
           {# single #}
-          {%- if type == "single" -%}
+          {%- if type in ["single", "long"] -%}
             "was given"
           {# double #}
           {%- else -%}
@@ -20,7 +20,7 @@ medicine_buddy_button:
       data_template:
         topic: "medicine/buddy/last_given"
         payload: >
-          {%- if type == "single" -%}
+          {%- if type in ["single", "long"] -%}
             {{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}
           {%- endif %}
         retain: true

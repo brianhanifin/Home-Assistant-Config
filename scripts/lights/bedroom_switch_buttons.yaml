@@ -6,29 +6,27 @@ bedroom_switch_buttons:
     #     message: "type: {{ type }}\nside: {{ side }}"
 
     - service_template: >
-        {%- if type == "single" -%}
-          light.toggle
-        {%- else -%}
+        {%- if type in ["long", "double", "long_both", "double_both"] -%}
           switch.toggle
+        {%- elif type in ["single", "both"] -%}
+          light.toggle
         {%- endif %}
       data_template:
         entity_id: >
-          {# single #}
-          {%- if type == "single" -%}
-            {%- if side == "left" -%}
-              light.nerenes_light
-            {%- elif side == "right" -%}
-              light.brians_light
-            {%- else -%}{# both buttons #}
-              light.nerenes_light, light.brians_light
-            {%- endif -%}
-          {# long_click_press, both, double, long_click_both, both_double #}
-          {%- else -%}
+          {%- if type in ["long_both", "double_both"] -%}
+            switch.sound_machine, switch.bedroom_fan
+          {%- elif type in ["long", "double"] -%}
             {%- if side == "left" -%}
               switch.sound_machine
             {%- elif side == "right" -%}
               switch.bedroom_fan
-            {%- else -%}{# both buttons #}
-              switch.bedroom_fan, switch.sound_machine
+            {%- endif -%}
+          {%- elif type == "both" -%}
+              light.nerenes_light, light.brians_light
+          {%- elif type == "single" -%}
+            {%- if side == "left" -%}
+              light.nerenes_light
+            {%- elif side == "right" -%}
+              light.brians_light
             {%- endif -%}
           {%- endif %}
