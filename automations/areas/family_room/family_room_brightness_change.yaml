@@ -1,0 +1,22 @@
+alias: family_room_brightness_change
+initial_state: on
+trigger:
+  platform: numeric_state
+  entity_id: sensor.family_room_brightness
+  above: 200
+  #below: 100
+action:
+  - service: persistent_notification.create
+    data_template:
+      title: "family_room_brightness_change"
+      message: "brightness: {{ trigger.to_state.state }}"
+
+  - service_template: >
+      {%- if trigger.to_state.state > 400 -%}
+        light.turn_off
+      {%- endif -%}
+      data:
+        entity_id:
+          - light.family_room_floor_lamp
+          - light.family_room_table_lamp
+          - light.family_room_light
