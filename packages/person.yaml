@@ -1,0 +1,30 @@
+---
+# The person component allows to connect device tracker entities to one or more 
+# person entities. The last state update of a connected device tracker will set 
+# the state of the person. Eg if you connect your router and your owntracks 
+# device as trackers to your person, the last state update from either the router 
+# or your owntracks device will set the state of your person.
+# 
+# You can manage persons via the UI from the person page inside the configuration
+# panel.
+#
+# https://www.home-assistant.io/components/person/
+#
+#person: !include_dir_merge_named ../components/people
+person:
+  - name: Brian
+    id: brian
+    user_id: edb016a14f344fe6b728b5894a53b43c
+    device_trackers:
+      #- device_tracker.brians_iphone
+      #- device_tracker.brians_iphone_bluetooth
+      - device_tracker.life360_brian
+      - device_tracker.brians_iphone_nmap
+  - name: Nerene
+    id: nerene
+    user_id: 26a90119d94047a9b25379cb0ecb54cb
+    device_trackers:
+      #- device_tracker.nerenes_iphone
+      #- device_tracker.nerenes_iphone_bluetooth
+      - device_tracker.life360_nerene
+      - device_tracker.nerenes_iphone_nmap
