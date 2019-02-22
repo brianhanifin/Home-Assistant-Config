@@ -46,7 +46,7 @@ customElements.whenDefined('card-tools').then(() => {
         this.card.parentNode.removeChild(this.card);
       }
       if(e.detail && e.detail.entityId && this.offsetWidth && this.config.entity.includes(e.detail.entityId)) {
-        let moreInfo = document.querySelector("home-assistant")._moreInfoEl;
+        let moreInfo = document.querySelector("home-assistant")._moreInfoEl || document.querySelector("home-assistant").__moreInfoEl;
         moreInfo.style.overflowY = 'auto';
         moreInfo._page = "none";
         moreInfo.shadowRoot.appendChild(this.header);
