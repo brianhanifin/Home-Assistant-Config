@@ -13,13 +13,14 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.0.3'
+__version__ = '0.1.1'
 
 CONF_CHANNEL_ID = 'channel_id'
 
 ICON = 'mdi:youtube'
 
 BASE_URL = 'https://www.youtube.com/feeds/videos.xml?channel_id={}'
+BASE_URL_LIVE = "https://www.youtube.com/channel/{}"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_CHANNEL_ID): cv.string,
@@ -29,59 +30,91 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_platform(
-        hass, config, async_add_entities, discovery_info=None):
+        hass, config, async_add_entities, discovery_info=None):  # pylint: disable=unused-argument
+    """Setup sensor platform."""
     channel_id = config['channel_id']
     try:
         url = BASE_URL.format(channel_id)
         info = requests.get(url).text
         name = html.parser.HTMLParser().unescape(
             info.split('<title>')[1].split('</')[0])
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
+
         name = None
 
     if name is not None:
         async_add_entities([YoutubeSensor(channel_id, name)], True)
 
 class YoutubeSensor(Entity):
+    """YouTube Sensor class"""
     def __init__(self, channel_id, name):
         self._state = None
         self._image = None
+        self.live = False
         self._name = name
         self.channel_id = channel_id
-        self.attr = {}
+        self.url = None
+        self.published = None
 
     async def async_update(self):
+        """Update sensor."""
+        _LOGGER.debug('%s - Running update', self._name)
         try:
             url = BASE_URL.format(self.channel_id)
             info = requests.get(url).text
             title = html.parser.HTMLParser().unescape(
                 info.split('<title>')[2].split('</')[0])
             url = info.split('<link rel="alternate" href="')[2].split('"/>')[0]
-            published = info.split('<published>')[2].split('</')[0]
+            if self.live or url != self.url:
+                self.live = await is_live(self.channel_id, self._name)
+            else:
+                _LOGGER.debug('%s - Skipping live check', self._name)
+            self.url = url
+            self.published = info.split('<published>')[2].split('</')[0]
             thumbnail_url = info.split(
                 '<media:thumbnail url="')[1].split('"')[0]
             self._state = title
             self._image = thumbnail_url
-            self.attr = {'url': url, 'published': published}
-        except:
-            _LOGGER.debug('Could not update')
+        except Exception as error:  # pylint: disable=broad-except
+            _LOGGER.debug('%s - Could not update - %s', self._name, error)
 
     @property
     def name(self):
+        """Name."""
         return self._name
 
     @property
     def entity_picture(self):
+        """Picture."""
         return self._image
 
     @property
     def state(self):
+        """State."""
         return self._state
 
     @property
     def icon(self):
+        """Icon."""
         return ICON
 
     @property
     def device_state_attributes(self):
-        return self.attr
+        """Attributes."""
+        return {'url': self.url,
+                'published': self.published,
+                'live': self.live}
+
+
+async def is_live(channel_id, name):
+    """Return bool if channel is live"""
+    returnvalue = False
+    url = BASE_URL_LIVE.format(channel_id)
+    try:
+        info = requests.get(url).text
+        if 'live-promo' in info:
+            returnvalue = True
+            _LOGGER.debug('%s - Channel is live', name)
+    except Exception as error:  # pylint: disable=broad-except
+        _LOGGER.debug('%s - Could not update - %s', name, error)
+    return returnvalue

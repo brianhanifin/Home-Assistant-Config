@@ -11,22 +11,8 @@ class ButtonEntityRow extends Polymer.Element {
  }
  .flex-box {
      display: flex;
-     justify-content: space-between;
+     justify-content: space-evenly;
  }
- .flex-box paper-button:last-of-type {
-     padding-right: 1.75em;
-     min-width: 0px;
- }
-
- .flex-box paper-button:last-of-type ha-icon {
-     padding-right: 0;
- }
-
- .flex-box paper-button:first-of-type state-badge {
-     width: unset;
-     margin-right: 0.5em;
- }
-
  paper-button {
      color: var(--primary-color);
      font-weight: 500;
