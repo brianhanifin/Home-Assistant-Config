@@ -13,7 +13,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 CONF_CHANNEL_ID = 'channel_id'
 
@@ -56,7 +56,7 @@ class YoutubeSensor(Entity):
             info = requests.get(url).text
             title = html.parser.HTMLParser().unescape(
                 info.split('<title>')[2].split('</')[0])
-            url = info.split('<link rel="alternate" href="')[3].split('"/>')[0]
+            url = info.split('<link rel="alternate" href="')[2].split('"/>')[0]
             published = info.split('<published>')[2].split('</')[0]
             thumbnail_url = info.split(
                 '<media:thumbnail url="')[1].split('"')[0]
