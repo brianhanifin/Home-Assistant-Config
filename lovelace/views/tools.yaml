@@ -73,30 +73,21 @@ cards:
             tap_action:
               action: toggle
 
-  - type: vertical-stack
-    cards:
       - type: entities
         title: System
         show_header_toggle: false
         show_state: false
         entities:
-        - script.restart_hass
-        - script.reboot
-        #- input_select.log_level
+          - type: call-service
+            name: Check Config
+            service: config_check.run
+          - type: divider
+          - script.restart_hass
+          - script.reboot
+          #- input_select.log_level
 
-      - type: markdown
-        content: >
-          [config](https://hass.home.brianhanifin.com/config)
-          * [history](https://hass.home.brianhanifin.com/history)
-          * [logbook](https://hass.home.brianhanifin.com/logbook)
-      - type: markdown
-        content: >
-          [dev-service](https://hass.home.brianhanifin.com/dev-service)
-          * [dev-state](https://hass.home.brianhanifin.com/dev-state)
-          * [dev-templates](https://hass.home.brianhanifin.com/dev-template)
-          * [dev-events](https://hass.home.brianhanifin.com/dev-event)
-          * [dev-mqtt](https://hass.home.brianhanifin.com/dev-mqtt)
-          * [dev-info](https://hass.home.brianhanifin.com/dev-info)
+  - type: vertical-stack
+    cards:
 
       - type: custom:tracker-card
         title: Custom Lovelace Updates

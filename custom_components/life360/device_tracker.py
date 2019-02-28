@@ -35,17 +35,18 @@ from homeassistant.util.distance import convert
 import homeassistant.util.dt as dt_util
 
 
-__version__ = '2.6.0'
+__version__ = '2.8.0'
 
 _LOGGER = logging.getLogger(__name__)
 
 DEPENDENCIES = ['zone']
-REQUIREMENTS = ['life360==2.1.0', 'timezonefinderL==2.0.1']
+REQUIREMENTS = ['life360==2.2.0', 'timezonefinderL==2.0.1']
 
 DEFAULT_FILENAME = 'life360.conf'
 DEFAULT_HOME_PLACE = 'Home'
 SPEED_FACTOR_MPH = 2.25
 MIN_ZONE_INTERVAL = timedelta(minutes=1)
+EVENT_DELAY = timedelta(seconds=30)
 
 DATA_LIFE360 = 'life360'
 
@@ -154,19 +155,22 @@ def setup_scanner(hass, config, see, discovery_info=None):
 
     interval = config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     try:
-        from life360 import life360
+        from life360 import life360, LoginError
         api = life360(auth_info_callback, interval.total_seconds()-1,
                       hass.config.path(config[CONF_FILENAME]))
-        if not api.get_circles():
-            raise RuntimeError('get_circles failed')
-    except Exception as exc:
+        api.get_circles()
+    except LoginError as exc:
         _LOGGER.error(exc_msg(exc))
-        _LOGGER.error('Life360 communication failed!')
+        _LOGGER.error('Aborting setup!')
         return False
-    _LOGGER.debug('Life360 communication successful!')
+    # Ignore other errors at this time. Hopefully they're temporary.
+    except Exception as exc:
+        _LOGGER.warning('Ignoring: {}'.format(exc_msg(exc)))
+    _LOGGER.debug('Setup successful!')
 
     members = config.get(CONF_MEMBERS)
-    _LOGGER.debug('Configured members = {}'.format(members))
+    _LOGGER.debug('Configured members = {}'.format(
+        members if members else 'None specified; will include all'))
 
     if members:
         _members = []
@@ -383,9 +387,10 @@ class Life360Scanner:
             last_seen = None
 
         if self._max_update_wait:
+            now = dt_util.utcnow()
             update = last_seen or prev_seen or self._started
-            overdue = dt_util.utcnow() - update > self._max_update_wait
-            if overdue and not reported:
+            overdue = now - update > self._max_update_wait
+            if overdue and not reported and now - self._started > EVENT_DELAY:
                 self._hass.bus.fire(
                     'life360_update_overdue',
                     {'entity_id': DT_ENTITY_ID_FORMAT.format(dev_id)})
