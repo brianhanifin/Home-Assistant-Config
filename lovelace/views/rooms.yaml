@@ -53,7 +53,11 @@ cards:
               action: toggle
             hold_action:
               action: more-info
-          - <<: *blank-button
+          - type: entity-button
+            entity: switch.toggle_front
+            name: Front Door
+            tap_action:
+              action: toggle
 
   # Family Room
   - type: vertical-stack
@@ -204,6 +208,37 @@ cards:
             name: Fan
             tap_action:
               action: toggle
+
+  # Upstairs Bathroom
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Upstairs Bathroom
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - sensor.upstairs_bathroom_humidity
+            font_size: 75
+            line_color: lightblue
+            line_width: 8
+            more_info: false
+            name: Humidity
+            show:
+              labels: false
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - sensor.upstairs_bathroom_temperature
+            font_size: 75
+            line_color: orange
+            line_width: 8
+            more_info: false
+            name: Temperature
+            show:
+              labels: false
 
   
   - <<: *compact-header
