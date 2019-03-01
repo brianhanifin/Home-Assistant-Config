@@ -11,13 +11,15 @@ action:
       title: "family_room_brightness_change"
       message: "brightness: {{ trigger.to_state.state }}"
 
-  - service_template: >
-      # {%- if trigger.to_state.state > 400 -%}
-      #   light.turn_off
-      # {%- endif -%}
-      light.turn_off
-      data:
-        entity_id:
-          - light.family_room_floor_lamp
-          - light.family_room_table_lamp
-          - light.family_room_light
+  # - service_template: >
+  #     {% if trigger.to_state.state > 400 -%}
+  #       light.turn_off
+  #     {%- else -%}
+  #       light.turn_on
+  #     {%- endif %}
+  - service: light.turn_off
+    data:
+      entity_id:
+        - light.family_room_floor_lamp
+        - light.family_room_table_lamp
+        - light.family_room_light

@@ -55,7 +55,7 @@ cards:
               action: more-info
           - type: entity-button
             entity: switch.toggle_front
-            name: Front Door
+            name: Door
             tap_action:
               action: toggle
 
@@ -217,15 +217,36 @@ cards:
           ## Upstairs Bathroom
       - type: horizontal-stack
         cards:
+          - type: entity-button
+            entity: light.upstairs_bathroom_nightlight
+            icon: fas:rocket
+            name: Nightlight
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          # - type: entity-button
+          #   entity: switch.upstairs_bathroom_fan
+          #   icon: mdi:air-filter
+          #   name: Fan
+          #   tap_action:
+          #     action: toggle
+          - <<: *blank-button
+          - <<: *blank-button
+          - <<: *blank-button
+
+      - type: horizontal-stack
+        cards:
           - type: custom:mini-graph-card
             animate: true
             entities:
               - sensor.upstairs_bathroom_humidity
             font_size: 75
+            hours_to_show: 6
             line_color: lightblue
             line_width: 8
-            more_info: false
             name: Humidity
+            points_per_hour: 6
             show:
               labels: false
           - type: custom:mini-graph-card
@@ -233,10 +254,11 @@ cards:
             entities:
               - sensor.upstairs_bathroom_temperature
             font_size: 75
+            hours_to_show: 6
             line_color: orange
             line_width: 8
-            more_info: false
             name: Temperature
+            points_per_hour: 4
             show:
               labels: false
 

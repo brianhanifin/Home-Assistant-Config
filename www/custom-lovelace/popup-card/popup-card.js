@@ -1,7 +1,7 @@
 (function (){
 const thisScript = document.currentScript;
 customElements.whenDefined('card-tools').then(() => {
-  cardTools = customElements.get('card-tools');
+  let cardTools = customElements.get('card-tools');
 
   document.querySelector("home-assistant").addEventListener("hass-more-info", (e) => {
     const data = Object.assign({},

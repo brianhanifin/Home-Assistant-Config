@@ -65,6 +65,11 @@ class CardModder extends cardTools.litElement() {
     }
     while(!target) {
       await root.updateComplete;
+      if(root._cardModder) {
+        target = root._cardModder.target;
+        styles = root._cardModder.styles;
+        continue;
+      }
       if(root.querySelector("style"))
         styles = root.querySelector("style");
       if(root.querySelector("ha-card")) {

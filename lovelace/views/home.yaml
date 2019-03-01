@@ -222,5 +222,26 @@ cards:
                 icon: mdi:hotel
                 name: Sleeping, Brian & Nerene
               - binary_sensor.washer_running
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - entity: sensor.home_temperature
+                name: Downstairs
+              - entity: sensor.bedroom_temperature
+                name: Bedroom
+              - entity: sensor.boys_bedroom_temperature
+                name: Boys
+              - entity: sensor.upstairs_bathroom_temperature
+                name: Bath
+              - entity: sensor.goez_temperature
+                name: Goez
+            font_size: 75
+            height: 150
+            line_width: 3
+            name: Temperature
+            show:
+              labels: false
 
   - <<: *compact-header

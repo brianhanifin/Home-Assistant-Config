@@ -8,7 +8,7 @@ import logging
 from subprocess import Popen, PIPE
 
 
-VERSION = '0.0.1'
+VERSION = '0.0.3'
 
 NOTIFYID = '1337'
 
@@ -36,9 +36,24 @@ async def async_setup(hass, config):
 
 async def run_check(path):
     """Run check."""
-    run = Popen(
-        ["hass", "--script", "check_config", "-c", path, "-i"],
-        stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    run = None
+    try:
+        run = Popen(
+            ["hass", "--script", "check_config", "-c", path, "-i"],
+            stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    except Exception as error:  # pylint: disable=broad-except
+        _LOGGER.debug('Could not find hass - %s', error)
+    if run is None:
+        try:
+            run = Popen(
+                ["python", "-m", "homeassistant", "--script", "check_config",
+                 "-c", path, "-i"],
+                stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        except Exception as error:  # pylint: disable=broad-except
+            _LOGGER.debug('Could not find homeassistant - %s', error)
+    if run is None:
+        _LOGGER.critical('Could not find hass/homeassistant')
+        return 'Could not find hass/homeassistant'
     result, err = run.communicate()
     _LOGGER.debug(result)
     _LOGGER.debug(err)
