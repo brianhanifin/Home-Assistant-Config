@@ -34,24 +34,27 @@ I am inspired to finally find uses for the bag full of random ESP boards I purch
 **Bluetooth Low Energy Device Hub**:
 [Using the example code from esphome.io][esphome-ble-hub] I deployed a bridge in my Garage to pass along the data from the Xiaomi MiFlora sensor I stuck in one of our plant pots in the Front Yard. I had this for over almost a year and was unable to get the data into Home Assistant, until now! :smile:
 #### ESP8266 + ESP8285
-**Water Bowl Sensor**: [Using the Sonoff Basic button press binary sensor][esphome-sonoff-basic] as a starting point, I deployed a ESP8285 with two simple jumper wires attached to sense when the dog's water bowl becomes empty. If the sensor still reads the bowl as empty after 5 minutes then Alexa announces it is time to fill the bowl.
+-**Water Bowl Sensor**: [Using the Sonoff Basic button press binary sensor][esphome-sonoff-basic] as a starting point, I deployed a ESP8285 with two simple jumper wires attached to sense when the dog's water bowl becomes empty. If the sensor still reads the bowl as empty after 5 minutes then Alexa announces it is time to fill the bowl.-
 #### SonOff Plugs
 **Basic, S31, POW R2**:
 These plugs control a hot water circulation pump, floor fans, landscape lighting, Christmas light strings, etc. One monitors the power usage of the Washing Machine so Alexa can announce when the clothes are ready to be moved to the dryer.
 
 I replaced my HomeKit smart plugs with various SonOff plugs. First with Tasmota installed, then I replaced the Tasmota firmware with ESPHome firmware which loses the MQTT layer in favor of native Home Assistant integration (and I suspect speed).
+#### Tuya Plugs
+**Luntak and Zoozee Brand**:
+I have 8 of these than I used Tuya-convert to replace the stock firmware with ESPHome firmware. I use these for various things like floor/tabletop fans, decorative yard lights, and the white noise sound machine in our bedroom.
 
 ### Harmony Ultimate Hub
 We have become an almost controller-free house! Our two TV areas and both have hubs to manage switching inputs to all of the devices hooked up to them. The Harmony Alexa skill handles most of the voice commands, and setup Alexa Routines to handle the two commands that overlap on the two TVs.
-* "Alexa, turn on the " *Living Room or Family Room* " Computer."
-* "Alexa, turn on the " *Living Room or Family Room* " TV."
-* "Alexa, turn off the " *Living Room or Family Room* " TV."
+* "Alexa, turn on the " *Family Room or Play Room* " Computer."
+* "Alexa, turn on the " *Family Room or Play Room* " TV."
+* "Alexa, turn off the " *Family Room or Play Room* " TV."
 
 ### Insteon
 I started with HomeKit compatible *Insteon* lamp dimmer modules. I plug a few... er... lamps into them. :)
 
 ### Lutron
-Along with Inteon dimmer modules I also started installing *Lutron* in-wall dimmer switches and in-wall wireless remotes. The remotes are installed in several locations that otherwise would not have a light switch. Somehow our living room never had a light switch installed, now it does.
+Along with Inteon dimmer modules I also started installing *Lutron* in-wall dimmer switches and in-wall wireless remotes. The remotes are installed in several locations that otherwise would not have a light switch. Somehow our Play Room never had a light switch installed, now it does.
 
 ### Philips Hue
 Hue color bulbs for Porch Light, Garage Entry Light, and my Family Room Table Lamp. The Porch bulb changes color based on the current national holiday (or family birthday/anniversary) while the Garage Entry Light and Family Room Table Lamp flash briefly, then stay on to indicate certain events: such as the garage door is open, or Alexa is announcing it is time for the boys to go to bed. Two of my remaining five Hue bulbs are reserved for an additional two porch/entryway hanging lamps, so I can set 3 colors for each holiday! :)
