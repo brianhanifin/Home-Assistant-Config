@@ -1,0 +1,13 @@
+alias: TTS Phrase Selected
+initial_state: on
+trigger:
+  platform: state
+  entity_id: input_select.tts_phrases
+condition:
+  - condition: template
+    value_template: "{{ states('input_select.tts_phrases') != 'None' }}"
+action:
+  service: script.notify_speech
+  data_template:
+    media_player: "media_player.{{ states('input_select.tts_phrase_room') }}"
+    message: "{{ trigger.to_state.state }}"
