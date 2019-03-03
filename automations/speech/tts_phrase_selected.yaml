@@ -5,7 +5,7 @@ trigger:
   entity_id: input_select.tts_phrases
 condition:
   - condition: template
-    value_template: "{{ states('input_select.tts_phrases') != 'None' }}"
+    value_template: "{{ states('input_select.tts_phrases') not in ('None','─────────────────────────') }}"
 action:
   service: script.notify_speech
   data_template:
