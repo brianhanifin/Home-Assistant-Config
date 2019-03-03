@@ -117,7 +117,7 @@ I wish I could be more like this guy. He is just so darn positive and happy all 
 * YouTube: [DrZzs Channel][drzzs-youtube]
 
 ### Frenck
-I just learned of Franck recently, but he is a long time member of the community. I just refactored my code to be similar to his config ([as discussed in this video][frenck-youtube-config]).
+I just learned of Frenck recently, but he is a long time member of the community. I just refactored my code to be similar to his config ([as discussed in this video][frenck-youtube-config]).
 * Github: [Frenck's Home Assistant Configuration][frenck-github]
 * YouTube: [Frenck's Channel][frenck-youtube]
 
