@@ -4,11 +4,11 @@ sensors:
   tvs_off:
     entity_id:
       - remote.family_room_hub
-      - remote.living_room_hub
+      - remote.play_room_hub
       - media_player.family_room_apple_tv
     friendly_name: TVs Off
     # Check that the TVs are both off and the Apple TV is idle
     value_template: >
       {{ ( is_state('remote.family_room_hub', 'off') 
-       and is_state('remote.living_room_hub', 'off') 
+       and is_state('remote.play_room_hub', 'off') 
        and not is_state('media_player.family_room_apple_tv', 'playing') ) }}
