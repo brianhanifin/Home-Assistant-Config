@@ -4,8 +4,12 @@ goodnight_routine:
     # Make sure the garage door is closed.
     - service: cover.close_cover
       entity_id: cover.garage_door
+
+    # Lock the front door right away as well.
+    - service: lock.lock
+      entity_id: lock.front_door
     
-    # Run the shutdown/goodbye routine.
+    # Shutdown the rest of the lights and switches.
     - service: script.turn_on
       entity_id: script.shutdown_routine
 

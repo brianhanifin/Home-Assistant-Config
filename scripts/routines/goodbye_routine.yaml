@@ -19,3 +19,13 @@ goodbye_routine:
         #media_player: "{{ states('sensor.last_alexa')|trim }}"
         media_player: "media_player.kitchen, media_player.garage"
         say_goodbye: "true"
+
+    # Delay locking the front door slightly in case we are leaving by it.
+    - delay:
+        seconds: 10
+    - wait_template: "states(sensor.front_door) == 'closed'"
+      timeout:
+        minutes: 1
+      continue_on_timeout: 'true'
+    - service: lock.lock
+      entity_id: lock.front_door
