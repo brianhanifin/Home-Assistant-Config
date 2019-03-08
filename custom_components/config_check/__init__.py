@@ -8,7 +8,7 @@ import logging
 from subprocess import Popen, PIPE
 
 
-VERSION = '0.0.3'
+VERSION = '0.1.0'
 
 NOTIFYID = '1337'
 
@@ -30,6 +30,19 @@ async def async_setup(hass, config):
         result = await run_check(str(hass.config.path()))
         hass.components.persistent_notification.async_create(
             result, 'Configuration Check Result', NOTIFYID)
+        if result == "\nConfiguration is OK!\n":
+            finish_service = call.data.get('service')
+            finish_service_data = call.data.get('service_data', {})
+            if finish_service is not None:
+                domain = finish_service.split('.')[0]
+                service = finish_service.split('.')[1]
+                hass.bus.async_fire(
+                    event_type='call_service',
+                    event_data={'domain': domain,
+                                'service': service,
+                                'service_data': finish_service_data})
+
+
     hass.services.async_register(DOMAIN, 'run', run_check_service)
     return True
 
