@@ -2,7 +2,7 @@
 
 | Repository Status | Home Assistant Community |
 | :--- | :--- |
-| [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Uptime Robot status][uptime-status-shield]][uptime-robot] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] | 
+| [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] | 
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.

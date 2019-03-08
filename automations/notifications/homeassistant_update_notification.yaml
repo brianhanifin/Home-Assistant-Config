@@ -8,12 +8,13 @@ trigger:
     entity_id: binary_sensor.update_available
     to: "on"
 action:
+  - service: persistent_notification.create
+    data_template:
+      title: "New Docker Build Available"
+      message: "Version {{ sensor.docker_lastest_build }} is available on Docker!"
+
   - service: script.notify_ios
     data_template:
       title: "Home Assistant Update"
       message: "Version {{ sensor.docker_lastest_build }} is available on Docker!"
       who: "brian"
-  - service: persistent_notification.create
-    data_template:
-      title: "New Docker Build Available"
-      message: "Version {{ sensor.docker_lastest_build }} is available on Docker!"
