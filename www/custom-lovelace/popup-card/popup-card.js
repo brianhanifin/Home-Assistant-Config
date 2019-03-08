@@ -3,7 +3,9 @@ const thisScript = document.currentScript;
 customElements.whenDefined('card-tools').then(() => {
   let cardTools = customElements.get('card-tools');
 
+  let moreInfo = null;
   document.querySelector("home-assistant").addEventListener("hass-more-info", (e) => {
+    if(moreInfo && !moreInfo.getAttribute('aria-hidden')) return;
     const data = Object.assign({},
       cardTools.lovelace.config.popup_cards,
       cardTools.lovelace.config.views[cardTools.lovelace.current_view].popup_cards,
@@ -19,7 +21,23 @@ customElements.whenDefined('card-tools').then(() => {
       if(!settings) return;
       const card = cardTools.createCard(settings.card);
       if(cardTools.hass) card.hass = cardTools.hass;
-      cardTools.popUp(settings.title, card, settings.large || false);
+      moreInfo = cardTools.popUp(settings.title, card, settings.large || false);
+      if(settings.style) {
+        let oldStyle = {};
+        for(var k in settings.style) {
+          oldStyle[k] = moreInfo.style[k];
+          moreInfo.style.setProperty(k, settings.style[k]);
+        }
+        setTimeout(() =>{
+        let interval = setInterval(() => {
+          if(moreInfo.getAttribute('aria-hidden')) {
+            for(var k in oldStyle)
+              moreInfo.style.setProperty(k, oldStyle[k]);
+            clearInterval(interval);
+          }
+        }, 100)
+        }, 1000);;
+      }
     }
   });
 

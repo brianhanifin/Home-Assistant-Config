@@ -4,15 +4,16 @@
 alias: homeassistant_update_notification
 initial_state: on
 trigger:
-  platform: state
-  entity_id: updater.updater
+  - platform: state
+    entity_id: binary_sensor.update_available
+    to: 'on'
 action:
   - service: script.notify_ios
     data_template:
-      title: "Home Assistant Update Available"
-      message: "{{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+      title: "Home Assistant Update"
+      message: "Version {{ sensor.docker_lastest_build }} is available on Docker!"
       who: "brian"
-  #- service: persistent_notification.create
-  #  data:
-  #    title: "Update Available"
-  #    message: "Home Assistant {{ states('updater.updater') }} is available. - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+  - service: persistent_notification.create
+    data_template:
+      title: "New Docker Build Available"
+      message: "Version {{ sensor.docker_lastest_build }} is available on Docker!"
