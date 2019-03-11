@@ -1,4 +1,9 @@
 ---
+# Blank Button Anchors
+blank-button: &blank-button
+- type: "custom:button-card"
+  color_type: blank-card
+
 # Compact Header 'Anchor'
 compact-header: &compact-header
 - type: custom:compact-custom-header
@@ -65,6 +70,41 @@ cards:
               service: script.turn_on
               service_data:
                 entity_id: script.tv_family_room_bluray
+
+      - type: horizontal-stack
+        cards:
+          - <<: *blank-button
+          - type: entity-button
+            entity: remote.family_room_hub
+            icon: mdi:blank
+            name: Mute
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: Mute
+                device: 33992719
+          - type: entity-button
+            entity: remote.family_room_hub
+            icon: mdi:blank
+            name: "-"
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeDown
+                device: 33992719
+          - type: entity-button
+            entity: remote.family_room_hub
+            icon: mdi:blank
+            name: +
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeUp
+                device: 33992719
+          - <<: *blank-button
 
       - type: markdown
         content: >
@@ -145,6 +185,41 @@ cards:
               service: script.turn_on
               service_data:
                 entity_id: script.tv_play_room_xbox
+
+      - type: horizontal-stack
+        cards:
+          - <<: *blank-button
+          - type: entity-button
+            entity: remote.play_room_hub
+            icon: mdi:blank
+            name: Mute
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: Mute
+                device: 33992719
+          - type: entity-button
+            entity: remote.play_room_hub
+            icon: mdi:blank
+            name: "-"
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeDown
+                device: 33992719
+          - type: entity-button
+            entity: remote.play_room_hub
+            icon: mdi:blank
+            name: +
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeUp
+                device: 33992719
+          - <<: *blank-button
 
       - type: markdown
         content: >
