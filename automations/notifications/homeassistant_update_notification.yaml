@@ -4,9 +4,11 @@
 alias: homeassistant_update_notification
 initial_state: on
 trigger:
-  - platform: state
-    entity_id: binary_sensor.update_available
-    to: "on"
+  - platform: template
+    value_template: "{{ states('sensor.docker_lastest_build') > states('sensor.current_version') }}"
+  # - platform: state
+  #   entity_id: binary_sensor.update_available
+  #   to: "on"
 action:
   - service: persistent_notification.create
     data_template:
