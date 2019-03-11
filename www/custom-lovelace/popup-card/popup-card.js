@@ -6,6 +6,7 @@ customElements.whenDefined('card-tools').then(() => {
   let moreInfo = null;
   document.querySelector("home-assistant").addEventListener("hass-more-info", (e) => {
     if(moreInfo && !moreInfo.getAttribute('aria-hidden')) return;
+    if(!cardTools.lovelace) return;
     const data = Object.assign({},
       cardTools.lovelace.config.popup_cards,
       cardTools.lovelace.config.views[cardTools.lovelace.current_view].popup_cards,

@@ -23,6 +23,87 @@ title: Control Panel
 path: home
 #icon: mdi:apps
 icon: fas:th
+popup_cards:
+  light.nerenes_light:
+    title: Bedroom
+    large: false
+    card:
+      type: entities
+      entities:
+        - type: custom:slider-entity-row
+          entity: light.nerenes_light
+          icon: mdi:floor-lamp
+          name: Nerene
+          toggle: true
+        - type: custom:slider-entity-row
+          entity: light.brians_light
+          icon: mdi:floor-lamp
+          name: Brian
+          toggle: true
+        - switch.sound_machine
+        - switch.bedroom_fan
+  
+  light.entry_light:
+    title: Entry / Porch
+    large: false
+    card:
+      type: entities
+      entities:
+        - type: custom:slider-entity-row
+          entity: light.entry_light
+          icon: mdi:floor-lamp
+          name: Entry
+          toggle: true
+        - type: custom:slider-entity-row
+          entity: light.porch_light
+          icon: mdi:floor-lamp
+          name: Porch
+          toggle: true
+        - switch.landscape_lights
+
+  light.family_room_light:
+    title: Family Room
+    large: false
+    card:
+      type: entities
+      entities:
+        - type: custom:slider-entity-row
+          entity: light.family_room_light
+          icon: mdi:floor-lamp
+          name: Switch
+          toggle: true
+        - type: custom:slider-entity-row
+          entity: light.family_room_floor_lamp
+          icon: mdi:floor-lamp
+          name: Floor
+          toggle: true
+        - type: custom:light-entity-row
+          entity: light.family_room_table_lamp
+          icon: mdi:lamp
+          name: Table
+          toggle: true
+          showColorPicker: true
+          showColorSliders: true
+          buttons:
+            - name: Red
+              service_data:
+                color_name: red
+            - name: Blue
+              service_data:
+                color_name: blue
+            - name: Teal
+              service_data:
+                color_name: teal
+
+  switch.kitchen_light:
+    title: Kitchen
+    large: false
+    card:
+      type: entities
+      entities:
+        - switch.kitchen_light
+        - switch.kitchen_prep_light
+
 cards:
   - type: conditional
     conditions:
@@ -46,7 +127,6 @@ cards:
         - binary_sensor.alarm_co_detected
       snow_name: false
       show_state: false
-
 
   - type: vertical-stack
     cards:
@@ -209,21 +289,6 @@ cards:
           ## Sensors
       - type: horizontal-stack
         cards:
-          - type: entities
-            entities:
-              - entity: sensor.medicine_buddy_given_today
-                icon: mdi:pill
-                name: Buddy's Medicine Last Given
-              - binary_sensor.dog_water_bowl
-              - entity: variable.last_motion
-                icon: mdi:motion-sensor
-                name: Last Motion
-              - entity: binary_sensor.sleeping
-                icon: mdi:hotel
-                name: Sleeping, Brian & Nerene
-              - binary_sensor.washer_running
-      - type: horizontal-stack
-        cards:
           - type: custom:mini-graph-card
             animate: true
             entities:
@@ -243,5 +308,21 @@ cards:
             name: Temperature
             show:
               labels: false
+              
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.medicine_buddy_given_today
+                icon: mdi:pill
+                name: Buddy's Medicine Last Given
+              - binary_sensor.dog_water_bowl
+              - entity: variable.last_motion
+                icon: mdi:motion-sensor
+                name: Last Motion
+              - entity: binary_sensor.sleeping
+                icon: mdi:hotel
+                name: Sleeping, Brian & Nerene
+              - binary_sensor.washer_running
 
   - <<: *compact-header
