@@ -7,8 +7,14 @@ sensors:
     value_template: >-
       {%- set last_given = states('sensor.medicine_buddy') %}
       {%- set today = as_timestamp(now())|timestamp_custom('%Y-%m-%d') %}
-      {%- if last_given == today -%}
+      {% if last_given == today -%}
         Today
       {%- else -%}
-        {{ last_given }}
+        {%- set last_given_day = last_given.split('-')|last|int %}
+        {%- set yesterday = today.split('-')|last|int - 1 %}
+        {%- if last_given_day == yesterday -%}
+          Yesterday
+        {%- else -%}
+          {{ last_given }}
+        {%- endif -%}
       {%- endif -%}
