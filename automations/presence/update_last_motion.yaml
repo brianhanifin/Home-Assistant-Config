@@ -21,7 +21,8 @@ action:
           "history_1": "{{ variable.state }}",
           "history_2": "{{ variable.attributes.history_1 }}",
           "history_3": "{{ variable.attributes.history_2 }}",
-          "updated": "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
+          "icon":      "mdi:motion-sensor",
+          "updated":   "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
         }
     data_template:
       value: "{{ trigger.to_state.attributes.friendly_name|replace(' Occupancy','')|replace(' Motion #1','')|replace(' Motion #2','')|replace(' Motion','')|replace(' motion','') }}"

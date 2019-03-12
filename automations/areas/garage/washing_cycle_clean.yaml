@@ -1,0 +1,23 @@
+# Wait 8 minutes for us to be in the Finishing state before we decide the 
+# washing machine has finished. This way, if the washing machine is in 
+# between cycles and the power drops, we won't mark the washing machine cycle 
+# as finished too early.
+# 
+alias: washing_cycle_clean
+trigger:
+  - platform: state
+    entity_id: input_select.washing_machine_status
+    to: Finishing
+    for:
+      minutes: 8
+condition:
+  condition: and
+  conditions:
+    - condition: state
+      entity_id: input_select.washing_machine_status
+      state: Finishing
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.washing_machine_status
+      option: Clean

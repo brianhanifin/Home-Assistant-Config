@@ -3,11 +3,13 @@ alias: wash_cycle_complete
 initial_state: on
 trigger:
   - platform: state
-    entity_id: binary_sensor.washer_running
-    from: 'on'
-    to: 'off'
-    for:
-      minutes: 1
+    # entity_id: binary_sensor.washer_running
+    # from: 'on'
+    # to: 'off'
+    # for:
+    #   minutes: 1
+    entity_id: input_select.washing_machine_status
+    to: Clean
 action:
   - service: script.notify_speech
     data_template:
