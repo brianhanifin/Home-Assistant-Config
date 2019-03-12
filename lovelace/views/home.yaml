@@ -154,29 +154,247 @@ popup_cards:
         - type: thermostat
           entity: climate.goez
 
+  script.tv_family_room_off:
+    title: TV Controls
+    large: false
+    card:
+      type: vertical-stack
+      cards:
+        - type: markdown
+          content: >
+            ## Family Room TV
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: script.tv_family_room_off
+              icon: mdi:blank
+              name: "Off"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_family_room_off
+            - type: entity-button
+              entity: script.tv_family_room_apple_tv
+              icon: mdi:blank
+              name: "Apple TV"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_family_room_apple_tv
+            - type: entity-button
+              entity: script.tv_family_room_computer
+              icon: mdi:blank
+              name: "Computer"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_family_room_computer
+            - type: entity-button
+              entity: script.tv_family_room_bluray
+              icon: mdi:blank
+              name: "Movie Disc"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_family_room_bluray
+        - type: horizontal-stack
+          cards:
+            - <<: *blank-button
+            - type: entity-button
+              entity: remote.family_room_hub
+              icon: mdi:blank
+              name: Mute
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data: 
+                  command: Mute
+                  device: 33992719
+            - type: entity-button
+              entity: remote.family_room_hub
+              icon: mdi:blank
+              name: "-"
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data: 
+                  command: VolumeDown
+                  device: 33992719
+            - type: entity-button
+              entity: remote.family_room_hub
+              icon: mdi:blank
+              name: +
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data: 
+                  command: VolumeUp
+                  device: 33992719
+            - <<: *blank-button
+
+        - type: markdown
+          content: >
+            ## Play Room TV
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: script.tv_play_room_off
+              icon: mdi:blank
+              name: "Off"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_off
+            - type: entity-button
+              entity: script.tv_play_room_apple_tv
+              icon: mdi:blank
+              name: "Apple TV"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_apple_tv
+            - type: entity-button
+              entity: script.tv_play_room_computer
+              icon: mdi:blank
+              name: "Computer"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_computer
+            - type: entity-button
+              entity: script.tv_play_room_dvr
+              icon: mdi:blank
+              name: "DVR"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_dvr
+        - type: horizontal-stack
+          cards:
+            - type: entity-button
+              entity: script.tv_play_room_switch
+              icon: mdi:blank
+              name: "Switch"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_switch
+            - type: entity-button
+              entity: script.tv_play_room_wii
+              icon: mdi:blank
+              name: "Wii"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_wii
+            - type: entity-button
+              entity: script.tv_play_room_wii_u
+              icon: mdi:blank
+              name: "Wii U"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_wii_u
+            - type: entity-button
+              entity: script.tv_play_room_xbox
+              icon: mdi:blank
+              name: "Xbox"
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.tv_play_room_xbox
+        - type: horizontal-stack
+          cards:
+            - <<: *blank-button
+            - type: entity-button
+              entity: remote.play_room_hub
+              icon: mdi:blank
+              name: Mute
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data: 
+                  command: Mute
+                  device: 33992719
+            - type: entity-button
+              entity: remote.play_room_hub
+              icon: mdi:blank
+              name: "-"
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data: 
+                  command: VolumeDown
+                  device: 33992719
+            - type: entity-button
+              entity: remote.play_room_hub
+              icon: mdi:blank
+              name: +
+              tap_action:
+                action: call-service
+                service: remote.send_command
+                service_data: 
+                  command: VolumeUp
+                  device: 33992719
+            - <<: *blank-button
+
 cards:
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.alarm_smoke_detected
-        state: "on"
+  - type: entity-filter
+    state_filter:
+      - 'on'
+      - open
+      # - 'off'
+      # - closed
     card:
-      type: glance
-      title: SMOKE DETECTED!
-      entities:
+      type: custom:card-modder
+      style:
+        "background-color": "#F9C536"
+        "color": black
+        "--paper-item-icon-color": black
+        "--paper-item-icon-active-color": black
+      card:
+        type: glance
+        columns: 4
+        show_state: false
+        title: Open Doors + Windows
+    show_empty: false
+    entities:
+      - binary_sensor.front_door
+      - cover.garage_door
+      - binary_sensor.shoe_closet_door
+
+  - type: entity-filter
+    state_filter:
+      - 'on'
+      # - 'off'
+    card:
+      type: custom:card-modder
+      style:
+        "background-color": "#E45E65"
+        "color": white
+        "--paper-item-icon-color": white
+        "--paper-item-icon-active-color": white
+      card:
+        type: glance
+        columns: 2
+        show_state: false
+        title: SAFTEY ALERT
+    show_empty: false
+    entities:
         - binary_sensor.alarm_smoke_detected
-      snow_name: false
-      show_state: false
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.alarm_co_detected
-        state: "on"
-    card:
-      type: glance
-      title: CARBON MONOXIDE DETECTED!
-      entities:
         - binary_sensor.alarm_co_detected
-      snow_name: false
-      show_state: false
 
   - type: vertical-stack
     cards:
@@ -304,7 +522,12 @@ cards:
             name: Thermostats
             tap_action:
               action: more-info
-          - <<: *blank-button
+          - type: entity-button
+            entity: script.tv_family_room_off
+            icon: mdi:television
+            name: TV Controls
+            tap_action:
+              action: more-info
           - <<: *blank-button
 
       # - type: horizontal-stack
