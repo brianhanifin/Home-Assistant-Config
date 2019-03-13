@@ -89,6 +89,9 @@ popup_cards:
           name: Floor
           toggle: true
         - type: divider
+        - entity: switch.family_room_fan
+          icon: mdi:fan
+        - type: divider
         - type: custom:light-entity-row
           entity: light.family_room_table_lamp
           icon: mdi:lamp
@@ -374,6 +377,49 @@ cards:
       - binary_sensor.front_door
       - cover.garage_door
       - binary_sensor.shoe_closet_door
+
+  - type: entity-filter
+    state_filter:
+      - Offline
+      - Unknown
+      - 'off'
+    card:
+      type: custom:card-modder
+      style:
+        "background-color": "#F9C536"
+        "color": black
+        "--paper-item-icon-color": black
+        "--paper-item-icon-active-color": black
+      card:
+        type: glance
+        columns: 4
+        show_state: false
+        title: Devices Offline
+    show_empty: false
+    entities:
+      # Melnor RainCloud / AquaTimer
+      - binary_sensor.aquatimer_control_unit_status
+      - binary_sensor.side_yard_status
+
+      # ESPHome Devices
+      - binary_sensor.ble_hub_status
+      - binary_sensor.plug01_status
+      - binary_sensor.plug02_status
+      - binary_sensor.plug03_status
+      - binary_sensor.plug05_status
+      - binary_sensor.plug06_status
+      # - binary_sensor.plug07_status
+      # - binary_sensor.plug08_status
+      # - binary_sensor.sonoff_s31_01_status
+      - binary_sensor.sonoff_s31_02_status
+      # - binary_sensor.sonoff_s31_03_status
+      # - binary_sensor.sonoff_s31_04_status
+      # - binary_sensor.sonoff_s31_05_status
+      # - binary_sensor.sonoff_s31_06_status
+
+      # Harmony Hubs
+      - sensor.harmony_hub_family_room_status
+      - sensor.harmony_hub_play_room_status
 
   - type: entity-filter
     state_filter:

@@ -1,0 +1,15 @@
+---
+platform: template
+sensors:
+  harmony_hub_play_room_status:
+    value_template: >
+      {%- if states('device_tracker.harmony_hub_play_room') -%}
+        {%- if is_state('device_tracker.harmony_hub_play_room', 'home') -%}
+          Online
+        {%- else -%}
+          Offline
+        {%- endif -%}
+      {%- else -%}
+        Unknown
+      {%- endif %}
+    friendly_name: Harmony Hub Play Room Status
