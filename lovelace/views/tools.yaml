@@ -89,6 +89,10 @@ cards:
           - script.reboot
           #- input_select.log_level
           - type: divider
+          # - type: custom:config-template-card
+          #   config:
+          #     entity: binary_sensor.update_available
+          #     state: "${this.hass.states['binary_sensor.update_available'].state === 'on' ? 'Available' : 'Not Available'}"
           - binary_sensor.update_available
           - sensor.docker_lastest_build
           - sensor.current_version
@@ -96,7 +100,6 @@ cards:
 
   - type: vertical-stack
     cards:
-
       - type: custom:tracker-card
         title: Custom Lovelace Updates
         trackers:

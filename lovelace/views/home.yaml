@@ -355,11 +355,16 @@ popup_cards:
 
 cards:
   - type: entity-filter
+    entities:
+      - binary_sensor.front_door
+      - cover.garage_door
+      - binary_sensor.shoe_closet_door
     state_filter:
       - 'on'
       - open
       # - 'off'
       # - closed
+    show_empty: false
     card:
       type: custom:card-modder
       style:
@@ -372,30 +377,8 @@ cards:
         columns: 4
         show_state: false
         title: Open Doors + Windows
-    show_empty: false
-    entities:
-      - binary_sensor.front_door
-      - cover.garage_door
-      - binary_sensor.shoe_closet_door
 
   - type: entity-filter
-    state_filter:
-      - Offline
-      - Unknown
-      - 'off'
-    card:
-      type: custom:card-modder
-      style:
-        "background-color": "#F9C536"
-        "color": black
-        "--paper-item-icon-color": black
-        "--paper-item-icon-active-color": black
-      card:
-        type: glance
-        columns: 4
-        show_state: false
-        title: Devices Offline
-    show_empty: false
     entities:
       # Melnor RainCloud / AquaTimer
       - binary_sensor.aquatimer_control_unit_status
@@ -420,11 +403,56 @@ cards:
       # Harmony Hubs
       - sensor.harmony_hub_family_room_status
       - sensor.harmony_hub_play_room_status
+    state_filter:
+      - Offline
+      - Unknown
+      - 'off'
+    show_empty: false
+    card:
+      type: custom:card-modder
+      style:
+        "background-color": "#F9C536"
+        "color": black
+        "--paper-item-icon-color": black
+        "--paper-item-icon-active-color": black
+      card:
+        type: glance
+        columns: 4
+        show_state: false
+        title: Devices Offline
+
+  - type: custom:auto-entities
+    filter:
+      include:
+        - entity_id: "sensor.*_battery"
+          attributes:
+            battery_level: "<= 20"
+      exclude:
+        - entity_id: "*phone*"
+        - entity_id: "*brightness*" # *motion* = state for same device
+        - entity_id: "*left_button*"
+        - entity_id: "*right_button*"
+    show_empty: false
+    card:
+      type: custom:card-modder
+      style:
+        background-color: "#F9C536"
+        color: black
+        --paper-item-icon-color: black
+        --paper-item-icon-active-color: black
+      card:
+        type: entities
+        title: Low Batteries
+        show_header_toggle: false
 
   - type: entity-filter
+    entities:
+      - binary_sensor.alarm_smoke_detected
+      - binary_sensor.alarm_co_detected
     state_filter:
       - 'on'
       # - 'off'
+    show_empty: false
     card:
       type: custom:card-modder
       style:
@@ -437,10 +465,6 @@ cards:
         columns: 2
         show_state: false
         title: SAFTEY ALERT
-    show_empty: false
-    entities:
-        - binary_sensor.alarm_smoke_detected
-        - binary_sensor.alarm_co_detected
 
   - type: vertical-stack
     cards:
