@@ -28,65 +28,102 @@ cards:
 
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Alexa TTS
-      - type: entities
-        #title: TTS
-        show_header_toggle: false
-        show_state: false
-        entities:
-          - input_select.tts_phrase_room
-          - input_select.tts_phrases
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: >
+              ## Alexa TTS
+          - type: entities
+            show_header_toggle: false
+            show_state: false
+            entities:
+              - input_select.tts_phrase_room
+              - type: divider
+              - input_select.tts_phrases
+              - input_text.tts_phrase
+              - type: divider
+              - script.tts_phrase_submitted
 
-  - type: vertical-stack
-    cards:
       - type: markdown
         content: >
-          ## Alexa Devices
-      - type: custom:mini-media-player
-        entity: media_player.boys_room
-        artwork: cover
-        hide:
-          icon: true
-          power_state: true
-          source: true
-        tts:
-          platform: alexa
-          entity_id: media_player.boys_room
-      - type: custom:mini-media-player
-        entity: media_player.family_room
-        artwork: cover
-        hide:
-          icon: true
-          power_state: true
-          source: true
-        tts:
-          platform: alexa
-          entity_id: media_player.family_room
-      - type: custom:mini-media-player
-        entity: media_player.play_room
-        artwork: cover
-        hide:
-          icon: true
-          power_state: true
-          source: true
-        tts:
-          platform: alexa
-          entity_id: media_player.play_room
+          ## Media Devices
+      - type: custom:swipe-card
+        card_width: '90%'
+        parameters:
+          centeredSlides: true
+          slidesPerView: 'auto'
+          spaceBetween: 8
+          pagination:
+            #type: 'progressbar'
+            type: 'bullets'
+          navigation:
+          keyboard:
+            enabled: true
+            onlyInViewport: true
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Echo: Boys Room
+              - type: custom:mini-media-player
+                entity: media_player.boys_room
+                artwork: none
+                hide:
+                  icon: true
+                  name: true
+                  power: true
+                  source: true
+                tts:
+                  platform: alexa
+                  entity_id: media_player.boys_room
 
-  - type: vertical-stack
-    cards:
-      - type: markdown
-        content: >
-          ## Chromecast
-      - type: custom:mini-media-player
-        entity: media_player.family_room_speaker
-        artwork: cover
-        hide:
-          icon: true
-          power_state: true
-          source: true
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Echo: Family Room
+              - type: custom:mini-media-player
+                entity: media_player.family_room
+                artwork: none
+                hide:
+                  icon: true
+                  name: true
+                  power: true
+                  source: true
+                tts:
+                  platform: alexa
+                  entity_id: media_player.family_room
+
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Echo: Play Room
+              - type: custom:mini-media-player
+                entity: media_player.play_room
+                artwork: none
+                hide:
+                  icon: true
+                  name: true
+                  power: true
+                  source: true
+                tts:
+                  platform: alexa
+                  entity_id: media_player.play_room
+
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Chromecast
+              - type: custom:mini-media-player
+                entity: media_player.family_room_speaker
+                artwork: none
+                hide:
+                  icon: true
+                  power_state: true
+                  source: true
 
 
   - <<: *compact-header
