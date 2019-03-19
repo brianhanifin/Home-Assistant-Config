@@ -359,11 +359,14 @@ cards:
       - binary_sensor.front_door
       - cover.garage_door
       - binary_sensor.shoe_closet_door
+      - lock.front_door
     state_filter:
       - 'on'
       - open
+      - unlocked
       # - 'off'
       # - closed
+      - locked
     show_empty: false
     card:
       type: custom:card-modder
@@ -376,7 +379,7 @@ cards:
         type: glance
         columns: 4
         show_state: false
-        title: Open Doors + Windows
+        title: "Doors + Windows: Open or Unlocked"
 
   - type: entity-filter
     entities:

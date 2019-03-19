@@ -1,7 +1,6 @@
 ---
-############################################
-## Warn us if the garage door is still open
-############################################
+# Warn us if any doors or windows are open or unlocked
+#
 alias: watchdog_doors_and_windows_at_2000
 initial_state: on
 trigger:
@@ -16,11 +15,15 @@ condition:
     - condition: state
       entity_id: binary_sensor.front_door
       state: 'on'
+    - condition: state
+      entity_id: lock.front_door
+      state: 'unlocked'
 action:
   - service: script.notify_ios
     data_template:
       who: "parents"
-      message: "Check your windows and doors. One of them may have been left open."
+      title: OPEN / UNLOCKED
+      message: "Check your windows and doors. One of them may have been left open or unlocked."
 
   #- service: input_boolean.turn_on
   #  entity_id: input_boolean.alert_mode
@@ -34,4 +37,4 @@ action:
         "media_player.play_room,
          media_player.kitchen,
          media_player.family_room"
-      message: "Check your windows and doors. One of them may have been left open."
+      message: "Check your windows and doors. One of them may have been left open or unlocked."
