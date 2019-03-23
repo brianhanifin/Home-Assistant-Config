@@ -2,8 +2,6 @@
 # Compact Header 'Anchor'
 compact-header: &compact-header
 - type: custom:compact-custom-header
-  clock_format: 24
-  menu: false
 
 action_more_info: &action_more_info
   tap_action:
@@ -109,14 +107,23 @@ cards:
           - script.reboot
           #- input_select.log_level
           - type: divider
-          # - type: custom:config-template-card
-          #   config:
-          #     entity: binary_sensor.update_available
-          #     state: "${this.hass.states['binary_sensor.update_available'].state === 'on' ? 'Available' : 'Not Available'}"
+
           - binary_sensor.update_available
           - sensor.docker_lastest_build
           - sensor.current_version
           # - automation.homeassistant_update_notification
+
+      - type: custom:config-template-card
+        variables:
+          - states['binary_sensor.update_available'].state
+        entities:
+          - binary_sensor.update_available
+        card:
+          type: custom:hui-glance-card
+          entities:
+            - entity: binary_sensor.update_available
+              name: "${vars[0] === 'on' ? 'Available' : 'Not Available' }"
+              value_template: "${vars[0] === 'on' ? 'Available' : 'Not Available'}"
 
       - type: custom:tracker-card
         title: Custom Lovelace Updates

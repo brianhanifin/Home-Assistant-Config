@@ -2,8 +2,6 @@
 # Compact Header 'Anchor'
 compact-header: &compact-header
 - type: custom:compact-custom-header
-  clock_format: 24
-  menu: false
 
 action_more_info: &action_more_info
   tap_action:
@@ -112,6 +110,11 @@ cards:
         filter:
           include:
             - domain: light
+          exclude:
+            - entity_id: light.dummy
+            - entity_id: light.lamplinc*
+            - entity_id: light.kitchen_prep_light
+            - entity_id: "*_led"
       - type: custom:auto-entities
         show_empty: false
         card:
@@ -123,6 +126,10 @@ cards:
           include:
             - domain: light
               state: "on"
+          exclude:
+            - entity_id: light.dummy
+            - entity_id: light.kitchen_prep_light
+            - entity_id: "*_led"
       - type: custom:auto-entities
         show_empty: false
         card:
@@ -135,6 +142,10 @@ cards:
             - domain: light
               attributes:
                 brightness: "< 125"
+          exclude:
+            - entity_id: light.dummy
+            - entity_id: light.kitchen_prep_light
+            - entity_id: "*_led"
       - type: custom:auto-entities
         show_empty: false
         card:
@@ -148,6 +159,10 @@ cards:
               attributes:
                 hs_color 1: "0:> 195"
                 hs_color 2: "0:< 255"
+          exclude:
+            - entity_id: light.dummy
+            - entity_id: light.kitchen_prep_light
+            - entity_id: "*_led"
 
   - type: entities
     title: light-entity-row + slider-entity-row
