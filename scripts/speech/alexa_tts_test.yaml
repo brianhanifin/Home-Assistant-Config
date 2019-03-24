@@ -1,7 +1,12 @@
 ---
 alexa_tts_test:
   sequence:
-    - service: media_player.alexa_tts
-      data_template:
-        entity_id: "media_player.family_room"
+    - service: notify.alexa_media
+      data:
+        #target: media_player.family_room
+        target: media_player.master_bedroom
+        #title: "My title for Echo show"
+        data:
+          type: announce
+          #method: all
         message: "TTS test"

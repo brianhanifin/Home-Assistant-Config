@@ -6,7 +6,11 @@ speech_processing:
         payload: "This message is from {{ now().strftime('%-I') }}:{{ now().strftime('%M') }} {{ now().strftime('%p') }}. {{ briefing | truncate(254)}}"
         retain: true
 
-    - service: media_player.alexa_tts
+    - service: notify.alexa_media
       data_template:
-        entity_id: "{{ media_player }}"
+        target: "{{ media_player }}"
+        #title: "My title for Echo show"
+        data:
+          type: announce
+          #method: all
         message: "{{ briefing }}"

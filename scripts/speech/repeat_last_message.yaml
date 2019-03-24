@@ -16,8 +16,12 @@ repeat_last_message:
     #       {%- endfor -%}
 
     # Say the previous message on the last Alexa device that was spoken to.
-    - service: media_player.alexa_tts
+    - service: notify.alexa_media
       data_template:
-        #media_player: "{{ states('input_text.last_alexa')|trim }}"
-        media_player: "media_player.kitchen"
+        #target: "{{ states('sensor.last_alexa') }}"
+        target: "media_player.family_room"
+        #title: "My title for Echo show"
+        data:
+          type: announce
+          #method: all
         message: "{{ states('sensor.last_message') }}"

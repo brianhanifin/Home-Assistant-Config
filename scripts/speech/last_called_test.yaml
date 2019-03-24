@@ -13,7 +13,11 @@ last_called_test:
     #     seconds: 2
 
     # Speak your message.
-    - service: media_player.alexa_tts
+    - service: notify.alexa_media
       data_template:
-        entity_id: "{{ states('sensor.last_alexa') }}"
+        target: "{{ states('sensor.last_alexa') }}"
+        #title: "My title for Echo show"
+        data:
+          type: announce
+          #method: all
         message: "This is a test"
