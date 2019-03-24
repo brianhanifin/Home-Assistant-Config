@@ -3,15 +3,15 @@ announce_plant_info:
   sequence:
     - service: script.notify_speech
       data_template:
-        entity_id: media_player.family_room
+        entity_id: !include ../../templates/speech/media_player.yaml
         message: >
           {% if is_state_attr('sensor.plant_problems','water_number',0) %}
           No plants need watering.
           {% elif states.sensor.plant_problems.attributes.water_number | float > 0 %}
-          {{states.sensor.plant_problems.attributes.water}} need to be watered.
+          {{states.sensor.plant_problems.attributes.water|sort|replace('0',' ')}} need to be watered.
           {% endif %}
           {% if is_state_attr('sensor.plant_problems','fertilize_number',0) %}
           No plants need fertilizer.
           {% elif states.sensor.plant_problems.attributes.fertilize_number | float > 0 %}
-          These plants {{states.sensor.plant_problems.attributes.fertilize}} need fertilizing.
+          These plants {{states.sensor.plant_problems.attributes.fertilize|replace('0',' ')|sort}} need fertilizing.
           {% endif %}
