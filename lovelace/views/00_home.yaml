@@ -1,0 +1,361 @@
+---
+# Define Anchors
+alert_style_red: &alert_style_red
+  style:
+    "background-color": "#E45E65"
+    "color": white
+    "--paper-item-icon-color": white
+    "--paper-item-icon-active-color": white
+
+alert_style_yellow: &alert_style_yellow
+  style:
+    "background-color": "#F9C536"
+    "color": black
+    "--paper-item-icon-color": black
+    "--paper-item-icon-active-color": black
+
+blank-button: &blank-button
+- type: custom:button-card
+  color_type: blank-card
+
+compact-header: &compact-header
+- type: custom:compact-custom-header
+  main_config: true
+  clock_date: true
+  menu: overflow
+  notifications: clock
+  options: show
+  redirect: false
+  exceptions:
+    - conditions:
+        user: Nerene
+      config:
+        hide_tabs: 4,5
+        notifications: hide
+        options: hide
+    - conditions:
+        media_query: "(max-width: 600px)"
+      config:
+        notifications: overflow
+        options: show
+
+
+title: Control Panel
+path: home
+#icon: mdi:apps
+icon: fas:th
+popup_cards: !include popup_cards_home.yaml
+cards:
+  - type: entity-filter
+    entities:
+      - binary_sensor.front_door
+      - cover.garage_door
+      - binary_sensor.shoe_closet_door
+      - lock.front_door
+    state_filter:
+      - 'on'
+      - open
+      - unlocked
+    show_empty: false
+    card:
+      type: custom:card-modder
+      <<: *alert_style_yellow
+      card:
+        type: glance
+        columns: 4
+        show_state: false
+        title: "Doors + Windows: Open or Unlocked"
+
+  - type: entity-filter
+    entities:
+      # Melnor RainCloud / AquaTimer
+      - binary_sensor.aquatimer_control_unit_status
+      - binary_sensor.side_yard_status
+
+      # ESPHome Devices
+      - binary_sensor.ble_hub_status
+      - binary_sensor.plug01_status
+      - binary_sensor.plug02_status
+      - binary_sensor.plug03_status
+      - binary_sensor.plug05_status
+      - binary_sensor.plug06_status
+      # - binary_sensor.plug07_status
+      # - binary_sensor.plug08_status
+      # - binary_sensor.sonoff_s31_01_status
+      - binary_sensor.sonoff_s31_02_status
+      # - binary_sensor.sonoff_s31_03_status
+      # - binary_sensor.sonoff_s31_04_status
+      # - binary_sensor.sonoff_s31_05_status
+      # - binary_sensor.sonoff_s31_06_status
+
+      # Harmony Hubs
+      - sensor.harmony_hub_family_room_status
+      - sensor.harmony_hub_play_room_status
+    state_filter:
+      - Offline
+      - Unknown
+      - 'off'
+    show_empty: false
+    card:
+      type: custom:card-modder
+      <<: *alert_style_yellow
+      card:
+        type: glance
+        columns: 4
+        show_state: false
+        title: Devices Offline
+
+  - type: custom:auto-entities
+    filter:
+      include:
+        - entity_id: "sensor.*_battery"
+          attributes:
+            battery_level: "<= 20"
+      exclude:
+        - entity_id: "*phone*"
+        - entity_id: "*brightness*" # *motion* = state for same device
+        - entity_id: "*left_button*"
+        - entity_id: "*right_button*"
+    show_empty: false
+    card:
+      type: custom:card-modder
+      <<: *alert_style_yellow
+      card:
+        type: entities
+        title: Low Batteries
+        show_header_toggle: false
+
+  - type: entity-filter
+    entities:
+      - binary_sensor.alarm_smoke_detected
+      - binary_sensor.alarm_co_detected
+    state_filter:
+      - 'on'
+    show_empty: false
+    card:
+      type: custom:card-modder
+      <<: *alert_style_red
+      card:
+        type: glance
+        columns: 2
+        show_state: false
+        title: SAFTEY ALERT
+
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: |-
+          ## Areas / Lights
+          Click: quick toggle &middot; Long-press: more lights/switches
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: light.nerenes_light
+            icon: mdi:hotel
+            name: Bed Room
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.toggle_bedroom_lights
+          - type: entity-button
+            entity: light.dining_room_light
+            icon: mdi:food
+            name: Dining
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: light.entry_light
+            icon: mdi:door
+            name: Entry
+            tap_action:
+              action: toggle
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: light.family_room_light
+            icon: mdi:television
+            name: Family
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: switch.kitchen_light
+            icon: mdi:stove
+            name: Kitchen
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.toggle_kitchen_lights
+          - type: entity-button
+            entity: switch.landscape_lights
+            icon: mdi:tree
+            name: Outdoor
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.toggle_outdoor_lights
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: light.play_room_light
+            icon: mdi:gamepad-variant
+            name: Play Room
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: light.upstairs_bathroom_nightlight
+            name: Upstairs Bath
+            icon: fas:rocket
+            tap_action:
+              action: toggle
+          - <<: *blank-button
+
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Devices
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.bedroom_fan
+            icon: mdi:fan 
+            name: Bed Room
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: switch.family_room_fan
+            icon: mdi:fan
+            name: Family
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: switch.play_room_fan
+            icon: mdi:fan
+            name: Play Room
+            tap_action:
+              action: toggle
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.hot_water_pump
+            icon: mdi:hot-tub
+            name: Hot Water
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: switch.toggle_front
+            name: Front Door
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: switch.toggle_garage
+            name: Garage Door
+            tap_action:
+              action: toggle
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.printers
+            icon: mdi:printer
+            name: Printers
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: climate.home
+            icon: mdi:thermostat
+            name: Thermostats
+            tap_action:
+              action: more-info
+          - type: entity-button
+            entity: script.tv_family_room_off
+            icon: mdi:remote
+            name: TV Controls
+            tap_action:
+              action: more-info
+
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Routines
+      - type: horizontal-stack
+        cards:
+          - <<: *blank-button
+          - type: entity-button
+            entity: script.goodbye_routine
+            icon: mdi:exit-run
+            name: Bye
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.goodbye_routine
+          - type: entity-button
+            entity: script.goodnight_routine
+            icon: mdi:weather-night
+            name: Night
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.goodnight_routine
+          - <<: *blank-button
+
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Sensors
+      - type: custom:swipe-card
+        card_width: '90%'
+        parameters:
+          centeredSlides: true
+          slidesPerView: 'auto'
+          spaceBetween: 8
+          pagination:
+            #type: 'progressbar'
+            type: 'bullets'
+          navigation:
+          keyboard:
+            enabled: true
+            onlyInViewport: true
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.medicine_buddy_given_today
+                icon: mdi:pill
+                name: Buddy's Medicine Last Given
+              #- binary_sensor.dog_water_bowl
+              - entity: variable.last_motion
+                icon: mdi:motion-sensor
+                name: Last Motion
+              - entity: binary_sensor.sleeping
+                icon: mdi:hotel
+                name: Sleeping, Brian & Nerene
+              #- binary_sensor.washer_running
+              - sensor.washing_machine_status
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - entity: sensor.home_temperature
+                name: Downstairs
+              - entity: sensor.bedroom_temperature
+                name: Bedroom
+              - entity: sensor.boys_bedroom_temperature
+                name: Boys
+              - entity: sensor.upstairs_bathroom_temperature
+                name: Bath
+              - entity: sensor.goez_temperature
+                name: Goez
+            font_size: 75
+            height: 150
+            line_width: 3
+            name: Temperature
+            show:
+              labels: false
+
+
+  - <<: *compact-header

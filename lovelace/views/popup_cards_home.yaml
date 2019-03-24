@@ -1,0 +1,398 @@
+---
+# Define Anchors
+blank-button: &blank-button
+- type: "custom:button-card"
+  color_type: blank-card
+
+light-entity-card: &light-entity-card
+  type: custom:light-entity-card
+  brightness: false
+  color_temp: true
+  colorWheel: true
+  effects_list: false
+  group: true
+  header: false
+  persist_features: true
+  white_value: true
+
+# Define Popups
+light.nerenes_light:
+  title: Bedroom
+  large: false
+  card:
+    type: vertical-stack
+    cards:
+      - type: horizontal-stack
+        cards:
+          - type: light
+            entity: light.nerenes_light
+          - type: light
+            entity: light.brians_light
+
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.bedroom_fan
+            icon: mdi:fan 
+            name: Fan
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: switch.sound_machine
+            icon: mdi:weather-windy-variant
+            name: Sound Machine
+            tap_action:
+              action: toggle
+
+light.dining_room_light:
+  title: Dining Room
+  card:
+    type: light
+    entity: light.dining_room_light
+
+light.entry_light:
+  title: Entry
+  large: false
+  card:
+    type: vertical-stack
+    cards:
+      - type: horizontal-stack
+        cards:
+          - type: light
+            entity: light.entry_light
+            name: Entry
+
+light.family_room_light:
+  title: Family Room
+  large: false
+  card:
+    type: vertical-stack
+    cards:
+      - type: horizontal-stack
+        cards:
+          - type: light
+            entity: light.family_room_light
+            name: Switch
+          - type: light
+            entity: light.family_room_floor_lamp
+            name: Floor
+      - type: horizontal-stack
+        cards:
+          - type: light
+            entity: light.family_room_table_lamp
+            name: Table
+          - type: vertical-stack
+            cards:
+              - <<: *blank-button
+              - <<: *blank-button
+              - <<: *blank-button
+              - <<: *blank-button
+              - <<: *blank-button
+              - entity: light.family_room_table_lamp
+                <<: *light-entity-card
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.family_room_fan
+            icon: mdi:fan
+            name: Fan
+            tap_action:
+              action: toggle
+          - <<: *blank-button
+
+switch.kitchen_light:
+  title: Kitchen
+  large: false
+  card:
+    type: horizontal-stack
+    cards:
+      - type: entity-button
+        entity: switch.kitchen_light
+        name: Kitchen
+        icon: mdi:wall-sconce-flat
+      - type: entity-button
+        entity: switch.kitchen_prep_light
+        name: Prep
+        icon: mdi:wall-sconce-flat
+      - type: entity-button
+        entity: light.kitchen_undercabinet
+        name: Cabinet
+        icon: mdi:led-strip
+
+switch.landscape_lights:
+  title: Outdoor
+  large: false
+  card:
+    type: vertical-stack
+    cards:
+      - type: horizontal-stack
+        cards:
+          - type: light
+            entity: light.porch_light
+            name: Porch
+          - type: vertical-stack
+            cards:
+              - <<: *blank-button
+              - <<: *blank-button
+              - <<: *blank-button
+              - <<: *blank-button
+              - <<: *blank-button
+              - entity: light.porch_light
+                <<: *light-entity-card
+
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: switch.landscape_lights
+            icon: mdi:tree
+            name: Landscape
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.toggle_outdoor_lights
+          - <<: *blank-button
+
+light.play_room_light:
+  title: Play Room
+  large: false
+  card:
+    type: horizontal-stack
+    cards:
+      - type: light
+        entity: light.play_room_light
+        name: Lamp
+      - type: vertical-stack
+        cards:
+          - <<: *blank-button
+          - <<: *blank-button
+          - <<: *blank-button
+          - <<: *blank-button
+          - <<: *blank-button
+          - type: entity-button
+            entity: switch.play_room_fan
+            icon: mdi:fan
+            name: Fan
+            tap_action:
+              action: toggle
+
+climate.home:
+  title: Thermostats
+  large: false
+  card:
+    type: vertical-stack
+    cards:
+      # - type: custom:ecobee-card
+      #   entity: climate.home
+      # - type: custom:ecobee-card
+      #   entity: climate.goez
+      - type: thermostat
+        entity: climate.home
+      - type: thermostat
+        entity: climate.goez
+
+script.tv_family_room_off:
+  title: TV Controls
+  large: false
+  card:
+    type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Family Room TV
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: script.tv_family_room_off
+            icon: mdi:blank
+            name: "Off"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_family_room_off
+          - type: entity-button
+            entity: script.tv_family_room_apple_tv
+            icon: mdi:blank
+            name: "Apple TV"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_family_room_apple_tv
+          - type: entity-button
+            entity: script.tv_family_room_computer
+            icon: mdi:blank
+            name: "Computer"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_family_room_computer
+          - type: entity-button
+            entity: script.tv_family_room_bluray
+            icon: mdi:blank
+            name: "Movie Disc"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_family_room_bluray
+      - type: horizontal-stack
+        cards:
+          - <<: *blank-button
+          - type: entity-button
+            entity: remote.family_room_hub
+            icon: mdi:blank
+            name: Mute
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: Mute
+                device: 33992719
+          - type: entity-button
+            entity: remote.family_room_hub
+            icon: mdi:blank
+            name: "-"
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeDown
+                device: 33992719
+          - type: entity-button
+            entity: remote.family_room_hub
+            icon: mdi:blank
+            name: +
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeUp
+                device: 33992719
+          - <<: *blank-button
+
+      - type: markdown
+        content: >
+          ## Play Room TV
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: script.tv_play_room_off
+            icon: mdi:blank
+            name: "Off"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_off
+          - type: entity-button
+            entity: script.tv_play_room_apple_tv
+            icon: mdi:blank
+            name: "Apple TV"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_apple_tv
+          - type: entity-button
+            entity: script.tv_play_room_computer
+            icon: mdi:blank
+            name: "Computer"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_computer
+          - type: entity-button
+            entity: script.tv_play_room_dvr
+            icon: mdi:blank
+            name: "DVR"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_dvr
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: script.tv_play_room_switch
+            icon: mdi:blank
+            name: "Switch"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_switch
+          - type: entity-button
+            entity: script.tv_play_room_wii
+            icon: mdi:blank
+            name: "Wii"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_wii
+          - type: entity-button
+            entity: script.tv_play_room_wii_u
+            icon: mdi:blank
+            name: "Wii U"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_wii_u
+          - type: entity-button
+            entity: script.tv_play_room_xbox
+            icon: mdi:blank
+            name: "Xbox"
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.tv_play_room_xbox
+      - type: horizontal-stack
+        cards:
+          - <<: *blank-button
+          - type: entity-button
+            entity: remote.play_room_hub
+            icon: mdi:blank
+            name: Mute
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: Mute
+                device: 33992719
+          - type: entity-button
+            entity: remote.play_room_hub
+            icon: mdi:blank
+            name: "-"
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeDown
+                device: 33992719
+          - type: entity-button
+            entity: remote.play_room_hub
+            icon: mdi:blank
+            name: +
+            tap_action:
+              action: call-service
+              service: remote.send_command
+              service_data: 
+                command: VolumeUp
+                device: 33992719
+          - <<: *blank-button
+
+light.upstairs_bathroom_nightlight:
+  title: Upstairs Bathroom
+  large: false
+  card:
+    type: horizontal-stack
+    cards:
+      - type: light
+        entity: light.play_room_light
+        name: Rocket Light

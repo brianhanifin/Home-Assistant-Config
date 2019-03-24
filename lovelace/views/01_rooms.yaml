@@ -12,41 +12,6 @@ path: rooms
 #icon: mdi:dip-switch
 icon: fas:sliders-h
 cards:
-  - type: vertical-stack
-    cards:
-      - type: markdown
-        content: >
-          ## Porch / Entry
-      - type: horizontal-stack
-        cards:
-          - type: entity-button
-            entity: light.porch_light
-            icon: mdi:ceiling-light
-            name: Porch
-            tap_action:
-              action: toggle
-            hold_action:
-              action: more-info
-          - type: entity-button
-            entity: switch.landscape_lights
-            icon: mdi:tree
-            name: Landscape
-            tap_action:
-              action: toggle
-          - type: entity-button
-            entity: light.entry_light
-            icon: mdi:ceiling-light
-            name: Entry
-            tap_action:
-              action: toggle
-            hold_action:
-              action: more-info
-          - type: entity-button
-            entity: switch.toggle_front
-            name: Door
-            tap_action:
-              action: toggle
-
   # Family Room
   - type: vertical-stack
     cards:
@@ -205,26 +170,6 @@ cards:
           ## Upstairs Bathroom
       - type: horizontal-stack
         cards:
-          - type: entity-button
-            entity: light.upstairs_bathroom_nightlight
-            icon: fas:rocket
-            name: Nightlight
-            tap_action:
-              action: toggle
-            hold_action:
-              action: more-info
-          # - type: entity-button
-          #   entity: switch.upstairs_bathroom_fan
-          #   icon: mdi:air-filter
-          #   name: Fan
-          #   tap_action:
-          #     action: toggle
-          - <<: *blank-button
-          - <<: *blank-button
-          - <<: *blank-button
-
-      - type: horizontal-stack
-        cards:
           - type: custom:mini-graph-card
             animate: true
             entities:
@@ -249,6 +194,61 @@ cards:
             points_per_hour: 4
             show:
               labels: false
+
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: light.upstairs_bathroom_nightlight
+            icon: fas:rocket
+            name: Nightlight
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          # - type: entity-button
+          #   entity: switch.upstairs_bathroom_fan
+          #   icon: mdi:air-filter
+          #   name: Fan
+          #   tap_action:
+          #     action: toggle
+          - <<: *blank-button
+          - <<: *blank-button
+          - <<: *blank-button
+
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Outdoor / Entry
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
+            entity: light.porch_light
+            icon: mdi:ceiling-light
+            name: Porch
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - type: entity-button
+            entity: switch.landscape_lights
+            icon: mdi:tree
+            name: Landscape
+            tap_action:
+              action: toggle
+          - type: entity-button
+            entity: light.entry_light
+            icon: mdi:ceiling-light
+            name: Entry
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+          - type: entity-button
+            entity: switch.toggle_front
+            name: Door
+            tap_action:
+              action: toggle
 
   
   - <<: *compact-header
