@@ -9,11 +9,6 @@ sensors:
       - media_player.kitchen
       - media_player.play_room
       - media_player.master_bedroom
-    # value_template: >
-    #   {%- for entity in states.media_player -%}
-    #     {%- if state_attr(entity.entity_id, 'last_called') == True -%}
-    #       {{ entity.entity_id }}
-    #     {%- endif -%}
-    #   {%- endfor -%}
+      - media_player.upstairs_bathroom
     value_template: >
       {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
