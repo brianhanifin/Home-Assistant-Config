@@ -78,8 +78,10 @@ cards:
             show_header_toggle: false
             show_state: false
             entities:
-              - sensor.last_alexa
-              - sensor.last_message
+              - entity: sensor.last_alexa
+                secondary_info: last-changed
+              - entity: sensor.last_message
+                secondary_info: last-changed
               - type: divider
               - type: divider
               - input_select.tts_phrase_room
@@ -109,8 +111,10 @@ cards:
           - type: divider
 
           #- binary_sensor.update_available
-          - sensor.docker_lastest_build
-          - sensor.current_version
+          - entity: sensor.docker_lastest_build
+            secondary_info: last-changed
+          - entity: sensor.current_version
+            secondary_info: last-changed
           # - automation.homeassistant_update_notification
           - type: divider
           - type: custom:config-template-card

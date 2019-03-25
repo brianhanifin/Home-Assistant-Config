@@ -153,6 +153,7 @@ cards:
         type: entities
         title: Notifications
         show_header_toggle: false
+        secondary_info: last-changed
 
   - type: vertical-stack
     cards:
@@ -339,17 +340,21 @@ cards:
           - type: entities
             entities:
               - entity: sensor.medicine_buddy_given_today
-                icon: mdi:pill
                 name: Buddy's Medicine Last Given
+                icon: mdi:pill
+                secondary_info: last-changed
               #- binary_sensor.dog_water_bowl
               - entity: variable.last_motion
-                icon: mdi:motion-sensor
                 name: Last Motion
+                icon: mdi:motion-sensor
+                secondary_info: last-changed
               - entity: binary_sensor.sleeping
-                icon: mdi:hotel
                 name: Sleeping, Brian & Nerene
-              #- binary_sensor.washer_running
-              - sensor.washing_machine_status
+                secondary_info: last-changed
+              # - entity: binary_sensor.washer_running
+              #   secondary_info: last-changed
+              - entity: sensor.washing_machine_status
+                secondary_info: last-changed
           - type: custom:mini-graph-card
             animate: true
             entities:
