@@ -16,15 +16,25 @@ medicine_buddy_button:
           {%- else -%}
             "was cleared"
           {%- endif %}
+
     - service: mqtt.publish
       data_template:
-        topic: "medicine/buddy/last_given"
-        payload: >
-          {%- if type in ["single", "long"] -%}
-            {{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}
-          {%- endif %}
+        topic: "homeassistant/medicine/buddy/state"
+        payload: >-
+          {
+            {%- if type in ["single", "long"] -%}
+              "value": "{{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}"
+            {%- else -%}
+              "value": ""
+            {%- endif %}
+          }
         retain: true
-    - delay:
-        minutes: 1
-    - service: homeassistant.update_entity
-      entity_id: sensor.medicine_buddy_given_today
+    - service: mqtt.publish
+      data_template:
+        topic: "homeassistant/medicine/buddy/attributes"
+        payload: >-
+          {
+            "day": "{{ as_timestamp(now())|timestamp_custom('%A') }}",
+            "updated": "{{ as_timestamp(now())|timestamp_custom('%B %-d %Y %-I:%M %P') }}"
+          }
+        retain: true
