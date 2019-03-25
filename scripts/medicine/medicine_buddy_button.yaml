@@ -21,13 +21,9 @@ medicine_buddy_button:
       data_template:
         topic: "homeassistant/medicine/buddy/state"
         payload: >-
-          {
-            {%- if type in ["single", "long"] -%}
-              "value": "{{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}"
-            {%- else -%}
-              "value": ""
-            {%- endif %}
-          }
+          {%- if type in ["single", "long"] -%}
+            {{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}
+          {%- endif %}
         retain: true
     - service: mqtt.publish
       data_template:

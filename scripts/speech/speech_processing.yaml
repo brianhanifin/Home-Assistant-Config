@@ -18,8 +18,9 @@ speech_processing:
       data_template:
         topic: "homeassistant/speech/last_message/state"
         retain: true
-        payload: >-
-          { "value": "{{ briefing }}" }
+        # payload: >-
+        #   { "value": "{{ briefing|truncate(254) }}" }
+        payload: "{{ briefing }}"
     - service: mqtt.publish
       data_template:
         topic: "homeassistant/speech/last_message/attributes"

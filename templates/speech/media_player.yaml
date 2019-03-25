@@ -1,10 +1,6 @@
   >
-  {% macro get_media_player() -%}
-    {%- if media_player is not string -%}
-      {%- set media_player = 'media_player.kitchen' -%}
-    {%- else -%}
-      {%- set media_player = media_player|trim|replace(' ', '') -%}
-    {%- endif -%}
-    {{ media_player|replace(' ,',',')|replace(',',', ')|trim }}
-  {%- endmacro -%}
-  {{ get_media_player() }}
+  {%- if media_player is not string -%}
+    media_player.kitchen
+  {%- else -%}
+    {{ media_player|trim|replace(' ', '') }}
+  {%- endif -%}
