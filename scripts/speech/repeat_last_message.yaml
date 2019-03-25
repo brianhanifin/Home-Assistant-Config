@@ -5,13 +5,21 @@ repeat_last_message:
     #   entity_id: sensor.last_alexa
 
     # Update the last_message.
-    # - service: homeassistant.update_entity
-    #   entity_id: sensor.last_message
-
+    - service: homeassistant.update_entity
+      entity_id: sensor.last_message
 
     # Say the previous message on the last Alexa device that was spoken to.
-    - service: script.say
+    # Bypass `script.say` to avoid storing the last message again.
+    - service: notify.alexa_media
       data_template:
-        media_player: "{{ states('sensor.last_alexa') }}"
-        say_greeting: "false"
+        data:
+          type: announce
+          method: all
+        title: >
+          {%- if title is not string -%}
+            Home Assistant Notification
+          {%- else -%}
+            {{ title }}
+          {%- endif -%}
         message: "{{ states('sensor.last_message') }}"
+        target: "{{ states('sensor.last_alexa') }}"

@@ -1,10 +1,18 @@
   >
   {# UTILITY FUNCTIONS #}
+  {%- macro get_friendly_list(list) -%}
+    {%- set comma = joiner(', ') -%}
+    {%- for item in list|sort if list|length > 0 -%}
+      {{ ' and' if loop.last and not loop.first else comma() }}
+      {{ item|title }}
+    {%- endfor -%}
+  {%- endmacro -%}
+
   {%- macro get_friendly_names(entity_list) -%}
     {% set comma = joiner(', ') %}
     {%- for entity in entity_list if entity_list|length > 0 -%}
       {{ ' and' if loop.last and not loop.first else comma() }}
-      {{ state_attr(entity, 'friendly_name')|replace('Light','')|replace('Lamp','')|trim  }}
+      {{ state_attr(entity, 'friendly_name')|replace('Light','')|replace('Lamp','')|trim|title  }}
     {%- endfor -%}
   {%- endmacro -%}
 
@@ -189,18 +197,23 @@
   {%- macro light_check() -%}
     {% set lights_on = states('variable.lights_on').split(',') %}
     {% if lights_on|length > 0 %}
-      There are {{ lights_on|length }} lights on right now.
-
-      The {{ get_friendly_names(lights_on) }} lights are on.
+      
+      {%- if lights_on|length == 1 %}
+        There is 1 light on right now.
+        The {{ get_friendly_names(lights_on) }} light is on.
+      {%- else %}
+        There are {{ lights_on|length }} lights on right now.
+        The {{ get_friendly_names(lights_on) }} lights are on.
+      {%- endif %}
     {%- endif -%}
   {%- endmacro -%}
 
   {%- macro inside_weather() -%}
-    ... Inside the house, it is {{ state('sensor.home_temperature') }} degrees
+    Inside the house, it is {{ states('sensor.home_temperature')|int }} degrees.
   {%- endmacro -%}
 
   {%- macro outside_weather() -%}
-    ... Outside, today will be {{ state_attr('weather.home', 'forecast')[0]['condition'] }} ... the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature'] }} degrees
+    Outside, today will be {{ state_attr('weather.home', 'forecast')[0]['condition'] }} ... the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature']|int }} degrees.
   {%- endmacro -%}
 
   {%- macro medicine() -%}
@@ -210,16 +223,16 @@
   {%- endmacro -%}
 
   {%- macro plant_problems() -%}
-    {% if is_state_attr('sensor.plant_problems','water_number',0) %}
+    {%- if is_state_attr('sensor.plant_problems','water_number',0) -%}
       No plants need watering.
-    {% elif states.sensor.plant_problems.attributes.water_number | float > 0 %}
-      {{states.sensor.plant_problems.attributes.water|sort|replace('0',' ')}} need to be watered.
-    {% endif %}
-    {% if is_state_attr('sensor.plant_problems','fertilize_number',0) %}
+    {%- elif state_attr('sensor.plant_problems','water_number')|float > 0 -%}
+      Please water {{ get_friendly_list(state_attr('sensor.plant_problems','water'))|replace('0',' ') }}.
+    {%- endif %}
+    {%- if is_state_attr('sensor.plant_problems','fertilize_number',0) -%}
       No plants need fertilizer.
-    {% elif states.sensor.plant_problems.attributes.fertilize_number | float > 0 %}
-      These plants {{states.sensor.plant_problems.attributes.fertilize|replace('0',' ')|sort}} need fertilizing.
-    {% endif %}
+    {%- elif state_attr('sensor.plant_problems','fertilize_number')|float > 0 -%}
+      Please fertilize {{ get_friendly_list(state_attr('sensor.plant_problems','fertilize'))|replace('0',' ') }}.
+    {%- endif %}
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
@@ -269,49 +282,57 @@
   {# BRIEFING TEMPLATE #}
   {%- macro get_briefing() -%}
     {%- if say_greeting == "true" -%}
-      {{ greeting_line() + " " }}
+      {{ greeting_line() + " ... " }}
       
-      {{ holiday() }}
+      {{ holiday() + " ... " }}
     {%- endif -%}
 
     {%- if person_arriving is not undefined -%}
-      {{ welcome_home(person_arriving) }}
+      {{ welcome_home(person_arriving) + " ... " }}
 
-      {{ medicine() }}
+      {{ medicine() + " ... " }}
     {%- endif -%}
 
     {{ message }}
 
     {%- if say_dark_outside == "true" -%}
-      {{ dark_outside() }}
+      {{ dark_outside() + " ... " }}
     {%- endif -%}
 
     {%- if say_inside_weather == "true" -%}
-      {{ inside_weather() }}
+      {{ inside_weather() + " ... " }}
     {%- endif -%}
 
     {%- if say_outside_weather == "true" -%}
-      {{ outside_weather() }}
+      {{ outside_weather() + " ... " }}
     {%- endif -%}
 
     {%- if say_dog_water == "true" -%}
-      {{ dog_water_bowl() }}
+      {{ dog_water_bowl() + " ... " }}
     {%- endif -%}
 
     {%- if say_responsibilities == "true" -%}
-      {{ responsibilities() }}
+      {{ responsibilities() + " ... " }}
+    {%- endif -%}
+
+    {%- if say_garage_check == "true" -%}
+      {{ garage_check() + " ... " }}
+    {%- endif -%}
+
+    {%- if say_light_check == "true" -%}
+      {{ light_check() + " ... " }}
     {%- endif -%}
 
     {%- if say_plant_problems == "true" -%}
-      {{ plant_problems() }}
+      {{ plant_problems() + " ... " }}
     {%- endif -%}
 
     {%- if say_goodbye == "true" -%}
-      {{ " " + goodbye_line() }}
+      {{ " " + goodbye_line() + " ... " }}
     {%- endif -%}
 
     {%- if say_goodnight == "true" -%}
-      {{ " " + goodnight_line() }}
+      {{ " " + goodnight_line() + " ... " }}
     {%- endif -%}
   {%- endmacro -%}
 
@@ -339,6 +360,10 @@
 
   {%- if say_inside_weather is undefined -%}
     {%- set say_inside_weather = "false" -%}
+  {%- endif -%}
+
+  {%- if say_garage_check is undefined -%}
+    {%- set say_garage_check = "false" -%}
   {%- endif -%}
 
   {%- if say_light_check is undefined -%}
