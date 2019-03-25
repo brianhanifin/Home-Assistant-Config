@@ -1,4 +1,12 @@
 ---
+# Define Anchors
+alert_style_yellow: &alert_style_yellow
+  style:
+    "background-color": "#F9C536"
+    "color": black
+    "--paper-item-icon-color": black
+    "--paper-item-icon-active-color": black
+
 # Compact Header 'Anchor'
 compact-header: &compact-header
 - type: custom:compact-custom-header
@@ -104,6 +112,14 @@ cards:
           - type: call-service
             name: Check Config + Restart
             service: script.config_check_and_restart
+          - type: custom:card-modder
+            <<: *alert_style_yellow
+            card:
+              type: custom:useful-markdown-card
+              content: >-
+                ### [[ persistent_notification.1337.attributes.title ]]
+
+                [[ persistent_notification.1337.attributes.message ]]
           - type: divider
           - script.restart_hass
           - script.reboot

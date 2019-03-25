@@ -1,5 +1,24 @@
 config_check_and_restart:
   sequence:
-    - service: config_check.run
-      data_template:
-        service: shell_command.restart_hass
+    # Run the config_check
+    - service: script.config_check
+
+    # Wait for the notification to appear
+    - wait_template: "{{ states('persistent_notification.1337') is string }}"
+      timeout: 00:02:00
+
+    # Restart only if the configuration is OK
+    - condition: template
+      value_template: "{{ state_attr('persistent_notification.1337','message') == 'Configuration is OK!' }}"
+
+    # Clear any old config check notifications
+    - service: persistent_notification.create
+      data:
+        notification_id: "1337"
+        title: "Restarting..."
+        message: "Home Assistant is restarting!"
+    
+    - delay:
+        seconds: 5
+
+    - service: script.restart_hass
