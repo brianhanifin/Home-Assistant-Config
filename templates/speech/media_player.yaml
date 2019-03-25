@@ -1,6 +1,8 @@
   >
-  {%- if media_player is not string -%}
+  {% if media_player is not string -%}
     media_player.kitchen
+  {%- elif ',' in media_player -%}
+    {{ (media_player|replace(' ','')).split(',') }}
   {%- else -%}
-    {{ media_player|trim|replace(' ', '') }}
+    {{ media_player }}
   {%- endif -%}
