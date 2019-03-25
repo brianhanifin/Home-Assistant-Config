@@ -1,17 +1,33 @@
   >
-  {# BRIEFING MACROS #}
+  {# UTILITY FUNCTIONS #}
+  {%- macro get_friendly_names(entity_list) -%}
+    {% set comma = joiner(', ') %}
+    {%- for entity in entity_list if entity_list|length > 0 -%}
+      {{ ' and' if loop.last and not loop.first else comma() }}
+      {{ state_attr(entity, 'friendly_name')|replace('Light','')|replace('Lamp','')|trim  }}
+    {%- endfor -%}
+  {%- endmacro -%}
+
+
+  {# BRIEFING FUNCTIONS #}
   {%- macro dark_outside() -%}
     {{ [
       'It is pretty dark outside.  ...  I will turn on the outside lights now.',
       'It is a little past Sunset.  Time to turn on the outside lights.  ...  I am on it.',
       'I will switch on the outside lights.  ...  It is getting dark outside.',
-      'Time to turn on the front lights.  ...  I will take care of it.'
+      'Time to turn on the front lights.  ...  I am on it.'
     ]|random }}
   {%- endmacro -%}
 
   {%- macro dog_water_bowl() -%}
     {%- if states('binary_sensor.dog_water_bowl') == "off" -%}
       Buddy and Pepper's water bowl is empty ... please refill it for them.
+    {%- endif -%}
+  {%- endmacro -%}
+
+  {%- macro garage_check() -%}
+    {% if states('cover.garage_door') !='closed' -%}
+      The garage door is open
     {%- endif -%}
   {%- endmacro -%}
 
@@ -164,35 +180,62 @@
     {%- endif %}
   {%- endmacro -%}
 
+  {%- macro holiday() -%}
+    {% if states('sensor.holiday') not in ('unknown','') %}
+      Today is {{ states('sensor.holiday') }}.
+    {% endif %}
+  {%- endmacro -%}
+
+  {%- macro light_check() -%}
+    {% set lights_on = states('variable.lights_on').split(',') %}
+    {% if lights_on|length > 0 %}
+      There are {{ lights_on|length }} lights on right now.
+
+      The {{ get_friendly_names(lights_on) }} lights are on.
+    {%- endif -%}
+  {%- endmacro -%}
+
   {%- macro inside_weather() -%}
-    ... Inside the house, it is {{ state_attr('weather.home', 'temperature') }} degrees
+    ... Inside the house, it is {{ state('sensor.home_temperature') }} degrees
   {%- endmacro -%}
 
   {%- macro outside_weather() -%}
     ... Outside, today will be {{ state_attr('weather.home', 'forecast')[0]['condition'] }} ... the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature'] }} degrees
   {%- endmacro -%}
 
+  {%- macro medicine() -%}
+    {% if is_state('sensor.medicine_buddy_given_today', 'today') -%}
+      Please make sure Buddy's medicine has been prepared for the day
+    {% endif -%}
+  {%- endmacro -%}
+
   {%- macro plant_problems() -%}
     {% if is_state_attr('sensor.plant_problems','water_number',0) %}
       No plants need watering.
     {% elif states.sensor.plant_problems.attributes.water_number | float > 0 %}
-      {{states.sensor.plant_problems.attributes.water}} need to be watered.
+      {{states.sensor.plant_problems.attributes.water|sort|replace('0',' ')}} need to be watered.
     {% endif %}
     {% if is_state_attr('sensor.plant_problems','fertilize_number',0) %}
       No plants need fertilizer.
     {% elif states.sensor.plant_problems.attributes.fertilize_number | float > 0 %}
-      These plants {{states.sensor.plant_problems.attributes.fertilize}} need fertilizing.
+      These plants {{states.sensor.plant_problems.attributes.fertilize|replace('0',' ')|sort}} need fertilizing.
     {% endif %}
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
-    {# Alternate poop pickup every other day. Give them Christmas Off. #}
-    {% if now().strftime('%j')|int % 2 != 0
-      and now().strftime('%j')|int != 358 %}
-      Today is Lucas' day to pickup the dookie.
-    {% else %}
-      Today is Kyle's day to pickup the dookie.
+    {% if now().strftime('%a') == 'Mon' %}
+      It is Monday and tomorrow is garbage day. Please take the cans to the curb.
     {% endif %}
+
+    {# Alternate poop pickup every other day. Give them Christmas Off. #}
+    {% if now().strftime('%-H')|int == 14 -%}
+      {% if now().strftime('%j')|int % 2 != 0
+        and now().strftime('%j')|int != 358 %}
+        Today is Lucas' day to pickup the dookie.
+      {% else %}
+        Today is Kyle's day to pickup the dookie.
+      {% endif %}
+    {%- endif -%}
   {%- endmacro -%}
 
   {%- macro welcome_home(person) -%}
@@ -205,7 +248,7 @@
     "Life is like a song, you’re back where you belong.  ...  Welcome home " ~ person,
     "Hey there " ~ person + "  ...  Welcome Home!",
     "Knock Knock.  ...  Who is There?  ... "   ~ person +" is!",
-    "The garage door opener just told me that "   ~ person +" is home.",
+    "The garage door just told me that "   ~ person +" is home.",
     person + " can not hide from the system.  ... Welcome home.",
     person ~ "!  ... You are home!",
     "I know a secret! ... "  ~ person +" is home!",
@@ -226,11 +269,15 @@
   {# BRIEFING TEMPLATE #}
   {%- macro get_briefing() -%}
     {%- if say_greeting == "true" -%}
-       {{ greeting_line() + " " }}
+      {{ greeting_line() + " " }}
+      
+      {{ holiday() }}
     {%- endif -%}
 
-    {%- if personarriving is not undefined -%}
-      {{ welcome_home(personarriving) }}
+    {%- if person_arriving is not undefined -%}
+      {{ welcome_home(person_arriving) }}
+
+      {{ medicine() }}
     {%- endif -%}
 
     {{ message }}
@@ -240,7 +287,7 @@
     {%- endif -%}
 
     {%- if say_inside_weather == "true" -%}
-      {#{ inside_weather() }#}
+      {{ inside_weather() }}
     {%- endif -%}
 
     {%- if say_outside_weather == "true" -%}
@@ -260,7 +307,7 @@
     {%- endif -%}
 
     {%- if say_goodbye == "true" -%}
-       {{ " " + goodbye_line() }}
+      {{ " " + goodbye_line() }}
     {%- endif -%}
 
     {%- if say_goodnight == "true" -%}
@@ -314,7 +361,7 @@
     {%- set say_plant_problems = "false" -%}
   {%- endif -%}
 
-  {%- if personarriving is not undefined -%}
+  {%- if person_arriving is not undefined -%}
     {%- set say_greeting = "false" -%}
   {%- endif -%}
 

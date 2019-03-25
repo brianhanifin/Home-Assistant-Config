@@ -1,0 +1,45 @@
+---
+##############################################################################
+###  Family Member Arrival
+##############################################################################
+alias: family_arrival
+initial_state: on
+trigger:
+  - platform: state
+    entity_id:
+      - input_select.brian
+      - input_select.nerene
+      # - input_select.eric
+      # - input_select.sandy
+      # - input_select.heather
+    to: 'Just Arrived'
+    for:
+      minutes: 0
+      seconds: 5
+action:
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.away_mode
+
+  # - wait_template: "{{ is_state('binary_sensor.front_door', 'True') or is_state('binary_sensor.garage_entry_door', 'True')}}"
+  #   timeout: 00:08:00
+  - delay:
+      minutes: 1
+
+  #- service: script.speech_engine
+  #  data_template:
+  #    call_do_not_greet: 1
+  #    person_arriving: >
+  #      {{ trigger.entity_id.split('.')[1]|title|replace('_', ' ') }}
+  #    call_inside_weather: 1
+  #    call_garage_check: 1
+  #    call_window_check: 1
+  #    call_door_check: 1
+  #    call_light_check: 1
+  #    call_moon: 1
+
+  - service: script.say
+    data_template:
+      media_player: "group.alexa_downstairs"
+      person_arriving: "{{ trigger.entity_id.split('.')[1]|title|replace('_', ' ') }}"
+      say_inside_weather: "true"
+      say_responsibilities: "true"

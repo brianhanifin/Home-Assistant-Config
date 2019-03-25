@@ -8,9 +8,14 @@ speech_processing:
 
     - service: notify.alexa_media
       data_template:
-        target: "{{ media_player }}"
-        #title: "My title for Echo show"
         data:
           type: announce
           method: all
+        title: >
+          {%- if title is not string -%}
+            Home Assistant Notification
+          {%- else -%}
+            {{ title }}
+          {%- endif -%}
         message: "{{ briefing }}"
+        target: "{{ media_player }}"
