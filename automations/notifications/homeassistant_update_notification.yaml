@@ -7,12 +7,11 @@ trigger:
   - platform: state
     entity_id: binary_sensor.update_available
     to: "on"
+condition:
+  condition: template
+  value_template: >
+    {{ trigger.to_state.state not in [trigger.from_state.state, 'unavailable'] }}
 action:
-  - condition:
-      condition: template
-      value_template: >
-        {{ trigger.to_state.state not in [trigger.from_state.state, 'unavailable'] }}
-
   - service: persistent_notification.create
     data_template:
       title: "New Docker Build Available"
