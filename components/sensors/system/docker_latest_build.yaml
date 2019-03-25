@@ -10,9 +10,11 @@ resource: https://registry.hub.docker.com/v1/repositories/homeassistant/home-ass
 headers:
   Content-Type: application/json
   User-Agent: Home Assistant REST sensor
+# value_template: >-
+#   {%- for image_build in value_json | reverse if image_build.name.split(".")[0]=="0" and "b" not in image_build.name.split(".")[2] -%}
 value_template: >-
-  {%- for image_build in value_json | reverse if image_build.name.split(".")[0]=="0" and "b" not in image_build.name.split(".")[2] -%}
+  {% for image_build in value_json | reverse if image_build.name|regex_search("\d+\.\d+\.\d+$") -%}
     {%- if loop.first -%}
       {{ image_build.name }}
     {%- endif -%}
-  {% endfor %}
+  {%- endfor %}
