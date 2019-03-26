@@ -390,5 +390,7 @@
     {%- set say_greeting = "false" -%}
   {%- endif -%}
 
-  {#- Get briefing -#}
-  {{ get_briefing() }}
+  {#- Get briefing, and strip unnecessary characters. -#}
+  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace("... ...", "...") %}
+    {{ get_briefing() }}
+  {% endfilter %}
