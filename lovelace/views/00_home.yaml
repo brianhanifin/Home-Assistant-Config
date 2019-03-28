@@ -1,18 +1,10 @@
 ---
 # Define Anchors
 alert_style_red: &alert_style_red
-  style:
-    "background-color": "#E45E65"
-    "color": white
-    "--paper-item-icon-color": white
-    "--paper-item-icon-active-color": white
+  style: !include ../templates/alert_style_red.yaml
 
 alert_style_yellow: &alert_style_yellow
-  style:
-    "background-color": "#F9C536"
-    "color": black
-    "--paper-item-icon-color": black
-    "--paper-item-icon-active-color": black
+  style: !include ../templates/alert_style_yellow.yaml
 
 blank-button: &blank-button
 - type: custom:button-card
@@ -30,7 +22,7 @@ compact-header: &compact-header
     - conditions:
         user: Nerene
       config:
-        hide_tabs: 4,5
+        hide_tabs: 5,6
         notifications: hide
         options: hide
     - conditions:
@@ -38,6 +30,20 @@ compact-header: &compact-header
       config:
         notifications: overflow
         options: show
+
+tap_call_script: &tap_call_script
+  tap_action:
+    action: call-service
+    service: script.turn_on
+    service_data:
+
+tap_more_info: &tap_more_info
+  tap_action:
+    action: more-info
+
+tap_toggle: &tap_toggle
+  tap_action:
+    action: toggle
 
 
 title: Control Panel
@@ -167,63 +173,49 @@ cards:
             entity: light.nerenes_light
             icon: mdi:hotel
             name: Bed Room
-            tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_bedroom_lights
+            <<: *tap_call_script
+            entity_id: script.toggle_bedroom_lights
           - type: entity-button
             entity: light.dining_room_light
             icon: mdi:food
             name: Dining
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: light.entry_light
             icon: mdi:door
             name: Entry
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
       - type: horizontal-stack
         cards:
           - type: entity-button
             entity: light.family_room_light
             icon: mdi:television
             name: Family
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: switch.kitchen_light
             icon: mdi:stove
             name: Kitchen
-            tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_kitchen_lights
+            <<: *tap_call_script
+            entity_id: script.toggle_kitchen_lights
           - type: entity-button
             entity: switch.landscape_lights
             icon: mdi:tree
             name: Outdoor
-            tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_outdoor_lights
+            <<: *tap_call_script
+            entity_id: script.toggle_outdoor_lights
       - type: horizontal-stack
         cards:
           - type: entity-button
             entity: light.play_room_light
             icon: mdi:gamepad-variant
             name: Play Room
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: light.upstairs_bathroom_nightlight
             name: Upstairs Bath
             icon: fas:rocket
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - <<: *blank-button
 
   - type: vertical-stack
@@ -237,58 +229,49 @@ cards:
             entity: switch.bedroom_fan
             icon: mdi:fan 
             name: Bed Room
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: switch.family_room_fan
             icon: mdi:fan
             name: Family
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: switch.play_room_fan
             icon: mdi:fan
             name: Play Room
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
       - type: horizontal-stack
         cards:
           - type: entity-button
             entity: switch.hot_water_pump
             icon: mdi:hot-tub
             name: Hot Water
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: switch.toggle_front
             name: Front Door
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: switch.toggle_garage
             name: Garage Door
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
       - type: horizontal-stack
         cards:
           - type: entity-button
             entity: switch.printers
             icon: mdi:printer
             name: Printers
-            tap_action:
-              action: toggle
+            <<: *tap_toggle
           - type: entity-button
             entity: climate.home
             icon: mdi:thermostat
             name: Thermostats
-            tap_action:
-              action: more-info
+            <<: *tap_more_info
           - type: entity-button
             entity: script.tv_family_room_off
             icon: mdi:remote
             name: TV Controls
-            tap_action:
-              action: more-info
+            <<: *tap_more_info
 
   - type: vertical-stack
     cards:
@@ -302,20 +285,14 @@ cards:
             entity: script.goodbye_routine
             icon: mdi:exit-run
             name: Bye
-            tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.goodbye_routine
+            <<: *tap_call_script
+            entity_id: script.goodbye_routine
           - type: entity-button
             entity: script.goodnight_routine
             icon: mdi:weather-night
             name: Night
-            tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.goodnight_routine
+            <<: *tap_call_script
+            entity_id: script.goodnight_routine
           - <<: *blank-button
 
   - type: vertical-stack
