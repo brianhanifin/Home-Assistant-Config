@@ -1,11 +1,5 @@
 ---
 # Define Anchors
-alert_style_red: &alert_style_red
-  style: !include ../templates/alert_style_red.yaml
-
-alert_style_yellow: &alert_style_yellow
-  style: !include ../templates/alert_style_yellow.yaml
-
 blank-button: &blank-button
 - type: custom:button-card
   color_type: blank-card
@@ -52,114 +46,7 @@ path: home
 icon: fas:th
 popup_cards: !include popup_cards_home.yaml
 cards:
-  - type: entity-filter
-    entities:
-      - binary_sensor.front_door
-      - cover.garage_door
-      - binary_sensor.shoe_closet_door
-      - lock.front_door
-    state_filter:
-      - 'on'
-      - open
-      - unlocked
-    show_empty: false
-    card:
-      type: custom:card-modder
-      <<: *alert_style_yellow
-      card:
-        type: glance
-        columns: 4
-        show_state: false
-        title: "Doors + Windows: Open or Unlocked"
-
-  - type: entity-filter
-    entities:
-      # Melnor RainCloud / AquaTimer
-      - binary_sensor.aquatimer_control_unit_status
-      - binary_sensor.side_yard_status
-
-      # ESPHome Devices
-      - binary_sensor.ble_hub_status
-      - binary_sensor.plug01_status
-      - binary_sensor.plug02_status
-      - binary_sensor.plug03_status
-      - binary_sensor.plug05_status
-      - binary_sensor.plug06_status
-      # - binary_sensor.plug07_status
-      # - binary_sensor.plug08_status
-      # - binary_sensor.sonoff_s31_01_status
-      - binary_sensor.sonoff_s31_02_status
-      # - binary_sensor.sonoff_s31_03_status
-      # - binary_sensor.sonoff_s31_04_status
-      # - binary_sensor.sonoff_s31_05_status
-      # - binary_sensor.sonoff_s31_06_status
-
-      # Harmony Hubs
-      - sensor.harmony_hub_family_room_status
-      - sensor.harmony_hub_play_room_status
-    state_filter:
-      - Offline
-      - Unknown
-      - 'off'
-    show_empty: false
-    card:
-      type: custom:card-modder
-      <<: *alert_style_yellow
-      card:
-        type: glance
-        columns: 4
-        show_state: false
-        title: Devices Offline
-
-  - type: custom:auto-entities
-    filter:
-      include:
-        - entity_id: "sensor.*_battery"
-          attributes:
-            battery_level: "<= 20"
-      exclude:
-        - entity_id: "*phone*"
-        - entity_id: "*brightness*" # *motion* = state for same device
-        - entity_id: "*left_button*"
-        - entity_id: "*right_button*"
-    show_empty: false
-    card:
-      type: custom:card-modder
-      <<: *alert_style_yellow
-      card:
-        type: entities
-        title: Low Batteries
-        show_header_toggle: false
-
-  - type: entity-filter
-    entities:
-      - binary_sensor.alarm_smoke_detected
-      - binary_sensor.alarm_co_detected
-    state_filter:
-      - 'on'
-    show_empty: false
-    card:
-      type: custom:card-modder
-      <<: *alert_style_red
-      card:
-        type: glance
-        columns: 2
-        show_state: false
-        title: SAFTEY ALERT
-
-  - type: custom:auto-entities
-    filter:
-      include:
-        - domain: "persistent_notification"
-    show_empty: false
-    card:
-      type: custom:card-modder
-      <<: *alert_style_yellow
-      card:
-        type: entities
-        title: Notifications
-        show_header_toggle: false
-        secondary_info: last-changed
+  - !include ../templates/alerts.yaml
 
   - type: vertical-stack
     cards:
@@ -205,7 +92,7 @@ cards:
             <<: *tap_call_script
             entity_id: script.toggle_outdoor_lights
       - type: horizontal-stack
-        cards:
+        cards: 
           - type: entity-button
             entity: light.play_room_light
             icon: mdi:gamepad-variant

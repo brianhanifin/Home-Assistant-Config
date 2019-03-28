@@ -16,29 +16,33 @@ icon: mdi:pill
 cards:
   - type: vertical-stack
     cards:
-      - type: custom:card-modder
-        <<: *alert_style_red
-        card:
-          type: markdown
-          content: |-
-            ## ⚠️ Experimental Feature ⚠️
+      - !include ../templates/alerts.yaml
 
-            *This feature is not functional yet and may never be.*
+      - type: vertical-stack
+        cards:
+          - type: custom:card-modder
+            <<: *alert_style_red
+            card:
+              type: markdown
+              content: |-
+                ## ⚠️ Experimental Feature ⚠️
 
-  - type: vertical-stack
-    cards:
-      - type: markdown
-        content: |-
-          ## Medicine Tracker
-      - type: custom:check-button-card
-        title: Buddy
-        entity: sensor.medicine_buddy_taken
-      - type: custom:check-button-card
-        title: Brian
-        entity: sensor.medicine_brian_taken
-      - type: custom:check-button-card
-        title: Nerene
-        entity: sensor.medicine_nerene_taken
+                *This feature is not functional yet and may never be.*
+
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |-
+              ## Medicine Tracker
+          - type: custom:check-button-card
+            title: Buddy
+            entity: sensor.medicine_buddy_taken
+          - type: custom:check-button-card
+            title: Brian
+            entity: sensor.medicine_brian_taken
+          - type: custom:check-button-card
+            title: Nerene
+            entity: sensor.medicine_nerene_taken
 
 
   - <<: *compact-header
