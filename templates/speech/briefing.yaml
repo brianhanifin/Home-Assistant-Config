@@ -216,12 +216,6 @@
     Outside, today will be {{ state_attr('weather.home', 'forecast')[0]['condition'] }} ... the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature']|int }} degrees.
   {%- endmacro -%}
 
-  {%- macro medicine() -%}
-    {% if is_state('sensor.medicine_buddy_given_today', 'today') -%}
-      Please make sure Buddy's medicine has been prepared for the day
-    {% endif -%}
-  {%- endmacro -%}
-
   {%- macro plant_problems() -%}
     {%- if is_state_attr('sensor.plant_problems','water_number',0) -%}
       No plants need watering.
@@ -236,17 +230,23 @@
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
-    {% if now().strftime('%a') == 'Mon' %}
+    {# Trash to curb #}
+    {%- if now().strftime('%a') == 'Mon' -%}
       It is Monday and tomorrow is garbage day. Please take the cans to the curb.
-    {% endif %}
+    {%- endif %}
+
+    {# Medicine #}
+    {%- if states('sensor.medicine_buddy_given_today') != 'today' -%}
+      Please make sure Buddy's medicine has been prepared for the day
+    {%- endif %}
 
     {# Alternate poop pickup every other day. Give them Christmas Off. #}
     {% if now().strftime('%-H')|int == 14 -%}
       {% if now().strftime('%j')|int % 2 != 0
         and now().strftime('%j')|int != 358 %}
-        Today is Lucas' day to pickup the dookie.
-      {% else %}
         Today is Kyle's day to pickup the dookie.
+      {% else %}
+        Today is Lucas' day to pickup the dookie.
       {% endif %}
     {%- endif -%}
   {%- endmacro -%}
@@ -289,8 +289,6 @@
 
     {%- if person_arriving is not undefined -%}
       {{ welcome_home(person_arriving) + " ... " }}
-
-      {{ medicine() + " ... " }}
     {%- endif -%}
 
     {{ message }}
