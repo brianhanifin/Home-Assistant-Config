@@ -1,0 +1,100 @@
+---
+# Define Anchors
+alert_style_red: &alert_style_red
+  style: !include ../templates/alert_style_red.yaml
+
+blank-button: &blank-button
+- type: "custom:button-card"
+  color_type: blank-card
+
+check-button-contribution: &check-button-contribution
+  severity:
+    - value: 1 days
+      hue: '120'
+    - value: 3 days
+      hue: '40'
+    - value: 4 days
+      hue: '0'
+  type: custom:check-button-card
+  width: 60%
+
+check-button-medicine: &check-button-medicine
+  severity:
+    - value: 8 hours
+      hue: '120'
+    - value: 12 hours
+      hue: '40'
+    - value: 24 hours
+      hue: '0'
+  type: custom:check-button-card
+  width: 60%
+
+compact-header: &compact-header
+- type: custom:compact-custom-header
+
+title: contribution
+path: contribution
+icon: mdi:heart-pulse
+cards:
+  - type: vertical-stack
+    cards:
+      - !include ../templates/alerts.yaml
+      - type: markdown
+        content: |-
+          ## Medicine Tracker
+      - entity: sensor.medicine_buddy_taken
+        title: Buddy
+        <<: *check-button-medicine
+      - entity: sensor.medicine_brian_taken
+        title: Brian
+        <<: *check-button-medicine
+      - entity: sensor.medicine_nerene_taken
+        title: Nerene
+        <<: *check-button-medicine
+
+  - type: vertical-stack
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |-
+              ## Kyle's Contributions
+          - entity: sensor.contribution_kyle_clothes_sort
+            title: "Clothes: Sort"
+            <<: *check-button-contribution
+          - entity: sensor.contribution_kyle_clothes_wash
+            title: "Clothes: Wash"
+            <<: *check-button-contribution
+          - entity: sensor.contribution_kyle_dookie
+            title: Dookie
+            <<: *check-button-contribution
+          - entity: sensor.contribution_kyle_trash
+            title: Trash + Recycle
+            <<: *check-button-contribution
+
+      - type: vertical-stack
+        cards:
+          - type: markdown
+            content: |-
+              ## Lucas' Contributions
+          - entity: sensor.contribution_lucas_clothes_sort
+            title: "Clothes: Sort"
+            <<: *check-button-contribution
+          - entity: sensor.contribution_kyle_dishes
+            title: "Diswasher: Reload"
+            <<: *check-button-contribution
+          - entity: sensor.contribution_lucas_dookie
+            title: Dookie
+            <<: *check-button-contribution
+          - entity: sensor.contribution_lucas_trash
+            title: Trash + Recycle
+            <<: *check-button-contribution
+      
+      - type: markdown
+        content: |-
+          *The "family contributions" on this page are your regularly
+          occuring contribution. However, you will be asked to contribute
+          in other ways as the adults in this house. Contributions will be 
+          reqested and expected one or more times every day.*
+
+  - <<: *compact-header

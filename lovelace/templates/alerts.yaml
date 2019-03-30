@@ -9,6 +9,36 @@ type: horizontal-stack
 cards:
   - type: vertical-stack
     cards:
+      - type: custom:auto-entities
+        filter:
+          include:
+            - domain: "persistent_notification"
+        show_empty: false
+        card:
+          type: custom:card-modder
+          <<: *alert_style_yellow
+          card:
+            type: entities
+            title: Notifications
+            show_header_toggle: false
+            secondary_info: last-changed
+
+      - type: entity-filter
+        entities:
+          - binary_sensor.alarm_smoke_detected
+          - binary_sensor.alarm_co_detected
+        state_filter:
+          - 'on'
+        show_empty: false
+        card:
+          type: custom:card-modder
+          <<: *alert_style_red
+          card:
+            type: glance
+            columns: 2
+            show_state: false
+            title: SAFTEY ALERT
+
       - type: entity-filter
         entities:
           - binary_sensor.front_door
@@ -87,33 +117,3 @@ cards:
             type: entities
             title: Low Batteries
             show_header_toggle: false
-
-      - type: entity-filter
-        entities:
-          - binary_sensor.alarm_smoke_detected
-          - binary_sensor.alarm_co_detected
-        state_filter:
-          - 'on'
-        show_empty: false
-        card:
-          type: custom:card-modder
-          <<: *alert_style_red
-          card:
-            type: glance
-            columns: 2
-            show_state: false
-            title: SAFTEY ALERT
-
-      - type: custom:auto-entities
-        filter:
-          include:
-            - domain: "persistent_notification"
-        show_empty: false
-        card:
-          type: custom:card-modder
-          <<: *alert_style_yellow
-          card:
-            type: entities
-            title: Notifications
-            show_header_toggle: false
-            secondary_info: last-changed
