@@ -2,15 +2,16 @@
 platform: template
 sensors:
   medicine_buddy_given_today:
+    entity_id: sensor.medicine_buddy_taken
     friendly_name: Buddy Given Medicine
     icon_template: mdi:pill
     value_template: >-
-      {%- set last_given = state_attr('sensor.medicine_buddy','day') %}
+      {%- set last_given = states('sensor.medicine_buddy_taken')|int|timestamp_custom('%A') %}
       {%- set today = as_timestamp(now())|timestamp_custom('%A') %}
       {% if last_given == today -%}
         Today
       {%- else -%}
-        {%- set last_given_day = states('sensor.medicine_buddy').split('-')|last|int %}
+        {%- set last_given_day = states('sensor.medicine_buddy_taken')|int|timestamp_custom('%d')|int %}
         {%- set yesterday = as_timestamp(now())|timestamp_custom('%d')|int - 1 %}
         {%- if last_given_day == yesterday -%}
           Yesterday
