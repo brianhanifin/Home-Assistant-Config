@@ -5,25 +5,26 @@
 # time the power level changes, and we're already in the Running state.
 #
 alias: washing_cycle_running
+initial_state: on
 trigger:
   - platform: numeric_state
     entity_id: sensor.sonoff_s31_02_power
     above: 10
-condition:
-  condition: or
-  conditions:
-    - condition: state
-      entity_id: sensor.washing_machine_status
-      state: Idle
-    - condition: state
-      entity_id: sensor.washing_machine_status
-      state: Clean
-    - condition: state
-      entity_id: sensor.washing_machine_status
-      state: Finishing
+# condition:
+#   condition: or
+#   conditions:
+#     - condition: state
+#       entity_id: sensor.washing_machine_status
+#       state: Idle
+#     - condition: state
+#       entity_id: sensor.washing_machine_status
+#       state: Clean
+#     - condition: state
+#       entity_id: sensor.washing_machine_status
+#       state: Finishing
 action:
   - delay:
-      minutes: 5
+      minutes: 2
 
   - condition: numeric_state
     entity_id: sensor.sonoff_s31_02_power

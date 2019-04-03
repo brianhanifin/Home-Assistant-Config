@@ -12,16 +12,14 @@ action:
     entity_id: switch.hot_water_pump
 
   # Sometimes the garage entry light turns on at startup, 
-  # so turn it back off if the door is closed.
-  - condition: state
-    entity_id: cover.garage_door
-    state: "closed"
+  # so turn it back off.
   - service: light.turn_off
     entity_id: light.garage_entry_light
 
-
   # script.set_light_brightness_pct_by_time runs multiple times at startup,
   # delay the first calling of that script.
-  - delay: "00:00:30"
+  - delay:
+      seconds: 30
   - service: homeassistant.turn_on
-    entity_id: automation.lights_adjust_as_turned_on
+    entity_id: group.all_automations
+    #entity_id: automation.lights_adjust_as_turned_on
