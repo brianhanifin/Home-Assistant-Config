@@ -1,4 +1,4 @@
-import "./compact-custom-header-editor.js?v=1.0.2b1";
+import "./compact-custom-header-editor.js?v=1.0.2b7";
 
 export const LitElement = Object.getPrototypeOf(
   customElements.get("ha-panel-lovelace")
@@ -131,7 +131,7 @@ if (!customElements.get("compact-custom-header")) {
       if (window.location.href.includes("clear_cch_cache")) {
         localStorage.removeItem("cchCache");
         window.location.replace(
-          window.location.href.replace("?clear_cch_cache","")
+          window.location.href.replace("?clear_cch_cache", "")
         );
       }
 
@@ -203,9 +203,9 @@ if (!customElements.get("compact-custom-header")) {
       const tabs = tabContainer
         ? Array.from(tabContainer.querySelectorAll("paper-tab"))
         : [];
-      const view = root.querySelector("ha-app-layout").querySelector(
-        '[id="view"]'
-      );
+      const view = root
+        .querySelector("ha-app-layout")
+        .querySelector('[id="view"]');
       this.editMode =
         root.querySelector("app-toolbar").className == "edit-mode";
 
@@ -230,7 +230,7 @@ if (!customElements.get("compact-custom-header")) {
         for (let i = 0; i < tabs.length; i++) {
           total_tabs.push(i);
         }
-        hidden_tabs = total_tabs.filter((el) => !shown_tabs.includes(el));
+        hidden_tabs = total_tabs.filter(el => !shown_tabs.includes(el));
       }
 
       if (!this.editMode) this.hideCard();
@@ -244,14 +244,7 @@ if (!customElements.get("compact-custom-header")) {
         !window.location.href.includes("disable_cch")
       ) {
         const marginRight = this.marginRight;
-        this.styleHeader(
-          root,
-          tabContainer,
-          marginRight,
-          header,
-          view,
-          tabs
-        );
+        this.styleHeader(root, tabContainer, marginRight, header, view, tabs);
         this.styleButtons(buttons, tabs, root);
         if (this.cchConfig.hide_tabs && tabContainer) {
           this.hideTabs(tabContainer, tabs, hidden_tabs);
@@ -261,7 +254,7 @@ if (!customElements.get("compact-custom-header")) {
           if (this.cchConfig[button] == "clock") {
             this.insertClock(
               buttons,
-              button == "options" || button == "menu" && hassVersion > 0.88
+              button == "options" || (button == "menu" && hassVersion > 0.88)
                 ? buttons[button]
                 : buttons[button].shadowRoot,
               tabContainer,
@@ -269,6 +262,14 @@ if (!customElements.get("compact-custom-header")) {
             );
           }
         }
+
+        if (this.cchConfig.conditional_styles) {
+          this.conditionalStyling(header, buttons, tabs);
+          this.hass.connection.socket.addEventListener("message", event => {
+            this.conditionalStyling(header, buttons, tabs);
+          });
+        }
+
         fireEvent(this, "iron-resize");
       }
     }
@@ -288,9 +289,9 @@ if (!customElements.get("compact-custom-header")) {
           .querySelector("home-assistant")
           .shadowRoot.querySelector("home-assistant-main")
           .shadowRoot.querySelector("app-drawer-layout partial-panel-resolver");
-        if (panelResolver.shadowRoot){
-          return panelResolver
-            .shadowRoot.querySelector("ha-panel-lovelace")
+        if (panelResolver.shadowRoot) {
+          return panelResolver.shadowRoot
+            .querySelector("ha-panel-lovelace")
             .shadowRoot.querySelector("hui-root").shadowRoot;
         } else {
           return document
@@ -299,7 +300,7 @@ if (!customElements.get("compact-custom-header")) {
             .shadowRoot.querySelector("ha-panel-lovelace")
             .shadowRoot.querySelector("hui-root").shadowRoot;
         }
-      } catch(e) {
+      } catch (e) {
         console.log("Can't find 'hui-root', going to walk the DOM to find it.");
       }
       this.recursiveWalk(document, "HUI-ROOT", node => {
@@ -360,8 +361,8 @@ if (!customElements.get("compact-custom-header")) {
     styleHeader(root, tabContainer, marginRight, header, view, tabs) {
       if (!this.cchConfig.header && !this.editMode) {
         header.style.display = "none";
-        view.style.minHeight = "100vh"
-        return
+        view.style.minHeight = "100vh";
+        return;
       } else if (!this.editMode) {
         view.style.minHeight = "100vh";
         view.style.marginTop = "-48.5px";
@@ -371,45 +372,57 @@ if (!customElements.get("compact-custom-header")) {
           view.querySelectorAll("*")[0].style.paddingTop = "55px";
           view.querySelectorAll("*")[0].style.display = "block";
         }
-        header.style.backgroundColor = this.cchConfig.background_color ||
+        header.style.backgroundColor =
+          this.cchConfig.background_color ||
           "var(--cch-background-color, var(--primary-color))";
-        header.style.backgroundImage = this.cchConfig.background_image ||
-          "var(--cch-background-image)";
+        header.style.backgroundImage =
+          this.cchConfig.background_image || "var(--cch-background-image)";
       }
 
       // Style header all icons, all tab icons, and selection indicator.
-      let tab_indicator_color = this.cchConfig.tab_indicator_color;
-      let all_tabs_color = this.cchConfig.all_tabs_color ||
-        "var(--cch-all-tabs-color)";
-      if (tab_indicator_color) {
+      let indicator = this.cchConfig.tab_indicator_color;
+      let all_tabs_color =
+        this.cchConfig.all_tabs_color || "var(--cch-all-tabs-color)";
+      if (indicator) {
         if (!root.querySelector('[id="cch_header_colors"]') && !this.editMode) {
           let style = document.createElement("style");
           style.setAttribute("id", "cch_header_colors");
           style.innerHTML = `
             paper-tabs {
-              ${tab_indicator_color
-                  ? `--paper-tabs-selection-bar-color: ${tab_indicator_color}`
-                  : "var(--cch-tab-indicator-color)"
+              ${
+                indicator
+                  ? `--paper-tabs-selection-bar-color: ${indicator} !important`
+                  : "var(--cch-tab-indicator-color) !important"
               }
             }
-
           `;
           root.appendChild(style);
         }
       }
 
-      if (!root.querySelector('[id="cch_iron_selected"]') && !this.editMode) {
+      let conditionalTabs;
+      if (this.cchConfig.conditional_styles) {
+        conditionalTabs = JSON.stringify(
+          this.cchConfig.conditional_styles
+        ).includes("tab");
+      }
+
+      if (
+        !root.querySelector('[id="cch_iron_selected"]') &&
+        !this.editMode &&
+        !conditionalTabs
+      ) {
         let style = document.createElement("style");
         style.setAttribute("id", "cch_iron_selected");
         style.innerHTML = `
-          .iron-selected {
-            ${this.cchConfig.active_tab_color
-                ? `color: ${this.cchConfig.active_tab_color + " !important"}`
-                : "var(--cch-active-tab-color)"
+            .iron-selected {
+              ${
+                this.cchConfig.active_tab_color
+                  ? `color: ${this.cchConfig.active_tab_color + " !important"}`
+                  : "var(--cch-active-tab-color)"
+              }
             }
-          }
-  
-        `;
+          `;
         tabContainer.appendChild(style);
       }
 
@@ -430,8 +443,9 @@ if (!customElements.get("compact-custom-header")) {
         // Shift the header up to hide unused portion.
         root.querySelector("app-toolbar").style.marginTop = "-64px";
 
-        if (this.cchConfig.chevrons &&
-            !tabContainer.shadowRoot.querySelector('[id="cch_chevron"]')
+        if (
+          this.cchConfig.chevrons &&
+          !tabContainer.shadowRoot.querySelector('[id="cch_chevron"]')
         ) {
           // Remove space taken up by "not-visible" chevron.
           let style = document.createElement("style");
@@ -453,7 +467,7 @@ if (!customElements.get("compact-custom-header")) {
     }
 
     styleButtons(buttons, tabs, root) {
-      let topMargin = tabs.length > 0 ? "margin-top:111px;" : ""
+      let topMargin = tabs.length > 0 ? "margin-top:111px;" : "";
       for (const button in buttons) {
         if (button == "options" && this.cchConfig[button] == "overflow") {
           this.cchConfig[button] = "show";
@@ -484,27 +498,29 @@ if (!customElements.get("compact-custom-header")) {
             wrapper.addEventListener("click", () => {
               paperIconButton.click();
             });
-            paperIconButton.style.pointerEvents="none";
+            paperIconButton.style.pointerEvents = "none";
             this.insertMenuItem(menu_items, wrapper);
             if (button == "notifications") {
-              let style = document.createElement('style');
+              let style = document.createElement("style");
               style.innerHTML = `
                 .indicator {
                   top: 5px;
                   right: 0px;
                   width: 10px;
                   height: 10px;
-                  ${this.cchConfig.notify_indicator_color
-                    ? `background-color:${
-                      this.cchConfig.notify_indicator_color}`
-                    : ""
+                  ${
+                    this.cchConfig.notify_indicator_color
+                      ? `background-color:${
+                          this.cchConfig.notify_indicator_color
+                        }`
+                      : ""
                   }
                 }
                 .indicator > div{
                   display:none;
                 }
               `;
-              paperIconButton.parentNode.appendChild(style)
+              paperIconButton.parentNode.appendChild(style);
             }
           }
         } else if (this.cchConfig[button] == "hide") {
@@ -513,15 +529,15 @@ if (!customElements.get("compact-custom-header")) {
       }
 
       // Use button colors vars set in HA theme.
-      buttons.menu.style.color = "var(--cch-button-color-menu)"
+      buttons.menu.style.color = "var(--cch-button-color-menu)";
       buttons.notifications.style.color =
-        "var(--cch-button-color-notifications)"
-      buttons.voice.style.color = "var(--cch-button-color-voice)"
-      buttons.options.style.color = "var(--cch-button-color-options)"
+        "var(--cch-button-color-notifications)";
+      buttons.voice.style.color = "var(--cch-button-color-voice)";
+      buttons.options.style.color = "var(--cch-button-color-options)";
 
       if (this.cchConfig.all_buttons_color) {
         root.querySelector("app-toolbar").style.color =
-          this.cchConfig.all_buttons_color || "var(--cch-all-buttons-color)"
+          this.cchConfig.all_buttons_color || "var(--cch-all-buttons-color)";
       }
 
       // Use button colors set in config.
@@ -531,16 +547,17 @@ if (!customElements.get("compact-custom-header")) {
         }
       }
 
-      if (this.cchConfig.notify_indicator_color &&
-          this.cchConfig.notifications == "show"
-        ) {
-        let style = document.createElement('style');
+      if (
+        this.cchConfig.notify_indicator_color &&
+        this.cchConfig.notifications == "show"
+      ) {
+        let style = document.createElement("style");
         style.innerHTML = `
           .indicator {
             background-color:${this.cchConfig.notify_indicator_color ||
-              "var(--cch-notify-indicator-color)"};
+              "var(--cch-notify-indicator-color)"} !important;
             color: ${this.cchConfig.notify_text_color ||
-              "var(--cch-notify-text-color, var(--primary-text-color))"};
+              "var(--cch-notify-text-color), var(--primary-text-color)"};
           }
         `;
         buttons.notifications.shadowRoot.appendChild(style);
@@ -575,8 +592,7 @@ if (!customElements.get("compact-custom-header")) {
 
       if (this.cchConfig.redirect) {
         // Check if current tab is a hidden tab.
-        const activeTab =
-          tabContainer.querySelector("paper-tab.iron-selected");
+        const activeTab = tabContainer.querySelector("paper-tab.iron-selected");
         const activeTabIndex = tabs.indexOf(activeTab);
         if (
           hidden_tabs.includes(activeTabIndex) &&
@@ -611,19 +627,17 @@ if (!customElements.get("compact-custom-header")) {
       const clockIcon = clock_button.querySelector("paper-icon-button");
       const clockIronIcon = clockIcon.shadowRoot.querySelector("iron-icon");
       const clockWidth =
-        this.cchConfig.clock_format == 12 &&
-        this.cchConfig.clock_am_pm ||
+        (this.cchConfig.clock_format == 12 && this.cchConfig.clock_am_pm) ||
         this.cchConfig.clock_date
           ? 90
           : 80;
 
-      if (this.cchConfig.notifications == "clock" &&
-          this.cchConfig.clock_date &&
-          !buttons.notifications.shadowRoot.querySelector(
-            '[id="cch_indicator"]'
-          )
-        ) {
-        let style = document.createElement('style');
+      if (
+        this.cchConfig.notifications == "clock" &&
+        this.cchConfig.clock_date &&
+        !buttons.notifications.shadowRoot.querySelector('[id="cch_indicator"]')
+      ) {
+        let style = document.createElement("style");
         style.setAttribute("id", "cch_indicator");
         style.innerHTML = `
           .indicator {
@@ -633,16 +647,17 @@ if (!customElements.get("compact-custom-header")) {
             width: 90%;
             height: 3px;
             border-radius: 0;
-            ${this.cchConfig.notify_indicator_color
-              ? `background-color:${this.cchConfig.notify_indicator_color}`
-              : ""
+            ${
+              this.cchConfig.notify_indicator_color
+                ? `background-color:${this.cchConfig.notify_indicator_color}`
+                : ""
             }
           }
           .indicator > div{
             display:none;
           }
         `;
-        buttons.notifications.shadowRoot.appendChild(style)
+        buttons.notifications.shadowRoot.appendChild(style);
       }
 
       let clockElement = clockIronIcon.parentNode.getElementById("cch_clock");
@@ -696,12 +711,12 @@ if (!customElements.get("compact-custom-header")) {
       let locale = this.cchConfig.date_locale || this.hass.language;
       let time = date.toLocaleTimeString([], clockFormat);
       let options = {
-        "weekday": "short",
-        "month": "2-digit",
-        "day": "2-digit"
-      }
+        weekday: "short",
+        month: "2-digit",
+        day: "2-digit"
+      };
       date = this.cchConfig.clock_date
-        ? `</br>${date.toLocaleDateString( locale, options )}`
+        ? `</br>${date.toLocaleDateString(locale, options)}`
         : "";
       if (!this.cchConfig.clock_am_pm && this.cchConfig.clock_format == 12) {
         clock.innerHTML = time.slice(0, -3) + date;
@@ -709,6 +724,167 @@ if (!customElements.get("compact-custom-header")) {
         clock.innerHTML = time + date;
       }
       window.setTimeout(() => this.updateClock(clock, clockFormat), 60000);
+    }
+
+    conditionalStyling(header, buttons, tabs) {
+      if (window.cchState == undefined) window.cchState = [];
+      if (this.prevColor == undefined) this.prevColor = {};
+      if (this.prevState == undefined) this.prevState = [];
+      const conditional_styles = this.cchConfig.conditional_styles;
+      let element, color, image, hide, onIcon, offIcon, iconElement;
+
+      const styleElements = (elem, color, hide, image, onIcon, iconElem) => {
+        if (color && image && elem == "background") {
+          header.style.backgroundColor = color;
+          header.style.backgroundImage = image;
+        } else if (color && elem == "background") {
+          header.style.backgroundColor = color;
+        } else if (image && elem == "background") {
+          header.style.backgroundImage = image;
+        } else if (color) {
+          elem.style.color = color;
+        }
+        if (onIcon && iconElem) iconElem.setAttribute("icon", onIcon);
+        if (hide && elem !== "background" && !this.editMode) {
+          elem.style.display = "none";
+        }
+      };
+
+      const getElements = (key, elemArray, i, obj, styling) => {
+        element = elemArray[key];
+        color = styling[i][obj][key].color;
+        onIcon = styling[i][obj][key].on_icon;
+        offIcon = styling[i][obj][key].off_icon;
+        hide = styling[i][obj][key].hide;
+        if (!this.prevColor[key]) {
+          this.prevColor[key] = window
+            .getComputedStyle(element, null)
+            .getPropertyValue("color");
+        }
+      };
+
+      let styling = [];
+      for (let i = 0; i < conditional_styles.length; i++) {
+        styling.push(Object.assign({}, conditional_styles[i]));
+      }
+
+      for (let i = 0; i < styling.length; i++) {
+        let entity = styling[i].entity;
+        if (
+          !this.editMode &&
+          this.hass.states[entity] == undefined &&
+          entity !== "notifications"
+        ) {
+          throw new Error(`${entity} does not exist.`);
+        }
+        if (entity == "notifications") {
+          this.notificationMonitor = true;
+          window.hassConnection.then(function(result) {
+            window.cchState[i] = !!result.conn._ntf.state.length;
+          });
+        } else {
+          window.hassConnection.then(function(result) {
+            window.cchState[i] = result.conn._ent.state[entity].state;
+          });
+        }
+        if (window.cchState[i] == undefined) {
+          window.setTimeout(() => {
+            this.conditionalStyling(header, buttons, tabs);
+          }, 1);
+          return;
+        }
+
+        if (
+          window.cchState[i] !== this.prevState[i] ||
+          !window.cchState.length
+        ) {
+          this.prevState[i] = window.cchState[i];
+          let above = styling[i].condition.above;
+          let below = styling[i].condition.below;
+          let great = above !== undefined && below == undefined;
+          let less = above == undefined && below !== undefined;
+          let greatless = above !== undefined && below !== undefined;
+
+          for (const obj in styling[i]) {
+            let key = Object.keys(styling[i][obj])[0];
+            if (obj == "background") {
+              element = "background";
+              color = styling[i][obj].color;
+              image = styling[i][obj].image;
+              iconElement = false;
+              if (!this.prevColor[obj]) {
+                this.prevColor[obj] = window
+                  .getComputedStyle(header, null)
+                  .getPropertyValue("background-color");
+              }
+              if (!this.prevImage)
+                this.prevImage = window
+                  .getComputedStyle(header, null)
+                  .getPropertyValue("background-image");
+            } else if (obj == "button") {
+              getElements(key, buttons, i, obj, styling);
+              if (key == "menu") {
+                iconElement = element
+                  .querySelector("paper-icon-button")
+                  .shadowRoot.querySelector("iron-icon");
+              } else {
+                iconElement = element.shadowRoot
+                  .querySelector("paper-icon-button")
+                  .shadowRoot.querySelector("iron-icon");
+              }
+            } else if (obj == "tab") {
+              getElements(key, tabs, i, obj, styling);
+              iconElement = element.querySelector("ha-icon");
+            }
+
+            if (window.cchState[i] == styling[i].condition.state) {
+              styleElements(element, color, hide, image, onIcon, iconElement);
+            } else if (
+              greatless &&
+              window.cchState[i] > above &&
+              window.cchState[i] < below
+            ) {
+              styleElements(element, color, hide, image, onIcon, iconElement);
+            } else if (great && window.cchState[i] > above) {
+              styleElements(element, color, hide, image, onIcon, iconElement);
+            } else if (less && window.cchState[i] < below) {
+              styleElements(element, color, hide, image, onIcon, iconElement);
+            } else {
+              if (
+                element !== "background" &&
+                hide &&
+                element.style.display == "none"
+              ) {
+                element.style.display = "";
+              }
+              if (color && image && element == "background") {
+                header.style.backgroundColor = this.prevColor[obj];
+                header.style.backgroundImage = this.prevImage;
+              } else if (color && element == "background") {
+                header.style.backgroundColor = this.prevColor[obj];
+              } else if (image && element == "background") {
+                header.style.backgroundImage = this.prevImage;
+              } else if (
+                obj !== "background" &&
+                obj !== "entity" &&
+                obj !== "condition"
+              ) {
+                element.style.color = this.prevColor[key];
+              }
+              if (onIcon && offIcon) {
+                iconElement.setAttribute("icon", offIcon);
+              }
+            }
+          }
+        }
+      }
+      fireEvent(this, "iron-resize");
+      if (this.notificationMonitor) {
+        window.setTimeout(
+          () => this.conditionalStyling(header, buttons, tabs),
+          1000
+        );
+      }
     }
 
     // Walk the DOM to find element.
