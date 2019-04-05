@@ -4,4 +4,20 @@ sensors:
   update_available:
     entity_id: sensor.docker_lastest
     friendly_name: Home Assistant Update Available?
-    value_template: "{{ states('sensor.docker_lastest_build') > states('sensor.current_version') }}"
+    #value_template: "{{ states('sensor.docker_lastest_build') > states('sensor.current_version') }}"
+    value_template: >
+      {%- set docker_version = states('sensor.docker_lastest_build').split('.') -%}
+      {%- set current_version = states('sensor.current_version').split('.') -%}
+      {%- set update_available = false -%}
+
+      {# MAJOR: ex. 1.0.0 > 0.90.2 #}
+      {%- if docker_version[0] > current_version[0] -%}
+        {%- set update_available = true -%}
+      {# MINOR: ex. 0.91.0 > 0.90.2 #}
+      {%- elif docker_version[1] > current_version[1] -%}
+        {%- set update_available = true -%}
+      {# PATCH: ex. 0.90.2 > 0.90.1 #}
+      {%- elif docker_version[2] > current_version[2] -%}
+        {%- set update_available = true -%}
+      {%- endif -%}
+      {{ update_available }}
