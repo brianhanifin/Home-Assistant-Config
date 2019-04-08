@@ -240,16 +240,19 @@
       Please make sure Buddy's medicine has been prepared for the day
     {%- endif %}
 
-    {# Alternate poop pickup every other day. Give them Christmas Off. #}
-    {% if now().strftime('%-H')|int == 14 -%}
-      {% if now().strftime('%j')|int % 2 != 0
-        and now().strftime('%j')|int != 358 %}
-        Today is Kyle's day to pickup the dookie.
-      {% else %}
-        Today is Lucas' day to pickup the dookie.
-      {% endif %}
-    {%- endif -%}
-  {%- endmacro -%}
+    {# Dog poop #}
+    {%- set today = as_timestamp(now())|timestamp_custom('%A') %}
+    {% if states('sensor.contribution_kyle_dookie') < states('sensor.contribution_lucas_dookie') -%}
+      {%- set dookie_turn = "Kyle" -%}
+      {%- set last_dookie = states('sensor.contribution_lucas_dookie')|int|timestamp_custom('%A') %}
+    {%- else -%}
+      {%- set dookie_turn = "Lucas" -%}
+      {%- set last_dookie = states('sensor.contribution_kyle_dookie')|int|timestamp_custom('%A') %}
+    {%- endif %}
+    {# If the poop was already picked up today, don't tell someone to do it. #}
+    {% if last_dookie != today -%}
+      Today is {{ dookie_turn }} day to pickup the dookie.
+    {% endif %}
 
   {%- macro welcome_home(person) -%}
     {{ [
