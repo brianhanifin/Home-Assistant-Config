@@ -230,54 +230,71 @@
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
-    {# Trash to curb #}
-    {%- if now().strftime('%a') == 'Mon' -%}
-      It is Monday and tomorrow is garbage day. Please take the cans to the curb.
-    {%- endif %}
+    {{ responsibility_trash() }}
+    {{ responsibility_medicine_buddy() }}
+    {{ responsibility_dookie() }}
+  {%- endmacro -%}
 
-    {# Medicine #}
+  {%- macro responsibility_dookie() -%}
+    {%- set is_school_day = states('binary_sensor.schoolday') -%}
+    {%- set hour = now().strftime('%-H')|int -%}
+
+    {# Announce after 2pm on School Days and after 9am otherwise. #}
+    {% if is_school_day and hour >= 14
+      or not is_school_day and hour >=9 -%}
+      {# Decide whose turn it is. #}
+      {% if states('sensor.contribution_kyle_dookie') < states('sensor.contribution_lucas_dookie') -%}
+        {%- set dookie_turn = "Kyle" -%}
+        {%- set last_dookie = states('sensor.contribution_lucas_dookie')|int|timestamp_custom('%A') %}
+      {%- else -%}
+        {%- set dookie_turn = "Lucas" -%}
+        {%- set last_dookie = states('sensor.contribution_kyle_dookie')|int|timestamp_custom('%A') %}
+      {%- endif %}
+
+      {# Announce whose turn it is if it has not already been done today. #}
+      {%- set today = as_timestamp(now())|timestamp_custom('%A') %}
+      {% if last_dookie != today -%}
+        Today is {{ dookie_turn }} day to pickup the dookie.
+      {% endif %}
+    {% endif %}
+  {%- endmacro -%}
+
+  {%- macro responsibility_medicine_buddy() -%}
     {%- if states('sensor.medicine_buddy_given_today') != 'Today' -%}
       Please make sure Buddy's medicine has been prepared for the day
     {%- endif %}
+  {%- endmacro -%}
 
-    {# Dog poop #}
-    {%- set today = as_timestamp(now())|timestamp_custom('%A') %}
-    {% if states('sensor.contribution_kyle_dookie') < states('sensor.contribution_lucas_dookie') -%}
-      {%- set dookie_turn = "Kyle" -%}
-      {%- set last_dookie = states('sensor.contribution_lucas_dookie')|int|timestamp_custom('%A') %}
-    {%- else -%}
-      {%- set dookie_turn = "Lucas" -%}
-      {%- set last_dookie = states('sensor.contribution_kyle_dookie')|int|timestamp_custom('%A') %}
+  {%- macro responsibility_trash() -%}
+    {%- if now().strftime('%a') == 'Mon' -%}
+      It is Monday and tomorrow is garbage day. Please take the cans to the curb.
     {%- endif %}
-    {# If the poop was already picked up today, don't tell someone to do it. #}
-    {% if last_dookie != today -%}
-      Today is {{ dookie_turn }} day to pickup the dookie.
-    {% endif %}
+  {%- endmacro -%}
 
   {%- macro welcome_home(person) -%}
     {{ [
     "Welcome back home " ~ person,
-    "Guess who is home?  ...  " ~ person +", is!",
-    person + " is now in the house.",
-    "Welcome Home " ~ person + ".  ...  We have missed you.  ...  Or at least Pepper did.",
+    "Guess who is home?  ...  " ~ person ~ ", is!",
+    person ~ " is now in the house.",
+    "Welcome Home " ~ person ~ ".  ...  We have missed you.  ...  Or at least Pepper did.",
     "Our home is now complete, Rest your head and relax your feet!  ...  Welcome Back " ~ person,
     "Life is like a song, you’re back where you belong.  ...  Welcome home " ~ person,
-    "Hey there " ~ person + "  ...  Welcome Home!",
-    "Knock Knock.  ...  Who is There?  ... "   ~ person +" is!",
-    "The garage door just told me that "   ~ person +" is home.",
-    person + " can not hide from the system.  ... Welcome home.",
+    "Hey there " ~ person ~ "  ...  Welcome Home!",
+    "Knock Knock.  ...  Who is There?  ... " ~ person ~ " is!",
+    "The garage door just told me that "   ~ person ~ " is home.",
+    person ~ " can not hide from the system.  ... Welcome home.",
     person ~ "!  ... You are home!",
-    "I know a secret! ... "  ~ person +" is home!",
-    "Hey "  ~ person +". Your arrival has been recorded by the Smartest house on the block.",
-    "Take note Pepper!  ...  "  ~ person +" is home.",
-    "I am sensing a disturbance in the force.  ... "  ~ person +" must be home!",
+    "I know a secret! ... "  ~ person ~ " is home!",
+    "Hey "  ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
+    "Take note Pepper!  ...  "  ~ person ~ " is home.",
+    "I am sensing a disturbance in the force.  ... "  ~ person ~ " must be home!",
     "And the house becomes a home.  ...  Welcome back " ~ person,
-    person + " is now here.  ...  Hash tag Welcome Home.",
-    person + " is now here.  ...  Hash tag Home.",
-    person + " is now here.  ...  Hash tag Smart Home.",
-    "Just a quick announcement. " ~ person +" has arrived!",
-    "Pardon the interruption but " ~ person +" is home!",
-    "My systems are picking up the presence of additional humans.  ...  " ~ person +" has been identified as home."
+    person ~ " is now here.  ...  Hash tag Welcome Home.",
+    person ~ " is now here.  ...  Hash tag Home.",
+    person ~ " is now here.  ...  Hash tag Smart Home.",
+    "Just a quick announcement. " ~ person ~ " has arrived!",
+    "Pardon the interruption but " ~ person ~ " is home!",
+    "My systems are picking up the presence of additional humans.  ...  " ~ person ~ " has been identified as home."
     ] | random }}
   {%- endmacro -%}
 
@@ -285,55 +302,55 @@
   {# BRIEFING TEMPLATE #}
   {%- macro get_briefing() -%}
     {%- if say_greeting == "true" -%}
-      {{ greeting_line() + " ... " }}
+      {{ greeting_line() ~ " ... " }}
       
-      {{ holiday() + " ... " }}
+      {{ holiday() ~ " ... " }}
     {%- endif -%}
 
     {%- if person_arriving is not undefined -%}
-      {{ welcome_home(person_arriving) + " ... " }}
+      {{ welcome_home(person_arriving) ~ " ... " }}
     {%- endif -%}
 
     {{ message }}
 
     {%- if say_dark_outside == "true" -%}
-      {{ dark_outside() + " ... " }}
+      {{ dark_outside() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_inside_weather == "true" -%}
-      {{ inside_weather() + " ... " }}
+      {{ inside_weather() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_outside_weather == "true" -%}
-      {{ outside_weather() + " ... " }}
+      {{ outside_weather() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_dog_water == "true" -%}
-      {{ dog_water_bowl() + " ... " }}
+      {{ dog_water_bowl() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_responsibilities == "true" -%}
-      {{ responsibilities() + " ... " }}
+      {{ responsibilities() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_garage_check == "true" -%}
-      {{ garage_check() + " ... " }}
+      {{ garage_check() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_light_check == "true" -%}
-      {{ light_check() + " ... " }}
+      {{ light_check() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_plant_problems == "true" -%}
-      {{ plant_problems() + " ... " }}
+      {{ plant_problems() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_goodbye == "true" -%}
-      {{ " " + goodbye_line() + " ... " }}
+      {{ " " ~ goodbye_line() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_goodnight == "true" -%}
-      {{ " " + goodnight_line() + " ... " }}
+      {{ " " ~ goodnight_line() ~ " ... " }}
     {%- endif -%}
   {%- endmacro -%}
 
