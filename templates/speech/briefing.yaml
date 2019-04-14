@@ -236,12 +236,13 @@
   {%- endmacro -%}
 
   {%- macro responsibility_dookie() -%}
-    {%- set is_school_day = states('binary_sensor.schoolday') -%}
+    {%- set is_school_day = states('binary_sensor.schoolday')|int -%}
     {%- set hour = now().strftime('%-H')|int -%}
 
     {# Announce after 2pm on School Days and after 9am otherwise. #}
-    {% if is_school_day and hour >= 14
-      or not is_school_day and hour >=9 -%}
+    {% if    is_school_day and hour >= 14
+      or not is_school_day and hour >=  9 -%}
+      
       {# Decide whose turn it is. #}
       {% if states('sensor.contribution_kyle_dookie') < states('sensor.contribution_lucas_dookie') -%}
         {%- set dookie_turn = "Kyle" -%}

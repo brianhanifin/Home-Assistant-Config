@@ -70,8 +70,11 @@ cards:
             entity: light.nerenes_light
             icon: mdi:hotel
             name: Bed Room
-            <<: *tap_call_script
-            entity_id: script.toggle_bedroom_lights
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.toggle_bedroom_lights
           - type: entity-button
             entity: light.dining_room_light
             icon: mdi:food
@@ -93,14 +96,20 @@ cards:
             entity: switch.kitchen_light
             icon: mdi:stove
             name: Kitchen
-            <<: *tap_call_script
-            entity_id: script.toggle_kitchen_lights
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.toggle_kitchen_lights
           - type: entity-button
             entity: switch.landscape_lights
             icon: mdi:tree
             name: Outdoor
-            <<: *tap_call_script
-            entity_id: script.toggle_outdoor_lights
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.toggle_outdoor_lights
       - type: horizontal-stack
         cards: 
           - type: entity-button
@@ -188,8 +197,11 @@ cards:
             entity: script.goodnight_routine
             icon: mdi:weather-night
             name: Night
-            <<: *tap_call_script
-            entity_id: script.goodnight_routine
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.goodnight_routine
           - <<: *blank-button
 
   - type: vertical-stack
