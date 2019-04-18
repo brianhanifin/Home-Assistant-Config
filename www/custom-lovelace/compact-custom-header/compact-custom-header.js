@@ -1,4 +1,4 @@
-import "./compact-custom-header-editor.js?v=1.0.2b9";
+import "./compact-custom-header-editor.js?v=1.0.3b1";
 
 export const LitElement = Object.getPrototypeOf(
   customElements.get("ha-panel-lovelace")
@@ -312,8 +312,10 @@ if (!customElements.get("compact-custom-header")) {
           }
         }
       }
-      tabContainer.style.marginRight = marginRight + "px";
-      tabContainer.style.marginLeft = marginLeft + "px";
+      if (tabContainer) {
+        tabContainer.style.marginRight = marginRight + "px";
+        tabContainer.style.marginLeft = marginLeft + "px";
+      }
     }
 
     get rootElement() {
@@ -440,7 +442,8 @@ if (!customElements.get("compact-custom-header")) {
       if (
         !root.querySelector('[id="cch_iron_selected"]') &&
         !this.editMode &&
-        !conditionalTabs
+        !conditionalTabs &&
+        tabContainer
       ) {
         let style = document.createElement("style");
         style.setAttribute("id", "cch_iron_selected");
@@ -467,20 +470,17 @@ if (!customElements.get("compact-custom-header")) {
         // Shift the header up to hide unused portion.
         root.querySelector("app-toolbar").style.marginTop = "-64px";
 
-        if (
-          this.cchConfig.chevrons &&
-          !tabContainer.shadowRoot.querySelector('[id="cch_chevron"]')
-        ) {
-          // Remove space taken up by "not-visible" chevron.
-          let style = document.createElement("style");
-          style.setAttribute("id", "cch_chevron");
-          style.innerHTML = `
-            .not-visible {
-              display:none;
-            }
-          `;
-          tabContainer.shadowRoot.appendChild(style);
-        } else {
+        // Remove space taken up by "not-visible" chevron.
+        let style = document.createElement("style");
+        style.setAttribute("id", "cch_chevron");
+        style.innerHTML = `
+          .not-visible {
+            display:none;
+          }
+        `;
+        tabContainer.shadowRoot.appendChild(style);
+
+        if (!this.cchConfig.chevrons) {
           let chevron = tabContainer.shadowRoot.querySelectorAll(
             '[icon^="paper-tabs:chevron"]'
           );
@@ -750,7 +750,7 @@ if (!customElements.get("compact-custom-header")) {
       if (this.prevColor == undefined) this.prevColor = {};
       if (this.prevState == undefined) this.prevState = [];
       const conditional_styles = this.cchConfig.conditional_styles;
-      let tabContainer = tabs[0].parentNode;
+      let tabContainer = tabs[0] ? tabs[0].parentNode : "";
       let element, color, background, hide, onIcon, offIcon, iconElement;
 
       const styleElements = (

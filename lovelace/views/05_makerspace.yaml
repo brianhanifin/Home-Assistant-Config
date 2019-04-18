@@ -1,0 +1,123 @@
+---
+# Define Anchors
+alert_style_yellow: &alert_style_yellow
+  style: !include ../templates/alert_style_yellow.yaml
+
+# Compact Header 'Anchor'
+compact-header: &compact-header
+- type: custom:compact-custom-header
+
+title: Makerspace
+path: makerspace
+icon: mdi:printer-3d
+panel: true
+cards:
+  - type: vertical-stack
+    cards:
+      - !include ../templates/alerts.yaml
+      - type: markdown
+        content: >
+          ## Makerspace
+      - type: vertical-stack
+        cards:
+          # - type: picture-glance
+          #   title: WyzeCam01
+          #   entities: []
+          #   camera_image: camera.wyzecam01
+
+          - type: picture-entity
+            entity: camera.wyzecam01
+            name: WyzeCam01
+            tap_action: more-info
+
+          - type: horizontal-stack
+            cards:
+              - type: gauge
+                title: Bed Temp
+                entity: sensor.prusa_actual_bed_temp
+                unit_of_measurement: °C
+                min: 0
+                max: 150
+                severity: 
+                  red: 120
+                  amber: 0
+                  green: 60
+                #scale: '50px'
+
+              - type: gauge
+                title: Hot End Temp
+                entity: sensor.prusa_actual_tool0_temp
+                unit_of_measurement: °C
+                min: 0
+                max: 260
+                severity:
+                  red: 225
+                  amber: 0
+                  green: 200
+                #scale: '50px'  
+
+          - type: horizontal-stack
+            cards:
+              - type: gauge
+                title: Bed Target
+                entity: sensor.prusa_target_bed_temp
+                unit_of_measurement: °C
+                min: 0
+                max: 150
+                severity: 
+                  red: 120
+                  amber: 0
+                  green: 59
+                #scale: '50px'
+
+              - type: gauge
+                title: Hot End Target
+                entity: sensor.prusa_target_tool0_temp
+                unit_of_measurement: °C
+                min: 0
+                max: 260
+                severity:
+                  red: 225
+                  amber: 0
+                  green: 199
+                #scale: '50px'
+
+          - type: custom:bignumber-card
+            title: Current Job Completion Status
+            entity: sensor.prusa_job_percentage
+            scale: 30px
+            from: left
+            min: 0
+            max: 100
+            severity:
+              - value: 20
+                style: 'var(--label-badge-red)'
+              - value: 40
+                style: 'var(--label-badge-yellow)'
+              - value: 70
+                style: 'var(--label-badge-green)' 
+          
+          - type: horizontal-stack
+            cards:
+              - type: sensor
+                name: Elapsed
+                entity: sensor.prusa_time_elapsed
+                graph: none
+
+              - type: sensor
+                name: Remaining
+                entity: sensor.prusa_time_remaining
+                graph: none
+
+          - type: glance
+            show_header_toggle: false
+            column_width: calc(100% / 3)
+            entities:
+              - entity: binary_sensor.prusa_printing
+                name: Printing Status
+                icon: mdi:printer-wireless
+              - entity: binary_sensor.prusa_printing_error
+                name:  Error State
+                icon: mdi:printer-alert
+              - entity: sensor.prusa_current_state
+                name: Current Status

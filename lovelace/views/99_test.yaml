@@ -13,108 +13,6 @@ icon: fas:blank
 cards:
   - type: vertical-stack
     cards:
-      - title: Makerspace
-        cards:
-          # - type: picture-entity
-          #   entity: camera.printcam
-          #   name: printcam
-          #   show_state: false
-          #   tap_action: more-info
-
-          - type: horizontal-stack
-            cards:
-              - type: gauge
-                title: Bed Temp
-                entity: sensor.prusa_actual_bed_temp
-                unit_of_measurement: °C
-                min: 0
-                max: 150
-                severity: 
-                  red: 120
-                  amber: 0
-                  green: 60
-                #scale: '50px'
-
-              - type: gauge
-                title: Hot End Temp
-                entity: sensor.hotend
-                unit_of_measurement: °C
-                min: 0
-                max: 260
-                severity:
-                  red: 225
-                  amber: 0
-                  green: 200
-                #scale: '50px'  
-
-          - type: horizontal-stack
-            cards:
-              - type: gauge
-                title: Bed Target
-                entity: sensor.bed_target
-                unit_of_measurement: °C
-                min: 0
-                max: 150
-                severity: 
-                  red: 120
-                  amber: 0
-                  green: 59
-                #scale: '50px'
-
-              - type: gauge
-                title: Hot End Target
-                entity: sensor.hotend_target
-                unit_of_measurement: °C
-                min: 0
-                max: 260
-                severity:
-                  red: 225
-                  amber: 0
-                  green: 199
-                #scale: '50px'  
-
-          - type: custom:bignumber-card
-            title: Current Job Completion Status
-            entity: sensor.octoprint_job_percentage
-            scale: 30px
-            from: left
-            min: 0
-            max: 100
-            severity:
-              - value: 20
-                style: 'var(--label-badge-red)'
-              - value: 40
-                style: 'var(--label-badge-yellow)'
-              - value: 70
-                style: 'var(--label-badge-green)' 
-          
-          - type: horizontal-stack
-            cards:
-              - type: sensor
-                name: Elapsed
-                entity: sensor.octoprint_time_elapsed
-                graph: none
-
-              - type: sensor
-                name: Remaining
-                entity: sensor.octoprint_time_remaining
-                graph: none
-
-          - type: glance
-            show_header_toggle: false
-            column_width: calc(100% / 3)
-            entities:
-              - entity: binary_sensor.octoprint_printing
-                name: Printing Status
-                icon: mdi:printer-wireless
-              - entity: binary_sensor.octoprint_printing_error
-                name:  Error State
-                icon: mdi:printer-alert
-              - entity: sensor.octoprint_current_state
-                name: Current Status
-
-  - type: vertical-stack
-    cards:
       - type: markdown
         content: >
           ## Extended Presence
@@ -149,157 +47,157 @@ cards:
               - input_boolean.residents_extended_away
 
 
-  # - type: lists
-  #   #title: To Do List
+      # - type: lists
+      #   #title: To Do List
 
-  # - type: custom:list-card
-  #   entity: sensor.engineering_feed
-  #   title: Engineering Feed
-  #   columns:
-  #     - title: ''
-  #       type: image
-  #       add_link: link
-  #       field: image
-  #     - title: Title
-  #       field: title
-  #       style:
-  #         - white-space: nowrap
-  #     - title: Description
-  #       field: description
+      # - type: custom:list-card
+      #   entity: sensor.engineering_feed
+      #   title: Engineering Feed
+      #   columns:
+      #     - title: ''
+      #       type: image
+      #       add_link: link
+      #       field: image
+      #     - title: Title
+      #       field: title
+      #       style:
+      #         - white-space: nowrap
+      #     - title: Description
+      #       field: description
 
-  - type: entities
-    title: Experimental Sensors
-    show_header_toggle: false
-    entities:
-      - entity: binary_sensor.sleeping
-        name: Sleeping, Brian & Nerene
-        secondary_info: last-changed
+      - type: entities
+        title: Experimental Sensors
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.sleeping
+            name: Sleeping, Brian & Nerene
+            secondary_info: last-changed
 
-  - type: entities
-    title: auto-entities
-    show_header_toggle: false
-    entities:
-      - type: custom:auto-entities
-        card:
-          type: custom:fold-entity-row
-          head:
-            type: section
-            label: All lights
-        filter:
-          include:
-            - domain: light
-          exclude:
-            - entity_id: light.dummy
-            - entity_id: light.lamplinc*
-            - entity_id: light.kitchen_prep_light
-            - entity_id: "*_led"
-      - type: custom:auto-entities
-        show_empty: false
-        card:
-          type: custom:fold-entity-row
-          head:
-            type: section
-            label: Lights that are on
-        filter:
-          include:
-            - domain: light
-              state: "on"
-          exclude:
-            - entity_id: light.dummy
-            - entity_id: light.kitchen_prep_light
-            - entity_id: "*_led"
-      - type: custom:auto-entities
-        show_empty: false
-        card:
-          type: custom:fold-entity-row
-          head:
-            type: section
-            label: Lights that are dimmed below 50%
-        filter:
-          include:
-            - domain: light
-              attributes:
-                brightness: "< 125"
-          exclude:
-            - entity_id: light.dummy
-            - entity_id: light.kitchen_prep_light
-            - entity_id: "*_led"
-      - type: custom:auto-entities
-        show_empty: false
-        card:
-          type: custom:fold-entity-row
-          head:
-            type: section
-            label: Lights that are kinda blue-ish
-        filter:
-          include:
-            - domain: light
-              attributes:
-                hs_color 1: "0:> 195"
-                hs_color 2: "0:< 255"
-          exclude:
-            - entity_id: light.dummy
-            - entity_id: light.kitchen_prep_light
-            - entity_id: "*_led"
+      - type: entities
+        title: auto-entities
+        show_header_toggle: false
+        entities:
+          - type: custom:auto-entities
+            card:
+              type: custom:fold-entity-row
+              head:
+                type: section
+                label: All lights
+            filter:
+              include:
+                - domain: light
+              exclude:
+                - entity_id: light.dummy
+                - entity_id: light.lamplinc*
+                - entity_id: light.kitchen_prep_light
+                - entity_id: "*_led"
+          - type: custom:auto-entities
+            show_empty: false
+            card:
+              type: custom:fold-entity-row
+              head:
+                type: section
+                label: Lights that are on
+            filter:
+              include:
+                - domain: light
+                  state: "on"
+              exclude:
+                - entity_id: light.dummy
+                - entity_id: light.kitchen_prep_light
+                - entity_id: "*_led"
+          - type: custom:auto-entities
+            show_empty: false
+            card:
+              type: custom:fold-entity-row
+              head:
+                type: section
+                label: Lights that are dimmed below 50%
+            filter:
+              include:
+                - domain: light
+                  attributes:
+                    brightness: "< 125"
+              exclude:
+                - entity_id: light.dummy
+                - entity_id: light.kitchen_prep_light
+                - entity_id: "*_led"
+          - type: custom:auto-entities
+            show_empty: false
+            card:
+              type: custom:fold-entity-row
+              head:
+                type: section
+                label: Lights that are kinda blue-ish
+            filter:
+              include:
+                - domain: light
+                  attributes:
+                    hs_color 1: "0:> 195"
+                    hs_color 2: "0:< 255"
+              exclude:
+                - entity_id: light.dummy
+                - entity_id: light.kitchen_prep_light
+                - entity_id: "*_led"
 
-  - type: entities
-    entities:
-      - type: custom:slider-entity-row
-        entity: light.family_room_table_lamp
-        icon: mdi:lamp
-        name: Table Lamp
-
-  - type: entities
-    title: light-entity-row + slider-entity-row
-    show_header_toggle: false
-    entities:
-      - entity: light.family_room_light
-        icon: mdi:floor-lamp
-        name: Switched
-      - type: custom:slider-entity-row
-        entity: light.family_room_light
-        full_row: true
-        toggle: false
-      - type: custom:slider-entity-row
-        entity: light.family_room_floor_lamp
-        icon: mdi:floor-lamp
-        name: Floor Lamp
-        toggle: true
-      - type: "custom:light-entity-row"
-        entity: light.family_room_table_lamp
-        icon: mdi:floor-lamp
-        name: Table Lamp
-        showColorPicker: true
-        showColorSliders: true
-        buttons:
-          - name: Red
-            service_data:
-              color_name: red
-          - name: Blue
-            service_data:
-              color_name: blue
-          - name: Teal
-            service_data:
-              color_name: teal
-
-  - type: entities
-    title: button-entity-row
-    show_header_toggle: false
-    entities:
-      - type: "custom:button-entity-row"
-        buttons:
-          - icon: mdi:floor-lamp
-            icon_color: yellow
-            name: "Corner Lamp"
-            entity: light.family_room_light
-          - icon: mdi:lamp
-            icon_color: yellow
-            name: "Table Lamp"
+      - type: entities
+        entities:
+          - type: custom:slider-entity-row
             entity: light.family_room_table_lamp
-          - icon: mdi:floor-lamp
-            icon_color: yellow
-            name: "Floor Lamp"
+            icon: mdi:lamp
+            name: Table Lamp
+
+      - type: entities
+        title: light-entity-row + slider-entity-row
+        show_header_toggle: false
+        entities:
+          - entity: light.family_room_light
+            icon: mdi:floor-lamp
+            name: Switched
+          - type: custom:slider-entity-row
+            entity: light.family_room_light
+            full_row: true
+            toggle: false
+          - type: custom:slider-entity-row
             entity: light.family_room_floor_lamp
+            icon: mdi:floor-lamp
+            name: Floor Lamp
+            toggle: true
+          - type: "custom:light-entity-row"
+            entity: light.family_room_table_lamp
+            icon: mdi:floor-lamp
+            name: Table Lamp
+            showColorPicker: true
+            showColorSliders: true
+            buttons:
+              - name: Red
+                service_data:
+                  color_name: red
+              - name: Blue
+                service_data:
+                  color_name: blue
+              - name: Teal
+                service_data:
+                  color_name: teal
+
+      - type: entities
+        title: button-entity-row
+        show_header_toggle: false
+        entities:
+          - type: "custom:button-entity-row"
+            buttons:
+              - icon: mdi:floor-lamp
+                icon_color: yellow
+                name: "Corner Lamp"
+                entity: light.family_room_light
+              - icon: mdi:lamp
+                icon_color: yellow
+                name: "Table Lamp"
+                entity: light.family_room_table_lamp
+              - icon: mdi:floor-lamp
+                icon_color: yellow
+                name: "Floor Lamp"
+                entity: light.family_room_floor_lamp
 
 
   - <<: *compact-header
