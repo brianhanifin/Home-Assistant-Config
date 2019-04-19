@@ -1,9 +1,16 @@
-# Install the Rainforest Component
-Place `__init__.py` and `sensor.py` in `config\custom_components\rainforest\`
-
+# Rainforest Energy Monitoring Component
 
 ## Overview
-To use your Rainforest Automation EMU-2™ Energy Monitoring Unit in your installation, add the following to your `configuration.yaml` file:
+To use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant follow the `Installation` and `Configuration` instructions.
+
+## Installation
+Place the following files in `config\custom_components\rainforest\`:
+* [__`rainforest/__init__.py`__](./__init__.py)
+* [__`rainforest/sensor.py`__](./sensor.py)
+* [__`rainforest/manifest.json`__](./manifest.json)
+
+## Configuraion
+Add the following to your `configuration.yaml` file:
 
 ```yaml
 # Example configuration.yaml entry
@@ -11,8 +18,6 @@ sensor:
   - platform: rainforest
     port: '/dev/ttyACM0'
 ```
-
-## Configuraion
 
 ### port:
   * description: The comm port which the meter is connected to.

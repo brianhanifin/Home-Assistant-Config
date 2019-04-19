@@ -1,7 +1,7 @@
 """
 Use serial protocol of EMU2 meter to obtain state of the connected meter.
 For more details about this component, please refer to the documentation
-at https://github.com/jrhorrisberger/home-assistant/custom_components/rainforest_emu2
+at https://github.com/jrhorrisberger/home-assistant/custom_components/rainforest
 """
 
 from homeassistant.helpers.entity import Entity
@@ -9,11 +9,11 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME, EVENT_HOMEASSISTANT_STOP)
-
 import logging
 import voluptuous as vol
-
 from threading import Thread
+
+__version__ = '0.2.0'
 
 _LOGGER = logging.getLogger(__name__)
 
