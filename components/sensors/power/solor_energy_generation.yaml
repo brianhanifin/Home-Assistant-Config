@@ -1,0 +1,11 @@
+platform: template
+sensors:
+  solor_energy_generation:
+    value_template: >-
+      {% if is_state_attr("sensor.solar", "energy_generation", "NaN") -%}
+        0
+      {%- else -%}
+        {{ "%0.2f"|format(states.sensor.solar.attributes.energy_generation|float/1000) }}
+      {%- endif %}
+    friendly_name: Generated
+    unit_of_measurement: kWh
