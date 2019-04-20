@@ -110,38 +110,56 @@ cards:
           - type: call-service
             name: Check Config + Restart
             service: script.config_check_and_restart
-          - type: custom:card-modder
-            <<: *alert_style_yellow
-            card:
-              type: custom:useful-markdown-card
-              content: >-
-                ### [[ persistent_notification.1337.attributes.title ]]
 
-                [[ persistent_notification.1337.attributes.message ]]
+          - type: custom:auto-entities
+            filter:
+              include:
+                - entity_id: persistent_notification.1337
+            show_empty: false
+            card:
+              type: custom:card-modder
+              <<: *alert_style_yellow
+              card:
+                type: custom:useful-markdown-card
+                content: >
+                  ### [[ persistent_notification.1337.attributes.title ]]
+
+                  [[ persistent_notification.1337.attributes.message ]]
+
           - type: divider
           - script.restart_hass
           - script.reboot
           #- input_select.log_level
           - type: divider
 
-          #- binary_sensor.update_available
-          - entity: sensor.docker_lastest_build
-            secondary_info: last-changed
-          - entity: sensor.current_version
-            secondary_info: last-changed
-          # - automation.homeassistant_update_notification
-          - type: divider
           - type: custom:config-template-card
             variables:
               - states['binary_sensor.update_available'].state
             entities:
               - binary_sensor.update_available
             card:
-              type: custom:hui-glance-card
+              type: custom:hui-entities-card
               entities:
                 - entity: binary_sensor.update_available
                   name: "${vars[0] === 'on' ? 'Update Available' : 'No Update Available'}"
-              show_state: false
+                - sensor.potential_breaking_changes
+                - entity: sensor.docker_lastest_build
+                  secondary_info: last-changed
+                - entity: sensor.current_version
+                  secondary_info: last-changed
+          - automation.homeassistant_update_notification
+          # - type: divider
+          # - type: custom:config-template-card
+          #   variables:
+          #     - states['binary_sensor.update_available'].state
+          #   entities:
+          #     - binary_sensor.update_available
+          #   card:
+          #     type: custom:hui-glance-card
+          #     entities:
+          #       - entity: binary_sensor.update_available
+          #         name: "${vars[0] === 'on' ? 'Update Available' : 'No Update Available'}"
+          #     show_state: false
 
       - type: custom:theme-maker
 
