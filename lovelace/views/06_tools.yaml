@@ -132,21 +132,20 @@ cards:
           #- input_select.log_level
           - type: divider
 
-          - type: custom:config-template-card
-            variables:
-              - states['binary_sensor.update_available'].state
-            entities:
-              - binary_sensor.update_available
+          - type: custom:auto-entities
+            filter:
+              include:
+                - entity_id: binary_sensor.update_available
+                  state: "on"
+                - entity_id: sensor.potential_breaking_changes
+                  state: "> 0"
             card:
-              type: custom:hui-entities-card
-              entities:
-                - entity: binary_sensor.update_available
-                  name: "${vars[0] === 'on' ? 'Update Available' : 'No Update Available'}"
-                - sensor.potential_breaking_changes
-                - entity: sensor.docker_lastest_build
-                  secondary_info: last-changed
-                - entity: sensor.current_version
-                  secondary_info: last-changed
+              type: entities
+
+          - entity: sensor.docker_lastest_build
+            secondary_info: last-changed
+          - entity: sensor.current_version
+            secondary_info: last-changed
           - automation.homeassistant_update_notification
           # - type: divider
           # - type: custom:config-template-card
