@@ -1,0 +1,11 @@
+platform: template
+sensors:
+  power_use_total:
+    value_template: >-
+      {% if is_state_attr("sensor.power_use_mean", "total", "NaN") -%}
+        0
+      {%- else -%}
+        {{ "%0.2f"|format(states.sensor.power_use_mean.attributes.total|float) }}
+      {%- endif %}
+    friendly_name: Power Use Total
+    unit_of_measurement: kWh
