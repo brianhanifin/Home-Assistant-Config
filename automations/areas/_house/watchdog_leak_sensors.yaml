@@ -18,7 +18,7 @@ trigger:
 action:
   - service: script.notify_speech
     data_template:
-      media_player: media_player.kitchen, media_player.garage, media_player.master_bedroom
+      media_player: group.alexa_all
       message: >
         {% set room = trigger.to_state.name|lower|replace(' leak detection', '')|trim -%}
         A leak has been detected in the {{ room }}!

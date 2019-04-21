@@ -8,12 +8,12 @@ goodnight_routine:
     # Lock the front door right away as well.
     - service: lock.lock
       entity_id: lock.front_door
-    
+
     # Shutdown the rest of the lights and switches.
     - service: script.turn_on
       entity_id: script.shutdown_routine
 
     - service: script.say
       data_template:
-        media_player: "media_player.kitchen"
+        media_player: media_player.family_room
         say_goodnight: "true"
