@@ -44,7 +44,7 @@ except ImportError:
     WAZE_IMPORT_SUCCESSFUL = 'NO'
     pass
 
-VERSION = '1.0.3'      #Custom Component Updater
+VERSION = '1.0.4'      #Custom Component Updater
 _LOGGER = logging.getLogger(__name__)
 REQUIREMENTS = ['pyicloud==0.9.1']
 
