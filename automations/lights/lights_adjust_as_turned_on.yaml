@@ -1,6 +1,6 @@
 ---
 ##############################################
-## Adjust brightness of each light as it is 
+## Adjust brightness of each light as it is
 ## turned on.
 ##############################################
 alias: lights_adjust_as_turned_on
@@ -11,21 +11,21 @@ trigger:
 condition:
   # Only look at lights.
   - condition: template
-    value_template: "{{ trigger.event.data is not none 
+    value_template: "{{ trigger.event.data is not none
                     and trigger.event.data.entity_id is not none
                     and 'light' in trigger.event.data.entity_id|lower }}"
   # Only when lights are going from off to on.
   - condition: template
-    value_template: "{{ trigger.event.data.old_state.state == 'off' 
+    value_template: "{{ trigger.event.data.old_state.state == 'off'
                     and trigger.event.data.new_state.state == 'on' }}"
   # Don't change these lights.
   - condition: template
     value_template: "{{ trigger.event.data.entity_id|lower != 'light.entry'
                     and trigger.event.data.entity_id|lower != 'light.hue'
                     and trigger.event.data.entity_id|lower != 'light.porch'
-                    and not ('garage_entry'  in trigger.event.data.entity_id|lower)
-                    and not ('shoe_closet'   in trigger.event.data.entity_id|lower)
-                    and not ('gateway_light' in trigger.event.data.entity_id|lower)
+                    and not ('garage_entry'   in trigger.event.data.entity_id|lower)
+                    and not ('network_closet' in trigger.event.data.entity_id|lower)
+                    and not ('gateway_light'  in trigger.event.data.entity_id|lower)
                     and not (trigger.event.data.entity_id|lower).endswith('nightlight') }}"
                     #and not (trigger.event.data.entity_id|lower).endswith('lamp') }}"
 action:

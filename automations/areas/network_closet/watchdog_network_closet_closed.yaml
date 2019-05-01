@@ -1,0 +1,10 @@
+---
+alias: watchdog_network_closet_closed
+initial_state: on
+trigger:
+  platform: state
+  entity_id: binary_sensor.network_closet_door
+  to: "off"
+action:
+  service: light.turn_off
+  entity_id: light.network_closet_light
