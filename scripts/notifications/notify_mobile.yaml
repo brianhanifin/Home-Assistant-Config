@@ -1,8 +1,8 @@
 ---
 ######################################################################################################
-#  Call "notify_ios" like this:
+#  Call "notify_mobile" like this:
 #    action:
-#      service: script.notify_ios
+#      service: script.notify_mobile
 #      data_template:
 #        title: 'Startup: Home Assistant is Up and Running!'
 #        message: "{{ trigger.to_state.state }}"
@@ -10,10 +10,10 @@
 #        image: "{{ trigger.event.data.entity_picture }}"
 #        url: "{{ trigger.event.data.url }}"
 ######################################################################################################
-notify_ios:
+notify_mobile:
   sequence:
     - condition: state
-      entity_id: input_boolean.ios_notifications
+      entity_id: input_boolean.mobile_notifications
       state: 'on'
     - service_template: >
         {% if who is not string %}{% set who = 'brian' %}{% endif %}

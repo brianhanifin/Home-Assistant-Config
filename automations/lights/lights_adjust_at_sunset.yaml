@@ -30,10 +30,12 @@ action:
       entity_id: light.entry_light
       brightness_pct: '60'
 
-  - service: switch.turn_on
-    entity_id: switch.upstairs_bathroom_nightlight
+  - service: light.turn_on
+    data:
+      entity_id: light.upstairs_bathroom_nightlight
+      brightness: 76
 
-  - service: script.notify_ios
+  - service: script.notify_mobile
     data_template:
       title: 'Script: Sunset'
       message: "Activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
