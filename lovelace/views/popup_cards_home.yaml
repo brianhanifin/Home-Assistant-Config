@@ -33,7 +33,7 @@ light.nerenes_light:
         cards:
           - type: entity-button
             entity: switch.bedroom_fan
-            icon: mdi:fan 
+            icon: mdi:fan
             name: Fan
             tap_action:
               action: toggle
@@ -61,6 +61,9 @@ light.entry_light:
           - type: light
             entity: light.entry_light
             name: Entry
+          - type: light
+            entity: light.porch_light
+            name: Porch
 
 light.family_room_light:
   title: Family Room
@@ -75,30 +78,22 @@ light.family_room_light:
             name: Switch
           - type: light
             entity: light.family_room_floor_lamp
-            name: Floor
+            name: Floor (Big)
       - type: horizontal-stack
         cards:
-          - type: light
-            entity: light.family_room_table_lamp
-            name: Table
           - type: vertical-stack
             cards:
-              - <<: *blank-button
-              - <<: *blank-button
-              - <<: *blank-button
-              - <<: *blank-button
-              - <<: *blank-button
+              - type: light
+                entity: light.family_room_table_lamp
+                name: Table
               - entity: light.family_room_table_lamp
                 <<: *light-entity-card
-      - type: horizontal-stack
-        cards:
           - type: entity-button
             entity: switch.family_room_fan
             icon: mdi:fan
             name: Fan
             tap_action:
               action: toggle
-          - <<: *blank-button
 
 switch.kitchen_light:
   title: Kitchen
@@ -127,48 +122,38 @@ switch.landscape_lights:
     cards:
       - type: horizontal-stack
         cards:
-          - type: light
-            entity: light.porch_light
-            name: Porch
           - type: vertical-stack
             cards:
-              - <<: *blank-button
-              - <<: *blank-button
-              - <<: *blank-button
-              - <<: *blank-button
-              - <<: *blank-button
+              - type: light
+                entity: light.porch_light
+                name: Porch
               - entity: light.porch_light
                 <<: *light-entity-card
-
-      - type: horizontal-stack
-        cards:
           - type: entity-button
             entity: switch.landscape_lights
             icon: mdi:tree
-            name: Landscape
-            tap_action:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_outdoor_lights
-          - <<: *blank-button
+            name: Landscape Lights
 
 light.play_room_light:
   title: Play Room
   large: false
   card:
-    type: horizontal-stack
+    type: vertical-stack
     cards:
-      - type: light
-        entity: light.play_room_light
-        name: Lamp
-      - type: vertical-stack
+      - type: horizontal-stack
         cards:
-          - <<: *blank-button
-          - <<: *blank-button
-          - <<: *blank-button
-          - <<: *blank-button
-          - <<: *blank-button
+          - type: light
+            entity: light.play_room_light
+            name: Big Bulb
+          - type: light
+            entity: light.play_room_floor_lamp
+            name: Floor Lamp
+
+      - type: horizontal-stack
+        cards:
+          - type: light
+            entity: light.garage_entry_light
+            name: Garage Entry
           - type: entity-button
             entity: switch.play_room_fan
             icon: mdi:fan
@@ -248,7 +233,7 @@ script.tv_family_room_off:
             tap_action:
               action: call-service
               service: remote.send_command
-              service_data: 
+              service_data:
                 command: Mute
                 device: 33992719
           - type: entity-button
@@ -258,7 +243,7 @@ script.tv_family_room_off:
             tap_action:
               action: call-service
               service: remote.send_command
-              service_data: 
+              service_data:
                 command: VolumeDown
                 device: 33992719
           - type: entity-button
@@ -268,7 +253,7 @@ script.tv_family_room_off:
             tap_action:
               action: call-service
               service: remote.send_command
-              service_data: 
+              service_data:
                 command: VolumeUp
                 device: 33992719
           - <<: *blank-button
@@ -362,7 +347,7 @@ script.tv_family_room_off:
             tap_action:
               action: call-service
               service: remote.send_command
-              service_data: 
+              service_data:
                 command: Mute
                 device: 33992719
           - type: entity-button
@@ -372,7 +357,7 @@ script.tv_family_room_off:
             tap_action:
               action: call-service
               service: remote.send_command
-              service_data: 
+              service_data:
                 command: VolumeDown
                 device: 33992719
           - type: entity-button
@@ -382,7 +367,7 @@ script.tv_family_room_off:
             tap_action:
               action: call-service
               service: remote.send_command
-              service_data: 
+              service_data:
                 command: VolumeUp
                 device: 33992719
           - <<: *blank-button
