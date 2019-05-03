@@ -1,0 +1,19 @@
+---
+# Brighten the porch light when someone approaches the door in the dark.
+#
+alias: front_door_motion_detected
+initial_state: on
+trigger:
+  platform: state
+  entity_id: binary_sensor.ring_front_door_motion
+  to: "on"
+condition:
+  condition: or
+  conditions:
+    - condition: sun
+      after: sunset
+    - condition: sun
+      before: sunrise
+action:
+  - service: scene.turn_on
+    entity_id: scene.front_full_brightness
