@@ -35,12 +35,6 @@ compact-header: &compact-header
         notifications: overflow
         options: show
 
-tap_call_script: &tap_call_script
-  tap_action:
-    action: call-service
-    service: script.turn_on
-    service_data:
-
 tap_more_info: &tap_more_info
   tap_action:
     action: more-info
@@ -111,7 +105,7 @@ cards:
               service_data:
                 entity_id: script.toggle_outdoor_lights
       - type: horizontal-stack
-        cards: 
+        cards:
           - type: entity-button
             entity: light.play_room_light
             icon: mdi:gamepad-variant
@@ -133,7 +127,7 @@ cards:
         cards:
           - type: entity-button
             entity: switch.bedroom_fan
-            icon: mdi:fan 
+            icon: mdi:fan
             name: Bed Room
             <<: *tap_toggle
           - type: entity-button
@@ -191,8 +185,11 @@ cards:
             entity: script.goodbye_routine
             icon: mdi:exit-run
             name: Bye
-            <<: *tap_call_script
-            entity_id: script.goodbye_routine
+            tap_action:
+              action: call-service
+              service: script.turn_on
+              service_data:
+                entity_id: script.goodbye_routine
           - type: entity-button
             entity: script.goodnight_routine
             icon: mdi:weather-night
