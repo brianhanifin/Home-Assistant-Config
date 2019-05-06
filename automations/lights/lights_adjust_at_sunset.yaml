@@ -7,30 +7,16 @@ initial_state: on
 trigger:
   - platform: sun
     event: sunset
-    #offset: "-00:45:00"
 condition:
   - condition: state
     entity_id: input_boolean.time_based_dimmers_enabled
     state: 'on'
 action:
-  - service: homeassistant.turn_on
-    entity_id: switch.landscape_lights
-
   - service: scene.turn_on
-    entity_id: scene.front_full_brightness
+    entity_id: scene.sunset
 
   - service: script.turn_on
     entity_id: script.holiday_color_change
-
-  - service: light.turn_on
-    data:
-      entity_id: light.entry_light
-      brightness_pct: '60'
-
-  - service: light.turn_on
-    data:
-      entity_id: light.upstairs_bathroom_nightlight
-      brightness: 76
 
   - service: script.notify_mobile
     data_template:
