@@ -1,6 +1,7 @@
 toggle_front_door_lock:
   sequence:
-    - wait_template: "{{ is_state('sensor.front_door','closed') }}"
+    # Wait for the door to be closed before locking.
+    - wait_template: "{{ is_state('binary_sensor.front_door','off') }}"
       timeout:
         minutes: 1
       continue_on_timeout: 'true'

@@ -6,28 +6,28 @@ initial_state: on
 trigger:
   platform: state
   entity_id:
-    - binary_sensor.leak_downstairs_bathroom
-    # - binary_sensor.leak_garage
-    # - binary_sensor.leak_goez_bathroom_1
-    # - binary_sensor.leak_goez_bathroom_2
-    - binary_sensor.leak_kitchen
-    - binary_sensor.leak_master_1_bathroom
-    - binary_sensor.leak_master_2_bathroom
-    - binary_sensor.leak_upstairs_bathroom
+    - binary_sensor.downstairs_bathroom_leak
+    # - binary_sensor.garage_leak
+    # - binary_sensor.goez_bathroom_1_leak
+    # - binary_sensor.goez_bathroom_2_leak
+    - binary_sensor.kitchen_leak
+    - binary_sensor.master_bathroom_1_leak
+    - binary_sensor.master_bathroom_2_leak
+    - binary_sensor.upstairs_bathroom_leak
   to: "on"
 action:
   - service: script.notify_speech
     data_template:
       media_player: group.alexa_all
       message: >
-        {% set room = trigger.to_state.name|lower|replace(' leak detection', '')|trim -%}
+        {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
         A leak has been detected in the {{ room }}!
 
   - service: script.notify_mobile
     data_template:
       title: "LEAK DETECTED!"
       message: >
-        {% set room = trigger.to_state.name|lower|replace(' leak detection', '')|trim -%}
+        {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
         {{ room|upper }}: A leak has been detected!
       who: "parents"
 
@@ -35,5 +35,5 @@ action:
     data_template:
       title: "LEAK DETECTED!"
       message: >
-        {% set room = trigger.to_state.name|lower|replace(' leak detection', '')|trim -%}
+        {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
         {{ room|upper }}: A leak has been detected!
