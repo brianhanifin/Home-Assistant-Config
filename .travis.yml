@@ -2,9 +2,9 @@ language: python
 python: "3.6.4"
 before_install:
   - mv ./travis_secrets.yaml ./secrets.yaml
+  - rm -y ./packages/stream.yaml
 install:
   - pip3 install homeassistant
   - pip3 install colorlog
-  - pip3 install av
 script:
   - hass -c ./ --script check_config --info all
