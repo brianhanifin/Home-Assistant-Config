@@ -1,6 +1,12 @@
   >
   {% if media_player is not string -%}
-    media_player.kitchen
+
+    {%- if states('sensor.last_alexa') is not string -%}
+      media_player.kitchen
+    {%- else -%}
+      {{ states('sensor.last_alexa') }}
+    {%- endif -%}
+
   {%- elif ',' in media_player -%}
     {{ (media_player|replace(' ','')).split(',') }}
   {%- else -%}
