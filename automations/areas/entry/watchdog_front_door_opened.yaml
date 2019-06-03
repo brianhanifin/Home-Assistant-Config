@@ -1,0 +1,13 @@
+---
+alias: watchdog_front_door_opened
+initial_state: on
+trigger:
+  - platform: state
+    entity_id: binary_sensor.front_door
+    from: 'off'
+    to: 'on'
+action:
+  - service: script.notify_speech
+    data_template:
+      media_player: media_player.garage
+      message: "Someone has opened the front door."
