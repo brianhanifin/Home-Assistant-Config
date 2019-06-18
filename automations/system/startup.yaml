@@ -11,7 +11,7 @@ action:
   - service: switch.turn_off
     entity_id: switch.hot_water_pump
 
-  # Sometimes the garage entry light turns on at startup, 
+  # Sometimes the garage entry light turns on at startup,
   # so turn it back off.
   - service: light.turn_off
     entity_id: light.garage_entry_light
@@ -20,6 +20,6 @@ action:
   # delay the first calling of that script.
   - delay:
       seconds: 30
-  - service: homeassistant.turn_on
-    entity_id: group.all_automations
+  - service: automation.turn_on
+    entity_id: all
     #entity_id: automation.lights_adjust_as_turned_on
