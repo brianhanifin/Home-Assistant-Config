@@ -2,18 +2,19 @@
 A platform which give you info about the newest video on a channel.
 
 For more details about this component, please refer to the documentation at
-https://github.com/custom-components/sensor.youtube
+https://github.com/custom-components/youtube
 """
 
 import html
 import logging
-import requests
+import async_timeout
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.1.2'
+__version__ = '0.2.0'
 
 CONF_CHANNEL_ID = 'channel_id'
 
@@ -33,9 +34,12 @@ async def async_setup_platform(
         hass, config, async_add_entities, discovery_info=None):  # pylint: disable=unused-argument
     """Setup sensor platform."""
     channel_id = config['channel_id']
+    session = async_create_clientsession(hass)
     try:
         url = BASE_URL.format(channel_id)
-        info = requests.get(url).text
+        async with async_timeout.timeout(10, loop=hass.loop):
+            response = await session.get(url)
+            info = await response.text()
         name = html.parser.HTMLParser().unescape(
             info.split('<title>')[1].split('</')[0])
     except Exception:  # pylint: disable=broad-except
@@ -43,12 +47,13 @@ async def async_setup_platform(
         name = None
 
     if name is not None:
-        async_add_entities([YoutubeSensor(channel_id, name)], True)
+        async_add_entities([YoutubeSensor(channel_id, name, session)], True)
 
 class YoutubeSensor(Entity):
     """YouTube Sensor class"""
-    def __init__(self, channel_id, name):
+    def __init__(self, channel_id, name, session):
         self._state = None
+        self.session = session
         self._image = None
         self.live = False
         self._name = name
@@ -61,12 +66,14 @@ class YoutubeSensor(Entity):
         _LOGGER.debug('%s - Running update', self._name)
         try:
             url = BASE_URL.format(self.channel_id)
-            info = requests.get(url).text
+            async with async_timeout.timeout(10, loop=self.hass.loop):
+                response = await self.session.get(url)
+                info = await response.text()
             title = html.parser.HTMLParser().unescape(
                 info.split('<title>')[2].split('</')[0])
             url = info.split('<link rel="alternate" href="')[2].split('"/>')[0]
             if self.live or url != self.url:
-                self.live = await is_live(self.channel_id, self._name)
+                self.live = await is_live(self.channel_id, self._name, self.hass, self.session)
             else:
                 _LOGGER.debug('%s - Skipping live check', self._name)
             self.url = url
@@ -106,12 +113,14 @@ class YoutubeSensor(Entity):
                 'live': self.live}
 
 
-async def is_live(channel_id, name):
+async def is_live(channel_id, name, hass, session):
     """Return bool if channel is live"""
     returnvalue = False
     url = BASE_URL_LIVE.format(channel_id)
     try:
-        info = requests.get(url).text
+        async with async_timeout.timeout(10, loop=hass.loop):
+            response = await session.get(url)
+            info = await response.text()
         if 'live-promo' in info:
             returnvalue = True
             _LOGGER.debug('%s - Channel is live', name)
