@@ -3,7 +3,6 @@ python: "3.6.4"
 before_install:
   - mv ./travis_secrets.yaml ./secrets.yaml
   - rm -f ./packages/stream.yaml
-  #- sudo apt-get install -y git
   - cd custom_components
   - git clone https://github.com/custom-components/hacs.git hacs_temp
   - cd hacs_temp
@@ -11,6 +10,7 @@ before_install:
   - cd ../
   - cp -r hacs_temp/custom_components/hacs hacs
   - rm -rf hacs_temp
+  - cd ~
 install:
   - pip3 install homeassistant
 script:
