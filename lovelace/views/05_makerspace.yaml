@@ -15,9 +15,6 @@ cards:
   - type: vertical-stack
     cards:
       - !include ../templates/alerts.yaml
-      - type: markdown
-        content: >
-          ## Cameras
       - type: vertical-stack
         cards:
           - type: horizontal-stack
@@ -33,7 +30,7 @@ cards:
 
       - type: markdown
         content: >
-          ## Makerspace
+          ## 3D Printer Status
       - type: glance
         show_header_toggle: false
         column_width: calc(100% / 3)
@@ -74,57 +71,114 @@ cards:
             entity: sensor.prusa_time_remaining
             graph: none
 
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## 3D Printer Temperature
       - type: horizontal-stack
         cards:
-          - type: gauge
-            title: Bed Temp
-            entity: sensor.prusa_actual_bed_temp
-            unit_of_measurement: °C
-            min: 0
-            max: 150
-            severity:
-              red: 120
-              amber: 0
-              green: 60
-            #scale: '50px'
-
-          - type: gauge
-            title: Hot End Temp
-            entity: sensor.prusa_actual_tool0_temp
-            unit_of_measurement: °C
-            min: 0
-            max: 260
-            severity:
-              red: 225
-              amber: 0
-              green: 200
-            #scale: '50px'
+          - type: custom:dual-gauge-card
+            title: Hotend
+            min: 32
+            max: 100
+            outer:
+              entity: sensor.prusa_actual_tool0_temp
+              label: Current
+              unit: °C
+              min: 32
+              max: 100
+            inner:
+              entity: sensor.prusa_target_tool0_temp
+              label: Target
+              unit: °C
+            colors:
+              - color: "var(--label-badge-white)"
+                value: 240
+              - color: "var(--label-badge-yellow)"
+                value: 200
+              - color: "var(--label-badge-orange)"
+                value: 180
+              - color: "var(--label-badge-blue)"
+                value: 0
 
       - type: horizontal-stack
         cards:
-          - type: gauge
-            title: Bed Target
-            entity: sensor.prusa_target_bed_temp
-            unit_of_measurement: °C
-            min: 0
-            max: 150
-            severity:
-              red: 120
-              amber: 0
-              green: 59
-            #scale: '50px'
+          - type: custom:dual-gauge-card
+            title: Bed
+            min: 32
+            max: 100
+            outer:
+              entity: sensor.prusa_actual_bed_temp
+              label: Current
+              unit: °C
+              min: 32
+              max: 100
+              colors:
+                - color: "var(--label-badge-white)"
+                  value: 80
+                - color: "var(--label-badge-yellow)"
+                  value: 60
+                - color: "var(--label-badge-orange)"
+                  value: 40
+                - color: "var(--label-badge-blue)"
+                  value: 0
+            inner:
+              entity: sensor.prusa_target_bed_temp
+              label: Target
+              unit: °C
 
-          - type: gauge
-            title: Hot End Target
-            entity: sensor.prusa_target_tool0_temp
-            unit_of_measurement: °C
-            min: 0
-            max: 260
-            severity:
-              red: 225
-              amber: 0
-              green: 199
-            #scale: '50px'
+      # - type: horizontal-stack
+      #   cards:
+      #     - type: gauge
+      #       title: Bed Temp
+      #       entity: sensor.prusa_actual_bed_temp
+      #       unit_of_measurement: °C
+      #       min: 0
+      #       max: 150
+      #       severity:
+      #         red: 120
+      #         amber: 0
+      #         green: 60
+      #       #scale: '50px'
+
+      #     - type: gauge
+      #       title: Hot End Temp
+      #       entity: sensor.prusa_target_tool0_temp
+      #       unit_of_measurement: °C
+      #       min: 0
+      #       max: 260
+      #       severity:
+      #         red: 225
+      #         amber: 0
+      #         green: 200
+      #       #scale: '50px'
+
+      # - type: horizontal-stack
+      #   cards:
+      #     - type: gauge
+      #       title: Bed Target
+      #       entity: sensor.prusa_target_bed_temp
+      #       unit_of_measurement: °C
+      #       min: 0
+      #       max: 150
+      #       severity:
+      #         red: 120
+      #         amber: 0
+      #         green: 59
+      #       #scale: '50px'
+
+      #     - type: gauge
+      #       title: Hot End Target
+      #       entity: sensor.prusa_target_tool0_temp
+      #       unit_of_measurement: °C
+      #       min: 0
+      #       max: 260
+      #       severity:
+      #         red: 225
+      #         amber: 0
+      #         green: 199
+      #       #scale: '50px'
 
 
   - <<: *compact-header
