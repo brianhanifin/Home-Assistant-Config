@@ -1,0 +1,19 @@
+---
+alias: hacs_update_notification
+initial_state: on
+trigger:
+  platform: numeric_state
+  entity_id: sensor.hacs
+  above: 0
+action:
+  - service: script.notify_web
+    data_template:
+      title: "HACS Update"
+      message: "Home Assistant Community Store is ready to be updated!"
+      id: "update"
+
+  - service: script.notify_mobile
+    data_template:
+      title: "HACS Update"
+      message: "Home Assistant Community Store is ready to be updated!"
+      who: "brian"
