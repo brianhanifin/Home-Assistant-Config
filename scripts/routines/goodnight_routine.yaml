@@ -1,6 +1,11 @@
 ---
 goodnight_routine:
   sequence:
+    - service: script.turn_on
+      entity_id:
+        - script.tv_family_room_off
+        - script.tv_play_room_off
+
     # Make sure the garage door is closed.
     - service: cover.close_cover
       entity_id: cover.garage_door

@@ -1,9 +1,11 @@
 ---
 goodbye_routine:
   sequence:
-    # Run the shutdown/goodbye routine.
+    # Run the shutdown/goodbye routine + turn off the family room TV.
     - service: script.turn_on
-      entity_id: script.shutdown_routine
+      entity_id:
+        - script.shutdown_routine
+        - script.tv_family_room_off
 
     # Say goodnight.
     - service: script.say
