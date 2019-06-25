@@ -10,7 +10,7 @@
 
   {%- macro get_friendly_names(entity_list) -%}
     {% set comma = joiner(', ') %}
-    {%- for entity in entity_list if entity_list|length > 0 -%}
+    {%- for entity in entity_list if entity_list|length > 0 and entity_list != [''] -%}
       {{ ' and' if loop.last and not loop.first else comma() }}
       {{ state_attr(entity, 'friendly_name')|replace('Light','')|replace('Lamp','')|trim|title  }}
     {%- endfor -%}
@@ -20,9 +20,9 @@
   {# BRIEFING FUNCTIONS #}
   {%- macro dark_outside() -%}
     {{ [
-      'It is pretty dark outside.  ...  I will turn on the outside lights now.',
-      'It is a little past Sunset.  Time to turn on the outside lights.  ...  I am on it.',
-      'I will switch on the outside lights.  ...  It is getting dark outside.',
+      'It is pretty dark outside.  ...  I will turn on the lights now.',
+      'It is a little past Sunset.  Time to turn on the lights.',
+      'I will switch on the lights.  ...  It is getting dark outside.',
       'Time to turn on the front lights.  ...  I am on it.'
     ]|random }}
   {%- endmacro -%}
@@ -196,7 +196,7 @@
 
   {%- macro light_check() -%}
     {% set lights_on = states('variable.lights_on').split(',') %}
-    {% if lights_on|length > 0 %}
+    {% if lights_on|length > 0 and lights_on != [''] %}
 
       {%- if lights_on|length == 1 %}
         There is 1 light on right now.

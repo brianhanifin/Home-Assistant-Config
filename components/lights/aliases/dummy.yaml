@@ -5,15 +5,15 @@ platform: template
 lights:
   dummy:
     friendly_name: "Dummy Light"
-    value_template: on
-    level_template: 255
+    value_template: off
+    level_template: 0
     set_level:
-      service: light.turn_on
+      service: light.turn_off
       data_template:
         entity_id: light.dummy
-        brightness: "{{ brightness }}"
+        #brightness: "{{ brightness }}"
     turn_on:
-      service: light.turn_on
+      service: light.turn_off
       data:
         entity_id: light.dummy
     turn_off:
