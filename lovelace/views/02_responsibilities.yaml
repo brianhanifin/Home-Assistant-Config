@@ -9,7 +9,7 @@ blank-button: &blank-button
 
 check-button-contribution: &check-button-contribution
   severity:
-    - value: 1 days
+    - value: 1 day
       hue: '120'
     - value: 3 days
       hue: '40'
@@ -18,13 +18,13 @@ check-button-contribution: &check-button-contribution
   type: custom:check-button-card
   width: 60%
 
-check-button-medicine: &check-button-medicine
+check-button-weekly: &check-button-weekly
   severity:
-    - value: 8 hours
+    - value: 1 day
       hue: '120'
-    - value: 12 hours
+    - value: 6 days
       hue: '40'
-    - value: 24 hours
+    - value: 7 days
       hue: '0'
   type: custom:check-button-card
   width: 60%
@@ -38,19 +38,40 @@ icon: mdi:heart-pulse
 cards:
   - type: vertical-stack
     cards:
-      - !include ../templates/alerts.yaml
-      - type: markdown
-        content: |-
-          ## Medicine Tracker
-      - entity: sensor.medicine_buddy_taken
-        title: Buddy
-        <<: *check-button-medicine
-      # - entity: sensor.medicine_brian_taken
-      #   title: Brian
-      #   <<: *check-button-medicine
-      # - entity: sensor.medicine_nerene_taken
-      #   title: Nerene
-      #   <<: *check-button-medicine
+      - type: vertical-stack
+        cards:
+          - !include ../templates/alerts.yaml
+          - type: markdown
+            content: |-
+              ## Medicine Status
+          - entity: sensor.medicine_buddy_taken
+            title: Buddy
+            severity:
+              - value: 8 hours
+                hue: '120'
+              - value: 12 hours
+                hue: '40'
+              - value: 1 day
+                hue: '0'
+            type: custom:check-button-card
+            width: 60%
+          # - entity: sensor.medicine_brian_taken
+          #   title: Brian
+          #   <<: *check-button-medicine
+          # - entity: sensor.medicine_nerene_taken
+          #   title: Nerene
+          #   <<: *check-button-medicine
+
+      - type: vertical-stack
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: |-
+                  ## Weekly Responsibilities
+              - entity: sensor.contribution_trash_to_curb
+                title: "Trash to Curb"
+                <<: *check-button-weekly
 
   - type: vertical-stack
     cards:

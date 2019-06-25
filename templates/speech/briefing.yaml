@@ -197,7 +197,7 @@
   {%- macro light_check() -%}
     {% set lights_on = states('variable.lights_on').split(',') %}
     {% if lights_on|length > 0 %}
-      
+
       {%- if lights_on|length == 1 %}
         There is 1 light on right now.
         The {{ get_friendly_names(lights_on) }} light is on.
@@ -242,7 +242,7 @@
     {# Announce after 2pm on School Days and after 9am otherwise. #}
     {% if    is_school_day and hour >= 14
       or not is_school_day and hour >=  9 -%}
-      
+
       {# Decide whose turn it is. #}
       {% if states('sensor.contribution_kyle_dookie') < states('sensor.contribution_lucas_dookie') -%}
         {%- set dookie_turn = "Kyle" -%}
@@ -268,7 +268,11 @@
 
   {%- macro responsibility_trash() -%}
     {%- if now().strftime('%a') == 'Mon' -%}
-      It is Monday and tomorrow is garbage day. Please take the cans to the curb.
+      {%- set last_curb = states('sensor.contribution_trash_to_curb')|int|timestamp_custom('%m%d') -%}
+      {%- set today = as_timestamp(now())|timestamp_custom('%m%d') %}
+      {%- if last_curb != today -%}
+        It is Monday and tomorrow is garbage day. Please take the cans to the curb.
+      {%- endif %}
     {%- endif %}
   {%- endmacro -%}
 
@@ -304,7 +308,7 @@
   {%- macro get_briefing() -%}
     {%- if say_greeting == "true" -%}
       {{ greeting_line() ~ " ... " }}
-      
+
       {{ holiday() ~ " ... " }}
     {%- endif -%}
 
