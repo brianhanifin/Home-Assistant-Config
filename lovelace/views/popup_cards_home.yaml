@@ -15,6 +15,41 @@ light-entity-card: &light-entity-card
   persist_features: true
   white_value: true
 
+light-entity-row-colors: &light-entity-row-colors
+  type: custom:light-entity-row
+  hideBrightness: true
+  hideColorTemp: true
+  showColorPicker: false
+  showColorSliders: false
+  buttons:
+    - name: "[X]"
+      service_data:
+        color_name: normal
+    - name: Red
+      service_data:
+        color_name: red
+    - name: Orange
+      service_data:
+        color_name: orange
+    - name: Yellow
+      service_data:
+        color_name: yellow
+    - name: Green
+      service_data:
+        color_name: green
+    - name: Blue
+      service_data:
+        color_name: blue
+    - name: Indigo
+      service_data:
+        color_name: indigo
+    - name: Violet
+      service_data:
+        color_name: violet
+    - name: Purple
+      service_data:
+        color_name: purple
+
 # Define Popups
 light.nerenes_light:
   title: Bedroom
@@ -50,9 +85,39 @@ light.dining_room:
     type: vertical-stack
     cards:
       - entity: light.dining_room
-        type: light
+        <<: *light-entity-row-colors
       - entity: light.dining_room
-        <<: *light-entity-card
+        brightness: true
+        color_temp: true
+        color_picker: false
+        effects_list: input_select.hue_effect
+        group: true
+        header: false
+        type: custom:light-entity-card
+
+      - entity: light.dining1
+        name: Light 1-1
+        <<: *light-entity-row-colors
+      - entity: light.dining2
+        name: Light 1-2
+        <<: *light-entity-row-colors
+      - entity: light.dining3
+        name: Light 1-3
+        <<: *light-entity-row-colors
+      - entity: light.dining4
+        name: Light 1-4
+        <<: *light-entity-row-colors
+      - entity: light.dining5
+        name: Light 1-5
+        <<: *light-entity-row-colors
+      - entity: light.dining6
+        name: Light 1-6
+        <<: *light-entity-row-colors
+
+      # - entity: light.dining_room
+      #   type: light
+      # - entity: light.dining_room
+      #   <<: *light-entity-card
 
 light.entry_light:
   title: Entry
