@@ -3,14 +3,19 @@
 alias: nerene_is_nearby
 initial_state: on
 trigger:
-  platform: zone
-  event: enter
-  zone: zone.home
-  entity_id: person.nerene
-condition:
-  condition: time
-  after: '14:00'
-  before: '18:00'
+  - platform: numeric_state
+    entity_id: proximity.nerene_home
+    value_template: "{{ states('proximity.nerene_home')|float }}"
+    below: 0.25
+# trigger:
+#   platform: zone
+#   event: enter
+#   zone: zone.home
+#   entity_id: person.nerene
+# condition:
+#   condition: time
+#   after: '14:00'
+#   before: '18:00'
 action:
   - service: script.say
     data_template:
