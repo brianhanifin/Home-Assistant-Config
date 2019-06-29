@@ -53,13 +53,13 @@ class EMU2Sensor(Entity):
         self._timeout = 1
         self._icon = 'mdi:flash'
         self._unit_of_measurement = "kWh"
-        
+
         self._serial_thread = None
         self._serial_thread_isEnabled = True
 
         self._state = None
 
-        self._data = {}                
+        self._data = {}
         self._data[ATTR_DEVICE_MAC_ID] = None
         self._data[ATTR_METER_MAC_ID] = None
         self._data[ATTR_TEIR] = None
@@ -77,7 +77,7 @@ class EMU2Sensor(Entity):
             ATTR_TEIR: self._data.get(ATTR_TEIR),
             ATTR_PRICE: self._data.get(ATTR_PRICE),
         }
-        
+
     @property
     def icon(self):
         return self._icon
@@ -100,7 +100,7 @@ class EMU2Sensor(Entity):
         self._serial_thread.start()
 
     def serial_read(self, portIN, baudrateIN, timeoutIN, **kwargs):
-        
+
         _LOGGER.debug("Thread Starting")
         import serial, time
         import xml.etree.ElementTree as xmlDecoder
@@ -113,7 +113,7 @@ class EMU2Sensor(Entity):
                 _LOGGER.error("Failed to open %s. Retrying in 5s...", portIN)
                 time.sleep(5.0)
 
-        
+
         _LOGGER.debug("Begining Loop")
         while self._serial_thread_isEnabled:
             if (reader.in_waiting > 0):
@@ -125,9 +125,10 @@ class EMU2Sensor(Entity):
                         xmlTree = xmlDecoder.fromstring(msgStr)
                     except:
                         continue
-                                
+
                     if xmlTree.tag == 'InstantaneousDemand':
                         demand = int(xmlTree.find('Demand').text, 16)
+                        demand = -(demand & 0x80000000) | (demand & 0x7fffffff)
                         multiplier = int(xmlTree.find('Multiplier').text, 16)
                         divisor = int(xmlTree.find('Divisor').text, 16)
                         digitsRight = int(xmlTree.find('DigitsRight').text, 16)
@@ -139,7 +140,7 @@ class EMU2Sensor(Entity):
                         self._data[ATTR_METER_MAC_ID] = xmlTree.find('MeterMacId').text
 
                         self.async_schedule_update_ha_state()
-                        
+
                         _LOGGER.debug("InstantaneousDemand: %s", self._state)
 
                     elif xmlTree.tag == 'PriceCluster':
@@ -148,7 +149,7 @@ class EMU2Sensor(Entity):
                         self._data[ATTR_PRICE] = priceRaw / pow(10, trailingDigits)
 
                         self._data[ATTR_TEIR] = int(xmlTree.find('Tier').text, 16)
-                        
+
                         _LOGGER.debug("PriceCluster: %s", self._data[ATTR_PRICE])
             else:
                 time.sleep(0.5)
