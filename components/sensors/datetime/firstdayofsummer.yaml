@@ -23,13 +23,13 @@ sensors:
 
       {#
       ex. Get the nth Wendnesday of June.
-      1st: {{ get_nth_dayofmonth(6, "Wednesday", 1) }}
-      2nd: {{ get_nth_dayofmonth(6, "Wednesday", 2, 2019) }}
-      3rd: {{ get_nth_dayofmonth(6, "Wednesday", 3) }}
+      1st: {{ get_nth_dayofmonth(1, "Wednesday", 6) }}
+      2nd: {{ get_nth_dayofmonth(2, "Wednesday", 6, 2019) }}
+      3rd: {{ get_nth_dayofmonth(3, "Wednesday", 6) }}
 
       Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
       #}
-      {%- macro get_nth_dayofmonth(month, dayofweek, nth, year=now().strftime('%Y')) -%}
+      {%- macro get_nth_dayofmonth(nth, dayofweek, month, year=now().strftime('%Y')) -%}
         {%- set dayofweek = dayofweek_number(dayofweek)|int -%}
         {%- set firstdateofmonth = strptime(year ~'-'~ month ~'-1', "%Y-%m-%d") -%}
         {%- set firstdayofmonth = dayofweek_number(firstdateofmonth.strftime('%A'))|int -%}
@@ -48,4 +48,4 @@ sensors:
         {{ strptime(year ~'-'~ month ~'-'~ nthoccurrance, "%Y-%m-%d") }}
       {%- endmacro -%}
 
-      {{ get_nth_dayofmonth(6, "Wednesday", 2) }}
+      {{ get_nth_dayofmonth(2, "Wednesday", 6) }}
