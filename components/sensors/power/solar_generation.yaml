@@ -1,0 +1,12 @@
+platform: template
+sensors:
+  solar_generation:
+    value_template: >-
+      {% if is_state("sensor.solar", "NaN") -%}
+        0.0
+      {%- else -%}
+        {%- set solar = states("sensor.solar")|float / 1000 -%}
+        {{ "%0.2f"|format(solar) }}
+      {%- endif %}
+    friendly_name: Solar
+    unit_of_measurement: kWh

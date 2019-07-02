@@ -71,11 +71,12 @@ const notifDrawer = huiRoot.shadowRoot
   .querySelector("hui-notification-drawer")
   .shadowRoot.querySelector(".notifications");
 let notifications = notifDrawer.querySelectorAll(".notification").length;
-let editMode, cchConfig;
+let editMode;
+let cchConfig = buildConfig();
 let redirectedToDefaultTab = false;
 let sidebarClosed = false;
 let firstRun = true;
-let overflowButtons = [];
+let waitForButtons = 0;
 
 if (
   lovelace.config.cch == undefined &&
@@ -84,7 +85,6 @@ if (
   breakingChangeNotification();
 }
 
-buildConfig();
 run();
 
 function run() {
@@ -96,10 +96,8 @@ function run() {
     ? Array.from(tabContainer.querySelectorAll("paper-tab"))
     : [];
 
-  if (editMode) {
-    if (!disable) removeStyles(tabContainer, tabs);
+  if (!disable && !urlDisable) {
     insertEditMenu(buttons, tabs);
-  } else if (!disable && !urlDisable) {
     styleButtons(buttons, tabs);
     styleHeader(tabContainer, tabs);
     restoreTabs(tabs, hideTabs(tabContainer, tabs));
@@ -122,7 +120,13 @@ function run() {
     if (firstRun && !disable && !urlDisable) {
       window.hassConnection.then(({ conn }) => {
         conn.socket.onmessage = () => {
+          let i = 0;
           if (!editMode && huiRoot) {
+            let notif = notifDrawer.querySelectorAll(".notification");
+            [].forEach.call(notif, function(item) {
+              if (item.style.display !== "none") i++;
+            });
+            notifications = i;
             conditionalStyling(getButtonElements(), tabs);
           }
         };
@@ -146,7 +150,9 @@ function run() {
     }
     window.dispatchEvent(new Event("resize"));
   }
-  if (!disable) monitorElements(tabs, urlDisable);
+  if (!disable && firstRun) {
+    monitorElements(tabContainer, tabs, urlDisable);
+  }
   firstRun = false;
 }
 
@@ -179,7 +185,7 @@ function buildConfig() {
     delete config.hide_tabs;
   }
 
-  cchConfig = { ...defaultConfig, ...config, ...exceptionConfig };
+  return { ...defaultConfig, ...config, ...exceptionConfig };
 
   function countMatches(conditions) {
     const userVars = { user: hass.user.name, user_agent: navigator.userAgent };
@@ -199,18 +205,17 @@ function buildConfig() {
   }
 }
 
-function monitorElements(tabs, urlDisable) {
+function monitorElements(tabContainer, tabs, urlDisable) {
   const callback = function(mutations) {
     mutations.forEach(mutation => {
-      if (mutation.target.className == "empty") {
-        notifications = mutation.target.style.display == "none" ? true : false;
-        if (!editMode && !firstRun && huiRoot && !urlDisable) {
-          conditionalStyling(getButtonElements(), tabs);
-        }
-        return;
-      } else if (mutation.attributeName === "class") {
+      if (mutation.attributeName === "class") {
         editMode = mutation.target.className == "edit-mode";
-        if (huiRoot) run();
+        if (editMode) {
+          if (!cchConfig.disable) removeStyles(tabContainer, tabs);
+          insertEditMenu(getButtonElements(), tabs);
+        } else {
+          run();
+        }
       } else if (mutation.addedNodes.length) {
         if (mutation.addedNodes[0].nodeName == "HUI-UNUSED-ENTITIES") {
           return;
@@ -226,10 +231,6 @@ function monitorElements(tabs, urlDisable) {
     });
   };
   new MutationObserver(callback).observe(view, { childList: true });
-  new MutationObserver(callback).observe(notifDrawer.querySelector(".empty"), {
-    attributes: true,
-    attributeFilter: ["style"]
-  });
   new MutationObserver(callback).observe(header, {
     attributes: true,
     attributeFilter: ["class"]
@@ -261,15 +262,7 @@ function tabContainerMargin(buttons, tabContainer) {
 }
 
 function insertEditMenu(buttons, tabs) {
-  if (cchConfig.hide_tabs && buttons.options) {
-    let editor = document.createElement("paper-item");
-    editor.setAttribute("id", "cch_settings");
-    editor.addEventListener("click", () => {
-      showEditor();
-    });
-    editor.innerHTML = "CCH Settings";
-    insertMenuItem(buttons.options.querySelector("paper-listbox"), editor);
-
+  if (cchConfig.hide_tabs && buttons.options && editMode) {
     let show_tabs = document.createElement("paper-item");
     show_tabs.setAttribute("id", "show_tabs");
     show_tabs.addEventListener("click", () => {
@@ -279,6 +272,14 @@ function insertEditMenu(buttons, tabs) {
     });
     show_tabs.innerHTML = "Show all tabs";
     insertMenuItem(buttons.options.querySelector("paper-listbox"), show_tabs);
+  } else if (buttons.options && !editMode && lovelace.mode == "storage") {
+    let editor = document.createElement("paper-item");
+    editor.setAttribute("id", "cch_settings");
+    editor.addEventListener("click", () => {
+      showEditor();
+    });
+    editor.innerHTML = "CCH Settings";
+    insertMenuItem(buttons.options.querySelector("paper-listbox"), editor);
   }
 }
 
@@ -406,7 +407,6 @@ function styleHeader(tabContainer, tabs) {
 
 function styleButtons(buttons, tabs) {
   let topMargin = tabs.length > 0 ? "margin-top:111px;" : "";
-  let iteration = 0;
   for (const button in buttons) {
     if (button == "options" && cchConfig[button] == "overflow") {
       cchConfig[button] = "show";
@@ -422,11 +422,11 @@ function styleButtons(buttons, tabs) {
       const paperIconButton = buttons[button].querySelector("paper-icon-button")
         ? buttons[button].querySelector("paper-icon-button")
         : buttons[button].shadowRoot.querySelector("paper-icon-button");
-      if (!paperIconButton && iteration < 10) {
+      if (!paperIconButton && waitForButtons < 10) {
         setTimeout(function() {
-          styleButtons(buttons, tabs);
+          styleButtons(getButtonElements(), tabs);
         }, 500);
-        iteration++
+        waitForButtons++;
         break;
       } else if (!paperIconButton) {
         throw new Error("CCH: Cannot find button element.");
@@ -611,7 +611,7 @@ function insertClock(buttons, clock_button) {
   const clockWidth =
     (cchConfig.clock_format == 12 && cchConfig.clock_am_pm) ||
     cchConfig.clock_date
-      ? 90
+      ? 110
       : 80;
 
   if (
@@ -926,12 +926,16 @@ function buildRanges(array) {
 }
 
 function showEditor() {
+  window.scrollTo(0, 0);
   import("./compact-custom-header-editor.js?v=1.1.7").then(() => {
     document.createElement("compact-custom-header-editor");
   });
   if (!root.querySelector("ha-app-layout").querySelector("editor")) {
     const container = document.createElement("editor");
     const nest = document.createElement("div");
+    const loader = document.createElement("div");
+    loader.classList.add("lds-ring");
+    loader.innerHTML = "<div></div><div></div><div></div><div></div>";
     const cchEditor = document.createElement("compact-custom-header-editor");
     nest.style.cssText = `
       padding: 20px;
@@ -949,8 +953,50 @@ function showEditor() {
       z-index: 1;
       padding: 5px;
     `;
+    nest.innerHTML += `
+      <style>
+      .lds-ring {
+        left: 50%;
+        margin-left: -32px;
+        display: inline-block;
+        position: relative;
+        width: 64px;
+        height: 64px;
+      }
+      .lds-ring div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 51px;
+        height: 51px;
+        margin: 6px;
+        border: 6px solid #fff;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: var(--primary-color) transparent transparent transparent;
+      }
+      .lds-ring div:nth-child(1) {
+        animation-delay: -0.45s;
+      }
+      .lds-ring div:nth-child(2) {
+        animation-delay: -0.3s;
+      }
+      .lds-ring div:nth-child(3) {
+        animation-delay: -0.15s;
+      }
+      @keyframes lds-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      </style>
+      `;
     root.querySelector("ha-app-layout").insertBefore(container, view);
     container.appendChild(nest);
+    nest.appendChild(loader);
     nest.appendChild(cchEditor);
   }
 }
@@ -958,6 +1004,7 @@ function showEditor() {
 function breakingChangeNotification() {
   hass.callService("persistent_notification", "create", {
     title: "CCH Breaking Change",
+    notification_id: "CCH_Breaking_Change",
     message:
       "Compact-Custom-Header's configuration method has changed. You are " +
       "receiving this notification because you have updated CCH, but are " +

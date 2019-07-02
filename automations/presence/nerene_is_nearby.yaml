@@ -6,7 +6,11 @@ trigger:
   - platform: numeric_state
     entity_id: proximity.nerene_home
     value_template: "{{ states('proximity.nerene_home')|float }}"
-    below: 0.25
+    below: 1
+condition:
+  condition: state
+  entity_id: input_select.nerene
+  state: Away
 # trigger:
 #   platform: zone
 #   event: enter

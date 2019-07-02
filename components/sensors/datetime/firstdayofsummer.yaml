@@ -1,0 +1,51 @@
+---
+platform: template
+sensors:
+  firstdayofsummer:
+    value_template: >-
+      {%- macro dayofweek_number(dayofweek) -%}
+        {%- if dayofweek == "Sunday" or dayofweek == "Sun" -%}
+          1
+        {%- elif dayofweek == "Monday" or dayofweek == "Mon" -%}
+          2
+        {%- elif dayofweek == "Tuesday" or dayofweek == "Tue" -%}
+          3
+        {%- elif dayofweek == "Wednesday" or dayofweek == "Wed" -%}
+          4
+        {%- elif dayofweek == "Thursday" or dayofweek == "Thu" -%}
+          5
+        {%- elif dayofweek == "Friday" or dayofweek == "Fri" -%}
+          6
+        {%- elif dayofweek == "Saturday" or dayofweek == "Sat" -%}
+          7
+        {%- endif -%}
+      {%- endmacro -%}
+
+      {#
+      ex. Get the nth Wendnesday of June.
+      1st: {{ get_nth_dayofmonth(6, "Wednesday", 1) }}
+      2nd: {{ get_nth_dayofmonth(6, "Wednesday", 2, 2019) }}
+      3rd: {{ get_nth_dayofmonth(6, "Wednesday", 3) }}
+
+      Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
+      #}
+      {%- macro get_nth_dayofmonth(month, dayofweek, nth, year=now().strftime('%Y')) -%}
+        {%- set dayofweek = dayofweek_number(dayofweek)|int -%}
+        {%- set firstdateofmonth = strptime(year ~'-'~ month ~'-1', "%Y-%m-%d") -%}
+        {%- set firstdayofmonth = dayofweek_number(firstdateofmonth.strftime('%A'))|int -%}
+
+        {# Determine the first occurrence of the day. #}
+        {%- if firstdayofmonth < dayofweek -%}
+          {%- set firstoccurrence = (dayofweek - dayofweek_number(firstdayofmonth)) -%}
+        {%- else -%}
+          {%- set firstoccurrence = (7 - firstdayofmonth + dayofweek) + 1 -%}
+        {%- endif -%}
+
+        {# Determine the nth occurrence of the dayofweek. #}
+        {%- set nthoccurrance = firstoccurrence + 7 * (nth-1) -%}
+
+        {# Return the day with the month and year so it can be useful. #}
+        {{ strptime(year ~'-'~ month ~'-'~ nthoccurrance, "%Y-%m-%d") }}
+      {%- endmacro -%}
+
+      {{ get_nth_dayofmonth(6, "Wednesday", 2) }}
