@@ -5,6 +5,9 @@ trigger:
   platform: numeric_state
   entity_id: sensor.hacs
   above: 0
+condition:
+  - condition: template
+    value_template: "{{ not is_state('sensor.hacs', 'unknown') }}"
 action:
   - service: script.notify_web
     data_template:
