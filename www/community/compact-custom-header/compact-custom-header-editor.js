@@ -3,13 +3,13 @@ import {
   html,
   fireEvent,
   defaultConfig,
-  lovelace,
   hass
 } from "./compact-custom-header.js";
 
 const buttonOptions = ["show", "hide", "clock", "overflow"];
 const overflowOptions = ["show", "hide", "clock"];
 const swipeAnimation = ["none", "swipe", "fade", "flip"];
+let lovelace;
 
 export class CompactCustomHeaderEditor extends LitElement {
   static get properties() {
@@ -19,13 +19,23 @@ export class CompactCustomHeaderEditor extends LitElement {
   }
 
   firstUpdated() {
+    let ll = document.querySelector("home-assistant");
+    ll = ll && ll.shadowRoot;
+    ll = ll && ll.querySelector("home-assistant-main");
+    ll = ll && ll.shadowRoot;
+    ll = ll && ll.querySelector("app-drawer-layout partial-panel-resolver");
+    ll = (ll && ll.shadowRoot) || ll;
+    ll = ll && ll.querySelector("ha-panel-lovelace");
+    ll = ll && ll.shadowRoot;
+    lovelace = ll && ll.querySelector("hui-root").lovelace;
+
     let loader = this.parentNode.querySelector(".lds-ring");
     loader.parentNode.removeChild(loader);
     this._config = lovelace.config.cch ? deepcopy(lovelace.config.cch) : {};
   }
 
   render() {
-    if (!this._config) return html``;
+    if (!this._config || !lovelace) return html``;
     return html`
       <div @click="${this._close}" class="title_control">
         X
@@ -434,17 +444,6 @@ export class CchConfigEditor extends LitElement {
           Display Tab Chevrons
         </paper-toggle-button>
         <paper-toggle-button
-          class="${this.exception && this.config.hide_help === undefined
-            ? "inherited"
-            : ""}"
-          ?checked="${this.getConfig("hide_help") !== false}"
-          .configValue="${"hide_help"}"
-          @change="${this._valueChanged}"
-          title='Hide "Help" in options menu.'
-        >
-          Hide "Help"
-        </paper-toggle-button>
-        <paper-toggle-button
           class="${this.exception && this.config.sidebar_closed === undefined
             ? "inherited"
             : ""}"
@@ -455,22 +454,6 @@ export class CchConfigEditor extends LitElement {
           title="Closes the sidebar on opening Lovelace."
         >
           Close Sidebar
-        </paper-toggle-button>
-        <paper-toggle-button
-          class="${this.exception && this.config.hide_config === undefined
-            ? "inherited"
-            : ""}"
-          ?checked="${this.getConfig("hide_config") !== false}"
-          .configValue="${"hide_config"}"
-          @change="${this._valueChanged}"
-          title='Hide "Configure UI" in options menu.'
-        >
-          Hide "Configure UI"
-          ${this.getConfig("warning")
-            ? html`
-                <iron-icon icon="hass:alert" class="alert"></iron-icon>
-              `
-            : ""}
         </paper-toggle-button>
         <paper-toggle-button
           class="${this.exception && this.config.sidebar_swipe === undefined
@@ -500,7 +483,47 @@ export class CchConfigEditor extends LitElement {
             `
           : ""}
       </div>
-
+      <h4 class="underline">Menu Items</h4>
+      <div class="side-by-side">
+        <paper-toggle-button
+          class="${this.exception && this.config.hide_config === undefined
+            ? "inherited"
+            : ""}"
+          ?checked="${this.getConfig("hide_config") !== false}"
+          .configValue="${"hide_config"}"
+          @change="${this._valueChanged}"
+          title='Hide "Configure UI" in options menu.'
+        >
+          Hide "Configure UI"
+          ${this.getConfig("warning")
+            ? html`
+                <iron-icon icon="hass:alert" class="alert"></iron-icon>
+              `
+            : ""}
+        </paper-toggle-button>
+        <paper-toggle-button
+          class="${this.exception && this.config.hide_help === undefined
+            ? "inherited"
+            : ""}"
+          ?checked="${this.getConfig("hide_help") !== false}"
+          .configValue="${"hide_help"}"
+          @change="${this._valueChanged}"
+          title='Hide "Help" in options menu.'
+        >
+          Hide "Help"
+        </paper-toggle-button>
+        <paper-toggle-button
+          class="${this.exception && this.config.hide_unused === undefined
+            ? "inherited"
+            : ""}"
+          ?checked="${this.getConfig("hide_unused") !== false}"
+          .configValue="${"hide_unused"}"
+          @change="${this._valueChanged}"
+          title='Hide "Help" in options menu.'
+        >
+          Hide "Unused Entities"
+        </paper-toggle-button>
+      </div>
       <h4 class="underline">Buttons</h4>
       <div class="buttons side-by-side">
         <div
@@ -604,7 +627,7 @@ export class CchConfigEditor extends LitElement {
             <div class="side-by-side">
               <paper-dropdown-menu
                 class="${this.exception &&
-                this.config.getConfig("clock_format") === undefined
+                this.getConfig("clock_format") === undefined
                   ? "inherited"
                   : ""}"
                 label="Clock format"
