@@ -163,36 +163,8 @@ cards:
       - type: markdown
         content: >
           ## Sensors
-      - type: custom:swipe-card
-        card_width: '90%'
-        parameters:
-          centeredSlides: true
-          slidesPerView: 'auto'
-          spaceBetween: 8
-          pagination:
-            #type: 'progressbar'
-            type: 'bullets'
-          navigation:
-          keyboard:
-            enabled: true
-            onlyInViewport: true
+      - type: horizontal-stack
         cards:
-          - type: entities
-            entities:
-              - entity: sensor.medicine_buddy_given_today
-                name: Buddy's Medicine Last Given
-                icon: mdi:pill
-                secondary_info: last-changed
-              #- binary_sensor.dog_water_bowl
-              - entity: variable.last_motion
-                name: Last Motion
-                icon: mdi:motion-sensor
-                secondary_info: last-changed
-              # - entity: binary_sensor.washer_running
-              #   secondary_info: last-changed
-              - entity: sensor.washing_machine_status
-                secondary_info: last-changed
-
           - type: custom:mini-graph-card
             animate: true
             entities:
@@ -201,9 +173,10 @@ cards:
             font_size: 75
             height: 150
             icon_adaptive_color: true
-            line_color: var(--primary-color)
+            line_color: lightblue
             line_width: 3
             name: Power
+            points_per_hour: 1
             show:
               labels: false
 
@@ -214,29 +187,27 @@ cards:
                 #name: Solar
             font_size: 75
             height: 150
+            icon: mdi:solar-power
             icon_adaptive_color: true
-            line_color: var(--accent-color)
+            line_color: orange
             line_width: 3
-            name: Solar
+            name: Solar Total
+            points_per_hour: 1
             show:
               labels: false
 
-          - type: custom:mini-graph-card
-            animate: true
-            entities:
-              - entity: sensor.home_temperature
-                name: Downstairs
-              - entity: sensor.bedroom_temperature
-                name: Bedroom
-              - entity: sensor.boys_bedroom_temperature
-                name: Boys
-              - entity: sensor.upstairs_bathroom_temperature
-                name: Bath
-              - entity: sensor.goez_temperature
-                name: Goez
-            font_size: 75
-            height: 150
-            line_width: 3
-            name: Temperature
-            show:
-              labels: false
+      - type: entities
+        entities:
+          - entity: sensor.medicine_buddy_given_today
+            name: Buddy's Medicine Last Given
+            icon: mdi:pill
+            secondary_info: last-changed
+          #- binary_sensor.dog_water_bowl
+          - entity: variable.last_motion
+            name: Last Motion
+            icon: mdi:motion-sensor
+            secondary_info: last-changed
+          # - entity: binary_sensor.washer_running
+          #   secondary_info: last-changed
+          - entity: sensor.washing_machine_status
+            secondary_info: last-changed

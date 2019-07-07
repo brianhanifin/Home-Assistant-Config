@@ -24,14 +24,14 @@ cards:
             entity: light.family_room_light
             icon: mdi:floor-lamp
             name: Lamp
-          - type: entity-button
-            entity: light.family_room_table_lamp
-            icon: mdi:lamp
-            name: Table
-            tap_action:
-              action: toggle
-            hold_action:
-              action: more-info
+          # - type: entity-button
+          #   entity: light.family_room_table_lamp
+          #   icon: mdi:lamp
+          #   name: Table
+          #   tap_action:
+          #     action: toggle
+          #   hold_action:
+          #     action: more-info
           - type: entity-button
             entity: light.family_room_floor_lamp
             icon: fas:sun
@@ -46,6 +46,7 @@ cards:
             name: Fan
             tap_action:
               action: toggle
+          - <<: *blank-button
 
   # Dining / Kitchen
   - type: vertical-stack
@@ -183,7 +184,8 @@ cards:
           - type: custom:mini-graph-card
             animate: true
             entities:
-              - sensor.upstairs_bathroom_temperature
+              - entity: sensor.upstairs_bathroom_temperature
+                unit_of_measurement: °F
             font_size: 75
             hours_to_show: 6
             line_color: orange

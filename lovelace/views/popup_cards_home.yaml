@@ -245,14 +245,51 @@ climate.home:
   card:
     type: vertical-stack
     cards:
-      # - type: custom:ecobee-card
+      # - type: thermostat
       #   entity: climate.home
-      # - type: custom:ecobee-card
+      # - type: thermostat
       #   entity: climate.goez
-      - type: thermostat
-        entity: climate.home
-      - type: thermostat
-        entity: climate.goez
+      - entity: climate.home
+        icon: mdi:home-circle
+        # off,heat,cool,auto
+        modes:
+          auto:
+            name: Auto
+          cool:
+            name: Cool
+          heat:
+            name: Heat
+          "off":
+            name: "Off"
+        step_size: 1
+        sensors:
+          - entity: sensor.bedroom_temperature
+            name: Bedroom⬆
+          - entity: sensor.boys_bedroom_temperature
+            name: Boys Room⬆
+          - entity: sensor.upstairs_bathroom_temperature
+            name: Upstairs Bath⬆
+            unit_of_measurement: °F
+          - entity: sensor.home_temperature
+            name: Downstairs⬇
+          # - attribute: min_temp
+          #   name: Min temp
+        type: custom:simple-thermostat
+
+      - entity: climate.goez
+        icon: mdi:home-floor-g
+        # off,heat,cool,auto
+        modes:
+          auto:
+            name: auto
+          cool:
+            name: cool
+          heat:
+            name: heat
+          "off":
+            name: "off"
+        step_size: 1
+        type: custom:simple-thermostat
 
 script.tv_family_room_off:
   title: TV Controls
