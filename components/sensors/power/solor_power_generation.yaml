@@ -5,7 +5,7 @@ sensors:
       {% if is_state_attr("sensor.solar", "power_generation", "NaN") -%}
         0
       {%- else -%}
-        {{ states.sensor.solar.attributes.power_generation }}
+        {{ state_attr("sensor.solar", "power_generation")|int / 1000 }}
       {%- endif %}
     friendly_name: Generating
-    unit_of_measurement: Watt
+    unit_of_measurement: Kilowatt
