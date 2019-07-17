@@ -8,7 +8,12 @@ lights_on_update:
         entities: >-
           {% set group_id = 'group.actionable_lights' %}
           {% set on_states = ['on'] %}
-          {{ states | selectattr('entity_id','in', state_attr(group_id, 'entity_id')) | selectattr('state','in',on_states) | map(attribute='entity_id') | join(', ') }}
+          {%- set entities = states | selectattr('entity_id','in', state_attr(group_id, 'entity_id')) | selectattr('state','in',on_states) | map(attribute='entity_id') | join(', ') -%}
+          {%- if entities|trim == "" -%}
+            {{ "light.none" }}
+          {%- else -%}
+            {{ entities }}
+          {%- endif -%}
 
     - service: variable.set_variable
       data:
@@ -16,4 +21,9 @@ lights_on_update:
         value_template: >
           {% set group_id = 'group.actionable_lights' %}
           {% set on_states = ['on'] %}
-          {{ states | selectattr('entity_id','in', state_attr(group_id, 'entity_id')) | selectattr('state','in',on_states) | map(attribute='entity_id') | join(', ') }}
+          {%- set entities = states | selectattr('entity_id','in', state_attr(group_id, 'entity_id')) | selectattr('state','in',on_states) | map(attribute='entity_id') | join(', ') -%}
+          {%- if entities|trim == "" -%}
+            {{ " " }}
+          {%- else -%}
+            {{ entities }}
+          {%- endif -%}
