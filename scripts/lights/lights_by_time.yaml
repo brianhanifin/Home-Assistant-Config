@@ -11,6 +11,10 @@ lights_by_time:
                       and states.input_boolean.away_mode.state == 'off'
                       and states.input_boolean.guest_mode.state == 'off' }}"
 
+    # Get the current list of lights that are one.
+    - service: script.turn_on
+      entity_id: script.lights_on_update
+
     # Update the brightness value.
     - service: script.turn_on
       entity_id: script.light_brightness_update
