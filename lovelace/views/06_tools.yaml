@@ -112,9 +112,14 @@ cards:
               - input_select.tts_phrase_room
               - type: divider
               - input_select.tts_phrases
-              - input_text.tts_phrase
+              - type: custom:text-input-row
+                entity: input_text.tts_phrase
               - type: divider
-              - script.tts_phrase_submitted
+              - type: call-service
+                name: ' '
+                icon: 'mdi:voice'
+                action_name: Announce It...
+                service: script.tts_phrase_submitted
 
   - type: vertical-stack
     cards:
