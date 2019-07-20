@@ -5,38 +5,49 @@ alert_style_yellow: &alert_style_yellow
   style: !include ../templates/alert_style_yellow.yaml
 
 
-type: horizontal-stack
+type: vertical-stack
 cards:
   - type: vertical-stack
     cards:
-      - type: custom:auto-entities
-        filter:
-          include:
-            - domain: "persistent_notification"
-        show_empty: false
+      - type: custom:card-modder
+        <<: *alert_style_yellow
         card:
-          type: custom:card-modder
-          <<: *alert_style_yellow
-          card:
-            type: entities
-            title: Notifications
-            show_header_toggle: false
-            secondary_info: last-changed
+          type: 'custom:home-feed-card'
+          title: Home Feed
+          show_empty: false
+          show_notification_title: true
+          id_filter: persistent_notification*
 
-      - type: entity-filter
-        entities:
-          - persistent_notification.1337
-        state_filter:
-          - 'on'
-        show_empty: false
-        card:
-          type: custom:card-modder
-          <<: *alert_style_red
-          card:
-            type: glance
-            columns: 2
-            show_state: false
-            title: SAFTEY ALERT
+  # - type: vertical-stack
+  #   cards:
+  #     - type: custom:auto-entities
+  #       filter:
+  #         include:
+  #           - domain: "persistent_notification"
+  #       show_empty: false
+  #       card:
+  #         type: custom:card-modder
+  #         <<: *alert_style_yellow
+  #         card:
+  #           type: entities
+  #           title: Notifications
+  #           show_header_toggle: false
+  #           secondary_info: last-changed
+
+      # - type: entity-filter
+      #   entities:
+      #     - persistent_notification.1337
+      #   state_filter:
+      #     - 'on'
+      #   show_empty: false
+      #   card:
+      #     type: custom:card-modder
+      #     <<: *alert_style_red
+      #     card:
+      #       type: glance
+      #       columns: 2
+      #       show_state: false
+      #       title: SAFTEY ALERT
 
       - type: entity-filter
         entities:
