@@ -5,11 +5,11 @@ lights_on_update:
     - service: group.set
       data_template:
         object_id: "lights_on"
-        entities: >-
-          {% set group_id = 'group.actionable_lights' %}
-          {% set on_states = ['on'] %}
+        entities: >
+          {%- set group_id = 'group.actionable_lights' -%}
+          {%- set on_states = ['on'] -%}
           {%- set entities = states | selectattr('entity_id','in', state_attr(group_id, 'entity_id')) | selectattr('state','in',on_states) | map(attribute='entity_id') | join(', ') -%}
-          {%- if entities|trim == "" -%}
+          {%- if "light." not in entities -%}
             {{ "light.none" }}
           {%- else -%}
             {{ entities }}
@@ -19,11 +19,17 @@ lights_on_update:
       data:
         variable: lights_on
         value_template: >
-          {% set group_id = 'group.actionable_lights' %}
-          {% set on_states = ['on'] %}
+          {%- set group_id = 'group.actionable_lights' -%}
+          {%- set on_states = ['on'] -%}
           {%- set entities = states | selectattr('entity_id','in', state_attr(group_id, 'entity_id')) | selectattr('state','in',on_states) | map(attribute='entity_id') | join(', ') -%}
-          {%- if entities|trim == "" -%}
+          {%- if "light." not in entities -%}
             {{ " " }}
           {%- else -%}
             {{ entities }}
           {%- endif -%}
+
+    - service: logbook.log
+      data_template:
+        name: "DEBUG: variable.lights_on"
+        message: >
+          {{ "'" ~ states("variable.lights_on") ~ "'" }}
