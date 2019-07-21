@@ -43,17 +43,17 @@ cards:
             icon: mdi:food
             name: Dining
           - type: entity-button
-            entity: light.entry_light
+            entity: light.entry
             icon: mdi:door
             name: Entry
       - type: horizontal-stack
         cards:
           - type: entity-button
-            entity: light.family_room_light
+            entity: light.family_room
             icon: mdi:television
             name: Family
           - type: entity-button
-            entity: switch.kitchen_light
+            entity: switch.kitchen
             icon: mdi:stove
             name: Kitchen
             tap_action:
@@ -73,7 +73,7 @@ cards:
       - type: horizontal-stack
         cards:
           - type: entity-button
-            entity: light.play_room_light
+            entity: light.play_room
             icon: mdi:gamepad-variant
             name: Play Room
           - type: entity-button
@@ -163,39 +163,6 @@ cards:
       - type: markdown
         content: >
           ## Sensors
-      - type: horizontal-stack
-        cards:
-          - type: custom:mini-graph-card
-            animate: true
-            entities:
-              - entity: sensor.rainforest_energy_monitoring_unit
-                #name: Use
-            font_size: 75
-            height: 150
-            icon_adaptive_color: true
-            line_color: lightblue
-            line_width: 3
-            name: Power
-            points_per_hour: 1
-            show:
-              labels: false
-
-          - type: custom:mini-graph-card
-            animate: true
-            entities:
-              - entity: sensor.solor_power_generation
-                #name: Solar
-            font_size: 75
-            height: 150
-            icon: mdi:solar-power
-            icon_adaptive_color: true
-            line_color: orange
-            line_width: 3
-            name: Solar
-            points_per_hour: 1
-            show:
-              labels: false
-
       - type: entities
         entities:
           - entity: sensor.medicine_buddy_given_today
@@ -211,3 +178,22 @@ cards:
           #   secondary_info: last-changed
           - entity: sensor.washing_machine_status
             secondary_info: last-changed
+
+      - type: vertical-stack
+        cards:
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - entity: sensor.rainforest_energy_monitoring_unit
+                name: Power - Solar
+              - entity: sensor.solor_power_generation
+                name: Solar Only
+            font_size: 75
+            height: 150
+            icon_adaptive_color: true
+            line_color: lightblue
+            line_width: 3
+            name: Power Use/Generation
+            points_per_hour: 1
+            show:
+              labels: false
