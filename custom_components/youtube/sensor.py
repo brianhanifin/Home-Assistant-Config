@@ -14,8 +14,6 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
-__version__ = '0.2.0'
-
 CONF_CHANNEL_ID = 'channel_id'
 
 ICON = 'mdi:youtube'

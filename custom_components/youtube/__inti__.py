@@ -1,1 +1,0 @@
-"""Youtube Home Assistant integration."""
