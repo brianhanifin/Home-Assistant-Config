@@ -1,0 +1,33 @@
+---
+# Close the garage door + lock the front door if Brian or Nerene leave home.
+alias: watchdog_lock_door_at_bedtime
+initial_state: on
+trigger:
+  # When Brian's phone is charging.
+  - platform: template
+    value_template: '{{ state_attr("device_tracker.life360_brian", "battery_charging") }}'
+condition:
+  condition: and
+  conditions:
+    # Only during night time.
+    - condition: time
+      after: '20:00'
+      before: '6:00'
+    # But only if Brian or Nerene are home.
+    - condition: or
+      conditions:
+        - condition: state
+          entity_id: person.brian
+          state: 'home'
+        - condition: state
+          entity_id: person.nerene
+          state: 'home'
+action:
+  - service: lock.lock
+    entity_id: lock.front_door
+
+  - condition: state
+    entity_id: cover.garage_door
+    state:     'open'
+  - service: cover.close_cover
+    entity_id: cover.garage_door
