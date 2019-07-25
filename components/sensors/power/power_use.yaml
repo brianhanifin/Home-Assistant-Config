@@ -1,0 +1,7 @@
+platform: template
+sensors:
+  power_use:
+    value_template: >-
+      {{ states("sensor.rainforest_energy_monitoring_unit")|int + (state_attr("sensor.solar", "power_generation")|int / 1000) }}
+    friendly_name: Power Use
+    unit_of_measurement: kWh
