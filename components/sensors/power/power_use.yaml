@@ -7,4 +7,4 @@ sensors:
       - sensor.solar
     unit_of_measurement: kWh
     value_template: >-
-      {{ states("sensor.rainforest_energy_monitoring_unit")|float + (state_attr("sensor.solar", "power_generation") / 1000) }}
+      {{ states("sensor.rainforest_energy_monitoring_unit")|float + (state_attr("sensor.solar", "power_generation")|int / 1000) }}
