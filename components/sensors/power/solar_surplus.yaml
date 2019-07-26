@@ -1,0 +1,12 @@
+platform: template
+sensors:
+  solar_surplus:
+    friendly_name: Solar Surplus
+    entity_id: sensor.power_use
+    unit_of_measurement: kWh
+    value_template: >
+      {%- if states("sensor.power_use")|float < 0 -%}
+        {{ "%0.2f"|format(states("sensor.power_use")|float|abs) }}
+      {%- else -%}
+        0.0
+      {%- endif -%}
