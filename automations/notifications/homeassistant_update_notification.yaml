@@ -2,10 +2,10 @@
 # Sends alerts when a new release is available.
 #
 alias: homeassistant_update_notification
-initial_state: on
+initial_state: off
 trigger:
   - platform: template
-    value_template: "{{ states('sensor.current_version') < states('sensor.latest_version') }}"
+    value_template: "{{ states('sensor.current_version') != states('sensor.latest_version') }}"
 action:
   - service: script.notify_web
     data_template:

@@ -5,8 +5,19 @@ alert_style_yellow: &alert_style_yellow
   style: !include ../templates/alert_style_yellow.yaml
 
 
-type: horizontal-stack
+type: vertical-stack
 cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:card-modder
+        <<: *alert_style_yellow
+        card:
+          type: 'custom:home-feed-card'
+          title: Home Feed
+          show_empty: false
+          show_notification_title: true
+          id_filter: persistent_notification*
+
   - type: vertical-stack
     cards:
       - type: custom:auto-entities
@@ -67,14 +78,6 @@ cards:
 
           # ESPHome Devices
           - binary_sensor.bluetooth_hub_status
-          - binary_sensor.plug01_status
-          - binary_sensor.plug02_status
-          - binary_sensor.plug03_status
-          - binary_sensor.plug05_status
-          - binary_sensor.plug06_status
-          - binary_sensor.plug07_status
-          # - binary_sensor.plug07_status
-          # - binary_sensor.plug08_status
           - binary_sensor.sonoff_pow_01_status
           - binary_sensor.sonoff_s31_01_status
           - binary_sensor.sonoff_s31_02_status

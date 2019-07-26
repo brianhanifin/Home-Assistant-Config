@@ -11,45 +11,59 @@ lights_by_time:
                       and states.input_boolean.away_mode.state == 'off'
                       and states.input_boolean.guest_mode.state == 'off' }}"
 
+    # Get the current list of lights that are one.
+    - service: script.turn_on
+      entity_id: script.lights_on_update
+
+    # - delay:
+    #     seconds: 5
+
     # Update the brightness value.
     - service: script.turn_on
       entity_id: script.light_brightness_update
+
+    - service: logbook.log
+      data_template:
+        name: "DEBUG: get_lights_to_change()"
+        message: >
+          {% macro get_lights_to_change(brightness) -%}
+            {%- set entity_list = state_attr("group.lights_on","entity_id")|list -%}
+            {%- for entity in entity_list -%}
+              {#- Omit light if its brightness is already lower than current setting. -#}
+              {%- if "light." in entity
+                  and state_attr(entity, "brightness")|int >= brightness|int -%}
+                {{ entity }}{{ " " }}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endmacro -%}
+          {%- if "light." in entity -%}
+            {{ entity }}
+          {%- else -%}
+            {%- set brightness = states("variable.light_brightness") -%}
+            {%- set lights_to_change = get_lights_to_change(brightness)|trim|replace(" ", ",") -%}
+            {{ "'" ~ lights_to_change ~ "'"  }}
+          {%- endif %}
 
     # Adjust the brightness.
     - service: light.turn_on
       data_template:
         brightness: >
-          {{ states('variable.light_brightness') }}
+          {{ states("variable.light_brightness") }}
         entity_id: >
           {% macro get_lights_to_change(brightness) -%}
-            {%- for group in states.light|groupby('state') -%}
-              {%- for entity in group.list -%}
-                {#- Omit light if its brightness is already lower than current setting. -#}
-                {%- if entity.state == 'on'
-                    and state_attr(entity.entity_id, 'brightness')|int >= brightness|int
-                    and entity.entity_id != 'light.dummy'
-                    and entity.entity_id != 'light.garage_entry'
-                    and entity.entity_id != 'light.hue'
-                    and entity.entity_id != 'light.kitchen_cabinet'
-                    and entity.entity_id != 'light.network_closet_light'
-                    and not ('gateway_light' in entity.entity_id)
-                    and not ('hub'           in entity.entity_id)
-                    and not (entity.entity_id).endswith('_led')
-                    and not (entity.entity_id).endswith('nightlight')
-                    and not (entity.entity_id).startswith('light.lamplinc') -%}
-                    {{ entity.entity_id }}{{ ' ' }}
-                {%- endif -%}
-              {%- endfor -%}
+            {%- set entity_list = state_attr("group.lights_on","entity_id")|list -%}
+            {%- for entity in entity_list -%}
+              {#- Omit light if its brightness is already lower than current setting. -#}
+              {%- if "light." in entity
+                  and state_attr(entity, "brightness")|int >= brightness|int -%}
+                {{ entity }}{{ " " }}
+              {%- endif -%}
             {%- endfor -%}
           {%- endmacro -%}
-          {%- if entity is string -%}
+          {%- if "light." in entity -%}
             {{ entity }}
           {%- else -%}
-            {%- set brightness = states('variable.light_brightness') -%}
-            {%- set lights = get_lights_to_change(brightness)|trim|replace(' ', ',') -%}
-            {#- To avoid an error: set a dummy light in case no lights are returned. -#}
-            {%- if lights|trim == "" -%}
-              {%- set lights = 'light.dummy' -%}
-            {%- endif -%}
-            {{ lights }}
+            {%- set brightness = states("variable.light_brightness") -%}
+            {%- set lights_to_change = get_lights_to_change(brightness)|trim|replace(" ", ",") -%}
+            {{ lights_to_change }}
           {%- endif %}

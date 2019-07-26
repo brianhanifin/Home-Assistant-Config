@@ -1,0 +1,11 @@
+---
+############################################
+## Create the actionable lights group.
+############################################
+create_every_light_group:
+  sequence:
+    - service: group.set
+      data_template:
+        object_id: "every_light"
+        entities: >
+          {{ states.light |  map(attribute='entity_id') | join(',') }}

@@ -7,6 +7,10 @@ trigger:
   platform: homeassistant
   event: start
 action:
+  - service: frontend.set_theme
+    data:
+      name: slate
+
   # Make sure the Hot Water Pump is turned off at startup.
   - service: switch.turn_off
     entity_id: switch.hot_water_pump
@@ -15,6 +19,10 @@ action:
   # so turn it back off.
   - service: light.turn_off
     entity_id: light.garage_entry
+
+  # Create group.actionable_lights to replace group.all_lights.
+  - service: script.turn_on
+    entity_id: script.create_actionable_lights_group
 
   # script.set_light_brightness_pct_by_time runs multiple times at startup,
   # delay the first calling of that script.
