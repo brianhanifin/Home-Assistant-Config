@@ -25,7 +25,7 @@ action:
 
   - service: script.notify_mobile
     data_template:
-      title: "LEAK DETECTED!"
+      title: "WATER LEAK DETECTED!"
       message: >
         {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
         {{ room|upper }}: A leak has been detected!
@@ -33,7 +33,8 @@ action:
 
   - service: persistent_notification.create
     data_template:
-      title: "LEAK DETECTED!"
+      title: "WATER LEAK DETECTED!"
       message: >
         {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
         {{ room|upper }}: A leak has been detected!
+      notification_id: "safety"

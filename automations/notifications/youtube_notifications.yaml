@@ -7,6 +7,14 @@ trigger:
     - sensor.drzzs
     - sensor.franck_nijhof
 action:
+  - service: persistent_notification.create
+    data_template:
+      title: "YouTube: {{ trigger.event.data.friendly_name }}"
+      message: >-
+        {{ trigger.to_state.state }}
+        {{ trigger.event.data.url }}
+      notification_id: "youtube"
+
   - service: script.notify_mobile
     data_template:
       title: "YouTube: {{ trigger.event.data.friendly_name }}"
