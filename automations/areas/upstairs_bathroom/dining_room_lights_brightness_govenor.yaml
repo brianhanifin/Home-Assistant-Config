@@ -1,0 +1,15 @@
+---
+##############################################
+## Upstairs Bathroom Nightlight Govenor
+##############################################
+alias: dining_room_light_govenor
+initial_state: on
+trigger:
+  platform: state
+  entity_id: light.dining_room
+  to: "on"
+action:
+  - service: light.turn_on
+    data:
+      entity_id: light.dining_room
+      brightness: 255
