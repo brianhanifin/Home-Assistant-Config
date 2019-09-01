@@ -1,13 +1,13 @@
 platform: template
 sensors:
-  solar_surplus:
-    friendly_name: Solar Surplus
+  solar_deficit:
+    friendly_name: Solar Deficit
     entity_id: sensor.power_use
     unit_of_measurement: kWh
     value_template: >
       {%- set use = states("sensor.power_use")|float -%}
-      {%- set generation= states("sensor.solor_power_generation")|float -%}
-      {%- if generation > use -%}
+      {%- set generation = states("sensor.solor_power_generation")|float -%}
+      {%- if use > generation -%}
         {{ "%0.3f"|format( generation - use ) }}
       {%- else -%}
         0.00

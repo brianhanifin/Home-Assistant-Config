@@ -1,0 +1,10 @@
+platform: template
+sensors:
+  solar_difference:
+    friendly_name: Solar Difference
+    entity_id: sensor.power_use
+    unit_of_measurement: kWh
+    value_template: >
+      {%- set use = states("sensor.power_use")|float -%}
+      {%- set generation = states("sensor.solor_power_generation")|float -%}
+      {{ "%0.3f"|format( generation - use ) }}
