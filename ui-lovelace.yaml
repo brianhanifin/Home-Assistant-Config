@@ -7,10 +7,12 @@
 # Views are actually include one by one, this to guarantee the order of
 # the tabs of the view in the UI.
 #
-title: Home Control Panel
+title: Home
 #background: center / cover no-repeat url("/local/blue-gradient.jpg") fixed
-resources: !include_dir_list /config/lovelace/
+resources: !include_dir_list /config/lovelace/resources
+#background: var(--background-image)
 cch: !include /config/lovelace/compact-custom-header.yaml
+decluttering_templates: !include /config/lovelace/templates/decluttering-templates.yaml
 views:
   - !include /config/lovelace/views/00_home.yaml
   - !include /config/lovelace/views/01_rooms.yaml
@@ -20,3 +22,46 @@ views:
   - !include /config/lovelace/views/05_makerspace.yaml
   - !include /config/lovelace/views/06_tools.yaml
   - !include /config/lovelace/views/99_test.yaml
+
+# Views
+# The following 5 views are swipable, the order
+# of these 5 files is the swipe order as well.
+# The first view is the page 0. In my setup
+# the interface defaults to view 1.
+
+  # - !include lovelace/views/climate.yaml
+  # - !include lovelace/views/home.yaml
+  # - !include lovelace/views/lights.yaml
+  # - !include lovelace/views/devices.yaml
+  # - !include lovelace/views/security.yaml
+
+# The views below are used as fake popup cards
+# They are non swipable and will behave just like
+# a popup card or conditional cards. The order of
+# these files will not change anything.
+  # - !include lovelace/views/vacuum.yaml
+  # - !include lovelace/views/vacuum-zoned-cleaning.yaml
+  # - !include lovelace/views/alarm.yaml
+
+  # - !include lovelace/views/brian.yaml
+  # - !include lovelace/views/nerene.yaml
+  # - !include lovelace/views/buddy.yaml
+  # - !include lovelace/views/scenes.yaml
+  # - !include lovelace/views/main_menu.yaml
+  # - !include lovelace/views/contributions.yaml
+  # - !include lovelace/views/floorplan.yaml
+  # - !include lovelace/views/remote.yaml
+  # - !include lovelace/views/links.yaml
+  # - !include lovelace/views/calendar.yaml
+  # - !include lovelace/views/laundry.yaml
+  # - !include lovelace/views/media.yaml
+  # - !include lovelace/views/energy.yaml
+  # - !include lovelace/views/other.yaml
+  # - !include lovelace/views/currently_on.yaml
+  # - !include lovelace/views/location.yaml
+  # - !include lovelace/views/themes.yaml
+  # - !include lovelace/views/weather.yaml
+
+  # - !include lovelace/views/postnl-jimmy.yaml
+  # - !include lovelace/views/postnl-stephanie.yaml
+  # - !include lovelace/views/downloads.yaml
