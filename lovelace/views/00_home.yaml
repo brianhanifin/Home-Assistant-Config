@@ -14,7 +14,7 @@ tap_toggle: &tap_toggle
 
 
 title: Control Panel
-path: home
+path: 00_home
 #icon: mdi:apps
 icon: fas:th
 popup_cards: !include popup_cards_home.yaml
@@ -185,23 +185,79 @@ cards:
 
       - type: vertical-stack
         cards:
-          - type: custom:mini-graph-card
-            animate: true
-            entities:
-              # - entity: sensor.rainforest_energy_monitoring_unit
-              #   name: Power/Solar Offset
-              - entity: sensor.power_use
-                name: Power Use
-              - entity: sensor.solor_power_generation
-                name: Solar Generation
-              - entity: sensor.solar_surplus
-                name: Solar Surplus
-            font_size: 75
-            height: 150
-            icon_adaptive_color: true
-            line_color: lightblue
-            line_width: 3
-            name: Home Power
-            points_per_hour: 1
-            show:
-              labels: false
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:swipe-card
+                card_width: '90%'
+                parameters:
+                  centeredSlides: true
+                  slidesPerView: 'auto'
+                  spaceBetween: 8
+                  pagination:
+                    #type: 'progressbar'
+                    type: 'bullets'
+                  navigation:
+                  keyboard:
+                    enabled: true
+                    onlyInViewport: true
+                cards:
+                  - type: custom:mini-graph-card
+                    animate: true
+                    entities:
+                      # - entity: sensor.rainforest_energy_monitoring_unit
+                      #   name: Power/Solar Offset
+                      - entity: sensor.power_use
+                        name: Power Use
+                        color: lightblue
+                      - entity: sensor.solor_power_generation
+                        name: Solar Generation
+                        color: orange
+                      - entity: sensor.solar_difference_hourly
+                        name: Solar Difference
+                        color: lightgreen
+                    font_size: 75
+                    height: 150
+                    icon_adaptive_color: true
+                    line_color: lightblue
+                    line_width: 3
+                    name: Home Power
+                    points_per_hour: 1
+                    show:
+                      #average: true
+                      #extrema: true
+                      icon: false
+                      #labels: false
+                      #graph: bar
+                      #state: false
+
+                  - type: custom:mini-graph-card
+                    animate: true
+                    entities:
+                      # - entity: sensor.rainforest_energy_monitoring_unit
+                      #   name: Power/Solar Offset
+                      # - entity: sensor.power_use
+                      #   name: Power Use
+                      #   color: lightblue
+                      # - entity: sensor.solor_power_generation
+                      #   name: Solar Generation
+                      - entity: sensor.solar_surplus
+                        name: Solar Surplus
+                        color: lightgreen
+                      - entity: sensor.solar_deficit
+                        name: Solar Deficit
+                        color: red
+                    font_size: 75
+                    height: 150
+                    icon_adaptive_color: true
+                    line_color: lightblue
+                    line_width: 3
+                    name: Solar Power Surplus (+/-)
+                    points_per_hour: 1
+                    show:
+                      #average: true
+                      #extrema: true
+                      icon: false
+                      #labels: false
+                      #graph: bar
+                      #state: false
