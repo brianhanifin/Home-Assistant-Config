@@ -1,18 +1,13 @@
 ---
-alias: glowforge_finishing
+alias: glowforge_off
 initial_state: on
 trigger:
   - platform: numeric_state
     entity_id: sensor.sonoff_s31_01_power
-    below: 150
-condition:
-  condition: and
-  conditions:
-    - condition: state
-      entity_id: input_select.glowforge_status
-      state: Running
+    below: 10
 action:
   - service: input_select.select_option
     data:
       entity_id: input_select.glowforge_status
-      option: Finishing
+      option: Off
+
