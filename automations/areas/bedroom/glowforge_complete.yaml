@@ -1,0 +1,23 @@
+---
+alias: glowforge_complete
+initial_state: on
+trigger:
+  - platform: state
+    entity_id: input_select.washing_machine_status
+    to: Complete
+action:
+  - service: script.notify_speech
+    data_template:
+      media_player: media_player.kitchen
+      message: "Glowforge is complete!"
+
+  - service: script.notify_mobile
+    data_template:
+      title: "Glowforge"
+      message: "Glowforge is complete!"
+      who: "brian"
+
+  #- service: script.notify_web
+  #  data_template:
+  #     title: "Glowforge"
+  #     message: "Glowforge is complete!"

@@ -1,0 +1,20 @@
+---
+alias: glowforge_idle
+initial_state: on
+trigger:
+  - platform: state
+    entity_id: input_select.glowforge_status
+    to: Clean
+    for:
+      minutes: 60
+condition:
+  condition: and
+  conditions:
+    - condition: state
+      entity_id: input_select.glowforge_status
+      state: Completed
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.glowforge_status
+      option: Idle

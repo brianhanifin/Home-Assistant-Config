@@ -1,0 +1,19 @@
+---
+alias: glowforge_running
+initial_state: on
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.sonoff_s31_01_power
+    above: 150
+action:
+  - delay:
+      minutes: 2
+
+  - condition: numeric_state
+    entity_id: sensor.sonoff_s31_01_power
+    above: 150
+
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.glowforge_status
+      option: Running
