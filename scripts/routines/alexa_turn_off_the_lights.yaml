@@ -1,0 +1,14 @@
+---
+# "Alexa, turn off the lights"
+alexa_turn_off_the_lights:
+  sequence:
+    - service: homeassistant.turn_off
+      data_template:
+        entity_id: >-
+          {% filter trim|replace("\n", "")|replace("\t", " ") %}
+            {# Use the name of each Echo to determine which room the command likely came from. #}
+            {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+            {%- set room = room|replace('master_','') -%}
+
+            group.{{ room }}_lights
+          {% endfilter %}

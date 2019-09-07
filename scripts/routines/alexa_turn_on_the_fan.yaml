@@ -1,0 +1,12 @@
+---
+# "Alexa, turn on the fan"
+alexa_turn_on_the_fan:
+  sequence:
+    - service: switch.turn_on
+      data_template:
+        entity_id: >-
+          {# Use the name of each Echo to determine which room the command likely came from. #}
+          {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+          {%- set room = room|replace('master_','')|replace('kitchen','family_room') -%}
+
+          switch.{{ room }}_fan
