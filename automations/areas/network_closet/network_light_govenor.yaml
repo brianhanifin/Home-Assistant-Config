@@ -1,9 +1,10 @@
 ---
-alias: watchdog_network_closet_open
+alias: network_closet_light_govenor
 initial_state: on
 trigger:
   platform: state
-  entity_id: binary_sensor.network_closet_door
+  entity_id: light.network_closet
+  from: "off"
   to: "on"
 action:
   - service: light.turn_on
