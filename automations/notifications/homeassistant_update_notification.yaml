@@ -4,13 +4,16 @@
 alias: homeassistant_update_notification
 initial_state: off
 trigger:
-  # - platform: template
-  #   value_template: "{{ states('sensor.current_version') != states('sensor.latest_version') }}"
-
-  # New sensor in 0.98
-  - platform: state
-    entity_id: binary_sensor.updater
-    to: "on"
+  platform: state
+  entity_id: sensor.version_available
+condition:
+  - condition: template
+    value_template: >-
+      {{
+        states('sensor.lastest_version')
+        !=
+        states('sensor.current_version')
+      }}
 action:
   - service: script.notify_web
     data_template:

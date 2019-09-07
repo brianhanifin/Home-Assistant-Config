@@ -7,6 +7,7 @@
 #        title: 'Startup: Home Assistant is Up and Running!'
 #        message: "{{ trigger.to_state.state }}"
 #        who: "brian | nerene | lucas | kyle | family | parents"
+#        id: messages with same id are grouped
 #        image: "{{ trigger.event.data.entity_picture }}"
 #        url: "{{ trigger.event.data.url }}"
 ######################################################################################################
@@ -18,27 +19,35 @@ notify_mobile:
     - service_template: >
         {% if who is not string %}{% set who = 'brian' %}{% endif %}
         {% if who == 'brian' %}
-          notify.brian
+          notify.mobile_app_brians_iphone
         {% elif who == 'family' %}
           notify.family
         {% elif who == 'kids' %}
           notify.kids
         {% elif who == 'kyle' %}
-          notify.kyle
+          notify.mobile_app_ipad_pro_white
         {% elif who == 'lucas' %}
-          notify.lucas
+          notify.mobile_app_ipad_pro_red
         {% elif who == 'nerene' %}
-          notify.nerene
+          notify.mobile_app_nerenes_iphone
         {% elif who == 'parents' %}
           notify.parents
-        {% else %}
-          notify.brian
         {% endif %}
       data_template:
         title: "{{ title }}"
         message: "{{ message }}"
         data:
-          url: "{{ url }}"
-          attachment:
-            url: "{{ image }}"
-            hide-thumbnail: false
+          # url: "{{ url }}"
+          push:
+            apns_headers:
+              apns-collapse-id: >-
+                {%- if replacable_id is not string -%}{%- set replacable_id = none -%}{%- endif -%}
+                {{ replacable_id }}
+            thread-id: >-
+              {%- if id is not string -%}{%- set id = "HOMEASSISTANT" -%}{%- endif -%}
+              {{ id|upper }}
+        #     sound: "{{ sound }}"
+
+
+            # url: "{{ image }}"
+            # hide-thumbnail: false
