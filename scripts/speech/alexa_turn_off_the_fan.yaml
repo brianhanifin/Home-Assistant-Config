@@ -1,0 +1,19 @@
+---
+# "Alexa, turn on the fan"
+alexa_turn_off_the_fan:
+  sequence:
+    - service: switch.turn_off
+      data_template:
+        entity_id: >
+          {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+          {%- if room == "kitchen" -%}
+            switch.family_room_fan
+          {%- elif room == "family_room" -%}
+            switch.family_room_fan
+          {%- elif room == "garage" -%}
+            switch.garage_fan
+          {%- elif room == "master_bedroom" -%}
+            switch.bedroom_fan
+          {%- elif room == "play_room" -%}
+            switch.play_room_fan
+          {%- endif -%}
