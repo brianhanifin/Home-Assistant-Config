@@ -22,27 +22,27 @@ lights_by_time:
     - service: script.turn_on
       entity_id: script.light_brightness_update
 
-    - service: logbook.log
-      data_template:
-        name: "DEBUG: get_lights_to_change()"
-        message: >
-          {% macro get_lights_to_change(brightness) -%}
-            {%- set entity_list = state_attr("group.lights_on","entity_id")|list -%}
-            {%- for entity in entity_list -%}
-              {#- Omit light if its brightness is already lower than current setting. -#}
-              {%- if "light." in entity
-                  and state_attr(entity, "brightness")|int >= brightness|int -%}
-                {{ entity }}{{ " " }}
-              {%- endif -%}
-            {%- endfor -%}
-          {%- endmacro -%}
-          {%- if "light." in entity -%}
-            {{ entity }}
-          {%- else -%}
-            {%- set brightness = states("variable.light_brightness") -%}
-            {%- set lights_to_change = get_lights_to_change(brightness)|trim|replace(" ", ",") -%}
-            {{ "'" ~ lights_to_change ~ "'"  }}
-          {%- endif %}
+    # - service: logbook.log
+    #   data_template:
+    #     name: "DEBUG: get_lights_to_change()"
+    #     message: >
+    #       {% macro get_lights_to_change(brightness) -%}
+    #         {%- set entity_list = state_attr("group.lights_on","entity_id")|list -%}
+    #         {%- for entity in entity_list -%}
+    #           {#- Omit light if its brightness is already lower than current setting. -#}
+    #           {%- if "light." in entity
+    #               and state_attr(entity, "brightness")|int >= brightness|int -%}
+    #             {{ entity }}{{ " " }}
+    #           {%- endif -%}
+    #         {%- endfor -%}
+    #       {%- endmacro -%}
+    #       {%- if "light." in entity -%}
+    #         {{ entity }}
+    #       {%- else -%}
+    #         {%- set brightness = states("variable.light_brightness") -%}
+    #         {%- set lights_to_change = get_lights_to_change(brightness)|trim|replace(" ", ",") -%}
+    #         {{ "'" ~ lights_to_change ~ "'"  }}
+    #       {%- endif %}
 
     # Adjust the brightness.
     - service: light.turn_on
