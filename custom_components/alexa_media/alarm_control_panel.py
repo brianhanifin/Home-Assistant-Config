@@ -12,56 +12,60 @@ from typing import List  # noqa pylint: disable=unused-import
 
 from homeassistant import util
 from homeassistant.components.alarm_control_panel import AlarmControlPanel
-from homeassistant.const import (STATE_ALARM_ARMED_AWAY,
-                                 STATE_ALARM_DISARMED)
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.const import STATE_ALARM_ARMED_AWAY, STATE_ALARM_DISARMED
 from homeassistant.helpers.event import async_call_later
 
-from . import DATA_ALEXAMEDIA
+from . import (CONF_EMAIL, CONF_EXCLUDE_DEVICES, CONF_INCLUDE_DEVICES,
+               DATA_ALEXAMEDIA)
 from . import DOMAIN as ALEXA_DOMAIN
 from . import MIN_TIME_BETWEEN_FORCED_SCANS, MIN_TIME_BETWEEN_SCANS, hide_email
+from .helpers import add_devices, retry_async
 
 _LOGGER = logging.getLogger(__name__)
 
 DEPENDENCIES = [ALEXA_DOMAIN]
 
-
+@retry_async(limit=5, delay=2, catch_exceptions=True)
 async def async_setup_platform(hass,
                                config,
                                add_devices_callback,
                                discovery_info=None) -> bool:
     """Set up the Alexa alarm control panel platform."""
     devices = []  # type: List[AlexaAlarmControlPanel]
-    for account, account_dict in (hass.data[DATA_ALEXAMEDIA]
-                                  ['accounts'].items()):
-        alexa_client: AlexaAlarmControlPanel = AlexaAlarmControlPanel(
-            account_dict['login_obj'])
-        await alexa_client.init()
-        if not (alexa_client and alexa_client.unique_id):
-            _LOGGER.debug("%s: Skipping creation of uninitialized device: %s",
-                          hide_email(account),
-                          alexa_client)
-            continue
+    config = discovery_info['config']
+    account = config[CONF_EMAIL]
+    include_filter = config.get(CONF_INCLUDE_DEVICES, [])
+    exclude_filter = config.get(CONF_EXCLUDE_DEVICES, [])
+    account_dict = hass.data[DATA_ALEXAMEDIA]['accounts'][account]
+    if 'alarm_control_panel' not in (account_dict
+                                     ['entities']):
+        (hass.data[DATA_ALEXAMEDIA]
+         ['accounts']
+         [account]
+         ['entities']['alarm_control_panel']) = {}
+    alexa_client: AlexaAlarmControlPanel = AlexaAlarmControlPanel(
+        account_dict['login_obj'])
+    await alexa_client.init()
+    if not (alexa_client and alexa_client.unique_id):
+        _LOGGER.debug("%s: Skipping creation of uninitialized device: %s",
+                      hide_email(account),
+                      alexa_client)
+    elif alexa_client.unique_id not in (account_dict
+                                        ['entities']
+                                        ['alarm_control_panel']):
         devices.append(alexa_client)
         (hass.data[DATA_ALEXAMEDIA]
          ['accounts']
          [account]
          ['entities']
-         ['alarm_control_panel']) = alexa_client
-    if devices:
-        _LOGGER.debug("Adding %s", devices)
-        try:
-            add_devices_callback(devices, True)
-        except HomeAssistantError as exception_:
-            message = exception_.message  # type: str
-            if message.startswith("Entity id already exists"):
-                _LOGGER.debug("Device already added: %s",
-                              message)
-            else:
-                _LOGGER.debug("Unable to add devices: %s : %s",
-                              devices,
-                              message)
-    return True
+         ['alarm_control_panel'][alexa_client.unique_id]) = alexa_client
+    else:
+        _LOGGER.debug("%s: Skipping already added device: %s",
+                      hide_email(account),
+                      alexa_client)
+    return await add_devices(hide_email(account),
+                             devices, add_devices_callback,
+                             include_filter, exclude_filter)
 
 
 class AlexaAlarmControlPanel(AlarmControlPanel):
@@ -108,7 +112,6 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
                               self._guard_entity_id)
         if not self._appliance_id:
             _LOGGER.debug("%s: No Alexa Guard entity found", self.account)
-            return None
 
     async def async_added_to_hass(self):
         """Store register state change callback."""

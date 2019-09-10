@@ -3,27 +3,12 @@ log:
   logfile: STDOUT
   errorfile: STDERR
 appdaemon:
-  # If you are using AppDaemon just for the dasboard and not the Apps, you can disable the app engine with the following directive:
-  #disable_apps: 1  # This will free up some CPU and memory.
   threads: 10
   app_dir: /config/appdaemon/apps
   plugins:
     HASS:
       type: hass
-      ha_url: !secret hass_baseurl
-      ha_key: !secret http_pass
+      ha_url: hass_baseurl
 hadashboard:
   dash_url: http://127.0.0.1:5050
   dash_dir: /config/appdaemon/dashboards
-
-# HassStatesLoad:
-#   module: hass_states_load
-#   class: HassStatesLoad
-#   path: /config/saved_states.ini
-#   isloaded_switch: input_boolean.hass_saved_states_loaded
-# HassStatesSave:
-#   module: hass_states_save
-#   class: HassStatesSave
-#   path: /config/saved_states.ini
-#   isloaded_switch: input_boolean.hass_saved_states_loaded
-#   constrain_input_boolean: input_boolean.hass_saved_states_loaded
