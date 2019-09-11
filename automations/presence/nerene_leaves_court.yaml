@@ -1,0 +1,23 @@
+---
+# Notify when Nerene leaves court.
+alias: nerene_leaves_court
+initial_state: on
+trigger:
+  platform: zone
+  event: leave
+  zone: zone.court
+  entity_id: person.nerene
+condition:
+  condition: time
+  after: '13:00'
+  before: '17:00'
+action:
+  - service: script.say
+    data_template:
+      media_player: group.alexa_welcome
+      message: >
+        {{ [
+          "Just a head's up, Nerene is done with court.",
+          "Your mom is on her way home from court."
+        ]|random }}
+      say_greeting: "false"
