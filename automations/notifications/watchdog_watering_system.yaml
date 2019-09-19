@@ -1,0 +1,21 @@
+alias: watchdog_watering_system
+initial_state: off
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.aquatimer_control_unit_status
+      - binary_sensor.side_yard_status
+    to: 'off'
+    for: '02:00:00'
+action:
+  - service: script.notify_web
+    data_template:
+      title: "Watering System Offline"
+      message: "The Melnor Aquatimer has been offline for 2 hours!"
+      id: "update"
+
+  - service: script.notify_mobile
+    data_template:
+      title: "Watering System Offline"
+      message: "The Melnor Aquatimer has been offline for 2 hours"
+      who: "brian"
