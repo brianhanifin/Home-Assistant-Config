@@ -1,0 +1,32 @@
+---
+# button presses:
+#   0   Release
+#   1   on
+#   4   off
+#   8   dim_up
+#   16  dim_down
+#   2   preset
+lutron_pico_button_handler:
+  sequence:
+    # - service: persistent_notification.create
+    #   data_template:
+    #     title: "lutron_pico_button_handler"
+    #     message: >
+    #       button =
+    #       {% if button == "4" -%}
+    #         script.lutron_pico_light_off
+    #       {%- else -%}
+    #         script.lutron_pico_light_on
+    #       {%- endif %}
+    #       button = "{{ button }}"
+    #       light = "{{ 'light.' + area|lower|replace(' ','_') }}"
+
+    - service_template: >
+        {% if button == "4" -%}
+          script.lutron_pico_light_off
+        {%- else -%}
+          script.lutron_pico_light_on
+        {%- endif %}
+      data_template:
+        button: "{{ button }}"
+        light: "{{ 'light.' + area|lower|replace(' ','_') }}"

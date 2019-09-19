@@ -1,0 +1,25 @@
+alias: lutron_pico_remote_click
+initial_state: on
+trigger:
+  platform: state
+  entity_id:
+    - sensor.dining_room_remote
+    - sensor.entry_remote
+    - sensor.play_room_1_remote
+    - sensor.play_room_2_remote
+condition:
+  - condition: template
+    value_template: "{{ trigger.to_state.state != '0' }}"
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "lutron_pico_remote_click"
+  #     message: "button: {{ trigger.to_state.state }}"
+
+  #buttons: 0=none, 1=on, 4=off, 8=dim_up, 16=dim_down, 2=preset
+  - service: script.lutron_pico_button_handler
+    data_template:
+      button: >
+        {{ trigger.to_state.state }}
+      area: >
+        {{ trigger.to_state.attributes.area_name }}

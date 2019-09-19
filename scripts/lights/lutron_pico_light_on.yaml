@@ -1,0 +1,40 @@
+---
+lutron_pico_light_on:
+  sequence:
+    # - service: persistent_notification.create
+    #   data_template:
+    #     title: "lutron_pico_light_on"
+    #     message: >
+    #       light =
+    #       {{ light }}
+    #       button =
+    #       {{ button }}
+
+    - service: light.turn_on
+      data_template:
+        entity_id: "{{ light }}"
+
+    - service: light.turn_on
+      data_template:
+        entity_id: "{{ light }}"
+        brightness: >
+          {%- set brightness = state_attr(light, "brightness")|int -%}
+          {%- if button == "2" -%}
+            152
+          {%- elif button == "8" -%}
+            {%- set brightness = brightness + 51 -%}
+            {%- if brightness < 254 -%}
+              {{ brightness }}
+            {%- else -%}
+              254
+            {%- endif -%}
+          {%- elif button == "16" -%}
+            {%- set brightness = brightness - 51 -%}
+            {%- if brightness >= 51 -%}
+              {{ brightness }}
+            {%- else -%}
+              51
+            {%- endif -%}
+          {%- else -%}
+            254
+          {%- endif %}
