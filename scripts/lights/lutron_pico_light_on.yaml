@@ -18,23 +18,14 @@ lutron_pico_light_on:
       data_template:
         entity_id: "{{ light }}"
         brightness: >
-          {%- set brightness = state_attr(light, "brightness")|int -%}
           {%- if button == "2" -%}
             152
           {%- elif button == "8" -%}
-            {%- set brightness = brightness + 51 -%}
-            {%- if brightness < 254 -%}
-              {{ brightness }}
-            {%- else -%}
-              254
-            {%- endif -%}
+            {%- set brightness = state_attr(light, "brightness")|int -%}
+            {{ [254, brightness + 51]|min }}
           {%- elif button == "16" -%}
-            {%- set brightness = brightness - 51 -%}
-            {%- if brightness >= 51 -%}
-              {{ brightness }}
-            {%- else -%}
-              51
-            {%- endif -%}
+            {%- set brightness = state_attr(light, "brightness")|int -%}
+            {{ [51,  brightness - 51]|max }}
           {%- else -%}
             254
           {%- endif %}
