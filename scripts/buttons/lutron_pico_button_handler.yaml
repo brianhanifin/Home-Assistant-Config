@@ -12,21 +12,31 @@ lutron_pico_button_handler:
     #   data_template:
     #     title: "lutron_pico_button_handler"
     #     message: >
-    #       button =
     #       {% if button == "4" -%}
     #         script.lutron_pico_light_off
     #       {%- else -%}
     #         script.lutron_pico_light_on
     #       {%- endif %}
+    #       remote = "{{ remote }}"
+    #       area =   "{{ area|lower|replace(' ','_')|replace('playroom','play_room') }}"
     #       button = "{{ button }}"
-    #       light = "{{ 'light.' + area|lower|replace(' ','_') }}"
+    #       light =  "{{ 'light.' + area|lower|replace(' ','_')|replace('playroom','play_room') }}"
 
     - service_template: >
-        {% if button == "4" -%}
-          script.lutron_pico_light_off
+        {% set area = area|lower|trim|replace(' ','_')|replace('playroom','play_room') -%}
+        {%- if area == "dining_room" -%}
+          {%- if button == "4" -%}
+            script.lutron_pico_generic_light_off
+          {%- else -%}
+            script.lutron_pico_generic_light_on
+          {%- endif %}
+
         {%- else -%}
-          script.lutron_pico_light_on
-        {%- endif %}
+          {%- if button == "2" -%}
+            script.lutron_pico_middle_toggle
+          {%- endif %}
+        {%- endif -%}
       data_template:
+        remote: "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
         button: "{{ button }}"
-        light: "{{ 'light.' + area|lower|replace(' ','_') }}"
+        light:  "{{ 'light.' + area|lower|replace(' ','_') }}"

@@ -1,0 +1,27 @@
+---
+lutron_pico_middle_toggle:
+  sequence:
+    # - service: persistent_notification.create
+    #   data_template:
+    #     title: "lutron_pico_middle_toggle"
+    #     message: >
+    #       remote = {{ remote }}
+    #       light =
+    #       {%- if remote == "entry" -%}
+    #         light.dummy
+    #       {%- elif remote == "play_room_1" -%}
+    #         light.play_room_floor_lamp
+    #       {%- elif remote == "play_room_2" -%}
+    #         light.garage_entry
+    #       {%- endif -%}
+
+    - service: light.toggle
+      data_template:
+        entity_id: >
+          {%- if remote == "entry" -%}
+            light.dummy
+          {%- elif remote == "play_room_1" -%}
+            light.play_room_floor_lamp
+          {%- elif remote == "play_room_2" -%}
+            light.garage_entry
+          {%- endif -%}

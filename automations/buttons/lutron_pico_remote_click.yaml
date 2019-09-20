@@ -14,12 +14,11 @@ action:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "lutron_pico_remote_click"
-  #     message: "button: {{ trigger.to_state.state }}"
+  #     message: "{{ trigger.to_state }}"
 
   #buttons: 0=none, 1=on, 4=off, 8=dim_up, 16=dim_down, 2=preset
   - service: script.lutron_pico_button_handler
     data_template:
-      button: >
-        {{ trigger.to_state.state }}
-      area: >
-        {{ trigger.to_state.attributes.area_name }}
+      remote: "{{ trigger.to_state.entity_id }}"
+      button: "{{ trigger.to_state.state }}"
+      area:   "{{ trigger.to_state.attributes.area_name }}"
