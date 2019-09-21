@@ -15,9 +15,6 @@ cards:
   # Family Room
   - type: vertical-stack
     cards:
-      - type: custom:search-card
-        max_results: 10
-
       - type: markdown
         content: >
           ## Family Room
@@ -125,6 +122,33 @@ cards:
             name: Fan
             tap_action:
               action: toggle
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - sensor.garage_temperature
+            font_size: 75
+            hours_to_show: 6
+            line_color: orange
+            line_width: 8
+            name: Temperature
+            points_per_hour: 4
+            show:
+              labels: false
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - sensor.garage_humidity
+            font_size: 75
+            hours_to_show: 6
+            line_color: lightblue
+            line_width: 8
+            name: Humidity
+            points_per_hour: 6
+            show:
+              labels: false
+
 
   # Bedroom
   - type: vertical-stack
@@ -171,34 +195,6 @@ cards:
           ## Upstairs Bathroom
       - type: horizontal-stack
         cards:
-          - type: custom:mini-graph-card
-            animate: true
-            entities:
-              - sensor.upstairs_bathroom_humidity
-            font_size: 75
-            hours_to_show: 6
-            line_color: lightblue
-            line_width: 8
-            name: Humidity
-            points_per_hour: 6
-            show:
-              labels: false
-          - type: custom:mini-graph-card
-            animate: true
-            entities:
-              - entity: sensor.upstairs_bathroom_temperature
-                unit_of_measurement: °F
-            font_size: 75
-            hours_to_show: 6
-            line_color: orange
-            line_width: 8
-            name: Temperature
-            points_per_hour: 4
-            show:
-              labels: false
-
-      - type: horizontal-stack
-        cards:
           - type: entity-button
             entity: light.upstairs_bathroom_nightlight
             icon: fas:rocket
@@ -216,6 +212,33 @@ cards:
           - <<: *blank-button
           - <<: *blank-button
           - <<: *blank-button
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - entity: sensor.upstairs_bathroom_temperature
+                unit_of_measurement: °F
+            font_size: 75
+            hours_to_show: 6
+            line_color: orange
+            line_width: 8
+            name: Temperature
+            points_per_hour: 4
+            show:
+              labels: false
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - sensor.upstairs_bathroom_humidity
+            font_size: 75
+            hours_to_show: 6
+            line_color: lightblue
+            line_width: 8
+            name: Humidity
+            points_per_hour: 6
+            show:
+              labels: false
 
   - type: vertical-stack
     cards:
@@ -291,3 +314,29 @@ cards:
             name: Door
             tap_action:
               action: toggle
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - sensor.outside_temperature
+            font_size: 75
+            hours_to_show: 6
+            line_color: orange
+            line_width: 8
+            name: Temperature
+            points_per_hour: 4
+            show:
+              labels: false
+          - type: custom:mini-graph-card
+            animate: true
+            entities:
+              - sensor.outside_humidity
+            font_size: 75
+            hours_to_show: 6
+            line_color: lightblue
+            line_width: 8
+            name: Humidity
+            points_per_hour: 6
+            show:
+              labels: false
