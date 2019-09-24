@@ -4,7 +4,100 @@ path: outdoors
 icon: fas:seedling
 popup_cards: !include popup_cards_outdoors.yaml
 cards:
-  - !include ../templates/alerts.yaml
+  - type: vertical-stack
+    cards:
+      - !include ../templates/alerts.yaml
+
+      # - type: custom:simple-weather-card
+      #   entity: weather.dark_sky
+      #   name: in Santee
+      #   backdrop: true
+
+      - type: custom:weather-card
+        entity: weather.dark_sky
+
+      - type: picture-entity
+        entity: camera.radar
+
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Garden Irrigation
+      - type: custom:swipe-card
+        card_width: '90%'
+        parameters:
+          centeredSlides: true
+          slidesPerView: 'auto'
+          spaceBetween: 8
+          pagination:
+            #type: 'progressbar'
+            type: 'bullets'
+          navigation:
+          keyboard:
+            enabled: true
+            onlyInViewport: true
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Garden Irrigation
+              - type: entities
+                entities:
+                  - entity: switch.front_yard_automatic_watering
+                    name: Scheduled
+                  - entity: sensor.front_yard_next_cycle
+                    name: Next Schedule
+                    secondary_info: last-changed
+                  - type: call-service
+                    name: Run for 15 minutes
+                    action_name: Start Now
+                    service: switch.toggle
+                    service_data:
+                      entity_id: switch.front_yard_manual_watering
+                  - entity: binary_sensor.front_yard_watering
+                    secondary_info: last-changed
+                  - entity: sensor.front_yard_remaining_watering_time
+                    name: Time Remaining
+
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Pool Filler
+              - type: entities
+                entities:
+                  - entity: switch.pool_filler_automatic_watering
+                    name: Scheduled
+                  - entity: sensor.pool_filler_next_cycle
+                    name: Next Schedule
+                    secondary_info: last-changed
+                  - type: call-service
+                    name: Run for 15 minutes
+                    action_name: Start Now
+                    service: switch.toggle
+                    service_data:
+                      entity_id: switch.pool_filler_manual_watering
+                  - entity: binary_sensor.pool_filler_watering
+                    secondary_info: last-changed
+                  - entity: sensor.pool_filler_remaining_watering_time
+                    name: Time Remaining
+
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Irrigation Controller
+              - type: vertical-stack
+                cards:
+                  - type: glance
+                    entities:
+                      - binary_sensor.aquatimer_control_unit_status
+                      - entity: binary_sensor.side_yard_status
+                        name: Controller
+                      - entity: sensor.side_yard_battery
+                        name: Controller Battery
 
   - type: vertical-stack
     cards:
@@ -147,92 +240,3 @@ cards:
       #         - type: plant-status
       #           entity: plant.plant06
       #           name: Plant 06
-
-      - type: markdown
-        content: >
-          ## Garden Irrigation
-      - type: custom:swipe-card
-        card_width: '90%'
-        parameters:
-          centeredSlides: true
-          slidesPerView: 'auto'
-          spaceBetween: 8
-          pagination:
-            #type: 'progressbar'
-            type: 'bullets'
-          navigation:
-          keyboard:
-            enabled: true
-            onlyInViewport: true
-        cards:
-          - type: vertical-stack
-            cards:
-              - type: markdown
-                content: >
-                  ## Garden Irrigation
-              - type: entities
-                entities:
-                  - entity: switch.front_yard_automatic_watering
-                    name: Scheduled
-                  - entity: sensor.front_yard_next_cycle
-                    name: Next Schedule
-                    secondary_info: last-changed
-                  - type: call-service
-                    name: Run for 15 minutes
-                    action_name: Start Now
-                    service: switch.toggle
-                    service_data:
-                      entity_id: switch.front_yard_manual_watering
-                  - entity: binary_sensor.front_yard_watering
-                    secondary_info: last-changed
-                  - entity: sensor.front_yard_remaining_watering_time
-                    name: Time Remaining
-
-          - type: vertical-stack
-            cards:
-              - type: markdown
-                content: >
-                  ## Pool Filler
-              - type: entities
-                entities:
-                  - entity: switch.pool_filler_automatic_watering
-                    name: Scheduled
-                  - entity: sensor.pool_filler_next_cycle
-                    name: Next Schedule
-                    secondary_info: last-changed
-                  - type: call-service
-                    name: Run for 15 minutes
-                    action_name: Start Now
-                    service: switch.toggle
-                    service_data:
-                      entity_id: switch.pool_filler_manual_watering
-                  - entity: binary_sensor.pool_filler_watering
-                    secondary_info: last-changed
-                  - entity: sensor.pool_filler_remaining_watering_time
-                    name: Time Remaining
-
-          - type: vertical-stack
-            cards:
-              - type: markdown
-                content: >
-                  ## Irrigation Controller
-              - type: vertical-stack
-                cards:
-                  - type: glance
-                    entities:
-                      - binary_sensor.aquatimer_control_unit_status
-                      - binary_sensor.side_yard_status
-                      - sensor.side_yard_battery
-
-  - type: vertical-stack
-    cards:
-      # - type: custom:simple-weather-card
-      #   entity: weather.dark_sky
-      #   name: in Santee
-      #   backdrop: true
-
-      - type: custom:weather-card
-        entity: weather.dark_sky
-
-      - type: picture-entity
-        entity: camera.radar

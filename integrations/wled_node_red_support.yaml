@@ -1,0 +1,297 @@
+#---------------------------------------------------------
+input_number:
+  ledspeed:
+    name: Speed
+    initial: 0
+    min: 0
+    max: 255
+    step: 1
+  ledintensity:
+    name: LED Intensity
+    initial: 0
+    min: 0
+    max: 255
+    step: 1
+  ledbrightness:
+    name: LED Brightness
+    initial: 0
+    min: 0
+    max: 255
+    step: 1
+#---------------------------------------------------------
+input_select:
+  palette_list:
+    options:
+      - "00 Default"
+      - "01 Random Cycle"
+      - "02 Primary color"
+      - "03 Based on primary"
+      - "04 Set colors"
+      - "05 Based on set"
+      - "06 Party"
+      - "07 Cloud"
+      - "08 Lava"
+      - "09 Ocean"
+      - "10 Forest"
+      - "11 Rainbow"
+      - "12 Rainbow bands"
+      - "13 Sunset"
+      - "14 Rivendell"
+      - "15 Breeze"
+      - "16 Red & Blue"
+      - "17 Yellowout"
+      - "18 Analoguous"
+      - "19 Splash"
+      - "20 Pastel"
+      - "21 Sunset 2"
+      - "22 Beech"
+      - "23 Vintage"
+      - "24 Departure"
+      - "25 Landscape"
+      - "26 Beach"
+      - "27 Sherbet"
+      - "28 Hult"
+      - "29 Hult 64"
+      - "30 Drywet"
+      - "31 Jul"
+      - "32 Grintage"
+      - "33 Rewhi"
+      - "34 Tertiary"
+      - "35 Fire"
+      - "36 Icefire"
+      - "37 Cyane"
+      - "38 Light Pink"
+      - "39 Autumn"
+      - "40 Magenta"
+      - "41 Magred"
+      - "42 Yelmag"
+      - "43 Yelblu"
+      - "44 Orange & Teal"
+      - "45 Tiamat"
+      - "46 April Night"
+#---------------------------------------------------------
+  effect_list:
+    options:
+      - "00 Solid"
+      - "01 Blink"
+      - "02 Breathe"
+      - "03 Wipe"
+      - "04 Wipe Random"
+      - "05 Random Colors"
+      - "06 Sweep"
+      - "07 Dynamic"
+      - "08 Colorloop"
+      - "09 Rainbow"
+      - "10 Scan"
+      - "11 Dual Scan"
+      - "12 Fade"
+      - "13 Chase"
+      - "14 Chase Rainbow"
+      - "15 Running"
+      - "16 Saw"
+      - "17 Twinkle"
+      - "18 Dissolve"
+      - "19 Dissolve Rnd"
+      - "20 Sparkle"
+      - "21 Dark Sparkle"
+      - "22 Sparkle+"
+      - "23 Strobe"
+      - "24 Strobe Rainbow"
+      - "25 Mega Strobe"
+      - "26 Blink Rainbow"
+      - "27 Android"
+      - "28 Chase"
+      - "29 Chase Random"
+      - "30 Chase Rainbow"
+      - "31 Chase Flash"
+      - "32 Chase Flash Rnd"
+      - "33 Rainbow Runner"
+      - "34 Colorful"
+      - "35 Traffic Light"
+      - "36 Sweep Random"
+      - "37 Running 2"
+      - "38 Red & Blue"
+      - "39 Stream"
+      - "40 Scanner"
+      - "41 Lighthouse"
+      - "42 Fireworks"
+      - "43 Rain"
+      - "44 Merry Christmas"
+      - "45 Fire Flicker"
+      - "46 Gradient"
+      - "47 Loading"
+      - "48 In Out"
+      - "49 In In"
+      - "50 Out Out"
+      - "51 Out In"
+      - "52 Circus"
+      - "53 Halloween"
+      - "54 Tri Chase"
+      - "55 Tri Wipe"
+      - "56 Tri Fade"
+      - "57 Lightning"
+      - "58 ICU"
+      - "59 Multi Comet"
+      - "60 Dual Scanner"
+      - "61 Stream 2"
+      - "62 Oscillate"
+      - "63 Pride 2015"
+      - "64 Juggle"
+      - "65 Palette"
+      - "66 Fire 2012"
+      - "67 Colorwaves"
+      - "68 BPM"
+      - "69 Fill Noise"
+      - "70 Noise 1"
+      - "71 Noise 2"
+      - "72 Noise 3"
+      - "73 Noise 4"
+      - "74 Colortwinkle"
+      - "75 Lake"
+      - "76 Meteor"
+      - "77 Smooth Meteor"
+      - "78 Railway"
+      - "79 Ripple"
+      - "80 Twinklefox"
+#---------------------------------------------------------
+input_boolean:
+  preset_1:
+    name: preset_1
+    icon: mdi:light
+  preset_2:
+    name: preset_2
+    icon: mdi:light
+  preset_3:
+    name: preset_3
+    icon: mdi:light
+  preset_4:
+    name: preset_4
+    icon: mdi:light
+  preset_5:
+    name: preset_5
+    icon: mdi:light
+  preset_6:
+    name: preset_6
+    icon: mdi:light
+  preset_7:
+    name: preset_7
+    icon: mdi:light
+  preset_8:
+    name: preset_8
+    icon: mdi:light
+  preset_9:
+    name: preset_9
+    icon: mdi:light
+  preset_10:
+    name: preset_10
+    icon: mdi:light
+  preset_11:
+    name: preset_11
+    icon: mdi:light
+  preset_12:
+    name: preset_12
+    icon: mdi:light
+  preset_13:
+    name: preset_13
+    icon: mdi:light
+  preset_14:
+    name: preset_14
+    icon: mdi:light
+  preset_15:
+    name: preset_15
+    icon: mdi:light
+  preset_16:
+    name: preset_16
+    icon: mdi:light
+#---------------------------------------------------------
+light:
+  - platform: mqtt
+    name: "Deck Lights"
+    command_topic: "wled/all"
+    brightness_command_topic: "wled/all"
+    rgb_command_topic: "wled/all/col"
+    rgb_command_template: "{{ '#%02x%02x%02x' | format(red, green, blue)}}"
+    effect_command_topic : "wled/all/api"
+    effect_list:
+    - "[FX=00] Solid"
+    - "[FX=01] Blink"
+    - "[FX=02] Breathe"
+    - "[FX=03] Wipe"
+    - "[FX=04] Wipe Random"
+    - "[FX=05] Random Colors"
+    - "[FX=06] Sweep"
+    - "[FX=07] Dynamic"
+    - "[FX=08] Colorloop"
+    - "[FX=09] Rainbow"
+    - "[FX=10] Scan"
+    - "[FX=11] Dual Scan"
+    - "[FX=12] Fade"
+    - "[FX=13] Chase"
+    - "[FX=14] Chase Rainbow"
+    - "[FX=15] Running"
+    - "[FX=16] Saw"
+    - "[FX=17] Twinkle"
+    - "[FX=18] Dissolve"
+    - "[FX=19] Dissolve Rnd"
+    - "[FX=20] Sparkle"
+    - "[FX=21] Dark Sparkle"
+    - "[FX=22] Sparkle+"
+    - "[FX=23] Strobe"
+    - "[FX=24] Strobe Rainbow"
+    - "[FX=25] Mega Strobe"
+    - "[FX=26] Blink Rainbow"
+    - "[FX=27] Android"
+    - "[FX=28] Chase"
+    - "[FX=29] Chase Random"
+    - "[FX=30] Chase Rainbow"
+    - "[FX=31] Chase Flash"
+    - "[FX=32] Chase Flash Rnd"
+    - "[FX=33] Rainbow Runner"
+    - "[FX=34] Colorful"
+    - "[FX=35] Traffic Light"
+    - "[FX=36] Sweep Random"
+    - "[FX=37] Running 2"
+    - "[FX=38] Red & Blue"
+    - "[FX=39] Stream"
+    - "[FX=40] Scanner"
+    - "[FX=41] Lighthouse"
+    - "[FX=42] Fireworks"
+    - "[FX=43] Rain"
+    - "[FX=44] Merry Christmas"
+    - "[FX=45] Fire Flicker"
+    - "[FX=46] Gradient"
+    - "[FX=47] Loading"
+    - "[FX=48] In Out"
+    - "[FX=49] In In"
+    - "[FX=50] Out Out"
+    - "[FX=51] Out In"
+    - "[FX=52] Circus"
+    - "[FX=53] Halloween"
+    - "[FX=54] Tri Chase"
+    - "[FX=55] Tri Wipe"
+    - "[FX=56] Tri Fade"
+    - "[FX=57] Lightning"
+    - "[FX=58] ICU"
+    - "[FX=59] Multi Comet"
+    - "[FX=60] Dual Scanner"
+    - "[FX=61] Stream 2"
+    - "[FX=62] Oscillate"
+    - "[FX=63] Pride 2015"
+    - "[FX=64] Juggle"
+    - "[FX=65] Palette"
+    - "[FX=66] Fire 2012"
+    - "[FX=67] Colorwaves"
+    - "[FX=68] BPM"
+    - "[FX=69] Fill Noise"
+    - "[FX=70] Noise 1"
+    - "[FX=71] Noise 2"
+    - "[FX=72] Noise 3"
+    - "[FX=73] Noise 4"
+    - "[FX=74] Colortwinkle"
+    - "[FX=75] Lake"
+    - "[FX=76] Meteor"
+    - "[FX=77] Smooth Meteor"
+    - "[FX=78] Railway"
+    - "[FX=79] Ripple"
+    - "[FX=80] Twinklefox"
+#---------------------------------------------------------
