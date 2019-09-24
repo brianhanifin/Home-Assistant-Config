@@ -1,0 +1,22 @@
+---
+# Warn us if any doors or windows are open or unlocked
+#
+alias: watchdog_window_open_30_minutes
+initial_state: on
+trigger:
+  - platform: state
+    entity_id: binary_sensor.upstairs_bathroom_window
+    to: 'on'
+    for:
+      minutes: 30
+action:
+  - service: script.notify_mobile
+    data_template:
+      who: "parents"
+      title: WINDOW OPEN
+      message: "The Upstairs Bathroom has been open 30 minutes."
+
+  - service: script.notify_speech
+    data_template:
+      media_player: group.alexa_welcome
+      message: "The Upstairs Bathroom has been open for a half hour."

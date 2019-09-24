@@ -11,11 +11,11 @@ action:
   - service: variable.set_variable
     data_template:
       variable: family_room_table_lamp_previous_state
-      value_template: "{{ states('light.family_room_table_lamp') }}"
+      value_template: "{{ states('light.table_lamp') }}"
       attributes:
-        brightness: "{{ state_attr('light.family_room_table_lamp', 'brightness') }}"
-        color_temp: "{{ state_attr('light.family_room_table_lamp', 'color_temp') }}"
-        rgb_color: "{{ state_attr('light.family_room_table_lamp', 'rgb_color') }}"
+        brightness: "{{ state_attr('light.table_lamp', 'brightness') }}"
+        color_temp: "{{ state_attr('light.table_lamp', 'color_temp') }}"
+        rgb_color: "{{ state_attr('light.table_lamp', 'rgb_color') }}"
 
   - service: light.turn_on
     data:
@@ -24,18 +24,18 @@ action:
       effect: "colorloop"
   - service: light.turn_on
     data:
-      entity_id: light.family_room_table_lamp 
+      entity_id: light.table_lamp
       brightness_pct: 100
       color_name: green
   - delay: "0:00:05"
   - service: light.turn_on
     data:
-      entity_id: "light.family_room_table_lamp, light.garage_entry_light"
+      entity_id: "light.table_lamp, light.garage_entry_light"
       flash: "short"
   - delay: "0:00:01"
   - service: light.turn_on
     data:
-      entity_id: "light.family_room_table_lamp, light.garage_entry_light"
+      entity_id: "light.table_lamp, light.garage_entry_light"
       flash: "short"
 
   # If after 5 minutes the garage is still open, dim the light.
@@ -50,6 +50,6 @@ action:
       transition: 5
   - service: light.turn_on
     data:
-      entity_id: light.family_room_table_lamp
+      entity_id: light.table_lamp
       brightness_pct: 20
       transition: 5
