@@ -9,7 +9,7 @@ sensors:
       {%- set wakeup_brian_hour    = wakeup_brian_time.split(':')[0] -%}
       {%- set wakeup_brian_minutes = wakeup_brian_time.split(':')[1] -%}
       {%- if (wakeup_brian_minutes | int >= 10) -%}
-       {{ "%0.02d:%0.02d"|format(wakeup_brian_hour|int, wakeup_brian_minutes|int -10) }}
+        {{ "%0.02d:%0.02d"|format(wakeup_brian_hour|int, wakeup_brian_minutes|int -10) }}
       {%- else -%}
-       {{ "%0.02d:%0.02d"|format(wakeup_brian_hour|int -1, wakeup_brian_minutes|int +50) }}
+        {{ "%0.02d:%0.02d"|format(wakeup_brian_hour|int -1, wakeup_brian_minutes|int +50) }}
       {%- endif -%}

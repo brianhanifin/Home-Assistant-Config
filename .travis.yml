@@ -1,4 +1,5 @@
-#source: https://github.com/riemers/home-assistant-config/blob/368ed52c06b994573b7582c594cd95542d6b445c/.travis.yml
+---
+# source: https://github.com/riemers/home-assistant-config/blob/368ed52c06b994573b7582c594cd95542d6b445c/.travis.yml
 language: python
 # addons:
 #   apt:
@@ -40,10 +41,10 @@ python: "3.6.4"
 before_install:
   - mv ./travis_secrets.yaml ./secrets.yaml
   - rm -f ./integrations/stream.yaml
-  #- sed -e '/hacs/,+5d' < configuration.yaml > configuration.yaml
+  # - sed -e '/hacs/,+5d' < configuration.yaml > configuration.yaml
   - rm -f ./integrations/breaking_changes.yaml
 install:
-  #- wget http://ffmpeg.org/releases/ffmpeg-3.2.tar.bz2 && tar -xjf ffmpeg-3.2.tar.bz2 && cd ffmpeg-3.2 && ./configure --disable-static --enable-shared --disable-doc && make && sudo make install && cd ..
+  # - wget http://ffmpeg.org/releases/ffmpeg-3.2.tar.bz2 && tar -xjf ffmpeg-3.2.tar.bz2 && cd ffmpeg-3.2 && ./configure --disable-static --enable-shared --disable-doc && make && sudo make install && cd ..
   - pip3 install -U setuptools
   - pip3 install homeassistant
   - pip3 install colorlog

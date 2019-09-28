@@ -9,7 +9,7 @@ sensors:
       {%- set wakeup_nerene_hour    = wakeup_nerene_time.split(':')[0] -%}
       {%- set wakeup_nerene_minutes = wakeup_nerene_time.split(':')[1] -%}
       {%- if (wakeup_nerene_minutes | int >= 10) -%}
-       {{ "%0.02d:%0.02d"|format(wakeup_nerene_hour|int, wakeup_nerene_minutes|int -10) }}
+        {{ "%0.02d:%0.02d"|format(wakeup_nerene_hour|int, wakeup_nerene_minutes|int -10) }}
       {%- else -%}
-       {{ "%0.02d:%0.02d"|format(wakeup_nerene_hour|int -1, wakeup_nerene_minutes|int +50) }}
+        {{ "%0.02d:%0.02d"|format(wakeup_nerene_hour|int -1, wakeup_nerene_minutes|int +50) }}
       {%- endif -%}
