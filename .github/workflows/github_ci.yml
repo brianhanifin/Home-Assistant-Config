@@ -40,7 +40,8 @@ jobs:
       - name: Activate dummy secrets.yaml
         run: mv ./travis_secrets.yaml ./secrets.yaml
       - name: Disable troublesome components
-        run: rm -f ./integrations/breaking_changes.yaml && rm -f ./integrations/stream.yaml
+        run: rm -f ./integrations/breaking_changes.yaml
+        run: rm -f ./integrations/stream.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
