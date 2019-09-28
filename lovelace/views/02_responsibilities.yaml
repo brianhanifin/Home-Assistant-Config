@@ -1,116 +1,117 @@
 ---
-# Define Anchors
-alert_style_red: &alert_style_red
-  style: !include ../templates/alert_style_red.yaml
-
-blank-button: &blank-button
-- type: "custom:button-card"
-  color_type: blank-card
-
-check-button-contribution: &check-button-contribution
-  severity:
-    - value: 1 day
-      hue: '120'
-    - value: 3 days
-      hue: '40'
-    - value: 4 days
-      hue: '0'
-  type: custom:check-button-card
-  width: 60%
-
-check-button-weekly: &check-button-weekly
-  severity:
-    - value: 1 day
-      hue: '120'
-    - value: 6 days
-      hue: '40'
-    - value: 7 days
-      hue: '0'
-  type: custom:check-button-card
-  width: 60%
-
-
 title: contribution
 path: contribution
 icon: mdi:heart-pulse
 cards:
   - type: vertical-stack
     cards:
-      - !include ../templates/alerts.yaml
+      - type: custom:decluttering-card
+        template: notifications
 
-      - type: markdown
-        content: |-
-          ## Other Responsibilities
-      - entity: sensor.medicine_buddy_taken
-        title: Buddy's Medicine
-        severity:
-          - value: 8 hours
-            hue: '120'
-          - value: 12 hours
-            hue: '40'
-          - value: 1 day
-            hue: '0'
-        type: custom:check-button-card
-        width: 60%
-      # - entity: sensor.medicine_brian_taken
-      #   title: Brian
-      #   <<: *check-button-medicine
-      # - entity: sensor.medicine_nerene_taken
-      #   title: Nerene
-      #   <<: *check-button-medicine
-      - entity: sensor.contribution_trash_to_curb
-        title: "Trash to Curb"
-        <<: *check-button-weekly
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Other Responsibilities"
+      - type: custom:decluttering-card
+        template: contribution
+        variables:
+          - entity: sensor.medicine_buddy_taken
+          - title: Buddy's Medicine
+          - severity:
+            - value: "8 hours"
+              hue:   "120"
+            - value: "12 hours"
+              hue:   "40"
+            - value: "1 day"
+              hue:   "0"
+      - type: custom:decluttering-card
+        template: contribution
+        variables:
+          - entity: sensor.contribution_trash_to_curb
+          - title: Trash to Curb
+          - severity:
+            - value: "1 day"
+              hue:   "120"
+            - value: "6 days"
+              hue:   "40"
+            - value: "7 days"
+              hue:   "0"
 
   - type: vertical-stack
     cards:
       - type: vertical-stack
         cards:
-          - type: markdown
-            content: |-
-              ## Kyle's Contributions
-          - entity: sensor.contribution_kyle_clothes_sort
-            title: "Clothes: Sort"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_kyle_clothes_wash
-            title: "Clothes: Wash"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_kyle_dishes
-            title: "Diswasher: Reload"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_kyle_dookie
-            title: Dookie
-            <<: *check-button-contribution
-          - entity: sensor.contribution_kyle_other
-            title: "Other Task"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_kyle_trash
-            title: Trash + Recycle
-            <<: *check-button-contribution
+          - type: custom:decluttering-card
+            template: heading
+            variables:
+              - heading: "Kyle's Contributions"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_kyle_clothes_sort
+              - title: "Clothes: Sort"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_kyle_clothes_wash
+              - title: "Clothes: Wash"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_kyle_dishes
+              - title: "Diswasher: Reload"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_kyle_dookie
+              - title: Dookie
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_kyle_other
+              - title: Other Task
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_kyle_trash
+              - title: Trash + Recycle
 
       - type: vertical-stack
         cards:
-          - type: markdown
-            content: |-
-              ## Lucas' Contributions
-          - entity: sensor.contribution_lucas_clothes_sort
-            title: "Clothes: Sort"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_lucas_clothes_wash
-            title: "Clothes: Wash"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_lucas_dishes
-            title: "Diswasher: Reload"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_lucas_dookie
-            title: Dookie
-            <<: *check-button-contribution
-          - entity: sensor.contribution_lucas_other
-            title: "Other Task"
-            <<: *check-button-contribution
-          - entity: sensor.contribution_lucas_trash
-            title: Trash + Recycle
-            <<: *check-button-contribution
+          - type: custom:decluttering-card
+            template: heading
+            variables:
+              - heading: "Lucas' Contributions"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_lucas_clothes_sort
+              - title: "Clothes: Sort"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_lucas_clothes_wash
+              - title: "Clothes: Wash"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_lucas_dishes
+              - title: "Diswasher: Reload"
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_lucas_dookie
+              - title: Dookie
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_lucas_other
+              - title: Other Task
+          - type: custom:decluttering-card
+            template: contribution
+            variables:
+              - entity: sensor.contribution_lucas_trash
+              - title: Trash + Recycle
 
       - type: markdown
         content: |-

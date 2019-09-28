@@ -1,9 +1,4 @@
 ---
-# Define Anchors
-alert_style_yellow: &alert_style_yellow
-  style: !include ../templates/alert_style_yellow.yaml
-
-
 title: Tools
 path: tools
 #icon: mdi:wrench
@@ -17,7 +12,9 @@ badges:
 cards:
   - type: vertical-stack
     cards:
-      - !include ../templates/alerts.yaml
+      - type: custom:decluttering-card
+        template: notifications
+
 
       - type: markdown
         content: >
@@ -119,14 +116,11 @@ cards:
                 - entity_id: persistent_notification.1337
             show_empty: false
             card:
-              type: custom:card-modder
-              <<: *alert_style_yellow
-              card:
-                type: markdown
-                content: >
-                  ### [[ persistent_notification.1337.attributes.title ]]
+              type: markdown
+              content: >
+                ### [[ persistent_notification.1337.attributes.title ]]
 
-                  [[ persistent_notification.1337.attributes.message ]]
+                [[ persistent_notification.1337.attributes.message ]]
 
           - type: divider
           - script.restart_hass

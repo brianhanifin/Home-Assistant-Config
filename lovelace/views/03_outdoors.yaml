@@ -2,11 +2,11 @@
 title: Outdoors
 path: outdoors
 icon: fas:seedling
-popup_cards: !include popup_cards_outdoors.yaml
 cards:
   - type: vertical-stack
     cards:
-      - !include ../templates/alerts.yaml
+      - type: custom:decluttering-card
+        template: notifications
 
       # - type: custom:simple-weather-card
       #   entity: weather.dark_sky
@@ -15,15 +15,25 @@ cards:
 
       - type: custom:weather-card
         entity: weather.dark_sky
+        tap_action:
+          action: call-service
+          service: browser_mod.command
+          service_data:
+            command: popup
+            title: Weather
+            card:
+              type: custom:decluttering-card
+              template: popup_weather
 
       - type: picture-entity
         entity: camera.radar
 
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Garden Irrigation
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Garden Irrigation"
       - type: custom:swipe-card
         card_width: '90%'
         parameters:
@@ -40,9 +50,10 @@ cards:
         cards:
           - type: vertical-stack
             cards:
-              - type: markdown
-                content: >
-                  ## Garden Irrigation
+              - type: custom:decluttering-card
+                template: heading
+                variables:
+                  - heading: "Garden Irrigation"
               - type: entities
                 entities:
                   - entity: switch.front_yard_automatic_watering
@@ -63,9 +74,10 @@ cards:
 
           - type: vertical-stack
             cards:
-              - type: markdown
-                content: >
-                  ## Pool Filler
+              - type: custom:decluttering-card
+                template: heading
+                variables:
+                  - heading: "Pool Filler"
               - type: entities
                 entities:
                   - entity: switch.pool_filler_automatic_watering
@@ -86,9 +98,10 @@ cards:
 
           - type: vertical-stack
             cards:
-              - type: markdown
-                content: >
-                  ## Irrigation Controller
+              - type: custom:decluttering-card
+                template: heading
+                variables:
+                  - heading: "Irrigation Controller"
               - type: vertical-stack
                 cards:
                   - type: glance
@@ -101,9 +114,10 @@ cards:
 
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Plants
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Plants"
       - type: horizontal-stack
         cards:
           - type: custom:swipe-card

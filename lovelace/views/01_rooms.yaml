@@ -1,10 +1,4 @@
 ---
-# Define Anchors
-blank-button: &blank-button
-- type: "custom:button-card"
-  color_type: blank-card
-
-
 title: Rooms
 path: rooms
 #icon: mdi:dip-switch
@@ -13,11 +7,13 @@ cards:
   # Family Room
   - type: vertical-stack
     cards:
-      - !include ../templates/alerts.yaml
+      - type: custom:decluttering-card
+        template: notifications
 
-      - type: markdown
-        content: >
-          ## Family Room
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Family Room"
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -50,9 +46,10 @@ cards:
   # Dining / Kitchen
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Dining / Kitchen
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Dining / Kitchen"
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -87,9 +84,10 @@ cards:
   # Play Room / Garage
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Play Room
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Play Room"
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -103,7 +101,7 @@ cards:
           - type: entity-button
             entity: light.play_room_floor_lamp
             icon: mdi:floor-lamp
-            name: Floor Lamp
+            name: Floor
             tap_action:
               action: toggle
             hold_action:
@@ -126,9 +124,10 @@ cards:
   # Bedroom
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Bedroom
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Bedroom"
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -163,15 +162,16 @@ cards:
   # Upstairs Bathroom
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Upstairs Bathroom
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Upstairs Bathroom"
       - type: horizontal-stack
         cards:
           - type: entity-button
             entity: light.upstairs_bathroom_nightlight
             icon: fas:rocket
-            name: Nightlight
+            name: Night
             tap_action:
               action: toggle
             hold_action:
@@ -182,9 +182,12 @@ cards:
           #   name: Fan
           #   tap_action:
           #     action: toggle
-          - <<: *blank-button
-          - <<: *blank-button
-          - <<: *blank-button
+          - type: custom:decluttering-card
+            template: button_blank
+          - type: custom:decluttering-card
+            template: button_blank
+          - type: custom:decluttering-card
+            template: button_blank
       - type: horizontal-stack
         cards:
           - type: custom:mini-graph-card
@@ -215,9 +218,10 @@ cards:
 
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Garage
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Garage"
       - type: horizontal-stack
         cards:
           # - type: entity-button
@@ -251,7 +255,8 @@ cards:
               action: toggle
             hold_action:
               action: more-info
-          - <<: *blank-button
+          - type: custom:decluttering-card
+            template: button_blank
       - type: horizontal-stack
         cards:
           - type: custom:mini-graph-card
@@ -281,9 +286,10 @@ cards:
 
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Outdoor / Entry
+      - type: custom:decluttering-card
+        template: heading
+        variables:
+          - heading: "Outdoor / Entry"
       - type: horizontal-stack
         cards:
           - type: entity-button
@@ -297,7 +303,7 @@ cards:
           - type: entity-button
             entity: switch.landscape_lights
             icon: mdi:tree
-            name: Landscape
+            name: Yard
             tap_action:
               action: toggle
           - type: entity-button
