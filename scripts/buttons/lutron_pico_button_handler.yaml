@@ -23,20 +23,23 @@ lutron_pico_button_handler:
     #       light =  "{{ 'light.' + area|lower|replace(' ','_')|replace('playroom','play_room') }}"
 
     - service_template: >
-        {% set area = area|lower|trim|replace(' ','_')|replace('playroom','play_room') -%}
-        {%- if area == "dining_room" -%}
-          {%- if button == "4" -%}
+        {%- if area|lower|trim|replace(' ','_') == "entry" -%}
+          {%- if button == "2" -%}
+            script.lutron_pico_middle_toggle
+          {%- endif %}
+        {%- else -%}
+          {%- if button == "0" -%}
+            timer.cancel
+          {%- elif button == "2" -%}
+            script.lutron_pico_middle_toggle
+          {%- elif button == "4" -%}
             script.lutron_pico_generic_light_off
           {%- else -%}
             script.lutron_pico_generic_light_on
           {%- endif %}
-
-        {%- else -%}
-          {%- if button == "2" -%}
-            script.lutron_pico_middle_toggle
-          {%- endif %}
         {%- endif -%}
       data_template:
+        entity_id: timer.pico_press_timeout
         remote: "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
         button: "{{ button }}"
-        light:  "{{ 'light.' + area|lower|replace(' ','_') }}"
+        light:  "{{ 'light.' + area|lower|trim|replace(' ','_')|replace('playroom','play_room') }}"

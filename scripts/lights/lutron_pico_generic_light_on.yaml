@@ -10,17 +10,15 @@ lutron_pico_generic_light_on:
     #       button =
     #       {{ button }}
 
-    - service: light.turn_on
-      data_template:
-        entity_id: "{{ light }}"
+    # - service: light.turn_on
+    #   data_template:
+    #     entity_id: "{{ light }}"
 
     - service: light.turn_on
       data_template:
         entity_id: "{{ light }}"
         brightness: >
-          {%- if button == "2" -%}
-            152
-          {%- elif button == "8" -%}
+          {%- if button == "8" -%}
             {%- set brightness = state_attr(light, "brightness")|int -%}
             {{ [254, brightness + 51]|min }}
           {%- elif button == "16" -%}
