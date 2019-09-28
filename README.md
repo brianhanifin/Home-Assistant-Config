@@ -2,7 +2,7 @@
 
 | Repository Status | Home Assistant Community |
 | :--- | :--- |
-| [![Github Action Status][github-build-status-shield]][github-build-status] [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] |
+| [![Github Action Status][github-build-status-shield]][github-build-status] [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
@@ -144,26 +144,25 @@ All of my configuration files are tested against the most stable version of home
 [amazon-echo]: ./README-images/echo.jpeg
 [button-medicine]: ./README-images/button_medicine.jpeg
 
-[commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg
-[commits]: https://github.com/brianhanifin/Home-Assistant-Config/commits/master
-[github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?style=plasticr
-[github-master]: https://github.com/BrianHanifin/Home-Assistant-Config/commits/master
-
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/build/badge.svg
 
 [travis-build-status]: https://travis-ci.org/brianhanifin/Home-Assistant-Config
-[travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-Assistant-Config.svg?branch=master
+# [travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-Assistant-Config.svg?branch=master
+[travis-build-status-shield]: https://img.shields.io/travis/brianhanifin/Home-Assistant-Config?logo=travis
 
-[uptime-status-shield]: https://img.shields.io/uptimerobot/status/m781778026-6d060136ab5e0b0b72139815.svg
-[uptime-robot]: https://uptimerobot.com/dashboard.php#tvMode
+[commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
+# [commits]: https://github.com/brianhanifin/Home-Assistant-Config/commits/master
+[commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[discord-shield]: https://img.shields.io/discord/330944238910963714.svg
+[github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
+[github-master]: https://github.com/BrianHanifin/Home-Assistant-Config/commits/master
+
+[discord-shield]: https://img.shields.io/discord/330944238910963714.svg?logo=discord&color=7289da
 [discord]: https://discord.gg/c5DvZ4e
 
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg
-[forum]: https://community.home-assistant.io/u/brianhanifin/summary
-
+[discourse-shield]: https://img.shields.io/discourse/topics?color=46B4ED&label=community&logo=discourse&logoColor=46B4ED&server=https%3A%2F%2Fcommunity.home-assistant.io
+[discourse]: https://community.home-assistant.io/u/brianhanifin/summary
 
 [esphome-ble-hub]:https://esphome.io/components/esp32_ble_tracker.html
 [esphome-sonoff-basic]:https://esphome.io/devices/sonoff_basic.html
