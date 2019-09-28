@@ -2,7 +2,7 @@
 
 | Repository Status | Home Assistant Community |
 | :--- | :--- |
-| [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] |
+| [![github build status][github-build-status-shield]][github-build-status] [![travis build status][travis-build-status-shield]][travis-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Community Forum][forum-shield]][forum] [![Discord][discord-shield]][discord] |
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
@@ -148,6 +148,9 @@ All of my configuration files are tested against the most stable version of home
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/commits/master
 [github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?style=plasticr
 [github-master]: https://github.com/BrianHanifin/Home-Assistant-Config/commits/master
+
+[github-build-status]: 
+[github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/Home%20Assistant%20CI/badge.svg
 
 [travis-build-status]: https://travis-ci.org/brianhanifin/Home-Assistant-Config
 [travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-Assistant-Config.svg?branch=master
