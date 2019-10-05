@@ -1,0 +1,15 @@
+---
+##############################################
+## Play Room Light Automations
+##############################################
+## Turn the floor lamp off when the main switch is turned off.
+alias: watchdog_play_room_light_off
+initial_state: on
+trigger:
+  - platform: state
+    entity_id: light.play_room
+    from: 'on'
+    to: 'off'
+action:
+  - service: light.turn_off
+    entity_id: light.play_room_floor_lamp
