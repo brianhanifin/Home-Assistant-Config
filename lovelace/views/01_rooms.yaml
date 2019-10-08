@@ -4,12 +4,12 @@ path: rooms
 #icon: mdi:dip-switch
 icon: fas:sliders-h
 cards:
+  - type: custom:decluttering-card
+    template: notifications
+
   # Family Room
   - type: vertical-stack
     cards:
-      - type: custom:decluttering-card
-        template: notifications
-
       - type: custom:decluttering-card
         template: heading
         variables:
@@ -147,6 +147,12 @@ cards:
             hold_action:
               action: more-info
           - type: entity-button
+            entity: light.glowforge
+            icon: mdi:lamp
+            name: Glowforge
+      - type: horizontal-stack
+        cards:
+          - type: entity-button
             entity: switch.sound_machine
             icon: mdi:weather-windy-variant
             name: Machine
@@ -158,6 +164,8 @@ cards:
             name: Fan
             tap_action:
               action: toggle
+          - type: custom:decluttering-card
+            template: button_blank
 
   # Upstairs Bathroom
   - type: vertical-stack
@@ -176,16 +184,12 @@ cards:
               action: toggle
             hold_action:
               action: more-info
-          # - type: entity-button
-          #   entity: switch.upstairs_bathroom_fan
-          #   icon: mdi:air-filter
-          #   name: Fan
-          #   tap_action:
-          #     action: toggle
-          - type: custom:decluttering-card
-            template: button_blank
-          - type: custom:decluttering-card
-            template: button_blank
+          - type: entity-button
+            entity: switch.upstairs_bathroom_fan
+            icon: mdi:air-filter
+            name: Fan
+            tap_action:
+              action: toggle
           - type: custom:decluttering-card
             template: button_blank
       - type: horizontal-stack
@@ -255,8 +259,6 @@ cards:
               action: toggle
             hold_action:
               action: more-info
-          - type: custom:decluttering-card
-            template: button_blank
       - type: horizontal-stack
         cards:
           - type: custom:mini-graph-card

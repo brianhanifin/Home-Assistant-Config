@@ -1,125 +1,91 @@
 ---
-alert_style_level1: &alert_style_level1
-  style: |
-    ha-card {
-      --ha-card-background: red;
-      color: white;
-      --paper-item-icon-color: white;
-      --paper-item-icon-active-color: white;
-    }
-
-alert_style_level2: &alert_style_level2
-  style: |
-    ha-card {
-      --ha-card-background: maroon;
-      color: white;
-      --paper-item-icon-color: white;
-      --paper-item-icon-active-color: white;
-    }
-
 card:
   type: vertical-stack
   cards:
-    - type: vertical-stack
-      cards:
-        - type: 'custom:home-feed-card'
-          <<: *alert_style_level2
-          title: Home Feed
-          show_empty: false
-          show_notification_title: true
-          id_filter: persistent_notification*
-
-    - type: vertical-stack
-      cards:
-        - type: custom:auto-entities
-          filter:
-            include:
-              - domain: "persistent_notification"
-          show_empty: false
-          card:
-            type: entities
-            <<: *alert_style_level2
-            title: Notifications
-            show_header_toggle: false
-
-        - type: entity-filter
-          entities:
-            - persistent_notification.1337
-          state_filter:
-            - 'on'
-          show_empty: false
-          card:
-            type: glance
-            <<: *alert_style_level1
-            columns: 2
-            show_state: false
-            title: SAFETY ALERT
-
-        - type: entity-filter
-          entities:
-            - binary_sensor.front_doorz
-            - cover.garage_door
-            - binary_sensor.network_closet_door
-            - lock.front_door
-            - binary_sensor.upstairs_bathroom_window
-          state_filter:
-            - 'on'
-            - open
-            - unlocked
-          show_empty: false
-          card:
-            type: glance
-            <<: *alert_style_level2
-            columns: 4
-            show_state: false
-            title: "Doors + Windows: Open or Unlocked"
-
-        - type: entity-filter
-          entities:
-            # Melnor RainCloud / AquaTimer
-            - binary_sensor.aquatimer_control_unit_status
-            - entity: binary_sensor.side_yard_status
-              name: Side Yard
-
-            # ESPHome Devices
-            - binary_sensor.ble_hub_status
-            - binary_sensor.sonoff_pow_01_status
-            - binary_sensor.sonoff_s31_01_status
-            - binary_sensor.sonoff_s31_02_status
-            # - binary_sensor.sonoff_s31_03_status
-            # - binary_sensor.sonoff_s31_04_status
-            # - binary_sensor.sonoff_s31_05_status
-            # - binary_sensor.sonoff_s31_06_status
-
-            # Harmony Hubs
-            # - sensor.harmony_hub_family_room_status
-            # - sensor.harmony_hub_play_room_status
-          state_filter:
-            - Offline
-            - Unknown
+    - type: custom:home-feed-card
+      style: |
+        ha-card {
+          --ha-card-background: maroon;
+          color: white;
+          --paper-item-icon-color: white;
+          --paper-item-icon-active-color: white;
+        }
+      title: Notifications
+      more_info_on_tap: true
+      show_empty: false
+      show_notification_title: true
+      deviceID: persistent_notification
+      entities:
+        # Safety Alerts
+        - entity: binary_sensor.alarm_co_detected
+          exclude_states:
             - 'off'
-          show_empty: false
-          card:
-            type: glance
-            <<: *alert_style_level2
-            columns: 4
-            show_state: false
-            title: Devices Offline
+          state_map:
+            on: DETECTED
+        - entity: binary_sensor.alarm_smoke_detected
+          exclude_states:
+            - 'off'
+          state_map:
+            on: DETECTED
 
-        - type: custom:auto-entities
-          filter:
-            include:
-              - entity_id: "sensor.*_battery"
-                attributes:
-                  battery_level: "<= 20"
-            exclude:
-              - entity_id: "*phone*"
-              - entity_id: "*brightness*" # *motion* = state for same device
-              - entity_id: "*left_button*"
-              - entity_id: "*right_button*"
-          show_empty: false
-          card:
-            type: entities
-            <<: *alert_style_level2
-            title: Low Batteries
-            show_header_toggle: false
+        # Doors + Windows
+        - entity: binary_sensor.front_door
+          name: Front Door
+          exclude_states:
+            - 'off'
+          state_map:
+            on: open
+        - entity: cover.garage_door
+          exclude_states:
+            - 'closed'
+        - entity: binary_sensor.network_closet_door
+          exclude_states:
+            - 'off'
+          state_map:
+            on: open
+        - entity: lock.front_door
+          exclude_states:
+            - 'locked'
+        - entity: binary_sensor.upstairs_bathroom_window
+          exclude_states:
+            - 'off'
+          state_map:
+            on: open
+
+        # Melnor RainCloud / AquaTimer
+        - entity: binary_sensor.aquatimer_control_unit_status
+          exclude_states:
+            - 'on'
+          state_map:
+            off: offline
+        - entity: binary_sensor.side_yard_status
+          name: Side Yard
+          exclude_states:
+            - 'on'
+          state_map:
+            off: offline
+
+        # ESPHome Devices
+        #- binary_sensor.ble_hub_status
+
+        # Harmony Hubs
+        # - sensor.harmony_hub_family_room_status
+        # - sensor.harmony_hub_play_room_status
+
+    # - type: custom:auto-entities
+    #   filter:
+    #     include:
+    #       - entity_id: "sensor.*_battery"
+    #         attributes:
+    #           battery_level: "<= 20"
+    #     exclude:
+    #       - entity_id: "*phone*"
+    #       - entity_id: "*brightness*" # *motion* = state for same device
+    #       - entity_id: "*left_button*"
+    #       - entity_id: "*right_button*"
+    #   show_empty: false
+    #   card:
+    #     type: entities
+    #     <<: *alert_style_level2
+    #     title: Low Batteries
+    #     show_header_toggle: false
