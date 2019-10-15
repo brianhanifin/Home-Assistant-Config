@@ -1,7 +1,14 @@
-var LitElement = LitElement || Object.getPrototypeOf(customElements.get("home-assistant-main"));
-var html = LitElement.prototype.html;
+class HomeFeedCardHelpers{
+	
+	static get LitElement(){
+		return Object.getPrototypeOf(customElements.get("home-assistant-main"));
+	}
+	static get html(){
+		return HomeFeedCardHelpers.LitElement.prototype.html;
+	}
+}
 
-class HomeFeedCard extends LitElement {
+class HomeFeedCard extends HomeFeedCardHelpers.LitElement {
     constructor() {
 		super();
 		
@@ -45,7 +52,7 @@ class HomeFeedCard extends LitElement {
 	}
 
 	static get stylesheet() {
-		return html`
+		return HomeFeedCardHelpers.html`
 			<style>
 				ha-card {
 			  		padding: 0 16px 16px 16px;
@@ -133,20 +140,20 @@ class HomeFeedCard extends LitElement {
 
 	render() {
 		if(!this._hass || !this.moment || !this.helpers){
-			return html``;
+			return HomeFeedCardHelpers.html``;
 		} 
 		else{
 			if(this.feedContent != null){
 				if(this.feedContent.length === 0 && this._config.show_empty === false){
-					return html``;
+					return HomeFeedCardHelpers.html``;
 				}
 				else{
-				return html`
+				return HomeFeedCardHelpers.html`
 				${HomeFeedCard.stylesheet}
 				<ha-card id="card">
 					${!this._config.title
-					? html``
-					: html`
+					? HomeFeedCardHelpers.html``
+					: HomeFeedCardHelpers.html`
 						  <div id="header" class="header">
 						  <div class="name">${this._config.title}</div>
 						</div>
@@ -157,17 +164,18 @@ class HomeFeedCard extends LitElement {
 					}
 			}
 			else{
-				return html``;
+				return HomeFeedCardHelpers.html``;
 			}
 		}
 	}
 
     clearCache() {
-    	localStorage.removeItem('home-feed-card-events' + this.pageId);
-	 	localStorage.removeItem('home-feed-card-eventsLastUpdate' + this.pageId);
-	 	localStorage.removeItem('home-feed-card-notifications' + this.pageId);
-	 	localStorage.removeItem('home-feed-card-notificationsLastUpdate' + this.pageId);
-	 	localStorage.removeItem('home-feed-card-history' + this.pageId);
+    	localStorage.removeItem('home-feed-card-events' + this.pageId + this._config.title);
+	 	localStorage.removeItem('home-feed-card-eventsLastUpdate' + this.pageId + this._config.title);
+	 	localStorage.removeItem('home-feed-card-notifications' + this.pageId + this._config.title);
+	 	localStorage.removeItem('home-feed-card-notificationsLastUpdate' + this.pageId + this._config.title);
+	 	localStorage.removeItem('home-feed-card-history' + this.pageId + this._config.title);
+	 	localStorage.removeItem('home-feed-card-historyLastUpdate' + this.pageId + this._config.title);
     }
     
     setConfig(config) {
@@ -323,13 +331,14 @@ class HomeFeedCard extends LitElement {
   	if(this._config.entities.length == 0) return;
   	
   	let entityHistory = await this.getLiveEntityHistory();
-  	localStorage.setItem('home-feed-card-history' + this.pageId, JSON.stringify(entityHistory));
+  	localStorage.setItem('home-feed-card-history' + this.pageId + this._config.title, JSON.stringify(entityHistory));
+  	
 	this.buildIfReady();
   }
   
   async getEvents() {
 	if(!this.calendars || this.calendars.length == 0) return [];
-	let lastUpdate = JSON.parse(localStorage.getItem('home-feed-card-eventsLastUpdate' + this.pageId));
+	let lastUpdate = JSON.parse(localStorage.getItem('home-feed-card-eventsLastUpdate' + this.pageId + this._config.title));
 	if(!lastUpdate || (this.moment && this.moment().diff(lastUpdate, 'minutes') > 15)) {
 		const start = this.moment.utc().format("YYYY-MM-DDTHH:mm:ss");
     	const end = this.moment.utc().startOf('day').add(1, 'days').format("YYYY-MM-DDTHH:mm:ss");
@@ -351,12 +360,12 @@ class HomeFeedCard extends LitElement {
 	 		return { ...i, format: "relative", item_type: "calendar_event" };
 	 	});
 	 	
-	 	localStorage.setItem('home-feed-card-events' + this.pageId,JSON.stringify(data));
-	 	localStorage.setItem('home-feed-card-eventsLastUpdate' + this.pageId,JSON.stringify(this.moment()));
+	 	localStorage.setItem('home-feed-card-events' + this.pageId + this._config.title,JSON.stringify(data));
+	 	localStorage.setItem('home-feed-card-eventsLastUpdate' + this.pageId + this._config.title,JSON.stringify(this.moment()));
 	 	return data;
 	 }
 	 else{
-	 	return JSON.parse(localStorage.getItem('home-feed-card-events' + this.pageId));
+	 	return JSON.parse(localStorage.getItem('home-feed-card-events' + this.pageId + this._config.title));
 	 }
   }
   
@@ -374,10 +383,10 @@ class HomeFeedCard extends LitElement {
 	 let data = response.map(i => {
 	 	return { ...i, format: "relative", item_type: "notification" };
 	 });
-	 localStorage.setItem('home-feed-card-notifications' + this.pageId,JSON.stringify(data));
+	 localStorage.setItem('home-feed-card-notifications' + this.pageId + this._config.title,JSON.stringify(data));
 	 
 	 if(this.moment){
-	 	localStorage.setItem('home-feed-card-notificationsLastUpdate' + this.pageId,JSON.stringify(this.moment()));
+	 	localStorage.setItem('home-feed-card-notificationsLastUpdate' + this.pageId + this._config.title,JSON.stringify(this.moment()));
 	 }
 	 
 	 this.refreshingNotifications = false;
@@ -386,14 +395,14 @@ class HomeFeedCard extends LitElement {
    }
    
    getNotifications() {
-   	 if(!JSON.parse(localStorage.getItem('home-feed-card-notifications' + this.pageId))) return [];
+   	 if(!JSON.parse(localStorage.getItem('home-feed-card-notifications' + this.pageId + this._config.title))) return [];
    	 
-     return JSON.parse(localStorage.getItem('home-feed-card-notifications' + this.pageId));
+     return JSON.parse(localStorage.getItem('home-feed-card-notifications' + this.pageId + this._config.title));
    }
    
    async getEntityHistoryItems() {
-   	if(!JSON.parse(localStorage.getItem('home-feed-card-history' + this.pageId))) return [];
-   	return JSON.parse(localStorage.getItem('home-feed-card-history' + this.pageId));
+   	if(!JSON.parse(localStorage.getItem('home-feed-card-history' + this.pageId + this._config.title))) return [];
+   	return JSON.parse(localStorage.getItem('home-feed-card-history' + this.pageId + this._config.title));
    }
    
    getItemTimestamp(item)
@@ -562,6 +571,7 @@ class HomeFeedCard extends LitElement {
 		
     	this.getFeedItems().then(items =>
 	  	{
+	  		if(this._config.max_item_count) items.splice(this._config.max_item_count);
 	  		this.feedContent = items;
 			this.requestUpdate();
   		}
@@ -660,7 +670,7 @@ class HomeFeedCard extends LitElement {
 			else{
 				var timeString = "Today";
 			}
-			timeItem = html`<div style="display:block; clear:both;">${timeString}</div>`;
+			timeItem = HomeFeedCardHelpers.html`<div style="display:block; clear:both;">${timeString}</div>`;
 		}
 		else
 		{
@@ -668,11 +678,11 @@ class HomeFeedCard extends LitElement {
 				// Time difference less than 1 minute, so use a regular div tag with fixed text.
 				// This avoids the time display refreshing too often shortly before or after an item's timestamp
 				let timeString = n.timeDifference.sign == 0 ? "now" : n.timeDifference.sign == 1 ? "Less than 1 minute ago" : "In less than 1 minute";
-				timeItem = html`<div style="display:block; clear:both;" title="${new Date(n.timestamp)}">${timeString}</div>`;
+				timeItem = HomeFeedCardHelpers.html`<div style="display:block; clear:both;" title="${new Date(n.timestamp)}">${timeString}</div>`;
 			}
 			else {
 				// Time difference creater than or equal to 1 minute, so use hui-timestamp-display in relative mode
-				timeItem = html`<hui-timestamp-display
+				timeItem = HomeFeedCardHelpers.html`<hui-timestamp-display
 									style="display:block; clear:both;"
 									.hass="${this._hass}"
 									.ts="${new Date(n.timestamp)}"
@@ -686,15 +696,15 @@ class HomeFeedCard extends LitElement {
 		
 
 		if(n.item_type == "notification"){
-			var closeLink = html`<ha-icon icon='mdi:close' .notificationId='${n.notification_id}' @click=${this._handleDismiss}</ha-icon>`;
+			var closeLink = HomeFeedCardHelpers.html`<ha-icon icon='mdi:close' .notificationId='${n.notification_id}' @click=${this._handleDismiss}</ha-icon>`;
 		}
 		else{
-			var closeLink = html``;
+			var closeLink = HomeFeedCardHelpers.html``;
 		}
 		
 		let stateObj = n.stateObj ? n.stateObj : {"entity_id": "", "state": "unknown", "attributes":{}};
 
-		return html`
+		return HomeFeedCardHelpers.html`
 		<div class="item-container">
 			<div class="item-left">
 				<state-badge .stateObj='${stateObj}' .overrideIcon='${icon}'/>
@@ -752,7 +762,7 @@ class HomeFeedCard extends LitElement {
     
     notificationMonitor() {
 	  let oldNotificationCount = this.notificationCount ? this.notificationCount : "0";
-	  let notificationsLastUpdate = JSON.parse(localStorage.getItem('home-feed-card-notificationsLastUpdate' + this.pageId));
+	  let notificationsLastUpdate = JSON.parse(localStorage.getItem('home-feed-card-notificationsLastUpdate' + this.pageId + this._config.title));
       if(this._hass){
         const filtered = Object.keys(this._hass.states).filter(key => key.startsWith("persistent_notification."));
       	let notificationCount = filtered.length;
@@ -770,7 +780,7 @@ class HomeFeedCard extends LitElement {
     
     buildIfReady(){
     	if(!this._hass || !this.moment || !this.helpers) return;
-		let notificationsLastUpdate = JSON.parse(localStorage.getItem('home-feed-card-notificationsLastUpdate' + this.pageId));
+		let notificationsLastUpdate = JSON.parse(localStorage.getItem('home-feed-card-notificationsLastUpdate' + this.pageId + this._config.title));
 		
     	if((!this.loadedNotifications || !notificationsLastUpdate) && this.moment){
     		this.refreshNotifications().then(() => {});

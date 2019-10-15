@@ -2,6 +2,12 @@
 card:
   type: vertical-stack
   cards:
+    # - type: custom:decluttering-card
+    #   template: heading
+    #   variables:
+    #     - heading: "Test"
+
+
     - type: custom:home-feed-card
       style: |
         ha-card {
@@ -14,7 +20,6 @@ card:
       more_info_on_tap: true
       show_empty: false
       show_notification_title: true
-      deviceID: persistent_notification
       entities:
         # Safety Alerts
         - entity: binary_sensor.alarm_co_detected
@@ -46,13 +51,13 @@ card:
         - entity: lock.front_door
           exclude_states:
             - 'locked'
-        - entity: binary_sensor.upstairs_bathroom_window
-          exclude_states:
-            - 'off'
-          state_map:
-            on: open
+        # - entity: binary_sensor.upstairs_bathroom_window
+        #   exclude_states:
+        #     - 'off'
+        #   state_map:
+        #     on: open
 
-        # Melnor RainCloud / AquaTimer
+        # # Melnor RainCloud / AquaTimer
         - entity: binary_sensor.aquatimer_control_unit_status
           exclude_states:
             - 'on'
@@ -64,6 +69,8 @@ card:
             - 'on'
           state_map:
             off: offline
+
+
 
         # ESPHome Devices
         #- binary_sensor.ble_hub_status
@@ -86,6 +93,6 @@ card:
     #   show_empty: false
     #   card:
     #     type: entities
-    #     <<: *alert_style_level2
+    #     #<<: *alert_style_level2
     #     title: Low Batteries
     #     show_header_toggle: false
