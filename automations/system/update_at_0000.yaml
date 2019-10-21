@@ -1,0 +1,28 @@
+---
+# Check these at midnight
+#
+alias: update_at_0000
+initial_state: on
+trigger:
+  platform: time
+  at: "00:00:01"
+action:
+  # Create group.actionable_lights to replace group.all_lights.
+  - service: script.turn_on
+    entity_id: script.create_actionable_lights_group
+
+  # Update upcoming dynamic holidays.
+  - service: script.update_date_easter
+  - service: script.update_date_fathers
+  - service: script.update_date_labor
+  - service: script.update_date_memorial
+  - service: script.update_date_mlk
+  - service: script.update_date_mothers
+  - service: script.update_date_presidents
+  - service: script.update_date_thanksgiving
+
+  # Update the holiday sensors.
+  - delay:
+      minutes: 5
+  - service: script.turn_on
+    entity_id: script.holiday_sensors_update

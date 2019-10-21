@@ -3,17 +3,43 @@
 platform: rest
 resource: https://raw.githubusercontent.com/brianhanifin/Home-AssistantConfig/master/json_data/holidays.json
 name: Holiday
-scan_interval: 14400
+#scan_interval: 14400
 value_template: >
   {% set today = now().month  ~ '/' ~ now().day  -%}
   {%- set personal = value_json.PERSONAL[ today ]|trim -%}
   {%- set holiday = value_json.MAJOR_US.static[ today ]|trim -%}
-  {%- if holiday == "" -%}
-    {%- set today = now().month  ~ '/' ~ now().day ~ '/' ~ now().year -%}
-    {%- set holiday = value_json.MAJOR_US.dynamic[ today ]|trim -%}
+
+  {%- macro pcase(text) -%}
+    {{ text[0]|upper}}{{text[1:] }}
+  {%- endmacro -%}
+  {%- macro get_dyanmic_holiday(event) -%}
+    {%- set today = states('sensor.date') -%}
+    {%- if today == event -%}
+      {%- set date_parts = states(event).split('-') -%}
+      {%- set event_name = event.split('_')[1] -%}
+      {%- if event_name == "easter" -%}
+        {{ "Easter Sunday" }}
+      {%- elif event_name == "presidents" -%}
+        {{ "Presidents' Day"}}
+      {%- else -%}
+        {{ pcase(event_name ~ " ")|replace("s ","'s ") ~ "Day" }}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endmacro -%}
+  {%- if holiday == '' -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_easter') -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_fathers') -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_labor') -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_memorial') -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_mlk') -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_mothers') -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_presidents') -%}
+    {%- set holiday = get_dyanmic_holiday('sensor.date_thanksgiving') -%}
   {%- endif -%}
+
   {%- if personal != '' -%}
     {{ personal }}
     {%- if holiday != '' -%}{{ ' and ' }}{%- endif -%}
   {%- endif -%}
+
   {{ holiday }}
