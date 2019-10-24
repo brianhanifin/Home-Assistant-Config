@@ -3,7 +3,7 @@
 ## Update the travel time at helpful times.
 ############################################
 alias: watchdog_school_travel_time_update_0700
-initial_state: on
+initial_state: true
 trigger:
   platform: time
   at: "7:00:00"
@@ -38,7 +38,7 @@ action:
       minutes: 5
   - service: homeassistant.update_entity
     entity_id: sensor.school_travel_time
-  
+
   # Sleep the watchdog.
   - delay:
       minutes: 1

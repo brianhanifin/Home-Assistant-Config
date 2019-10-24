@@ -2,11 +2,17 @@
 # Check these at midnight
 #
 alias: update_at_0000
-initial_state: on
+initial_state: true
 trigger:
   platform: time
   at: "00:00:01"
 action:
+  - service: persistent_notification.create
+    data:
+      title: "update_at_0000"
+      message: "Start - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+
+
   # Create group.actionable_lights to replace group.all_lights.
   - service: script.turn_on
     entity_id: script.create_actionable_lights_group
@@ -26,3 +32,9 @@ action:
       minutes: 5
   - service: script.turn_on
     entity_id: script.holiday_sensors_update
+
+
+  - service: persistent_notification.create
+    data:
+      title: "update_at_0000"
+      message: "End - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
