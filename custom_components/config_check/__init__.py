@@ -41,14 +41,7 @@ https://github.com/custom-components/config_check
             if finish_service is not None:
                 domain = finish_service.split(".")[0]
                 service = finish_service.split(".")[1]
-                hass.bus.async_fire(
-                    event_type="call_service",
-                    event_data={
-                        "domain": domain,
-                        "service": service,
-                        "service_data": finish_service_data,
-                    },
-                )
+                await hass.services.async_call(domain, service, finish_service_data)
 
     hass.services.async_register(DOMAIN, "run", run_check_service)
     return True
