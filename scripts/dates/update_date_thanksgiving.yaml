@@ -11,5 +11,10 @@ update_date_thanksgiving:
         {{ today == day_after_event
         or event == 'unknown' }}
 
+    - service: persistent_notification.create
+      data:
+        title: "update_date_thanksgiving"
+        message: "Updating sensor.date_thanksgiving: {{ states('sensor.date_thanksgiving') }}"
+
     - service: homeassistant.update_entity
       entity_id: sensor.date_thanksgiving
