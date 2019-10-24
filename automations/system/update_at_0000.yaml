@@ -5,7 +5,7 @@ alias: update_at_0000
 initial_state: true
 trigger:
   platform: time
-  at: "00:00:01"
+  at: "0:00:01"
 action:
   - service: persistent_notification.create
     data:
@@ -14,8 +14,7 @@ action:
 
 
   # Create group.actionable_lights to replace group.all_lights.
-  - service: script.turn_on
-    entity_id: script.create_actionable_lights_group
+  - service: script.create_actionable_lights_group
 
   # Update upcoming dynamic holidays.
   - service: script.update_date_easter
@@ -30,8 +29,7 @@ action:
   # Update the holiday sensors.
   - delay:
       minutes: 5
-  - service: script.turn_on
-    entity_id: script.holiday_sensors_update
+  - service: script.holiday_sensors_update
 
 
   - service: persistent_notification.create
