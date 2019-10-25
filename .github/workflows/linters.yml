@@ -1,0 +1,25 @@
+name: linters
+
+on: [push]
+
+jobs:
+  remarklint:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v1
+      - name: Running Remark lint
+        uses: "docker://pipelinecomponents/remark-lint:latest"
+        continue-on-error: true
+        with:
+          args: "remark --no-stdout --color --frail --use preset-lint-recommended ."
+
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v1
+      - name: Running YAMLlint
+        uses: "docker://pipelinecomponents/yamllint:latest"
+        with:
+          args: yamllint .
