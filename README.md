@@ -126,7 +126,7 @@ I just learned of Frenck recently, but he is a long time member of the community
 
 ---
 
-All of my configuration files are tested against the most stable version of home-assistant using [Travis][travis-build-status].
+All of my configuration files are tested against the most stable version of home-assistant using [Github Actions](https://github.com/brianhanifin/Home-Assistant-Config/actions).
 
 
 [lovelace-01t]: ./README-images/01_home_t.jpeg
@@ -147,12 +147,7 @@ All of my configuration files are tested against the most stable version of home
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/build/badge.svg
 
-[travis-build-status]: https://travis-ci.org/brianhanifin/Home-Assistant-Config
-# [travis-build-status-shield]: https://travis-ci.org/brianhanifin/Home-Assistant-Config.svg?branch=master
-[travis-build-status-shield]: https://img.shields.io/travis/brianhanifin/Home-Assistant-Config?logo=travis
-
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
-# [commits]: https://github.com/brianhanifin/Home-Assistant-Config/commits/master
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
