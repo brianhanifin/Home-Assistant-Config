@@ -1,0 +1,22 @@
+---
+alias: watchdog_front_door_unlocked
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: lock.front_door
+    from: 'locked'
+    to: 'unlocked'
+action:
+  - service: python_script.light_store
+    data:
+      store_name: locked_state_lights
+      entity_id:
+        - light.entry
+        - light.porch
+  
+  - service: light.turn_on
+    entity_id:
+      - light.entry
+      - light.porch
+    data:
+      brightness: 255

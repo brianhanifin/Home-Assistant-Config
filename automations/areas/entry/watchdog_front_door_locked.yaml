@@ -1,0 +1,13 @@
+---
+alias: watchdog_front_door_locked
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: lock.front_door
+    from: 'unlocked'
+    to: 'locked'
+action:
+  - service: python_script.light_store
+    data:
+      store_name: locked_state_lights
+      operation: restore
