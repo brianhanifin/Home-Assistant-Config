@@ -6,9 +6,9 @@ icon: fas:wrench
 badges:
   - person.brian
   - person.nerene
-  - person.eric
-  - person.sandy
-  - person.heather
+  # - person.eric
+  # - person.sandy
+  # - person.heather
 cards:
   - type: custom:decluttering-card
     template: notifications
@@ -20,10 +20,16 @@ cards:
           ## Mode Overrides
       - type: horizontal-stack
         cards:
+          # - type: entity-button
+          #   entity: switch.time_based_dimmers_enabled
+          #   icon: mdi:brightness-auto
+          #   name: Lights.Dim
+          #   tap_action:
+          #     action: toggle
           - type: entity-button
-            entity: switch.time_based_dimmers_enabled
-            icon: mdi:brightness-auto
-            name: Lights.Dim
+            entity: switch.circadian_lighting_circadian_lighting
+            icon: mdi:theme-light-dark
+            name: Circadian
             tap_action:
               action: toggle
           - type: entity-button
@@ -117,9 +123,9 @@ cards:
             card:
               type: markdown
               content: >
-                ### [[ persistent_notification.1337.attributes.title ]]
+                ### {{ state_attr('persistent_notification.1337','title') }}
 
-                [[ persistent_notification.1337.attributes.message ]]
+                {{ state_attr('persistent_notification.1337','message') }}
 
           - type: divider
           - script.restart_hass
