@@ -9,10 +9,9 @@
 ######################################################################################################
 holiday_color_change:
   sequence:
-    # - service: persistent_notification.create
-    #   data:
-    #     title: "holiday_color_change"
-    #     message: >
+    # - service: scene.turn_on
+    #   data_template:
+    #     entity_id: >
     #       scene.holiday_
     #       {%- if states.sensor.flag.state == "True" -%}
     #         RWB
@@ -26,9 +25,7 @@ holiday_color_change:
       data_template:
         entity_id: >
           scene.holiday_
-          {%- if states.sensor.flag.state == "True" -%}
-            RWB
-          {%- elif states.sensor.holiday_scene.state != "" -%}
+          {%- if states.sensor.holiday_scene.state != "" -%}
             {{ states.sensor.holiday_scene.state }}
           {%- else -%}
             standard
