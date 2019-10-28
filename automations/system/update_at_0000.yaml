@@ -7,13 +7,7 @@ trigger:
   platform: time
   at: "0:00:01"
 action:
-  - service: persistent_notification.create
-    data:
-      title: "update_at_0000"
-      message: "Start - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
-
-
-  # Create group.actionable_lights to replace group.all_lights.
+  # Update group.actionable_lights to replace group.all_lights.
   - service: script.create_actionable_lights_group
 
   # Update upcoming dynamic holidays.
@@ -30,9 +24,3 @@ action:
   - delay:
       minutes: 5
   - service: script.holiday_sensors_update
-
-
-  - service: persistent_notification.create
-    data:
-      title: "update_at_0000"
-      message: "End - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"

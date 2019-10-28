@@ -2,10 +2,10 @@
 # Only update the day after the event (or the event date is unknown).
 update_date_thanksgiving:
   sequence:
-    - service: persistent_notification.create
-      data:
-        title: "update_date_thanksgiving"
-        message: "Start - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+    # - service: persistent_notification.create
+    #   data:
+    #     title: "update_date_thanksgiving"
+    #     message: "Start - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
 
     - condition: template
       value_template: >
@@ -30,5 +30,5 @@ update_date_thanksgiving:
       data:
         title: "update_date_thanksgiving"
         message: >
-          End - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}
+          Update Complete - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}
           sensor.date_thanksgiving: {{ states('sensor.date_thanksgiving') }}

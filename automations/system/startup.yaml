@@ -7,11 +7,6 @@ trigger:
   platform: homeassistant
   event: start
 action:
-  # - service: persistent_notification.create
-  #   data:
-  #     title: "startup"
-  #     message: "Start - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
-
   - service: frontend.set_theme
     data:
       name: midnight
@@ -32,8 +27,3 @@ action:
   - service: automation.turn_on
     entity_id: "all"
     #entity_id: automation.lights_adjust_as_turned_on
-
-  # - service: persistent_notification.create
-  #   data:
-  #     title: "startup"
-  #     message: "End - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
