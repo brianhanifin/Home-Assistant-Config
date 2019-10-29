@@ -7,14 +7,8 @@ initial_state: true
 trigger:
   - platform: sun
     event: sunrise
-    offset: '+1:30:00'
+    offset: '+0:30:00'
 action:
-  # Make sure these modes are renabled every morning.
-  - service: input_boolean.turn_on
-    entity_id: input_boolean.bedroom_light_sync_enabled
-  - service: input_boolean.turn_on
-    entity_id: input_boolean.time_based_dimmers_enabled
-
   # Turn off the night time lights.
   - service:  scene.turn_on
     entity_id: scene.morning

@@ -35,12 +35,6 @@ action:
   #     title: "DEBUG"
   #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_nerene_10min_early')|timestamp_custom('%H:%M', false) }}"
 
-  # Disable bedroom light sync and time based dimmers temporarily.
-  - service: input_boolean.turn_off
-    entity_id: input_boolean.bedroom_light_sync_enabled
-  - service: input_boolean.turn_off
-    entity_id: input_boolean.time_based_dimmers_enabled
-
   # Time to turn on the lights!
   - service: script.turn_on
     entity_id: script.wakeup_nerene_light_start
