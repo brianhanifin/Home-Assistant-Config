@@ -2,10 +2,10 @@
 wakeup_nerene_light_start:
   sequence:
     # Disable bedroom light sync and time based dimmers temporarily.
-  - service: input_boolean.turn_off
-    entity_id: input_boolean.bedroom_light_sync_enabled
-  - service: input_boolean.turn_off
-    entity_id: input_boolean.time_based_dimmers_enabled
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.bedroom_light_sync_enabled
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.time_based_dimmers_enabled
 
 
     # Start lights at ~20% and increment by ~10% every minute for 9 minutes.
@@ -90,8 +90,8 @@ wakeup_nerene_light_start:
     - service: light.turn_off
       entity_id: light.bedroom
 
-  # Re-enable bedroom light sync and time based dimmers temporarily.
-  - service: input_boolean.turn_on
-    entity_id: input_boolean.bedroom_light_sync_enabled
-  - service: input_boolean.turn_on
-    entity_id: input_boolean.time_based_dimmers_enabled
+    # Re-enable bedroom light sync and time based dimmers temporarily.
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.bedroom_light_sync_enabled
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.time_based_dimmers_enabled

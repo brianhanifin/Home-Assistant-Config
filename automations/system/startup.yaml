@@ -7,6 +7,12 @@ trigger:
   platform: homeassistant
   event: start
 action:
+  # Let Zwave2MQTT know we are back online.
+  - service: mqtt.publish
+    data:
+      topic: "hass/status"
+      payload: "online"
+
   - service: frontend.set_theme
     data:
       name: midnight
