@@ -6,16 +6,17 @@ initial_state: true
 trigger:
   platform: state
   entity_id: binary_sensor.update_available
-  to: 'on'
+  from: "off"
+  to: "on"
 action:
   - service: script.notify_web
     data_template:
       title: "New Home Assistant Available"
-      message: "Version {{ sensor.lastest_version }} is available!"
+      message: "{{ sensor.lastest_version }} is available!"
       id: "update"
 
   - service: script.notify_mobile
     data_template:
       title: "Home Assistant Update"
-      message: "Version {{ sensor.lastest_version }} is available!"
+      message: "{{ sensor.lastest_version }} is available!"
       who: "brian"

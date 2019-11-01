@@ -1,0 +1,16 @@
+---
+platform: mqtt
+name: front_door
+#state_topic: "zwave/entry/8/98/1/0"
+json_attributes_topic: "zwave/entry/8/98/1/0"
+command_topic: "zwave/entry/8/98/1/0/set"
+payload_lock: "true"
+payload_unlock: "false"
+value_template: >
+  {%- if value_json.value == false -%}
+    false
+  {%- elif value_json.value == true -%}
+    true
+  {%- else -%}
+    unknown
+  {%- endif -%}
