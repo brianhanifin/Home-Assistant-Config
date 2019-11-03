@@ -5,7 +5,17 @@ wakeup_brian_light_start:
     - service: light.turn_on
       data:
         entity_id: light.brian1
+    #- delay: 00:00:01
+    - service: light.turn_on
+      data:
+        entity_id: light.brian1
         brightness: 50
+    - service: light.turn_off
+      data:
+        entity_id: light.brian2
+    - service: light.turn_off
+      data:
+        entity_id: light.brian3
 
     - delay: 00:01:00
     - condition: state
