@@ -155,7 +155,7 @@ All of my configuration files are tested against the most stable version of home
 [lovelace-05]: ./README-images/05_tools.jpeg
 
 [amazon-echo]: ./README-images/echo.jpeg
-[bedroom_switches]: ./README-images/xiaomi_double_switch.jpg
+[bedroom_switches]: ./README-images/xiaomi_double_switch.jpeg
 [button-medicine]: ./README-images/button_medicine.jpeg
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
