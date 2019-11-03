@@ -7,16 +7,21 @@
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
 
-Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle is complete (thanks to the help of a power monitoring smart plug).
+Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
 ## User Interface
 ### Amazon Alexa
 <span style="float:left">![amazon echo][amazon-echo]</span> Our primary way we interact with Alexa is via Echo devices in all of the major rooms of the house. Alexa makes announcments when something needs our immediate attention: such as when it is time to leave for school, or the dog's water bowl needs to be refilled.
 
 ### Physical Buttons
+
+#### Dog Medicine Logger
 <span style="float:left">![medicine button][button-medicine]</span> Recently I stuck a wireless push button inside the cabinet where we keep our dog's seizure medicine. When we prepare his pill treats for the day, and give him his first dose a press of the button logs today's date. Around 9am an automation runs that announces that the dog's medicine needs his medicine. However, if the button was pressed earlier in the day the announcement is not made.
 
 My wife is really happy with how this is working and I am considering incorporating more of these into our daily routine. Maybe Home Assistant could take over more of our household reminders from apps on our Phones?
+
+#### Bedside Toggle Switches
+<span style="float:left">![bedroom_switches]</span>I added a battery powered Xiaomi double switch to my wife's bedside table. Single clicks toggle the lights on either side of our bed. While a long press toggles the bedroom fans, or the sound machine.
 
 ### Lovelace
 
@@ -35,6 +40,10 @@ I am inspired to finally find uses for the bag full of random ESP boards I purch
 [Using the example code from esphome.io][esphome-ble-hub] I deployed a bridge in my Garage to pass along the data from the Xiaomi MiFlora sensor I stuck in one of our plant pots in the Front Yard. I had this for over almost a year and was unable to get the data into Home Assistant, until now! :smile:
 #### ESP8266 + ESP8285
 -**Water Bowl Sensor**: [Using the Sonoff Basic button press binary sensor][esphome-sonoff-basic] as a starting point, I deployed a ESP8285 with two simple jumper wires attached to sense when the dog's water bowl becomes empty. If the sensor still reads the bowl as empty after 5 minutes then Alexa announces it is time to fill the bowl.-
+
+#### Shelly Boards
+These devices are great for shoving in a box behind a light switch to add smarts.
+
 #### SonOff Plugs
 **Basic, S31, POW R2**:
 These plugs control a hot water circulation pump, floor fans, landscape lighting, Christmas light strings, etc. One monitors the power usage of the Washing Machine so Alexa can announce when the clothes are ready to be moved to the dryer.
@@ -72,10 +81,12 @@ Based on DrZzs recommendation I switch presence tracking for my and my wife's ph
 ### Smoke + Carbon Monoxide Detectors
 Thanks to Carlo's article "[PSA: CHECK OUT YOUR SMOKE DETECTORS (ONCE EVERY 10 YEARS)][carlo-blog-smoke]" I realized that I have lived in my house for almost 11 years now, and we're due for new smoke detectors.
 
-I have added 6 of these around the house and setup an iOS alert to alert my and my wife's phones should the Smoke or CO sensor be triggered anywhere in the house. As they are interconnected they all appear as one device in Wink and Home Assistant! :)
+I have added 2 of these around the house and setup an iOS alert to alert my phone should the Smoke or CO sensor be triggered anywhere in the house. ~~As they are interconnected they all appear as one device in Wink and Home Assistant!~~ Unfortunatley, Wink has been super flaky and they discontinued support for the Wink 1 hub, and are running out of money. So I need to replace these smoke detectors with some Z-wave ones perhaps?
 
 ### Xiaomi
 This Chinese company makes a lot of very useful and inexpensive wireless smart home products. I use their Zigbee smart hub to get these devices to talk to Home Assistant.
+#### Buttons
+I use a small battery powered button to track when the dog's medicine has been prepared for the day. Also, a double switch unit is on my wife's bedside table to sliently operate lights and devices in our room at night.
 #### Contact Sensors
 I use their door/window sensors to turn the light in the shoe closet on and off, and remind us when we leave the Glowforge vent window open.
 #### Motion Sensors
@@ -98,7 +109,9 @@ Cons:
 
 
 ### Wink Hub
-I picked up an inexpensive version 1 Wink Hub so I could add Z-Wave devices and replace my Lutron Hub. I have now added Kidee Smoke + Carbon Monoxide detectors as well.
+~~I picked up an inexpensive version 1 Wink Hub so I could add Z-Wave devices and replace my Lutron Hub. I have now added Kidee Smoke + Carbon Monoxide detectors as well.~~
+
+I have almost completely moved all devices over to my Zwave2MQTT install or my Conbee Zigbee install.
 
 ### Z-Wave
 I have added some GE Z-Wave in-wall switches in the kitchen since we don't care to dim the overhead lights in there. I also have a few dimmers as well.
@@ -142,6 +155,7 @@ All of my configuration files are tested against the most stable version of home
 [lovelace-05]: ./README-images/05_tools.jpeg
 
 [amazon-echo]: ./README-images/echo.jpeg
+[bedroom_switches]: ./README-images/xiaomi_double_switch.jpg
 [button-medicine]: ./README-images/button_medicine.jpeg
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
