@@ -1,7 +1,7 @@
 # Hanifin Smart Home
 
 | GitHub Repository | Home Assistant Community |
-| :---| :--- | :--- |
+| :---| :--- |
 | [![Github Action Status][github-build-status-shield]][github-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits]  | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
 
 ## About our smart home
