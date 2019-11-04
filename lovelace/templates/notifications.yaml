@@ -10,22 +10,25 @@ card:
           --paper-item-icon-color: white;
           --paper-item-icon-active-color: white;
         }
+        ha-card a {
+          color: white;
+        }
       title: Notifications
       more_info_on_tap: true
       show_empty: false
       show_notification_title: true
       entities:
         # Safety Alerts
-        - entity: binary_sensor.alarm_co_detected
-          exclude_states:
-            - 'off'
-          state_map:
-            on: DETECTED
-        - entity: binary_sensor.alarm_smoke_detected
-          exclude_states:
-            - 'off'
-          state_map:
-            on: DETECTED
+        # - entity: binary_sensor.alarm_co_detected
+        #   exclude_states:
+        #     - 'off'
+        #   state_map:
+        #     on: DETECTED
+        # - entity: binary_sensor.alarm_smoke_detected
+        #   exclude_states:
+        #     - 'off'
+        #   state_map:
+        #     on: DETECTED
 
         # Doors + Windows
         - entity: binary_sensor.front_door
@@ -45,11 +48,11 @@ card:
         - entity: lock.front_door
           exclude_states:
             - 'locked'
-        # - entity: binary_sensor.upstairs_bathroom_window
-        #   exclude_states:
-        #     - 'off'
-        #   state_map:
-        #     on: open
+        - entity: binary_sensor.upstairs_bathroom_window
+          exclude_states:
+            - 'off'
+          state_map:
+            on: open
 
         # # Melnor RainCloud / AquaTimer
         - entity: binary_sensor.aquatimer_control_unit_status
