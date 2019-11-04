@@ -4,15 +4,11 @@ alexa_turn_on_the_lights:
   sequence:
     - service: homeassistant.turn_on
       data_template:
-        entity_id: >-
-          {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+        entity_id: >
+          {% filter trim|replace("\n", "")|replace("\t", " ") %}
+            {# Use the name of each Echo to determine which room the command likely came from. #}
+            {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+            {%- set room = room|replace('master_','') -%}
 
-          {%- if room == "kitchen" -%}
-            group.kitchen_lights
-          {%- elif room == "family_room" -%}
-            light.family_room
-          {%- elif room == "master_bedroom" -%}
-            light.bedroom
-          {%- elif room == "play_room" -%}
-            light.play_room
-          {%- endif -%}
+            group.{{ room }}_lights
+          {% endfilter %}

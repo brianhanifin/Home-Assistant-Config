@@ -1,12 +1,13 @@
 ---
 platform: template
 sensors:
-  wakeup_nerene_10min_early:
+  wakeup_boys_10min_early:
     friendly_name: Light Fade-in Start
     icon_template: mdi:lightbulb-on-outline
-    entity_id: input_datetime.wakeup_nerene_time
+    entity_id: sensor.boys_room_next_alarm
     value_template: >-
-      {%  set wakeup_time    = states("input_datetime.wakeup_nerene_time") -%}
+      {%- set next_alarm     = states('sensor.boys_room_next_alarm') -%}
+      {%- set wakeup_time    = next_alarm.split("T")[1].split("-")[0] -%}
       {%- set wakeup_hour    = wakeup_time.split(':')[0] -%}
       {%- set wakeup_minutes = wakeup_time.split(':')[1] -%}
       {%- if (wakeup_minutes | int >= 10) -%}

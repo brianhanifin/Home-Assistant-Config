@@ -7,16 +7,28 @@ cards:
   - type: custom:decluttering-card
     template: notifications
 
+  - type: custom:decluttering-card
+    template: wakeup
+    variables:
+      - pname: Nerene
+      - name:  nerene
+
+  - type: custom:decluttering-card
+    template: wakeup
+    variables:
+      - pname: Brian
+      - name:  brian
+
   - type: vertical-stack
     cards:
       - type: custom:decluttering-card
-        template: wakeup
+        template: heading
         variables:
-          - pname: Nerene
-          - name:  nerene
+          - heading: "Boy's Bedroom Wakeup Light"
 
-      - type: custom:decluttering-card
-        template: wakeup
-        variables:
-          - pname: Brian
-          - name:  brian
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - light.boys_wakeup
+          - sensor.boys_room_next_alarm
+          - sensor.wakeup_boys_10min_early
