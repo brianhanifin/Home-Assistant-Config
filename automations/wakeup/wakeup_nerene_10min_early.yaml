@@ -1,6 +1,6 @@
 ---
 alias: wakeup_nerene_10min_early
-initial_state: true
+#initial_state: true
 trigger:
   platform: template
   #value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
@@ -13,9 +13,9 @@ condition:
     #    state: home
 
     # Is the alarm enabled.
-    - condition: state
-      entity_id: input_boolean.wakeup_nerene_status
-      state: 'on'
+    # - condition: state
+    #   entity_id: input_boolean.wakeup_nerene_status
+    #   state: 'on'
 
     # Is today one of the selected days?
     - condition: template
