@@ -58,13 +58,6 @@ cards:
                 <<: *action_more_info
               - entity: input_select.heather
                 <<: *action_more_info
-      - type: horizontal-stack
-        cards:
-          - type: entities
-            entities:
-              - input_boolean.residents_home
-              - input_boolean.residents_away
-              - input_boolean.residents_extended_away
 
 
       # - type: lists
@@ -98,16 +91,16 @@ cards:
         show_header_toggle: false
         entities:
           - type: custom:auto-entities
+            show_empty: false
             card:
               type: custom:fold-entity-row
               head:
                 type: section
-                label: All lights
+                label: Actionable Lights
             filter:
               include:
-                - domain: light
+                - group: group.actionable_lights
               exclude:
-                - entity_id: light.lamplinc*
                 - entity_id: light.kitchen_prep
                 - entity_id: "*_led"
           - type: custom:auto-entities
@@ -116,10 +109,10 @@ cards:
               type: custom:fold-entity-row
               head:
                 type: section
-                label: Lights that are on
+                label: Actionable Lights that are on
             filter:
               include:
-                - domain: light
+                - group: group.actionable_lights
                   state: "on"
               exclude:
                 - entity_id: light.kitchen_prep
