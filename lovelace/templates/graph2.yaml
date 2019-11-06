@@ -1,0 +1,60 @@
+---
+default:
+  - entities1:
+    - sensor.zero
+  - name1: Temperature
+  - unit1: °F
+
+  - entities2:
+    - sensor.zero
+  - name2: Humidity
+  - unit2: "%"
+
+  - animate: true
+  - entities: ""
+  - font_size: 75
+  - height: 150
+  - hours_to_show: 6
+  - line_width: 3
+  - name: ""
+  - points_per_hour: 1
+  - show:
+      icon: false
+      labels: false
+  - unit: ""
+
+card:
+  type: horizontal-stack
+  cards:
+    - type: custom:decluttering-card
+      template: graph
+      variables:
+        - entities: "[[entities1]]"
+        - name: "[[name1]]"
+        - unit: "[[unit1]]"
+        - color: orange
+        - animate: "[[animate]]"
+        - font_size: "[[font_size]]"
+        - height: "[[height]]"
+        - hours_to_show: "[[hours_to_show]]"
+        - line_color: "[[color]]"
+        - line_width: "[[line_width]]"
+        - points_per_hour: "[[points_per_hour]]"
+        - show: "[[show]]"
+
+    - type: custom:decluttering-card
+      template: graph
+      variables:
+        - entities: "[[entities2]]"
+        - name: "[[name2]]"
+        - unit: "[[unit2]]"
+        - color: lightblue
+        - animate: "[[animate]]"
+        - font_size: "[[font_size]]"
+        - height: "[[height]]"
+        - hours_to_show: "[[hours_to_show]]"
+        - line_color: "[[color]]"
+        - line_width: "[[line_width]]"
+        - points_per_hour: "[[points_per_hour]]"
+        - show: "[[show]]"
+
