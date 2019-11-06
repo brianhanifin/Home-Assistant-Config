@@ -18,59 +18,35 @@ cards:
       - type: markdown
         content: >
           ## Mode Overrides
-      - type: horizontal-stack
-        cards:
-          - type: entity-button
-            #color: rgb(66, 134, 244)
-            entity: switch.guest_mode
-            icon: mdi:account-supervisor-circle
-            name: Guest
-            tap_action:
-              action: toggle
-          - type: entity-button
-            entity: switch.circadian_lighting_enabled
-            icon: mdi:weather-sunset
-            name: Circadian
-            tap_action:
-              action: toggle
-          # - type: entity-button
-          #   entity: switch.time_based_dimmers_enabled
-          #   icon: mdi:brightness-auto
-          #   name: Lights.dim
-          #   tap_action:
-          #     action: toggle
-          - type: entity-button
-            entity: switch.network_closet_timeout
-            icon: mdi:ethernet
-            name: Timeout
-            tap_action:
-              action: toggle
-      - type: horizontal-stack
-        cards:
-          - type: entity-button
-            entity: switch.mobile_notifications
-            icon: mdi:cellphone-message
-            name: Notify
-            tap_action:
-              action: toggle
-          - type: entity-button
-            entity: switch.audio_notifications
-            icon: mdi:speaker-wireless
-            name: Notify
-            tap_action:
-              action: toggle
-          - type: entity-button
-            entity: switch.motion_detection_mode
-            icon: mdi:exit-run
-            name: Detection
-            tap_action:
-              action: toggle
-          - type: entity-button
-            entity: switch.vacation
-            icon: mdi:car-estate
-            name: Vacation
-            tap_action:
-              action: toggle
+
+      - type: custom:decluttering-card
+        template: button_row3
+        variables:
+          - entity1: switch.guest_mode
+          - icon1: mdi:account-supervisor-circle
+          - name1: Guest
+          - entity2: switch.circadian_lighting_enabled
+          - icon2: mdi:weather-sunset
+          - name2: Circadian
+          - entity3: switch.network_closet_timeout
+          - icon3: mdi:ethernet
+          - name3: Timeout
+
+      - type: custom:decluttering-card
+        template: button_row4
+        variables:
+          - entity1: switch.mobile_notifications
+          - icon1: mdi:cellphone-message
+          - name1: Notify
+          - entity2: switch.audio_notifications
+          - icon2: mdi:speaker-wireless
+          - name2: Notify
+          - entity3: switch.motion_detection_mode
+          - icon3:  mdi:exit-run
+          - name3: Detection
+          - entity4: switch.vacation
+          - icon4: mdi:car-estate
+          - name4: Vacation
 
       - type: horizontal-stack
         cards:
@@ -87,14 +63,16 @@ cards:
                 secondary_info: last-changed
               - entity: sensor.last_message
                 secondary_info: last-changed
-              - type: divider
-              - type: divider
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            show_header_toggle: false
+            show_state: false
+            entities:
               - input_select.tts_phrase_room
-              - type: divider
               - input_select.tts_phrases
               - type: custom:text-input-row
                 entity: input_text.tts_phrase
-              - type: divider
               - type: call-service
                 name: ' '
                 icon: 'mdi:voice'
@@ -103,8 +81,10 @@ cards:
 
   - type: vertical-stack
     cards:
+      - type: markdown
+        content: >
+          ## System
       - type: entities
-        title: System
         show_header_toggle: false
         show_state: false
         entities:
@@ -114,7 +94,6 @@ cards:
           - type: call-service
             name: Check Config + Restart
             service: script.config_check_and_restart
-
           - type: custom:auto-entities
             filter:
               include:
@@ -127,12 +106,18 @@ cards:
 
                 {{ state_attr('persistent_notification.1337','message') }}
 
-          - type: divider
+      - type: entities
+        show_header_toggle: false
+        show_state: false
+        entities:
           - script.restart_hass
           - script.reboot
           #- input_select.log_level
-          - type: divider
 
+      - type: entities
+        show_header_toggle: false
+        show_state: false
+        entities:
           - type: custom:auto-entities
             filter:
               include:
@@ -142,7 +127,6 @@ cards:
                   state: "> 0"
             card:
               type: entities
-
           - entity: sensor.latest_version
             secondary_info: last-changed
           - entity: sensor.current_version
@@ -185,8 +169,13 @@ cards:
                 icon: mdi:router-wireless-settings
                 type: weblink
 
-  - type: custom:gui-sandbox
+  - type: vertical-stack
+    cards:
+      - type: markdown
+        content: >
+          ## Sandbox
   - type: custom:theme-maker
+  - type: custom:gui-sandbox
 
   - type: custom:auto-entities
     filter:

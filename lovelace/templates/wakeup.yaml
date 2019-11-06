@@ -7,71 +7,47 @@ card:
       variables:
         - heading: "[[pname]]'s Wakeup Light"
 
-    - type: horizontal-stack
-      cards:
-        - type: entities
-          show_header_toggle: false
-          entities:
-            # - entity: "input_boolean.wakeup_[[name]]_status"
-            #   icon: fas:bell
-            - entity: "automation.wakeup_[[name]]_10min_early"
-              icon: fas:bell
-              name: Activate Light
-            - type: time-input-row
-              entity: "input_datetime.wakeup_[[name]]_time"
-              icon: mdi:weather-sunny
-            - entity: "sensor.wakeup_[[name]]_10min_early"
-              icon: mdi:weather-sunset-up
+    - type: entities
+      show_header_toggle: false
+      entities:
+        # - entity: "input_boolean.wakeup_[[name]]_status"
+        #   icon: fas:bell
+        - entity: "automation.wakeup_[[name]]_10min_early"
+          icon: fas:bell
+          name: Activate Light
+        - type: time-input-row
+          entity: "input_datetime.wakeup_[[name]]_time"
+          icon: mdi:weather-sunny
+        - entity: "sensor.wakeup_[[name]]_10min_early"
+          icon: mdi:weather-sunset-up
 
-    - type: horizontal-stack
-      cards:
-        - type: custom:decluttering-card
-          template: "button"
-          variables:
-            - entity: "switch.wakeup_[[name]]_mon"
-            - icon: mdi:checkbox-marked-circle
-            - name: Mon
-        - type: custom:decluttering-card
-          template: "button"
-          variables:
-            - entity: "switch.wakeup_[[name]]_tue"
-            - icon: mdi:checkbox-marked-circle
-            - name: Tue
-        - type: custom:decluttering-card
-          template: "button"
-          variables:
-            - entity: "switch.wakeup_[[name]]_wed"
-            - icon: mdi:checkbox-marked-circle
-            - name: Wed
-        - type: custom:decluttering-card
-          template: "button"
-          variables:
-            - entity: "switch.wakeup_[[name]]_thu"
-            - icon: mdi:checkbox-marked-circle
-            - name: Thu
-        - type: custom:decluttering-card
-          template: "button"
-          variables:
-            - entity: "switch.wakeup_[[name]]_fri"
-            - icon: mdi:checkbox-marked-circle
-            - name: Fri
-    - type: horizontal-stack
-      cards:
-        - type: custom:decluttering-card
-          template: button_blank
+    - type: custom:decluttering-card
+      template: button_row5
+      variables:
+        - entity1: "switch.wakeup_[[name]]_mon"
+        - icon1:  mdi:checkbox-marked-circle
+        - name1: Monday
+        - entity2: "switch.wakeup_[[name]]_tue"
+        - icon2: mdi:checkbox-marked-circle
+        - name2: Tuesday
+        - entity3: "switch.wakeup_[[name]]_wed"
+        - icon3: mdi:checkbox-marked-circle
+        - name3: Wednesday
+        - entity4: "switch.wakeup_[[name]]_thu"
+        - icon4: mdi:checkbox-marked-circle
+        - name4: Thursday
+        - entity5: "switch.wakeup_[[name]]_fri"
+        - icon5: mdi:checkbox-marked-circle
+        - name5: Friday
 
-        - type: custom:decluttering-card
-          template: "button"
-          variables:
-            - entity: "switch.wakeup_[[name]]_sat"
-            - icon: "mdi:checkbox-marked-circle"
-            - name: "Sat"
-        - type: custom:decluttering-card
-          template: "button"
-          variables:
-            - entity: "switch.wakeup_[[name]]_sun"
-            - icon: "mdi:checkbox-marked-circle"
-            - name: "Sun"
-
-        - type: custom:decluttering-card
-          template: button_blank
+    - type: custom:decluttering-card
+      template: button_row4
+      variables:
+        - template1: button_blank
+        - entity2: "switch.wakeup_[[name]]_sat"
+        - icon2: "mdi:checkbox-marked-circle"
+        - name2: Saturday
+        - entity3: "switch.wakeup_[[name]]_sun"
+        - icon3: "mdi:checkbox-marked-circle"
+        - name3: Sunday
+        - template4: button_blank

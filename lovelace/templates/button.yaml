@@ -7,11 +7,73 @@ default:
       action: toggle
   - hold_action:
       action: more-info
+  - show_state: true
+  - type: icon
 
 card:
-  type: entity-button
+  # type: entity-button
+  # entity: "[[entity]]"
+  # icon: "[[icon]]"
+  # name: "[[name]]"
+  # tap_action: "[[tap_action]]"
+  # hold_action: "[[hold_action]]"
+
+  type: custom:button-card
+  color_type: "[[type]]"
   entity: "[[entity]]"
-  icon: "[[icon]]"
   name: "[[name]]"
   tap_action: "[[tap_action]]"
   hold_action: "[[hold_action]]"
+  show_state: "[[show_state]]"
+  icon: "[[icon]]"
+  styles:
+    grid:
+      - grid-template-areas: '"i" "n" "s"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr min-content min-content
+    img_cell:
+      - align-self: start
+      - text-align: start
+    name:
+      - justify-self: start
+      - padding-left: 10px
+      - font-weight: bold
+      - text-transform: lowercase
+    state:
+      - justify-self: start
+      - padding-left: 10px
+  state:
+    - value: unlocked
+      icon: mdi:lock-open
+    - value: locked
+      icon: mdi:lock
+      styles:
+        card:
+          - filter: opacity(50%)
+        icon:
+          - filter: grayscale(100%)
+    - value: 'off'
+      styles:
+        card:
+          - filter: opacity(50%)
+        icon:
+          - filter: grayscale(100%)
+    - value: unavailable
+      styles:
+        card:
+          - filter: opacity(25%)
+        icon:
+          - filter: grayscale(100%)
+    - value: closed
+      styles:
+        card:
+          - filter: opacity(50%)
+        icon:
+          - filter: grayscale(100%)
+    - value: open
+      icon: >
+        [[[
+          if (entity.entity_id == "cover.garage_door")
+            return "mdi:garage-open";
+          return "[[icon]]";
+        ]]]

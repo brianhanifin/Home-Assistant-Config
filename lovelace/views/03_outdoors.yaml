@@ -38,15 +38,15 @@ cards:
         card_width: '90%'
         parameters:
           centeredSlides: true
-          slidesPerView: 'auto'
-          spaceBetween: 8
-          pagination:
-            #type: 'progressbar'
-            type: 'bullets'
-          navigation:
           keyboard:
             enabled: true
             onlyInViewport: true
+          navigation:
+          pagination:
+            #type: 'progressbar'
+            type: 'bullets'
+          slidesPerView: 'auto'
+          spaceBetween: 8
         cards:
           - type: vertical-stack
             cards:
@@ -134,91 +134,89 @@ cards:
                 enabled: true
                 onlyInViewport: true
             cards:
-              - type: custom:mini-graph-card
-                animate: true
-                entities:
-                  - entity: sensor.xiaomi_miflora_01_moisture
-                    name: Daisy
-                  - entity: sensor.xiaomi_miflora_02_moisture
-                    name: Plant 2
-                  - entity: sensor.xiaomi_miflora_03_moisture
-                    name: Plant 3
-                  - entity: sensor.xiaomi_miflora_04_moisture
-                    name: Plant 4
-                  - entity: sensor.xiaomi_miflora_05_moisture
-                    name: Plant 5
-                  - entity: sensor.xiaomi_miflora_06_moisture
-                    name: Plant 6
-                font_size: 75
-                line_width: 3
-                more_info: false
-                name: Moisture
-                # show:
-                #   state: false
-              - type: custom:mini-graph-card
-                animate: true
-                entities:
-                  - entity: sensor.xiaomi_miflora_01_soil_conductivity
-                    name: Daisy
-                  - entity: sensor.xiaomi_miflora_02_soil_conductivity
-                    name: Plant 2
-                  - entity: sensor.xiaomi_miflora_03_soil_conductivity
-                    name: Plant 3
-                  - entity: sensor.xiaomi_miflora_04_soil_conductivity
-                    name: Plant 4
-                  - entity: sensor.xiaomi_miflora_05_soil_conductivity
-                    name: Plant 5
-                  - entity: sensor.xiaomi_miflora_06_soil_conductivity
-                    name: Plant 6
-                font_size: 75
-                line_width: 3
-                more_info: false
-                name: Conductivity
-                # show:
-                #   state: false
+              - type: custom:decluttering-card
+                template: graph
+                variables:
+                  - name: Moisture
+                  - entities:
+                    - entity: sensor.xiaomi_miflora_01_moisture
+                      name: Daisy
+                    - entity: sensor.xiaomi_miflora_02_moisture
+                      name: Plant 2
+                    - entity: sensor.xiaomi_miflora_03_moisture
+                      name: Plant 3
+                    - entity: sensor.xiaomi_miflora_04_moisture
+                      name: Plant 4
+                    - entity: sensor.xiaomi_miflora_05_moisture
+                      name: Plant 5
+                    - entity: sensor.xiaomi_miflora_06_moisture
+                      name: Plant 6
+                  - font_size: 75
+                  - line_width: 3
+                  - more_info: false
 
-              - type: custom:mini-graph-card
-                animate: true
-                entities:
-                  - entity: sensor.xiaomi_miflora_01_illuminance
-                    name: Daisy
-                  - entity: sensor.xiaomi_miflora_02_illuminance
-                    name: Plant 2
-                  - entity: sensor.xiaomi_miflora_03_illuminance
-                    name: Plant 3
-                  - entity: sensor.xiaomi_miflora_04_illuminance
-                    name: Plant 4
-                  - entity: sensor.xiaomi_miflora_05_illuminance
-                    name: Plant 5
-                  - entity: sensor.xiaomi_miflora_06_illuminance
-                    name: Plant 6
-                font_size: 75
-                line_width: 3
-                more_info: false
-                name: Illuminance
-                # show:
-                #   state: false
-              - type: custom:mini-graph-card
-                animate: true
-                entities:
-                  - entity: sensor.xiaomi_miflora_01_temperature
-                    name: Daisy
-                  - entity: sensor.xiaomi_miflora_02_temperature
-                    name: Plant 2
-                  - entity: sensor.xiaomi_miflora_03_temperature
-                    name: Plant 3
-                  - entity: sensor.xiaomi_miflora_04_temperature
-                    name: Plant 4
-                  - entity: sensor.xiaomi_miflora_05_temperature
-                    name: Plant 5
-                  - entity: sensor.xiaomi_miflora_06_temperature
-                    name: Plant 6
-                font_size: 75
-                line_width: 3
-                more_info: false
-                name: Temperature
-                # show:
-                #   state: false
+              - type: custom:decluttering-card
+                template: graph
+                variables:
+                  - name: Conductivity
+                  - entities:
+                    - entity: sensor.xiaomi_miflora_01_soil_conductivity
+                      name: Daisy
+                    - entity: sensor.xiaomi_miflora_02_soil_conductivity
+                      name: Plant 2
+                    - entity: sensor.xiaomi_miflora_03_soil_conductivity
+                      name: Plant 3
+                    - entity: sensor.xiaomi_miflora_04_soil_conductivity
+                      name: Plant 4
+                    - entity: sensor.xiaomi_miflora_05_soil_conductivity
+                      name: Plant 5
+                    - entity: sensor.xiaomi_miflora_06_soil_conductivity
+                      name: Plant 6
+                  - font_size: 75
+                  - line_width: 3
+                  - more_info: false
+
+              - type: custom:decluttering-card
+                template: graph
+                variables:
+                  - name: Illuminance
+                  - entities:
+                    - entity: sensor.xiaomi_miflora_01_illuminance
+                      name: Daisy
+                    - entity: sensor.xiaomi_miflora_02_illuminance
+                      name: Plant 2
+                    - entity: sensor.xiaomi_miflora_03_illuminance
+                      name: Plant 3
+                    - entity: sensor.xiaomi_miflora_04_illuminance
+                      name: Plant 4
+                    - entity: sensor.xiaomi_miflora_05_illuminance
+                      name: Plant 5
+                    - entity: sensor.xiaomi_miflora_06_illuminance
+                      name: Plant 6
+                  - font_size: 75
+                  - line_width: 3
+                  - more_info: false
+
+              - type: custom:decluttering-card
+                template: graph
+                variables:
+                  - name: Illuminance
+                  - entities:
+                    - entity: sensor.xiaomi_miflora_01_temperature
+                      name: Daisy
+                    - entity: sensor.xiaomi_miflora_02_temperature
+                      name: Plant 2
+                    - entity: sensor.xiaomi_miflora_03_temperature
+                      name: Plant 3
+                    - entity: sensor.xiaomi_miflora_04_temperature
+                      name: Plant 4
+                    - entity: sensor.xiaomi_miflora_05_temperature
+                      name: Plant 5
+                    - entity: sensor.xiaomi_miflora_06_temperature
+                      name: Plant 6
+                  - font_size: 75
+                  - line_width: 3
+                  - more_info: false
 
       # - type: horizontal-stack
       #   cards:
@@ -226,15 +224,15 @@ cards:
       #       card_width: '90%'
       #       parameters:
       #         centeredSlides: true
-      #         slidesPerView: 'auto'
-      #         spaceBetween: 8
-      #         pagination:
-      #           #type: 'progressbar'
-      #           type: 'bullets'
-      #         navigation:
       #         keyboard:
       #           enabled: true
       #           onlyInViewport: true
+      #         navigation:
+      #         pagination:
+      #           #type: 'progressbar'
+      #           type: 'bullets'
+      #         slidesPerView: 'auto'
+      #         spaceBetween: 8
       #       cards:
       #         - type: plant-status
       #           entity: plant.plant01

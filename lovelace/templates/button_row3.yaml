@@ -3,6 +3,7 @@ default:
   - entity1: light.dummy
   - icon1: mdi:light-switch
   - name1: dummy
+  - show_state1: true
   - tap_action1:
       action: toggle
   - hold_action1:
@@ -12,6 +13,7 @@ default:
   - entity2: light.dummy
   - icon2: mdi:light-switch
   - name2: dummy
+  - show_state2: true
   - tap_action2:
       action: toggle
   - hold_action2:
@@ -21,6 +23,7 @@ default:
   - entity3: light.dummy
   - icon3: mdi:light-switch
   - name3: dummy
+  - show_state3: true
   - tap_action3:
       action: toggle
   - hold_action3:
@@ -28,31 +31,36 @@ default:
   - template3: button
 
 card:
-  type: horizontal-stack
+  type: vertical-stack
   cards:
-    - type: custom:decluttering-card
-      template: "[[template1]]"
-      variables:
-        - entity: "[[entity1]]"
-        - icon: "[[icon1]]"
-        - name: "[[name1]]"
-        - tap_action: "[[tap_action1]]"
-        - hold_action: "[[hold_action1]]"
+    - type: horizontal-stack
+      cards:
+        - type: custom:decluttering-card
+          template: "[[template1]]"
+          variables:
+            - entity: "[[entity1]]"
+            - icon: "[[icon1]]"
+            - name: "[[name1]]"
+            - show_state: "[[show_state1]]"
+            - tap_action: "[[tap_action1]]"
+            - hold_action: "[[hold_action1]]"
 
-    - type: custom:decluttering-card
-      template: "[[template2]]"
-      variables:
-        - entity: "[[entity2]]"
-        - icon: "[[icon2]]"
-        - name: "[[name2]]"
-        - tap_action: "[[tap_action2]]"
-        - hold_action: "[[hold_action2]]"
+        - type: custom:decluttering-card
+          template: "[[template2]]"
+          variables:
+            - entity: "[[entity2]]"
+            - icon: "[[icon2]]"
+            - name: "[[name2]]"
+            - show_state: "[[show_state2]]"
+            - tap_action: "[[tap_action2]]"
+            - hold_action: "[[hold_action2]]"
 
-    - type: custom:decluttering-card
-      template: "[[template3]]"
-      variables:
-        - entity: "[[entity3]]"
-        - icon: "[[icon3]]"
-        - name: "[[name3]]"
-        - tap_action: "[[tap_action3]]"
-        - hold_action: "[[hold_action3]]"
+        - type: custom:decluttering-card
+          template: "[[template3]]"
+          variables:
+            - entity: "[[entity3]]"
+            - icon: "[[icon3]]"
+            - name: "[[name3]]"
+            - show_state: "[[show_state3]]"
+            - tap_action: "[[tap_action3]]"
+            - hold_action: "[[hold_action3]]"

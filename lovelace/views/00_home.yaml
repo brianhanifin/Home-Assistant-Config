@@ -159,11 +159,11 @@ cards:
           - icon1: mdi:hot-tub
           - name1: Hot Water
 
-          - entity2: switch.toggle_front
+          - entity2: lock.front_door
           - icon2: mdi:lock
           - name2: Front Door
 
-          - entity3: switch.toggle_garage
+          - entity3: cover.garage_door
           - icon3: mdi:garage
           - name3: Garage Door
 
@@ -187,7 +187,7 @@ cards:
                   type: custom:decluttering-card
                   template: popup_thermostats
 
-          - entity3: script.tv_family_room_off
+          - entity3: remote.family_room_hub
           - icon3: mdi:remote
           - name3: TV Activities
           - tap_action3:
@@ -214,6 +214,7 @@ cards:
           - entity2: script.goodbye_routine
           - icon2: mdi:exit-run
           - name2: Bye
+          - show_state2: false
           - tap_action2:
               action: call-service
               service: script.turn_on
@@ -224,6 +225,7 @@ cards:
           - entity3: script.goodnight_routine
           - icon3: mdi:weather-night
           - name3: Night
+          - show_state3: false
           - tap_action3:
               action: call-service
               service: script.turn_on
@@ -259,68 +261,41 @@ cards:
 
       - type: vertical-stack
         cards:
-
-          - type: horizontal-stack
+          - type: custom:swipe-card
+            card_width: '90%'
+            parameters:
+              centeredSlides: true
+              keyboard:
+                enabled: true
+                onlyInViewport: true
+              pagination:
+                #type: 'progressbar'
+                type: 'bullets'
+              navigation:
+              slidesPerView: 'auto'
+              spaceBetween: 8
             cards:
-              - type: custom:swipe-card
-                card_width: '90%'
-                parameters:
-                  centeredSlides: true
-                  slidesPerView: 'auto'
-                  spaceBetween: 8
-                  pagination:
-                    #type: 'progressbar'
-                    type: 'bullets'
-                  navigation:
-                  keyboard:
-                    enabled: true
-                    onlyInViewport: true
-                cards:
-                  - type: custom:mini-graph-card
-                    animate: true
-                    entities:
-                      # - entity: sensor.rainforest_energy_monitoring_unit
-                      #   name: Power/Solar Offset
-                      - entity: sensor.power_use
-                        name: Power Use
-                        color: lightblue
-                      - entity: sensor.solor_power_generation
-                        name: Solar Generation
-                        color: orange
-                    font_size: 75
-                    height: 150
-                    icon_adaptive_color: true
-                    line_color: lightblue
-                    line_width: 3
-                    name: Home Power
-                    hours_to_show: 12
-                    points_per_hour: 1
-                    show:
-                      #average: true
-                      #extrema: true
-                      icon: false
-                      #labels: false
-                      #graph: bar
-                      #state: false
-
-                  - type: custom:mini-graph-card
-                    animate: true
-                    entities:
-                      - sensor.solar_difference_hourly
-                      - entity: sensor.zero
-                        color: grey
-                    font_size: 75
-                    height: 150
-                    icon_adaptive_color: true
-                    line_color: lightblue
-                    line_width: 3
-                    name: Solar Difference (+/-)
-                    hours_to_show: 12
-                    points_per_hour: 1
-                    show:
-                      #average: true
-                      #extrema: true
-                      icon: false
-                      #labels: false
-                      #graph: bar
-                      #state: false
+              - type: custom:decluttering-card
+                template: graph
+                variables:
+                  - name: Home Power
+                  - entities:
+                    - entity: sensor.power_use
+                      name: Power Use
+                      color: lightblue
+                    - entity: sensor.solor_power_generation
+                      name: Solar Generation
+                      color: orange
+                  - hours_to_show: 12
+                  - points_per_hour: 1
+              - type: custom:decluttering-card
+                template: graph
+                variables:
+                  - name: Solar Difference (+/-)
+                  - entities:
+                    - entity: sensor.solar_difference_hourly
+                      color: lightblue
+                    - entity: sensor.zero
+                      color: grey
+                  - hours_to_show: 12
+                  - points_per_hour: 1
