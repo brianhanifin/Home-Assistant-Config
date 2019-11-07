@@ -1,0 +1,8 @@
+---
+platform: template
+sensors:
+  today_icon:
+    entity_id: weather.dark_sky
+    friendly_name: Today forecast
+    icon_template: "{{ 'mdi:weather-' ~ state_attr('weather.dark_sky','forecast')[0].condition|replace('clear-','') }}"
+    value_template: "{{ state_attr('weather.dark_sky','forecast')[0].condition }}"
