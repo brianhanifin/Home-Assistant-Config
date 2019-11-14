@@ -1,0 +1,54 @@
+---
+default:
+  - zone_number: 1
+  - name: Zone 1
+
+card:
+  type: vertical-stack
+  cards:
+    - type: custom:decluttering-card
+      template: heading
+      variables:
+        - heading: "Zone [[zone_number]]: [[name]]"
+
+    - type: entities
+      show_header_toggle: false
+      entities:
+        - entity: binary_sensor.irrigation_zone[[zone_number]]
+          secondary_info: last-changed
+        - entity: sensor.irrigation_zone[[zone_number]]_remaining
+          name: Time Remaining
+        - type: "custom:button-entity-row"
+          buttons:
+            - entity: switch.irrigation_zone[[zone_number]]
+              name: Zone [[zone_number]]
+              style:
+                background: lightgray
+                border-radius: 9999px
+              state_icons:
+                "off": "mdi:play"
+                "on": "mdi:stop"
+              state_styles:
+                "off":
+                  color: green
+                  font-weight: bold
+                "on":
+                  color: grey
+
+    - type: entities
+      show_header_toggle: false
+      entities:
+        - entity: switch.irrigation_zone[[zone_number]]_schedule
+          name: Scheduled
+        - type: time-input-row
+          entity: "input_datetime.irrigation_zone[[zone_number]]_first"
+          name: First Run of the Day
+          icon: mdi:weather-sunset-up
+        - type: time-input-row
+          entity: "input_datetime.irrigation_zone[[zone_number]]_last"
+          name: First Run
+          icon: mdi:weather-sunset-up
+        # - input_select.irrigation_zone[[zone_number]]_duration
+        - entity: sensor.irrigation_zone[[zone_number]]_last
+          name: Last Run of the Day
+          secondary_info: last-changed
