@@ -5,7 +5,11 @@ trigger:
   platform: template
   value_template: >
     {%- set next_alarm = states("sensor.boys_room_next_alarm") -%}
-    {%- set wakeup_date = next_alarm.split("T")[0] -%}
+    {%- if next_alarm != "unknown" -%}
+      {%- set wakeup_date = next_alarm.split("T")[0] -%}
+    {%- else -%}
+      {%- set wakeup_date = states('sensor.date') -%}
+    {%- endif -%}
     {%- set start_time = states("sensor.wakeup_boys_10min_early") -%}
 
     {%- if next_alarm != "unknown" -%}

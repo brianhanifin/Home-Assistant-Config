@@ -6,8 +6,12 @@ sensors:
     icon_template: mdi:lightbulb-on-outline
     entity_id: sensor.boys_room_next_alarm
     value_template: >-
-      {%- set next_alarm     = states('sensor.boys_room_next_alarm') -%}
-      {%- set wakeup_time    = next_alarm.split("T")[1].split("-")[0] -%}
+      {%- set next_alarm = states('sensor.boys_room_next_alarm') -%}
+      {%- if next_alarm != "unknown" -%}
+        {%- set wakeup_time    = next_alarm.split("T")[1].split("-")[0] -%}
+      {%- else -%}
+        {%- set wakeup_time = "06:00" -%}
+      {%- endif -%}
       {%- set wakeup_hour    = wakeup_time.split(':')[0] -%}
       {%- set wakeup_minutes = wakeup_time.split(':')[1] -%}
       {%- if (wakeup_minutes | int >= 10) -%}
