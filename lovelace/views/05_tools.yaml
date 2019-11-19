@@ -33,7 +33,7 @@ cards:
           - name3: Timeout
 
       - type: custom:decluttering-card
-        template: button_row4
+        template: button_row3
         variables:
           - entity1: switch.mobile_notifications
           - icon1: mdi:cellphone-message
@@ -41,12 +41,9 @@ cards:
           - entity2: switch.audio_notifications
           - icon2: mdi:speaker-wireless
           - name2: Notify
-          - entity3: switch.motion_detection_mode
-          - icon3:  mdi:exit-run
-          - name3: Detection
-          - entity4: switch.vacation
-          - icon4: mdi:car-estate
-          - name4: Vacation
+          - entity3: switch.vacation
+          - icon3: mdi:car-estate
+          - name3: Vacation
 
       - type: horizontal-stack
         cards:
@@ -153,20 +150,24 @@ cards:
   - type: custom:theme-maker
   - type: custom:gui-sandbox
 
-  - type: custom:auto-entities
-    filter:
-      include:
-        - entity_id: "sensor.*_battery"
-          # attributes:
-          #   battery_level: "<= 20"
-      exclude:
-        - entity_id: "*phone*"
-        - entity_id: "*brightness*" # *motion* = state for same device
-        - entity_id: "*left_button*"
-        - entity_id: "*right_button*"
-    show_empty: false
-    card:
-      type: custom:fold-entity-row
-      head:
-        type: section
-        label: All Batteries
+  - type: entities
+    show_header_toggle: false
+    show_state: false
+    entities:
+      - type: custom:auto-entities
+        filter:
+          include:
+            - entity_id: "sensor.*_battery"
+              # attributes:
+              #   battery_level: "<= 20"
+          exclude:
+            - entity_id: "*phone*"
+            - entity_id: "*brightness*" # *motion* = state for same device
+            - entity_id: "*left_button*"
+            - entity_id: "*right_button*"
+        show_empty: false
+        card:
+          type: custom:fold-entity-row
+          head:
+            type: section
+            label: All Batteries
