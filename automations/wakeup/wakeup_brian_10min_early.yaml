@@ -12,11 +12,6 @@ condition:
     #    entity_id: person.brian
     #    state: home
 
-    # Is the alarm enabled.
-    # - condition: state
-    #   entity_id: input_boolean.wakeup_brian_status
-    #   state: 'on'
-
     # Is today one of the selected days?
     - condition: template
       value_template: >
@@ -36,7 +31,14 @@ action:
   #     message: "automation.wakeup_brian_10min_early {{ states('sensor.wakeup_brian_10min_early')|timestamp_custom('%H:%M', false) }}"
 
   # Time to turn on the lights!
+  # - service: script.turn_on
+  #   entity_id: script.wakeup_brian_light_start
+
   - service: script.turn_on
-    entity_id: script.wakeup_brian_light_start
-  - service: scene.turn_on
-    entity_id: scene.wakeup_brian
+    data_template:
+      entity_id: >
+        {% if is_state('input_boolean.wakeup_brian_skipnext', 'on') %}
+          script.wakeup_brian_skipnext
+        {% else %}
+          script.wakeup_brian_light_start
+        {% endif %}

@@ -12,11 +12,6 @@ condition:
     #    entity_id: person.nerene
     #    state: home
 
-    # Is the alarm enabled.
-    # - condition: state
-    #   entity_id: input_boolean.wakeup_nerene_status
-    #   state: 'on'
-
     # Is today one of the selected days?
     - condition: template
       value_template: >
@@ -36,7 +31,14 @@ action:
   #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_nerene_10min_early')|timestamp_custom('%H:%M', false) }}"
 
   # Time to turn on the lights!
+  # - service: script.turn_on
+  #   entity_id: script.wakeup_nerene_light_start
+
   - service: script.turn_on
-    entity_id: script.wakeup_nerene_light_start
-  - service: scene.turn_on
-    entity_id: scene.wakeup_nerene
+    data_template:
+      entity_id: >
+        {% if is_state('input_boolean.wakeup_nerene_skipnext', 'on') %}
+          script.wakeup_nerene_skipnext
+        {% else %}
+          script.wakeup_nerene_light_start
+        {% endif %}

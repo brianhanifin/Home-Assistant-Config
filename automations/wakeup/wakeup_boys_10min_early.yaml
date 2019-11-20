@@ -24,5 +24,14 @@ action:
   #     message: "automation.wakeup_boys_10min_early"
 
   # Time to turn on the lights!
+  # - service: script.turn_on
+  #   entity_id: script.wakeup_boys_light_start
+
   - service: script.turn_on
-    entity_id: script.wakeup_boys_light_start
+    data_template:
+      entity_id: >
+        {% if is_state('input_boolean.wakeup_boys_skipnext', 'on') %}
+          script.wakeup_boys_skipnext
+        {% else %}
+          script.wakeup_boys_light_start
+        {% endif %}
