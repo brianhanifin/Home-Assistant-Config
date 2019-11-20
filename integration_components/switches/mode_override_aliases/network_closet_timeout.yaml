@@ -1,0 +1,16 @@
+---
+# Network Closet Timeout: Alias
+#
+platform: template
+switches:
+  network_closet_timeout:
+    friendly_name: Network Closet Light Timeout
+    turn_on:
+      service: automation.turn_on
+      data:
+        entity_id: automation.watchdog_network_closet_timeout
+    turn_off:
+      service: automation.turn_off
+      data:
+        entity_id: automation.watchdog_network_closet_timeout
+    value_template: "{{ is_state('automation.watchdog_network_closet_timeout', 'on') }}"
