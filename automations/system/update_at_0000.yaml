@@ -8,11 +8,15 @@ trigger:
   at: "0:00:01"
 action:
   # Save power by turning off the landscape lighting at midnight.
-  - service: light.turn_off
+  - service: switch.turn_off
     entity_id: switch.landscape_lights
 
   # Update group.actionable_lights to replace group.all_lights.
   - service: script.create_actionable_lights_group
+
+  # Disable guest mode (in case it was enabled in the evening).
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.guest_mode
 
   # Update upcoming dynamic holidays.
   - service: script.update_date_easter
