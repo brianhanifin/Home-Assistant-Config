@@ -1,0 +1,15 @@
+---
+# Restart the addon when it is unavailable.
+alias: deconz_watchdog
+initial_state: true
+trigger:
+  # Use the Deconz generated daylight sensor to verify status.
+  - platform: state
+    entity_id: sensor.daylight
+    to: "unknown"
+    for:
+      minutes: 5
+action:
+  - service: hassio.addon_restart
+    data:
+      addon: core_deconz
