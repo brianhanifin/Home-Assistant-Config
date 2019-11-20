@@ -8,8 +8,16 @@ trigger:
     from: 'off'
     to: 'on'
 action:
+  # Disable circadian light dimming.
   - service: switch.turn_off
     entity_id: switch.circadian_lighting_enabled
+
+  # Brighten the lights.
+  - service: light.turn_on
+    data:
+      entity_id: group.lights_on
+      brightness: 255
+      kelvin: 4000
 
   - service: script.say
     data_template:

@@ -8,8 +8,15 @@ trigger:
     from: 'on'
     to: 'off'
 action:
+  # Enable circadian light dimming.
   - service: switch.turn_on
     entity_id: switch.circadian_lighting_enabled
+  
+  # Adjust the lights back to circadian levels.
+  - service: light.turn_on
+    data_template:
+      entity_id: group.lights_on
+      kelvin: "{{ state_attr('sensor.circadian_values','colortemp') }}"
 
   - service: script.say
     data_template:
