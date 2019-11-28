@@ -7,10 +7,7 @@ initial_state: true
 trigger:
   - platform: sun
     event: sunset
-condition:
-  - condition: state
-    entity_id: input_boolean.time_based_dimmers_enabled
-    state: 'on'
+    offset: "-00:15:00"
 action:
   - service: scene.turn_on
     entity_id: scene.sunset
