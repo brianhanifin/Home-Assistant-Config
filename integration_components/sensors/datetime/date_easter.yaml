@@ -1,6 +1,14 @@
 ---
-platform: rest
-name: date_easter
-resource: !secret wolframalpha_date_easter
-scan_interval: 2592000 # 86400 seconds * 30 days
-value_template: "{{ value|replace(' (Unix time)','')|int|timestamp_custom('%Y-%m-%d') }}"
+platform: template
+sensors:
+  date_easter:
+    entity_id: sensor.date_next_easter
+    icon_template: fas:egg
+    value_template: >
+      {%- set today = states('sensor.date') -%}
+      {%- set this_event = states('sensor.date_easter') -%}
+      {%- if today == this_event -%}
+        {{ states('sensor.date') }}
+      {%- else -%}
+        {{ states('sensor.date_next_easter') }}
+      {%- endif -%}
