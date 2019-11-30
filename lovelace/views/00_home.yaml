@@ -285,24 +285,40 @@ cards:
                   - name: Home Power
                   - sensors:
                     - entity: sensor.power_use
-                      name: Power Use
-                      color: lightblue
-                    - entity: sensor.solor_power_generation
-                      name: Solar Generation
+                      name: Consumed
                       color: orange
+                      y_axis: secondary
+                    - entity: sensor.solor_power_generation
+                      name: Generated
+                      color: lightgreen
+                  - group_by: hour
                   - hours_to_show: 12
                   - points_per_hour: 1
+                  - show:
+                      labels: true
+                      labels_secondary: false
               - type: custom:decluttering-card
                 template: graph
                 variables:
-                  - name: Solar Difference (+/-)
+                  - name: SDG&E
                   - sensors:
                     - entity: sensor.solar_difference_hourly
                       color: lightblue
-                    - entity: sensor.zero
-                      color: grey
+                      name: Pulled from the grid
+                    # - entity: sensor.zero
+                    #   color: grey
+                    #   show_legend: false
+                    #   show_line: true
+                    #   show_points: false
+                    #   y_axis: secondary
+                  - group_by: hour
                   - hours_to_show: 12
-                  - points_per_hour: 1
+                  #- points_per_hour: 1
+                  - show:
+                      graph: bar
+                      labels: true
+                      labels_secondary: false
+                      legend: false
 
   - type: vertical-stack
     cards:
