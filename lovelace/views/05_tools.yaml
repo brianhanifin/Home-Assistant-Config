@@ -82,10 +82,10 @@ cards:
             name: Check Config + Restart
             service: script.config_check_and_restart
           - type: custom:auto-entities
+            show_empty: false
             filter:
               include:
                 - entity_id: persistent_notification.1337
-            show_empty: false
             card:
               type: markdown
               content: >
@@ -106,6 +106,7 @@ cards:
         show_state: false
         entities:
           - type: custom:auto-entities
+            show_empty: false
             filter:
               include:
                 - entity_id: binary_sensor.update_available
@@ -119,18 +120,6 @@ cards:
           - entity: sensor.current_version
             secondary_info: last-changed
           - automation.homeassistant_update_notification
-          # - type: divider
-          # - type: custom:config-template-card
-          #   variables:
-          #     - states['binary_sensor.update_available'].state
-          #   entities:
-          #     - binary_sensor.update_available
-          #   card:
-          #     type: custom:hui-glance-card
-          #     entities:
-          #       - entity: binary_sensor.update_available
-          #         name: "${vars[0] === 'on' ? 'Update Available' : 'No Update Available'}"
-          #     show_state: false
 
   - type: vertical-stack
     cards:
