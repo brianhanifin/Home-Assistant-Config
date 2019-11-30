@@ -38,17 +38,22 @@ card:
     - type: entities
       show_header_toggle: false
       entities:
-        - entity: switch.irrigation_zone[[zone_number]]_schedule
-          name: Scheduled
-        - type: time-input-row
-          entity: "input_datetime.irrigation_zone[[zone_number]]_first"
-          name: First Run of the Day
-          icon: mdi:weather-sunset-up
-        - type: time-input-row
-          entity: "input_datetime.irrigation_zone[[zone_number]]_last"
-          name: First Run
-          icon: mdi:weather-sunset-up
-        # - input_select.irrigation_zone[[zone_number]]_duration
-        - entity: sensor.irrigation_zone[[zone_number]]_last
-          name: Last Run of the Day
-          secondary_info: last-changed
+        - type: custom:fold-entity-row
+          head:
+            type: section
+            label: Edit Schedule
+          entities:
+            - entity: switch.irrigation_zone[[zone_number]]_schedule
+              name: Scheduled
+            - type: time-input-row
+              entity: "input_datetime.irrigation_zone[[zone_number]]_first"
+              name: First Run of the Day
+              icon: mdi:weather-sunset-up
+            - type: time-input-row
+              entity: "input_datetime.irrigation_zone[[zone_number]]_last"
+              name: First Run
+              icon: mdi:weather-sunset-up
+            # - input_select.irrigation_zone[[zone_number]]_duration
+            - entity: sensor.irrigation_zone[[zone_number]]_last
+              name: Last Run of the Day
+              secondary_info: last-changed
