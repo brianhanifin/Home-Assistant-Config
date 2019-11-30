@@ -1,6 +1,6 @@
 ---
-name: build
 ## Source: https://github.com/frenck/home-assistant-config/tree/master/.github/workflows
+name: build
 
 # yamllint disable-line rule:truthy
 on:
@@ -21,8 +21,8 @@ jobs:
         run: rm -f ./integrations/stream.yaml
       - name: "Ignore 3rd party package: Breaking Changes"
         run: rm -f ./integrations/breaking_changes.yaml
-        - name: "Ignore 3rd party package: battery_alert.yaml"
-          run: rm -f ./integrations/battery_alert.yaml
+      - name: "Ignore 3rd party package: battery_alert.yaml"
+        run: rm -f ./integrations/battery_alert.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
