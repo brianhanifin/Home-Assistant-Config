@@ -13,10 +13,10 @@ trigger:
       minutes: 5
       seconds: 0
 condition:
-  # Only turn on Away Mode if no family members are present and the guest mode override is off.
-  - condition: template
-    value_template: "{{ states.group.family.state == 'not_home'
-                    and states.input_boolean.guest_mode.state == 'off' }}"
+  # Only turn on Away Mode if guest mode override is off.
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: "off"
 action:
   - service: input_boolean.turn_on
     entity_id: input_boolean.away_mode
