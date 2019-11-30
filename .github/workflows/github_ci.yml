@@ -1,6 +1,6 @@
 ---
-## Source: https://github.com/frenck/home-assistant-config/tree/master/.github/workflows
 name: build
+## Source: https://github.com/frenck/home-assistant-config/tree/master/.github/workflows
 
 # yamllint disable-line rule:truthy
 on:
@@ -17,10 +17,12 @@ jobs:
         uses: actions/checkout@v1
       - name: Activate dummy secrets.yaml
         run: mv ./test_secrets.yaml ./secrets.yaml
-      - name: Disable troublesome component: Breaking Changes
-        run: rm -f ./integrations/breaking_changes.yaml
-      - name: Disable troublesome component: Stream
+      - name: "Disable troublesome component: Stream"
         run: rm -f ./integrations/stream.yaml
+      - name: "Ignore 3rd party package: Breaking Changes"
+        run: rm -f ./integrations/breaking_changes.yaml
+        - name: "Ignore 3rd party package: battery_alert.yaml"
+          run: rm -f ./integrations/battery_alert.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
