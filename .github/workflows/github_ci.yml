@@ -19,10 +19,8 @@ jobs:
         run: mv ./test_secrets.yaml ./secrets.yaml
       - name: "Disable troublesome component: Stream"
         run: rm -f ./integrations/stream.yaml
-      - name: "Ignore 3rd party package: Breaking Changes"
+      - name: "Disable troublesome component: Breaking Changes"
         run: rm -f ./integrations/breaking_changes.yaml
-      - name: "Ignore 3rd party package: battery_alert.yaml"
-        run: rm -f ./integrations/battery_alert.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
