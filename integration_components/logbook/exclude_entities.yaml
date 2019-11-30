@@ -1,26 +1,29 @@
 ---
 exclude:
   entities:
-    - automation.battery_notification_default
-    - automation.battery_notification_slack
+    # Exclude all entities created by /integrations/battery_alert
+    - group.battery_alert
+    - group.battery_status
+    - group.battery_view
+    - input_boolean.low_batteries
+    - input_number.battery_alert_threshold_min
+    - input_number.battery_alert_threshold_max
+    - input_text.delete_battery_sensor
+    - input_text.notifier_name
+    - input_select.notifier_format
     - automation.battery_persistent_notification
     - automation.battery_persistent_notification_clear
+    - automation.battery_notification_default
+    - automation.battery_notification_slack
     - automation.battery_sensor_from_attributes
     - automation.update_battery_status_group_members
+    - automation.delete_battery_sensor
 
-    - automation.persistent_notification_update
 
     - binary_sensor.family_room_motion
+    - binary_sensor.kitchen_1_motion
+    - binary_sensor.kitchen_2_motion
     - binary_sensor.play_room_motion
-    - binary_sensor.sonoff01
-    - binary_sensor.sonoff02
-    - binary_sensor.sonoff_01_btn
-    - binary_sensor.sonoff_02_btn
-    - binary_sensor.sonoff_pow_01
-    - binary_sensor.sonoff_pow_02
-    - binary_sensor.sonoffs31_01
-    - binary_sensor.sonoffs31_01_btn
-    - binary_sensor.sonoffs31_03
 
     - group.all_automations
     - group.all_covers
@@ -30,15 +33,6 @@ exclude:
     - group.all_remotes
     - group.all_scripts
     - group.all_switches
-    
-    - group.battery_alert
-    - group.battery_status
-    - group.battery_view
-
-    - light.entry
-    - light.play_room
-    - light.xiaomi_hub
-    - light.upstairs_bathroom_nightlight
 
     - light.dining1
     - light.dining2
@@ -49,17 +43,16 @@ exclude:
     - light.dining7
     - light.dining8
     - light.dining9
-    
-    - light.entertainment_area_1
-    - light.hue
-
+    - light.entry
     - light.family_room_floor_lamp1
     - light.family_room_floor_lamp2
     - light.family_room_floor_lamp3
-    
-    - script.battery_persistent_notification_clear
-    - script.battery_sensor_from_attributes
-    - script.update_battery_status_group_members
+    - light.play_room
+    - light.upstairs_bathroom_nightlight
+
+    - light.entertainment_area_1
+    - light.hue
+    - light.xiaomi_hub
 
     - sensor.custom_card_tracker
     - sensor.custom_component_tracker
@@ -81,12 +74,6 @@ exclude:
     - sensor.wakeup_nerene_10min_early
     - sensor.wakeup_nerene_time
 
-    - switch.sonoff01
-    - switch.sonoff02
-    - switch.sonoff_01
-    - switch.sonoff_02
-    - switch.hot_water_pump
-    - switch.landscape_lights
-    - switch.sonoffs31_01
-    - switch.sonoffs31_02
-    - switch.sonoffs31_03
+    # Ignore always on devices, when they turn on.
+    - switch.sonoff_s31_01 
+    - switch.sonoff_s31_02

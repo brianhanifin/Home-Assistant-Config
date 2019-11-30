@@ -15,7 +15,7 @@ action:
 
   - service: frontend.set_theme
     data:
-      name: midnight
+      name: ios-dark-mode # midnight
 
   # Sometimes the garage entry light turns on at startup,
   # so turn it back off.
@@ -25,11 +25,3 @@ action:
   # Create group.actionable_lights to replace group.all_lights.
   - service: script.turn_on
     entity_id: script.create_actionable_lights_group
-
-  # script.set_light_brightness_pct_by_time runs multiple times at startup,
-  # delay the first calling of that script.
-  # - delay:
-  #     seconds: 30
-  # - service: automation.turn_on
-  #   entity_id: "all"
-    #entity_id: automation.lights_adjust_as_turned_on
