@@ -1,0 +1,20 @@
+---
+alias: irrigation_system_offline
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: binary_sensor.irrigation_status
+    to: 'off'
+    for: '02:00:00'
+action:
+  - service: script.notify_web
+    data_template:
+      title: "Irrigation System Offline"
+      message: "The Irrigation System has been offline for 2 hours!"
+      id: "update"
+
+  - service: script.notify_mobile
+    data_template:
+      title: "Irrigation System Offline"
+      message: "The Irrigation System has been offline for 2 hours"
+      who: "brian"
