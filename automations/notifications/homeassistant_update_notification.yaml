@@ -8,7 +8,7 @@ trigger:
     entity_id: binary_sensor.update_available
     to: "on"
   - platform: template
-    template: >
+    value_template: >
       {{
         states('sensor.latest_version') != "unknown"
         and (states('sensor.current_version') != states('sensor.latest_version'))
