@@ -4,9 +4,15 @@
 alias: homeassistant_update_notification
 initial_state: true
 trigger:
-  platform: state
-  entity_id: binary_sensor.update_available
-  to: "on"
+  - platform: state
+    entity_id: binary_sensor.update_available
+    to: "on"
+  - platform: template
+    template: >
+      {{
+        states('sensor.latest_version') != "unknown"
+        and (states('sensor.current_version') != states('sensor.latest_version'))
+      }}
 action:
   - service: script.notify_web
     data_template:
