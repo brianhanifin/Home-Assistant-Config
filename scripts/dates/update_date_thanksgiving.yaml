@@ -11,23 +11,5 @@ update_date_thanksgiving:
         {{ today == day_after_event
           or event == 'unknown' }}
 
-    - service: persistent_notification.create
-      data:
-        title: "update_date_thanksgiving"
-        message: "Updating sensor.date_thanksgiving."
-
-    - service: homeassistant.update_entity
-      entity_id: sensor.date_next_thanksgiving
-
-    - delay:
-        seconds: 15
-
     - service: homeassistant.update_entity
       entity_id: sensor.date_thanksgiving
-
-    - service: persistent_notification.create
-      data:
-        title: "update_date_thanksgiving"
-        message: >
-          Update Complete - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}
-          sensor.date_thanksgiving: {{ states('sensor.date_thanksgiving') }}
