@@ -1,0 +1,1045 @@
+---
+# The First two automations in this package are configured to run on three locks
+# The Scripts section of this package has entries for three locks as well
+# I did not want to add 36 extra scripts just to break it out by lock.
+# if you only have one or two remove the unneeded sections
+#
+# https://github.com/ptdalen/home-assistant/tree/master/packages
+automation:
+  - alias: Keypad temporary code end
+    initial_state: true
+    trigger:
+      - platform: state
+        to: 'True'
+        entity_id:
+          - sensor.keypad_1_temp_lock_turn_off
+          - sensor.keypad_2_temp_lock_turn_off
+          - sensor.keypad_3_temp_lock_turn_off
+          - sensor.keypad_4_temp_lock_turn_off
+          - sensor.keypad_5_temp_lock_turn_off
+          - sensor.keypad_6_temp_lock_turn_off
+          - sensor.keypad_7_temp_lock_turn_off
+          - sensor.keypad_8_temp_lock_turn_off
+          - sensor.keypad_9_temp_lock_turn_off
+          - sensor.keypad_10_temp_lock_turn_off
+          - sensor.keypad_11_temp_lock_turn_off
+          - sensor.keypad_12_temp_lock_turn_off
+          - sensor.keypad_13_temp_lock_turn_off
+          - sensor.keypad_14_temp_lock_turn_off
+          - sensor.keypad_15_temp_lock_turn_off
+# this is where usercodes get deleted, for the Schlage locks there seems to be an issue with 
+# clear usercode, so this sets a random code, of course that means there is an unknown code in the cleared
+# slots.  If you dont like that set a specific code that only you know
+    action:
+#front Door Lock
+      # - service: lock.set_usercode
+      #   data_template:
+      #     usercode: >-
+      #       {{ range(1000, 9999) | random }}
+      #     node_id: >-
+      #       {{ states.lock.lock_front_door_lock.attributes.node_id }}
+      #     code_slot: >-
+      #       {% set object_id = trigger.to_state.object_id %}
+      #       {% set code_slot = object_id[7:-19] %}
+      #       {{ code_slot }}
+      - service: lock.clear_usercode
+        data_template:
+          node_id: >-
+            {{ states.lock.lock_front_door_lock.attributes.node_id }}
+          code_slot: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set code_slot = object_id[7:-19] %}
+            {{ code_slot }}
+      - service: script.turn_on
+        entity_id: script.notify_mobile
+        data_template:
+          message: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set code_slot = object_id[7:-19] %}
+            {% set usercode_input = 'door_keypad_' ~ code_slot ~ '_code' %}
+            {% set usercode = states['input_text'][usercode_input].state %}
+            {% set name_input = 'door_keypad_' ~ code_slot ~ '_name' %}
+            {% set name = states['input_text'][name_input].state %}
+            The pin code {{ usercode }} for {{ name }} has now been removed from all doors.
+          title: "Beach House: Temporary code disabled on all doors"        
+          who: brian
+
+  - alias: Keypad clear code after one time use code is used for 16 through 18
+    initial_state: true
+# this is configured to run on three locks, if you only have one or two remove the unneeded sensors from the trigger and condtions
+# When the code from slots 16. 17 or 18 are used, this immediately runs the delete script, removing the code from all doors
+# notice that the alarm level is used to determine which slot was used, make sure the names match your config.  Added condition
+# for keypad unlock to keep codes from being deleted when set  (Yale Locks did this)
+    trigger:
+      - platform: numeric_state
+        entity_id:
+          - sensor.lock_front_door_deadbolt_alarm_level
+        above: 15
+        below: 19
+    condition:
+    - condition: and
+      conditions:
+        - condition: template
+          value_template: "{{ states.sensor.front_door_report.state.lower().startswith('keypad unlock') }}"
+        # - condition: numeric_state
+        #   entity_id: sensor.ha_runtime_in_minutes
+        #   above: 1
+    action:
+      - service: script.turn_on
+        data_template:
+          entity_id: >
+            {% set code_slot = trigger.to_state.state %}
+            {{ 'script.door_keypad_' ~ code_slot ~ '_delete' }}
+      - service: script.turn_on
+        entity_id: script.notify_mobile
+        data:
+          message: "Code has been cleared from all Doors"
+          title: "One Time Code Used"
+          who: brian
+
+  - alias: Keypad clear code after one time use is set to disabled for 16 through 18
+    initial_state: true
+# This will also delete the code from all doors when you change the option from enabled to disabled
+    trigger:
+      - platform: state
+        to: 'Disabled'
+        entity_id:
+          - input_select.door_keypad_16_access_schedule
+          - input_select.door_keypad_17_access_schedule
+          - input_select.door_keypad_18_access_schedule
+    action:
+      - service: script.turn_on
+        data_template:
+          entity_id: >
+                {% set object_id = trigger.to_state.entity_id %}
+                {% set code_slot = "_".join(object_id.split("_")[3:-2]) %}
+                {% set script_to_run = 'script.door_keypad_' ~ code_slot ~ '_delete' %}
+                {{ script_to_run }}
+
+  - alias: Keypad set random code for one time use
+    initial_state: true
+    trigger:
+      - platform: state
+        to: 'Enabled'
+        entity_id:
+          - input_select.door_keypad_16_access_schedule
+          - input_select.door_keypad_17_access_schedule
+          - input_select.door_keypad_18_access_schedule
+# This just sets the input boolean to a random number.  The code wont actually be set until you select the door switch you 
+# want to use
+    action:
+      - service: input_text.set_value
+        data_template:
+          entity_id: >
+                {% set object_id = trigger.to_state.entity_id %}
+                {% set code_slot = "_".join(object_id.split("_")[3:-2]) %}
+                {% set user_code_id = 'input_text.door_keypad_' ~ code_slot ~ '_code' %}
+                {{ user_code_id }}
+          value: '{{ range(1000, 9999) | random }}'
+
+input_text:
+  door_keypad_1_name:
+    name: Name
+  door_keypad_1_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_2_name:
+    name: Name
+  door_keypad_2_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_3_name:
+    name: Name
+  door_keypad_3_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_4_name:
+    name: Name
+  door_keypad_4_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_5_name:
+    name: Name
+  door_keypad_5_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_6_name:
+    name: Name
+  door_keypad_6_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_7_name:
+    name: Name
+  door_keypad_7_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_8_name:
+    name: Name
+  door_keypad_8_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_9_name:
+    name: Name
+  door_keypad_9_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_10_name:
+    name: Name
+  door_keypad_10_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_11_name:
+    name: Name
+  door_keypad_11_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_12_name:
+    name: Name
+  door_keypad_12_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_13_name:
+    name: Name
+  door_keypad_13_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_14_name:
+    name: Name
+  door_keypad_14_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_15_name:
+    name: Name
+  door_keypad_15_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_16_name:
+    name: Name
+  door_keypad_16_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_17_name:
+    name: Name
+  door_keypad_17_code:
+    name: Code
+    pattern: '[0-9]*'
+  door_keypad_18_name:
+    name: Name
+  door_keypad_18_code:
+    name: Code
+    pattern: '[0-9]*'
+
+input_select:
+  door_keypad_1_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_2_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_3_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_4_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_5_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_6_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_7_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_8_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_9_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_10_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_11_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_12_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_13_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_14_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_15_access_schedule:
+    name: Access Schedule
+    options:
+      - Always
+      - Recurring
+      - Temporary
+  door_keypad_16_access_schedule:
+    name: One Time Use
+    options:
+      - Disabled
+      - Enabled
+  door_keypad_17_access_schedule:
+    name: One Time Use
+    options:
+      - Disabled
+      - Enabled
+  door_keypad_18_access_schedule:
+    name: One Time Use
+    options:
+      - Disabled
+      - Enabled
+
+input_datetime:
+  door_keypad_1_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_1_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_2_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_2_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_3_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_3_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_4_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_4_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_5_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_5_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_6_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_6_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_7_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_7_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_8_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_8_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_9_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_9_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_10_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_10_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_11_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_11_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_12_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_12_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_13_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_13_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_14_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_14_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+  door_keypad_15_date_start:
+    name: Start Time
+    has_date: true
+    has_time: true
+  door_keypad_15_date_end:
+    name: End Time
+    has_date: true
+    has_time: true
+
+input_boolean:
+  code_1_notify:
+    name: Notify when Used
+  code_2_notify:
+    name: Notify when Used
+  code_3_notify:
+    name: Notify when Used
+  code_4_notify:
+    name: Notify when Used
+  code_5_notify:
+    name: Notify when Used
+  code_6_notify:
+    name: Notify when Used
+  code_7_notify:
+    name: Notify when Used
+  code_8_notify:
+    name: Notify when Used
+  code_9_notify:
+    name: Notify when Used
+  code_10_notify:
+    name: Notify when Used
+  code_11_notify:
+    name: Notify when Used
+  code_12_notify:
+    name: Notify when Used
+  code_13_notify:
+    name: Notify when Used
+  code_14_notify:
+    name: Notify when Used
+  code_15_notify:
+    name: Notify when Used
+  code_16_notify:
+    name: Notify when Used
+  code_17_notify:
+    name: Notify when Used
+  code_18_notify:
+    name: Notify when Used
+
+# this is has entities for three locks (mine), if you only have one lock or
+# its named differently, delete the extra entities from all 18 scripts below
+script:
+  door_keypad_1_delete:
+    alias: Delete Door Code 1
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_1_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_1_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_1_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_1_front_switch
+      - input_boolean.code_1_notify
+
+  door_keypad_2_delete:
+    alias: Delete Door Code 2
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_2_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_2_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_2_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_2_front_switch
+      - input_boolean.code_2_notify
+
+  door_keypad_3_delete:
+    alias: Delete Door Code 3
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_3_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_3_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_3_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_3_front_switch
+      - input_boolean.code_3_notify
+
+  door_keypad_4_delete:
+    alias: Delete Door Code 4
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_4_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_4_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_4_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_4_front_switch
+      - input_boolean.code_4_notify
+
+  door_keypad_5_delete:
+    alias: Delete Door Code 5
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_5_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_5_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_5_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_5_front_switch
+      - input_boolean.code_5_notify
+
+  door_keypad_6_delete:
+    alias: Delete Door Code 6
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_6_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_6_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_6_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_6_front_switch
+      - input_boolean.code_6_notify
+
+  door_keypad_7_delete:
+    alias: Delete Door Code 7
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_7_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_7_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_7_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_7_front_switch
+      - input_boolean.code_7_notify
+
+  door_keypad_8_delete:
+    alias: Delete Door Code 8
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_8_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_8_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_8_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_8_front_switch
+      - input_boolean.code_8_notify
+
+  door_keypad_9_delete:
+    alias: Delete Door Code 9
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_9_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_9_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_9_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_9_front_switch
+      - input_boolean.code_9_notify
+
+  door_keypad_10_delete:
+    alias: Delete Door Code 10
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_10_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_10_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_10_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_10_front_switch
+      - input_boolean.code_10_notify
+
+  door_keypad_11_delete:
+    alias: Delete Door Code 11
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_11_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_11_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_11_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_11_front_switch
+      - input_boolean.code_11_notify
+
+  door_keypad_12_delete:
+    alias: Delete Door Code 12
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_12_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_12_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_12_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_12_front_switch
+      - input_boolean.code_12_notify
+
+  door_keypad_13_delete:
+    alias: Delete Door Code 13
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_13_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_13_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_13_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_13_front_switch
+      - input_boolean.code_13_notify
+
+  door_keypad_14_delete:
+    alias: Delete Door Code 14
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_14_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_14_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_14_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_14_front_switch
+      - input_boolean.code_14_notify
+
+  door_keypad_15_delete:
+    alias: Delete Door Code 15
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_15_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_15_code
+    - service: input_select.select_option
+      data:
+        option: 'Always'
+        entity_id: input_select.door_keypad_15_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_15_front_switch
+      - input_boolean.code_15_notify
+
+  door_keypad_16_delete:
+    alias: Delete Door Code 16
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_16_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_16_code
+    - service: input_select.select_option
+      data:
+        option: 'Disabled'
+        entity_id: input_select.door_keypad_16_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_16_front_switch
+      - input_boolean.code_16_notify
+
+  door_keypad_17_delete:
+    alias: Delete Door Code 17
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_17_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_17_code
+    - service: input_select.select_option
+      data:
+        option: 'Disabled'
+        entity_id: input_select.door_keypad_17_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_17_front_switch
+      - input_boolean.code_17_notify
+
+  door_keypad_18_delete:
+    alias: Delete Door Code 18
+    sequence:
+    - service: input_text.set_value
+      data:
+        value: 'Name Here'
+        entity_id: input_text.door_keypad_18_name
+    - service: input_text.set_value
+      data:
+        value: 'Code Here'
+        entity_id: input_text.door_keypad_18_code
+    - service: input_select.select_option
+      data:
+        option: 'Disabled'
+        entity_id: input_select.door_keypad_18_access_schedule
+    - service: input_boolean.turn_off
+      entity_id:
+      - input_boolean.door_keypad_18_front_switch
+      - input_boolean.code_18_notify
+
+
+sensor:
+  - platform: template
+    sensors:
+
+      keypad_1_temp_lock_turn_on:
+        friendly_name: Turn keypad 1 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_1_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_1_schedule') == 'on') }}
+
+      keypad_2_temp_lock_turn_on:
+        friendly_name: Turn keypad 2 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_2_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_2_schedule') == 'on') }}
+
+      keypad_3_temp_lock_turn_on:
+        friendly_name: Turn keypad 3 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_3_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_3_schedule') == 'on') }}
+          
+      keypad_4_temp_lock_turn_on:
+        friendly_name: Turn keypad 4 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_4_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_4_schedule') == 'on') }}
+          
+      keypad_5_temp_lock_turn_on:
+        friendly_name: Turn keypad 5 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_5_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_5_schedule') == 'on') }}
+          
+      keypad_6_temp_lock_turn_on:
+        friendly_name: Turn keypad 6 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_6_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_6_schedule') == 'on') }}
+          
+      keypad_7_temp_lock_turn_on:
+        friendly_name: Turn keypad 7 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_7_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_7_schedule') == 'on') }}
+          
+      keypad_8_temp_lock_turn_on:
+        friendly_name: Turn keypad 8 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_8_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_8_schedule') == 'on') }}
+          
+      keypad_9_temp_lock_turn_on:
+        friendly_name: Turn keypad 9 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_9_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_9_schedule') == 'on') }}
+          
+      keypad_10_temp_lock_turn_on:
+        friendly_name: Turn keypad 10 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_10_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_10_schedule') == 'on') }}
+          
+      keypad_11_temp_lock_turn_on:
+        friendly_name: Turn keypad 11 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_11_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_11_schedule') == 'on') }}
+          
+      keypad_12_temp_lock_turn_on:
+        friendly_name: Turn keypad 12 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_12_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_12_schedule') == 'on') }}
+          
+      keypad_13_temp_lock_turn_on:
+        friendly_name: Turn keypad 13 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_13_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_13_schedule') == 'on') }}
+          
+      keypad_14_temp_lock_turn_on:
+        friendly_name: Turn keypad 14 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_14_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_14_schedule') == 'on') }}
+          
+      keypad_15_temp_lock_turn_on:
+        friendly_name: Turn keypad 15 on
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_15_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_15_schedule') == 'on') }}
+          
+      keypad_1_temp_lock_turn_off:
+        friendly_name: Turn keypad 1 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_1_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_1_schedule') == 'off') }}
+
+      keypad_2_temp_lock_turn_off:
+        friendly_name: Turn keypad 2 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_2_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_2_schedule') == 'off') }}
+
+      keypad_3_temp_lock_turn_off:
+        friendly_name: Turn keypad 3 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_3_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_3_schedule') == 'off') }}
+          
+      keypad_4_temp_lock_turn_off:
+        friendly_name: Turn keypad 4 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_4_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_4_schedule') == 'off') }}
+          
+      keypad_5_temp_lock_turn_off:
+        friendly_name: Turn keypad 5 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_5_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_5_schedule') == 'off') }}
+          
+      keypad_6_temp_lock_turn_off:
+        friendly_name: Turn keypad 6 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_6_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_6_schedule') == 'off') }}
+          
+      keypad_7_temp_lock_turn_off:
+        friendly_name: Turn keypad 7 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_7_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_7_schedule') == 'off') }}
+          
+      keypad_8_temp_lock_turn_off:
+        friendly_name: Turn keypad 8 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_8_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_8_schedule') == 'off') }}
+          
+      keypad_9_temp_lock_turn_off:
+        friendly_name: Turn keypad 9 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_9_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_9_schedule') == 'off') }}
+          
+      keypad_10_temp_lock_turn_off:
+        friendly_name: Turn keypad 10 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_10_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_10_schedule') == 'off') }}
+          
+      keypad_11_temp_lock_turn_off:
+        friendly_name: Turn keypad 11 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_11_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_11_schedule') == 'off') }}
+          
+      keypad_12_temp_lock_turn_off:
+        friendly_name: Turn keypad 12 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_12_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_12_schedule') == 'off') }}
+          
+      keypad_13_temp_lock_turn_off:
+        friendly_name: Turn keypad 13 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_13_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_13_schedule') == 'off') }}
+          
+      keypad_14_temp_lock_turn_off:
+        friendly_name: Turn keypad 14 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_14_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_14_schedule') == 'off') }}
+          
+      keypad_15_temp_lock_turn_off:
+        friendly_name: Turn keypad 15 off
+        entity_id: sensor.date_time
+        value_template: >-
+          {{ ((states['input_select']['door_keypad_15_access_schedule'].state in ['Temporary', 'Recurring']) and states('calendar.lock_code_15_schedule') == 'off') }}

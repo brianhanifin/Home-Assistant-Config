@@ -1,0 +1,417 @@
+---
+#################################################################
+# Names in needed in entity registry:                           #
+# zwave.lock_front_door_deadbolt                                #
+# lock.lock_front_door_lock                                     #
+# sensor.lock_front_door_deadbolt_alarm_type,                   #
+# sensor.lock_front_door_deadbolt_alarm_level                   #
+# also recommend you use the recorder component in your         #
+# configuration.yaml, as well as the uptime sensor component    #
+# and for notifications I use pushbullet, but replace with      #
+# notifyier of your choice.                                     #
+#################################################################
+automation:
+  - alias: Keypad switch turned on (Front Door)
+    initial_state: true
+    trigger:
+      - platform: state
+        to: 'on'
+        entity_id:
+          # Entities need to be named to match your lock name.  In this case front
+          - input_boolean.door_keypad_1_front_switch
+          - input_boolean.door_keypad_2_front_switch
+          - input_boolean.door_keypad_3_front_switch
+          - input_boolean.door_keypad_4_front_switch
+          - input_boolean.door_keypad_5_front_switch
+          - input_boolean.door_keypad_6_front_switch
+          - input_boolean.door_keypad_7_front_switch
+          - input_boolean.door_keypad_8_front_switch
+          - input_boolean.door_keypad_9_front_switch
+          - input_boolean.door_keypad_10_front_switch
+          - input_boolean.door_keypad_11_front_switch
+          - input_boolean.door_keypad_12_front_switch
+          - input_boolean.door_keypad_13_front_switch
+          - input_boolean.door_keypad_14_front_switch
+          - input_boolean.door_keypad_15_front_switch
+          - input_boolean.door_keypad_16_front_switch
+          - input_boolean.door_keypad_17_front_switch
+          - input_boolean.door_keypad_18_front_switch
+
+    condition:
+      - condition: template
+        value_template:  >-
+          {% set object_id = trigger.to_state.object_id %}
+          {% set code_slot = "_".join(object_id.split("_")[2:-2]) %}
+          {% set select_id = 'door_keypad_' ~ code_slot ~ '_access_schedule' %}
+          {% set calendar_id = 'lock_code_' ~ code_slot ~ '_schedule' %}
+          {{ (states['input_select'][select_id].state in ['Always', 'Enabled']) or (states['input_select'][select_id].state in ['Temporary', 'Recurring']) }}
+          #{{ (states['input_select'][select_id].state in ['Always', 'Enabled']) or (states['input_select'][select_id].state in ['Temporary', 'Recurring'] and states['calendar'][calendar_id].state == 'on') }}
+    action:
+      - service: lock.set_usercode
+        data_template:
+          node_id: >-
+            {{ sta11tes.lock.front_door.attributes.node_id }}
+
+          code_slot: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set code_slot = "_".join(object_id.split("_")[2:-2]) %}
+            {{ code_slot }}
+
+          usercode: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set code_slot = "_".join(object_id.split("_")[2:-2]) %}
+            {% set user_code_id = 'door_keypad_' ~ code_slot ~ '_code' %}
+            {{ states['input_text'][user_code_id].state }}
+
+  - alias: Keypad switch turned off (Front Door)
+    initial_state: true
+    trigger:
+      - platform: state
+        to: 'off'
+        entity_id:
+          - input_boolean.door_keypad_1_front_switch
+          - input_boolean.door_keypad_2_front_switch
+          - input_boolean.door_keypad_3_front_switch
+          - input_boolean.door_keypad_4_front_switch
+          - input_boolean.door_keypad_5_front_switch
+          - input_boolean.door_keypad_6_front_switch
+          - input_boolean.door_keypad_7_front_switch
+          - input_boolean.door_keypad_8_front_switch
+          - input_boolean.door_keypad_9_front_switch
+          - input_boolean.door_keypad_10_front_switch
+          - input_boolean.door_keypad_11_front_switch
+          - input_boolean.door_keypad_12_front_switch
+          - input_boolean.door_keypad_13_front_switch
+          - input_boolean.door_keypad_14_front_switch
+          - input_boolean.door_keypad_15_front_switch
+          - input_boolean.door_keypad_16_front_switch
+          - input_boolean.door_keypad_17_front_switch
+          - input_boolean.door_keypad_18_front_switch
+    condition:
+      - condition: template
+        value_template:  >-
+          {% set object_id = trigger.to_state.object_id %}
+          {% set code_slot = "_".join(object_id.split("_")[2:-2]) %}
+          {% set select_id = 'door_keypad_' ~ code_slot ~ '_access_schedule' %}
+          {{ states['input_select'][select_id].state in ['Always', 'Disabled'] }}
+    action:
+      # this is where usercodes get deleted, for the many locks there is a known issue with clear usercode
+      # so this sets a random code, of course that means there is an unknown code in the cleared
+      # slots.  If you dont like that set a specific code that only you know using - usercode: number_here
+      # - service: lock.set_usercode
+      #   data_template:
+      #     usercode: >-
+      #       {{ range(1000, 9999) | random }}
+      #     node_id: >-
+      #       {{ states.lock.front_door.attributes.node_id }}
+      #     code_slot: >-
+      #       {% set object_id = trigger.to_state.object_id %}
+      #       {% set code_slot = "_".join(object_id.split("_")[2:-2]) %}
+      #       {{ code_slot }}
+      - service: lock.clear_usercode
+        data_template:
+          node_id: >-
+            {{ states.lock.front_door.attributes.node_id }}
+          code_slot: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set code_slot = "_".join(object_id.split("_")[2:-2]) %}
+            {{ code_slot }}
+
+  - alias: Keypad temporary code start (Front Door)
+    initial_state: true
+    trigger:
+      - platform: state
+        to: 'True'
+        entity_id:
+          - sensor.keypad_1_temp_lock_turn_on
+          - sensor.keypad_2_temp_lock_turn_on
+          - sensor.keypad_3_temp_lock_turn_on
+          - sensor.keypad_4_temp_lock_turn_on
+          - sensor.keypad_5_temp_lock_turn_on
+          - sensor.keypad_6_temp_lock_turn_on
+          - sensor.keypad_7_temp_lock_turn_on
+          - sensor.keypad_8_temp_lock_turn_on
+          - sensor.keypad_9_temp_lock_turn_on
+          - sensor.keypad_10_temp_lock_turn_on
+          - sensor.keypad_11_temp_lock_turn_on
+          - sensor.keypad_12_temp_lock_turn_on
+          - sensor.keypad_13_temp_lock_turn_on
+          - sensor.keypad_14_temp_lock_turn_on
+          - sensor.keypad_15_temp_lock_turn_on
+
+    condition:
+      - condition: template
+        value_template: >-
+          {% set object_id = trigger.to_state.object_id %}
+          {% set code_slot = object_id[7:-18] %}
+          {% set input = 'door_keypad_' ~ code_slot ~ '_front_switch' %}
+          {{ states['input_boolean'][input].state == 'on' }}
+  
+    action:
+      - service: lock.set_usercode
+        data_template:
+          usercode: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set code_slot = object_id[7:-18] %}
+            {% set input = 'door_keypad_' ~ code_slot ~ '_code' %}
+            {{ states['input_text'][input].state }}
+
+          node_id: >-
+            {{ states.lock.front_door.attributes.node_id }}
+
+          code_slot: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set code_slot = object_id[7:-18] %}
+            {{ code_slot }}
+
+      # - service: script.turn_on
+      #   entity_id: script.notify_mobile
+      #   data_template:
+      #     message: >-
+      #       {% set object_id = trigger.to_state.object_id %}
+      #       {% set code_slot = object_id[7:-18] %}
+      #       {% set usercode_input = 'door_keypad_' ~ code_slot ~ '_code' %}
+      #       {% set usercode = states['input_text'][usercode_input].state %}
+      #       {% set name_input = 'door_keypad_' ~ code_slot ~ '_name' %}
+      #       {% set name = states['input_text'][name_input].state %}
+      #       {% set start_input = 'lock_code_' ~ code_slot ~ '_schedule' %}
+      #       {% set start = as_timestamp(states['calendar'][start_input].attributes.start_time) | timestamp_custom('%A %x at %I:%M %p' ) %}
+      #       {% set end_input = 'lock_code_' ~ code_slot ~ '_schedule' %}
+      #       {% set end = as_timestamp(states['calendar'][end_input].attributes.end_time) | timestamp_custom('%A %x at %I:%M %p' ) %}
+      #       The pin code {{ usercode }} is now temporarily enabled for {{ name }} starting on {{ start }} and ending on {{ end }}.
+
+          title: >-
+            Beach House: Temporary code enabled on Front Door
+          who: brian
+
+  - alias: Notify on Unlock (Front Door)
+    initial_state: true
+    trigger:
+      - platform: template
+        value_template: "{{ states.sensor.front_door_report.state.lower().startswith('keypad unlock') }}"
+    # condition:
+    #   - condition: numeric_state
+    #     entity_id: sensor.ha_runtime_in_minutes
+    #     above: 3
+    action:
+      - delay:
+          seconds: 1
+      # This will set a a friendly name of whoever unlocked the door to input_text.front_door_code, use in other automations if you wish
+      - service: input_text.set_value
+        data_template:
+          entity_id: input_text.front_door_code
+          value: >
+            {% set number = states('sensor.front_door_lock_alarm_level') %}
+            {% set entity_id = 'input_text.door_keypad_' + number + '_name' %}
+            {% set user = 'Master' if number == '0' else states(entity_id) %}
+            {{ user }}
+
+    #condition:
+    #   - condition: template
+    #     value_template: >-
+    #       {% set code_used = states('sensor.front_door_lock_alarm_level') %}
+    #       {% set notify_input_object_id = 'code_' ~ code_used ~ '_notify' %}
+    #       {{ states['input_boolean'][notify_input_object_id].state == 'on' }}
+
+    # - service: script.turn_on
+    #   entity_id: script.notify_mobile
+    #   data_template:
+    #     title: "Front Door Unlocked"
+    #     message: >-
+    #       by {{ states.input_text.front_door_code.state }} at {{ as_timestamp (now()) | timestamp_custom('%I:%M %p') }} 
+    #     who: brian
+
+  - alias: Set Lock Options (Front Door)
+    trigger:
+      - platform: state
+        entity_id:
+          - input_select.lock_zwave_option_3_front
+          - input_select.lock_zwave_option_4_front
+          - input_select.lock_zwave_option_5_front
+          - input_select.lock_zwave_option_7_front
+          - input_select.lock_zwave_option_8_front
+          - input_select.lock_zwave_option_9_front
+          - input_select.lock_zwave_option_10_front
+          - input_select.lock_zwave_option_11_front
+          - input_select.lock_zwave_option_15_front
+          - input_select.lock_zwave_option_16_front
+    action:
+      - service: zwave.set_config_parameter
+        data_template:
+          node_id: >-
+            {{ states.lock.front_door.attributes.node_id }}
+            
+          parameter: >-
+            {% if trigger.entity_id == 'input_select.lock_zwave_option_3_front' %}
+              3
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_4_front' %}
+              4
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_5_front' %}
+              5
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_7_front' %}
+              7
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_8_front' %}
+              8
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_9_front' %}
+              9
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_10_front' %}
+              10
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_11_front' %}
+              11
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_15_front' %}
+              15
+            {% elif trigger.entity_id == 'input_select.lock_zwave_option_16_front' %}
+              16
+            {% else %}
+              0
+            {% endif %}
+  
+          value: >-
+            {{ trigger.to_state.state }}
+
+input_text:
+  front_door_code:
+    name: Last Person to Unlock Front Door with Keypad
+
+input_select:
+  lock_zwave_option_3_front:
+      name: Enable or disable the beeper.
+      options:
+          - Enable Beeper
+          - Disable Beeper
+
+  lock_zwave_option_4_front:
+      name: Prevents all user codes from unlocking the deadbolt
+      options:
+          - Disable Vacation Mode
+          - Enable Vacation Mode
+
+  lock_zwave_option_5_front:
+      name: Press the Outside Schlage Button to lock the deadbolt
+      options:
+          - Enable Lock & Leave
+          - Disable Lock & Leave
+
+  lock_zwave_option_7_front:
+      name: Alarm sounds based on door activity
+      options:
+          - Alarm Off
+          - Activity
+          - Tamper
+          - Forced Entry
+
+  lock_zwave_option_8_front:
+      name: Activity Alarm Sensitivity
+      options:
+          - Medium Sensitivity
+          - Most Sensitive
+          - Medium/high Sensitivity
+          - Medium/low Sensitivity
+          - Least Sensitivity
+
+  lock_zwave_option_9_front:
+      name: Tamper Alarm Sensitivity
+      options:
+          - Medium Sensitivity
+          - Most Sensitive
+          - Medium/high Sensitivity
+          - Medium/low Sensitivity
+          - Least Sensitivity
+
+  lock_zwave_option_10_front:
+      name: Forced Entry Alarm Sensitivity
+      options:
+          - Medium Sensitivity
+          - Most Sensitive
+          - Medium/high Sensitivity
+          - Medium/low Sensitivity
+          - Least Sensitivity
+
+  lock_zwave_option_11_front:
+      name: Disable Local Alarm Controls
+      options:
+          - Enable local alarm controls
+          - Disable local alarm controls
+
+  lock_zwave_option_15_front:
+      name: Auto lock
+      options:
+          - Disable auto lock
+          - Enable auto lock
+
+  lock_zwave_option_16_front:
+      name: User code pin length (changing Length erases all codes)
+      options:
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+      
+input_boolean:
+  door_keypad_1_front_switch:
+  door_keypad_2_front_switch:
+  door_keypad_3_front_switch:
+  door_keypad_4_front_switch:
+  door_keypad_5_front_switch:
+  door_keypad_6_front_switch:
+  door_keypad_7_front_switch:
+  door_keypad_8_front_switch:
+  door_keypad_9_front_switch:
+  door_keypad_10_front_switch:
+  door_keypad_11_front_switch:
+  door_keypad_12_front_switch:
+  door_keypad_13_front_switch:
+  door_keypad_14_front_switch:
+  door_keypad_15_front_switch:
+  door_keypad_16_front_switch:
+  door_keypad_17_front_switch:
+  door_keypad_18_front_switch:
+
+sensor:
+  - platform: template
+    sensors:
+      front_door_report:
+        friendly_name: 'Front Door'
+        value_template: >
+          {% set number = states('sensor.front_door_lock_alarm_level') %}
+          {% set alarm_type_value = states('sensor.front_door_lock_alarm_type') %}
+          {% set entity_id = 'input_text.door_keypad_' + number + '_name' %}
+          {% set user = 'Master' if number == '0' else states(entity_id) %}
+          {% set alarm_type_value = '24' if (as_timestamp(now())-as_timestamp(states.lock.front_door.last_changed)) < 15 and (as_timestamp(now())-as_timestamp(states.sensor.front_door_lock_alarm_type.last_changed)) > 15  and (states.lock.front_door.state) == 'locked' else alarm_type_value %}
+          {% set alarm_type_value = '25' if (as_timestamp(now())-as_timestamp(states.lock.front_door.last_changed)) < 15 and (as_timestamp(now())-as_timestamp(states.sensor.front_door_lock_alarm_type.last_changed)) > 15  and (states.lock.front_door.state) == 'unlocked' else alarm_type_value %}
+          {% set alarm_type_general_actions = {
+            '0':'No Status Reported',          
+            '9':'Lock Jammed',
+            '17':'Keypad Lock Jammed',
+            '21':'Manual Lock',
+            '22':'Manual Unlock',
+            '23':'HA Lock Jammed',
+            '24':'HA Lock',
+            '25':'HA Unlock',
+            '26':'Auto Lock Jammed',
+            '27':'Auto Lock',
+            '32':'All Codes Deleted',
+            '161':'Bad Code Entered',
+            '167':'Battery Low',
+            '168':'Battery Critical',
+            '169':'Battery Too Low To Operate Lock' } %}
+          {% set alarm_type_lock_actions = {
+            '18':'Keypad Lock',
+            '19':'Keypad Unlock',
+            '162':'Lock Code Attempt Outside of Schedule' } %}
+          {% set alarm_type_code_actions = {
+            '33':'Code Deleted',
+            '112':'Code Changed',
+            '113':'Duplicate Code' } %}
+          {% if alarm_type_value in alarm_type_code_actions %}
+            {{ alarm_type_code_actions[alarm_type_value] }} (Code {{ number}})
+          {% elif alarm_type_value in alarm_type_lock_actions and number == '0' %}
+            {{ alarm_type_lock_actions[alarm_type_value] }} with Schlage Button
+          {% elif alarm_type_value in alarm_type_lock_actions  %}
+            {{ alarm_type_lock_actions[alarm_type_value] }} with Code {{ number }} ({{ user }})
+          {% elif alarm_type_value in alarm_type_general_actions %}
+            {{ alarm_type_general_actions[alarm_type_value] }}
+          {% else %}
+            Unknown Alarm Type Value {{ states('sensor.front_door_lock_alarm_type') }}
+          {% endif %}
