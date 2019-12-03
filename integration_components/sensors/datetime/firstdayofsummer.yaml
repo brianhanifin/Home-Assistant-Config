@@ -35,7 +35,9 @@ sensors:
         {%- set firstdayofmonth = dayofweek_number(firstdateofmonth.strftime('%A'))|int -%}
 
         {# Determine the first occurrence of the day. #}
-        {%- if firstdayofmonth < dayofweek -%}
+        {%- if firstdayofmonth == 1 -%}
+          {%- set firstoccurrence = dayofweek -%}
+        {%- elif firstdayofmonth < dayofweek -%}
           {%- set firstoccurrence = (dayofweek - dayofweek_number(firstdayofmonth)) -%}
         {%- else -%}
           {%- set firstoccurrence = (7 - firstdayofmonth + dayofweek) + 1 -%}

@@ -12,17 +12,19 @@ sensors:
     icon_template: mdi:peace
     value_template: >
       {%- macro main() -%}
-        {%- set event_month = 1 -%}
-        {%- set this_month = now().strftime('%m')|int -%}
+        {%- set event_nthday    = 3 -%}
+        {%- set event_dayofweek = "Monday" -%}
+        {%- set event_month     = 1 -%}
 
         {# If the event has passed for this year, get next year's event. #}
+        {%- set this_month = now().strftime('%m')|int -%}
         {%- if event_month < this_month -%}
           {%- set event_year = now().strftime('%Y')|int + 1 -%}
         {%- else -%}
           {%- set event_year = now().strftime('%Y')|int -%}
         {%- endif -%}
 
-        {%- set event_date = get_nth_dayofmonth(3, "Monday", 1, event_year) -%}
+        {%- set event_date = get_nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year) -%}
 
         {# When we are past the event date, but are in the same month, recalcluate for the next event.  #}
         {%- if event_month == this_month -%}
@@ -30,12 +32,13 @@ sensors:
           {%- set this_day = now().strftime('%d')|int -%}
 
           {%- if this_day > event_day -%}
-            {%- set event_date = get_nth_dayofmonth(3, "Monday", 1, event_year+1) if this_day > event_day -%}
+            {%- set event_date = get_nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year+1) if this_day > event_day -%}
           {%- endif -%}
         {%- endif -%}
 
         {{ event_date|replace("00:00:00","")|trim }}
       {%- endmacro -%}
+
 
 
       {%- macro dayofweek_number(dayofweek) -%}
@@ -86,7 +89,9 @@ sensors:
         {%- set firstdayofmonth = dayofweek_number(firstdateofmonth.strftime("%A"))|int -%}
 
         {# Determine the first occurrence of the day. #}
-        {%- if firstdayofmonth < dayofweek -%}
+        {%- if firstdayofmonth == 1 -%}
+          {%- set firstoccurrence = dayofweek -%}
+        {%- elif firstdayofmonth < dayofweek -%}
           {%- set firstoccurrence = (dayofweek - dayofweek_number(firstdayofmonth)) -%}
         {%- else -%}
           {%- set firstoccurrence = (7 - firstdayofmonth + dayofweek) + 1 -%}
