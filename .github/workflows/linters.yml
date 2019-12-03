@@ -9,8 +9,12 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
-      - name: "Ignore 3rd party package: battery_alert.yaml"
-        run: rm -f ./integrations/battery_alert.yaml
+      - name: "Ignore 3rd party package: battery_alert"
+        run: rm -f ./integrations/0_battery_alert_package.yaml
+      - name: "Ignore 3rd party package: lock_common"
+        run: rm -f ./integrations/0_lock_common_package.yaml
+      - name: "Ignore 3rd party package: lock_front_door"
+        run: rm -f ./integrations/0_lock_front_door_package.yaml
       - name: Running YAMLlint
         uses: "docker://pipelinecomponents/yamllint:latest"
         with:
