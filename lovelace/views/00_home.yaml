@@ -1,356 +1,334 @@
 ---
 title: Control Panel
 path: home
-#icon: mdi:apps
 icon: fas:th
+panel: true
 cards:
-  - type: custom:decluttering-card
-    template: notifications
-
   - type: vertical-stack
     cards:
       - type: custom:decluttering-card
-        template: heading
-        variables:
-          - heading: "Areas / Lights"
-          - subtext: "Click: quick toggle &middot; Long-press: more lights/switches"
-      - type: custom:decluttering-card
-        template: button_row3
-        variables:
-          - entity1: light.bedroom
-          - icon1: mdi:hotel
-          - name1: Bed Room
-          - tap_action1:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_bedroom_lights
-          - hold_action1:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Bedroom
-                card:
-                  type: custom:decluttering-card
-                  template: popup_bedroom
-          - entity2: light.dining_room
-          - icon2: mdi:food
-          - name2: Dining
-          - hold_action2:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Dining Room
-                card:
-                  type: custom:decluttering-card
-                  template: popup_dining_room
-          - entity3: light.entry
-          - icon3: mdi:door
-          - name3: Entry
-          - hold_action3:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Entry
-                card:
-                  type: custom:decluttering-card
-                  template: popup_entry
+        template: notifications
 
-      - type: custom:decluttering-card
-        template: button_row3
-        variables:
-          - entity1: light.family_room
-          - icon1: mdi:television
-          - name1: Family
-          - hold_action1:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Family Room
-                card:
-                  type: custom:decluttering-card
-                  template: popup_family_room
-          - entity2: switch.kitchen
-          - icon2: mdi:stove
-          - name2: Kitchen
-          - tap_action2:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_kitchen_lights
-          - hold_action2:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Kitchen
-                card:
-                  type: custom:decluttering-card
-                  template: popup_kitchen
-          - entity3: switch.landscape_lights
-          - icon3: mdi:tree
-          - name3: Outdoor
-          - tap_action3:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.toggle_outdoor_lights
-          - hold_action3:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Outdoor
-                card:
-                  type: custom:decluttering-card
-                  template: popup_outdoor
-
-      - type: custom:decluttering-card
-        template: button_row3
-        variables:
-          - entity1: light.play_room
-          - icon1: mdi:gamepad-variant
-          - name1: Play Room
-          - hold_action1:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Playroom
-                card:
-                  type: custom:decluttering-card
-                  template: popup_playroom
-
-          - entity2: light.upstairs_bathroom_nightlight
-          - name2: Bath⬆
-          - icon2: fas:rocket
-
-          #- template3: button_blank
-          - entity3: switch.xmas_tree
-          - icon3: mdi:pine-tree
-          - name3: Xmas
-
-  - type: vertical-stack
-    cards:
-      - type: custom:decluttering-card
-        template: heading
-        variables:
-          - heading: "Devices"
-      - type: custom:decluttering-card
-        template: button_row3
-        variables:
-          - entity1: switch.bedroom_fan
-          - icon1: mdi:fan
-          - name1: Bed Room
-
-          - entity2: switch.family_room_fan
-          - icon2: mdi:fan
-          - name2: Family
-
-          - entity3: switch.play_room_fan
-          - icon3: mdi:fan
-          - name3: Play Room
-
-      - type: custom:decluttering-card
-        template: button_row3
-        variables:
-          - entity1: switch.hot_water_pump
-          - icon1: mdi:hot-tub
-          - name1: Hot Water
-
-          - entity2: lock.front_door
-          - icon2: mdi:lock
-          - name2: Front Door
-          - lock2: true
-
-          - entity3: cover.garage_door
-          - icon3: mdi:garage
-          - name3: Garage Door
-          - lock3: true
-
-      - type: custom:decluttering-card
-        template: button_row3
-        variables:
-          - entity1: switch.printers
-          - icon1: mdi:printer
-          - name1: Printers
-
-          - entity2: climate.home
-          - icon2: mdi:thermostat
-          - name2: Thermostats
-          - tap_action2:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: Thermostats
-                card:
-                  type: custom:decluttering-card
-                  template: popup_thermostats
-
-          - entity3: remote.family_room_hub
-          - icon3: mdi:remote
-          - name3: TV Activities
-          - tap_action3:
-              action: call-service
-              service: browser_mod.command
-              service_data:
-                command: popup
-                title: TV Activities + Volume
-                card:
-                  type: custom:decluttering-card
-                  template: popup_tv
-
-  - type: vertical-stack
-    cards:
-      - type: custom:decluttering-card
-        template: heading
-        variables:
-          - heading: "Routines"
-      - type: custom:decluttering-card
-        template: button_row4
-        variables:
-          - template1: button_blank
-
-          - entity2: script.goodbye_routine
-          - icon2: mdi:exit-run
-          - name2: Bye
-          - lock2: true
-          - show_state2: false
-          - tap_action2:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.goodbye_routine
-
-          - type3: entity-button
-          - entity3: script.goodnight_routine
-          - icon3: mdi:weather-night
-          - name3: Night
-          - lock3: true
-          - show_state3: false
-          - tap_action3:
-              action: call-service
-              service: script.turn_on
-              service_data:
-                entity_id: script.goodnight_routine
-
-          - template4: button_blank
-
-  - type: custom:search-card
-    max_results: 20
-
-  - type: vertical-stack
-    cards:
-      - type: custom:decluttering-card
-        template: heading
-        variables:
-          - heading: "Sensors"
-      - type: glance
-        entities:
-          - entity: sensor.medicine_buddy_given_today
-            name: Buddy's Meds
-            icon: mdi:pill
-            #secondary_info: last-changed
-          - entity: variable.last_motion
-            name: Last Motion
-            icon: mdi:motion-sensor
-          - entity: sensor.glowforge_status
-            name: Glowforge Status
-            secondary_info: last-changed
-          - entity: sensor.washing_machine_status
-            name: Wash Status
-            #secondary_info: last-changed
-
-      - type: vertical-stack
+      - type: custom:layout-card
+        layout: horizontal
         cards:
-          - type: custom:swipe-card
-            card_width: '90%'
-            parameters:
-              centeredSlides: true
-              keyboard:
-                enabled: true
-                onlyInViewport: true
-              pagination:
-                #type: 'progressbar'
-                type: 'bullets'
-              navigation:
-              slidesPerView: 'auto'
-              spaceBetween: 8
+
+          - type: vertical-stack
             cards:
               - type: custom:decluttering-card
-                template: graph
+                template: heading
                 variables:
-                  - name: Home Power
-                  - sensors:
-                      - entity: sensor.power_use
-                        name: Consumed
-                        color: orange
-                        y_axis: secondary
-                      - entity: sensor.solor_power_generation
-                        name: Generated
-                        color: lightgreen
-                  - group_by: hour
-                  - hours_to_show: 12
-                  - points_per_hour: 1
-                  - show:
-                      labels: true
-                      labels_secondary: false
+                  - heading: "Areas / Lights"
+                  - subtext: "Click: quick toggle &middot; Long-press: more lights/switches"
               - type: custom:decluttering-card
-                template: graph
+                template: button_row3
                 variables:
-                  - name: SDG&E
-                  - sensors:
-                      - entity: sensor.solar_difference_hourly
-                        color: lightblue
-                        name: Pulled from the grid
-                      # - entity: sensor.zero
-                      #   color: grey
-                      #   show_legend: false
-                      #   show_line: true
-                      #   show_points: false
-                      #   y_axis: secondary
-                  - group_by: hour
-                  - hours_to_show: 12
-                  #- points_per_hour: 1
-                  - show:
-                      graph: bar
-                      labels: true
-                      labels_secondary: false
-                      legend: false
+                  - entity1: light.bedroom
+                  - icon1: mdi:hotel
+                  - name1: Bed Room
+                  - tap_action1:
+                      action: call-service
+                      service: script.turn_on
+                      service_data:
+                        entity_id: script.toggle_bedroom_lights
+                  - hold_action1:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Bedroom
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_bedroom
+                  - entity2: light.dining_room
+                  - icon2: mdi:food
+                  - name2: Dining
+                  - hold_action2:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Dining Room
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_dining_room
+                  - entity3: light.entry
+                  - icon3: mdi:door
+                  - name3: Entry
+                  - hold_action3:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Entry
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_entry
 
-  - type: vertical-stack
-    cards:
-      - type: custom:decluttering-card
-        template: heading
-        variables:
-          - heading: "Irrigation System"
-      - type: custom:swipe-card
-        card_width: '90%'
-        parameters:
-          centeredSlides: true
-          keyboard:
-            enabled: true
-            onlyInViewport: true
-          navigation:
-          pagination:
-            #type: 'progressbar'
-            type: 'bullets'
-          slidesPerView: 'auto'
-          spaceBetween: 8
-        cards:
-          - type: custom:decluttering-card
-            template: irrigation_zone
-            variables:
-              - name: "Front Yard"
-              - zone_number: 1
-          
-          - type: custom:decluttering-card
-            template: irrigation_zone
-            variables:
-              - name: "Pool Filler"
-              - zone_number: 3
+              - type: custom:decluttering-card
+                template: button_row3
+                variables:
+                  - entity1: light.family_room
+                  - icon1: mdi:television
+                  - name1: Family
+                  - hold_action1:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Family Room
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_family_room
+                  - entity2: switch.kitchen
+                  - icon2: mdi:stove
+                  - name2: Kitchen
+                  - tap_action2:
+                      action: call-service
+                      service: script.turn_on
+                      service_data:
+                        entity_id: script.toggle_kitchen_lights
+                  - hold_action2:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Kitchen
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_kitchen
+                  - entity3: switch.landscape_lights
+                  - icon3: mdi:tree
+                  - name3: Outdoor
+                  - tap_action3:
+                      action: call-service
+                      service: script.turn_on
+                      service_data:
+                        entity_id: script.toggle_outdoor_lights
+                  - hold_action3:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Outdoor
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_outdoor
+
+              - type: custom:decluttering-card
+                template: button_row3
+                variables:
+                  - entity1: light.play_room
+                  - icon1: mdi:gamepad-variant
+                  - name1: Play Room
+                  - hold_action1:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Playroom
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_playroom
+
+                  - entity2: light.upstairs_bathroom_nightlight
+                  - name2: Bath⬆
+                  - icon2: fas:rocket
+
+                  #- template3: button_blank
+                  - entity3: switch.xmas_tree
+                  - icon3: mdi:pine-tree
+                  - name3: Xmas
+
+              - type: custom:search-card
+                max_results: 20
+
+          - type: vertical-stack
+            cards:
+              - type: custom:decluttering-card
+                template: heading
+                variables:
+                  - heading: "Devices"
+              - type: custom:decluttering-card
+                template: button_row3
+                variables:
+                  - entity1: switch.bedroom_fan
+                  - icon1: mdi:fan
+                  - name1: Bed Room
+
+                  - entity2: switch.family_room_fan
+                  - icon2: mdi:fan
+                  - name2: Family
+
+                  - entity3: switch.play_room_fan
+                  - icon3: mdi:fan
+                  - name3: Play Room
+
+              - type: custom:decluttering-card
+                template: button_row3
+                variables:
+                  - entity1: switch.hot_water_pump
+                  - icon1: mdi:hot-tub
+                  - name1: Hot Water
+
+                  - entity2: lock.front_door
+                  - icon2: mdi:lock
+                  - name2: Front Door
+                  - lock2: true
+
+                  - entity3: cover.garage_door
+                  - icon3: mdi:garage
+                  - name3: Garage Door
+                  - lock3: true
+
+              - type: custom:decluttering-card
+                template: button_row3
+                variables:
+                  - entity1: switch.printers
+                  - icon1: mdi:printer
+                  - name1: Printers
+
+                  - entity2: climate.home
+                  - icon2: mdi:thermostat
+                  - name2: Thermostats
+                  - tap_action2:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: Thermostats
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_thermostats
+
+                  - entity3: remote.family_room_hub
+                  - icon3: mdi:remote
+                  - name3: TV Activities
+                  - tap_action3:
+                      action: call-service
+                      service: browser_mod.command
+                      service_data:
+                        command: popup
+                        title: TV Activities + Volume
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_tv
+
+              - type: vertical-stack
+                cards:
+                  - type: custom:decluttering-card
+                    template: heading
+                    variables:
+                      - heading: "Routines"
+                  - type: custom:decluttering-card
+                    template: button_row4
+                    variables:
+                      - template1: button_blank
+
+                      - entity2: script.goodbye_routine
+                      - icon2: mdi:exit-run
+                      - name2: Bye
+                      - lock2: true
+                      - show_state2: false
+                      - tap_action2:
+                          action: call-service
+                          service: script.turn_on
+                          service_data:
+                            entity_id: script.goodbye_routine
+
+                      - type3: entity-button
+                      - entity3: script.goodnight_routine
+                      - icon3: mdi:weather-night
+                      - name3: Night
+                      - lock3: true
+                      - show_state3: false
+                      - tap_action3:
+                          action: call-service
+                          service: script.turn_on
+                          service_data:
+                            entity_id: script.goodnight_routine
+
+                      - template4: button_blank
+
+          - type: vertical-stack
+            cards:
+              - type: custom:decluttering-card
+                template: heading
+                variables:
+                  - heading: "Sensors"
+              - type: glance
+                entities:
+                  - entity: sensor.medicine_buddy_given_today
+                    name: Buddy's Meds
+                    icon: mdi:pill
+                    #secondary_info: last-changed
+                  - entity: variable.last_motion
+                    name: Last Motion
+                    icon: mdi:motion-sensor
+                  - entity: sensor.glowforge_status
+                    name: Glowforge Status
+                    secondary_info: last-changed
+              - type: glance
+                entities:
+                  - entity: sensor.washing_machine_status
+                    name: Wash Status
+                    #secondary_info: last-changed
+                  - entity_controller.kitchen_motion
+                  - entity_controller.porch_motion
+
+              - type: vertical-stack
+                cards:
+                  - type: custom:swipe-card
+                    card_width: '90%'
+                    parameters:
+                      centeredSlides: true
+                      keyboard:
+                        enabled: true
+                        onlyInViewport: true
+                      pagination:
+                        #type: 'progressbar'
+                        type: 'bullets'
+                      navigation:
+                      slidesPerView: 'auto'
+                      spaceBetween: 8
+                    cards:
+                      - type: custom:decluttering-card
+                        template: graph
+                        variables:
+                          - name: Home Power
+                          - sensors:
+                              - entity: sensor.power_use
+                                name: Consumed
+                                color: orange
+                                y_axis: secondary
+                              - entity: sensor.solor_power_generation
+                                name: Generated
+                                color: lightgreen
+                          - group_by: hour
+                          - hours_to_show: 12
+                          - points_per_hour: 1
+                          - show:
+                              labels: true
+                              labels_secondary: false
+                      - type: custom:decluttering-card
+                        template: graph
+                        variables:
+                          - name: SDG&E
+                          - sensors:
+                              - entity: sensor.solar_difference_hourly
+                                color: lightblue
+                                name: Pulled from the grid
+                              # - entity: sensor.zero
+                              #   color: grey
+                              #   show_legend: false
+                              #   show_line: true
+                              #   show_points: false
+                              #   y_axis: secondary
+                          - group_by: hour
+                          - hours_to_show: 12
+                          #- points_per_hour: 1
+                          - show:
+                              graph: bar
+                              labels: true
+                              labels_secondary: false
+                              legend: false

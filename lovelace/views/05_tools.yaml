@@ -9,143 +9,155 @@ badges:
   - person.eric
   - person.sandy
   - person.heather
+panel: true
 cards:
-  - type: custom:decluttering-card
-    template: notifications
-
   - type: vertical-stack
     cards:
-      - type: markdown
-        content: >
-          ## Mode Overrides
-
       - type: custom:decluttering-card
-        template: button_row4
-        variables:
-          - entity1: input_boolean.guest_mode
-          - icon1: mdi:account-supervisor-circle
-          - name1: Guest
-          - entity2: switch.circadian_lighting_enabled
-          - icon2: mdi:weather-sunset
-          - name2: Circadian
-          - entity3: input_boolean.mobile_notifications
-          - icon3: mdi:cellphone-message
-          - name3: Notify
-          - entity4: input_boolean.audio_notifications
-          - icon4: mdi:speaker-wireless
-          - name4: Notify
+        template: notifications
 
-      - type: horizontal-stack
+      - type: custom:layout-card
+        layout: horizontal
         cards:
-          - type: markdown
-            content: >
-              ## Alexa TTS
-      - type: horizontal-stack
-        cards:
-          - type: entities
-            show_header_toggle: false
-            show_state: false
-            entities:
-              - entity: sensor.last_alexa
-                secondary_info: last-changed
-              - entity: sensor.last_message
-                secondary_info: last-changed
-      - type: horizontal-stack
-        cards:
-          - type: entities
-            show_header_toggle: false
-            show_state: false
-            entities:
-              - input_select.tts_phrase_room
-              - input_select.tts_phrases
-              - type: custom:text-input-row
-                entity: input_text.tts_phrase
-              - type: call-service
-                name: ' '
-                icon: 'mdi:voice'
-                action_name: Announce It...
-                service: script.tts_phrase_submitted
+          - type: vertical-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: markdown
+                    content: >
+                      ## Mode Overrides
 
-  - type: vertical-stack
-    cards:
-      - type: markdown
-        content: >
-          ## System
-      - type: entities
-        show_header_toggle: false
-        show_state: false
-        entities:
-          - type: call-service
-            name: Check Config
-            service: script.config_check
-          - type: call-service
-            name: Check Config + Restart
-            service: script.config_check_and_restart
-          - type: custom:auto-entities
-            show_empty: false
-            filter:
-              include:
-                - entity_id: persistent_notification.1337
-            card:
-              type: markdown
-              content: >
-                ### {{ state_attr('persistent_notification.1337','title') }}
+                  - type: custom:decluttering-card
+                    template: button_row4
+                    variables:
+                      - entity1: input_boolean.guest_mode
+                      - icon1: mdi:account-supervisor-circle
+                      - name1: Guest
+                      - entity2: switch.circadian_lighting_enabled
+                      - icon2: mdi:weather-sunset
+                      - name2: Circadian
+                      - entity3: input_boolean.mobile_notifications
+                      - icon3: mdi:cellphone-message
+                      - name3: Notify
+                      - entity4: input_boolean.audio_notifications
+                      - icon4: mdi:speaker-wireless
+                      - name4: Notify
 
-                {{ state_attr('persistent_notification.1337','message') }}
+                  - type: horizontal-stack
+                    cards:
+                      - type: markdown
+                        content: >
+                          ## Alexa TTS
+                  - type: horizontal-stack
+                    cards:
+                      - type: entities
+                        show_header_toggle: false
+                        show_state: false
+                        entities:
+                          - entity: sensor.last_alexa
+                            secondary_info: last-changed
+                          - entity: sensor.last_message
+                            secondary_info: last-changed
+                  - type: horizontal-stack
+                    cards:
+                      - type: entities
+                        show_header_toggle: false
+                        show_state: false
+                        entities:
+                          - input_select.tts_phrase_room
+                          - input_select.tts_phrases
+                          - type: custom:text-input-row
+                            entity: input_text.tts_phrase
+                          - type: call-service
+                            name: ' '
+                            icon: 'mdi:voice'
+                            action_name: Announce It...
+                            service: script.tts_phrase_submitted
 
-      - type: entities
-        show_header_toggle: false
-        show_state: false
-        entities:
-          - script.restart_hass
-          - script.reboot
-          #- input_select.log_level
+              - type: entities
+                show_header_toggle: false
+                show_state: false
+                entities:
+                  - type: custom:auto-entities
+                    filter:
+                      include:
+                        - entity_id: "sensor.*_battery"
+                          # attributes:
+                          #   battery_level: "<= 20"
+                      exclude:
+                        - entity_id: "*phone*"
+                        - entity_id: "*brightness*" # *motion* = state for same device
+                        - entity_id: "*left_button*"
+                        - entity_id: "*right_button*"
+                    show_empty: false
+                    card:
+                      type: custom:fold-entity-row
+                      head:
+                        type: section
+                        label: All Batteries
 
-      - type: entities
-        show_header_toggle: false
-        show_state: false
-        entities:
-          - type: custom:auto-entities
-            show_empty: false
-            filter:
-              include:
-                - entity_id: binary_sensor.update_available
-                  state: "on"
-                - entity_id: sensor.potential_breaking_changes
-                  state: "> 0"
-            card:
-              type: entities
-          - entity: sensor.latest_version
-            secondary_info: last-changed
-          - entity: sensor.current_version
-            secondary_info: last-changed
+          - type: vertical-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: markdown
+                    content: >
+                      ## System
+                  - type: entities
+                    show_header_toggle: false
+                    show_state: false
+                    entities:
+                      - type: call-service
+                        name: Check Config
+                        service: script.config_check
+                      - type: call-service
+                        name: Check Config + Restart
+                        service: script.config_check_and_restart
+                      - type: custom:auto-entities
+                        show_empty: false
+                        filter:
+                          include:
+                            - entity_id: persistent_notification.1337
+                        card:
+                          type: markdown
+                          content: >
+                            ### {{ state_attr('persistent_notification.1337','title') }}
 
-  - type: vertical-stack
-    cards:
-      - type: markdown
-        content: >
-          ## Sandbox
-  - type: custom:theme-maker
-  - type: custom:gui-sandbox
+                            {{ state_attr('persistent_notification.1337','message') }}
 
-  - type: entities
-    show_header_toggle: false
-    show_state: false
-    entities:
-      - type: custom:auto-entities
-        filter:
-          include:
-            - entity_id: "sensor.*_battery"
-              # attributes:
-              #   battery_level: "<= 20"
-          exclude:
-            - entity_id: "*phone*"
-            - entity_id: "*brightness*" # *motion* = state for same device
-            - entity_id: "*left_button*"
-            - entity_id: "*right_button*"
-        show_empty: false
-        card:
-          type: custom:fold-entity-row
-          head:
-            type: section
-            label: All Batteries
+                  - type: entities
+                    show_header_toggle: false
+                    show_state: false
+                    entities:
+                      - script.restart_hass
+                      - script.reboot
+                      #- input_select.log_level
+
+                  - type: entities
+                    show_header_toggle: false
+                    show_state: false
+                    entities:
+                      - type: custom:auto-entities
+                        show_empty: false
+                        filter:
+                          include:
+                            - entity_id: binary_sensor.update_available
+                              state: "on"
+                            - entity_id: sensor.potential_breaking_changes
+                              state: "> 0"
+                        card:
+                          type: entities
+                      - entity: sensor.latest_version
+                        secondary_info: last-changed
+                      - entity: sensor.current_version
+                        secondary_info: last-changed
+
+              - type: vertical-stack
+                cards:
+                  - type: markdown
+                    content: >
+                      ## Sandbox
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:theme-maker
+                      - type: custom:gui-sandbox
