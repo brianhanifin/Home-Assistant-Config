@@ -1,0 +1,87 @@
+---
+alias: safety_alert_detected
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: sensor.safety_alarm_bedroom_type
+    to: "1"
+  - platform: state
+    entity_id: sensor.safety_alarm_bedroom_type
+    to: "2"
+  - platform: state
+    entity_id: sensor.safety_alarm_bedroom_type
+    to: "12"
+  - platform: state
+    entity_id: sensor.safety_alarm_guest_room_type
+    to: "1"
+  - platform: state
+    entity_id: sensor.safety_alarm_guest_room_type
+    to: "2"
+  - platform: state
+    entity_id: sensor.safety_alarm_guest_room_type
+    to: "12"
+action:
+  - service: script.notify_mobile
+    data_template:
+      title: >
+        {%- set type = trigger.event.data.new_state.state -%}
+        {%- if type == "1" -%}
+          {%- set danger = "Smoke" -%}
+        {%- elif type == "2" -%}
+          {%- set danger = "Carbon Monoxide" -%}
+        {%- else -%}
+          {%- set danger = "Test Button Press" -%}
+        {%- endif -%}
+        {{ alarm_type|upper }} DETECTED!
+      message: >
+        {%- set type = trigger.event.data.new_state.state -%}
+        {%- if type == "1" -%}
+          {%- set danger = "Smoke" -%}
+        {%- elif type == "2" -%}
+          {%- set danger = "Carbon Monoxide" -%}
+        {%- else -%}
+          {%- set danger = "Test Button Press" -%}
+        {%- endif -%}
+        {%- set room = trigger.event.data.friendly_name|replace("Safety Alarm: ","")|replace(" Type","") -%}
+        {{ danger|upper }} detected in the {{ room|upper }}
+      who: "brian"
+
+  - service: script.notify_speech
+    data_template:
+      media_player: group.alexa_downstairs
+      message: >
+        {%- set type = trigger.event.data.new_state.state -%}
+        {%- if type == "1" -%}
+          {%- set danger = "Smoke" -%}
+        {%- elif type == "2" -%}
+          {%- set danger = "Carbon Monoxide" -%}
+        {%- else -%}
+          {%- set danger = "Test Button Press" -%}
+        {%- endif -%}
+        {%- set room = trigger.event.data.friendly_name|replace("Safety Alarm: ","")|replace(" Type","") -%}
+        Safety Alert! ...  {{ danger }} detected in the {{ room }}! ... Safety Alert! ... {{ danger }} detected in the {{ room }}!
+
+  - service: script.notify_web
+    data_template:
+      title: >
+        {%- set type = trigger.event.data.new_state.state -%}
+        {%- if type == "1" -%}
+          {%- set danger = "Smoke" -%}
+        {%- elif type == "2" -%}
+          {%- set danger = "Carbon Monoxide" -%}
+        {%- else -%}
+          {%- set danger = "Test Button Press" -%}
+        {%- endif -%}
+        {{ danger }} DETECTED!
+      message: >
+        {%- set type = trigger.event.data.new_state.state -%}
+        {%- if type == "1" -%}
+          {%- set danger = "Smoke" -%}
+        {%- elif type == "2" -%}
+          {%- set danger = "Carbon Monoxide" -%}
+        {%- else -%}
+          {%- set danger = "Test Button Press" -%}
+        {%- endif -%}
+        {%- set room = trigger.event.data.friendly_name|replace("Safety Alarm: ","")|replace(" Type","") -%}
+        {{ danger|upper }} detected in the {{ room|upper }}!
+      id: "safety"
