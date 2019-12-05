@@ -15,27 +15,20 @@ cards:
         cards:
           - type: vertical-stack
             cards:
-              - type: vertical-stack
-                cards:
-                  # - type: custom:simple-weather-card
-                  #   entity: weather.dark_sky
-                  #   name: in Santee
-                  #   backdrop: true
+              - type: custom:weather-card
+                entity: weather.dark_sky
+                tap_action:
+                  action: call-service
+                  service: browser_mod.command
+                  service_data:
+                    command: popup
+                    title: Weather
+                    card:
+                      type: custom:decluttering-card
+                      template: popup_weather
 
-                  - type: custom:weather-card
-                    entity: weather.dark_sky
-                    tap_action:
-                      action: call-service
-                      service: browser_mod.command
-                      service_data:
-                        command: popup
-                        title: Weather
-                        card:
-                          type: custom:decluttering-card
-                          template: popup_weather
-
-                  - type: picture-entity
-                    entity: camera.radar
+              - type: picture-entity
+                entity: camera.radar
 
           - type: vertical-stack
             cards:

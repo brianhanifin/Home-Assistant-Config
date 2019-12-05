@@ -6,130 +6,131 @@ action_more_info: &action_more_info
 title: Test
 path: test
 icon: fas:blank
+panel: true
 cards:
   - type: vertical-stack
     cards:
       - type: custom:decluttering-card
         template: notifications
 
-      - type: markdown
-        content: >
-          ## Cameras
-      - type: horizontal-stack
+      - type: custom:layout-card
+        layout: horizontal
         cards:
-          - entity: camera.front_door
-            name: Front Door
-            type: picture-entity
-      - type: horizontal-stack
-        cards:
-          - entity: camera.glowforge
-            name: Glowforge
-            type: picture-entity
-      - type: horizontal-stack
-        cards:
-          - entity: camera.workbench
-            name: 3D Printer
-            type: picture-entity
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Cameras
+              - entity: camera.front_door
+                name: Front Door
+                type: picture-entity
+              - entity: camera.glowforge
+                name: Glowforge
+                type: picture-entity
+              - entity: camera.workbench
+                name: 3D Printer
+                type: picture-entity
 
-  - type: vertical-stack
-    cards:
-      - type: markdown
-        content: >
-          ## Extended Presence
-      - type: horizontal-stack
-        cards:
-          - type: glance
-            columns: 2
-            show_name: False
-            entities:
-              - entity: input_select.brian
-                <<: *action_more_info
-              - entity: input_select.nerene
-                <<: *action_more_info
-      - type: horizontal-stack
-        cards:
-          - type: glance
-            columns: 3
-            show_name: False
-            entities:
-              - entity: input_select.eric
-                <<: *action_more_info
-              - entity: input_select.sandy
-                <<: *action_more_info
-              - entity: input_select.heather
-                <<: *action_more_info
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: >
+                  ## Extended Presence
+              - type: horizontal-stack
+                cards:
+                  - type: glance
+                    columns: 2
+                    show_name: False
+                    entities:
+                      - entity: input_select.brian
+                        <<: *action_more_info
+                      - entity: input_select.nerene
+                        <<: *action_more_info
+              - type: horizontal-stack
+                cards:
+                  - type: glance
+                    columns: 3
+                    show_name: False
+                    entities:
+                      - entity: input_select.eric
+                        <<: *action_more_info
+                      - entity: input_select.sandy
+                        <<: *action_more_info
+                      - entity: input_select.heather
+                        <<: *action_more_info
 
+                      # - type: lists
+                      #   #title: To Do List
 
-      # - type: lists
-      #   #title: To Do List
+                      # - type: entities
+                      #   title: Experimental Sensors
+                      #   show_header_toggle: false
+                      #   entities:
+                      #     - entity: binary_sensor.sleeping
+                      #       name: Sleeping, Brian & Nerene
+                      #       secondary_info: last-changed
 
-      # - type: entities
-      #   title: Experimental Sensors
-      #   show_header_toggle: false
-      #   entities:
-      #     - entity: binary_sensor.sleeping
-      #       name: Sleeping, Brian & Nerene
-      #       secondary_info: last-changed
-
-      - type: entities
-        title: auto-entities
-        show_header_toggle: false
-        entities:
-          - type: custom:auto-entities
-            show_empty: false
-            card:
-              type: custom:fold-entity-row
-              head:
-                type: section
-                label: Actionable Lights
-            filter:
-              include:
-                - group: group.actionable_lights
-              exclude:
-                - entity_id: light.kitchen_prep
-                - entity_id: "*_led"
-          - type: custom:auto-entities
-            show_empty: false
-            card:
-              type: custom:fold-entity-row
-              head:
-                type: section
-                label: Actionable Lights that are on
-            filter:
-              include:
-                - group: group.actionable_lights
-                  state: "on"
-              exclude:
-                - entity_id: light.kitchen_prep
-                - entity_id: "*_led"
-          - type: custom:auto-entities
-            show_empty: false
-            card:
-              type: custom:fold-entity-row
-              head:
-                type: section
-                label: Lights that are dimmed below 50%
-            filter:
-              include:
-                - domain: light
-                  attributes:
-                    brightness: "< 125"
-              exclude:
-                - entity_id: light.kitchen_prep
-                - entity_id: "*_led"
-          - type: custom:auto-entities
-            show_empty: false
-            card:
-              type: custom:fold-entity-row
-              head:
-                type: section
-                label: Lights that are kinda blue-ish
-            filter:
-              include:
-                - domain: light
-                  attributes:
-                    hs_color 1: "0:> 195"
-                    hs_color 2: "0:< 255"
-              exclude:
-                - entity_id: light.kitchen_prep
-                - entity_id: "*_led"
+          - type: vertical-stack
+            cards:
+              - type: entities
+                title: auto-entities
+                show_header_toggle: false
+                entities:
+                  - type: custom:auto-entities
+                    show_empty: false
+                    card:
+                      type: custom:fold-entity-row
+                      head:
+                        type: section
+                        label: Actionable Lights
+                    filter:
+                      include:
+                        - group: group.actionable_lights
+                      exclude:
+                        - entity_id: light.kitchen_prep
+                        - entity_id: "*_led"
+                  - type: custom:auto-entities
+                    show_empty: false
+                    card:
+                      type: custom:fold-entity-row
+                      head:
+                        type: section
+                        label: Actionable Lights that are on
+                    filter:
+                      include:
+                        - group: group.actionable_lights
+                          state: "on"
+                      exclude:
+                        - entity_id: light.kitchen_prep
+                        - entity_id: "*_led"
+                  - type: custom:auto-entities
+                    show_empty: false
+                    card:
+                      type: custom:fold-entity-row
+                      head:
+                        type: section
+                        label: Lights that are dimmed below 50%
+                    filter:
+                      include:
+                        - domain: light
+                          attributes:
+                            brightness: "< 125"
+                      exclude:
+                        - entity_id: light.kitchen_prep
+                        - entity_id: "*_led"
+                  - type: custom:auto-entities
+                    show_empty: false
+                    card:
+                      type: custom:fold-entity-row
+                      head:
+                        type: section
+                        label: Lights that are kinda blue-ish
+                    filter:
+                      include:
+                        - domain: light
+                          attributes:
+                            hs_color 1: "0:> 195"
+                            hs_color 2: "0:< 255"
+                      exclude:
+                        - entity_id: light.kitchen_prep
+                        - entity_id: "*_led"

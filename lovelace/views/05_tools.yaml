@@ -103,40 +103,64 @@ cards:
                   - type: markdown
                     content: >
                       ## System
+                  # - type: entities
+                  #   show_header_toggle: false
+                  #   show_state: false
+                  #   entities:
+                  #     - type: call-service
+                  #       name: Check Config
+                  #       service: script.config_check
+                  #     - type: call-service
+                  #       name: Check Config + Restart
+                  #       service: script.config_check_and_restart
+                  #     - type: custom:auto-entities
+                  #       show_empty: false
+                  #       filter:
+                  #         include:
+                  #           - entity_id: persistent_notification.1337
+                  #       card:
+                  #         type: markdown
+                  #         content: >
+                  #           ### {{ state_attr('persistent_notification.1337','title') }}
+
+                  #           {{ state_attr('persistent_notification.1337','message') }}
+
+                  # - type: entities
+                  #   show_header_toggle: false
+                  #   show_state: false
+                  #   entities:
+                  #     - script.restart_hass
+                  #     - script.reboot
+                  #     #- input_select.log_level
+
+                  - type: custom:decluttering-card
+                    template: button_row4
+                    variables:
+                      - entity1: script.config_check
+                      #- icon1: mdi:wall-sconce-flat
+                      - name1: Check
+                      - show_state1: false
+                      - entity2: script.config_check_and_restart
+                      #- icon2: mdi:led-strip
+                      - name2: Check & Restart
+                      - show_state2: false
+                      - entity3: script.reboot
+                      #- icon3: mdi:wall-sconce-flat
+                      - name3: Reboot
+                      - show_state3: false
+                      - entity4: script.restart_hass
+                      #- icon4: mdi:ceiling-light
+                      - name4: Restart
+                      - show_state4: false
+
                   - type: entities
                     show_header_toggle: false
                     show_state: false
                     entities:
-                      - type: call-service
-                        name: Check Config
-                        service: script.config_check
-                      - type: call-service
-                        name: Check Config + Restart
-                        service: script.config_check_and_restart
-                      - type: custom:auto-entities
-                        show_empty: false
-                        filter:
-                          include:
-                            - entity_id: persistent_notification.1337
-                        card:
-                          type: markdown
-                          content: >
-                            ### {{ state_attr('persistent_notification.1337','title') }}
-
-                            {{ state_attr('persistent_notification.1337','message') }}
-
-                  - type: entities
-                    show_header_toggle: false
-                    show_state: false
-                    entities:
-                      - script.restart_hass
-                      - script.reboot
-                      #- input_select.log_level
-
-                  - type: entities
-                    show_header_toggle: false
-                    show_state: false
-                    entities:
+                      - entity: sensor.latest_version
+                        secondary_info: last-changed
+                      - entity: sensor.current_version
+                        secondary_info: last-changed
                       - type: custom:auto-entities
                         show_empty: false
                         filter:
@@ -147,10 +171,6 @@ cards:
                               state: "> 0"
                         card:
                           type: entities
-                      - entity: sensor.latest_version
-                        secondary_info: last-changed
-                      - entity: sensor.current_version
-                        secondary_info: last-changed
 
               - type: vertical-stack
                 cards:
