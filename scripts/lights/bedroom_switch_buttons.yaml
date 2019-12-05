@@ -14,20 +14,49 @@ bedroom_switch_buttons:
         {%- endif %}
       data_template:
         entity_id: >
-          {%- if type in ["long_both", "double_both"] -%}
-            switch.sound_machine, switch.bedroom_fan
-          {%- elif type in ["long", "double"] -%}
-            {%- if side == "left" -%}
-              switch.sound_machine
-            {%- elif side == "right" -%}
-              switch.bedroom_fan
-            {%- endif -%}
-          {%- elif type == "both" -%}
-              light.bedroom, light.brian
-          {%- elif type == "single" -%}
-            {%- if side == "left" -%}
-              light.bedroom
-            {%- elif side == "right" -%}
-              light.brian
-            {%- endif -%}
-          {%- endif %}
+          # {%- if type in ["long_both", "double_both"] -%}
+          #   switch.sound_machine, switch.bedroom_fan
+          # {%- elif type in ["long", "double"] -%}
+          #   {%- if side == "left" -%}
+          #     switch.sound_machine
+          #   {%- elif side == "right" -%}
+          #     switch.bedroom_fan
+          #   {%- endif -%}
+          # {%- elif type == "both" -%}
+          #     light.bedroom, light.brian
+          # {%- elif type == "single" -%}
+          #   {%- if side == "left" -%}
+          #     light.bedroom
+          #   {%- elif side == "right" -%}
+          #     light.brian
+          #   {%- endif -%}
+          # {%- endif %}
+          {%- if type in ["both","double_both","long_both"] -%}
+            {%- set side = "both" -%}
+          {%- endif -%}
+          {%-
+            set button_press = {
+              "single" : {
+                "left": "light.bedroom",
+                "right": "light.brian"
+              },
+              "double" : {
+                "left": "switch.sound_machine",
+                "right": "switch.bedroom_fan"
+              },
+              "long" : {
+                "left": "switch.sound_machine",
+                "right": "switch.bedroom_fan"
+              },
+              "both" : {
+                "both": "light.bedroom, light.brian"
+              },
+              "double_both": {
+                "both": "switch.sound_machine, switch.bedroom_fan"
+              },
+              "long_both": {
+                "both": "switch.sound_machine, switch.bedroom_fan"
+              }
+            }
+          -%}
+          {{ button_press[type][side] }}

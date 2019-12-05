@@ -12,7 +12,17 @@ config_check_and_restart:
     - condition: template
       value_template: "{{ state_attr('persistent_notification.1337','message') == 'Configuration is OK!' }}"
 
-    # Clear any old config check notifications
+    # - delay:
+    #     seconds: 1
+
+    # # Clear any old config check notifications
+    # - service: persistent_notification.dismiss
+    #   data:
+    #     notification_id: "1337"
+
+    - delay:
+        seconds: 1
+
     - service: persistent_notification.create
       data:
         notification_id: "1337"
