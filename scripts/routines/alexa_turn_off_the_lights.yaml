@@ -5,10 +5,15 @@ alexa_turn_off_the_lights:
     - service: homeassistant.turn_off
       data_template:
         entity_id: >-
-          {% filter trim|replace("\n", "")|replace("\t", " ") %}
-            {# Use the name of each Echo to determine which room the command likely came from. #}
-            {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
-            {%- set room = room|replace('master_','') -%}
-
-            group.{{ room }}_lights
-          {% endfilter %}
+          {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+          {%-
+            set lights = {
+              "boys_room" : "light.boys_wakeup",
+              "kitchen" : "group.kitchen_lights",
+              "family_room" : "group.family_room_lights",
+              "master_bedroom" : "group.bedroom_lights",
+              "play_room": "group.play_room_lights",
+              "upstairs_bathroom": "light.upstairs_bathroom_nightlight"
+            }
+          -%}
+          {{ lights[room] }}

@@ -4,14 +4,20 @@ tts_phrase_say:
     - service: script.notify_speech
       data_template:
         message: "{{ phrase }}"
-        media_player: >-
+        media_player: >
           {%- set room = states('input_select.tts_phrase_room')|lower|replace(' ','_')|replace('[','')|replace(']','')  %}
-          {%- if room in ['downstairs', 'upstairs', 'kitchen/garage'] -%}
-            group.alexa_{{ room|replace('kitchen/garage', 'welcome') }}
-          {%- elif room == 'bedroom' -%}
-            media_player.master_bedroom
-          {%- elif room == 'boys_bedroom' -%}
-            media_player.boys_room
-          {%- else -%}
-            media_player.{{ room }}
-          {%- endif -%}
+          {%-
+            set alexa = {
+              "bedroom" : "media_player.master_bedroom",
+              "boys_bedroom": "media_player.boys_room",
+              "downstairs": "media_player.alexa_downstairs",
+              "kitchen/garage": "group.alexa_welcome",
+              "garage" : "media_player.garage",
+              "kitchen" : "media_player.kitchen",
+              "family_room" : "media_player.family_room",
+              "play_room": "media_player.play_room",
+              "upstairs": "group.alexa_upstairs",
+              "upstairs_bathroom": "media_player.upstairs_bathroom"
+            }
+          -%}
+          {{ alexa[room] }}

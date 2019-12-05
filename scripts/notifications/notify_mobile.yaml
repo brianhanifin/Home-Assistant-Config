@@ -18,21 +18,18 @@ notify_mobile:
       state: 'on'
     - service_template: >
         {% if who is not string %}{% set who = 'brian' %}{% endif %}
-        {% if who == 'brian' %}
-          notify.mobile_app_brians_iphone
-        {% elif who == 'family' %}
-          notify.family
-        {% elif who == 'kids' %}
-          notify.kids
-        {% elif who == 'kyle' %}
-          notify.mobile_app_ipad_pro_white
-        {% elif who == 'lucas' %}
-          notify.mobile_app_ipad_pro_red
-        {% elif who == 'nerene' %}
-          notify.mobile_app_nerenes_iphone
-        {% elif who == 'parents' %}
-          notify.parents
-        {% endif %}
+        {%-
+          set devices = {
+            "brian": "notify.brian",
+            "family": "notify.family",
+            "kids": "notify.kids",
+            "kyle": "notify.kyle",
+            "lucas": "notify.lucas",
+            "nerene": "notify.nerene",
+            "parents": "notify.parents"
+          }
+        -%}
+        {{ devices[who] }}
       data_template:
         title: "{{ title }}"
         message: "{{ message }}"
@@ -41,8 +38,8 @@ notify_mobile:
           push:
             apns_headers:
               apns-collapse-id: >-
-                {%- if replacable_id is not string -%}{%- set replacable_id = none -%}{%- endif -%}
-                {{ replacable_id }}
+                {%- if replaceable_id is not string -%}{%- set replaceable_id = none -%}{%- endif -%}
+                {{ replaceable_id }}
             thread-id: >-
               {%- if id is not string -%}{%- set id = "HOMEASSISTANT" -%}{%- endif -%}
               {{ id|upper }}
