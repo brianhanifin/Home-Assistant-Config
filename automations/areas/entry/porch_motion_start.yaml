@@ -1,0 +1,34 @@
+---
+##############################################
+###  Porch
+##############################################
+# Porch Motion: Start
+alias: porch_motion_start
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: binary_sensor.porch_motion
+    from: 'off'
+    to: 'on'
+condition:
+  - condition: state
+    entity_id: input_boolean.motion_detection_mode
+    state: 'on'
+  # We don't need to turn on the light when the dogs are alone.
+  # - condition: state
+  #   entity_id: input_boolean.away_mode
+  #   state: 'off'
+action:
+  # Store the current state of the porch light.
+  - service: python_script.light_store
+    data:
+      store_name: porch_light_state
+      entity_id:
+        - light.porch
+
+  # Full brightness!
+  - service: light.turn_on
+    data:
+      entity_id: light.porch
+      brightness: 255
+

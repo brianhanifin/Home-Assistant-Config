@@ -7,13 +7,15 @@ trigger:
     from: 'locked'
     to: 'unlocked'
 action:
+  # Store the current state of the porch + entry lights.
   - service: python_script.light_store
     data:
-      store_name: locked_state_lights
+      store_name: front_door_locked_lights_state
       entity_id:
         - light.entry
         - light.porch
 
+  # Full brightness!
   - service: light.turn_on
     entity_id:
       - light.entry

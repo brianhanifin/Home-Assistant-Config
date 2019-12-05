@@ -7,7 +7,8 @@ trigger:
     from: 'unlocked'
     to: 'locked'
 action:
+  # Restore the previous state of the porch + entry lights.
   - service: python_script.light_store
     data:
-      store_name: locked_state_lights
+      store_name: front_door_locked_lights_state
       operation: restore
