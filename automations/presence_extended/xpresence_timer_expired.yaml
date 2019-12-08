@@ -1,0 +1,42 @@
+---
+alias: xpresence_timer_expired
+initial_state: true
+# When a timer finishes.
+trigger:
+  - platform: state
+    entity_id:
+      - timer.xpresence_brian
+      - timer.xpresence_eric
+      - timer.xpresence_heather
+      - timer.xpresence_nerene
+      - timer.xpresence_sandy
+    from: active
+    to: idle
+action:
+  # Change the status to Just Left or Just Arrived.
+  - service: input_select.select_option
+    data_template:
+      entity_id: "input_select.{{ trigger.entity_id.split('_')[1] }}"
+      option: >
+        {%- set current_state = states("input_select." + trigger.entity_id.split('_')[1]) -%}
+        {%-
+          set next_option = {
+            "Just Arrived": "Home",
+            "Just Left": "Away",
+            "Away": "Extended Away"
+          }
+        -%}
+        {{ next_option[current_state] }}
+
+  # Is the current state "Away"?
+  - condition: template
+    value_template: >
+      {%- set current_state = states("input_select." + trigger.entity_id.split('_')[1]) -%}
+      {%- set next_option = {"Just Left": "Away"} -%}
+      {{ current_state == "Away" }}
+
+  # "Away" doesn't become "Extended Away" for 24 hours.
+  - service: timer.start
+    data_template:
+      entity_id: "timer.xpresence_{{ trigger.entity_id.split('_')[1] }}"
+      duration: "24:00:00"

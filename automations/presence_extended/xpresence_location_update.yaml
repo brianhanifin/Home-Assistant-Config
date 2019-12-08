@@ -1,0 +1,38 @@
+---
+alias: xpresence_location_update
+initial_state: true
+trigger:
+  - platform: state
+    entity_id:
+      - person.brian
+      - person.eric
+      - person.heather
+      - person.nerene
+      - person.sandy
+    from: "not_home"
+    to: "home"
+  - platform: state
+    entity_id:
+      - person.brian
+      - person.eric
+      - person.heather
+      - person.nerene
+      - person.sandy
+    from: "home"
+    to: "not_home"
+action:
+  # Change the status to Just Left or Just Arrived.
+  - service: input_select.select_option
+    data_template:
+      entity_id: "input_select.{{ trigger.entity_id.split('.')[1] }}"
+      option: >
+        {%- if trigger.from_state.state == "not_home" -%}
+          Just Arrived
+        {%- else -%}
+          Just Left
+        {%- endif -%}
+
+  - service: timer.start
+    data_template:
+      entity_id: "timer.xpresence_{{ trigger.entity_id.split('.')[1] }}"
+      duration: "00:10:00"

@@ -1,0 +1,36 @@
+---
+# Every 10 minutes check for presence statues stuck as 'Just Arrived', or 'Just Left'.
+# The timer should be 'active', so if it is 'idle', then the status is considered stuck.
+alias: xpresence_stuck_watchdog
+initial_state: true
+trigger:
+  # Check every 10 minutes.
+  - platform: time_pattern 
+    minutes: '/10'
+action:
+  # Are there any stuck timers?
+  - condition: template
+    value_template: >
+      {%- set stuck_states = ['Just Arrived','Just Left','Away'] -%}
+      {%- set stuck_timers = states.input_select | selectattr('state','in',stuck_states) | map(attribute='entity_id') | list | replace('input_select.','timer.xpresence_') -%}
+      {%- set timers = states.timer | selectattr('entity_id','in',stuck_timers) | selectattr('state','in','idle') | map(attribute='entity_id') | list -%}
+      {{ timers|length > 0 }}
+
+  # Restart the first stuck timer.
+  - service: timer.start
+    data_template:
+      duration: >
+        {%- set stuck_states = ['Just Arrived','Just Left','Away'] -%}
+        {%- set stuck_timers = states.input_select | selectattr('state','in',stuck_states) | map(attribute='entity_id') | list | replace('input_select.','timer.xpresence_') -%}
+        {%- set timers = states.timer | selectattr('entity_id','in',stuck_timers) | selectattr('state','in','idle') | map(attribute='entity_id') | list -%}
+        {%- set first_timer = 'input_select.' + (timers|first).split('_')[1] -%}
+        {%- if is_state(first_timer, 'Away') -%}
+          24:00:00
+        {%- else -%}
+          00:00:05
+        {%- endif -%}
+      entity_id: >
+        {%- set stuck_states = ['Just Arrived','Just Left','Away'] -%}
+        {%- set stuck_timers = states.input_select | selectattr('state','in',stuck_states) | map(attribute='entity_id') | list | replace('input_select.','timer.xpresence_') -%}
+        {%- set timers = states.timer | selectattr('entity_id','in',stuck_timers) | selectattr('state','in','idle') | map(attribute='entity_id') | list -%}
+        {{ timers|first }}
