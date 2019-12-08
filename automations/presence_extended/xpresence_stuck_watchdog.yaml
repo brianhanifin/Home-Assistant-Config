@@ -25,7 +25,7 @@ action:
         {%- set timers = states.timer | selectattr('entity_id','in',stuck_timers) | selectattr('state','in','idle') | map(attribute='entity_id') | list -%}
         {%- set first_timer = 'input_select.' + (timers|first).split('_')[1] -%}
         {%- if is_state(first_timer, 'Away') -%}
-          24:00:00
+          23:59:59
         {%- else -%}
           00:00:05
         {%- endif -%}
