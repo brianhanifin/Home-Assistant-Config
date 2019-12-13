@@ -25,16 +25,38 @@ action:
   - service: script.notify_mobile
     data_template:
       who: "parents"
-      title: OPEN / UNLOCKED
-      message: "Check your windows and doors. One of them may have been left open or unlocked."
+      title: Doors and Windows Check
+      message: >
+        {%- set entities = [
+          'binary_sensor.front_door',
+          'lock.front_door',
+          'cover.garage_door',
+          'binary_sensor.upstairs_bathroom_window'
+        ] -%}
+        {%- set open_states = ['open','on','unlocked'] -%}
+        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list-%}
 
-  #- service: input_boolean.turn_on
-  #  entity_id: input_boolean.alert_mode
-  #- service: script.speech_engine
-  #  data_template:
-  #    call_window_check: 1
+        {%- if open_entities|length > 0 -%}
+          {%- for entity in open_entities -%}
+            The {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}.
+          {% endfor -%}
+        {%- endif -%}
 
   - service: script.notify_speech
     data_template:
       media_player: group.alexa_welcome
-      message: "Check your windows and doors. One of them may have been left open or unlocked."
+      message: >
+        {%- set entities = [
+          'binary_sensor.front_door',
+          'lock.front_door',
+          'cover.garage_door',
+          'binary_sensor.upstairs_bathroom_window'
+        ] -%}
+        {%- set open_states = ['open','on','unlocked'] -%}
+        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list-%}
+
+        {%- if open_entities|length > 0 -%}
+          {%- for entity in open_entities -%}
+            The {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}.
+          {% endfor -%}
+        {%- endif -%}
