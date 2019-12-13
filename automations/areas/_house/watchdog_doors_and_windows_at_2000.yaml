@@ -34,12 +34,12 @@ action:
           'binary_sensor.upstairs_bathroom_window'
         ] -%}
         {%- set open_states = ['open','on','unlocked'] -%}
-        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list-%}
+        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list -%}
 
         {%- if open_entities|length > 0 -%}
           {%- for entity in open_entities -%}
-            The {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}.
-          {% endfor -%}
+            {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
+          {%- endfor -%}
         {%- endif -%}
 
   - service: script.notify_speech
@@ -53,10 +53,10 @@ action:
           'binary_sensor.upstairs_bathroom_window'
         ] -%}
         {%- set open_states = ['open','on','unlocked'] -%}
-        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list-%}
+        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list -%}
 
         {%- if open_entities|length > 0 -%}
           {%- for entity in open_entities -%}
-            The {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}.
-          {% endfor -%}
+            {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
+          {%- endfor -%}
         {%- endif -%}
