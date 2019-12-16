@@ -1,0 +1,13 @@
+---
+alias: lights_outside_illuminance_off
+initial_state: true
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.outside_illuminance
+    above: 5000
+action:
+  - service: light.turn_off
+    entity_id:
+      #- light.table_lamp
+      - light.family_room_floor_lamp
+      - light.family_room
