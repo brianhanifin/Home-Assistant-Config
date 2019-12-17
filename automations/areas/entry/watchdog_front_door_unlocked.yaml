@@ -6,6 +6,10 @@ trigger:
     entity_id: lock.front_door
     from: 'locked'
     to: 'unlocked'
+condition:
+  - condition: numeric_state
+    entity_id: sensor.outside_illuminance
+    below: 5000
 action:
   # Store the current state of the porch + entry lights.
   - service: python_script.light_store

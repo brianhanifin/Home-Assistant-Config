@@ -8,8 +8,8 @@ initial_state: true
 trigger:
   - platform: state
     entity_id: binary_sensor.front_door_motion
-    from: 'off'
-    to: 'on'
+    from: 'on'
+    to: 'off'
     # for:
     #   minutes: 2
     #   seconds: 00
@@ -17,6 +17,9 @@ condition:
   - condition: state
     entity_id: input_boolean.motion_detection_mode
     state: 'on'
+  - condition: numeric_state
+    entity_id: sensor.outside_illuminance
+    below: 5000
 action:
   # Restore the previous state of the porch light.
   - service: python_script.light_store
