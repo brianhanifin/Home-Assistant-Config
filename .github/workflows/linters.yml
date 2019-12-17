@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
+      - name: "Ignore 3rd party packages (their formatting is not in our purview)"
+        run: rm -f ./integrations/3rdparty_*.yaml
       - name: Running Remark lint
         uses: "docker://pipelinecomponents/remark-lint:latest"
         continue-on-error: true
