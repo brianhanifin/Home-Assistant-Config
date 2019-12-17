@@ -2,7 +2,7 @@
 ##############################################
 ## Turn certain lights on at Sunset
 ##############################################
-alias: lights_adjust_at_sunset
+alias: lights_evening
 initial_state: true
 trigger:
   - platform: sun
@@ -18,11 +18,11 @@ action:
   - service: switch.turn_on
     entity_id: switch.xmas_tree
 
-  - service: script.notify_mobile
-    data_template:
-      title: 'Script: Sunset'
-      message: "Activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
-      who: "brian"
+  # - service: script.notify_mobile
+  #   data_template:
+  #     title: 'script.lights_evening'
+  #     message: "Activated at {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
+  #     who: "brian"
 
   - service: script.say
     data_template:
