@@ -1,0 +1,53 @@
+---
+#  Custom Header
+#
+# This addon is used to modify the header in Home Assistant.
+#
+# https://maykar.github.io/custom-header/#configuration/main
+#### #### #### #### #### #### #### #### #### #### #### #### 
+
+compact_mode: true
+chevrons: false
+background: 'rgba(0,0,0,0.3)'
+notify_indicator_color: "#e80000"
+swipe: true
+swipe_wrap: false
+
+# Default things to hide for everyone else.
+hide_help: true
+notifications: hide
+options: hide
+voice: hide
+
+tab_icons:
+  outdoors: "{{ state_attr('sensor.today_icon', 'icon') }}"
+
+exceptions:
+  - conditions:
+      user: brian
+    config:
+      notifications: show
+      options: show
+      voice: show
+
+  - conditions:
+      user: Kyle, Lucas
+    config:
+      default_tab: 2
+      disable_sidebar: true
+      hide_tabs: outdoors,wakeup,tools,lock,test
+
+  - conditions:
+      user: Nerene
+    config:
+      disable_sidebar: true
+      hide_tabs: tools,lock,test
+
+  - conditions:
+      user_agent: Mobile
+      media_query: "(max-width: 600px)"
+    config:
+      footer_mode: true
+      indicator_top: true
+      reverse_button_direction: true
+      reverse_tab_direction: true
