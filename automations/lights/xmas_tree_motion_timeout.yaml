@@ -1,0 +1,41 @@
+---
+# To conserve power: turn the Christmas tree lights off when no one 
+# has been seen nearby for a while.
+alias: xmas_tree_motion_timeout
+initial_state: true
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.kitchen_1_motion
+      - binary_sensor.kitchen_2_motion
+      - binary_sensor.family_room_motion
+action:
+  # Store the current state of the tree lights.
+  - service: variable.set_variable
+    data:
+      variable: xmas_tree_state_before_motion_timeout
+      attributes_template: >
+        {
+          "last_updated": "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
+        }
+    data_template:
+      value: "{{ states('switch.xmas_tree') }}"
+
+  # Only continue if the lights are on.
+  - condition: state
+    entity_id: switch.xmas_tree
+    state: "on"
+
+  - delay:
+      minutes: 20
+  
+  # - service: script.debug
+  #   data_template:
+  #     message: "seconds since last trigger = {{ (now() - trigger.from_state.last_changed).total_seconds() }}"
+
+  # After 5 minutes, if motion has not updated
+  - condition: template
+    value_template: "{{ (now() - trigger.from_state.last_changed).total_seconds() >= 20*60.0 }}"
+
+  - service: switch.turn_off
+    entity_id: switch.xmas_tree
