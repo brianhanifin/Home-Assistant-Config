@@ -7,12 +7,13 @@ scan_interval: 86400
 value_template: >
   {% set today = now().month  ~ '/' ~ now().day  -%}
   {%- set personal = value_json.PERSONAL[ today ]|trim -%}
-  {%- set holiday = value_json.MAJOR_US.static[ today ]|trim -%}
+  {%- set holiday = value_json.MAJOR_US[ today ]|trim -%}
 
   {%- macro pcase(text) -%}
     {{ text[0]|upper}}{{text[1:] }}
   {%- endmacro -%}
-  {%- macro get_dyanmic_holiday(event) -%}
+  
+  {%- macro get_dynamic_holiday(event) -%}
     {%- set today = states('sensor.date') -%}
     {%- if today == event -%}
       {%- set date_parts = states(event).split('-') -%}
@@ -26,15 +27,16 @@ value_template: >
       {%- endif -%}
     {%- endif -%}
   {%- endmacro -%}
+
   {%- if holiday == '' -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_easter') -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_fathers') -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_labor') -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_memorial') -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_mlk') -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_mothers') -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_presidents') -%}
-    {%- set holiday = get_dyanmic_holiday('sensor.date_thanksgiving') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_easter') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_fathers') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_labor') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_memorial') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_mlk') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_mothers') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_presidents') -%}
+    {%- set holiday = get_dynamic_holiday('sensor.date_thanksgiving') -%}
   {%- endif -%}
 
   {%- if personal != '' -%}
