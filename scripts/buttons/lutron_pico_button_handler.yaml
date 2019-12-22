@@ -12,15 +12,32 @@ lutron_pico_button_handler:
     #   data_template:
     #     title: "lutron_pico_button_handler"
     #     message: >
-    #       {% if button == "4" -%}
-    #         script.lutron_pico_light_off
+    #       {%- if area|lower|trim|replace(' ','_') == "entry" -%}
+    #         {%- if button == "2" -%}
+    #           script.lutron_pico_middle_toggle
+    #         {%- endif %}
     #       {%- else -%}
-    #         script.lutron_pico_light_on
-    #       {%- endif %}
-    #       remote = "{{ remote }}"
-    #       area =   "{{ area|lower|replace(' ','_')|replace('playroom','play_room') }}"
+    #         {%- if button == "2" -%}
+    #           script.lutron_pico_middle_toggle
+    #         {%- elif button == "4" -%}
+    #           script.lutron_pico_generic_light_off
+    #         {%- else -%}
+    #           script.lutron_pico_generic_light_on
+    #         {%- endif %}
+    #       {%- endif -%}
+    #       remote = "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
     #       button = "{{ button }}"
     #       light =  "{{ 'light.' + area|lower|replace(' ','_')|replace('playroom','play_room') }}"
+    #       area =   "{{ area|lower|replace(' ','_')|replace('playroom','play_room') }}"
+    #       light: >
+    #       {%-
+    #         set lights = {
+    #           "Dining Room" : "light.dining_room",
+    #           "Entry" : "light.entry",
+    #           "Playroom": "group.play_room_lights"
+    #         }
+    #       %}
+    #       {{ lights[area] }}
 
     - service_template: >
         {%- if area|lower|trim|replace(' ','_') == "entry" -%}
@@ -39,4 +56,27 @@ lutron_pico_button_handler:
       data_template:
         remote: "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
         button: "{{ button }}"
-        light:  "{{ 'light.' + area|lower|trim|replace(' ','_')|replace('playroom','play_room') }}"
+        light: >
+          {%- set remote = remote|trim|replace('sensor.','')|replace('_remote','') -%}
+          {%-
+            set lights = {
+              "dining_room": {
+                "1": "light.dining_room",
+                "4": "light.dining_room"
+              },
+              "entry": {
+                "1": "light.entry",
+                "4": "light.entry"
+              },
+              "play_room_1": {
+                "1": "light.play_room",
+                "4": "group.play_room_lights"
+              },
+              "play_room_2": {
+                "1": "light.play_room",
+                "4": "group.garage_entry_lights"
+              }
+            }
+          -%}
+          {{ lights[remote][button] }}
+        #light:  "{{ 'light.' + area|lower|trim|replace(' ','_')|replace('playroom','play_room') }}"
