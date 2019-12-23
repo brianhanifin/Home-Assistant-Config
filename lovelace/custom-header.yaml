@@ -19,6 +19,9 @@ notifications: hide
 options: hide
 voice: hide
 
+button_text:
+  options: "{{ hours12 }}:{{ minutesLZ }} {{ ampm }}"
+
 tab_icons:
   outdoors: "{{ state_attr('sensor.today_icon', 'icon') }}"
 
@@ -42,3 +45,12 @@ exceptions:
     config:
       disable_sidebar: true
       hide_tabs: tools,lock,test
+
+  - conditions:
+      user_agent: Mobile
+      media_query: "(max-width: 600px)"
+    config:
+      menu_hide: true
+      voice_dropdown: true
+      button_text:
+        options: ""
