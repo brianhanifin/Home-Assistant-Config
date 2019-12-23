@@ -1,39 +1,29 @@
 ---
-          # {%- if type in ["both","double_both","long_both"] -%}
-          #   {%- set side = "both" -%}
-          # {%- endif -%}
-          # {%-
-          #   set button_press = {
-          #     "single" : {
-          #       "left": "light.bedroom",
-          #       "right": "light.brian"
-          #     },
-          #     "double" : {
-          #       "left": "switch.sound_machine",
-          #       "right": "switch.bedroom_fan"
-          #     },
-          #     "long" : {
-          #       "left": "switch.sound_machine",
-          #       "right": "switch.bedroom_fan"
-          #     },
-          #     "both" : {
-          #       "both": "light.bedroom, light.brian"
-          #     },
-          #     "double_both": {
-          #       "both": "switch.sound_machine, switch.bedroom_fan"
-          #     },
-          #     "long_both": {
-          #       "both": "switch.sound_machine, switch.bedroom_fan"
-          #     }
-          #   }
-          # -%}
-          # {{ button_press[type][side] }}
 bedroom_switch_buttons:
   sequence:
-    # - service: persistent_notification.create
-    #   data_template:
-    #     title: "bedroom_switch_buttons"
-    #     message: "type: {{ type }}\nside: {{ side }}"
+    - service: persistent_notification.create
+      data_template:
+        title: "bedroom_switch_buttons"
+        message: "type: {{ type }}\nside: {{ side }}"
+
+        # entity_id: >
+        #   {%- if type in ["long_both", "double_both"] -%}
+        #     switch.sound_machine, switch.bedroom_fan
+        #   {%- elif type in ["long", "double"] -%}
+        #     {%- if side == "left" -%}
+        #       switch.sound_machine
+        #     {%- elif side == "right" -%}
+        #       switch.bedroom_fan
+        #     {%- endif -%}
+        #   {%- elif type == "both" -%}
+        #       light.bedroom, light.brian
+        #   {%- elif type == "single" -%}
+        #     {%- if side == "left" -%}
+        #       light.bedroom
+        #     {%- elif side == "right" -%}
+        #       light.brian
+        #     {%- endif -%}
+        #   {%- endif %}
 
     - service_template: >
         {%- if type in ["long", "double", "long_both", "double_both"] -%}
@@ -43,20 +33,22 @@ bedroom_switch_buttons:
         {%- endif %}
       data_template:
         entity_id: >
-          {%- if type in ["long_both", "double_both"] -%}
-            switch.sound_machine, switch.bedroom_fan
-          {%- elif type in ["long", "double"] -%}
-            {%- if side == "left" -%}
-              switch.sound_machine
-            {%- elif side == "right" -%}
-              switch.bedroom_fan
-            {%- endif -%}
-          {%- elif type == "both" -%}
-              light.bedroom, light.brian
-          {%- elif type == "single" -%}
-            {%- if side == "left" -%}
-              light.bedroom
-            {%- elif side == "right" -%}
-              light.brian
-            {%- endif -%}
-          {%- endif %}
+          {%- set button_press = {
+              "left": {
+                "single": "light.bedroom",
+                "double": "switch.sound_machine",
+                "long": "switch.sound_machine"
+              },
+              "right": {
+                "single": "light.brian",
+                "double": "switch.bedroom_fan",
+                "long": "switch.bedroom_fan"
+              },
+              "both": {
+                "both": "light.glowforge",
+                "double_both": "switch.sound_machine, switch.bedroom_fan",
+                "long_both": "switch.sound_machine, switch.bedroom_fan"
+              }
+            }
+          -%}
+          {{ button_press[side][type] }}
