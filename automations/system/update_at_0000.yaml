@@ -13,24 +13,8 @@ action:
       - switch.xmas_tree
       - switch.landscape_lights
 
-  # Update group.actionable_lights to replace group.all_lights.
-  - service: script.create_actionable_lights_group
-
   # Disable guest mode (in case it was enabled in the evening).
   - service: input_boolean.turn_off
     entity_id: input_boolean.guest_mode
 
-  # Update upcoming dynamic holidays.
-  - service: script.update_date_easter
-  - service: script.update_date_fathers
-  - service: script.update_date_labor
-  - service: script.update_date_memorial
-  - service: script.update_date_mlk
-  - service: script.update_date_mothers
-  - service: script.update_date_presidents
-  - service: script.update_date_thanksgiving
-
-  # Update the holiday sensors.
-  - delay:
-      minutes: 5
-  - service: script.holiday_sensors_update
+  - service: script.refresh_at_startup_and_midnight

@@ -7,7 +7,6 @@ trigger:
   platform: homeassistant
   event: start
 action:
-  # Let Zwave2MQTT know we are back online.
   - service: mqtt.publish
     data:
       topic: "hass/status"
@@ -25,3 +24,5 @@ action:
   # Create group.actionable_lights to replace group.all_lights.
   - service: script.turn_on
     entity_id: script.create_actionable_lights_group
+
+  - service: shell_command.store_addon_list

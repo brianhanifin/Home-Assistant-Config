@@ -1,0 +1,11 @@
+---
+refresh_at_startup_and_midnight:
+  alias: Refresh at Startup and Midnight
+  sequence:
+    # Update group.actionable_lights to replace group.all_lights.
+    - service: script.create_actionable_lights_group
+
+    # Update the holiday sensors.
+    - delay:
+        minutes: 1
+    - service: script.holiday_sensors_update
