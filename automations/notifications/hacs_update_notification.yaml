@@ -5,22 +5,22 @@ trigger:
   platform: numeric_state
   entity_id: sensor.hacs
   above: 0
-condition:
-  - condition: template
-    value_template: "{{ not is_state('sensor.hacs', 'unknown') }}"
+# condition:
+#   - condition: template
+#     value_template: "{{ not is_state('sensor.hacs', 'unknown') }}"
 action:
   - service: script.notify_web
     data_template:
       title: "HACS Component Update"
-      message: >
-        {%- set count = states('sensor.hacs') -%}
-        Home Assistant Community Store has {{ count + " items" if count > 1 else "1 item" }} ready to be updated!
+      message: >-
+        {% set updates = states('sensor.hacs')|int %}
+        Home Assistant Community Store has {{ updates }} update{{ "s" if updates > 1 }} ready to be updated!
       id: "update"
 
   - service: script.notify_mobile
     data_template:
       title: "HACS Component Update"
-      message: >
-        {%- set count = states('sensor.hacs') -%}
-        Home Assistant Community Store has {{ count + " items" if count > 1 else "1 item" }} ready to be updated!
+      message: >-
+        {% set updates = states('sensor.hacs')|int %}
+        Home Assistant Community Store has {{ updates }} update{{ "s" if updates > 1 }} ready to be updated!
       who: "brian"
