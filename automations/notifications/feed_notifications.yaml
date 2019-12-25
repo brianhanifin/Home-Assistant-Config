@@ -7,6 +7,6 @@ trigger:
 action:
   - service: persistent_notification.create
     data_template:
-      title: "{{trigger.event.data.title}}"
-      message: "New Article - {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d%b%Y', true) }}"
+      title: "{{ trigger.event.data.title }}"
+      message: "[Read]({{ trigger.event.data.link }})"
       notification_id: "rss"
