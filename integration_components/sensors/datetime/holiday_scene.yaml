@@ -6,7 +6,7 @@ sensors:
     value_template: >
       {% set holiday_scene = states('sensor.holiday') -%}
       {%- if holiday_scene is not none and holiday_scene != "" -%}
-        {%- set holiday_scene = holiday_scene|lower|trim|replace("'","")|replace(" ","_")|replace(",_eve","")|replace("eve","day") -%}
+        {%- set holiday_scene = holiday_scene|lower|trim|replace("'","")|replace(" ","_")|replace(",_eve","")|replace("day","") -%}
         {%- set holiday_scene = holiday_scene|replace("mothers_day","valentine")|replace("earth_day","st_patty") -%}
         {%- set last_word = holiday_scene.split('_')|last -%}
         {%- if last_word == "birthday" -%}
