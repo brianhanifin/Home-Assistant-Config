@@ -1,0 +1,23 @@
+---
+platform: template
+switches:
+  contribution_lucas_trash:
+    friendly_name: "Trash"
+    icon_template: mdi:trash-can
+    value_template: >-
+      {% set rightnow = (as_timestamp(now()))|int %}
+      {% set lastdone = (states('sensor.contribution_lucas_trash'))|int %}
+      {{ (rightnow - lastdone) < 86400 }}
+    turn_on:
+      - service: mqtt.publish
+        data_template:
+          entity_id: >-
+            topic: homeassistant/sensor/contribution_lucas_trash/state
+            payload_template: >
+              {
+                "timestamp": {{ (as_timestamp(now()))|int }},
+                "visibility_timeout": "none",
+                "visible": true,
+                "unit_of_measurement": "timestamp"
+              }
+    turn_off:
