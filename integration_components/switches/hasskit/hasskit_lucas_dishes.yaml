@@ -1,0 +1,22 @@
+---
+platform: template
+switches:
+  hasskit_lucas_dishes:
+    friendly_name: "Dishes"
+    icon_template: mdi:silverware
+    value_template: >-
+      {% set lastdone = (states('sensor.contribution_lucas_dishes'))|int %}
+      {% set rightnow = (as_timestamp(now()))|int %}
+      {{ (rightnow - lastdone) < 86400 }}
+    turn_on:
+      - service: mqtt.publish
+        data_template:
+          topic: homeassistant/sensor/contribution_lucas_dishes/state
+          payload_template: >
+            {
+              "timestamp": {{ (as_timestamp(now()))|int }},
+              "visibility_timeout": "none",
+              "visible": true,
+              "unit_of_measurement": "timestamp"
+            }
+    turn_off:

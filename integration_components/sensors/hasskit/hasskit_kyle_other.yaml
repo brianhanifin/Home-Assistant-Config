@@ -1,0 +1,12 @@
+---
+platform: template
+sensors:
+  hasskit_kyle_other:
+    entity_id: sensors.contribution_kyle_other
+    friendly_name: "Clothes: Sort"
+    icon_template: mdi:star-face
+    value_template: >-
+      {% set lastdone = (states('sensor.contribution_kyle_other'))|int %}
+      {% set rightnow = (as_timestamp(now()))|int %}
+      {% set days = ((rightnow - lastdone)|int // 86400) + 1 %}
+      {{ days }} day{{ "s" if days > 1 }} ago

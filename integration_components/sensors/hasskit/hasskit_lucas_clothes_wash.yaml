@@ -1,0 +1,12 @@
+---
+platform: template
+sensors:
+  hasskit_lucas_clothes_wash:
+    entity_id: sensors.contribution_lucas_clothes_wash
+    friendly_name: "Clothes: Sort"
+    icon_template: mdi:washing-machine
+    value_template: >-
+      {% set lastdone = (states('sensor.contribution_lucas_clothes_wash'))|int %}
+      {% set rightnow = (as_timestamp(now()))|int %}
+      {% set days = ((rightnow - lastdone)|int // 86400) + 1 %}
+      {{ days }} day{{ "s" if days > 1 }} ago
