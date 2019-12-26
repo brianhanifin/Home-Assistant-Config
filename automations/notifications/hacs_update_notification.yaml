@@ -2,19 +2,26 @@
 alias: hacs_update_notification
 initial_state: true
 trigger:
-  platform: numeric_state
+  platform: state
   entity_id: sensor.hacs
-  above: 0
-# condition:
-#   - condition: template
-#     value_template: "{{ not is_state('sensor.hacs', 'unknown') }}"
+condition:
+  - condition: template
+    value_template: "{{ states(trigger.entity_id) != 'unknown'}}"
+  - condition: template
+    value_template: "{{ (states(trigger.entity_id) | float) != 0}}"
 action:
   - service: script.notify_web
     data_template:
       title: "HACS Component Update"
       message: >-
-        {% set updates = states('sensor.hacs')|int %}
-        Home Assistant Community Store has {{ updates }} update{{ "s" if updates > 1 }} ready to be updated!
+        title: Updates pending in HACS
+        message: >-
+          {% set updates = states('sensor.hacs')|int %}
+          Home Assistant Community Store has {{ updates }} update{{ "s" if updates > 1 }} ready to be updated!
+
+          {% for repo in state_attr(trigger.entity_id, 'repositories') %}
+            **{{ repo.display_name }}** _{{ repo["installed version"] }}_ -> _{{ repo["available version"] }}_
+          {% endfor %}          
       id: "update"
 
   - service: script.notify_mobile
@@ -23,4 +30,8 @@ action:
       message: >-
         {% set updates = states('sensor.hacs')|int %}
         Home Assistant Community Store has {{ updates }} update{{ "s" if updates > 1 }} ready to be updated!
+
+        {% for repo in state_attr(trigger.entity_id, 'repositories') %}
+          **{{ repo.display_name }}** _{{ repo["installed version"] }}_ -> _{{ repo["available version"] }}_
+        {% endfor %}
       who: "brian"
