@@ -5,6 +5,11 @@ trigger:
   - platform: numeric_state
     entity_id: sensor.outside_illuminance
     above: 5000
+condition:
+  # Only the lights off if guest mode override is off.
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: "off"
 action:
   - service: light.turn_off
     entity_id:
