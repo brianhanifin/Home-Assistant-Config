@@ -1,0 +1,3 @@
+---
+# Generate a list of current docker containers
+store_addon_list: curl http://10.0.0.56:8126/containers | jq 'sort_by(.Names[]) | .[].Names[]' | grep addon | sed 's/"//g' | sed 's/\///g' | sed -n -e 'H;${x;s/\n/,/g;s/^,//;p;}' | sed 's/addon_//g' > ./www/data/addon_list.txt
