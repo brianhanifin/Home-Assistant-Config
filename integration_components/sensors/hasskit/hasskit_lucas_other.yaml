@@ -2,11 +2,19 @@
 platform: template
 sensors:
   hasskit_lucas_other:
-    entity_id: sensors.contribution_lucas_other
-    friendly_name: "Clothes: Sort"
+    entity_id:
+      - sensors.contribution_lucas_other
+      - switch.hasskit_lucas_other
+    friendly_name: "Other"
     icon_template: mdi:star-face
     value_template: >-
       {% set lastdone = (states('sensor.contribution_lucas_other'))|int %}
       {% set rightnow = (as_timestamp(now()))|int %}
-      {% set days = ((rightnow - lastdone)|int // 86400) + 1 %}
-      {{ days }} day{{ "s" if days > 1 }} ago
+      {% set days = ((rightnow - lastdone)|int // 86400) %}
+      {% if days == 0 %}
+        today
+      {% elif days == 1 %}
+        yesterday
+      {% else %}
+        {{ days }} days ago
+      {% endif %}
