@@ -23,6 +23,10 @@ refresh_at_startup_and_midnight:
         - switch.contribution_lucas_other
         - switch.contribution_lucas_trash
 
+    # Reset the status of Buddy's Medicine sensor.
+    - service: homeassistant.update_entity
+      entity_id: sensor.medicine_buddy_given_today
+
     # Update the holiday sensors.
     - delay:
         minutes: 1

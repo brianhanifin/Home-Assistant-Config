@@ -1,0 +1,20 @@
+---
+alias: garage_door_closed
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: cover.garage_door
+    #from: 'open'
+    to: 'closed'
+action:
+  # Turn off the garage entry light notification.
+  - service: light.turn_off
+    entity_id:
+      - light.garage_entry_light
+      - light.dining_room
+
+  # Restore the previous state of the dining room lights.
+  - service: python_script.light_store
+    data:
+      store_name: dining_room_light_state
+      operation: restore

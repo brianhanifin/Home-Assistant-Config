@@ -7,11 +7,9 @@ trigger:
     below: 150
     above: 10
 condition:
-  condition: and
-  conditions:
-    - condition: state
-      entity_id: input_select.glowforge_status
-      state: Running
+  - condition: state
+    entity_id: input_select.glowforge_status
+    state: Running
 action:
   - service: input_select.select_option
     data:

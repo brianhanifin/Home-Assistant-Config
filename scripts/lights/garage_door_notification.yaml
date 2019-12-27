@@ -1,0 +1,87 @@
+---
+garage_door_notification:
+  sequence:
+    # Store current light states.
+    - service: python_script.light_store
+      data:
+        store_name: dining_room_light_state
+        entity_id:
+          - light.dining_room
+
+    # Turn on the dining room lights.
+    - service: light.turn_on
+      entity_id: light.dining_room
+    - service: light.turn_on
+      data:
+        entity_id:
+          - light.garage_entry
+          - light.dining_room
+        brightness_pct: 40
+
+    # Flash the bulbs to draw attention.    - delay: "0:00:01"
+    - service: light.turn_on
+      data:
+        entity_id:
+          - light.garage_entry
+          - light.dining_room
+        flash: "short"
+
+    - delay: "0:00:01"
+    - service: light.turn_on
+      data:
+        entity_id:
+          - light.garage_entry
+          - light.dining_room
+
+    - delay: "0:00:01"
+    - service: light.turn_on
+      data:
+        entity_id:
+          - light.garage_entry
+          - light.dining_room
+        flash: "short"
+
+    # Brighten the single notification bulb.
+    - delay: "0:00:01"
+    - service: light.turn_on
+      data:
+        entity_id: light.dining2
+        brightness_pct: 40
+        effect: "colorloop"
+
+    # Turn off the rest of the dining room bulbs.
+    - service: light.turn_off
+      entity_id:
+        - light.dining1
+        - light.dining3
+        - light.dining4
+        - light.dining5
+        - light.dining6
+        - light.dining7
+        - light.dining8
+        - light.dining9
+
+    # Turn on the Garage Entry light.
+    - service: light.turn_on
+      data:
+        entity_id: light.garage_entry_light
+        brightness_pct: 75
+        effect: "colorloop"
+
+    # If after 5 minutes the garage is still open, dim the lights.
+    # - delay: "0:05:00"
+    # - condition: state
+    #   entity_id: cover.garage_door
+    #   state:     'open'
+
+    # - service: light.turn_on
+    #   data:
+    #     entity_id: light.garage_entry_light
+    #     brightness_pct: 20
+    #     transition: 5
+
+    # - service: light.turn_on
+    #   data:
+    #     entity_id: light.dining2
+    #     brightness_pct: 20
+    #     transition: 5

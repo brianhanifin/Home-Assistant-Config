@@ -5,11 +5,17 @@ initial_state: true
 trigger:
   platform: time_pattern
   minutes: '/05'
-action:
+condition:
   - condition: state
     entity_id: cover.garage_door
     state:     'closed'
+action:
+  # Turn off the garage entry light notification.
   - service: light.turn_off
     entity_id: light.garage_entry_light
-  # - service: light.turn_off
-  #   entity_id: light.table_lamp
+
+  # Restore the previous state of the dining room lights.
+  - service: python_script.light_store
+    data:
+      store_name: dining_room_light_state
+      operation: restore
