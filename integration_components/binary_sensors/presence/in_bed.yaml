@@ -1,0 +1,36 @@
+---
+platform: bayesian
+name: in_bed
+probability_threshold: 0.95
+prior: 0.42
+observations:
+  - entity_id: sun.sun
+    platform: state
+    to_state: below_horizon
+    prob_given_true: 0.75
+  # - entity_id: input_boolean.blackout_mode
+  #   platform: state
+  #   to_state: "on"
+  #   prob_given_true: 0.75
+  - entity_id: light.family_room
+    platform: state
+    to_state: "off"
+    prob_given_true: 0.65
+  # - entity_id: alarm_control_panel.simplisafe
+  #   platform: state
+  #   to_state: "armed_home"
+  #   prob_given_true: 0.65
+  - entity_id: remote.family_room_hub
+    platform: state
+    to_state: "off"
+    prob_given_true: 0.65
+  - entity_id: binary_sensor.brians_phone_charging
+    prob_given_true: 0.65
+    prob_given_false: 0.5
+    platform: state
+    to_state: true
+  - entity_id: binary_sensor.nerenes_phone_charging
+    prob_given_true: 0.65
+    prob_given_false: 0.5
+    platform: state
+    to_state: true

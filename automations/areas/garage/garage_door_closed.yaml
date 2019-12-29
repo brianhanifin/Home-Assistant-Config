@@ -4,14 +4,14 @@ initial_state: true
 trigger:
   - platform: state
     entity_id: cover.garage_door
-    #from: 'open'
-    to: 'closed'
+    #from: open
+    to: closed
 action:
-  # Turn off the garage entry light notification.
+  # Turn off the notification lights.
   - service: light.turn_off
-    entity_id:
-      - light.garage_entry_light
-      - light.dining_room
+    entity_id: light.garage_entry_light
+  - service: light.turn_off
+    entity_id: light.dining_room
 
   # Restore the previous state of the dining room lights.
   - service: python_script.light_store
