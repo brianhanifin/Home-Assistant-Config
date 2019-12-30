@@ -5,14 +5,14 @@ card:
     - type: custom:decluttering-card
       template: heading
       variables:
-        - heading: "[[pname]]'s Wakeup Light"
+        - heading: "[[name]]'s Wakeup Light"
 
     - type: entities
       show_header_toggle: false
       entities:
         - type: "custom:button-entity-row"
           buttons:
-            - entity: automation.wakeup_[[name]]_10min_early
+            - entity: automation.wakeup_[[id]]_10min_early
               name: Enable
               style:
                 background: lightgray
@@ -26,7 +26,7 @@ card:
                 "on":
                   color: green
                   font-weight: bold
-            - entity: input_boolean.wakeup_[[name]]_skipnext
+            - entity: input_boolean.wakeup_[[id]]_skipnext
               name: Skip Next
               style:
                 background: lightgray
@@ -42,25 +42,25 @@ card:
                   color: green
                   font-weight: bold
         - type: time-input-row
-          entity: "input_datetime.wakeup_[[name]]_time"
+          entity: "input_datetime.wakeup_[[id]]_time"
           icon: mdi:weather-sunny
-        - entity: "sensor.wakeup_[[name]]_10min_early"
+        - entity: "sensor.wakeup_[[id]]_10min_early"
           icon: mdi:weather-sunset-up
 
     - type: custom:decluttering-card
       template: button_row7
       variables:
-        - entity1: "input_boolean.wakeup_[[name]]_mon"
+        - entity1: "input_boolean.wakeup_[[id]]_mon"
         - name1: Mon
-        - entity2: "input_boolean.wakeup_[[name]]_tue"
+        - entity2: "input_boolean.wakeup_[[id]]_tue"
         - name2: Tue
-        - entity3: "input_boolean.wakeup_[[name]]_wed"
+        - entity3: "input_boolean.wakeup_[[id]]_wed"
         - name3: Wed
-        - entity4: "input_boolean.wakeup_[[name]]_thu"
+        - entity4: "input_boolean.wakeup_[[id]]_thu"
         - name4: Thu
-        - entity5: "input_boolean.wakeup_[[name]]_fri"
+        - entity5: "input_boolean.wakeup_[[id]]_fri"
         - name5: Fri
-        - entity6: "input_boolean.wakeup_[[name]]_sat"
+        - entity6: "input_boolean.wakeup_[[id]]_sat"
         - name6: Sat
-        - entity7: "input_boolean.wakeup_[[name]]_sun"
+        - entity7: "input_boolean.wakeup_[[id]]_sun"
         - name7: Sun
