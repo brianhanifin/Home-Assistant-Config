@@ -1,8 +1,7 @@
 ---
-toggle_bedroom_lights:
-  sequence:
-    - service_template: >-
-        {% if is_state('light.bedroom', 'off') -%}light.turn_on
-        {%- else -%}light.turn_off
-        {%- endif %}
-      entity_id: light.bedroom, light.glowforge, light.brian
+sequence:
+  - service_template: >-
+      {% if is_state('light.bedroom', 'off') -%}light.turn_on
+      {%- else -%}light.turn_off
+      {%- endif %}
+    entity_id: light.bedroom, light.glowforge, light.brian

@@ -7,26 +7,25 @@
 #   scenes should be named holiday_[01-12]_colors (holiday_06_colors)
 # Color help - http://www.esbnyc.com/explore/tower-lights/calendar
 ######################################################################################################
-holiday_color_change:
-  sequence:
-    # - service: scene.turn_on
-    #   data_template:
-    #     entity_id: >
-    #       scene.holiday_
-    #       {%- if states.sensor.flag.state == "True" -%}
-    #         RWB
-    #       {%- elif states.sensor.holiday_scene.state != "" -%}
-    #         {{ states.sensor.holiday_scene.state }}
-    #       {%- else -%}
-    #         standard
-    #       {%- endif -%}_colors
+sequence:
+  # - service: scene.turn_on
+  #   data_template:
+  #     entity_id: >
+  #       scene.holiday_
+  #       {%- if states.sensor.flag.state == "True" -%}
+  #         RWB
+  #       {%- elif states.sensor.holiday_scene.state != "" -%}
+  #         {{ states.sensor.holiday_scene.state }}
+  #       {%- else -%}
+  #         standard
+  #       {%- endif -%}_colors
 
-    - service: scene.turn_on
-      data_template:
-        entity_id: >
-          scene.holiday_
-          {%- if states.sensor.holiday_scene.state != "" -%}
-            {{ states.sensor.holiday_scene.state }}
-          {%- else -%}
-            standard
-          {%- endif -%}_colors
+  - service: scene.turn_on
+    data_template:
+      entity_id: >
+        scene.holiday_
+        {%- if states.sensor.holiday_scene.state != "" -%}
+          {{ states.sensor.holiday_scene.state }}
+        {%- else -%}
+          standard
+        {%- endif -%}_colors

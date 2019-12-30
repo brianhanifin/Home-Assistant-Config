@@ -1,15 +1,14 @@
 ---
-config_check:
-  sequence:
-    # Clear any old config check notifications
-    - service: persistent_notification.create
-      data:
-        notification_id: "1337"
-        title: "\"Config Check\" is running..."
-        message: ""
+sequence:
+  # Clear any old config check notifications
+  - service: persistent_notification.create
+    data:
+      notification_id: "1337"
+      title: "\"Config Check\" is running..."
+      message: ""
 
-    - delay:
-        seconds: 1
+  - delay:
+      seconds: 1
 
-    # Run the config_check
-    - service: config_check.run
+  # Run the config_check
+  - service: config_check.run

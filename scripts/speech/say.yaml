@@ -1,32 +1,31 @@
 ---
-say:
-  sequence:
-    - condition: state
-      entity_id: input_boolean.audio_notifications
-      state: 'on'
+sequence:
+  - condition: state
+    entity_id: input_boolean.audio_notifications
+    state: 'on'
 
-    # - condition: time
-    #   after: '06:00:00'
-    #   before: '22:00:00'
+  # - condition: time
+  #   after: '06:00:00'
+  #   before: '22:00:00'
 
-    - condition: or
-      conditions:
-        - condition: state
-          entity_id: group.family
-          state: 'home'
-        - condition: state
-          entity_id: input_boolean.guest_mode
-          state: 'on'
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: group.family
+        state: 'home'
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: 'on'
 
-    # Update the values that may be needed for the briefing.
-    - service: script.turn_on
-      entity_id: script.update_lights_on
+  # Update the values that may be needed for the briefing.
+  - service: script.turn_on
+    entity_id: script.update_lights_on
 
-    # - delay:
-    #     seconds: 5
+  # - delay:
+  #     seconds: 5
 
-    - service: script.speech_processing
-      data_template:
-        media_player: !include ../../templates/speech/media_player.yaml
-        briefing: !include ../../templates/speech/briefing.yaml
-        title: "{{ title }}"
+  - service: script.speech_processing
+    data_template:
+      media_player: !include ../../templates/speech/media_player.yaml
+      briefing: !include ../../templates/speech/briefing.yaml
+      title: "{{ title }}"

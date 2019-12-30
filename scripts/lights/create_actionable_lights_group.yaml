@@ -2,27 +2,26 @@
 ############################################
 ## Create the actionable lights group.
 ############################################
-create_actionable_lights_group:
-  sequence:
-    - service: group.set
-      data_template:
-        object_id: "actionable_lights"
-        entities: >
-          {%- set ignore_list = [
-            'light.brian_macbook_safari',
-            'light.brian_windows_chrome',
-            'light.brian_iphone_mobile_app',
-            'light.brian_ipad_mobile_app',
-            'light.brian1','light.brian2','light.brian3',
-            'light.dining1','light.dining2','light.dining3','light.dining4','light.dining5','light.dining6','light.dining7','light.dining8','light.dining9',
-            'light.entertainment_area_1',
-            'light.family_room_floor_lamp1','light.family_room_floor_lamp2','light.family_room_floor_lamp3',
-            'light.garage_entry',
-            'light.kitchen_cabinet',
-            'light.lamplinc_dimmer_3a_4e_12',
-            'light.lamplinc_dimmer_3a_76_dc',
-            'light.network_closet',
-            'light.upstairs_bathroom_nightlight',
-            'light.xiaomi_hub_light'
-          ] -%}
-          {{ states.light | rejectattr('entity_id','in',ignore_list) | map(attribute='entity_id') | join(',') }}
+sequence:
+  - service: group.set
+    data_template:
+      object_id: "actionable_lights"
+      entities: >
+        {%- set ignore_list = [
+          'light.brian_macbook_safari',
+          'light.brian_windows_chrome',
+          'light.brian_iphone_mobile_app',
+          'light.brian_ipad_mobile_app',
+          'light.brian1','light.brian2','light.brian3',
+          'light.dining1','light.dining2','light.dining3','light.dining4','light.dining5','light.dining6','light.dining7','light.dining8','light.dining9',
+          'light.entertainment_area_1',
+          'light.family_room_floor_lamp1','light.family_room_floor_lamp2','light.family_room_floor_lamp3',
+          'light.garage_entry',
+          'light.kitchen_cabinet',
+          'light.lamplinc_dimmer_3a_4e_12',
+          'light.lamplinc_dimmer_3a_76_dc',
+          'light.network_closet',
+          'light.upstairs_bathroom_nightlight',
+          'light.xiaomi_hub_light'
+        ] -%}
+        {{ states.light | rejectattr('entity_id','in',ignore_list) | map(attribute='entity_id') | join(',') }}

@@ -1,15 +1,14 @@
 ---
-tts_phrase_submitted:
-  sequence:
-    - condition: template
-      value_template: "{{ states('input_select.tts_phrases') not in ('None','')
-                      or  states('input_text.tts_phrase')|replace(' ','') != '' }}"
+sequence:
+  - condition: template
+    value_template: "{{ states('input_select.tts_phrases') not in ('None','')
+                    or  states('input_text.tts_phrase')|replace(' ','') != '' }}"
 
-    - service: script.tts_phrase_say
-      data_template:
-        phrase: >
-          {%- if states('input_text.tts_phrase')|replace(' ','') != '' -%}
-            {{ states('input_text.tts_phrase') }}
-          {%- else -%}
-            {{ states('input_select.tts_phrases') }}
-          {%- endif -%}
+  - service: script.tts_phrase_say
+    data_template:
+      phrase: >
+        {%- if states('input_text.tts_phrase')|replace(' ','') != '' -%}
+          {{ states('input_text.tts_phrase') }}
+        {%- else -%}
+          {{ states('input_select.tts_phrases') }}
+        {%- endif -%}

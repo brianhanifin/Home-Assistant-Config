@@ -1,28 +1,27 @@
 ---
-goodnight_routine:
-  sequence:
-    - service: script.turn_on
-      entity_id:
-        - script.tv_family_room_off
-        - script.tv_play_room_off
+sequence:
+  - service: script.turn_on
+    entity_id:
+      - script.tv_family_room_off
+      - script.tv_play_room_off
 
-    # Make sure the garage door is closed.
-    - service: cover.close_cover
-      entity_id: cover.garage_door
+  # Make sure the garage door is closed.
+  - service: cover.close_cover
+    entity_id: cover.garage_door
 
-    # Lock the front door right away as well.
-    - service: lock.lock
-      entity_id: lock.front_door
+  # Lock the front door right away as well.
+  - service: lock.lock
+    entity_id: lock.front_door
 
-    # Shutdown the rest of the lights and switches.
-    - service: script.turn_on
-      entity_id: script.shutdown_routine
+  # Shutdown the rest of the lights and switches.
+  - service: script.turn_on
+    entity_id: script.shutdown_routine
 
-    - service: switch.turn_off
-      entity_id: switch.xmas_tree
+  - service: switch.turn_off
+    entity_id: switch.xmas_tree
 
-    # Say goodnight.
-    - service: script.say
-      data_template:
-        media_player: media_player.family_room
-        say_goodnight: "true"
+  # Say goodnight.
+  - service: script.say
+    data_template:
+      media_player: media_player.family_room
+      say_goodnight: "true"

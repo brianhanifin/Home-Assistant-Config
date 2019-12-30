@@ -1,33 +1,32 @@
 ---
-play:
-  sequence:
-    - condition: state
-      entity_id: input_boolean.audio_notifications
-      state: 'on'
+sequence:
+  - condition: state
+    entity_id: input_boolean.audio_notifications
+    state: 'on'
 
-    # - condition: time
-    #   after: '06:00:00'
-    #   before: '22:00:00'
+  # - condition: time
+  #   after: '06:00:00'
+  #   before: '22:00:00'
 
-    - condition: or
-      conditions:
-        - condition: state
-          entity_id: group.family
-          state: 'home'
-        - condition: state
-          entity_id: input_boolean.guest_mode
-          state: 'on'
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: group.family
+        state: 'home'
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: 'on'
 
-    - service: media_player.turn_on
+  - service: media_player.turn_on
+    entity_id: media_player.family_room_speaker
+  - service: media_player.volume_set
+    data:
       entity_id: media_player.family_room_speaker
-    - service: media_player.volume_set
-      data:
-        entity_id: media_player.family_room_speaker
-        volume_level: 0.7
-    - delay:
-        seconds: 1
-    - service: media_player.play_media
-      data:
-        entity_id: media_player.family_room_speaker
-        media_content_id: /config/www/sounds/doorbells/jetsons.wav
-        media_content_type: audio/wav
+      volume_level: 0.7
+  - delay:
+      seconds: 1
+  - service: media_player.play_media
+    data:
+      entity_id: media_player.family_room_speaker
+      media_content_id: /config/www/sounds/doorbells/jetsons.wav
+      media_content_type: audio/wav

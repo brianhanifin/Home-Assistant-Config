@@ -1,17 +1,16 @@
 ---
-# "Alexa, turn on the floor lamp"
-alexa_turn_off_floor_lamp:
-  sequence:
-    - service: homeassistant.turn_off
-      data_template:
-        entity_id: >
-          {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
-          {%-
-            set light = {
-              "kitchen" : "light.family_room_floor_lamp",
-              "family_room" : "light.family_room_floor_lamp",
-              "master_bedroom" : "light.bedroom",
-              "play_room": "light.play_room_floor_lamp"
-            }
-          -%}
-          {{ light[room] }}
+# "Alexa, turn off the floor lamp"
+sequence:
+  - service: homeassistant.turn_off
+    data_template:
+      entity_id: >
+        {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+        {%-
+          set light = {
+            "kitchen" : "light.family_room_floor_lamp",
+            "family_room" : "light.family_room_floor_lamp",
+            "master_bedroom" : "light.bedroom",
+            "play_room": "light.play_room_floor_lamp"
+          }
+        -%}
+        {{ light[room] }}

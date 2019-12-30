@@ -10,22 +10,21 @@
 # 8:30pm | 9pm    |  40% #
 # 9pm    | 5am    |  30% #
 ##########################
-light_brightness_update:
-  #alias: "Update light brightness variable based on the current time"
-  sequence:
-    service: variable.set_variable
-    data:
-      variable: light_brightness
-      value_template: >
-        {%- set hour    = states("sensor.time").split(':')[0] | int -%}
-        {%- set minutes = states("sensor.time").split(':')[1] | int -%}
-        {%- if   hour >=  5 and hour <  8                   -%}{%- set brightness_pct = 60 -%}
-        {%- elif hour >=  8 and hour < 19                   -%}{%- set brightness_pct = 100 -%}
-        {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}{%- set brightness_pct = 70 -%}
-        {%- elif hour >= 19 and minutes > 30 and hour < 20  -%}{%- set brightness_pct = 60 -%}
-        {%- elif hour >= 20 and minutes < 30 and hour < 21  -%}{%- set brightness_pct = 50 -%}
-        {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}{%- set brightness_pct = 40 -%}
-        {%- else                                            -%}{%- set brightness_pct = 30 -%}
-        {%- endif -%}
-        {%- set brightness = brightness_pct / 100 * 255 -%}
-        {{ brightness|int }}
+# Update light brightness variable based on the current time
+sequence:
+  service: variable.set_variable
+  data:
+    variable: light_brightness
+    value_template: >
+      {%- set hour    = states("sensor.time").split(':')[0] | int -%}
+      {%- set minutes = states("sensor.time").split(':')[1] | int -%}
+      {%- if   hour >=  5 and hour <  8                   -%}{%- set brightness_pct = 60 -%}
+      {%- elif hour >=  8 and hour < 19                   -%}{%- set brightness_pct = 100 -%}
+      {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}{%- set brightness_pct = 70 -%}
+      {%- elif hour >= 19 and minutes > 30 and hour < 20  -%}{%- set brightness_pct = 60 -%}
+      {%- elif hour >= 20 and minutes < 30 and hour < 21  -%}{%- set brightness_pct = 50 -%}
+      {%- elif hour >= 20 and minutes > 30 and hour < 21  -%}{%- set brightness_pct = 40 -%}
+      {%- else                                            -%}{%- set brightness_pct = 30 -%}
+      {%- endif -%}
+      {%- set brightness = brightness_pct / 100 * 255 -%}
+      {{ brightness|int }}

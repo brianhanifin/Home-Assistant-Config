@@ -1,15 +1,14 @@
 ---
 # Only update the day after the event (or the event date is unknown).
-update_date_fathers:
-  sequence:
-    - condition: template
-      value_template: >
-        {%- set today = states('sensor.date') -%}
-        {%- set event = states('sensor.date_fathers') -%}
-        {%- set date_parts = event.split('-') -%}
-        {%- set day_after_event = date_parts[0] ~'-'~ date_parts[1] ~'-'~ (date_parts[2]|int+1) %}
-        {{ today == day_after_event
-        or event == 'unknown' }}
+sequence:
+  - condition: template
+    value_template: >
+      {%- set today = states('sensor.date') -%}
+      {%- set event = states('sensor.date_fathers') -%}
+      {%- set date_parts = event.split('-') -%}
+      {%- set day_after_event = date_parts[0] ~'-'~ date_parts[1] ~'-'~ (date_parts[2]|int+1) %}
+      {{ today == day_after_event
+      or event == 'unknown' }}
 
-    - service: homeassistant.update_entity
-      entity_id: sensor.date_fathers
+  - service: homeassistant.update_entity
+    entity_id: sensor.date_fathers

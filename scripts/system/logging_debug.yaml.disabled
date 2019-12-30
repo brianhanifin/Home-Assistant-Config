@@ -1,12 +1,11 @@
 ---
-logging_debug:
-  sequence:
-    - service: logger.set_level
-      data_template:
-        homeassistant.components: debug
-        custom_components.media_player.alexa: debug
-        custom_components.media_player.alexa_media: debug
-    - service: logbook.log
-      data:
-        name: Logging
-        message: "log_level: debug"
+sequence:
+  - service: logger.set_level
+    data_template:
+      homeassistant.components: debug
+      custom_components.media_player.alexa: debug
+      custom_components.media_player.alexa_media: debug
+  - service: logbook.log
+    data:
+      name: Logging
+      message: "log_level: debug"

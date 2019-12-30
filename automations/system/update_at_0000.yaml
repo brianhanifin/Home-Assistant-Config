@@ -18,3 +18,8 @@ action:
     entity_id: input_boolean.guest_mode
 
   - service: script.refresh_at_startup_and_midnight
+
+  # Update the holiday sensors.
+  - delay:
+      minutes: 1
+  - service: script.holiday_sensors_update

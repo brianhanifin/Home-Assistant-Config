@@ -1,24 +1,23 @@
 ---
-goodbye_routine:
-  sequence:
-    # Run the shutdown/goodbye routine + turn off the family room TV.
-    - service: script.turn_on
-      entity_id:
-        - script.shutdown_routine
-        - script.tv_family_room_off
+sequence:
+  # Run the shutdown/goodbye routine + turn off the family room TV.
+  - service: script.turn_on
+    entity_id:
+      - script.shutdown_routine
+      - script.tv_family_room_off
 
-    # Say goodnight.
-    - service: script.say
-      data_template:
-        media_player: !include ../../templates/speech/media_player_requestor.yaml
-        say_goodbye: "true"
+  # Say goodnight.
+  - service: script.say
+    data_template:
+      media_player: !include ../../templates/speech/media_player_requestor.yaml
+      say_goodbye: "true"
 
-    # Delay locking the front door slightly in case we are leaving by it.
-    - delay:
-        seconds: 10
-    - wait_template: "{{ is_state('sensor.front_door','closed') }}"
-      timeout:
-        minutes: 1
-      continue_on_timeout: 'true'
-    - service: lock.lock
-      entity_id: lock.front_door
+  # Delay locking the front door slightly in case we are leaving by it.
+  - delay:
+      seconds: 10
+  - wait_template: "{{ is_state('sensor.front_door','closed') }}"
+    timeout:
+      minutes: 1
+    continue_on_timeout: 'true'
+  - service: lock.lock
+    entity_id: lock.front_door

@@ -1,19 +1,18 @@
 ---
-xiaomi_button_handler:
-  sequence:
-    # - service: persistent_notification.create
-    #   data_template:
-    #     title: "xiaomi_button_handler"
-    #     message: "button: {{ button }}\ntype: {{ type }}\nscript.{{ button|replace('binary_sensor.','') }}"
+sequence:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "xiaomi_button_handler"
+  #     message: "button: {{ button }}\ntype: {{ type }}\nscript.{{ button|replace('binary_sensor.','') }}"
 
-    - service_template: >
-        {# Medicine: Buddy #}
-        {%- if button == "binary_sensor.medicine_buddy_button" -%}
-          script.medicine_buddy_button
-        {# Bedroom Wall Double Switch  #}
-        {%- elif button.startswith("binary_sensor.bedroom_switch_button") -%}
-          script.bedroom_switch_buttons
-        {%- endif %}
-      data_template:
-        type: "{{ type }}"
-        side: "{{ button|replace('binary_sensor.bedroom_switch_button_','') }}"
+  - service_template: >
+      {# Medicine: Buddy #}
+      {%- if button == "binary_sensor.medicine_buddy_button" -%}
+        script.medicine_buddy_button
+      {# Bedroom Wall Double Switch  #}
+      {%- elif button.startswith("binary_sensor.bedroom_switch_button") -%}
+        script.bedroom_switch_buttons
+      {%- endif %}
+    data_template:
+      type: "{{ type }}"
+      side: "{{ button|replace('binary_sensor.bedroom_switch_button_','') }}"

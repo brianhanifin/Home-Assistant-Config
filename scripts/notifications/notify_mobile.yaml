@@ -11,40 +11,39 @@
 #        image: "{{ trigger.event.data.entity_picture }}"
 #        url: "{{ trigger.event.data.url }}"
 ######################################################################################################
-notify_mobile:
-  sequence:
-    - condition: state
-      entity_id: input_boolean.mobile_notifications
-      state: 'on'
-    - service_template: >
-        {% if who is not string %}{% set who = 'brian' %}{% endif %}
-        {%-
-          set devices = {
-            "brian": "notify.brian",
-            "family": "notify.family",
-            "kids": "notify.kids",
-            "kyle": "notify.kyle",
-            "lucas": "notify.lucas",
-            "nerene": "notify.nerene",
-            "parents": "notify.parents"
-          }
-        -%}
-        {{ devices[who] }}
-      data_template:
-        title: "{{ title }}"
-        message: "{{ message }}"
-        data:
-          # url: "{{ url }}"
-          push:
-            apns_headers:
-              apns-collapse-id: >-
-                {%- if replaceable_id is not string -%}{%- set replaceable_id = none -%}{%- endif -%}
-                {{ replaceable_id }}
-            thread-id: >-
-              {%- if id is not string -%}{%- set id = "HOMEASSISTANT" -%}{%- endif -%}
-              {{ id|upper }}
-        #     sound: "{{ sound }}"
+sequence:
+  - condition: state
+    entity_id: input_boolean.mobile_notifications
+    state: 'on'
+  - service_template: >
+      {% if who is not string %}{% set who = 'brian' %}{% endif %}
+      {%-
+        set devices = {
+          "brian": "notify.brian",
+          "family": "notify.family",
+          "kids": "notify.kids",
+          "kyle": "notify.kyle",
+          "lucas": "notify.lucas",
+          "nerene": "notify.nerene",
+          "parents": "notify.parents"
+        }
+      -%}
+      {{ devices[who] }}
+    data_template:
+      title: "{{ title }}"
+      message: "{{ message }}"
+      data:
+        # url: "{{ url }}"
+        push:
+          apns_headers:
+            apns-collapse-id: >-
+              {%- if replaceable_id is not string -%}{%- set replaceable_id = none -%}{%- endif -%}
+              {{ replaceable_id }}
+          thread-id: >-
+            {%- if id is not string -%}{%- set id = "HOMEASSISTANT" -%}{%- endif -%}
+            {{ id|upper }}
+      #     sound: "{{ sound }}"
 
 
-            # url: "{{ image }}"
-            # hide-thumbnail: false
+          # url: "{{ image }}"
+          # hide-thumbnail: false

@@ -6,77 +6,76 @@
 #   8   dim_up
 #   16  dim_down
 #   2   preset
-lutron_pico_button_handler:
-  sequence:
-    # - service: persistent_notification.create
-    #   data_template:
-    #     title: "lutron_pico_button_handler"
-    #     message: >
-    #       {%- if area|lower|trim|replace(' ','_') == "entry" -%}
-    #         {%- if button == "2" -%}
-    #           script.lutron_pico_middle_toggle
-    #         {%- endif %}
-    #       {%- else -%}
-    #         {%- if button == "2" -%}
-    #           script.lutron_pico_middle_toggle
-    #         {%- elif button == "4" -%}
-    #           script.lutron_pico_generic_light_off
-    #         {%- else -%}
-    #           script.lutron_pico_generic_light_on
-    #         {%- endif %}
-    #       {%- endif -%}
-    #       remote = "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
-    #       button = "{{ button }}"
-    #       light =  "{{ 'light.' + area|lower|replace(' ','_')|replace('playroom','play_room') }}"
-    #       area =   "{{ area|lower|replace(' ','_')|replace('playroom','play_room') }}"
-    #       light: >
-    #       {%-
-    #         set lights = {
-    #           "Dining Room" : "light.dining_room",
-    #           "Entry" : "light.entry",
-    #           "Playroom": "group.play_room_lights"
-    #         }
-    #       %}
-    #       {{ lights[area] }}
+sequence:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "lutron_pico_button_handler"
+  #     message: >
+  #       {%- if area|lower|trim|replace(' ','_') == "entry" -%}
+  #         {%- if button == "2" -%}
+  #           script.lutron_pico_middle_toggle
+  #         {%- endif %}
+  #       {%- else -%}
+  #         {%- if button == "2" -%}
+  #           script.lutron_pico_middle_toggle
+  #         {%- elif button == "4" -%}
+  #           script.lutron_pico_generic_light_off
+  #         {%- else -%}
+  #           script.lutron_pico_generic_light_on
+  #         {%- endif %}
+  #       {%- endif -%}
+  #       remote = "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
+  #       button = "{{ button }}"
+  #       light =  "{{ 'light.' + area|lower|replace(' ','_')|replace('playroom','play_room') }}"
+  #       area =   "{{ area|lower|replace(' ','_')|replace('playroom','play_room') }}"
+  #       light: >
+  #       {%-
+  #         set lights = {
+  #           "Dining Room" : "light.dining_room",
+  #           "Entry" : "light.entry",
+  #           "Playroom": "group.play_room_lights"
+  #         }
+  #       %}
+  #       {{ lights[area] }}
 
-    - service_template: >
-        {%- if area|lower|trim|replace(' ','_') == "entry" -%}
-          {%- if button == "2" -%}
-            script.lutron_pico_middle_toggle
-          {%- endif %}
+  - service_template: >
+      {%- if area|lower|trim|replace(' ','_') == "entry" -%}
+        {%- if button == "2" -%}
+          script.lutron_pico_middle_toggle
+        {%- endif %}
+      {%- else -%}
+        {%- if button == "2" -%}
+          script.lutron_pico_middle_toggle
+        {%- elif button == "4" -%}
+          script.lutron_pico_generic_light_off
         {%- else -%}
-          {%- if button == "2" -%}
-            script.lutron_pico_middle_toggle
-          {%- elif button == "4" -%}
-            script.lutron_pico_generic_light_off
-          {%- else -%}
-            script.lutron_pico_generic_light_on
-          {%- endif %}
-        {%- endif -%}
-      data_template:
-        remote: "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
-        button: "{{ button }}"
-        light: >
-          {%- set remote = remote|trim|replace('sensor.','')|replace('_remote','') -%}
-          {%-
-            set lights = {
-              "dining_room": {
-                "1": "light.dining_room",
-                "4": "light.dining_room"
-              },
-              "entry": {
-                "1": "light.entry",
-                "4": "light.entry"
-              },
-              "play_room_1": {
-                "1": "light.play_room",
-                "4": "group.play_room_lights"
-              },
-              "play_room_2": {
-                "1": "light.play_room",
-                "4": "group.garage_entry_lights"
-              }
+          script.lutron_pico_generic_light_on
+        {%- endif %}
+      {%- endif -%}
+    data_template:
+      remote: "{{ remote|trim|replace('sensor.','')|replace('_remote','') }}"
+      button: "{{ button }}"
+      light: >
+        {%- set remote = remote|trim|replace('sensor.','')|replace('_remote','') -%}
+        {%-
+          set lights = {
+            "dining_room": {
+              "1": "light.dining_room",
+              "4": "light.dining_room"
+            },
+            "entry": {
+              "1": "light.entry",
+              "4": "light.entry"
+            },
+            "play_room_1": {
+              "1": "light.play_room",
+              "4": "group.play_room_lights"
+            },
+            "play_room_2": {
+              "1": "light.play_room",
+              "4": "group.garage_entry_lights"
             }
-          -%}
-          {{ lights[remote][button] }}
-        #light:  "{{ 'light.' + area|lower|trim|replace(' ','_')|replace('playroom','play_room') }}"
+          }
+        -%}
+        {{ lights[remote][button] }}
+      #light:  "{{ 'light.' + area|lower|trim|replace(' ','_')|replace('playroom','play_room') }}"
