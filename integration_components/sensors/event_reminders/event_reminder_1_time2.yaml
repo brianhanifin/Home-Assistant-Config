@@ -1,0 +1,11 @@
+---
+platform: template
+sensors:
+  event_reminder_1_time2:
+    friendly_name: Second Time
+    icon_template: mdi:clock-outline
+    value_template: >-
+      {%  set reminder__time    = states("input_datetime.event_reminder_1_time2") -%}
+      {%- set reminder__hour    = reminder__time.split(':')[0] -%}
+      {%- set reminder__minutes = reminder__time.split(':')[1] -%}
+      {{ "%0.02d:%0.02d" | format(reminder__hour|int, reminder__minutes|int) }}

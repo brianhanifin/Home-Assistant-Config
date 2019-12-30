@@ -1,0 +1,35 @@
+---
+# Start Time storage and recall.
+alias: event_reminders_update_time
+initial_state: true
+trigger:
+  platform: state
+  entity_id:
+    - input_datetime.event_reminder_1_time1
+    - input_datetime.event_reminder_1_time2
+    - input_datetime.event_reminder_2_time1
+    - input_datetime.event_reminder_2_time2
+    - input_datetime.event_reminder_3_time1
+    - input_datetime.event_reminder_3_time2
+    - input_datetime.event_reminder_4_time1
+    - input_datetime.event_reminder_4_time2
+    - input_datetime.event_reminder_5_time1
+    - input_datetime.event_reminder_5_time2
+    - input_datetime.event_reminder_6_time1
+    - input_datetime.event_reminder_6_time2
+    - input_datetime.event_reminder_7_time1
+    - input_datetime.event_reminder_7_time2
+    - input_datetime.event_reminder_8_time1
+    - input_datetime.event_reminder_8_time2
+    - input_datetime.event_reminder_9_time1
+    - input_datetime.event_reminder_9_time2
+    - input_datetime.event_reminder_10_time1
+    - input_datetime.event_reminder_10_time2
+    - input_datetime.event_reminder_11_time1
+    - input_datetime.event_reminder_11_time2
+    - input_datetime.event_reminder_12_time1
+    - input_datetime.event_reminder_12_time2
+action:
+  - service: homeassistant.update_entity
+    data_template:
+      entity_id: "{{ trigger.to_state.entity_id|replace('input_datetime.', 'sensor.') }}"

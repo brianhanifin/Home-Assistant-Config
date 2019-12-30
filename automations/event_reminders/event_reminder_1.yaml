@@ -1,0 +1,48 @@
+---
+alias: event_reminder_1
+initial_state: true
+trigger:
+  platform: template
+  value_template: >-
+    {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+    {% set time1 = states('sensor.event_reminder_1_time1')|timestamp_custom('%H:%M', false) %}
+    {% set time2 = states('sensor.event_reminder_1_time2')|timestamp_custom('%H:%M', false) %}
+    {{ current_time == time1 or current_time == time2 }}
+condition:
+  condition: and
+  conditions:
+    #  - condition: state
+    #    entity_id: person.brian
+    #    state: home
+
+    # Is today one of the selected days?
+    - condition: template
+      value_template: >
+        {% set   day_name = now().strftime("%A")|lower -%}
+        {%- if   day_name == 'monday'    and states.input_boolean.event_reminder_1_mon.state == 'on' -%}{{true}}
+        {%- elif day_name == 'tuesday'   and states.input_boolean.event_reminder_1_tue.state == 'on' -%}{{true}}
+        {%- elif day_name == 'wednesday' and states.input_boolean.event_reminder_1_wed.state == 'on' -%}{{true}}
+        {%- elif day_name == 'thursday'  and states.input_boolean.event_reminder_1_thu.state == 'on' -%}{{true}}
+        {%- elif day_name == 'friday'    and states.input_boolean.event_reminder_1_fri.state == 'on' -%}{{true}}
+        {%- elif day_name == 'saturday'  and states.input_boolean.event_reminder_1_sat.state == 'on' -%}{{true}}
+        {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_1_sun.state == 'on' -%}{{true}}
+        {%- else -%}{{false}}{%- endif %}
+action:
+  - service: persistent_notification.create
+    data_template:
+      title: "DEBUG"
+      message: "automation.event_reminder_1"
+
+  # Time to turn on the lights!
+  # - service: script.turn_on
+  #   entity_id: script.event_reminder_1_light_start
+
+  # - service_template: >
+  #     {% if is_state('input_boolean.event_reminder_1_skipnext', 'on') %}
+  #       script.event_reminder_skipnext
+  #     {% else %}
+  #       script.event_reminder_announce
+  #     {% endif %}
+  #   data_template:
+  #     id: "1"
+  #     statement: "{{ '1' if current_time == time1 else '2' }}"
