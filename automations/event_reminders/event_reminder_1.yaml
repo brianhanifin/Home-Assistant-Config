@@ -37,12 +37,16 @@ action:
   # - service: script.turn_on
   #   entity_id: script.event_reminder_1_light_start
 
-  # - service_template: >
-  #     {% if is_state('input_boolean.event_reminder_1_skipnext', 'on') %}
-  #       script.event_reminder_skipnext
-  #     {% else %}
-  #       script.event_reminder_announce
-  #     {% endif %}
-  #   data_template:
-  #     id: "1"
-  #     statement: "{{ '1' if current_time == time1 else '2' }}"
+  - service_template: >
+      {% if is_state('input_boolean.event_reminder_1_skipnext', 'on') %}
+        script.event_reminder_skipnext
+      {% else %}
+        script.event_reminder_announce
+      {% endif %}
+    data_template:
+      id: "1"
+      statement: >-
+        {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+        {% set time1 = states('sensor.event_reminder_1_time1')|timestamp_custom('%H:%M', false) %}
+        {% set time2 = states('sensor.event_reminder_1_time2')|timestamp_custom('%H:%M', false) %}
+        {{ '1' if current_time == time1 else '2' }}

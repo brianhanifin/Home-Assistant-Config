@@ -1,0 +1,37 @@
+---
+default:
+  - entity1: ""
+  - label1: Enable
+  - icon1_on: mdi:bell-off
+  - icon1_off: mdi:bell
+  - entity2: ""
+  - label2: Skip Next
+  - icon2_on: mdi:skip-next-circle
+  - icon2_off: mdi:skip-next-circle
+  - style:
+      background: lightgray
+      border-radius: 9999px
+  - state_styles:
+      "off":
+        color: red
+      "on":
+        color: green
+        font-weight: bold
+
+card:
+  type: custom:button-entity-row
+  buttons:
+    - entity: "[[entity1]]"
+      name: "[[label1]]"
+      state_icons:
+        "off": "[[icon1_on]]"
+        "on": "[[icon1_off]]"
+      style: "[[style]]"
+      state_styles: "[[state_styles]]"
+    - entity: "[[entity2]]"
+      name: "[[label2]]"
+      state_icons:
+        "off": "[[icon2_on]]"
+        "on": "[[icon2_off]]"
+      style: "[[style]]"
+      state_styles: "[[state_styles]]"
