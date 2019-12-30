@@ -1,0 +1,72 @@
+---
+default:
+  - id: ""
+  - name: ""
+  - time1: ""
+  - time2: ""
+
+card:
+  type: vertical-stack
+  cards:
+    - type: custom:decluttering-card
+      template: heading
+      variables:
+        - heading: "[[name]]"
+
+    - type: entities
+      show_header_toggle: false
+      entities:
+        - type: "custom:button-entity-row"
+          buttons:
+            - entity: automation.event_reminder_[[id]]
+              name: Enable
+              style:
+                background: lightgray
+                border-radius: 9999px
+              state_icons:
+                "off": "mdi:bell-off"
+                "on": "mdi:bell"
+              state_styles:
+                "off":
+                  color: red
+                "on":
+                  color: green
+                  font-weight: bold
+            - entity: input_boolean.event_reminder_[[id]]_skipnext
+              name: Skip Next
+              style:
+                background: lightgray
+                border-radius: 9999px
+              state_icons:
+                "off": "mdi:skip-next-circle"
+                "on": "mdi:skip-next-circle"
+              state_styles:
+                "off":
+                  color: red
+                  font-weight: bold
+                "on":
+                  color: green
+                  font-weight: bold
+        - type: time-input-row
+          entity: "input_datetime.event_reminder_[[id]]_time1"
+        - type: time-input-row
+          entity: "input_datetime.event_reminder_[[id]]_time2"
+          icon: mdi:weather-sunny
+
+    - type: custom:decluttering-card
+      template: button_row7
+      variables:
+        - entity1: "input_boolean.event_reminder_[[id]]_mon"
+        - name1: Mon
+        - entity2: "input_boolean.event_reminder_[[id]]_tue"
+        - name2: Tue
+        - entity3: "input_boolean.event_reminder_[[id]]_wed"
+        - name3: Wed
+        - entity4: "input_boolean.event_reminder_[[id]]_thu"
+        - name4: Thu
+        - entity5: "input_boolean.event_reminder_[[id]]_fri"
+        - name5: Fri
+        - entity6: "input_boolean.event_reminder_[[id]]_sat"
+        - name6: Sat
+        - entity7: "input_boolean.event_reminder_[[id]]_sun"
+        - name7: Sun
