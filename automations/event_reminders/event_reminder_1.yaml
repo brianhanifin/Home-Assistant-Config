@@ -5,16 +5,12 @@ trigger:
   platform: template
   value_template: >-
     {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-    {% set time1 = states('sensor.event_reminder_1_time1')|timestamp_custom('%H:%M', false) %}
-    {% set time2 = states('sensor.event_reminder_1_time2')|timestamp_custom('%H:%M', false) %}
+    {% set time1 = states('sensor.event_reminder_1')|timestamp_custom('%H:%M', false) %}
+    {% set time2 = states('sensor.event_reminder_2')|timestamp_custom('%H:%M', false) %}
     {{ current_time == time1 or current_time == time2 }}
 condition:
   condition: and
   conditions:
-    #  - condition: state
-    #    entity_id: person.brian
-    #    state: home
-
     # Is today one of the selected days?
     - condition: template
       value_template: >
@@ -33,10 +29,6 @@ action:
       title: "DEBUG"
       message: "automation.event_reminder_1"
 
-  # Time to turn on the lights!
-  # - service: script.turn_on
-  #   entity_id: script.event_reminder_1_light_start
-
   - service_template: >
       {% if is_state('input_boolean.event_reminder_1_skipnext', 'on') %}
         script.event_reminder_skipnext
@@ -47,6 +39,14 @@ action:
       id: "1"
       statement: >-
         {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-        {% set time1 = states('sensor.event_reminder_1_time1')|timestamp_custom('%H:%M', false) %}
-        {% set time2 = states('sensor.event_reminder_1_time2')|timestamp_custom('%H:%M', false) %}
+        {% set time1 = states('sensor.event_reminder_1')|timestamp_custom('%H:%M', false) %}
+        {% set time2 = states('sensor.event_reminder_2')|timestamp_custom('%H:%M', false) %}
         {{ '1' if current_time == time1 else '2' }}
+
+  # Run this routine for the second reminder, but not the first.
+  - condition: template
+    value_template: >-
+      {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+      {% set time2 = states('sensor.event_reminder_2')|timestamp_custom('%H:%M', false) %}
+      {{ current_time == time2 }}
+  - service: script.goodbye_routine
