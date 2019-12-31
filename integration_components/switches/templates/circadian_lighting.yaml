@@ -10,17 +10,17 @@ switches:
       - service: switch.turn_on
         data_template:
           entity_id: >-
-            {% if states('sensor.holiday_scene')|length > 0 %}
-              switch.circadian_lighting_holiday
-            {% else %}
+            {% if is_state('sensor.holiday_scene','standard') %}
               switch.circadian_lighting_all
+            {% else %}
+              switch.circadian_lighting_holiday
             {% endif %}
     turn_off:
       - service: switch.turn_off
         data_template:
           entity_id: >-
-            {% if states('sensor.holiday_scene')|length > 0 %}
-              switch.circadian_lighting_holiday
-            {% else %}
+            {% if is_state('sensor.holiday_scene','standard') %}
               switch.circadian_lighting_all
+            {% else %}
+              switch.circadian_lighting_holiday
             {% endif %}
