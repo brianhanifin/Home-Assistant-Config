@@ -4,12 +4,14 @@ initial_state: true
 trigger:
   - platform: state
     entity_id: cover.garage_door
-    #from: open
-    to: closed
+    #from: "open"
+    to: "closed"
+  # - platform: template
+  #   value_template: "{{ is_state('cover.garage_door','closed') }}"
 action:
   # Turn off the notification lights.
   - service: light.turn_off
-    entity_id: light.garage_entry_light
+    entity_id: light.garage_entry
   - service: light.turn_off
     entity_id: light.dining_room
 
