@@ -1,0 +1,11 @@
+---
+sequence:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "DEBUG: script.event_reminder_announce"
+  #     message: "{{ message }}"
+
+  - service: script.say
+    data_template:
+      media_player: "{{ states('input_select.event_reminder_2_echo') }}"
+      message: "{{ message }}"

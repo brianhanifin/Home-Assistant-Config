@@ -1,13 +1,11 @@
 ---
 alias: event_reminder_1
-initial_state: true
 trigger:
   platform: template
   value_template: >-
     {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-    {% set time1 = states('sensor.event_reminder_1')|timestamp_custom('%H:%M', false) %}
-    {% set time2 = states('sensor.event_reminder_2')|timestamp_custom('%H:%M', false) %}
-    {{ current_time == time1 or current_time == time2 }}
+    {{ is_state('sensor.event_reminder_1_1',current_time)
+    or is_state('sensor.event_reminder_1_2',current_time) }}
 condition:
   condition: and
   conditions:
@@ -24,10 +22,10 @@ condition:
         {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_1_sun.state == 'on' -%}{{true}}
         {%- else -%}{{false}}{%- endif %}
 action:
-  - service: persistent_notification.create
-    data_template:
-      title: "DEBUG"
-      message: "automation.event_reminder_1"
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "DEBUG"
+  #     message: "automation.event_reminder_1"
 
   - service_template: >
       {% if is_state('input_boolean.event_reminder_1_skipnext', 'on') %}
@@ -37,16 +35,17 @@ action:
       {% endif %}
     data_template:
       id: "1"
-      statement: >-
+      message: >-
         {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-        {% set time1 = states('sensor.event_reminder_1')|timestamp_custom('%H:%M', false) %}
-        {% set time2 = states('sensor.event_reminder_2')|timestamp_custom('%H:%M', false) %}
-        {{ '1' if current_time == time1 else '2' }}
+        {% if is_state('sensor.event_reminder_1_1',current_time) %}
+          {{ states('input_text.event_reminder_1_1') }}
+        {% else %}
+          {{ states('input_text.event_reminder_1_1') }}
+        {% endif %}
 
   # Run this routine for the second reminder, but not the first.
   - condition: template
     value_template: >-
       {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-      {% set time2 = states('sensor.event_reminder_2')|timestamp_custom('%H:%M', false) %}
-      {{ current_time == time2 }}
+      {{ is_state('sensor.event_reminder_1_2',current_time) }}
   - service: script.goodbye_routine
