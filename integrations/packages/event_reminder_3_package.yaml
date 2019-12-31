@@ -1,0 +1,92 @@
+---
+automation:
+  - alias: event_reminder_3
+    trigger:
+      platform: template
+      value_template: >-
+        {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+        {{ is_state('sensor.event_reminder_3_1',current_time)
+        or is_state('sensor.event_reminder_3_2',current_time) }}
+    condition:
+      condition: and
+      conditions:
+        # Only proceed if Buddy's medicine has not already been given.
+        - condition: template
+          value_template: "{{ not is_state('sensor.medicine_buddy_given_today','Today') }}"
+
+        # ... and today one of the selected days.
+        - condition: template
+          value_template: >
+            {% set   day_name = now().strftime("%A")|lower -%}
+            {%- if   day_name == 'monday'    and states.input_boolean.event_reminder_3_mon.state == 'on' -%}{{true}}
+            {%- elif day_name == 'tuesday'   and states.input_boolean.event_reminder_3_tue.state == 'on' -%}{{true}}
+            {%- elif day_name == 'wednesday' and states.input_boolean.event_reminder_3_wed.state == 'on' -%}{{true}}
+            {%- elif day_name == 'thursday'  and states.input_boolean.event_reminder_3_thu.state == 'on' -%}{{true}}
+            {%- elif day_name == 'friday'    and states.input_boolean.event_reminder_3_fri.state == 'on' -%}{{true}}
+            {%- elif day_name == 'saturday'  and states.input_boolean.event_reminder_3_sat.state == 'on' -%}{{true}}
+            {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_3_sun.state == 'on' -%}{{true}}
+            {%- else -%}{{false}}{%- endif %}
+    action:
+      # - service: persistent_notification.create
+      #   data_template:
+      #     title: "DEBUG"
+      #     message: "automation.event_reminder_3"
+
+      - service_template: >
+          {% if is_state('input_boolean.event_reminder_3_skipnext', 'on') %}
+            script.event_reminder_skipnext
+          {% else %}
+            script.say
+          {% endif %}
+        data_template:
+          say_greeting: "true"
+          say_responsibilities: "true"
+
+input_boolean:
+  event_reminder_3_skipnext:
+    name: Skip Next Reminder
+    icon: mdi:alarm-check
+  event_reminder_3_mon:
+    name: Monday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_3_tue:
+    name: Tuesday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_3_wed:
+    name: Wednesday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_3_thu:
+    name: Thursday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_3_fri:
+    name: Friday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_3_sat:
+    name: Saturday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_3_sun:
+    name: Sunday
+    icon: mdi:checkbox-marked-circle
+
+
+input_datetime:
+  event_reminder_3_1:
+    name: First Announcement
+    has_date: false
+    has_time: true
+  event_reminder_3_2:
+    name: Second Announcement
+    has_date: false
+    has_time: true
+
+input_select:
+  event_reminder_3_echo:
+    name: Announce on which Echo(s)?
+    options: !include /config/templates/speech/tts_rooms.yaml
+    icon: mdi:amazon-alexa
+
+# input_text:
+#   event_reminder_3_1:
+#     name: First Announcement
+#   event_reminder_3_2:
+#     name: First Announcement

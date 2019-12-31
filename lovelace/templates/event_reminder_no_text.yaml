@@ -1,0 +1,59 @@
+---
+default:
+  - id: ""
+  - name: ""
+  - example: ""
+
+card:
+  type: vertical-stack
+  cards:
+    - type: custom:decluttering-card
+      template: heading
+      variables:
+        - heading: "[[name]]"
+
+    - type: entities
+      show_header_toggle: false
+      entities:
+        - type: custom:decluttering-card
+          template: button_pill2
+          variables:
+            - entity1: automation.event_reminder_[[id]]
+            - entity2: input_boolean.event_reminder_[[id]]_skipnext
+
+        - type: custom:text-divider-row
+          text: Days and times
+
+        - type: custom:decluttering-card
+          template: button_row7
+          variables:
+            - entity1: "input_boolean.event_reminder_[[id]]_mon"
+            - name1: Mon
+            - entity2: "input_boolean.event_reminder_[[id]]_tue"
+            - name2: Tue
+            - entity3: "input_boolean.event_reminder_[[id]]_wed"
+            - name3: Wed
+            - entity4: "input_boolean.event_reminder_[[id]]_thu"
+            - name4: Thu
+            - entity5: "input_boolean.event_reminder_[[id]]_fri"
+            - name5: Fri
+            - entity6: "input_boolean.event_reminder_[[id]]_sat"
+            - name6: Sat
+            - entity7: "input_boolean.event_reminder_[[id]]_sun"
+            - name7: Sun
+
+        - type: time-input-row
+          entity: "input_datetime.event_reminder_[[id]]_1"
+        - type: time-input-row
+          entity: "input_datetime.event_reminder_[[id]]_2"
+
+        - type: custom:text-divider-row
+          text: Alexa announcements
+
+        - input_select.event_reminder_[[id]]_echo
+
+    - type: markdown
+      content: |-
+        ### Example Announcement
+
+        [[example]]
