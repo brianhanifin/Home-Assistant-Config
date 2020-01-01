@@ -46,12 +46,14 @@ card:
         - type: time-input-row
           entity: "input_datetime.event_reminder_[[id]]_2"
 
-        - type: custom:text-divider-row
-          text: Alexa announcements
+        - type: custom:fold-entity-row
+          head:
+            type: custom:text-divider-row
+            text: Alexa announcements
+          entities:
+            - type: custom:text-input-row
+              entity: input_text.event_reminder_[[id]]_1
+            - type: custom:text-input-row
+              entity: input_text.event_reminder_[[id]]_2
 
-        - type: custom:text-input-row
-          entity: input_text.event_reminder_[[id]]_1
-        - type: custom:text-input-row
-          entity: input_text.event_reminder_[[id]]_2
-
-        - input_select.event_reminder_[[id]]_echo
+            - input_select.event_reminder_[[id]]_echo

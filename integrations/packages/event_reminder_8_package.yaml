@@ -1,0 +1,125 @@
+---
+automation:
+  - alias: event_reminder_8
+    trigger:
+      platform: template
+      value_template: >-
+        {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+        {{ is_state('sensor.event_reminder_8_1',current_time)
+        or is_state('sensor.event_reminder_8_2',current_time) }}
+    condition:
+      condition: and
+      conditions:
+        # Is today one of the selected days?
+        - condition: template
+          value_template: >
+            {% set   day_name = now().strftime("%A")|lower -%}
+            {%- if   day_name == 'monday'    and states.input_boolean.event_reminder_8_mon.state == 'on' -%}{{true}}
+            {%- elif day_name == 'tuesday'   and states.input_boolean.event_reminder_8_tue.state == 'on' -%}{{true}}
+            {%- elif day_name == 'wednesday' and states.input_boolean.event_reminder_8_wed.state == 'on' -%}{{true}}
+            {%- elif day_name == 'thursday'  and states.input_boolean.event_reminder_8_thu.state == 'on' -%}{{true}}
+            {%- elif day_name == 'friday'    and states.input_boolean.event_reminder_8_fri.state == 'on' -%}{{true}}
+            {%- elif day_name == 'saturday'  and states.input_boolean.event_reminder_8_sat.state == 'on' -%}{{true}}
+            {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_8_sun.state == 'on' -%}{{true}}
+            {%- else -%}{{false}}{%- endif %}
+    action:
+      # - service: persistent_notification.create
+      #   data_template:
+      #     title: "DEBUG"
+      #     message: "automation.event_reminder_8"
+
+      - service_template: >
+          {% if is_state('input_boolean.event_reminder_8_skipnext', 'on') %}
+            script.event_reminder_skipnext
+          {% else %}
+            script.event_reminder_announce
+          {% endif %}
+        data_template:
+          media_player: "{{ states('input_select.event_reminder_8_echo') }}"
+          message: >-
+            {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+            {% if is_state('sensor.event_reminder_8_1',current_time) %}
+              {{ states('input_text.event_reminder_8_1') }}
+            {% else %}
+              {{ states('input_text.event_reminder_8_1') }}
+            {% endif %}
+
+      # Run this routine for the second reminder, but not the first.
+      - condition: template
+        value_template: >-
+          {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+          {{ is_state('sensor.event_reminder_8_2',current_time) }}
+      - service: script.goodbye_routine
+
+input_boolean:
+  event_reminder_8_skipnext:
+    name: Skip Next Reminder
+    icon: mdi:alarm-check
+  event_reminder_8_mon:
+    name: Monday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_8_tue:
+    name: Tuesday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_8_wed:
+    name: Wednesday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_8_thu:
+    name: Thursday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_8_fri:
+    name: Friday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_8_sat:
+    name: Saturday
+    icon: mdi:checkbox-marked-circle
+  event_reminder_8_sun:
+    name: Sunday
+    icon: mdi:checkbox-marked-circle
+
+
+input_datetime:
+  event_reminder_8_1:
+    name: First Announcement
+    has_date: false
+    has_time: true
+  event_reminder_8_2:
+    name: Second Announcement
+    has_date: false
+    has_time: true
+
+input_select:
+  event_reminder_8_echo:
+    name: Announce on which Echo(s)?
+    options: !include /config/templates/speech/tts_rooms.yaml
+    icon: mdi:amazon-alexa
+
+input_text:
+  event_reminder_8_1:
+    name: First Announcement
+  event_reminder_8_2:
+    name: Second Announcement
+
+sensor:
+  - platform: template
+    sensors:
+      event_reminder_8_1:
+        entity_id: input_datetime.event_reminder_8_1
+        friendly_name: First Time
+        icon_template: mdi:clock-outline
+        value_template: >-
+          {%  set reminder_time    = states("input_datetime.event_reminder_8_1") -%}
+          {%- set reminder_hour    = reminder_time.split(':')[0] -%}
+          {%- set reminder_minutes = reminder_time.split(':')[1] -%}
+          {{ "%0.02d:%0.02d" | format(reminder_hour|int, reminder_minutes|int) }}
+  - platform: template
+    sensors:
+      event_reminder_8_2:
+        entity_id: input_datetime.event_reminder_8_2
+        friendly_name: First Time
+        icon_template: mdi:clock-outline
+        value_template: >-
+          {%  set reminder_time    = states("input_datetime.event_reminder_8_2") -%}
+          {%- set reminder_hour    = reminder_time.split(':')[0] -%}
+          {%- set reminder_minutes = reminder_time.split(':')[1] -%}
+          {{ "%0.02d:%0.02d" | format(reminder_hour|int, reminder_minutes|int) }}
