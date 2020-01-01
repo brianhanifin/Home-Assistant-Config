@@ -18,3 +18,22 @@ script:
       - service: input_boolean.turn_off
         data_template:
           entity_id: "input_boolean.event_reminder_{{ id }}_skipnext"
+
+  # You can uncomment this if you have Alexa Media Player setup for speech, or just call
+  # your own speech routine. https://github.com/custom-components/alexa_media_player
+  #
+  # say:
+  #   sequence:
+  #     - service: notify.alexa_media
+  #       data_template:
+  #         data:
+  #           type: announce
+  #           method: all
+  #         title: >
+  #           {%- if title is not string -%}
+  #             Home Assistant
+  #           {%- else -%}
+  #             {{ title }}
+  #           {%- endif -%}
+  #         message: "{{ message }}"
+  #         target: "{{ media_player }}"

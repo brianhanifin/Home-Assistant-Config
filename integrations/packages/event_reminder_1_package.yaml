@@ -35,6 +35,7 @@ automation:
             script.event_reminder_announce
           {% endif %}
         data_template:
+          media_player: "{{ states('input_select.event_reminder_1_echo') }}"
           message: >-
             {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
             {% if is_state('sensor.event_reminder_1_1',current_time) %}
@@ -97,4 +98,28 @@ input_text:
   event_reminder_1_1:
     name: First Announcement
   event_reminder_1_2:
-    name: First Announcement
+    name: Second Announcement
+
+sensor:
+  - platform: template
+    sensors:
+      event_reminder_1_1:
+        entity_id: input_datetime.event_reminder_1_1
+        friendly_name: First Time
+        icon_template: mdi:clock-outline
+        value_template: >-
+          {%  set reminder_time    = states("input_datetime.event_reminder_1_1") -%}
+          {%- set reminder_hour    = reminder_time.split(':')[0] -%}
+          {%- set reminder_minutes = reminder_time.split(':')[1] -%}
+          {{ "%0.02d:%0.02d" | format(reminder_hour|int, reminder_minutes|int) }}
+  - platform: template
+    sensors:
+      event_reminder_1_2:
+        entity_id: input_datetime.event_reminder_1_2
+        friendly_name: First Time
+        icon_template: mdi:clock-outline
+        value_template: >-
+          {%  set reminder_time    = states("input_datetime.event_reminder_1_2") -%}
+          {%- set reminder_hour    = reminder_time.split(':')[0] -%}
+          {%- set reminder_minutes = reminder_time.split(':')[1] -%}
+          {{ "%0.02d:%0.02d" | format(reminder_hour|int, reminder_minutes|int) }}
