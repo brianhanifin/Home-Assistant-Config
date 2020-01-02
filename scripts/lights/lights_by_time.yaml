@@ -5,9 +5,8 @@
 sequence:
   # Only adjust light brightness if someone is home and the Time Based Dimmers are enabled.
   - condition: template
-    value_template: "{{ states.input_boolean.time_based_dimmers_enabled.state == 'on'
-                    and states.input_boolean.away_mode.state == 'off'
-                    and states.input_boolean.guest_mode.state == 'off' }}"
+    value_template: "{{ is_state('input_boolean.guest_mode','off')
+                    and is_state('input_boolean.away_mode','off') }}"
 
   # Get the current list of lights that are one.
   - service: script.turn_on

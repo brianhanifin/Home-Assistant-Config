@@ -1,0 +1,19 @@
+---
+sequence:
+  # When a Holiday scene is active (ie. NOT 'standard')
+  - condition: template
+    value_template: "{{ not is_state('sensor.holiday_scene','standard') }}"
+
+  # Both guest_mode and away_mode are inactive
+  - condition: template
+    value_template: "{{ is_state('input_boolean.guest_mode','off')
+                    and is_state('input_boolean.away_mode','off') }}"
+
+  # Update the brightness value.
+  - service: script.light_brightness_update
+
+  # Set the new brightness.
+  - service: light.turn_on
+    data_template:
+      entity_id: light.porch
+      brightness: "{{ states('variable.light_brightness') }}"

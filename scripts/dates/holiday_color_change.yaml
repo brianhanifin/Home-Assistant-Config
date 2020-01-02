@@ -8,19 +8,20 @@
 # Color help - http://www.esbnyc.com/explore/tower-lights/calendar
 ######################################################################################################
 sequence:
-  # - service: scene.turn_on
-  #   data_template:
-  #     entity_id: >
-  #       scene.holiday_
-  #       {%- if states.sensor.flag.state == "True" -%}
-  #         RWB
-  #       {%- elif states.sensor.holiday_scene.state != "" -%}
-  #         {{ states.sensor.holiday_scene.state }}
-  #       {%- else -%}
-  #         standard
-  #       {%- endif -%}_colors
+  # When a Holiday scene is active (ie. NOT 'standard')
+  - condition: template
+    value_template: "{{ not is_state('sensor.holiday_scene','standard') }}"
 
+  # Both guest_mode and away_mode are inactive
+  - condition: template
+    value_template: "{{ is_state('input_boolean.guest_mode','off')
+                    and is_state('input_boolean.away_mode','off') }}"
+
+  # Change the color scene
   - service: scene.turn_on
     data_template:
-      entity_id: >
+      entity_id: >-
         scene.holiday_{{ states('sensor.holiday_scene.state') }}_colors
+
+  # Adjust the brightness appropiate to the time of day
+  - service: script.holiday_color_brightness

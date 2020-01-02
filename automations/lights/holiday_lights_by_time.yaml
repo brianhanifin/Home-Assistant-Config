@@ -1,0 +1,16 @@
+---
+##############################################
+## Adjust brightness every half hour
+##############################################
+alias: holiday_lights_by_time
+initial_state: true
+trigger:
+  - platform: time_pattern
+    minutes: '/30'
+condition:
+  # Between 7pm and 8am
+  - condition: time
+    after: '18:59' # >= 7pm
+    before: '8:01' # <= 8am
+action:
+  - service: script.holiday_color_brightness
