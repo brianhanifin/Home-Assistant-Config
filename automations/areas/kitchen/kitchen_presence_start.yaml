@@ -2,19 +2,19 @@
 ##############################################
 ###  Kitchen
 ##############################################
-# Kitchen Motion Light On
-alias: kitchen_motion_start
+# Kitchen Presence Light On
+alias: kitchen_presence_start
 initial_state: true
 trigger:
   - platform: state
     entity_id:
-      - binary_sensor.kitchen_1_motion
-      - binary_sensor.kitchen_2_motion
+      - binary_sensor.kitchen_1_presence
+      - binary_sensor.kitchen_2_presence
     from: 'off'
     to: 'on'
 condition:
   - condition: state
-    entity_id: input_boolean.motion_detection_mode
+    entity_id: input_boolean.presence_detection_mode
     state: 'on'
   # We don't need to turn on the light when the dogs are alone.
   # - condition: state

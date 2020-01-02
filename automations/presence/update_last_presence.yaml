@@ -1,0 +1,29 @@
+---
+# Update Last Presence variable
+#
+alias: update_last_presence
+initial_state: true
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.bedroom_presence
+      - binary_sensor.boys_bedroom_occupancy
+      - binary_sensor.family_room_presence
+      - binary_sensor.front_door_presence
+      - binary_sensor.kitchen_presence
+      - binary_sensor.play_room_presence
+    to: 'on'
+action:
+  - service: variable.set_variable
+    data:
+      variable: last_presence
+      attributes_template: >
+        {
+          "history_1": "{{ variable.state }}",
+          "history_2": "{{ variable.attributes.history_1 }}",
+          "history_3": "{{ variable.attributes.history_2 }}",
+          "icon":      "mdi:presence-sensor",
+          "last_updated":   "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
+        }
+    data_template:
+      value: "{{ trigger.to_state.attributes.friendly_name|replace(' Occupancy','')|replace(' Presence #1','')|replace(' Presence #2','')|replace(' Presence','')|replace(' presence','') }}"

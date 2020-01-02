@@ -2,12 +2,12 @@
 ##############################################
 ###  Porch
 ##############################################
-# Porch Motion: Timeout
-alias: porch_motion_stop
+# Porch Presence: Timeout
+alias: porch_presence_stop
 initial_state: true
 trigger:
   - platform: state
-    entity_id: binary_sensor.front_door_motion
+    entity_id: binary_sensor.front_door_presence
     from: 'on'
     to: 'off'
     # for:
@@ -15,7 +15,7 @@ trigger:
     #   seconds: 00
 condition:
   - condition: state
-    entity_id: input_boolean.motion_detection_mode
+    entity_id: input_boolean.presence_detection_mode
     state: 'on'
   - condition: numeric_state
     entity_id: sensor.outside_illuminance

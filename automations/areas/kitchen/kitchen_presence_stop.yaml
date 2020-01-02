@@ -2,19 +2,19 @@
 ##############################################
 ###  Kitchen
 ##############################################
-# Kitchen Motion: Light Timeout
-alias: kitchen_motion_stop
+# Kitchen Presence: Light Timeout
+alias: kitchen_presence_stop
 initial_state: true
 trigger:
   - platform: template
-    value_template: "{% if is_state('binary_sensor.kitchen_1_motion', 'off')
-                      and is_state('binary_sensor.kitchen_2_motion', 'off') %}true{% else %}false{% endif %}"
+    value_template: "{% if is_state('binary_sensor.kitchen_1_presence', 'off')
+                      and is_state('binary_sensor.kitchen_2_presence', 'off') %}true{% else %}false{% endif %}"
     # for:
     #   minutes: 2
     #   seconds: 00
 condition:
   - condition: state
-    entity_id: input_boolean.motion_detection_mode
+    entity_id: input_boolean.presence_detection_mode
     state: 'on'
 action:
   - service: light.turn_off

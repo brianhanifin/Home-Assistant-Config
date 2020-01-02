@@ -2,17 +2,17 @@
 ##############################################
 ###  Porch
 ##############################################
-# Porch Motion: Start
-alias: porch_motion_start
+# Porch Presence: Start
+alias: porch_presence_start
 initial_state: true
 trigger:
   - platform: state
-    entity_id: binary_sensor.front_door_motion
+    entity_id: binary_sensor.front_door_presence
     from: 'off'
     to: 'on'
 condition:
   - condition: state
-    entity_id: input_boolean.motion_detection_mode
+    entity_id: input_boolean.presence_detection_mode
     state: 'on'
   - condition: numeric_state
     entity_id: sensor.outside_illuminance
