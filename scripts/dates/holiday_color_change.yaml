@@ -23,9 +23,4 @@ sequence:
   - service: scene.turn_on
     data_template:
       entity_id: >
-        scene.holiday_
-        {%- if states.sensor.holiday_scene.state != "" -%}
-          {{ states.sensor.holiday_scene.state }}
-        {%- else -%}
-          standard
-        {%- endif -%}_colors
+        scene.holiday_{{ states('sensor.holiday_scene.state') }}_colors
