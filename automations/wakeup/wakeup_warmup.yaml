@@ -1,0 +1,55 @@
+---
+alias: wakeup_warmup
+#initial_state: true
+trigger:
+  # Trigger 30 minutes before the wakeup time.
+  platform: template
+  value_template: >-
+    {% macro subtract_time(time, subtract_minutes) %}
+      {% if time|lower != 'unavailable' %}
+        {% set time = time.split(':') %}
+        {% set hour = time[0]|int %}
+        {% set minutes = time[1]|int %}
+        {% if (minutes|int >= subtract_minutes) %}
+          {{ "%0.02d:%0.02d"|format(hour, minutes - subtract_minutes) }}
+        {% else %}
+          {{ "%0.02d:%0.02d"|format(hour - 1, minutes + (60-subtract_minutes)) }}
+        {% endif %}
+      {% endif %}
+    {% endmacro %}
+
+    {% set subtract_minutes = 30 %}
+    {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+    {% set boys = subtract_time(states('sensor.boys_room_next_alarm'),subtract_minutes) %}
+    {% set brian = subtract_time(states('sensor.wakeup_brian_time'),subtract_minutes) %}
+    {% set nerene = subtract_time(states('sensor.wakeup_nerene_time'),subtract_minutes) %}
+
+    {{ current_time in [boys,brian,nerene] }}
+condition:
+  # Continue if skipnext is not enabled.
+  - condition: template
+    value_template: >-
+      {% macro subtract_time(time, subtract_minutes) %}
+        {% if time|lower != 'unavailable' %}
+          {% set time = time.split(':') %}
+          {% set hour = time[0]|int %}
+          {% set minutes = time[1]|int %}
+          {% if (minutes|int >= subtract_minutes) %}
+            {{ "%0.02d:%0.02d"|format(hour, minutes - subtract_minutes) }}
+          {% else %}
+            {{ "%0.02d:%0.02d"|format(hour - 1, minutes + (60-subtract_minutes)) }}
+          {% endif %}
+        {% endif %}
+      {% endmacro %}
+
+      {% set subtract_minutes = 30 %}
+      {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+      {% if current_time == subtract_time(states('sensor.boys_room_next_alarm'),subtract_minutes) %}
+        {{ is_state('input_boolean.wakeup_boys_skipnext','on') }}
+      {% elif current_time == subtract_time(states('sensor.wakeup_brian_time'),subtract_minutes) %}
+        {{ is_state('input_boolean.wakeup_brian_skipnext','on') }}
+      {% elif current_time == subtract_time(states('sensor.wakeup_nerene_time'),subtract_minutes) %}
+        {{ is_state('input_boolean.wakeup_nerene_skipnext','on') }}
+      {% endif %}
+action:
+  - service: script.hvac_warm
