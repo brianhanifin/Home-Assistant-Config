@@ -14,10 +14,10 @@ sequence:
   # - delay:
   #     seconds: 1
 
-  # # Clear any old config check notifications
-  # - service: persistent_notification.dismiss
-  #   data:
-  #     notification_id: "1337"
+  # Clear any old config check notifications
+  - service: persistent_notification.dismiss
+    data:
+      notification_id: "1337"
 
   - delay:
       seconds: 1
@@ -31,4 +31,4 @@ sequence:
   - delay:
       seconds: 2
 
-  - service: homeassistant.restart
+  - service: script.restart_hass
