@@ -4,9 +4,8 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-        {{ is_state('sensor.event_reminder_5_1',current_time)
-        or is_state('sensor.event_reminder_5_2',current_time) }}
+        {{ is_state('sensor.event_reminder_5_1',states('sensor.time'))
+        or is_state('sensor.event_reminder_5_2',states('sensor.time')) }}
     condition:
       condition: and
       conditions:
@@ -23,11 +22,6 @@ automation:
             {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_5_sun.state == 'on' -%}{{true}}
             {%- else -%}{{false}}{%- endif %}
     action:
-      # - service: persistent_notification.create
-      #   data_template:
-      #     title: "DEBUG"
-      #     message: "automation.event_reminder_5"
-
       - service_template: >
           {% if is_state('input_boolean.event_reminder_5_skipnext', 'on') %}
             script.event_reminder_skipnext
@@ -36,10 +30,12 @@ automation:
           {% endif %}
         data_template:
           media_player: "{{ states('input_select.event_reminder_5_echo') }}"
-          skipnext: "input_boolean.event_reminder_5_skipnext"
+          skipnext: >
+            {% if is_state('sensor.event_reminder_5_2',states('sensor.time')) %}
+              input_boolean.event_reminder_5_skipnext
+            {% endif %}
           message: >-
-            {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-            {% if is_state('sensor.event_reminder_5_1',current_time) %}
+            {% if is_state('sensor.event_reminder_5_1',states('sensor.time')) %}
               {{ states('input_text.event_reminder_5_1') }}
             {% else %}
               {{ states('input_text.event_reminder_5_2') }}

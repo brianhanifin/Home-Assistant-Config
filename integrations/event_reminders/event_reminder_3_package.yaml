@@ -4,16 +4,12 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+        {% set current_time = states('sensor.time') %}
         {{ is_state('sensor.event_reminder_3_1',current_time)
         or is_state('sensor.event_reminder_3_2',current_time) }}
     condition:
       condition: and
       conditions:
-        # Only proceed if Buddy's medicine has not already been given.
-        - condition: template
-          value_template: "{{ not is_state('sensor.medicine_buddy_given_today','Today') }}"
-
         # ... and today one of the selected days.
         - condition: template
           value_template: >
@@ -40,7 +36,10 @@ automation:
           {% endif %}
         data_template:
           media_player: "{{ states('input_select.event_reminder_3_echo') }}"
-          skipnext: "input_boolean.event_reminder_3_skipnext"
+          skipnext: >
+            {% if is_state('sensor.event_reminder_3_2', states('sensor.time')) %}
+              input_boolean.event_reminder_3_skipnext
+            {% endif %}
           say_greeting: "true"
           say_responsibilities: "true"
 

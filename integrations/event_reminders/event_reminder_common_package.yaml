@@ -1,3 +1,10 @@
+---
+# Enable this to create sensor.time, if you don't already have one.
+# sensor:
+#   - platform: time_date
+#     display_options:
+#       - 'time'
+
 script:
   event_reminder_announce:
     sequence:
@@ -10,13 +17,13 @@ script:
               set alexa = {
                 "bedroom" : "media_player.master_bedroom",
                 "boys_bedroom": "media_player.boys_room",
-                "downstairs": "group.alexa_downstairs",
+                "downstairs": "media_player.downstairs",
                 "kitchen/garage": "group.alexa_welcome",
                 "garage" : "media_player.garage",
                 "kitchen" : "media_player.kitchen",
                 "family_room" : "media_player.family_room",
                 "play_room": "media_player.play_room",
-                "upstairs": "group.alexa_upstairs",
+                "upstairs": "media_player.upstairs",
                 "upstairs_bathroom": "media_player.upstairs_bathroom"
               }
             -%}
@@ -39,7 +46,7 @@ script:
           seconds: 15
       - service: input_boolean.turn_off
         data_template:
-          entity_id: "{{ skipnext }}"
+          entity_id: "{{ skipnext|default('input_boolean.blank') }}"
 
   # You can uncomment this if you have Alexa Media Player setup for speech, or just call
   # your own speech routine. https://github.com/custom-components/alexa_media_player

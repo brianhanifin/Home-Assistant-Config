@@ -4,9 +4,8 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-        {{ is_state('sensor.event_reminder_8_1',current_time)
-        or is_state('sensor.event_reminder_8_2',current_time) }}
+        {{ is_state('sensor.event_reminder_8_1',states('sensor.time'))
+        or is_state('sensor.event_reminder_8_2',states('sensor.time')) }}
     condition:
       condition: and
       conditions:
@@ -23,11 +22,6 @@ automation:
             {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_8_sun.state == 'on' -%}{{true}}
             {%- else -%}{{false}}{%- endif %}
     action:
-      # - service: persistent_notification.create
-      #   data_template:
-      #     title: "DEBUG"
-      #     message: "automation.event_reminder_8"
-
       - service_template: >
           {% if is_state('input_boolean.event_reminder_8_skipnext', 'on') %}
             script.event_reminder_skipnext
@@ -36,10 +30,12 @@ automation:
           {% endif %}
         data_template:
           media_player: "{{ states('input_select.event_reminder_8_echo') }}"
-          skipnext: "input_boolean.event_reminder_8_skipnext"
+          skipnext: >
+            {% if is_state('sensor.event_reminder_8_2',states('sensor.time')) %}
+              input_boolean.event_reminder_8_skipnext
+            {% endif %}
           message: >-
-            {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-            {% if is_state('sensor.event_reminder_8_1',current_time) %}
+            {% if is_state('sensor.event_reminder_8_1',states('sensor.time')) %}
               {{ states('input_text.event_reminder_8_1') }}
             {% else %}
               {{ states('input_text.event_reminder_8_2') }}
@@ -47,9 +43,10 @@ automation:
 
       # Run this routine for the second reminder, but not the first.
       - condition: template
-        value_template: >-
-          {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-          {{ is_state('sensor.event_reminder_8_2',current_time) }}
+        value_template: "{{ is_state('sensor.event_reminder_8_2',states('sensor.time')) }}"
+
+      - delay:
+          minutes: 2
       - service: script.goodbye_routine
 
 input_boolean:

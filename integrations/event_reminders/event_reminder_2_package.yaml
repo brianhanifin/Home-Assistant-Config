@@ -4,7 +4,7 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+        {% set current_time = states('sensor.time') %}
         {{ is_state('sensor.event_reminder_2_1',current_time)
         or is_state('sensor.event_reminder_2_2',current_time) }}
     condition:
@@ -40,9 +40,12 @@ automation:
           {% endif %}
         data_template:
           media_player: "{{ states('input_select.event_reminder_2_echo') }}"
-          skipnext: "input_boolean.event_reminder_2_skipnext"
+          skipnext: >
+            {% if is_state('sensor.event_reminder_2_2', states('sensor.time')) %}
+              input_boolean.event_reminder_2_skipnext
+            {% endif %}
           message: >-
-            {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+            {% set current_time = states('sensor.time') %}
             {% if is_state('sensor.event_reminder_2_1',current_time) %}
               {{ states('input_text.event_reminder_2_1') }}
             {% else %}
