@@ -36,20 +36,14 @@ automation:
           {% endif %}
         data_template:
           media_player: "{{ states('input_select.event_reminder_10_echo') }}"
+          skipnext: "input_boolean.event_reminder_10_skipnext"
           message: >-
             {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
             {% if is_state('sensor.event_reminder_10_1',current_time) %}
               {{ states('input_text.event_reminder_10_1') }}
             {% else %}
-              {{ states('input_text.event_reminder_10_1') }}
+              {{ states('input_text.event_reminder_10_2') }}
             {% endif %}
-
-      # Run this routine for the second reminder, but not the first.
-      - condition: template
-        value_template: >-
-          {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
-          {{ is_state('sensor.event_reminder_10_2',current_time) }}
-      - service: script.goodbye_routine
 
 input_boolean:
   event_reminder_10_skipnext:

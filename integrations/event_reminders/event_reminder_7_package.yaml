@@ -36,12 +36,13 @@ automation:
           {% endif %}
         data_template:
           media_player: "{{ states('input_select.event_reminder_7_echo') }}"
+          skipnext: "input_boolean.event_reminder_7_skipnext"
           message: >-
             {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
             {% if is_state('sensor.event_reminder_7_1',current_time) %}
               {{ states('input_text.event_reminder_7_1') }}
             {% else %}
-              {{ states('input_text.event_reminder_7_1') }}
+              {{ states('input_text.event_reminder_7_2') }}
             {% endif %}
 
       # Run this routine for the second reminder, but not the first.
@@ -49,6 +50,9 @@ automation:
         value_template: >-
           {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
           {{ is_state('sensor.event_reminder_7_2',current_time) }}
+
+      - delay:
+          minutes: 2
       - service: script.goodbye_routine
 
 input_boolean:
@@ -76,7 +80,6 @@ input_boolean:
   event_reminder_7_sun:
     name: Sunday
     icon: mdi:checkbox-marked-circle
-
 
 input_datetime:
   event_reminder_7_1:

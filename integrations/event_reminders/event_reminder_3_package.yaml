@@ -36,10 +36,11 @@ automation:
           {% if is_state('input_boolean.event_reminder_3_skipnext', 'on') %}
             script.event_reminder_skipnext
           {% else %}
-            script.say
+            script.event_reminder_announce
           {% endif %}
         data_template:
           media_player: "{{ states('input_select.event_reminder_3_echo') }}"
+          skipnext: "input_boolean.event_reminder_3_skipnext"
           say_greeting: "true"
           say_responsibilities: "true"
 

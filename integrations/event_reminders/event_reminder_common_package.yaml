@@ -1,15 +1,37 @@
 script:
   event_reminder_announce:
     sequence:
-      # - service: persistent_notification.create
-      #   data_template:
-      #     title: "DEBUG: script.event_reminder_announce"
-      #     message: "{{ message }}"
-
       - service: script.say
         data_template:
-          media_player: "{{ states('input_select.event_reminder_2_echo') }}"
           message: "{{ message }}"
+          media_player: >
+            {%- set room = media_player|lower|replace(' ','_')|replace('[','')|replace(']','')  %}
+            {%-
+              set alexa = {
+                "bedroom" : "media_player.master_bedroom",
+                "boys_bedroom": "media_player.boys_room",
+                "downstairs": "group.alexa_downstairs",
+                "kitchen/garage": "group.alexa_welcome",
+                "garage" : "media_player.garage",
+                "kitchen" : "media_player.kitchen",
+                "family_room" : "media_player.family_room",
+                "play_room": "media_player.play_room",
+                "upstairs": "group.alexa_upstairs",
+                "upstairs_bathroom": "media_player.upstairs_bathroom"
+              }
+            -%}
+            {{ alexa[room] }}
+
+          # This section of variables can be removed. They are special for my setup.
+          say_dark_outside: "{{ say_dark_outside if say_dark_outside is string else 'false' }}"
+          say_garage_check: "{{ say_garage_check if say_garage_check is string else 'false' }}"
+          say_goodbye: "{{ say_goodbye if say_goodbye is string else 'false' }}"
+          say_goodnight: "{{ say_goodnight if say_goodnight is string else 'false' }}"
+          say_greeting: "{{ say_greeting if say_greeting is string else 'false' }}"
+          say_inside_weather: "{{ say_inside_weather if say_inside_weather is string else 'false' }}"
+          say_light_check: "{{ say_light_check if say_light_check is string else 'false' }}"
+          say_outside_weather: "{{ say_outside_weather if say_outside_weather is string else 'false' }}"
+          say_responsibilities: "{{ say_responsibilities if say_responsibilities is string else 'false' }}"
 
   event_reminder_skipnext:
     sequence:
@@ -17,7 +39,7 @@ script:
           seconds: 15
       - service: input_boolean.turn_off
         data_template:
-          entity_id: "input_boolean.event_reminder_{{ id }}_skipnext"
+          entity_id: "{{ skipnext }}"
 
   # You can uncomment this if you have Alexa Media Player setup for speech, or just call
   # your own speech routine. https://github.com/custom-components/alexa_media_player

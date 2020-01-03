@@ -2,6 +2,6 @@
 sequence:
   - service: persistent_notification.create
     data_template:
-      title: "{{ title }}"
+      title: "{{ title|default('Home Assistant') }}"
       message: "{{ message }}"
-      notification_id: "{{ id|default('') }}"
+      notification_id: "{{ id|default('hass') }}"

@@ -1,0 +1,26 @@
+---
+>
+  {%- if media_player is defined -%}
+    {{ media_player }}
+  {%- else -%}
+    {%- set media_player = states('input_select.tts_phrase_room') -%}
+  {%- endif -%}
+
+  {%- set room = media_player|lower|replace(' ','_')|replace('[','')|replace(']','')  %}
+  {%-
+    set alexa = {
+      "bedroom" : "media_player.master_bedroom",
+      "boys_bedroom": "media_player.boys_room",
+      "downstairs": "group.alexa_downstairs",
+      "kitchen/garage": "group.alexa_welcome",
+      "garage" : "media_player.garage",
+      "kitchen" : "media_player.kitchen",
+      "family_room" : "media_player.family_room",
+      "play_room": "media_player.play_room",
+      "upstairs": "group.alexa_upstairs",
+      "upstairs_bathroom": "media_player.upstairs_bathroom",
+      "welcome": "group.alexa_welcome",
+    }
+  -%}
+
+  {{ alexa[room] }}
