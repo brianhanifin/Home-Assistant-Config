@@ -6,18 +6,18 @@ card:
       columns: 4
       direction: up
       entities:
-        - color: black
-          entity: sensor.color_laserjet_black
-          title: BLACK
         - color: '#00ffff'
-          entity: sensor.color_laserjet_cyan
+          entity: sensor.color_laserjet_toner_cyan
           title: CYAN
-        - color: '#ff00ff'
-          entity: sensor.color_laserjet_magenta
-          title: MAGENTA
         - color: '#ffff00'
-          entity: sensor.color_laserjet_yellow            
-          title: YELLOW             
+          entity: sensor.color_laserjet_toner_yellow            
+          title: YELLOW
+        - color: '#ff00ff'
+          entity: sensor.color_laserjet_toner_magenta
+          title: MAGENTA
+        - color: black
+          entity: sensor.color_laserjet_toner_black
+          title: BLACK             
       height: 150px
       min: 0
       max: 100
@@ -27,4 +27,12 @@ card:
       align: center-split
       icon_position: inside
       unit_of_measurement: '%'
-      width: 100%  
+      width: 100%
+
+    - type: markdown
+      content: |-
+        | Total Pages | Color Pages | Monochrome Pages |
+        | :---------: | :---------: | :--------------: |
+        | {{ states('sensor.color_laserjet_printer') }} | {{ state_attr('sensor.color_laserjet_printer','Color') }} | {{ state_attr('sensor.color_laserjet_printer','Monochrome') }} |
+
+        [Web interface](http://10.0.0.216)
