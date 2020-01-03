@@ -19,7 +19,7 @@ trigger:
     {% endmacro %}
 
     {% set subtract_minutes = 30 %}
-    {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+    {% set current_time = states('sensor.time') %}
     {% set boys = subtract_time(states('sensor.boys_room_next_alarm'),subtract_minutes) %}
     {% set brian = subtract_time(states('sensor.wakeup_brian_time'),subtract_minutes) %}
     {% set nerene = subtract_time(states('sensor.wakeup_nerene_time'),subtract_minutes) %}
@@ -43,7 +43,7 @@ condition:
       {% endmacro %}
 
       {% set subtract_minutes = 30 %}
-      {% set current_time = states('sensor.time')|timestamp_custom('%H:%M', false) %}
+      {% set current_time = states('sensor.time') %}
       {% if current_time == subtract_time(states('sensor.boys_room_next_alarm'),subtract_minutes) %}
         {{ is_state('input_boolean.wakeup_boys_skipnext','on') }}
       {% elif current_time == subtract_time(states('sensor.wakeup_brian_time'),subtract_minutes) %}

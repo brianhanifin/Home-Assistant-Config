@@ -3,8 +3,8 @@ alias: wakeup_brian_10min_early
 #initial_state: true
 trigger:
   platform: template
-  #value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
-  value_template: "{{ states('sensor.time')|timestamp_custom('%H:%M', false) == states('sensor.wakeup_brian_10min_early')|timestamp_custom('%H:%M', false) }}"
+  #value_template: "{{ states('sensor.time') == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
+  value_template: "{{ states('sensor.time') == states('sensor.wakeup_brian_10min_early')|timestamp_custom('%H:%M', false) }}"
 condition:
   condition: and
   conditions:
