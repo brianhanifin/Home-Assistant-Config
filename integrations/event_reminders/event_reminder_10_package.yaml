@@ -1,6 +1,6 @@
 ---
 automation:
-  - alias: event_reminder_100
+  - alias: event_reminder_10
     trigger:
       platform: template
       value_template: >-
@@ -42,74 +42,74 @@ automation:
             {% endif %}
 
 input_boolean:
-  event_reminder_100_skipnext:
+  event_reminder_10_skipnext:
     name: Skip Next Reminder
     icon: mdi:alarm-check
-  event_reminder_100_mon:
+  event_reminder_10_mon:
     name: Monday
     icon: mdi:checkbox-marked-circle
-  event_reminder_100_tue:
+  event_reminder_10_tue:
     name: Tuesday
     icon: mdi:checkbox-marked-circle
-  event_reminder_100_wed:
+  event_reminder_10_wed:
     name: Wednesday
     icon: mdi:checkbox-marked-circle
-  event_reminder_100_thu:
+  event_reminder_10_thu:
     name: Thursday
     icon: mdi:checkbox-marked-circle
-  event_reminder_100_fri:
+  event_reminder_10_fri:
     name: Friday
     icon: mdi:checkbox-marked-circle
-  event_reminder_100_sat:
+  event_reminder_10_sat:
     name: Saturday
     icon: mdi:checkbox-marked-circle
-  event_reminder_100_sun:
+  event_reminder_10_sun:
     name: Sunday
     icon: mdi:checkbox-marked-circle
 
 
 input_datetime:
-  event_reminder_100_1:
+  event_reminder_10_1:
     name: First Announcement
     has_date: false
     has_time: true
-  event_reminder_100_2:
+  event_reminder_10_2:
     name: Second Announcement
     has_date: false
     has_time: true
 
 input_select:
-  event_reminder_100_echo:
+  event_reminder_10_echo:
     name: Announce on which Echo(s)?
     options: !include /config/templates/speech/tts_rooms.yaml
     icon: mdi:amazon-alexa
 
 input_text:
-  event_reminder_100_1:
+  event_reminder_10_1:
     name: First Announcement
-  event_reminder_100_2:
+  event_reminder_10_2:
     name: Second Announcement
 
 sensor:
   - platform: template
     sensors:
-      event_reminder_100_1:
-        entity_id: input_datetime.event_reminder_100_1
+      event_reminder_10_1:
+        entity_id: input_datetime.event_reminder_10_1
         friendly_name: First Time
         icon_template: mdi:clock-outline
         value_template: >-
-          {%  set reminder_time    = states("input_datetime.event_reminder_100_1") -%}
+          {%  set reminder_time    = states("input_datetime.event_reminder_10_1") -%}
           {%- set reminder_hour    = reminder_time.split(':')[0] -%}
           {%- set reminder_minutes = reminder_time.split(':')[1] -%}
           {{ "%0.02d:%0.02d" | format(reminder_hour|int, reminder_minutes|int) }}
   - platform: template
     sensors:
-      event_reminder_100_2:
-        entity_id: input_datetime.event_reminder_100_2
+      event_reminder_10_2:
+        entity_id: input_datetime.event_reminder_10_2
         friendly_name: First Time
         icon_template: mdi:clock-outline
         value_template: >-
-          {%  set reminder_time    = states("input_datetime.event_reminder_100_2") -%}
+          {%  set reminder_time    = states("input_datetime.event_reminder_10_2") -%}
           {%- set reminder_hour    = reminder_time.split(':')[0] -%}
           {%- set reminder_minutes = reminder_time.split(':')[1] -%}
           {{ "%0.02d:%0.02d" | format(reminder_hour|int, reminder_minutes|int) }}
