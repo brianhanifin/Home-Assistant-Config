@@ -1,0 +1,24 @@
+---
+alias: youtube_notifications
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: sensor.san_diego_county_inland_valleys
+action:
+  - service: persistent_notification.create
+    data_template:
+      title: "{{ trigger.event.data.event }}: {{ trigger.event.data.area }}"
+      message: >
+        {{ trigger.event.data.title }}
+        Certainty: {{ trigger.event.data.certainty }}
+        Severity: {{ trigger.event.data.severity }}
+      notification_id: "weatheralerts"
+
+  - service: script.notify_mobile
+    data_template:
+      title: "{{ trigger.event.data.event }}: {{ trigger.event.data.area }}"
+      message: >
+        {{ trigger.event.data.title }}
+        Certainty: {{ trigger.event.data.certainty }}
+        Severity: {{ trigger.event.data.severity }}
+      who: "brian"

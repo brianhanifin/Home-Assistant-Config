@@ -239,7 +239,19 @@
   {%- endmacro -%}
 
   {%- macro outside_weather() -%}
-    Outside, today will be {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }}. The high will be {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature']|int }} degrees.
+    {%- set conditions = {
+      "clear-night": "clear night skies",
+      "partlycoudly": "mostly cloudy skies",
+      "sunny": "clear skies and sun"
+    } -%}
+    {%- if conditions[states('weather.dark_sky')] is string -%}
+      {%- set condition = conditions[states('weather.dark_sky')] -%}
+    {%- else -%}
+      {%- set condition = states('weather.dark_sky') -%}
+    {%- endif -%}
+
+    {{ ['Currently', 'Right now']|random }}, in Santee it is {{ state_attr('weather.dark_sky','temperature')|int }} degrees fahrenheit with {{ condition }}.
+    Today's forecast is {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }} with a high of {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }} and a low of {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }} degrees.
   {%- endmacro -%}
 
   {%- macro plant_problems() -%}
