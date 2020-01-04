@@ -22,6 +22,14 @@
     {%- endfor -%}
   {%- endmacro -%}
 
+  {%- macro random_voice() -%}
+    {{ [
+        "Ivy", "Joanna", "Joey", "Justin", "Kendra", "Kimberly", 
+        "Matthew", "Salli", "Nicole", "Russell", "Amy", "Brian",
+        "Emma", "Aditi", "Raveena"
+    ]|random }}
+  {%- endmacro -%}
+
   {%- macro truthify(state) -%}
     {%- set truthy_states = ['on','true','open'] -%}
     {%- if state in truthy_states -%}
@@ -35,7 +43,7 @@
   {# BRIEFING FUNCTIONS #}
   {%- macro dark_outside() -%}
     {{ [
-      'It is about to get dark outside.  ...  I will turn on the lights now.',
+      'It is about to get dark outside. I will turn on the lights now.',
       'It is almost sunset.  Time to turn on the lights.',
       'I will switch on the outdoor lights.',
       'Time to turn on the front lights.'
@@ -44,7 +52,7 @@
 
   {%- macro dog_water_bowl() -%}
     {%- if states('binary_sensor.dog_water_bowl') == "off" -%}
-      Buddy and Pepper's water bowl is empty ... please refill it for them.
+      Buddy and Pepper's water bowl is empty please refill it for them.
     {%- endif -%}
   {%- endmacro -%}
 
@@ -59,6 +67,7 @@
     {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list -%}
 
     {%- if open_entities|length > 0 -%}
+      There is something you should know,
       {%- for entity in open_entities -%}
         {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
       {%- endfor -%}
@@ -74,9 +83,9 @@
       "Until next time!",
       "How lucky I am to have something that makes saying Goodbye so hard. ",
       "Good friends never say goodbye, they simply say, see you soon! ",
-      "See you later ... alligator! ",
+      "See you later alligator! ",
       "Stay out of trouble. ",
-      "I am out of here. ... Oh, I'm stuck here, are-nt I?",
+      "I am out of here. Oh, I'm stuck here, are-nt I?",
       "Okay...bye, fry guy! ",
       "If I don’t see you around, I'll see you square. ",
       "Stay classy. ",
@@ -85,8 +94,8 @@
       "Gotta go, buffalo. ",
       "Peace out! ",
       "Gotta hit the road. ",
-      "Live long ... and prosper!",
-      "Well, I guess your off! ... I've got things to do too. ",
+      "Live long and prosper!",
+      "Well, I guess your off! I've got things to do too. ",
       "Bye bye, butterfly. ",
       "Out to the door, dinosaur. ",
       "Catch you on the flip side. ",
@@ -106,10 +115,10 @@
       "Be good and don't get caught. ",
       "Thank you for your cooperation. Farewell. ",
       "I look forward to our next meeting. ",
-      "Are you gonna make like a bakery truck? ... and haul buh-uns. ",
+      "Are you gonna make like a bakery truck? and haul buh-uns. ",
       "Chop chop, lollipop! ",
       "Gotta roll! ",
-      "Hello. ... ... Oh, and in case I don't see you, good afternoon, good evening, and good night! ",
+      "Hello. Oh and in case I don't see you, good afternoon good evening and good night! ",
       "Don't forget to come back! ",
       "Once more unto the breach, dear friends! ",
       "See yuh, wouldn't wanna be yuh. ",
@@ -134,7 +143,7 @@
       "Better shake, rattlesnake! ",
       "Later, potato! ",
       "Don't forget to be awesome. ",
-      "Later ... nerds! ",
+      "Later nerds! ",
       "Stay cool, my dude. ",
       "Don't get cut by a blade of grass! ",
       "Be sweet, parakeet. ",
@@ -185,7 +194,7 @@
       "Go to bed, you sleepy head! ",
       "Nighty Night. ",
       "Sleep snug as a bug in a rug! ",
-      "Lights out! ... Uh huh. ... Dance, dance dance. ",
+      "Lights out! Uh huh. Dance, dance dance. ",
       "Time to ride the rainbow to dreamland! ",
       "Sweet dreams. ",
       "See ya' in the mornin'! ",
@@ -194,7 +203,7 @@
       "You're the most wonderful user in the whole world! ",
       "I'm yours, forever and always. ",
       "Parting is such sweet sorrow, that I shall say good night till it be tomorrow. ",
-      "Can you hear that? ... Its your soft warm bed calling your name. You really must go and see what it wants. ",
+      "Can you hear that? Its your soft warm bed calling your name. You really must go and see what it wants. ",
       "Grumpy cat says goodnight.",
       "Goodnight, sweet dreams. ",
       "You have so much to be greatful for... goodnight.",
@@ -250,8 +259,8 @@
       {%- set condition = states('weather.dark_sky') -%}
     {%- endif -%}
 
-    {{ ['Currently', 'Right now']|random }}, in Santee it is {{ state_attr('weather.dark_sky','temperature')|int }} degrees fahrenheit with {{ condition }}.
-    Today's forecast is {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }} with a high of {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }} and a low of {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }} degrees.
+    {{ ['Currently', 'Right now']|random }} in Santee, it is {{ state_attr('weather.dark_sky','temperature')|int }} degrees fahrenheit, with {{ condition }}.
+    Today's forecast is {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }}, with a high of {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}, and a low of {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }} degrees.
   {%- endmacro -%}
 
   {%- macro plant_problems() -%}
@@ -268,18 +277,27 @@
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
-    {{ responsibility_trash() }}
-    {{ responsibility_medicine_buddy() }}
-    {{ responsibility_dookie() }}
+    {%- set trash = responsibility_trash() -%}
+    {%- set buddy = responsibility_medicine_buddy() -%}
+    {%- set dookie = responsibility_dookie() -%}
+
+    {%- if trash|length > 10 or buddy|length > 10 or dookie|length > 10 -%}
+      <voice name="Brian">
+      Family Responsibilities<break time="1s"/>
+      {{ trash }}
+      {{ buddy }}
+      {{ dookie }}
+      </voice>
+    {%- endif %}
   {%- endmacro -%}
 
   {%- macro responsibility_dookie() -%}
     {%- set is_school_day = states('binary_sensor.schoolday')|int -%}
     {%- set hour = now().strftime('%-H')|int -%}
 
-    {# Announce after 2pm on School Days and after 9am otherwise. #}
+    {# Announce after 2pm on School Days and after 8am otherwise. #}
     {% if    is_school_day and hour >= 14
-      or not is_school_day and hour >=  9 -%}
+      or not is_school_day and hour >=  8 -%}
 
       {# Decide whose turn it is. #}
       {% if states('sensor.contribution_kyle_dookie') < states('sensor.contribution_lucas_dookie') -%}
@@ -293,7 +311,7 @@
       {# Announce whose turn it is if it has not already been done today. #}
       {%- set today = as_timestamp(now())|timestamp_custom('%A') %}
       {% if last_dookie != today -%}
-        Today is {{ dookie_turn }} day to pickup the dookie.
+        Today is {{ dookie_turn }}'s day to pickup the dookie.
       {% endif %}
     {% endif %}
   {%- endmacro -%}
@@ -317,27 +335,27 @@
   {%- macro welcome_home(person) -%}
     {{ [
     "Welcome back home " ~ person,
-    "Guess who is home?  ...  " ~ person ~ " is!",
+    "Guess who is home?   " ~ person ~ " is!",
     person ~ " is now in the house.",
-    "Welcome Home " ~ person ~ ".  ...  We have missed you.  ...  Or at least Pepper did.",
-    "Our home is now complete, Rest your head and relax your feet!  ...  Welcome Back " ~ person,
-    "Life is like a song, you’re back where you belong.  ...  Welcome home " ~ person,
-    "Hey there " ~ person ~ "  ...  Welcome Home!",
-    "Knock Knock.  ...  Who is There?  ... " ~ person ~ " is!",
+    "Welcome Home " ~ person ~ ".   We have missed you.   Or at least Pepper did.",
+    "Our home is now complete, Rest your head and relax your feet!   Welcome Back " ~ person,
+    "Life is like a song, you’re back where you belong.   Welcome home " ~ person,
+    "Hey there " ~ person ~ "   Welcome Home!",
+    "Knock Knock.   Who is There?  " ~ person ~ " is!",
     "The garage door just told me that "   ~ person ~ " is home.",
-    person ~ " can not hide from the system.  ... Welcome home.",
-    person ~ "!  ... You are home!",
-    "I know a secret! ... "  ~ person ~ " is home!",
+    person ~ " can not hide from the system.  Welcome home.",
+    person ~ "!  You are home!",
+    "I know a secret! "  ~ person ~ " is home!",
     "Hey "  ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
-    "Take note Pepper!  ...  "  ~ person ~ " is home.",
-    "I am sensing a disturbance in the force.  ... "  ~ person ~ " must be home!",
-    "And the house becomes a home.  ...  Welcome back " ~ person,
-    person ~ " is now here.  ...  Hash tag Welcome Home.",
-    person ~ " is now here.  ...  Hash tag Home.",
-    person ~ " is now here.  ...  Hash tag Smart Home.",
+    "Take note Pepper!   "  ~ person ~ " is home.",
+    "I am sensing a disturbance in the force.  "  ~ person ~ " must be home!",
+    "And the house becomes a home.   Welcome back " ~ person,
+    person ~ " is now here.   Hash tag Welcome Home.",
+    person ~ " is now here.   Hash tag Home.",
+    person ~ " is now here.   Hash tag Smart Home.",
     "Just a quick announcement. " ~ person ~ " has arrived!",
     "Pardon the interruption but " ~ person ~ " is home!",
-    "My systems are picking up the presence of additional humans.  ...  " ~ person ~ " has been identified as home."
+    "My systems are picking up the presence of additional humans.   " ~ person ~ " has been identified as home."
     ] | random }}
   {%- endmacro -%}
 
@@ -345,55 +363,59 @@
   {# BRIEFING TEMPLATE #}
   {%- macro get_briefing() -%}
     {%- if say_greeting == "true" -%}
-      {{ greeting_line() ~ " ... " }}
+      {{ greeting_line() }}
 
-      {{ holiday() ~ " ... " }}
+      {{ holiday() }}
     {%- endif -%}
 
     {%- if person_arriving is not undefined -%}
-      {{ welcome_home(person_arriving) ~ " ... " }}
+      {{ welcome_home(person_arriving) }}
     {%- endif -%}
 
     {{ message }}
 
     {%- if say_dark_outside == "true" -%}
-      {{ dark_outside() ~ " ... " }}
+      {{ dark_outside() }}
     {%- endif -%}
 
     {%- if say_inside_weather == "true" -%}
-      {{ inside_weather() ~ " ... " }}
+      {{ inside_weather() }}
     {%- endif -%}
 
     {%- if say_outside_weather == "true" -%}
-      {{ outside_weather() ~ " ... " }}
+      {{ outside_weather() }}
     {%- endif -%}
 
     {%- if say_dog_water == "true" -%}
-      {{ dog_water_bowl() ~ " ... " }}
+      {{ dog_water_bowl() }}
     {%- endif -%}
 
     {%- if say_responsibilities == "true" -%}
-      {{ responsibilities() ~ " ... " }}
+      {{ responsibilities() ~ " " }}
     {%- endif -%}
 
     {%- if say_door_window_check == "true" -%}
-      {{ door_window_check() ~ " ... " }}
+      {{ door_window_check() }}
     {%- endif -%}
 
     {%- if say_light_check == "true" -%}
-      {{ light_check() ~ " ... " }}
+      {{ light_check() }}
     {%- endif -%}
 
     {%- if say_plant_problems == "true" -%}
-      {{ plant_problems() ~ " ... " }}
+      {{ plant_problems() }}
     {%- endif -%}
 
     {%- if say_goodbye == "true" -%}
-      {{ " " ~ goodbye_line() ~ " ... " }}
+      <voice name="{{ random_voice() }}">
+      {{ " " ~ goodbye_line() }}
+      </voice>
     {%- endif -%}
 
     {%- if say_goodnight == "true" -%}
-      {{ " " ~ goodnight_line() ~ " ... " }}
+      <voice name="{{ random_voice() }}">
+      {{ " " ~ goodnight_line() }}
+      </voice>
     {%- endif -%}
   {%- endmacro -%}
 
@@ -472,6 +494,6 @@
   {%- endif -%}
 
   {#- Get briefing, and strip unnecessary characters. -#}
-  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace("... ...", "...") %}
+  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace("...", "...") %}
     {{ get_briefing() }}
   {% endfilter %}
