@@ -4,9 +4,8 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {% set current_time = states('sensor.time') %}
-        {{ is_state('sensor.event_reminder_3_1',current_time)
-        or is_state('sensor.event_reminder_3_2',current_time) }}
+        {{ is_state('sensor.event_reminder_3_1',states('sensor.time'))
+        or is_state('sensor.event_reminder_3_2',states('sensor.time')) }}
     condition:
       condition: and
       conditions:
@@ -37,38 +36,73 @@ automation:
         data_template:
           media_player: "{{ states('input_select.event_reminder_3_echo') }}"
           skipnext: >
-            {% if is_state('sensor.event_reminder_3_2', states('sensor.time')) %}
+            {% if is_state('sensor.event_reminder_3_2',states('sensor.time')) %}
               input_boolean.event_reminder_3_skipnext
             {% endif %}
-          say_greeting: "true"
-          say_responsibilities: "true"
+          say_dark_outside: "{{ states('input_boolean.event_reminder_3_say_dark_outside') }}"
+          say_door_window_check: "{{ states('input_boolean.event_reminder_3_say_door_window_check') }}"
+          say_goodbye: "{{ states('input_boolean.event_reminder_3_say_goodbye') }}"
+          say_goodnight: "{{ states('input_boolean.event_reminder_3_say_goodnight') }}"
+          say_greeting: "{{ states('input_boolean.event_reminder_3_say_greeting') }}"
+          say_inside_weather: "{{ states('input_boolean.event_reminder_3_say_inside_weather') }}"
+          say_light_check: "{{ states('input_boolean.event_reminder_3_say_light_check') }}"
+          say_outside_weather: "{{ states('input_boolean.event_reminder_3_say_outside_weather') }}"
+          say_responsibilities: "{{ states('input_boolean.event_reminder_3_say_responsibilities') }}"
+
+# script:
+#   event_reminder_3_announce_test:    
+#     sequence:
+#       - service: script.event_reminder_announce
+#         data_template:
+#           media_player: "{{ states('input_select.event_reminder_3_echo') }}"
+#           say_dark_outside: "{{ states('input_boolean.event_reminder_3_say_dark_outside') }}"
+#           say_door_window_check: "{{ states('input_boolean.event_reminder_3_say_door_window_check') }}"
+#           say_goodbye: "{{ states('input_boolean.event_reminder_3_say_goodbye') }}"
+#           say_goodnight: "{{ states('input_boolean.event_reminder_3_say_goodnight') }}"
+#           say_greeting: "{{ states('input_boolean.event_reminder_3_say_greeting') }}"
+#           say_inside_weather: "{{ states('input_boolean.event_reminder_3_say_inside_weather') }}"
+#           say_light_check: "{{ states('input_boolean.event_reminder_3_say_light_check') }}"
+#           say_outside_weather: "{{ states('input_boolean.event_reminder_3_say_outside_weather') }}"
+#           say_responsibilities: "{{ states('input_boolean.event_reminder_3_say_responsibilities') }}"
 
 input_boolean:
   event_reminder_3_skipnext:
     name: Skip Next Reminder
     icon: mdi:alarm-check
+
   event_reminder_3_mon:
     name: Monday
-    icon: mdi:checkbox-marked-circle
   event_reminder_3_tue:
     name: Tuesday
-    icon: mdi:checkbox-marked-circle
   event_reminder_3_wed:
     name: Wednesday
-    icon: mdi:checkbox-marked-circle
   event_reminder_3_thu:
     name: Thursday
-    icon: mdi:checkbox-marked-circle
   event_reminder_3_fri:
     name: Friday
-    icon: mdi:checkbox-marked-circle
   event_reminder_3_sat:
     name: Saturday
-    icon: mdi:checkbox-marked-circle
   event_reminder_3_sun:
     name: Sunday
-    icon: mdi:checkbox-marked-circle
 
+  event_reminder_3_say_dark_outside:
+    name: Dark Outside
+  event_reminder_3_say_door_window_check:
+    name: Door+Windows
+  event_reminder_3_say_goodbye:
+    name: Goodbye
+  event_reminder_3_say_goodnight:
+    name: Goodnight
+  event_reminder_3_say_greeting:
+    name: Greeting
+  event_reminder_3_say_inside_weather:
+    name: Indoor Temp
+  event_reminder_3_say_light_check:
+    name: Light Check
+  event_reminder_3_say_outside_weather:
+    name: Outdoor Weather
+  event_reminder_3_say_responsibilities:
+    name: Responsibilities 
 
 input_datetime:
   event_reminder_3_1:

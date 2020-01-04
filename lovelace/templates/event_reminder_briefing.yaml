@@ -51,11 +51,46 @@ card:
           head:
             type: custom:text-divider-row
             text: Alexa announcements
+          open: true
           entities:
             - type: custom:decluttering-card
-              template: heading2
+              template: button_check_row2
               variables:
-                - heading: "Example Announcement"
-                - subtext: "[[example]]"
+                - entity1: input_boolean.event_reminder_[[id]]_say_greeting
+                - name1: Greeting
+                - entity2: input_boolean.event_reminder_[[id]]_say_responsibilities
+                - name2: Responsibilities
+            - type: custom:decluttering-card
+              template: button_check_row2
+              variables:
+                - entity1: input_boolean.event_reminder_[[id]]_say_inside_weather
+                - name1: Indoor Temp
+                - entity2: input_boolean.event_reminder_[[id]]_say_outside_weather
+                - name2: Outdoor Temp
+            - type: custom:decluttering-card
+              template: button_check_row2
+              variables:
+                - entity1: input_boolean.event_reminder_[[id]]_say_light_check
+                - name1: Lights On
+                - entity2: input_boolean.event_reminder_[[id]]_say_door_window_check
+                - name2: Door+Windows
+            - type: custom:decluttering-card
+              template: button_check_row2
+              variables:
+                - entity1: input_boolean.event_reminder_[[id]]_say_goodbye
+                - name1: Goodbye
+                - entity2: input_boolean.event_reminder_[[id]]_say_goodnight
+                - name2: Goodnight
 
             - input_select.event_reminder_[[id]]_echo
+
+            # - type: custom:button-entity-row
+            #   buttons:
+            #     - service: script.event_reminder_3_announce_test
+            #       name: "Test Announcement"
+            #       icon: "mdi:voice"
+            #       style:
+            #         background: lightgray
+            #         border-radius: 9999px
+            #         color: black
+            #         font-weight: bold

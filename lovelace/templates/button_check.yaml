@@ -1,0 +1,52 @@
+---
+default:
+  - entity: input_boolean.blank
+  - icon: mdi:checkbox-blank-outline
+  - name: Checkbox
+  - lock: false
+  - tap_action:
+      action: toggle
+  - hold_action:
+      action: more-info
+  - show_state: false
+  - type: icon
+
+card:
+  # type: entity-button
+  # entity: "[[entity]]"
+  # icon: "[[icon]]"
+  # name: "[[name]]"
+  # tap_action: "[[tap_action]]"
+  # hold_action: "[[hold_action]]"
+
+  type: custom:button-card
+  layout: icon_name_state
+  color_type: "[[type]]"
+  entity: "[[entity]]"
+  name: "[[name]]"
+  tap_action: "[[tap_action]]"
+  hold_action: "[[hold_action]]"
+  show_state: "[[show_state]]"
+  icon: "[[icon]]"
+  lock:
+    enabled: "[[lock]]"
+  styles:
+    grid:
+      - grid-template-columns: 30% min-content
+  state:
+    - value: 'on'
+      icon: mdi:checkbox-marked
+    - value: 'off'
+      icon: mdi:checkbox-blank-outline
+      styles:
+        card:
+          - filter: opacity(50%)
+        icon:
+          - filter: grayscale(100%)
+    - value: unavailable
+      icon: mdi:checkbox-blank-outline
+      styles:
+        card:
+          - filter: opacity(25%)
+        icon:
+          - filter: grayscale(100%)

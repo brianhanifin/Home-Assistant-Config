@@ -11,10 +11,24 @@
 
   {%- macro get_friendly_names(entity_list) -%}
     {% set comma = joiner(', ') %}
-    {%- for entity in entity_list if entity_list|length > 0 and entity_list != [''] -%}
-      {{ ' and' if loop.last and not loop.first else comma() }}
-      {{ state_attr(entity, 'friendly_name')|replace('Light','')|replace('Lamp','')|trim|title  }}
+    {%- for entity_id in entity_list -%}
+      {{ ' and ' if loop.last and not loop.first else comma() }}
+      {%- set name = state_attr(entity_id,'friendly_name') -%}
+      {%- if name is string -%}
+        {{ name|trim|title }}
+      {%- else -%}
+        {{ entity_id|replace('light.','')|replace('_',' ')|trim|title }}
+      {%- endif -%}
     {%- endfor -%}
+  {%- endmacro -%}
+
+  {%- macro truthify(state) -%}
+    {%- set truthy_states = ['on','true','open'] -%}
+    {%- if state in truthy_states -%}
+      true
+    {%- else -%}
+      false
+    {%- endif -%}
   {%- endmacro -%}
 
 
@@ -34,9 +48,20 @@
     {%- endif -%}
   {%- endmacro -%}
 
-  {%- macro garage_check() -%}
-    {% if states('cover.garage_door') !='closed' -%}
-      The garage door is open
+  {%- macro door_window_check() -%}
+    {%- set entities = [
+      'binary_sensor.front_door',
+      'lock.front_door',
+      'cover.garage_door',
+      'binary_sensor.upstairs_bathroom_window'
+    ] -%}
+    {%- set open_states = ['open','on','unlocked'] -%}
+    {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list -%}
+
+    {%- if open_entities|length > 0 -%}
+      {%- for entity in open_entities -%}
+        {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
+      {%- endfor -%}
     {%- endif -%}
   {%- endmacro -%}
 
@@ -214,7 +239,7 @@
   {%- endmacro -%}
 
   {%- macro outside_weather() -%}
-    Outside, today will be {{ state_attr('weather.home', 'forecast')[0]['condition'] }} ... the high will be {{ state_attr('weather.home', 'forecast')[0]['temperature']|int }} degrees.
+    Outside, today will be {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }}. The high will be {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature']|int }} degrees.
   {%- endmacro -%}
 
   {%- macro plant_problems() -%}
@@ -339,8 +364,8 @@
       {{ responsibilities() ~ " ... " }}
     {%- endif -%}
 
-    {%- if say_garage_check == "true" -%}
-      {{ garage_check() ~ " ... " }}
+    {%- if say_door_window_check == "true" -%}
+      {{ door_window_check() ~ " ... " }}
     {%- endif -%}
 
     {%- if say_light_check == "true" -%}
@@ -364,18 +389,26 @@
   {# Initialize variables #}
   {%- if say_dark_outside is undefined -%}
     {%- set say_dark_outside = "false" -%}
+  {%- else -%}
+    {%- set say_dark_outside = truthify(say_dark_outside) -%}
   {%- endif -%}
 
   {%- if say_goodbye is undefined -%}
     {%- set say_goodbye = "false" -%}
+  {%- else -%}
+    {%- set say_goodbye = truthify(say_goodbye) -%}
   {%- endif -%}
 
   {%- if say_goodnight is undefined -%}
     {%- set say_goodnight = "false" -%}
+  {%- else -%}
+    {%- set say_goodnight = truthify(say_goodnight) -%}
   {%- endif -%}
 
   {%- if say_greeting is undefined -%}
     {%- set say_greeting = "false" -%}
+  {%- else -%}
+    {%- set say_greeting = truthify(say_greeting) -%}
   {%- endif -%}
 
   {%- if say_greeting == "true" and say_dog_water is undefined -%}
@@ -384,22 +417,32 @@
 
   {%- if say_inside_weather is undefined -%}
     {%- set say_inside_weather = "false" -%}
+  {%- else -%}
+    {%- set say_inside_weather = truthify(say_inside_weather) -%}
   {%- endif -%}
 
-  {%- if say_garage_check is undefined -%}
-    {%- set say_garage_check = "false" -%}
+  {%- if say_door_window_check is undefined -%}
+    {%- set say_door_window_check = "false" -%}
+  {%- else -%}
+    {%- set say_door_window_check = truthify(say_door_window_check) -%}
   {%- endif -%}
 
   {%- if say_light_check is undefined -%}
     {%- set say_light_check = "false" -%}
+  {%- else -%}
+    {%- set say_light_check = truthify(say_light_check) -%}
   {%- endif -%}
 
   {%- if say_outside_weather is undefined -%}
     {%- set say_outside_weather = "false" -%}
+  {%- else -%}
+    {%- set say_outside_weather = truthify(say_outside_weather) -%}
   {%- endif -%}
 
   {%- if say_responsibilities is undefined -%}
     {%- set say_responsibilities = "false" -%}
+  {%- else -%}
+    {%- set say_responsibilities = truthify(say_responsibilities) -%}
   {%- endif -%}
 
   {%- if say_goodnight == "true" -%}
@@ -408,6 +451,8 @@
 
   {%- if say_plant_problems is undefined -%}
     {%- set say_plant_problems = "false" -%}
+  {%- else -%}
+    {%- set say_plant_problems = truthify(say_plant_problems) -%}
   {%- endif -%}
 
   {%- if person_arriving is not undefined -%}

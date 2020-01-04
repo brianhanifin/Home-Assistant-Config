@@ -4,9 +4,8 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {% set current_time = states('sensor.time') %}
-        {{ is_state('sensor.event_reminder_2_1',current_time)
-        or is_state('sensor.event_reminder_2_2',current_time) }}
+        {{ is_state('sensor.event_reminder_2_1',states('sensor.time'))
+        or is_state('sensor.event_reminder_2_2',states('sensor.time')) }}
     condition:
       condition: and
       conditions:
@@ -27,11 +26,6 @@ automation:
             {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_2_sun.state == 'on' -%}{{true}}
             {%- else -%}{{false}}{%- endif %}
     action:
-      # - service: persistent_notification.create
-      #   data_template:
-      #     title: "DEBUG"
-      #     message: "automation.event_reminder_2"
-
       - service_template: >
           {% if is_state('input_boolean.event_reminder_2_skipnext', 'on') %}
             script.event_reminder_skipnext
@@ -45,8 +39,7 @@ automation:
               input_boolean.event_reminder_2_skipnext
             {% endif %}
           message: >-
-            {% set current_time = states('sensor.time') %}
-            {% if is_state('sensor.event_reminder_2_1',current_time) %}
+            {% if is_state('sensor.event_reminder_2_1',states('sensor.time')) %}
               {{ states('input_text.event_reminder_2_1') }}
             {% else %}
               {{ states('input_text.event_reminder_2_2') }}
@@ -77,7 +70,6 @@ input_boolean:
   event_reminder_2_sun:
     name: Sunday
     icon: mdi:checkbox-marked-circle
-
 
 input_datetime:
   event_reminder_2_1:
