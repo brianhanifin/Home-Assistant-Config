@@ -1,0 +1,28 @@
+---
+alias: wakeup_warmup_water
+#initial_state: true
+trigger:
+  # Trigger at wakeup time.
+  platform: template
+  value_template: >-
+    {% set current_time = states('sensor.time') %}
+    {% set boys = states('sensor.boys_room_next_alarm') %}
+    {% set brian = states('sensor.wakeup_brian_time') %}
+    {% set nerene = states('sensor.wakeup_nerene_time') %}
+
+    {{ current_time in [boys,brian,nerene] }}
+condition:
+  # Continue if skipnext is not enabled.
+  - condition: template
+    value_template: >-
+      {% set current_time = states('sensor.time') %}
+      {% if current_time == states('sensor.boys_room_next_alarm') %}
+        {{ is_state('input_boolean.wakeup_boys_skipnext','on') }}
+      {% elif current_time == states('sensor.wakeup_brian_time') %}
+        {{ is_state('input_boolean.wakeup_brian_skipnext','on') }}
+      {% elif current_time == states('sensor.wakeup_nerene_time') %}
+        {{ is_state('input_boolean.wakeup_nerene_skipnext','on') }}
+      {% endif %}
+action:
+  - service: switch.turn_on
+    entity_id: switch.hot_water_pump

@@ -1,0 +1,16 @@
+---
+platform: template
+sensors:
+  wakeup_nerene_day:
+    entity_id: sensor.date
+    friendly_name: Wakeup Nerene Today?
+    value_template: >-
+      {% set   day_name = now().strftime("%A")|lower -%}
+      {%- if   day_name == 'monday'    and states.input_boolean.wakeup_nerene_mon.state == 'on' -%}{{true}}
+      {%- elif day_name == 'tuesday'   and states.input_boolean.wakeup_nerene_tue.state == 'on' -%}{{true}}
+      {%- elif day_name == 'wednesday' and states.input_boolean.wakeup_nerene_wed.state == 'on' -%}{{true}}
+      {%- elif day_name == 'thursday'  and states.input_boolean.wakeup_nerene_thu.state == 'on' -%}{{true}}
+      {%- elif day_name == 'friday'    and states.input_boolean.wakeup_nerene_fri.state == 'on' -%}{{true}}
+      {%- elif day_name == 'saturday'  and states.input_boolean.wakeup_nerene_sat.state == 'on' -%}{{true}}
+      {%- elif day_name == 'sunday'    and states.input_boolean.wakeup_nerene_sun.state == 'on' -%}{{true}}
+      {%- else -%}{{false}}{%- endif %}

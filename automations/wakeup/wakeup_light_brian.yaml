@@ -1,0 +1,33 @@
+---
+alias: wakeup_light_brian
+#initial_state: true
+trigger:
+  platform: template
+  #value_template: "{{ states('sensor.time') == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
+  value_template: "{{ states('sensor.time') == states('sensor.wakeup_light_brian')|timestamp_custom('%H:%M', false) }}"
+condition:
+  - condition: state
+    entity_id: person.brian
+    state: home
+ # Continue today is a wakeup day.
+  - condition: state
+    entity_id: binary_sensor.wakeup_brian_day
+    state: "on"
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "DEBUG"
+  #     message: "automation.wakeup_light_brian {{ states('sensor.wakeup_light_brian')|timestamp_custom('%H:%M', false) }}"
+
+  # Time to turn on the lights!
+  # - service: script.turn_on
+  #   entity_id: script.wakeup_brian_light_start
+
+  - service: script.turn_on
+    data_template:
+      entity_id: >
+        {% if is_state('input_boolean.wakeup_brian_skipnext', 'on') %}
+          script.wakeup_brian_skipnext
+        {% else %}
+          script.wakeup_brian_light_start
+        {% endif %}

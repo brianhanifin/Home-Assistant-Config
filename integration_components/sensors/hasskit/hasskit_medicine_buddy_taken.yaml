@@ -10,7 +10,9 @@ sensors:
     value_template: >-
       {% set lastdone = (states('sensor.medicine_buddy_taken'))|int %}
       {% set rightnow = (as_timestamp(now()))|int %}
-      {% set days = ((rightnow - lastdone)|int // 86400) %}
+      {% set last_day = lastdone.strftime('%d')|int %}
+      {% set this_day = now().srtftime('%d')|int %}
+      {% set days = (this_day - last_day)|int %}
       {% if days == 0 %}
         today
       {% elif days == 1 %}
