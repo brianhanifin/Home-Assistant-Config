@@ -263,6 +263,14 @@
     Today's forecast is {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }}, with a high of {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}, and a low of {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }} degrees.
   {%- endmacro -%}
 
+  {%- macro pepper_warning(person_arriving) -%}
+    {%- set name = {
+      "eric": "Grandpa Eric",
+      "heather": "Heather"
+    } -%}
+    Head's up Pepper. {{ name[person_arriving] }} just got home!
+  {%- endmacro -%}
+
   {%- macro plant_problems() -%}
     {%- if is_state_attr('sensor.plant_problems','water_number',0) -%}
       No plants need watering.
@@ -368,6 +376,10 @@
       {{ holiday() }}
     {%- endif -%}
 
+    {%- if say_pepper_warning == "true" -%}
+      {{ pepper_warning(person_arriving) }}
+    {%- endif -%}
+
     {%- if person_arriving is not undefined -%}
       {{ welcome_home(person_arriving) }}
     {%- endif -%}
@@ -471,6 +483,16 @@
     {%- set say_outside_weather = "false" -%}
   {%- else -%}
     {%- set say_outside_weather = truthify(say_outside_weather) -%}
+  {%- endif -%}
+
+  {%- if say_pepper_warning is undefined -%}
+    {%- set say_pepper_warning = "false" -%}
+  {%- else -%}
+    {%- set say_pepper_warning = truthify(say_pepper_warning) -%}
+  {%- endif -%}
+
+  {%- if say_pepper_warning == "true" -%}
+    {%- set say_greeting = "false" -%}
   {%- endif -%}
 
   {%- if say_responsibilities is undefined -%}

@@ -1,0 +1,18 @@
+---
+##############################################################################
+###  Warn pepper when scary grandpa Eric arrives.
+##############################################################################
+alias: pepper_warning
+initial_state: true
+trigger:
+  - platform: state
+    entity_id:
+      - person.eric
+      - person.heather
+    to: "home"
+action:
+  - service: script.say
+    data_template:
+      media_player: media_player.kitchen
+      person_arriving: "{{ trigger.entity_id.split('.')[1]|title|replace('_', ' ') }}"
+      say_pepper_warning: "true"
