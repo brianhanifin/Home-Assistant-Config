@@ -1,10 +1,10 @@
 ---
-alias: wakeup_light_nerene
+alias: wakeup_nerene_light
 #initial_state: true
 trigger:
   platform: template
   #value_template: "{{ states('sensor.time') == states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
-  value_template: "{{ states('sensor.time') == states('sensor.wakeup_light_nerene')|timestamp_custom('%H:%M', false) }}"
+  value_template: "{{ states('sensor.time') == states('sensor.wakeup_nerene_light')|timestamp_custom('%H:%M', false) }}"
 condition:
   - condition: state
     entity_id: person.nerene
@@ -17,7 +17,7 @@ action:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "DEBUG"
-  #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_light_nerene')|timestamp_custom('%H:%M', false) }}"
+  #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_nerene_light')|timestamp_custom('%H:%M', false) }}"
 
   # Time to turn on the lights!
   # - service: script.turn_on

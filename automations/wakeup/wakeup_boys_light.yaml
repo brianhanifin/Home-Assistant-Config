@@ -1,5 +1,5 @@
 ---
-alias: wakeup_light_boys
+alias: wakeup_boys_light
 #initial_state: true
 trigger:
   platform: template
@@ -10,7 +10,7 @@ trigger:
     {%- else -%}
       {%- set wakeup_date = states('sensor.date') -%}
     {%- endif -%}
-    {%- set start_time = states("sensor.wakeup_light_boys") -%}
+    {%- set start_time = states("sensor.wakeup_boys_light") -%}
 
     {%- if next_alarm != "unknown" -%}
       {{ wakeup_date == states('sensor.date') and start_time == states('sensor.time') }}
@@ -21,7 +21,7 @@ action:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "DEBUG"
-  #     message: "automation.wakeup_light_boys"
+  #     message: "automation.wakeup_boys_light"
 
   # Time to turn on the lights!
   # - service: script.turn_on
