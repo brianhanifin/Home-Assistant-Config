@@ -287,41 +287,26 @@
   {%- macro responsibilities() -%}
     {%- set trash = responsibility_trash() -%}
     {%- set buddy = responsibility_medicine_buddy() -%}
-    {%- set dookie = responsibility_dookie() -%}
+    {%- set boys_weekly = responsibility_boys_weekly() -%}
 
-    {%- if trash|length > 10 or buddy|length > 10 or dookie|length > 10 -%}
+    {%- if trash|length > 10 or buddy|length > 10 or boys_weekly|length > 10 -%}
       <voice name="Brian">
       Family Responsibilities<break time="1s"/>
       {{ trash }}
       {{ buddy }}
-      {{ dookie }}
+      {{ boys_weekly }}
       </voice>
     {%- endif %}
   {%- endmacro -%}
 
-  {%- macro responsibility_dookie() -%}
-    {%- set is_school_day = states('binary_sensor.schoolday')|int -%}
-    {%- set hour = now().strftime('%-H')|int -%}
-
-    {# Announce after 2pm on School Days and after 8am otherwise. #}
-    {% if    is_school_day and hour >= 14
-      or not is_school_day and hour >=  8 -%}
-
-      {# Decide whose turn it is. #}
-      {% if states('sensor.contribution_kyle_dookie') < states('sensor.contribution_lucas_dookie') -%}
-        {%- set dookie_turn = "Kyle" -%}
-        {%- set last_dookie = states('sensor.contribution_lucas_dookie')|int|timestamp_custom('%A') %}
-      {%- else -%}
-        {%- set dookie_turn = "Lucas" -%}
-        {%- set last_dookie = states('sensor.contribution_kyle_dookie')|int|timestamp_custom('%A') %}
-      {%- endif %}
-
-      {# Announce whose turn it is if it has not already been done today. #}
-      {%- set today = as_timestamp(now())|timestamp_custom('%A') %}
-      {% if last_dookie != today -%}
-        Today is {{ dookie_turn }}'s day to pickup the dookie.
-      {% endif %}
-    {% endif %}
+  {%- macro responsibility_boys_weekly() -%}
+    {%- if "Monday" == as_timestamp(now())|timestamp_custom('%A') -%}
+      {%- set dishes_boy = states('sensor.responsibility_dishes_week') -%}
+      {%- set laundry_boy = "Lucas" if dishes_boy == "Kyle" else "Kyle" -%}
+      Listen up boys<break time="1s"/>
+      It is {{ dishes_boy }}'s week to do the dishes.
+      And it is {{ laundry_boy }}'s week to wash the laundry and pick up the dog poop.
+    {%- endif -%}
   {%- endmacro -%}
 
   {%- macro responsibility_medicine_buddy() -%}
