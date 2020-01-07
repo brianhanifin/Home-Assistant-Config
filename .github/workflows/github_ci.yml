@@ -16,7 +16,7 @@ jobs:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
       - name: Create /config link
-        run: ln /config /github/workspace
+        run: ln -s /github/workspace /config
       - name: Activate dummy secrets.yaml
         run: mv ./test_secrets.yaml ./secrets.yaml
       - name: "Disable troublesome component: notify.alexa_media"
