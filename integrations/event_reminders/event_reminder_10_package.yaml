@@ -13,13 +13,13 @@ automation:
         - condition: template
           value_template: >
             {% set   day_name = now().strftime("%A")|lower -%}
-            {%- if   day_name == 'monday'    and states.input_boolean.event_reminder_10_mon.state == 'on' -%}{{true}}
-            {%- elif day_name == 'tuesday'   and states.input_boolean.event_reminder_10_tue.state == 'on' -%}{{true}}
-            {%- elif day_name == 'wednesday' and states.input_boolean.event_reminder_10_wed.state == 'on' -%}{{true}}
-            {%- elif day_name == 'thursday'  and states.input_boolean.event_reminder_10_thu.state == 'on' -%}{{true}}
-            {%- elif day_name == 'friday'    and states.input_boolean.event_reminder_10_fri.state == 'on' -%}{{true}}
-            {%- elif day_name == 'saturday'  and states.input_boolean.event_reminder_10_sat.state == 'on' -%}{{true}}
-            {%- elif day_name == 'sunday'    and states.input_boolean.event_reminder_10_sun.state == 'on' -%}{{true}}
+            {%- if   day_name == 'monday'    and is_state('input_boolean.event_reminder_10_mon','on') -%}{{true}}
+            {%- elif day_name == 'tuesday'   and is_state('input_boolean.event_reminder_10_tue','on') -%}{{true}}
+            {%- elif day_name == 'wednesday' and is_state('input_boolean.event_reminder_10_wed','on') -%}{{true}}
+            {%- elif day_name == 'thursday'  and is_state('input_boolean.event_reminder_10_thu','on') -%}{{true}}
+            {%- elif day_name == 'friday'    and is_state('input_boolean.event_reminder_10_fri','on') -%}{{true}}
+            {%- elif day_name == 'saturday'  and is_state('input_boolean.event_reminder_10_sat','on') -%}{{true}}
+            {%- elif day_name == 'sunday'    and is_state('input_boolean.event_reminder_10_sun','on') -%}{{true}}
             {%- else -%}{{false}}{%- endif %}
     action:
       - service_template: >
