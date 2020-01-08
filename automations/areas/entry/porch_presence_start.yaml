@@ -23,10 +23,10 @@ condition:
   #   state: 'off'
 action:
   # Store the current state of the porch light.
-  - service: python_script.light_store
+  - service: scene.create
     data:
-      store_name: porch_light_state
-      entity_id:
+      scene_id: front_door_presence_lights_snapshot
+      snapshot_entities:
         - light.porch
 
   # Full brightness!

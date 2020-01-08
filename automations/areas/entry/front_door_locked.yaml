@@ -8,7 +8,7 @@ trigger:
     to: 'locked'
 action:
   # Restore the previous state of the porch + entry lights.
-  - service: python_script.light_store
+  - service: scene.turn_on
     data:
-      store_name: front_door_locked_lights_state
-      operation: restore
+      entity_id: scene.front_door_locked_lights_snapshot
+

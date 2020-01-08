@@ -1,5 +1,5 @@
 ---
-alias: watchdog_front_door_unlocked
+alias: front_door_unlocked
 initial_state: true
 trigger:
   - platform: state
@@ -12,10 +12,10 @@ condition:
     below: 5000
 action:
   # Store the current state of the porch + entry lights.
-  - service: python_script.light_store
+  - service: scene.create
     data:
-      store_name: front_door_locked_lights_state
-      entity_id:
+      scene_id: front_door_locked_lights_snapshot
+      snapshot_entities:
         - light.entry
         - light.porch
 

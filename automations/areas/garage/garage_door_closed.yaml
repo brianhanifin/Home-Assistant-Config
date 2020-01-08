@@ -6,17 +6,8 @@ trigger:
     entity_id: cover.garage_door
     #from: "open"
     to: "closed"
-  # - platform: template
-  #   value_template: "{{ is_state('cover.garage_door','closed') }}"
 action:
-  # Turn off the notification lights.
-  - service: light.turn_off
-    entity_id: light.garage_entry
-  # - service: light.turn_off
-  #   entity_id: light.dining_room
-
   # Restore the previous state of the dining room lights.
-  - service: python_script.light_store
+  - service: scene.turn_on
     data:
-      store_name: dining_room_light_state
-      operation: restore
+      entity_id: scene.garage_door_closed_lights_snapshot
