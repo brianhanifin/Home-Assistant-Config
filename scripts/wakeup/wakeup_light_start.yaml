@@ -1,0 +1,90 @@
+---
+sequence:
+  - service: persistent_notification.create
+    data_template:
+      title: "DEBUG"
+      message: "script.wakeup_light_start"
+
+  - service: scene.turn_on
+    data_template:
+      entity_id: "{{ scene|default('scene.blank') }}"
+
+  # Start lights at ~20% and increment by ~10% every minute for 9 minutes.
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 50
+  - delay: 00:00:01
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 50
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 75
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 100
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 125
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 150
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 175
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 200
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 225
+
+  - delay: 00:01:00
+  - condition: template
+    value_template: "{{ is_state(light,'on') }}"
+  - service: light.turn_on
+    data_template:
+      entity_id: "{{ light }}"
+      brightness: 255
+
+  - delay: 01:00:00
+  - service: light.turn_off
+    data_template:
+      entity_id: "{{ light }}"

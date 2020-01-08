@@ -3,7 +3,6 @@ alias: wakeup_nerene_light
 #initial_state: true
 trigger:
   platform: template
-  #value_template: "{{ states('sensor.time') == states('sensor.wakeup_nerene_time')|timestamp_custom('%H:%M', false) }}"
   value_template: "{{ states('sensor.time') == states('sensor.wakeup_nerene_light')|timestamp_custom('%H:%M', false) }}"
 condition:
   - condition: state
@@ -19,15 +18,8 @@ action:
   #     title: "DEBUG"
   #     message: "automation.wakeup_nerene {{ states('sensor.wakeup_nerene_light')|timestamp_custom('%H:%M', false) }}"
 
-  # Time to turn on the lights!
-  # - service: script.turn_on
-  #   entity_id: script.wakeup_nerene_light_start
-
-  - service: script.turn_on
+  - service_template: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_nerene_skipnext', 'on') else 'script.wakeup_light_start' }}"
     data_template:
-      entity_id: >
-        {% if is_state('input_boolean.wakeup_nerene_skipnext', 'on') %}
-          script.wakeup_nerene_skipnext
-        {% else %}
-          script.wakeup_nerene_light_start
-        {% endif %}
+      light: "light.glowforge" 
+      scene: "scene.wakeup_nerene"
+      skipnext: "input_boolean.wakeup_nerene_skipnext"

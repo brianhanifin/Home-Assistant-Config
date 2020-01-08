@@ -23,15 +23,8 @@ action:
   #     title: "DEBUG"
   #     message: "automation.wakeup_boys_light"
 
-  # Time to turn on the lights!
-  # - service: script.turn_on
-  #   entity_id: script.wakeup_boys_light_start
-
-  - service: script.turn_on
+  - service_template: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_boys_skipnext', 'on') else 'script.wakeup_light_start' }}"
     data_template:
-      entity_id: >
-        {% if is_state('input_boolean.wakeup_boys_skipnext', 'on') %}
-          script.wakeup_boys_skipnext
-        {% else %}
-          script.wakeup_boys_light_start
-        {% endif %}
+      light: "light.boys_wakeup" 
+      scene: "scene.wakeup_boys"
+      skipnext: "input_boolean.wakeup_boys_skipnext"

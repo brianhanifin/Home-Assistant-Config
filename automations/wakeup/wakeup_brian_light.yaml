@@ -3,7 +3,6 @@ alias: wakeup_brian_light
 #initial_state: true
 trigger:
   platform: template
-  #value_template: "{{ states('sensor.time') == states('sensor.wakeup_brian_time')|timestamp_custom('%H:%M', false) }}"
   value_template: "{{ states('sensor.time') == states('sensor.wakeup_brian_light')|timestamp_custom('%H:%M', false) }}"
 condition:
   - condition: state
@@ -17,17 +16,10 @@ action:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "DEBUG"
-  #     message: "automation.wakeup_brian_light {{ states('sensor.wakeup_brian_light')|timestamp_custom('%H:%M', false) }}"
+  #     message: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_brian_skipnext', 'on') else 'script.wakeup_light_start' }}"
 
-  # Time to turn on the lights!
-  # - service: script.turn_on
-  #   entity_id: script.wakeup_brian_light_start
-
-  - service: script.turn_on
+  - service_template: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_brian_skipnext', 'on') else 'script.wakeup_light_start' }}"
     data_template:
-      entity_id: >
-        {% if is_state('input_boolean.wakeup_brian_skipnext', 'on') %}
-          script.wakeup_brian_skipnext
-        {% else %}
-          script.wakeup_brian_light_start
-        {% endif %}
+      light: "light.glowforge" 
+      scene: "scene.wakeup_brian"
+      skipnext: "input_boolean.wakeup_brian_skipnext"
