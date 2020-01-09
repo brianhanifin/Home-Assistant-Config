@@ -23,9 +23,13 @@ action:
         {%- set stuck_states = ['Just Arrived','Just Left','Away'] -%}
         {%- set stuck_timers = states.input_select | selectattr('state','in',stuck_states) | map(attribute='entity_id') | list | replace('input_select.','timer.xpresence_') -%}
         {%- set timers = states.timer | selectattr('entity_id','in',stuck_timers) | selectattr('state','in','idle') | map(attribute='entity_id') | list -%}
-        {%- set first_timer = 'input_select.' + (timers|first).split('_')[1] -%}
-        {%- if is_state(first_timer, 'Away') -%}
-          23:59:59
+        {%- if timers|length > 0 -%}
+          {%- set first_timer = 'input_select.' + (timers|first).split('_')[1] -%}
+          {%- if is_state(first_timer, 'Away') -%}
+            23:59:59
+          {%- else -%}
+            00:00:05
+          {%- endif -%}
         {%- else -%}
           00:00:05
         {%- endif -%}

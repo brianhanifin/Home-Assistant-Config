@@ -361,12 +361,12 @@
       {{ holiday() }}
     {%- endif -%}
 
-    {%- if say_pepper_warning == "true" -%}
-      {{ pepper_warning(person_arriving) }}
-    {%- endif -%}
-
     {%- if person_arriving is not undefined -%}
-      {{ welcome_home(person_arriving) }}
+      {%- if say_pepper_warning == "true" -%}
+        {{ pepper_warning(person_arriving) }}
+      {%- else -%}
+        {{ welcome_home(person_arriving) }}
+      {%- endif -%}
     {%- endif -%}
 
     {{ message }}
