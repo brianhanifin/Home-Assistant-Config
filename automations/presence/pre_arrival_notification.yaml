@@ -2,14 +2,14 @@
 ##############################################################################
 ###  Warn pepper when scary grandpa Eric arrives.
 ##############################################################################
-alias: pepper_warning
+alias: pre_arrival_notification
 initial_state: true
 trigger:
   - platform: state
     entity_id:
-      - person.eric
-      - person.heather
-    to: "home"
+      - input_select.eric
+      - input_select.heather
+    to: "Just Arrived"
 action:
   - service: script.say
     data_template:

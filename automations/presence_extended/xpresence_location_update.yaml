@@ -20,6 +20,11 @@ trigger:
       - person.sandy
     from: "home"
     to: "not_home"
+condition:
+  # Don't allow status change immediately at startup to avoid phantom changes.
+  - condition: numeric_state
+    entity_id: sensor.uptime
+    above: 0.2
 action:
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
