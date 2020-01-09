@@ -20,21 +20,34 @@ action:
   - service: timer.start
     data_template:
       duration: >
-        {%- set stuck_states = ['Just Arrived','Just Left','Away'] -%}
-        {%- set stuck_timers = states.input_select | selectattr('state','in',stuck_states) | map(attribute='entity_id') | list | replace('input_select.','timer.xpresence_') -%}
-        {%- set timers = states.timer | selectattr('entity_id','in',stuck_timers) | selectattr('state','in','idle') | map(attribute='entity_id') | list -%}
-        {%- if timers|length > 0 -%}
-          {%- set first_timer = 'input_select.' + (timers|first).split('_')[1] -%}
-          {%- if is_state(first_timer, 'Away') -%}
-            23:59:59
-          {%- else -%}
-            00:00:05
-          {%- endif -%}
-        {%- else -%}
+        {#- Select Active + Idle timers. #}
+        {%- set active_timers = states.timer | selectattr('state','in',['active']) | map(attribute='entity_id') | list %}
+        {%- set idle_timers   = states.timer | selectattr('state','in',['idle'])   | map(attribute='entity_id') | list %}
+        {#- Select "Away" + "Just ..." timers. #}
+        {%- set just_state_timers = states.input_select | selectattr('state','in',['Just Arrived','Just Left']) | map(attribute='entity_id') | join(',') | replace('input_select.','timer.xpresence_') %}
+        {%- set away_state_timers = states.input_select | selectattr('state','in',['Away']) | map(attribute='entity_id') | join(',') | replace('input_select.','timer.xpresence_') %}
+        {#- Filter away all but the timers in common. #}
+        {%- set active_24hr_just_state_timers = states.timer | selectattr('attributes.duration','in',['23:59:59']) | map(attribute='entity_id') | select('in',active_timers) | select('in',just_state_timers) | list %}
+        {%- set idle_away_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',away_state_timers) | list %}
+
+        {%- if active_24hr_just_state_timers|length > 0 %}
           00:00:05
-        {%- endif -%}
+        {% elif idle_away_state_timers|length > 0 %}
+          23:59:59
+        {% endif %}
       entity_id: >
-        {%- set stuck_states = ['Just Arrived','Just Left','Away'] -%}
-        {%- set stuck_timers = states.input_select | selectattr('state','in',stuck_states) | map(attribute='entity_id') | list | replace('input_select.','timer.xpresence_') -%}
-        {%- set timers = states.timer | selectattr('entity_id','in',stuck_timers) | selectattr('state','in','idle') | map(attribute='entity_id') | list -%}
-        {{ timers|first }}
+        {#- Select Active + Idle timers. #}
+        {%- set active_timers = states.timer | selectattr('state','in',['active']) | map(attribute='entity_id') | list %}
+        {%- set idle_timers   = states.timer | selectattr('state','in',['idle'])   | map(attribute='entity_id') | list %}
+        {#- Select "Away" + "Just ..." timers. #}
+        {%- set just_state_timers = states.input_select | selectattr('state','in',['Just Arrived','Just Left']) | map(attribute='entity_id') | join(',') | replace('input_select.','timer.xpresence_') %}
+        {%- set away_state_timers = states.input_select | selectattr('state','in',['Away']) | map(attribute='entity_id') | join(',') | replace('input_select.','timer.xpresence_') %}
+        {#- Filter away all but the timers in common. #}
+        {%- set active_24hr_just_state_timers = states.timer | selectattr('attributes.duration','in',['23:59:59']) | map(attribute='entity_id') | select('in',active_timers) | select('in',just_state_timers) | list %}
+        {%- set idle_away_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',away_state_timers) | list %}
+
+        {%- if active_24hr_just_state_timers|length > 0 %}
+          {{ active_24hr_just_state_timers|first }}
+        {% elif idle_away_state_timers|length > 0 %}
+          {{ idle_away_state_timers|first }}
+        {% endif %}
