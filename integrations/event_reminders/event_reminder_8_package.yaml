@@ -41,14 +41,6 @@ automation:
               {{ states('input_text.event_reminder_8_2') }}
             {% endif %}
 
-      # Run this routine for the second reminder, but not the first.
-      - condition: template
-        value_template: "{{ is_state('sensor.event_reminder_8_2',states('sensor.time')) }}"
-
-      - delay:
-          minutes: 2
-      - service: script.goodbye_routine
-
 input_boolean:
   event_reminder_8_skipnext:
     name: Skip Next Reminder
