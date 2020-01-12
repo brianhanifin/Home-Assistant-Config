@@ -22,6 +22,10 @@
     {%- endfor -%}
   {%- endmacro -%}
 
+  {%- macro pause() -%}
+    {{ ". " }}
+  {%- endmacro -%}
+
   {%- macro random_voice() -%}
     {{ [
         "Ivy", "Joanna", "Joey", "Justin", "Kendra", "Kimberly", 
@@ -48,14 +52,14 @@
       'I will switch on the outdoor lights.',
       'Time to turn on the front lights.'
     ]|random }}
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro dog_water_bowl() -%}
     {%- if states('binary_sensor.dog_water_bowl') == "off" -%}
       Buddy and Pepper's water bowl is empty please refill it for them.
     {%- endif -%}
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro door_window_check() -%}
@@ -73,7 +77,7 @@
       {%- for entity in open_entities -%}
         {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
       {%- endfor -%}
-      <break time="1s"/>
+      {{ pause() }}
     {%- endif -%}
   {%- endmacro -%}
 
@@ -188,7 +192,7 @@
       "Forever and forever farewell. If we do meet again, we'll smile indeed. If not, 'tis true parting was well made. ",
       "See you at the restaurant at the edge of the universe! "
     ]|random }}
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro goodnight_line() -%}
@@ -214,7 +218,7 @@
       "Wishing you a goodnight and sweetest dreams.",
       "What about good night kisses? "
     ]|random }}
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro greeting_line() -%}
@@ -226,13 +230,13 @@
     {%- else %}
       Good evening.
     {%- endif %}
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro holiday() -%}
     {% if states('sensor.holiday') not in ('unknown','') %}
       Today is {{ states('sensor.holiday') }}.
-      <break time="1s"/>
+      {{ pause() }}
     {% endif %}
   {%- endmacro -%}
 
@@ -247,13 +251,13 @@
         There are {{ lights_on|length }} lights on right now.
         The {{ get_friendly_names(lights_on) }} lights are on.
       {%- endif %}
-      <break time="1s"/>
+      {{ pause() }}
     {%- endif -%}
   {%- endmacro -%}
 
   {%- macro inside_weather() -%}
     Inside the house, it is {{ states('sensor.home_temperature')|int }} degrees.
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro outside_weather() -%}
@@ -270,7 +274,7 @@
 
     {{ ['Currently', 'Right now']|random }} in Santee, it is {{ state_attr('weather.dark_sky','temperature')|int }} degrees fahrenheit, with {{ condition }}.
     Today's forecast is {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }}, with a high of {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}, and a low of {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }} degrees.
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro pepper_warning(person_arriving) -%}
@@ -279,7 +283,7 @@
       "heather": "Heather"
     } -%}
     Head's up Pepper. {{ name[person_arriving] }} just got home!
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro plant_problems() -%}
@@ -293,7 +297,7 @@
     {%- elif state_attr('sensor.plant_problems','fertilize_number')|float > 0 -%}
       Please fertilize {{ get_friendly_list(state_attr('sensor.plant_problems','fertilize'))|replace('0',' ') }}.
     {%- endif %}
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
@@ -303,7 +307,7 @@
 
     {%- if trash|length > 10 or buddy|length > 10 or boys_weekly|length > 10 -%}
       <voice name="Brian">
-      Family Responsibilities<break time="1s"/>
+      Family Responsibilities{{ pause() }}
       {{ trash }}
       {{ buddy }}
       {{ boys_weekly }}
@@ -315,17 +319,17 @@
     {%- if "Monday" == as_timestamp(now())|timestamp_custom('%A') -%}
       {%- set dishes_boy = states('sensor.responsibility_dishes_week') -%}
       {%- set laundry_boy = "Lucas" if dishes_boy == "Kyle" else "Kyle" -%}
-      Listen up boys<break time="1s"/>
+      Listen up boys{{ pause() }}
       It is {{ dishes_boy }}'s week to do the dishes.
       And it is {{ laundry_boy }}'s week to wash the laundry and pick up the dog poop.
-      <break time="1s"/>
+      {{ pause() }}
     {%- endif -%}
   {%- endmacro -%}
 
   {%- macro responsibility_medicine_buddy() -%}
     {%- if states('sensor.medicine_buddy_given_today') != 'Today' -%}
       Please make sure Buddy's medicine has been prepared for the day.
-      <break time="1s"/>
+      {{ pause() }}
     {%- endif %}
   {%- endmacro -%}
 
@@ -335,7 +339,7 @@
       {%- set today = as_timestamp(now())|timestamp_custom('%m%d') %}
       {%- if last_curb != today -%}
         It is Monday and tomorrow is garbage day. Please take the cans to the curb.
-        <break time="1s"/>
+        {{ pause() }}
       {%- endif %}
     {%- endif %}
   {%- endmacro -%}
@@ -365,7 +369,7 @@
     "Pardon the interruption but " ~ person ~ " is home!",
     "My systems are picking up the presence of additional humans.   " ~ person ~ " has been identified as home."
     ] | random }}
-    <break time="1s"/>
+    {{ pause() }}
   {%- endmacro -%}
 
 
