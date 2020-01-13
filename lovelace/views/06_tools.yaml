@@ -93,36 +93,47 @@ cards:
                     content: >
                       ## System
                   - type: custom:decluttering-card
-                    template: button_row3
+                    template: button_row4
                     variables:
                       - entity1: script.config_check
                       - icon1: mdi:check-box-outline
                       - name1: Config Check
                       - show_state1: false
-                      # - entity2: script.config_check_and_restart
-                      # - icon2: mdi:check-all
-                      # - name2: Check & Restart
-                      # - show_state2: false
-                      - entity2: script.reboot
-                      - icon2: mdi:power
-                      - name2: Reboot Server
+                      - entity2: script.config_check_and_restart
+                      - icon2: mdi:check-all
+                      - name2: Check & Restart
                       - show_state2: false
-                      - entity3: script.restart_hass
-                      - icon3: mdi:restart
-                      - name3: Restart HASS
+                      - entity3: script.reboot
+                      - icon3: mdi:power
+                      - name3: Reboot Server
                       - show_state3: false
+                      - entity4: script.restart_hass
+                      - icon4: mdi:restart
+                      - name4: Restart HASS
+                      - show_state4: false
+
+                  # - type: custom:auto-entities
+                  #   show_empty: false
+                  #   filter:
+                  #     include:
+                  #       - entity_id: persistent_notification.1337
+                  #   card:
+                  #     type: markdown
+                  #     content: >
+                  #       ### {{ state_attr('persistent_notification.1337','title') }}
+
+                  #       {{ state_attr('persistent_notification.1337','message') }}
 
                   - type: custom:auto-entities
                     show_empty: false
                     filter:
                       include:
-                        - entity_id: persistent_notification.1337
+                        - entity_id: binary_sensor.update_available
+                          state: "on"
+                        - entity_id: sensor.potential_breaking_changes
+                          state: "> 0"
                     card:
-                      type: markdown
-                      content: >
-                        ### {{ state_attr('persistent_notification.1337','title') }}
-
-                        {{ state_attr('persistent_notification.1337','message') }}
+                      type: entities
 
                   - type: entities
                     show_header_toggle: false
@@ -132,16 +143,6 @@ cards:
                         secondary_info: last-changed
                       - entity: sensor.current_version
                         secondary_info: last-changed
-                      - type: custom:auto-entities
-                        show_empty: false
-                        filter:
-                          include:
-                            - entity_id: binary_sensor.update_available
-                              state: "on"
-                            - entity_id: sensor.potential_breaking_changes
-                              state: "> 0"
-                        card:
-                          type: entities
 
               # - type: vertical-stack
               #   cards:

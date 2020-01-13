@@ -9,23 +9,16 @@ sequence:
 
   # Restart only if the configuration is OK
   - condition: template
-    value_template: "{{ state_attr('persistent_notification.1337','message') == 'Configuration is OK!' }}"
-
-  # - delay:
-  #     seconds: 1
+    value_template: "{{ is_state_attr('persistent_notification.1337','message','Configuration is OK!') }}"
 
   # Clear any old config check notifications
   - service: persistent_notification.dismiss
     data:
       notification_id: "1337"
 
-  - delay:
-      seconds: 1
-
   - service: script.toast
     data:
-      message: "Restarting: \"Config Check\" says there are no errors! :)"
-      duration: 20000
+      message: "\"Config Check\" says there are no errors! :)"
 
   - delay:
       seconds: 2
