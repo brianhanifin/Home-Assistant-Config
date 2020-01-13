@@ -1,0 +1,16 @@
+---
+alias: "Almost Home: Eric"
+initial_state: true
+trigger:
+  platform: webhook
+  webhook_id: almost_home_eric
+action:
+  - service: script.debug
+    data:
+      message: "Eric is almost home. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p', true) }}"
+
+  - service: script.say
+    data_template:
+      media_player: media_player.kitchen
+      person_arriving: "Eric"
+      say_pepper_warning: "true"

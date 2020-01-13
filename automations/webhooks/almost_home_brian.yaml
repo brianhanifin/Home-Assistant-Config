@@ -1,0 +1,10 @@
+---
+alias: "Almost Home: Brian"
+initial_state: true
+trigger:
+  platform: webhook
+  webhook_id: almost_home_brian
+action:
+  - service: script.debug
+    data:
+      message: "Brian is almost home. {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p', true) }}"
