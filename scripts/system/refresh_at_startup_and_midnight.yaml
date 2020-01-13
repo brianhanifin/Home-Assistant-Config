@@ -8,6 +8,16 @@ sequence:
   # Update group.actionable_lights to replace group.all_lights.
   - service: script.create_actionable_lights_group
 
+  # Only preform these tasks at midnight.
+  - condition: time
+    after: "0:00:00"
+    before: "0:10:00"
+
+  # Reset the status of Buddy's Medicine sensor.
+  - service: homeassistant.update_entity
+    entity_id: sensor.medicine_buddy_given_today
+
+
   # Reset family contribution switches (created as a workaround for the HassKit iOS app).
   - service: switch.turn_off
     entity_id:
@@ -26,6 +36,19 @@ sequence:
       - switch.hasskit_lucas_other
       - switch.hasskit_lucas_trash
 
-  # Reset the status of Buddy's Medicine sensor.
   - service: homeassistant.update_entity
-    entity_id: sensor.medicine_buddy_given_today
+    entity_id:
+      - switch.hasskit_medicine_buddy_taken
+      - switch.hasskit_trash_to_curb
+      - switch.hasskit_kyle_clothes_sort
+      - switch.hasskit_kyle_clothes_wash
+      - switch.hasskit_kyle_dishes
+      - switch.hasskit_kyle_dookie
+      - switch.hasskit_kyle_other
+      - switch.hasskit_kyle_trash
+      - switch.hasskit_lucas_clothes_sort
+      - switch.hasskit_lucas_clothes_wash
+      - switch.hasskit_lucas_dishes
+      - switch.hasskit_lucas_dookie
+      - switch.hasskit_lucas_other
+      - switch.hasskit_lucas_trash

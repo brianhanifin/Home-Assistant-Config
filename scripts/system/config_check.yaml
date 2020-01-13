@@ -7,3 +7,13 @@ sequence:
 
   # Run the config_check
   - service: config_check.run
+
+  # Wait for the notification to appear
+  - wait_template: "{{ states('persistent_notification.1337') is string }}"
+    timeout: 00:03:00
+
+  # Display the message as a toast notification
+  - service: script.toast
+    data_template:
+      message: "{{ state_attr('persistent_notification.1337','message') }}"
+      duration: 10000
