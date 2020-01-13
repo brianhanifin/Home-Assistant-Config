@@ -2,13 +2,21 @@
 platform: template
 sensors:
   update_available:
-    entity_id: sensor.latest_version
+    entity_id: sensor.latest_release
     friendly_name: Home Assistant Update Available?
     value_template: >-
-      {{
-        states('sensor.latest_version') != "unknown"
-        and (states('sensor.current_version') != states('sensor.latest_version'))
-      }}
+      {% set current_version = states("sensor.current_version") %}
+      {% if "b" in current_version %}
+        {{
+          states('sensor.latest_release') != "unknown"
+          and (current_version != states('sensor.latest_beta'))
+        }}
+      {% else %}
+        {{
+          states('sensor.latest_release') != "unknown"
+          and (current_version != states('sensor.latest_release'))
+        }}
+      {% endif %}
     # value_template: >
     #   {%- set docker_version = states('sensor.docker_lastest_build').split('.') -%}
     #   {%- set current_version = states('sensor.current_version').split('.') -%}

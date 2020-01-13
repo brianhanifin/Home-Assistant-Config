@@ -10,18 +10,23 @@ trigger:
   - platform: template
     value_template: >
       {{
-        states('sensor.latest_version') != "unknown"
-        and (states('sensor.current_version') != states('sensor.latest_version'))
+        states('sensor.latest_release') != "unknown"
+        and (states('sensor.current_version') != states('sensor.latest_release'))
       }}
 action:
   - service: script.notify_web
     data_template:
       title: "New Home Assistant Available"
-      message: "{{ sensor.lastest_version }} is available!"
+      message: "{{ sensor.latest_release }} is available!"
       id: "update"
+
+  - service: script.toast
+    data_template:
+      message: "{{ sensor.latest_release }} is available!"
+      duration: 10000
 
   - service: script.notify_mobile
     data_template:
       title: "Home Assistant Update"
-      message: "{{ sensor.lastest_version }} is available!"
+      message: "{{ sensor.latest_release }} is available!"
       who: "brian"
