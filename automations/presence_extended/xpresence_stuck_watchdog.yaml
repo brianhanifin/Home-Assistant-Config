@@ -5,7 +5,7 @@ alias: xpresence_stuck_watchdog
 initial_state: true
 trigger:
   # Check every 10 minutes.
-  - platform: time_pattern 
+  - platform: time_pattern
     minutes: '/10'
 action:
   # Are there any stuck timers?
@@ -20,8 +20,10 @@ action:
       {#- Filter away all but the timers in common. #}
       {%- set active_24hr_just_state_timers = states.timer | selectattr('attributes.duration','in',['23:59:59']) | map(attribute='entity_id') | select('in',active_timers) | select('in',just_state_timers) | list %}
       {%- set idle_away_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',away_state_timers) | list %}
+      {%- set idle_just_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',just_state_timers) | list %}
       {{ active_24hr_just_state_timers|length > 0
-          or idle_away_state_timers|length > 0 }}
+          or idle_away_state_timers|length > 0
+          or idle_just_state_timers|length > 0 }}
 
   # Restart the first stuck timer.
   - service: timer.start
@@ -36,8 +38,10 @@ action:
         {#- Filter away all but the timers in common. #}
         {%- set active_24hr_just_state_timers = states.timer | selectattr('attributes.duration','in',['23:59:59']) | map(attribute='entity_id') | select('in',active_timers) | select('in',just_state_timers) | list %}
         {%- set idle_away_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',away_state_timers) | list %}
+        {%- set idle_just_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',just_state_timers) | list %}
 
-        {%- if active_24hr_just_state_timers|length > 0 %}
+        {%- if active_24hr_just_state_timers|length > 0
+            or idle_just_state_timers|length > 0 %}
           00:00:05
         {% elif idle_away_state_timers|length > 0 %}
           23:59:59
@@ -52,9 +56,12 @@ action:
         {#- Filter away all but the timers in common. #}
         {%- set active_24hr_just_state_timers = states.timer | selectattr('attributes.duration','in',['23:59:59']) | map(attribute='entity_id') | select('in',active_timers) | select('in',just_state_timers) | list %}
         {%- set idle_away_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',away_state_timers) | list %}
+        {%- set idle_just_state_timers = states.timer | map(attribute='entity_id') | select('in',idle_timers) | select('in',just_state_timers) | list %}
 
         {%- if active_24hr_just_state_timers|length > 0 %}
           {{ active_24hr_just_state_timers|first }}
         {% elif idle_away_state_timers|length > 0 %}
           {{ idle_away_state_timers|first }}
+        {% elif idle_just_state_timers|length > 0 %}
+          {{ idle_just_state_timers|first }}
         {% endif %}
