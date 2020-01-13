@@ -1,0 +1,34 @@
+---
+# Brian or Nerene leave Costco.
+alias: leaving_costco
+initial_state: true
+trigger:
+  platform: zone
+  event: leave
+  zone: zone.costco
+  entity_id:
+    - person.brian
+    - person.nerene
+condition:
+  condition: time
+  after: '06:00'
+  before: '21:00'
+action:
+  - service: script.say
+    data_template:
+      media_player: group.alexa_welcome
+      message: >-
+        {% set message = [
+          "Just a head's up, [name1] is done with court.",
+          "Your [name2] is on her way home from court."
+        ]|random %}
+        {% set name = trigger.to_state.friendly_name %}
+        {% if ['name2'] in message %}
+          {% if name == "Nerene" %}
+            {% set name = "mom" %}
+          {% elif name == "Brian" %}
+            {% set name = "dad" %}
+          {% endif %} 
+        {% endif %} 
+        {{ message|replace("[name1]",name)|replace("[name2]",name) }}
+      say_greeting: "false"
