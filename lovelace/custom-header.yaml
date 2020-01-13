@@ -4,11 +4,11 @@
 # This addon is used to modify the header in Home Assistant.
 #
 # https://maykar.github.io/custom-header/#configuration/main
-#### #### #### #### #### #### #### #### #### #### #### #### 
+#### #### #### #### #### #### #### #### #### #### #### ####
 
 compact_mode: true
 chevrons: false
-background: "rgba(0,0,0,1)"
+background: "rgba(0,0,0,.6)"
 notify_indicator_color: "#e80000"
 swipe: true
 swipe_wrap: false
@@ -20,7 +20,7 @@ options: hide
 voice: hide
 
 button_text:
-  options: "{{ hours12 }}:{{ minutesLZ }} {{ ampm }}"
+  options: "{{ hours12 }}:{{ minutesLZ }}"
 
 tab_icons:
   outdoors: "{{ state_attr('sensor.today_icon', 'icon') }}"
@@ -29,7 +29,7 @@ exceptions:
   - conditions:
       user: brian
     config:
-      #background: "rgba(0,0,0,0.3)"
+      background: "rgba(0,0,0,0.3)"
       notifications: show
       options: show
       voice: show
@@ -46,6 +46,15 @@ exceptions:
     config:
       disable_sidebar: true
       hide_tabs: tools,lock,test
+
+  # Windows App
+  - conditions:
+      user_agent: Electron
+    config:
+      menu_hide: true
+      voice_dropdown: true
+      button_text:
+        options: ""
 
   - conditions:
       user_agent: Mobile
