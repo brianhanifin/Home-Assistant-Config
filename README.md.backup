@@ -4,14 +4,10 @@
 | :---| :--- |
 | [![Github Action Status][github-build-status-shield]][github-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits]  | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
 
-Home Assistant Version: 0.104.0b3
-
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
-
-As of my last commit I have **959 entities**, with **283 sensors** in Home Assistant. I am also using **23 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -27,7 +23,7 @@ My wife is really happy with how this is working and I am considering incorporat
 #### Bedside Toggle Switches
 <span style="float:left">![bedroom_switches]</span>I added a battery powered Xiaomi double switch to my wife's bedside table. Single clicks toggle the lights on either side of our bed. While a long press toggles the bedroom fans, or the sound machine.
 
-### Official User Interface (Lovelace)
+### Lovelace
 
 | | | | | |
 | --- | --- | --- | --- | --- |
@@ -39,12 +35,13 @@ My wife is really happy with how this is working and I am considering incorporat
 
 ### ESPHome
 I am inspired to finally find uses for the bag full of random ESP boards I purchased about a year ago, when I thought I was going to create my own sensors to work with Homebridge. *While waiting for them to arrive on a slow boat from China, I discovered Home Assistant and decided to go a different way!*
-
 #### ESP32
 **Bluetooth Low Energy Device Hub**:
 [Using the example code from esphome.io][esphome-ble-hub] I deployed a bridge in my Garage to pass along the data from the Xiaomi MiFlora sensor I stuck in one of our plant pots in the Front Yard. I had this for over almost a year and was unable to get the data into Home Assistant, until now! :smile:
+#### ESP8266 + ESP8285
+-**Water Bowl Sensor**: [Using the Sonoff Basic button press binary sensor][esphome-sonoff-basic] as a starting point, I deployed a ESP8285 with two simple jumper wires attached to sense when the dog's water bowl becomes empty. If the sensor still reads the bowl as empty after 5 minutes then Alexa announces it is time to fill the bowl.-
 
-#### Shelly 1 Boards
+#### Shelly Boards
 These devices are great for shoving in a box behind a light switch to add smarts.
 
 #### SonOff Plugs
@@ -62,8 +59,11 @@ We have become an almost controller-free house! Our two TV areas and both have h
 * "Alexa, turn on the " *Family Room or Play Room* " TV."
 * "Alexa, turn off the " *Family Room or Play Room* " TV."
 
+### Insteon
+I started with HomeKit compatible *Insteon* lamp dimmer modules. I plug a few... er... lamps into them. :)
+
 ### Lutron
-In-wall dimmer switches and in-wall wireless remotes. The remotes are installed in several locations that otherwise would not have a light switch. Somehow our Play Room never had a light switch installed, now it does.
+Along with Inteon dimmer modules I also started installing *Lutron* in-wall dimmer switches and in-wall wireless remotes. The remotes are installed in several locations that otherwise would not have a light switch. Somehow our Play Room never had a light switch installed, now it does.
 
 ### Philips Hue
 Hue color bulbs for Porch Light, Garage Entry Light, and my Family Room Table Lamp. The Porch bulb changes color based on the current national holiday (or family birthday/anniversary) while the Garage Entry Light and Family Room Table Lamp flash briefly, then stay on to indicate certain events: such as the garage door is open, or Alexa is announcing it is time for the boys to go to bed. Two of my remaining five Hue bulbs are reserved for an additional two porch/entryway hanging lamps, so I can set 3 colors for each holiday! :)
@@ -81,7 +81,7 @@ Based on DrZzs recommendation I switch presence tracking for my and my wife's ph
 ### Smoke + Carbon Monoxide Detectors
 Thanks to Carlo's article "[PSA: CHECK OUT YOUR SMOKE DETECTORS (ONCE EVERY 10 YEARS)][carlo-blog-smoke]" I realized that I have lived in my house for almost 11 years now, and we're due for new smoke detectors.
 
-I have begun replacing them with new First Alert ZCombo Z-Wave smoke dectors.
+I have added 2 of these around the house and setup an iOS alert to alert my phone should the Smoke or CO sensor be triggered anywhere in the house. ~~As they are interconnected they all appear as one device in Wink and Home Assistant!~~ Unfortunatley, Wink has been super flaky and they discontinued support for the Wink 1 hub, and are running out of money. So I need to replace these smoke detectors with some Z-wave ones perhaps?
 
 ### Xiaomi
 This Chinese company makes a lot of very useful and inexpensive wireless smart home products. I use their Zigbee smart hub to get these devices to talk to Home Assistant.
@@ -107,68 +107,14 @@ Pros:
 Cons:
 * Requires a long Ethernet cable run to each Access Point. (But also a "Pro"... see the last point above.)
 
-### Zigbee
-I have all of my Philips Hue white bulbs run off of the Conbee II Zigbee USB stick, as well as a Xiaomi Humidity/Temperature sensor.
+
+### Wink Hub
+~~I picked up an inexpensive version 1 Wink Hub so I could add Z-Wave devices and replace my Lutron Hub. I have now added Kidee Smoke + Carbon Monoxide detectors as well.~~
+
+I have almost completely moved all devices over to my Zwave2MQTT install or my Conbee Zigbee install.
 
 ### Z-Wave
 I have added some GE Z-Wave in-wall switches in the kitchen since we don't care to dim the overhead lights in there. I also have a few dimmers as well.
-
-## Technical Details
-
-<details>
-  <summary>### Custom Components</summary>
-  
-  ### [variable]({ integration.documentation }})
-  
-  ### [HP Printer Integration]({ integration.documentation }})
-  
-  ### [National Weather Service Radar]({ integration.documentation }})
-  
-  ### [Breaking Changes]({ integration.documentation }})
-  
-  ### [HACS (Home Assistant Community Store)]({ integration.documentation }})
-  
-  _{'description': 'Manage (Install, track, upgrade) and discover custom elements for Home Assistant.', 'usage': 'I use this to discover new awesome stuff, and to keep the custom elements I use up to date with the latest version of it from the developer.', 'config_flow': True}_
-  
-  ### [Browser mod]({ integration.documentation }})
-  
-  ### [ics Calendar]({ integration.documentation }})
-  
-  ### [Weatheralerts]({ integration.documentation }})
-  
-  ### [Config Check]({ integration.documentation }})
-  
-  ### [Alexa Media Player]({ integration.documentation }})
-  
-  ### [Amcrest Camera]({ integration.documentation }})
-  
-  ### [Youtube Sensor]({ integration.documentation }})
-  
-  ### [notify_hasskit]({ integration.documentation }})
-  
-  ### [UniFi Gateway]({ integration.documentation }})
-  
-  ### [Anniversaries]({ integration.documentation }})
-  
-  ### [Battery Level]({ integration.documentation }})
-  
-  ### [Illuminance]({ integration.documentation }})
-  
-  ### [Lutron Caséta Smart Bridge PRO / RA2 Select]({ integration.documentation }})
-  
-  ### [Apple TV]({ integration.documentation }})
-  
-  ### [Generate readme]({ integration.documentation }})
-  
-  _{'description': 'Generates this awesome readme file.', 'usage': 'I use this integration to generate this readme, and to convert my lovelace configuration.', 'config_flow': True}_
-  
-  ### [Circadian Lighting]({ integration.documentation }})
-  
-  ### [Fontawesome icons]({ integration.documentation }})
-  
-  ### [Rainforest]({ integration.documentation }})
-  
-</details>
 
 ---
 
