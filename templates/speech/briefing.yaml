@@ -313,7 +313,7 @@
 
   {%- macro responsibility_boys_weekly() -%}
     {%- if "Monday" == as_timestamp(now())|timestamp_custom('%A') -%}
-      {%- set dishes_boy = states('sensor.responsibility_dishes_week') -%}
+      {%- set dishes_boy = states('variable.responsibility_dishes_week') -%}
       {%- set laundry_boy = "Lucas" if dishes_boy == "Kyle" else "Kyle" -%}
       Listen up boys{{ pause() }}
       It is {{ dishes_boy }}'s week to do the dishes.
