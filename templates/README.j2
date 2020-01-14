@@ -134,16 +134,22 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
 } -%}
 <details>
   <summary>
+
 ### Custom Components
+
   </summary>
-  {% for integration in custom_components %}
-  ### [{{ integration.name }}]({ integration.documentation }})
-  {% if integration.domain in custom_component_descriptions %}
-  _{{ custom_component_descriptions[integration.domain] }}_
-  {% endif -%}
-  {% endfor -%}
-  {% endif %}
+
+  <dl>
+    {% for integration in custom_components %}
+    <dt> {{ integration.name }} </dt>
+    {% if integration.domain in custom_component_descriptions %}
+    <dd> {{ custom_component_descriptions[integration.domain] }} </dd>
+    {% endif -%}
+    {% endfor -%}
+  </dt>
+
 </details>
+{% endif %}
 
 ---
 

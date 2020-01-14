@@ -11,7 +11,7 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **959 entities**, with **283 sensors** in Home Assistant. I am also using **23 custom components**.
+As of my last commit I have **962 entities**, with **286 sensors** in Home Assistant. I am also using **23 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -121,60 +121,66 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
 
 <details>
   <summary>
+
 ### Custom Components
+
   </summary>
-  
-  ### [variable]({ integration.documentation }})
-  
-  ### [HP Printer Integration]({ integration.documentation }})
-  
-  ### [National Weather Service Radar]({ integration.documentation }})
-  
-  ### [Breaking Changes]({ integration.documentation }})
-  
-  ### [HACS (Home Assistant Community Store)]({ integration.documentation }})
-  
-  _{'description': 'Manage (Install, track, upgrade) and discover custom elements for Home Assistant.', 'usage': 'I use this to discover new awesome stuff, and to keep the custom elements I use up to date with the latest version of it from the developer.', 'config_flow': True}_
-  
-  ### [Browser mod]({ integration.documentation }})
-  
-  ### [ics Calendar]({ integration.documentation }})
-  
-  ### [Weatheralerts]({ integration.documentation }})
-  
-  ### [Config Check]({ integration.documentation }})
-  
-  ### [Alexa Media Player]({ integration.documentation }})
-  
-  ### [Amcrest Camera]({ integration.documentation }})
-  
-  ### [Youtube Sensor]({ integration.documentation }})
-  
-  ### [notify_hasskit]({ integration.documentation }})
-  
-  ### [UniFi Gateway]({ integration.documentation }})
-  
-  ### [Anniversaries]({ integration.documentation }})
-  
-  ### [Battery Level]({ integration.documentation }})
-  
-  ### [Illuminance]({ integration.documentation }})
-  
-  ### [Lutron Caséta Smart Bridge PRO / RA2 Select]({ integration.documentation }})
-  
-  ### [Apple TV]({ integration.documentation }})
-  
-  ### [Generate readme]({ integration.documentation }})
-  
-  _{'description': 'Generates this awesome readme file.', 'usage': 'I use this integration to generate this readme, and to convert my lovelace configuration.', 'config_flow': True}_
-  
-  ### [Circadian Lighting]({ integration.documentation }})
-  
-  ### [Fontawesome icons]({ integration.documentation }})
-  
-  ### [Rainforest]({ integration.documentation }})
-  
+
+  <dl>
+    
+    <dt> variable </dt>
+    
+    <dt> HP Printer Integration </dt>
+    
+    <dt> National Weather Service Radar </dt>
+    
+    <dt> Breaking Changes </dt>
+    
+    <dt> HACS (Home Assistant Community Store) </dt>
+    
+    <dd> {'description': 'Manage (Install, track, upgrade) and discover custom elements for Home Assistant.', 'usage': 'I use this to discover new awesome stuff, and to keep the custom elements I use up to date with the latest version of it from the developer.', 'config_flow': True} </dd>
+    
+    <dt> Browser mod </dt>
+    
+    <dt> ics Calendar </dt>
+    
+    <dt> Weatheralerts </dt>
+    
+    <dt> Config Check </dt>
+    
+    <dt> Alexa Media Player </dt>
+    
+    <dt> Amcrest Camera </dt>
+    
+    <dt> Youtube Sensor </dt>
+    
+    <dt> notify_hasskit </dt>
+    
+    <dt> UniFi Gateway </dt>
+    
+    <dt> Anniversaries </dt>
+    
+    <dt> Battery Level </dt>
+    
+    <dt> Illuminance </dt>
+    
+    <dt> Lutron Caséta Smart Bridge PRO / RA2 Select </dt>
+    
+    <dt> Apple TV </dt>
+    
+    <dt> Generate readme </dt>
+    
+    <dd> {'description': 'Generates this awesome readme file.', 'usage': 'I use this integration to generate this readme, and to convert my lovelace configuration.', 'config_flow': True} </dd>
+    
+    <dt> Circadian Lighting </dt>
+    
+    <dt> Fontawesome icons </dt>
+    
+    <dt> Rainforest </dt>
+    </dt>
+
 </details>
+
 
 ---
 
