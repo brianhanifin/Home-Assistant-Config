@@ -5,15 +5,16 @@ alias: front_door_presence_detected
 initial_state: true
 trigger:
   platform: state
-  entity_id: binary_sensor.ring_front_door_presence
+  entity_id: binary_sensor.front_door_presence
   to: "on"
-condition:
-  condition: or
-  conditions:
-    - condition: sun
-      after: sunset
-    - condition: sun
-      before: sunrise
 action:
+  - service: browser_mod.command
+    data:
+      command: more-info
+      entity_id: camera.front_door
+
+  - condition: sun
+    after: sunset
+
   - service: scene.turn_on
     entity_id: scene.front_full_brightness
