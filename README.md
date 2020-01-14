@@ -11,7 +11,7 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **962 entities**, with **286 sensors** in Home Assistant. I am also using **23 custom components**.
+As of my last commit I have **966 entities**, with **287 sensors** in Home Assistant. I am also using **23 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -133,7 +133,7 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
   
   <dt> HACS (Home Assistant Community Store) </dt>
   
-  <dd> {'description': 'Manage (Install, track, upgrade) and discover custom elements for Home Assistant.', 'usage': 'I use this to discover new awesome stuff, and to keep the custom elements I use up to date with the latest version of it from the developer.', 'config_flow': True} </dd>
+  <dd> Manage (Install, track, upgrade) and discover custom elements for Home Assistant. </dd>
   
   <dt> Browser mod </dt>
   
@@ -165,7 +165,7 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
   
   <dt> Generate readme </dt>
   
-  <dd> {'description': 'Generates this awesome readme file.', 'usage': 'I use this integration to generate this readme, and to convert my lovelace configuration.', 'config_flow': True} </dd>
+  <dd> Generates this awesome readme file. </dd>
   
   <dt> Circadian Lighting </dt>
   
