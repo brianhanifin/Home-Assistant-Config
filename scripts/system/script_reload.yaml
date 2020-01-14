@@ -1,7 +1,15 @@
 ---
 sequence:
-  - delay:
-      seconds: 1
+  # Reloading the script from a script breaks this script until scripts are reloaded
+  # from the server control page. So, instead send the user to the page.
+  - service: browser_mod.navigate
+    data:
+      navigation_path: /config/server_control
+      # deviceID:
+      #   - this
+
+  # - delay:
+  #     seconds: 1
 
   # Run the config_check
   - service: script.config_check
@@ -18,13 +26,12 @@ sequence:
   - service: script.toast
     data:
       message: "✔️ config = no bugs"
+      duration: 2000
 
   - delay:
       seconds: 2
 
   - service: script.toast
     data:
-      message: Reloading scripts...
-      duration: 5000
-
-  - service: shell_command.script_reload
+      message: Please click RELOAD SCRIPTS.
+      duration: 0
