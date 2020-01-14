@@ -1,5 +1,8 @@
 ---
 sequence:
+  - delay:
+      seconds: 1
+
   # Run the config_check
   - service: script.config_check
 
@@ -19,4 +22,9 @@ sequence:
   - delay:
       seconds: 2
 
-  - service: script.restart_hass
+  - service: script.toast
+    data:
+      message: Reloading automations...
+      duration: 5000
+
+  - service: automation.reload

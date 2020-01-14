@@ -93,24 +93,28 @@ cards:
                     content: >
                       ## System
                   - type: custom:decluttering-card
-                    template: button_row4
+                    template: button_row3
                     variables:
                       - entity1: script.config_check
-                      - icon1: mdi:check-box-outline
-                      - name1: Config Check
+                      - name1: ✔️ Config
                       - show_state1: false
-                      - entity2: script.config_check_and_restart
-                      - icon2: mdi:check-all
-                      - name2: Check & Restart
+                      - entity2: script.automation_reload
+                      - name2: 🔄 Automations
                       - show_state2: false
-                      - entity3: script.reboot
-                      - icon3: mdi:power
-                      - name3: Reboot Server
+                      - entity3: script.script_reload
+                      - name3: 🔄 Scripts
                       - show_state3: false
-                      - entity4: script.restart_hass
-                      - icon4: mdi:restart
-                      - name4: Restart HASS
-                      - show_state4: false
+                  - type: custom:decluttering-card
+                    template: button_row4
+                    variables:
+                      - template1: button_blank
+                      - entity2: script.config_check_and_reboot_server
+                      - name2: 🔄 Server
+                      - show_state2: false
+                      - entity3: script.config_check_and_restart
+                      - name3: 🔄 HASS
+                      - show_state3: false
+                      - template4: button_blank
 
                   # - type: custom:auto-entities
                   #   show_empty: false
