@@ -19,10 +19,14 @@ As of my last commit I have **959 entities**, with **283 sensors** in Home Assis
 
 ### Physical Buttons
 
+<details>
+  <summary>
 #### Dog Medicine Logger
+  </summary>
 <span style="float:left">![medicine button][button-medicine]</span> Recently I stuck a wireless push button inside the cabinet where we keep our dog's seizure medicine. When we prepare his pill treats for the day, and give him his first dose a press of the button logs today's date. Around 9am an automation runs that announces that the dog's medicine needs his medicine. However, if the button was pressed earlier in the day the announcement is not made.
 
 My wife is really happy with how this is working and I am considering incorporating more of these into our daily routine. Maybe Home Assistant could take over more of our household reminders from apps on our Phones?
+</details>
 
 #### Bedside Toggle Switches
 <span style="float:left">![bedroom_switches]</span>I added a battery powered Xiaomi double switch to my wife's bedside table. Single clicks toggle the lights on either side of our bed. While a long press toggles the bedroom fans, or the sound machine.
@@ -116,7 +120,9 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
 ## Technical Details
 
 <details>
-  <summary>### Custom Components</summary>
+  <summary>
+### Custom Components
+  </summary>
   
   ### [variable]({ integration.documentation }})
   
