@@ -4,7 +4,7 @@
 | :---| :--- |
 | [![Github Action Status][github-build-status-shield]][github-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits]  | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
 
-![ha-version-shield]
+[![ha-version-shield]][ha-version]
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
@@ -216,6 +216,7 @@ All of my configuration files are tested against the most stable version of home
 [bedroom_switches]: ./README-images/xiaomi_double_switch.jpeg
 [button-medicine]: ./README-images/button_medicine.jpeg
 
+[ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
 [ha-version-shield]: https://img.shields.io/badge/Home_Assistant-0.104.0b5-41BDF5?logo=home assistant
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
