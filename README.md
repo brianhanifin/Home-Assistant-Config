@@ -4,14 +4,14 @@
 | :---| :--- |
 | [![Github Action Status][github-build-status-shield]][github-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits]  | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
 
-Home Assistant Version: 0.104.0b3
+Home Assistant Version: 0.104.0b5
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **966 entities**, with **287 sensors** in Home Assistant. I am also using **23 custom components**.
+As of my last commit I have **977 entities**, with **293 sensors** in Home Assistant. I am also using **22 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -148,8 +148,6 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
   <dt> Amcrest Camera </dt>
   
   <dt> Youtube Sensor </dt>
-  
-  <dt> notify_hasskit </dt>
   
   <dt> UniFi Gateway </dt>
   
