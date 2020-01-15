@@ -8,6 +8,15 @@ trigger:
   entity_id: binary_sensor.front_door_presence
   to: "on"
 action:
+  - delay:
+      seconds: 5
+
+  # Display the message as a toast notification
+  - service: script.toast
+    data:
+      message: "Someone is at the front door."
+      duration: 0
+
   - service: browser_mod.command
     data:
       command: more-info

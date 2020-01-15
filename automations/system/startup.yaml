@@ -25,7 +25,8 @@ action:
   - service: script.turn_on
     entity_id: script.create_actionable_lights_group
 
-  # - delay:
-  #     minutes: 1
-  # - service: automation.turn_on
-  #   entity_id: automation.pre_arrival_notification
+  # Display the message as a toast notification
+  - service: script.toast
+    data:
+      message: "We're back online!"
+      duration: 5000
