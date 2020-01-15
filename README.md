@@ -4,14 +4,14 @@
 | :---| :--- |
 | [![Github Action Status][github-build-status-shield]][github-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits]  | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
 
-[![ha-version-shield]][ha-version]
+[![ha-version-shield]][ha-version] ![maintained]
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **978 entities**, with **293 sensors** in Home Assistant. I am also using **22 custom components**.
+As of my last commit I have **974 entities**, with **290 sensors** in Home Assistant. I am also using **22 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -19,14 +19,10 @@ As of my last commit I have **978 entities**, with **293 sensors** in Home Assis
 
 ### Physical Buttons
 
-<details>
-  <summary>
 #### Dog Medicine Logger
-  </summary>
 <span style="float:left">![medicine button][button-medicine]</span> Recently I stuck a wireless push button inside the cabinet where we keep our dog's seizure medicine. When we prepare his pill treats for the day, and give him his first dose a press of the button logs today's date. Around 9am an automation runs that announces that the dog's medicine needs his medicine. However, if the button was pressed earlier in the day the announcement is not made.
 
 My wife is really happy with how this is working and I am considering incorporating more of these into our daily routine. Maybe Home Assistant could take over more of our household reminders from apps on our Phones?
-</details>
 
 #### Bedside Toggle Switches
 <span style="float:left">![bedroom_switches]</span>I added a battery powered Xiaomi double switch to my wife's bedside table. Single clicks toggle the lights on either side of our bed. While a long press toggles the bedroom fans, or the sound machine.
@@ -118,6 +114,9 @@ I have all of my Philips Hue white bulbs run off of the Conbee II Zigbee USB sti
 I have added some GE Z-Wave in-wall switches in the kitchen since we don't care to dim the overhead lights in there. I also have a few dimmers as well.
 
 ## Technical Details
+
+
+
 
 ### Custom Components
 
@@ -224,6 +223,8 @@ All of my configuration files are tested against the most stable version of home
 
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
+
+[maintained]: https://img.shields.io/maintenance/yes/2020.svg
 
 [github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [github-master]: https://github.com/BrianHanifin/Home-Assistant-Config/commits/master

@@ -4,7 +4,7 @@
 | :---| :--- |
 | [![Github Action Status][github-build-status-shield]][github-build-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits]  | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
 
-[![ha-version-shield]][ha-version]
+[![ha-version-shield]][ha-version] ![maintained]
 
 ## About our smart home
 I started using Home Assistant in the spring of 2018 when I outgrew the limited automations on Apple's HomeKit platform. While my Home Assistant initially included many HomeKit smart plugs (mostly the iHome ones), I eventually moved away from Homekit altogether.
@@ -19,14 +19,10 @@ As of my last commit I have **{{ states|count }} entities**, with **{{ states.se
 
 ### Physical Buttons
 
-<details>
-  <summary>
 #### Dog Medicine Logger
-  </summary>
 <span style="float:left">![medicine button][button-medicine]</span> Recently I stuck a wireless push button inside the cabinet where we keep our dog's seizure medicine. When we prepare his pill treats for the day, and give him his first dose a press of the button logs today's date. Around 9am an automation runs that announces that the dog's medicine needs his medicine. However, if the button was pressed earlier in the day the announcement is not made.
 
 My wife is really happy with how this is working and I am considering incorporating more of these into our daily routine. Maybe Home Assistant could take over more of our household reminders from apps on our Phones?
-</details>
 
 #### Bedside Toggle Switches
 <span style="float:left">![bedroom_switches]</span>I added a battery powered Xiaomi double switch to my wife's bedside table. Single clicks toggle the lights on either side of our bed. While a long press toggles the bedroom fans, or the sound machine.
@@ -120,7 +116,7 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
 ## Technical Details
 
 {% if custom_components %}
-{%- set custom_component_descriptions = {
+{% set custom_component_descriptions = {
 	"readme": {
 		"description": "Generates this awesome readme file.",
 		"usage": "I use this integration to generate this readme, and to convert my lovelace configuration.",
@@ -131,7 +127,7 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
 		"usage": "I use this to discover new awesome stuff, and to keep the custom elements I use up to date with the latest version of it from the developer.",
 		"config_flow": True
 	}
-} -%}
+} %}
 
 ### Custom Components
 
@@ -196,6 +192,8 @@ All of my configuration files are tested against the most stable version of home
 
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
+
+[maintained]: https://img.shields.io/maintenance/yes/{{ states('sensor.date')[0:4] }}.svg
 
 [github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [github-master]: https://github.com/BrianHanifin/Home-Assistant-Config/commits/master
