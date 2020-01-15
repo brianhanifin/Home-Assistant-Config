@@ -140,16 +140,45 @@ cards:
                     card:
                       type: entities
 
-                  - type: entities
+                  - type: glance
                     show_header_toggle: false
-                    show_state: false
                     entities:
-                      - entity: sensor.latest_beta
-                        secondary_info: last-changed
-                      - entity: sensor.latest_release
-                        secondary_info: last-changed
-                      - entity: sensor.current_version
-                        secondary_info: last-changed
+                      - sensor.current_version
+                      - sensor.latest_release
+                      - sensor.latest_beta
+
+                  - type: custom:decluttering-card
+                    template: button_row3
+                    variables:
+                      - entity1: sensor.unifi_gateway_alerts
+                      - name1: Network
+                      - icon1: mdi:lan
+                      - show_state1: false
+                      - tap_action1:
+                          action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: Network Status
+                            card:
+                              type: custom:decluttering-card
+                              template: popup_network
+                            deviceID:
+                              - this
+                      - entity2: sensor.uptime
+                      - name2: System
+                      - icon2: mdi:server
+                      - show_state2: false
+                      - tap_action2:
+                          action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: System
+                            card:
+                              type: custom:decluttering-card
+                              template: popup_system
+                            deviceID:
+                              - this
+                      - template3: button_blank
 
               # - type: vertical-stack
               #   cards:
