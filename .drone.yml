@@ -7,14 +7,20 @@ trigger:
     - master
 
 steps:
-  - name: "Config Check: Latest"
-    image: homeassistant/home-assistant:latest
-    pull: always
-    commands:
-      - cd /usr/src/app
-      - .ci/make_fake_secrets.sh
-      - "python -m homeassistant -c /drone/src/home-assistant/settings \
-        --script check_config"
+- name: en
+  image: alpine
+  commands:
+  - echo hello
+  - echo world
+
+  # - name: "Config Check: Latest"
+  #   image: homeassistant/home-assistant:latest
+  #   pull: always
+  #   commands:
+  #     - cd /usr/src/app
+  #     - .ci/make_fake_secrets.sh
+  #     - "python -m homeassistant -c /drone/src/home-assistant/settings \
+  #       --script check_config"
 
   # - name: "Config Check: Dev"
   #   image: homeassistant/home-assistant:dev
@@ -38,3 +44,6 @@ steps:
   #   commands:
   #     - pip3 install --upgrade pip yamllint
   #     - yamllint ./home-assistant/settings/
+
+node:
+  type: build
