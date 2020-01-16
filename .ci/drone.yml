@@ -1,5 +1,6 @@
 ---
 kind: pipeline
+type: exec
 name: Home Assistant
 
 trigger:
@@ -7,19 +8,19 @@ trigger:
     - master
 
 steps:
-  # - name: en
-  #   image: alpine
-  #   commands:
-  #   - echo hello
-  #   - echo world
-
-  - name: "Config Check: Stable"
-    image: homeassistant/home-assistant:stable
-    pull: always
+  - name: en
+    image: alpine
     commands:
-      - cd /usr/src/homeassistant
-      - "python -m homeassistant -c /drone/src/home-assistant/settings \
-          --script check_config"
+    - echo hello
+    - echo world
+
+  # - name: "Config Check: Stable"
+  #   image: homeassistant/home-assistant:stable
+  #   pull: always
+  #   commands:
+  #     - cd /usr/src/homeassistant
+  #     - "python -m homeassistant -c /drone/src/home-assistant/settings \
+  #         --script check_config"
 
 # node:
 #   type: build
