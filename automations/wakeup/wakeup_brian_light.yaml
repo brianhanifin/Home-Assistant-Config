@@ -8,7 +8,7 @@ condition:
   - condition: state
     entity_id: person.brian
     state: home
- # Continue today is a wakeup day.
+  # Continue today is a wakeup day.
   - condition: state
     entity_id: binary_sensor.wakeup_brian_day
     state: "on"
@@ -20,6 +20,6 @@ action:
 
   - service_template: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_brian_skipnext', 'on') else 'script.wakeup_light_start' }}"
     data_template:
-      light: "light.glowforge" 
+      light: "light.glowforge"
       scene: "scene.wakeup_brian"
       skipnext: "input_boolean.wakeup_brian_skipnext"
