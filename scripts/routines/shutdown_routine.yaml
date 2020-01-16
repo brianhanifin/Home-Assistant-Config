@@ -5,14 +5,10 @@ sequence:
       - light.dining_room
       - light.entry
       - light.family_room_floor_lamp
-      #- light.table_lamp
+      - light.table_lamp
       - light.garage_entry
       - light.play_room
       - light.play_room_floor_lamp
-      - light.glowforge
-      - light.bedroom
-      - light.brian
-      - light.family_room
 
   - service: switch.turn_off
     entity_id:
@@ -22,3 +18,8 @@ sequence:
       - switch.play_room_fan
       - switch.garage_fan
       - switch.hot_water_pump
+
+  - delay:
+      seconds: 1
+  - service: light.turn_off
+    entity_id: light.family_room

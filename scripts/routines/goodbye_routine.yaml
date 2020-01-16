@@ -1,16 +1,25 @@
 ---
 sequence:
   # Run the shutdown/goodbye routine + turn off the family room TV.
+  - service: script.tv_family_room_off
+    data_template:
+      goodnight: true
+
   - service: script.turn_on
+    entity_id: script.shutdown_routine
+
+  # These lights are always turned off for the Goodbye routine,
+  # but not always for the Goodnight routine.
+  - service: light.turn_off
     entity_id:
-      - script.shutdown_routine
-      - script.tv_family_room_off
+      - light.glowforge
+      - light.bedroom
+      - light.brian
 
   # Say goodnight.
   - service: script.say
     data_template:
       media_player: !include ../../templates/speech/media_player_requestor.yaml
-      say_goodbye: "true"
 
   # Delay locking the front door slightly in case we are leaving by it.
   - delay:
