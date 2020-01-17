@@ -11,7 +11,7 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **995 entities**, with **300 sensors** in Home Assistant. I am also using **22 custom components**.
+As of my last commit I have **983 entities**, with **294 sensors** in Home Assistant. I am also using **22 custom components**.
 
 ## User Interface
 ### Amazon Alexa
