@@ -5,6 +5,7 @@ sequence:
   #     title: "DEBUG"
   #     message: "script.wakeup_light_start"
 
+  # Activate a scene that turns on appropriate lights downstairs
   - service: scene.turn_on
     data_template:
       entity_id: "{{ scene|default('scene.blank') }}"
@@ -84,7 +85,8 @@ sequence:
       entity_id: "{{ light }}"
       brightness: 255
 
-  - delay: 01:00:00
-  - service: light.turn_off
+  # Start a countdown timer which triggers and automation upon its conclusion.
+  # see: automation.wakeup_light_timeout
+  - service: timer.start
     data_template:
-      entity_id: "{{ light }}"
+      entity_id: "timer.wakeup_timeout_{{ light[6:] }}"

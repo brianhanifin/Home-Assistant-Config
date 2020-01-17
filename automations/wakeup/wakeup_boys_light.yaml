@@ -18,10 +18,10 @@ trigger:
       {{ wakeup_date == states('sensor.date') and start_time == states('sensor.time') }}
     {%- endif -%}
 action:
-  - service: persistent_notification.create
-    data_template:
-      title: "DEBUG"
-      message: "automation.wakeup_boys_light"
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "DEBUG"
+  #     message: "automation.wakeup_boys_light"
 
   - service_template: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_boys_skipnext', 'on') else 'script.wakeup_light_start' }}"
     data_template:
