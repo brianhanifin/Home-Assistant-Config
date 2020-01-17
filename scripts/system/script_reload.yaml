@@ -5,8 +5,8 @@ sequence:
   - service: browser_mod.navigate
     data:
       navigation_path: /config/server_control
-      # deviceID:
-      #   - this
+      deviceID:
+        - this
 
   # - delay:
   #     seconds: 1
@@ -26,12 +26,13 @@ sequence:
   - service: script.toast
     data:
       message: "✔️ = 👍"
-      duration: 2000
 
   - delay:
       seconds: 2
 
+  - service: shell_command.script_reload
+
   - service: script.toast
     data:
-      message: Please click RELOAD SCRIPTS.
-      duration: 0
+      message: Reloading scripts...
+      duration: 5000
