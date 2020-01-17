@@ -1,0 +1,9 @@
+---
+sequence:
+  - service: readme.generate
+  - service: shell_command.make_fake_secrets
+
+  - service: script.toast
+    data_template:
+      message: "{{ state_attr('persistent_notification.1337','message') }}"
+      duration: 0
