@@ -17,25 +17,6 @@ sequence:
           "was cleared"
         {%- endif %}
 
-  # Update old sensor
-  # - service: mqtt.publish
-  #   data_template:
-  #     topic: "homeassistant/medicine/buddy/state"
-  #     payload: >-
-  #       {%- if type in ["single", "long"] -%}
-  #         {{ as_timestamp(now())|timestamp_custom('%Y-%m-%d') }}
-  #       {%- endif %}
-  #     retain: true
-  # - service: mqtt.publish
-  #   data_template:
-  #     topic: "homeassistant/medicine/buddy/attributes"
-  #     payload: >-
-  #       {
-  #         "day": "{{ as_timestamp(now())|timestamp_custom('%A') }}",
-  #         "updated": "{{ as_timestamp(now())|timestamp_custom('%B %-d %Y %-I:%M %P') }}"
-  #       }
-  #     retain: true
-
   # Update check-button-card sensor
   - service: mqtt.publish
     data_template:
