@@ -1,19 +1,21 @@
 ---
+# 255 = double_tap_up
+# 0 = double_tap_down
 sequence:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "zwave_button_handler"
-  #     message: "switch: {{ switch }}\nvalue: {{ value }}\ndouble_click_up = {{ (value|int == 255) }}"
+  #     message: "switch: {{ switch }}\nlevel: {{ level }}"
 
   - service: scene.turn_on
     data_template:
       entity_id: >
-        {# Was to top side double tapped, or the bottom? #}
-        {%- set double_click_up = (value|int == 255) -%}
-
-        {# Family Room wall switch. #}
-        {%- if   double_click_up == true  and switch == "zwave.family_room_switch" -%}
-          scene.family_room_all_lights
-        {%- elif double_click_up == false and switch == "zwave.family_room_switch" -%}
-          scene.family_room_normal
-        {%- endif %}
+        {%-
+          set scenes = {
+            "zwave.family_room_dimmer": {
+              "255": "scene.family_room_all_lights",
+              "0": "scene.family_room_normal"
+            }
+          }
+        -%}
+        {{ scenes[switch][level] }}
