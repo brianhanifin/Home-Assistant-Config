@@ -12,14 +12,11 @@ trigger:
       - binary_sensor.kitchen_2_presence
     from: 'off'
     to: 'on'
-condition:
-  - condition: state
-    entity_id: input_boolean.presence_detection_mode
-    state: 'on'
-  # We don't need to turn on the light when the dogs are alone.
-  # - condition: state
-  #   entity_id: input_boolean.away_mode
-  #   state: 'off'
+# condition:
+#   # We don't need to turn on the light when the dogs are alone.
+#   - condition: state
+#     entity_id: input_boolean.away_mode
+#     state: 'off'
 action:
   - service: light.turn_on
     entity_id: light.kitchen_cabinet

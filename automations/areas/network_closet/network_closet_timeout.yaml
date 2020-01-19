@@ -1,6 +1,6 @@
 ---
-alias: watchdog_network_closet_timeout
-#initial_state: true
+alias: network_closet_timeout
+initial_state: true
 trigger:
   platform: state
   entity_id: binary_sensor.network_closet_door
@@ -9,8 +9,5 @@ trigger:
   for:
     minutes: 5
 action:
-  # - condition: state
-  #   entity_id: input_boolean.network_closet_timeout
-  #   state: 'on'
   - service: light.turn_off
     entity_id: light.network_closet
