@@ -33,7 +33,7 @@ sensors:
           {%- set event_year = now().strftime('%Y')|int -%}
         {%- endif -%}
 
-        {%- set event_date = get_nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year) -%}
+        {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year) -%}
 
         {# When we are past the event date, but are in the same month, recalcluate for the next event.  #}
         {%- if event_month == this_month -%}
@@ -41,7 +41,7 @@ sensors:
           {%- set this_day = now().strftime('%d')|int -%}
 
           {%- if this_day > event_day -%}
-            {%- set event_date = get_nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year+1) if this_day > event_day -%}
+            {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year+1) if this_day > event_day -%}
           {%- endif -%}
         {%- endif -%}
 
@@ -84,13 +84,13 @@ sensors:
 
       {#
       ex. Get the nth Monday of May.
-      1st: {{ get_nth_dayofmonth(1, "Monday", 5) }}
-      2nd: {{ get_nth_dayofmonth(2, "Monday", 5, 2019) }}
-      Last: {{ get_nth_dayofmonth("last", "Monday", 5) }}
+      1st: {{ nth_dayofmonth(1, "Monday", 5) }}
+      2nd: {{ nth_dayofmonth(2, "Monday", 5, 2019) }}
+      Last: {{ nth_dayofmonth("last", "Monday", 5) }}
 
       Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
       #}
-      {%- macro get_nth_dayofmonth(nth, dayofweek, month, year=now().strftime("%Y")) -%}
+      {%- macro nth_dayofmonth(nth, dayofweek, month, year=now().strftime("%Y")) -%}
         {%- set dayofweek = dayofweek_number(dayofweek)|int -%}
         {%- set firstdateofmonth = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") -%}
         {%- set firstdayofmonth = dayofweek_number(firstdateofmonth.strftime("%A"))|int -%}
