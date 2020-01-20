@@ -1,7 +1,7 @@
 ---
 # Check these at midnight
 #
-alias: update_at_0000
+alias: midnight_maintenance
 initial_state: true
 trigger:
   platform: time
@@ -24,3 +24,6 @@ action:
   - delay:
       minutes: 1
   - service: script.holiday_sensors_update
+
+  # Purge the Maria database of old data.
+  - service: recorder.purge
