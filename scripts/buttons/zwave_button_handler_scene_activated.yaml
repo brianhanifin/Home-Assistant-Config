@@ -1,0 +1,58 @@
+---
+sequence:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "zwave_button_handler_scene_activated"
+  #     message: "button: {{ switch }}\nscene_id: {{ scene_id }}\nscene_data: {{ scene_data }}"
+
+  - service: scene.turn_on
+    data_template:
+      entity_id: >
+        {%- set taps = {
+          "7680": "1x",
+          "7800": "HOLD",
+          "7740": "RELEASE",
+          "7860": "2x",
+          "7920": "3x",
+          "7980": "4x",
+          "8040": "5x"
+        } %}
+        {%- set direction = {
+          "1": "DOWN",
+          "2": "UP",
+          "3": "CONFIG"
+        } %}
+        {%- set entities = {
+          "zwave.dimmer_family_room": {
+            "1x": {
+              "UP": "scene.family_room_normal",
+              "DOWN": "scene.family_room_lights_off",
+              "CONFIG": "scene.dummy"
+            },
+            "HOLD": {
+              "UP": "scene.dummy",
+              "DOWN": "scene.dummy"
+            },
+            "RELEASE": {
+              "UP": "scene.dummy",
+              "DOWN": "scene.dummy"
+            },
+            "2x": {
+              "UP": "scene.family_room_all_lights",
+              "DOWN": "scene.family_room_normal"
+            },
+            "3x": {
+              "UP": "scene.family_room_fan_on",
+              "DOWN": "scene.family_room_fan_off"
+            },
+            "4x": {
+              "UP": "scene.dummy",
+              "DOWN": "scene.dummy"
+            },
+            "5x": {
+              "UP": "scene.dummy",
+              "DOWN": "scene.dummy"
+            }
+          }
+        } %}
+        {{ entities[switch][taps[scene_data]][direction[scene_id]] }}

@@ -1,29 +1,5 @@
 ---
 sequence:
-  # - service: persistent_notification.create
-  #   data_template:
-  #     title: "bedroom_switch_buttons"
-  #     message: "type: {{ type }}\nside: {{ side }}"
-
-      # entity_id: >
-      #   {%- if type in ["long_both", "double_both"] -%}
-      #     switch.sound_machine, switch.bedroom_fan
-      #   {%- elif type in ["long", "double"] -%}
-      #     {%- if side == "left" -%}
-      #       switch.sound_machine
-      #     {%- elif side == "right" -%}
-      #       switch.bedroom_fan
-      #     {%- endif -%}
-      #   {%- elif type == "both" -%}
-      #       light.bedroom, light.brian
-      #   {%- elif type == "single" -%}
-      #     {%- if side == "left" -%}
-      #       light.bedroom
-      #     {%- elif side == "right" -%}
-      #       light.brian
-      #     {%- endif -%}
-      #   {%- endif %}
-
   - service_template: >
       {%- if type in ["long", "double", "long_both", "double_both"] -%}
         switch.toggle

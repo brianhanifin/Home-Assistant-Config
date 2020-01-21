@@ -1,0 +1,23 @@
+---
+alias: zwave_button_taps
+initial_state: true
+trigger:
+  # GE Dimmers
+  - platform: event
+    event_type: zwave.node_event
+  # Inovelli dimmers
+  - platform: event
+    event_type: zwave.scene_activated
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "zwave_button_taps"
+  #     message: "script: script.zwave_button_handler_{{ trigger.event.event_type[6:] }}\nevent_type: {{ trigger.event.event_type }}\nbutton: {{ trigger.event.data.entity_id }}\nbasic_level: {{ trigger.event.data.basic_level }}\nscene_id: {{ trigger.event.data.scene_id }}\nscene_data: {{ trigger.event.data.scene_data }}"
+
+  - service_template: >
+      script.zwave_button_handler_{{ trigger.event.event_type[6:] }}
+    data_template:
+      switch: "{{ trigger.event.data.entity_id }}"
+      level: "{{ trigger.event.data.basic_level|default('') }}"
+      scene_id: "{{ trigger.event.data.scene_id|default('') }}"
+      scene_data: "{{ trigger.event.data.scene_data|default('') }}"

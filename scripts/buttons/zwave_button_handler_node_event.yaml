@@ -1,0 +1,17 @@
+---
+sequence:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "zwave_button_handler_node_event"
+  #     message: "button: {{ switch }}\nbasic_level: {{ level }}"
+
+  - service: scene.turn_on
+    data_template:
+      entity_id: >
+        {%- set scenes = {
+          "zwave.dimmer_bedroom": {
+            "255": "scene.bedroom_all_lights",
+            "0": "scene.bedroom_lights_off"
+          }
+        } %}
+        {{ scenes[switch][level] }}
