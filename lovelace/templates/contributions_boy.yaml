@@ -11,13 +11,13 @@ card:
       card:
         type: markdown
         content_template: >
-          {% if '[[name]]' == states('variable.responsibility_dishes_week')|lower %}
+          {% if '[[name]]' == states('input_select.responsibility_dishes_week')|lower %}
             It is [[pname]] week to do the **Dishes**.
           {% else %}
             It is [[pname]] week to pick up the **Dog Poop** and do the **Laundry**.
           {% endif %}
       entities:
-        - entity: variable.responsibility_dishes_week
+        - entity: input_select.responsibility_dishes_week
 
     - type: custom:decluttering-card
       template: contribution

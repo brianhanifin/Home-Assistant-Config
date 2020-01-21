@@ -1,15 +1,22 @@
 ---
 sequence:
-  service: variable.set_variable
-  data:
-    variable: responsibility_dishes_week
-    value_template: >
-      {% if "Monday" == as_timestamp(now())|timestamp_custom('%A') %}
-        {% if states('sensor.contribution_kyle_dishes')|int < states('sensor.contribution_lucas_dishes')|int -%}
-          Kyle
-        {%- else -%}
-          Lucas
-        {%- endif %}
-      {% else %}
-        {{ states('variable.responsibility_dishes_week') }}
-      {% endif %}
+  # Only update this one time at midnight on monday
+  - condition: time
+    after: "0:00:00"
+    before: "0:10:00"
+    weekday:
+      - mon
+
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.responsibility_dishes_week
+      option: >
+        {%- if "Monday" == as_timestamp(now())|timestamp_custom('%A') %}
+          {% if states('sensor.contribution_kyle_dishes')|int < states('sensor.contribution_lucas_dishes')|int -%}
+            Kyle
+          {%- else -%}
+            Lucas
+          {%- endif %}
+        {% else %}
+          {{ states('input_select.responsibility_dishes_week') }}
+        {% endif %}
