@@ -1,0 +1,9 @@
+---
+sequence:
+  - service: script.inovelli_led
+    data_template:
+      entity_id: "{{ entity_id|default('zwave.dimmer_family_room') }}"
+      effect: "Off"
+
+  # Check for another active status.
+  - service: script.inovelli_led_status_restore

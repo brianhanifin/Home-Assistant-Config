@@ -1,0 +1,15 @@
+---
+sequence:
+  - service: script.inovelli_led
+    data_template:
+      entity_id: "{{ entity_id|default('zwave.dimmer_family_room') }}"
+      color: >
+        {% set events = {
+          "front_door": "cyan",
+          "garage_door": "purple"
+        } %}
+        {% if is_state('lock.front_door','unlocked') %}
+          {{ events["front_door"] }}
+        {% elif is_state('cover.garage_door','open ') %}
+          {{ events["garage_door"] }}
+        {% endif %}

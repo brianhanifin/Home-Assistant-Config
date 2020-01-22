@@ -1,0 +1,72 @@
+---
+# Calculation References:
+#   https://nathanfiscus.github.io/inovelli-notification-calc/
+#   https://community.inovelli.com/t/home-assistant-2nd-gen-switch-rgb-working/168/62
+#   https://docs.google.com/spreadsheets/u/1/d/1SGJrJHCUtz8AzznWL_mLCTJjjr2U0IpltcUkRr7N_6M/edit?usp=sharing
+sequence:
+  - service: zwave.set_config_parameter
+    data_template:
+      node_id: "{{ state_attr(entity_id,'node_id') }}"
+      parameter: 16
+      size: 4
+      value: >
+        {% if effect|title == "Off" %}
+          0
+        {% else %}
+          {% set color = color|default("Yellow") if color is not number else color|int %}
+          {% set level = level|default(4) %}{# 1-10 * 256 #}
+          {% set duration = duration|default("Indefinitely") %}
+          {% set effect = effect|default("Pulse") %}
+          {% set colors = {
+            "Red": 1,
+            "Orange": 21,
+            "Green": 85,
+            "Blue": 170,
+            "Pink": 234,
+            "Yellow": 42,
+            "Cyan": 127,
+            "Purple": 195
+          } %}
+          {% set durations = {
+            "1 Second": 1,
+            "2 Seconds": 2,
+            "3 Seconds": 3,
+            "4 Seconds": 4,
+            "5 Seconds": 5,
+            "6 Seconds": 6,
+            "7 Seconds": 7,
+            "8 Seconds": 8,
+            "9 Seconds": 9,
+            "10 Seconds": 10,
+            "15 Seconds": 15,
+            "20 Seconds": 20,
+            "25 Seconds": 25,
+            "30 Seconds": 30,
+            "35 Seconds": 35,
+            "40 Seconds": 40,
+            "45 Seconds": 45,
+            "50 Seconds": 50,
+            "55 Seconds": 55,
+            "60 Seconds": 60,
+            "2 Minutes": 62,
+            "3 Minutes": 63,
+            "4 Minutes": 64,
+            "15 Minutes": 75,
+            "30 Minutes": 90,
+            "45 Minutes": 105,
+            "1 Hour": 120,
+            "2 Hours": 122,
+            "Indefinitely": 255
+          } %}
+          {% set effects = {
+            "Off": 0,
+            "Solid": 1,
+            "Chase": 2,
+            "Fast Blink": 3,
+            "Slow Blink": 4,
+            "Blink": 4,
+            "Pulse": 5,
+            "Breath": 5
+          } %}
+          {{ colors[color|title] + (level * 256) + (durations[duration|title] * 65536) + (effects[effect|title] * 16777216) }}
+        {% endif %}

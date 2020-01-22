@@ -71,9 +71,31 @@ action:
   # Turn on the Garage Entry light.
   - service: light.turn_on
     data:
-      entity_id: light.garage_entry
+      entity_id: zwave.dimmer_family_room
       brightness_pct: 75
       effect: "colorloop"
+
+  # Update Light Switch LED Status Color.
+  - service: script.inovelli_led
+    data:
+      entity_id: zwave.dimmer_family_room
+      color: purple
+      effect: chase
+      duration: 15 seconds
+      level: 4
+
+  - delay:
+      seconds: 14
+  - condition: state
+    entity_id: cover.garage_door
+    state: 'open'
+  - service: script.inovelli_led
+    data:
+      entity_id: zwave.dimmer_family_room
+      color: purple
+      duration: indefinitely
+      effect: pulse
+      level: 4
 
   # If after 5 minutes the garage is still open, dim the lights.
   - delay: "0:05:00"
