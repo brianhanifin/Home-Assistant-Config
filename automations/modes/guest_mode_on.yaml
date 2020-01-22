@@ -3,8 +3,7 @@ alias: guest_mode_on
 initial_state: true
 trigger:
   - platform: state
-    entity_id:
-      - input_boolean.guest_mode
+    entity_id: input_boolean.guest_mode
     from: 'off'
     to: 'on'
 action:
@@ -13,6 +12,9 @@ action:
     entity_id: switch.circadian_lighting
 
   # Brighten the lights.
+  - service: script.update_lights_on
+  - delay:
+      seconds: 1
   - service: light.turn_on
     data:
       entity_id: group.lights_on
