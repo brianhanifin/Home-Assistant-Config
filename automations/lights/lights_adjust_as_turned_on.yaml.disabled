@@ -13,7 +13,7 @@ condition:
   - condition: template
     value_template: "{{ trigger.event.data is not none
                     and trigger.event.data.entity_id is not none
-                    and 'light' in trigger.event.data.entity_id|lower }}"
+                    and 'light.' in trigger.event.data.entity_id|lower }}"
   # Only when lights are going from off to on.
   - condition: template
     value_template: "{{ trigger.event.data.old_state.state == 'off'
