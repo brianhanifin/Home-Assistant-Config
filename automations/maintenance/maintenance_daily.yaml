@@ -1,12 +1,16 @@
 ---
-# Check these at midnight
+# Preform these maintenance at midnight.
 #
-alias: midnight_maintenance
+alias: maintenance_daily
 initial_state: true
 trigger:
-  platform: time
-  at: "0:00:01"
+  platform: event
+  event_type: midnight
 action:
+  - service: script.toast
+    data:
+      message: Daily maintenance.
+
   # Save power by turning off the printers and vanity lighting at midnight.
   - service: switch.turn_off
     entity_id:
@@ -14,11 +18,18 @@ action:
       - switch.landscape_lights
       - switch.printers
 
+  # Update group.actionable_lights to replace group.all_lights.
+  - service: script.create_actionable_lights_group
+
   # Disable guest mode (in case it was enabled in the evening).
   - service: input_boolean.turn_off
     entity_id: input_boolean.guest_mode
 
-  - service: script.refresh_at_midnight
+  # Reset the status of Buddy's Medicine sensor.
+  - service: homeassistant.update_entity
+    entity_id: sensor.medicine_buddy_given_today
+
+  - service: script.update_responsibility_dishes_week
 
   # Update the holiday sensors.
   - delay:

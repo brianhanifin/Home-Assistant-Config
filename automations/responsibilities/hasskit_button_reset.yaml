@@ -1,22 +1,10 @@
 ---
-alias: refresh_at_midnight
-sequence:
-  - service: script.toast
-    data:
-      message: Refresh at Midnight.
-
-  # Update group.actionable_lights to replace group.all_lights.
-  - service: script.create_actionable_lights_group
-
-  # Only preform these tasks at midnight.
-  - condition: time
-    after: "0:00:00"
-    before: "0:10:00"
-
-  # Reset the status of Buddy's Medicine sensor.
-  - service: homeassistant.update_entity
-    entity_id: sensor.medicine_buddy_given_today
-
+alias: hasskit_button_reset
+initial_state: true
+trigger:
+  - platform: event
+    event_type: midnight
+action:
   # Reset family contribution switches (created as a workaround for the HassKit iOS app).
   - service: switch.turn_off
     entity_id:
@@ -51,5 +39,3 @@ sequence:
       - switch.hasskit_lucas_dookie
       - switch.hasskit_lucas_other
       - switch.hasskit_lucas_trash
-
-  - service: script.update_responsibility_dishes_week

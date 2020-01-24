@@ -1,12 +1,17 @@
 ---
-sequence:
+alias: update_dishes_responsibility
+initial_state: true
+trigger:
+  - platform: event
+    event_type: midnight
+condition:
   # Only update this one time at midnight on monday
   - condition: time
-    after: "0:00:00"
-    before: "0:10:00"
+    # after: "0:00:00"
+    # before: "0:10:00"
     weekday:
       - mon
-
+action:
   - service: input_select.select_option
     data_template:
       entity_id: input_select.responsibility_dishes_week
