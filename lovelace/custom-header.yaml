@@ -19,9 +19,6 @@ notifications: hide
 options: hide
 voice: hide
 
-split_mode: true
-footer_mode: true
-
 button_text:
   options: "{{ hours12 }}:{{ minutesLZ }} <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°"
 
@@ -42,10 +39,11 @@ header_text: >-
   #flipper p {position:fixed;color:#999; }
   </style>
   <div id=flipper><div id=flip><div><div>
-  Notification Bar </div></div><div><div>
+  ... END OF LINE.</div></div><div><div>
   {{ "Plex viewers: <b>" + states('sensor.plex') + "</b></div></div><div><div>" if states('sensor.plex')|int > 0 }}
   {{ "Update <b>" + states('sensor.latest_release') + "</b> Available</div></div><div><div>" if is_state('binary_sensor.update_available','on') }}
-  {{ states('sensor.forecast') }}</div></div><div><div>
+  {{ states('sensor.forecast')|trim|replace('<br>','</div></div><div><div>') }}</div></div><div><div>
+
 
 # header_text: >
 #   <style>
@@ -78,6 +76,8 @@ exceptions:
       notifications: show
       options: show
       voice: show
+      split_mode: true
+      footer_mode: true
 
   - conditions:
       user: Kyle, Lucas
@@ -100,6 +100,9 @@ exceptions:
       voice_dropdown: true
       button_text:
         options: ""
+      header_text: ""
+      split_mode: false
+      footer_mode: false
 
   - conditions:
       user_agent: Mobile
@@ -110,3 +113,6 @@ exceptions:
       voice_dropdown: true
       button_text:
         options: ""
+      header_text: ""
+      split_mode: false
+      footer_mode: false
