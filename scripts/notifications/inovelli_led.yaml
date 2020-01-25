@@ -7,7 +7,9 @@ sequence:
   - service: zwave.set_config_parameter
     data_template:
       node_id: "{{ state_attr(entity_id,'node_id') }}"
-      parameter: 16
+      parameter: >
+        {%- set dimmer = dimmer|default('true') %}
+        {{ "16" if dimmer == "true" else "8" }}
       size: 4
       value: >
         {% if effect|title == "Off" %}
