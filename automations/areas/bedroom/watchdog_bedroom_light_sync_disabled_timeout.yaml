@@ -3,11 +3,11 @@ alias: watchdog_bedroom_light_sync_disabled_timeout
 initial_state: true
 trigger:
   platform: state
-  entity_id: input_boolean.bedroom_light_sync_enabled
+  entity_id: input_boolean.bedroom_light_sync
   from: 'on'
   to: 'off'
   for:
     minutes: 15
 action:
   - service: input_boolean.turn_on
-    entity_id: input_boolean.bedroom_light_sync_enabled
+    entity_id: input_boolean.bedroom_light_sync

@@ -48,3 +48,8 @@ action:
       - light.porch
     data:
       brightness: 255
+
+  # Start a timer to relock the front door after the timer finishes.
+  - service: timer.start
+    data_template:
+      entity_id: "timer.front_door_unlocked"
