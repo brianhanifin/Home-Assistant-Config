@@ -7,6 +7,11 @@ trigger:
     from: 'unlocked'
     to: 'locked'
 action:
+  # Cancel and reset the timer.
+  - service: timer.cancel
+    data_template:
+      entity_id: timer.front_door_unlocked
+
   # Restore the previous state of the porch + entry lights.
   - service: scene.turn_on
     data:

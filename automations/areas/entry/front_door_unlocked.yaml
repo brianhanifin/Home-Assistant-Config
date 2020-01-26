@@ -7,6 +7,11 @@ trigger:
     from: 'locked'
     to: 'unlocked'
 action:
+  # Start a timer to relock the front door after the timer finishes.
+  - service: timer.start
+    data_template:
+      entity_id: timer.front_door_unlocked
+
   # Update Light Switch LED Status Color.
   - service: script.inovelli_led
     data:
@@ -29,6 +34,8 @@ action:
       effect: pulse
       level: 4
 
+  ## ================================================================================================= ##
+
   # Skip turning on the entry lights in the middle of the day.
   - condition: numeric_state
     entity_id: sensor.outside_illuminance
@@ -48,8 +55,3 @@ action:
       - light.porch
     data:
       brightness: 255
-
-  # Start a timer to relock the front door after the timer finishes.
-  - service: timer.start
-    data_template:
-      entity_id: "timer.front_door_unlocked"

@@ -7,74 +7,6 @@ trigger:
     #from: 'closed'
     to: 'opening'
 action:
-  # Store current light states.
-  - service: scene.create
-    data:
-      scene_id: garage_door_closed_lights_snapshot
-      snapshot_entities:
-        - light.garage_entry
-        - light.dining_room
-
-  # Turn on the dining room lights.
-  - service: light.turn_on
-    entity_id: light.dining_room
-  - service: light.turn_on
-    data:
-      entity_id:
-        - light.garage_entry
-        - light.dining_room
-      brightness_pct: 40
-
-  # Flash the bulbs to draw attention.    - delay: "0:00:01"
-  - service: light.turn_on
-    data:
-      entity_id:
-        - light.garage_entry
-        - light.dining_room
-      flash: "short"
-
-  - delay: "0:00:01"
-  - service: light.turn_on
-    data:
-      entity_id:
-        - light.garage_entry
-        - light.dining_room
-
-  - delay: "0:00:01"
-  - service: light.turn_on
-    data:
-      entity_id:
-        - light.garage_entry
-        - light.dining_room
-      flash: "short"
-
-  # Brighten the single notification bulb.
-  - delay: "0:00:01"
-  - service: light.turn_on
-    data:
-      entity_id: light.dining2
-      brightness_pct: 40
-      effect: "colorloop"
-
-  # Turn off the rest of the dining room bulbs.
-  - service: light.turn_off
-    entity_id:
-      - light.dining1
-      - light.dining3
-      - light.dining4
-      - light.dining5
-      - light.dining6
-      - light.dining7
-      - light.dining8
-      - light.dining9
-
-  # Turn on the Garage Entry light.
-  - service: light.turn_on
-    data:
-      entity_id: zwave.dimmer_family_room
-      brightness_pct: 75
-      effect: "colorloop"
-
   # Update Light Switch LED Status Color.
   - service: script.inovelli_led
     data:
@@ -84,8 +16,66 @@ action:
       duration: 15 seconds
       level: 4
 
+  # Store current light states.
+  - service: scene.create
+    data:
+      scene_id: garage_door_closed_lights_snapshot
+      snapshot_entities:
+        - light.garage_entry
+        - light.table_lamp
+
+  # Turn on the notification lights
+  - service: light.turn_on
+    entity_id: light.table_lamp
+  - service: light.turn_on
+    data:
+      entity_id:
+        - light.garage_entry
+        - light.table_lamp
+      brightness_pct: 40
+
+  # Flash the bulbs to draw attention.
+  - delay: "0:00:01"
+  - service: light.turn_on
+    data:
+      entity_id:
+        - light.garage_entry
+        - light.table_lamp
+      flash: "short"
+
+  - delay: "0:00:01"
+  - service: light.turn_on
+    data:
+      entity_id:
+        - light.garage_entry
+        - light.table_lamp
+
+  - delay: "0:00:01"
+  - service: light.turn_on
+    data:
+      entity_id:
+        - light.garage_entry
+        - light.table_lamp
+      flash: "short"
+
+  # Brighten the single notification bulb.
+  - delay: "0:00:01"
+  - service: light.turn_on
+    data:
+      entity_id: light.table_lamp
+      brightness_pct: 40
+      effect: "colorloop"
+
+  # Turn on the Garage Entry light.
+  - service: light.turn_on
+    data:
+      entity_id: zwave.dimmer_family_room
+      brightness_pct: 75
+      effect: "colorloop"
+
+  # Change the notification animation.
   - delay:
-      seconds: 14
+      seconds: 15
   - condition: state
     entity_id: cover.garage_door
     state: 'open'
@@ -111,7 +101,7 @@ action:
 
   - service: light.turn_on
     data:
-      entity_id: light.dining2
+      entity_id: light.table_lamp
       brightness_pct: 20
       transition: 5
 
