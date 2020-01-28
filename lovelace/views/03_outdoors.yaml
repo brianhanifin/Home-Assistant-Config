@@ -2,7 +2,6 @@
 title: Outdoors
 path: outdoors
 icon: fas:seedling
-#icon: "{{ state_attr('sensor.today_icon','icon') }}"
 panel: true
 cards:
   - type: vertical-stack
@@ -16,6 +15,13 @@ cards:
           - type: vertical-stack
             cards:
               - type: custom:weather-card
+                style: |
+                  ha-card {
+                    background-image: url(/local/ui/hass.png);
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;
+                    background-position: center 20px;
+                  }
                 entity: weather.dark_sky
                 tap_action:
                   action: call-service
