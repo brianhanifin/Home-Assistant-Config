@@ -12,29 +12,24 @@ trigger:
       #- input_select.eric
       #- input_select.sandy
       #- input_select.heather
-    to: 'Just Arrived'
+    to: Just Arrived
     for:
       minutes: 0
       seconds: 5
+condition:
+  # Only make an announcement if the person has been gone for more than 15 minutes.
+  - condition: template
+    value_template: "{{ 15 < (as_timestamp(now()) - as_timestamp(trigger.from_state.last_updated)) / 60 }}"
+
 action:
   - service: input_boolean.turn_off
     entity_id: input_boolean.away_mode
 
   - wait_template: "{{ is_state('binary_sensor.front_door', 'on')
                     or is_state('binary_sensor.garage_entry_door', 'on') }}"
-    timeout: 00:05:00
-  - delay:
-      minutes: 1
-
-  #- service: script.speech_engine
-  #  data_template:
-  #    call_do_not_greet: 1
-  #    person_arriving: >
-  #      {{ trigger.entity_id.split('.')[1]|title|replace('_', ' ') }}
-  #    call_inside_weather: 1
-  #    call_door_window_check: 1
-  #    call_door_check: 1
-  #    call_light_check: 1
+    timeout: 00:02:00
+  # - delay:
+  #     minutes: 1
 
   - service: script.say
     data_template:
