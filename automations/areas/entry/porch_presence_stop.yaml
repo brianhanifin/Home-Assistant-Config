@@ -7,7 +7,7 @@ alias: porch_presence_stop
 initial_state: true
 trigger:
   - platform: state
-    entity_id: binary_sensor.front_door_presence
+    entity_id: binary_sensor.doorbell_presence
     from: 'on'
     to: 'off'
     # for:
@@ -21,4 +21,4 @@ action:
   # Restore the previous state of the porch light.
   - service: scene.turn_on
     data:
-      entity_id: scene.front_door_presence_lights_snapshot
+      entity_id: scene.doorbell_presence_lights_snapshot
