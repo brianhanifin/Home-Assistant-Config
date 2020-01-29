@@ -14,9 +14,8 @@ trigger:
     #   minutes: 2
     #   seconds: 00
 condition:
-  - condition: numeric_state
-    entity_id: sensor.outside_illuminance
-    below: 5000
+  - condition: sun
+    after: sunset
 action:
   # Restore the previous state of the porch light.
   - service: scene.turn_on

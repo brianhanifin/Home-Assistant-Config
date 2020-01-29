@@ -20,7 +20,6 @@ condition:
   # Only make an announcement if the person has been gone for more than 15 minutes.
   - condition: template
     value_template: "{{ 15 < (as_timestamp(now()) - as_timestamp(trigger.from_state.last_updated)) / 60 }}"
-
 action:
   - service: input_boolean.turn_off
     entity_id: input_boolean.away_mode
