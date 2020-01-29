@@ -7,6 +7,11 @@ trigger:
     entity_id: timer.front_door_unlocked
     from: active
     to: idle
+condition:
+  # Guest mode overrides automatic door locking.
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: "off"
 action:
   - service: lock.lock
     entity_id: lock.front_door
