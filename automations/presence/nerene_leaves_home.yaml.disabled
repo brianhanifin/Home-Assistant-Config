@@ -1,0 +1,15 @@
+---
+# Log when Nerene leaves home.
+alias: nerene_leaves_home
+initial_state: true
+trigger:
+  platform: zone
+  event: leave
+  zone: zone.home
+  entity_id: person.nerene
+action:
+  # Display the message as a toast notification
+  - service: script.toast
+    data:
+      message: "Nerene has left"
+      duration: 1
