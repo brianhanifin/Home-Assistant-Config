@@ -1,0 +1,28 @@
+---
+large: true
+card:
+  type: horizontal-stack
+  cards:
+    - type: picture-glance
+      title: Driveway
+      camera_image: camera.driveway
+      camera_view: camera.driveway
+      entities:
+        - binary_sensor.driveway_motion
+        - camera.driveway
+      entity: binary_sensor.driveway_motion
+      state_filter:
+        "on": brightness(110%) saturate(1.2)
+        "off": grayscale(100%)
+
+    - type: picture-glance
+      title: Front Door
+      camera_image: camera.front_door
+      camera_view: camera.front_door
+      entities:
+        - binary_sensor.front_door_motion
+        - camera.front_door
+      entity: binary_sensor.front_door_motion
+      state_filter:
+        "on": brightness(110%) saturate(1.2)
+        "off": brightness(70%) grayscale(100%)
