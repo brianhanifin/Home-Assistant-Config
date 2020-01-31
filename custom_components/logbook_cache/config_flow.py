@@ -5,8 +5,16 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers import config_entry_flow
+import homeassistant.helpers.config_validation as cv
 
-from .const import DOMAIN, NAME, CACHE_DAYS, DEFAULT_CACHE_DAYS
+from .const import (
+    DOMAIN,
+    NAME,
+    CACHE_DAYS,
+    ONLY_CACHE,
+    DEFAULT_CACHE_DAYS,
+    DEFAULT_ONLY_CACHE,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,11 +39,17 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        "cache_days",
+                        CACHE_DAYS,
                         default=self.config_entry.options.get(
                             CACHE_DAYS, DEFAULT_CACHE_DAYS
                         ),
-                    ): vol.All(vol.Coerce(int), vol.Range(min=1))
+                    ): vol.All(vol.Coerce(int), vol.Range(min=1)),
+                    vol.Required(
+                        ONLY_CACHE,
+                        default=self.config_entry.options.get(
+                            ONLY_CACHE, DEFAULT_ONLY_CACHE
+                        ),
+                    ): bool,
                 }
             ),
         )
