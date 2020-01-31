@@ -1,0 +1,172 @@
+---
+title: Control Panel
+#path: home
+icon: fas:th
+panel: true
+cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:decluttering-card
+        template: notifications
+
+      - type: custom:layout-card
+        layout: horizontal
+        cards:
+          - type: vertical-stack
+            cards:
+                  ## Cameras
+              - type: 'custom:card-templater'
+                entities:
+                  - sensor.time
+                card:
+                  type: markdown
+                  style: |
+                    ha-card {
+                      background: none;
+                      box-shadow: none;
+                      color: 'rgba(255, 255, 255, 0.7)';
+                      font-size: 5.41em;
+                      font-weight: 600;
+                      letter-spacing: '-0.05em';     }
+                  content_template: >
+                    {{ "%0.1d:%0.02d"|format(now().strftime("%I")|int,now().minute) }}
+
+              - type: 'custom:card-templater'
+                entities:
+                  - group.actionable_lights
+                  - sensor.medicine_buddy_given_today
+                  - sensor.time
+                  - variable.left_home
+                card:
+                  type: markdown
+                  style: |
+                    ha-card {
+                      background: none;
+                      box-shadow: none;
+                      font-size: 1.4em;
+                      font-weight: 400;
+                      letter-spacing: 0.06em;
+                      line-height: 2.05em;
+                      opacity: 0.65;
+                      margin-top: -2em;
+                    }
+                  content_template: !include ../../templates/ui/briefing.yaml
+
+              # - icon: 'mdi:refresh'
+              #   style:
+              #     '--iron-icon-height': 3.5vw
+              #     '--iron-icon-width': 3.5vw
+              #     color: 'rgba(255, 255, 255, 0.10)'
+              #     left: 5%
+              #     top: 88.7%
+              #   tap_action:
+              #     action: call-service
+              #     service: browser_mod.lovelace_reload
+              #   title: null
+              #   type: icon
+
+          - type: vertical-stack
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture-glance
+                    title: Driveway
+                    camera_image: camera.driveway
+                    camera_view: camera.driveway
+                    entities:
+                      - binary_sensor.driveway_motion
+                      - camera.driveway
+                    entity: binary_sensor.driveway_motion
+                    state_filter:
+                      "on": brightness(110%) saturate(1.2)
+                      "off": grayscale(100%)
+                    tap_action:
+                      action: call-service
+                      service: browser_mod.more_info
+                      service_data:
+                        entity_id: camera.driveway
+                        deviceID:
+                          - this
+                  - type: picture-glance
+                    title: Front Door
+                    camera_image: camera.front_door
+                    camera_view: camera.front_door
+                    entities:
+                      - binary_sensor.front_door_motion
+                      - camera.front_door
+                    entity: binary_sensor.front_door_motion
+                    state_filter:
+                      "on": brightness(110%) saturate(1.2)
+                      "off": brightness(70%) grayscale(100%)
+                    tap_action:
+                      action: call-service
+                      service: browser_mod.more_info
+                      service_data:
+                        entity_id: camera.front_door
+                        deviceID:
+                          - this
+                    # tap_action:
+                    #   action: call-service
+                    #   service: browser_mod.popup
+                    #   service_data:
+                    #     title: Security
+                    #     card:
+                    #       type: custom:decluttering-card
+                    #       template: popup_security
+                    #   deviceID:
+                    #     - this
+
+
+              - type: custom:decluttering-card
+                template: heading2
+                variables:
+                  - heading: Rooms
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: light.bedroom
+                  - icon1: mdi:hotel
+                  - name1: Bed Room
+                  - tap_action1:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Bedroom
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_bedroom
+                        deviceID:
+                          - this
+                  - entity2: light.dining_room
+                  - icon2: mdi:food
+                  - name2: Dining
+                  - tap_action2:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Dining Room
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_dining_room
+                        deviceID:
+                          - this
+                  - entity3: light.entry
+                  - icon3: mdi:door
+                  - name3: Entry
+                  - tap_action3:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Entry
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_entry
+                        deviceID:
+                          - this
+
+          - type: vertical-stack
+            cards:
+              - type: custom:decluttering-card
+                template: heading2
+                variables:
+                  - heading: "Column #3"
