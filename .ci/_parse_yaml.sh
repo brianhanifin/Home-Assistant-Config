@@ -3,7 +3,8 @@
 ## This is service function which can parse YAML-file.                                ##
 ##
 
-# Source: https://gist.github.com/pkuczynski/8665367
+# https://github.com/Limych/HomeAssistantConfiguration/blob/master/bin/_parse_yaml.sh
+# Original Source: https://gist.github.com/pkuczynski/8665367
 
 parse_yaml() {
   local prefix=${2:-'secret_'}
