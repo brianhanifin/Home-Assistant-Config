@@ -1,7 +1,13 @@
 ---
 >
-  <p>{{ now().strftime("%A") }}</b><br>
-  <b>{{ now().strftime("%B") + ', ' + now().strftime("%d") }}</b></p>
+  <table style="width:200px;">
+  <tr>
+  <td style="width:50%;">{{ now().strftime("%A") }}</b><br>
+  <b>{{ now().strftime("%B") + ', ' + now().strftime("%d") }}</b></td>
+  <td style="width:50%;"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
+  {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}° high, {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }}° low</td>
+  </tr>
+  </table>
 
   {% if now().hour < 5 %} <b>Good night{{'\U0001F634'}}</b>
   {% elif now().hour < 11 %} <b>Good morning</b> {{'\u2615\uFE0F'}}
@@ -16,10 +22,6 @@
   {%- elif lights|count == 1 -%}
   <b>1 light</b> is on.<br>
   {%- endif -%}
-
-  <b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
-  {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}° high, {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }}° low
-
 
   {% if states('sensor.medicine_buddy_given_today') != 'Today' -%}
   Please make sure Buddy's medicine has been prepared for the day.<br>

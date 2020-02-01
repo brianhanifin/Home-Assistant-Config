@@ -3,130 +3,162 @@ title: Control Panel
 #path: home
 icon: fas:th
 panel: true
+background: center / cover no-repeat url("/local/images/grey-gradient.png")
 cards:
   - type: vertical-stack
     cards:
-      - type: custom:decluttering-card
-        template: notifications
-
       - type: custom:layout-card
         layout: horizontal
         cards:
+          # Column 1
+          - type: custom:mod-card
+            style: |
+              ha-card {
+                background: rgba(0, 0, 0, 0.3);
+                margin-top: 5px;
+                padding-bottom: 20px;
+              }
+            card:
+              type: vertical-stack
+              cards:
+                # Sidebar
+                - type: custom:card-templater
+                  entities:
+                    - sensor.time
+                  card:
+                    type: markdown
+                    style: |
+                      ha-card {
+                        background: none;
+                        box-shadow: none;
+                        color: rgba(255, 255, 255, 0.7);
+                        font-size: 5.41em;
+                        font-weight: 500;
+                        letter-spacing: '-0.05em';
+                        text-align: center;
+                      }
+                    content_template: >
+                      {{ "%0.1d:%0.02d"|format(now().strftime("%I")|int,now().minute) }}
+
+                - type: vertical-stack
+                  cards:
+                    - type: custom:home-feed-card
+                      style: |
+                        ha-card {
+                          background: rgba(128, 0, 0, 0.3);
+                          box-shadow: none;
+                          border-radius: 0;
+                          color: white;
+                          margin: 0 0 20px 0;
+                          max-height: 50%;
+                          --paper-item-icon-color: white;
+                          --paper-item-icon-active-color: white;
+                          padding: 20px 20px 0 20px;
+                        }
+                        ha-card a {
+                          color: white;
+                        }
+                      title: ""
+                      compact_mode: true
+                      more_info_on_tap: true
+                      show_empty: false
+                      show_notification_title: true
+                      entities: !include ../../templates/ui/notifications.yaml
+
+                - type: custom:card-templater
+                  entities:
+                    - group.actionable_lights
+                    - sensor.medicine_buddy_given_today
+                    - sensor.time
+                    - variable.left_home
+                  card:
+                    type: markdown
+                    style: |
+                      ha-card {
+                        background: none;
+                        box-shadow: none;
+                        font-size: 1.2em;
+                        font-weight: 400;
+                        letter-spacing: 0.06em;
+                        line-height: 2.05em;
+                        opacity: 0.65;
+                        margin-top: -2em;
+                      }
+                    content_template: !include ../../templates/ui/briefing.yaml
+
+                - type: horizontal-stack
+                  cards:
+                  - type: custom:decluttering-card
+                    template: icon_button
+                    variables:
+                      - icon: mdi:refresh
+                      - tap_action:
+                          action: call-service
+                          service: browser_mod.lovelace_reload
+                          service_data:
+                            deviceID:
+                              - this
+
+                  - type: custom:decluttering-card
+                    template: icon_button
+                    variables:
+                      - icon: mdi:server
+                      - tap_action:
+                          action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: System
+                            card:
+                              type: custom:decluttering-card
+                              template: popup_system
+                            deviceID:
+                              - this
+
+                  - type: custom:decluttering-card
+                    template: icon_button
+                    variables:
+                      - icon: mdi:lan
+                      - tap_action:
+                          action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: System
+                            card:
+                              type: custom:decluttering-card
+                              template: popup_network
+                            deviceID:
+                              - this
+
+                  - type: custom:decluttering-card
+                    template: icon_button
+                    variables:
+                      - icon: mdi:amazon-alexa
+                      - tap_action:
+                          action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: Alexa
+                            card:
+                              type: custom:decluttering-card
+                              template: popup_alexa
+                            deviceID:
+                              - this
+
+          # Column 2
           - type: vertical-stack
             cards:
-                  ## Cameras
-              - type: 'custom:card-templater'
-                entities:
-                  - sensor.time
-                card:
-                  type: markdown
-                  style: |
-                    ha-card {
-                      background: none;
-                      box-shadow: none;
-                      color: 'rgba(255, 255, 255, 0.7)';
-                      font-size: 5.41em;
-                      font-weight: 600;
-                      letter-spacing: '-0.05em';     }
-                  content_template: >
-                    {{ "%0.1d:%0.02d"|format(now().strftime("%I")|int,now().minute) }}
-
-              - type: 'custom:card-templater'
-                entities:
-                  - group.actionable_lights
-                  - sensor.medicine_buddy_given_today
-                  - sensor.time
-                  - variable.left_home
-                card:
-                  type: markdown
-                  style: |
-                    ha-card {
-                      background: none;
-                      box-shadow: none;
-                      font-size: 1.4em;
-                      font-weight: 400;
-                      letter-spacing: 0.06em;
-                      line-height: 2.05em;
-                      opacity: 0.65;
-                      margin-top: -2em;
-                    }
-                  content_template: !include ../../templates/ui/briefing.yaml
-
-              # - icon: 'mdi:refresh'
-              #   style:
-              #     '--iron-icon-height': 3.5vw
-              #     '--iron-icon-width': 3.5vw
-              #     color: 'rgba(255, 255, 255, 0.10)'
-              #     left: 5%
-              #     top: 88.7%
-              #   tap_action:
-              #     action: call-service
-              #     service: browser_mod.lovelace_reload
-              #   title: null
-              #   type: icon
-
-          - type: vertical-stack
-            cards:
-              - type: horizontal-stack
-                cards:
-                  - type: picture-glance
-                    title: Driveway
-                    camera_image: camera.driveway
-                    camera_view: camera.driveway
-                    entities:
-                      - binary_sensor.driveway_motion
-                      - camera.driveway
-                    entity: binary_sensor.driveway_motion
-                    state_filter:
-                      "on": brightness(110%) saturate(1.2)
-                      "off": grayscale(100%)
-                    tap_action:
-                      action: call-service
-                      service: browser_mod.more_info
-                      service_data:
-                        entity_id: camera.driveway
-                        deviceID:
-                          - this
-                  - type: picture-glance
-                    title: Front Door
-                    camera_image: camera.front_door
-                    camera_view: camera.front_door
-                    entities:
-                      - binary_sensor.front_door_motion
-                      - camera.front_door
-                    entity: binary_sensor.front_door_motion
-                    state_filter:
-                      "on": brightness(110%) saturate(1.2)
-                      "off": brightness(70%) grayscale(100%)
-                    tap_action:
-                      action: call-service
-                      service: browser_mod.more_info
-                      service_data:
-                        entity_id: camera.front_door
-                        deviceID:
-                          - this
-                    # tap_action:
-                    #   action: call-service
-                    #   service: browser_mod.popup
-                    #   service_data:
-                    #     title: Security
-                    #     card:
-                    #       type: custom:decluttering-card
-                    #       template: popup_security
-                    #   deviceID:
-                    #     - this
-
-
+              # AREAS
               - type: custom:decluttering-card
                 template: heading2
                 variables:
-                  - heading: Rooms
+                  - heading: Areas
+              # Row 1
               - type: custom:decluttering-card
                 template: button2_row3
                 variables:
                   - entity1: light.bedroom
                   - icon1: mdi:hotel
-                  - name1: Bed Room
+                  - name1: Bed
                   - tap_action1:
                       action: call-service
                       service: browser_mod.popup
@@ -163,10 +195,185 @@ cards:
                           template: popup_entry
                         deviceID:
                           - this
+              # Row 2
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: light.family_room
+                  - icon1: mdi:television
+                  - name1: Family
+                  - hold_action1:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Family Room
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_family_room
+                        deviceID:
+                          - this
+                  - entity2: group.kitchen_lights
+                  - icon2: mdi:stove
+                  - name2: Kitchen
+                  - hold_action2:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Kitchen
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_kitchen
+                        deviceID:
+                          - this
+                  - entity3: switch.landscape_lights
+                  - icon3: mdi:tree
+                  - name3: Outdoor
+                  - hold_action3:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Landscape
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_outdoor
+                        deviceID:
+                          - this
+              # Row 3
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: light.play_room
+                  - icon1: mdi:gamepad-variant
+                  - name1: Play
+                  - hold_action1:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Playroom
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_playroom
+                        deviceID:
+                          - this
+                  - entity2: light.upstairs_bathroom_nightlight
+                  - name2: Bath⬆
+                  - icon2: fas:rocket
+                  - template3: button_blank
 
+              # TOOLS
+              - type: custom:decluttering-card
+                template: heading2
+                variables:
+                  - heading: Mode Overrides
+              # Row 1
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: switch.circadian_lighting
+                  - icon1: mdi:weather-sunset
+                  - name1: Circadian
+                  - entity2: input_boolean.mobile_notifications
+                  - icon2: mdi:cellphone-message
+                  - name2: Notify
+                  - entity3: input_boolean.audio_notifications
+                  - icon3: mdi:speaker-wireless
+                  - name3: Notify
+              # Row 2
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: input_boolean.guest_mode
+                  - icon1: mdi:account-supervisor-circle
+                  - name1: Guest
+                  - template2: button_blank
+                  - template3: button_blank
+
+              - type: custom:decluttering-card
+                template: heading2
+                variables:
+                  - heading: Routines
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: script.goodbye_routine
+                  - icon1: mdi:exit-run
+                  - name1: Bye
+                  - lock1: true
+                  - show_state1: false
+                  - tap_action1:
+                      action: call-service
+                      service: script.turn_on
+                      service_data:
+                        entity_id: script.goodbye_routine
+                  - type2: entity-button
+                  - entity2: script.goodnight_routine
+                  - icon2: mdi:weather-night
+                  - name2: Night
+                  - lock2: true
+                  - show_state2: false
+                  - tap_action2:
+                      action: call-service
+                      service: script.turn_on
+                      service_data:
+                        entity_id: script.goodnight_routine
+                  - template3: button_blank
+
+          # Column 3
           - type: vertical-stack
             cards:
               - type: custom:decluttering-card
                 template: heading2
                 variables:
-                  - heading: "Column #3"
+                  - heading: Cameras
+              # - type: horizontal-stack
+              #   cards:
+              - type: picture-glance
+                title: Driveway
+                camera_image: camera.driveway
+                camera_view: camera.driveway
+                entities:
+                  - binary_sensor.driveway_motion
+                  - camera.driveway
+                entity: binary_sensor.driveway_motion
+                state_filter:
+                  "on": brightness(110%) saturate(1.2)
+                  "off": grayscale(100%)
+                tap_action:
+                  action: call-service
+                  service: browser_mod.more_info
+                  service_data:
+                    entity_id: camera.driveway
+                    deviceID:
+                      - this
+              - type: picture-glance
+                style: |
+                  .box, .box .row {
+                    align: right;
+                  }
+                title: Front Door
+                camera_image: camera.front_door
+                camera_view: camera.front_door
+                entities:
+                  - binary_sensor.front_door_motion
+                  - camera.front_door
+                entity: binary_sensor.front_door_motion
+                state_filter:
+                  "on": brightness(110%) saturate(1.2)
+                  "off": brightness(70%) grayscale(100%)
+                tap_action:
+                  action: call-service
+                  service: browser_mod.more_info
+                  service_data:
+                    entity_id: camera.front_door
+                    deviceID:
+                      - this
+                # tap_action:
+                #   action: call-service
+                #   service: browser_mod.popup
+                #   service_data:
+                #     title: Security
+                #     card:
+                #       type: custom:decluttering-card
+                #       template: popup_security
+                #   deviceID:
+                #     - this

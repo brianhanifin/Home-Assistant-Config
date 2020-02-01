@@ -20,3 +20,25 @@ condition:
 action:
   - service: input_boolean.turn_on
     entity_id: input_boolean.away_mode
+
+  - service: variable.set_variable
+    data_template:
+      value: "{{ trigger.to_state.attributes.friendly_name }}"
+    data:
+      variable: left_home
+      attributes_template: >
+        {%- macro person_left(name) %}
+          {%- if name == trigger.to_state.attributes.friendly_name %}
+            {{- now() }}
+          {%- else %}
+            {{- variable.left_home.attributes[name] }}
+          {%- endif %}
+        {%- endmacro %}
+        {
+          "Brian": "{{ person_left("Brian") }}",
+          "Eric": "{{ person_left("Eric") }}",
+          "Heather": "{{ person_left("Heather") }}",
+          "Nerene": "{{ person_left("Nerene") }}",
+          "Sandy": "{{ person_left("Sandy") }}",
+          "last_updated": "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
+        }

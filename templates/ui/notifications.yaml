@@ -1,0 +1,63 @@
+---
+# Safety Alerts
+# - entity: binary_sensor.smoke_detected
+#   exclude_states:
+#     - "off"
+#   state_map:
+#     on: DETECTED
+# - entity: binary_sensor.carbon_monoxide_detected
+#   exclude_states:
+#     - "off"
+#   state_map:
+#     on: DETECTED
+
+# Doors + Windows
+- entity: binary_sensor.front_door
+  name: Front Door
+  exclude_states:
+    - "off"
+  state_map:
+    on: open
+- entity: cover.garage_door
+  exclude_states:
+    - closed
+- entity: binary_sensor.network_closet_door
+  exclude_states:
+    - "off"
+  state_map:
+    on: open
+- entity: lock.front_door
+  name: Front Door
+  exclude_states:
+    - locked
+- entity: binary_sensor.upstairs_bathroom_window
+  exclude_states:
+    - "off"
+  state_map:
+    on: open
+
+# ESPHome Devices
+# - entity: binary_sensor.ble_hub_status
+#   exclude_states:
+#     - "on"
+- entity: binary_sensor.irrigation_status
+  exclude_states:
+    - "on"
+
+# Harmony Hubs
+- entity: binary_sensor.family_room_hub_status
+  exclude_states:
+    - "on"
+# - entity: binary_sensor.play_room_hub_status
+#   exclude_states:
+#     - "on"
+
+# Plex streams
+- entity: sensor.plex
+  exclude_states:
+    - "0"
+
+# Hassio Update
+- entity: binary_sensor.update_available
+  exclude_states:
+    - "off"

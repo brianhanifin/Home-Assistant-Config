@@ -117,7 +117,7 @@ cards:
                       - name2: ✔️ Config
                       - show_state2: false
                       - entity3: script.ci_prep
-                      - name3: 🔄 CI Prep
+                      - name3: 🥼 CI Prep
                       - show_state3: false
 
                   # - type: custom:auto-entities
@@ -181,7 +181,20 @@ cards:
                               template: popup_system
                             deviceID:
                               - this
-                      - template3: button_blank
+                      - entity3: sensor.uptime
+                      - name3: AdGuard
+                      - icon3: mdi:shield-check
+                      - show_state3: false
+                      - tap_action3:
+                          action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: AdGuard
+                            card:
+                              type: custom:decluttering-card
+                              template: popup_adguard
+                            deviceID:
+                              - this
 
               # - type: vertical-stack
               #   cards:
