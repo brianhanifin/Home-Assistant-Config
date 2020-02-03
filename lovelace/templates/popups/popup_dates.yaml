@@ -1,0 +1,22 @@
+---
+card:
+  type: custom:auto-entities
+  show_empty: true
+  card:
+    show_header_toggle: false
+    #title: Important Dates
+    type: entities
+  sort:
+    method: state
+    numeric: true
+  filter:
+    include:
+      - entity_id: /anniversary|birthday|wedding/
+        #state: < 120
+        options:
+          type: custom:secondaryinfo-entity-row
+          secondary_info: >-
+            [[ {entity}.attributes.date ]]  ( [[
+            {entity}.attributes.years_at_next_anniversary ]] Years )
+    exclude:
+      - entity_id: /automation.|calendar.|scene.|script./
