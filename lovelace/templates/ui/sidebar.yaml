@@ -23,6 +23,27 @@ card:
 
     - type: vertical-stack
       cards:
+        - type: custom:card-templater
+          entities:
+            - group.actionable_lights
+            - sensor.medicine_buddy_given_today
+            - sensor.time
+            - variable.left_home
+          card:
+            type: markdown
+            style: |
+              ha-card {
+                background: none;
+                box-shadow: none;
+                font-size: 1.2em;
+                font-weight: 400;
+                letter-spacing: 0.06em;
+                line-height: 2.05em;
+                opacity: 0.65;
+                margin-top: -2em;
+              }
+            content_template: !include ../../../templates/ui/briefing.yaml
+
         - type: custom:home-feed-card
           style: |
             ha-card {
@@ -45,27 +66,6 @@ card:
           show_empty: false
           show_notification_title: true
           entities: !include ../../../templates/ui/notifications.yaml
-
-        - type: custom:card-templater
-          entities:
-            - group.actionable_lights
-            - sensor.medicine_buddy_given_today
-            - sensor.time
-            - variable.left_home
-          card:
-            type: markdown
-            style: |
-              ha-card {
-                background: none;
-                box-shadow: none;
-                font-size: 1.2em;
-                font-weight: 400;
-                letter-spacing: 0.06em;
-                line-height: 2.05em;
-                opacity: 0.65;
-                margin-top: -2em;
-              }
-            content_template: !include ../../../templates/ui/briefing.yaml
 
         - type: horizontal-stack
           cards:
@@ -98,21 +98,6 @@ card:
             - type: custom:decluttering-card
               template: icon_button
               variables:
-                - icon: mdi:lan
-                - tap_action:
-                    action: call-service
-                    service: browser_mod.popup
-                    service_data:
-                      title: Network
-                      card:
-                        type: custom:decluttering-card
-                        template: popup_network
-                      deviceID:
-                        - this
-
-            - type: custom:decluttering-card
-              template: icon_button
-              variables:
                 - icon: mdi:amazon-alexa
                 - tap_action:
                     action: call-service
@@ -137,5 +122,20 @@ card:
                       card:
                         type: custom:decluttering-card
                         template: popup_dates
+                      deviceID:
+                        - this
+
+            - type: custom:decluttering-card
+              template: icon_button
+              variables:
+                - icon: mdi:robot
+                - tap_action:
+                    action: call-service
+                    service: browser_mod.popup
+                    service_data:
+                      title: Modes, Scenes, and Routines
+                      card:
+                        type: custom:decluttering-card
+                        template: popup_routines
                       deviceID:
                         - this

@@ -1,40 +1,52 @@
 ---
 >
-  <table style="width:200px;">
+  <table width="100%">
   <tr>
-  <td style="width:50%;">{{ now().strftime("%A") }}</b><br>
+  <td width="50%">{{ now().strftime("%A") }}</b><br>
   <b>{{ now().strftime("%B") + ', ' + now().strftime("%d") }}</b></td>
-  <td style="width:50%;"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
+  <td width="50%"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
   {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}° high, {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }}° low</td>
+  </tr>
+  <tr>
+    <td>
+      {% if now().hour < 5 %}Goodnight 😴
+      {% elif now().hour < 11 %}Good morning 🌄
+      {% elif now().hour < 18 %}Good afternoon ☀️
+      {% else %}Good evening 🌇
+      {% endif %}
+    </td>
+    <td>
+      {%- set group_id = 'group.actionable_lights' -%}
+      {%- set lights = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='name') | list -%}
+      {%- if lights|count > 5 -%}
+      <b>{{ lights|count }}</b> 💡 are on
+      {%- elif lights|count > 1 -%}
+      {%- for light in lights -%}💡{%- endfor %} are on
+      {%- elif lights|count == 1 -%}
+      <b>1 💡</b> is on
+      {%- endif -%}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      {% macro weekly_chores(name) -%}
+      {% if name == states('input_select.responsibility_dishes_week') -%}
+      {{ name }}: 🍽️
+      {% else -%}
+      {{ name }}: 💩+🧺
+      {% endif -%}
+      {% endmacro -%}
+      {{ weekly_chores("Lucas") -}}
+    </td>
+    <td>
+      {{ weekly_chores("Kyle") -}}
+    </td>
   </tr>
   </table>
 
-  {% if now().hour < 5 %} <b>Good night{{'\U0001F634'}}</b>
-  {% elif now().hour < 11 %} <b>Good morning</b> {{'\u2615\uFE0F'}}
-  {% elif now().hour < 18 %} <b>Good afternoon</b> {{'\U0001F44B\U0001F3FB'}}
-  {% else %} <b>Good evening</b> {{'\U0001F44B\U0001F3FB'}}
-  {% endif %}<br>
-
-  {%- set group_id = 'group.actionable_lights' -%}
-  {%- set lights = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='name') | list -%}
-  {%- if lights|count > 1 -%}
-  <b>{{ lights|count }} lights</b> are on.<br>
-  {%- elif lights|count == 1 -%}
-  <b>1 light</b> is on.<br>
-  {%- endif -%}
-
   {% if states('sensor.medicine_buddy_given_today') != 'Today' -%}
-  Please make sure Buddy's medicine has been prepared for the day.<br>
+  Buddy's 💊
   {% endif -%}
-  {% macro weekly_chores(name) -%}
-  {% if name == states('input_select.responsibility_dishes_week') -%}
-  {{ name }}: {{'\U0001F4A6'}}{{'\U0001F37D'}}
-  {% else -%}
-  {{ name }}: {{'\U0001F4A9'}}+{{'\U0001F4A6'}}{{'\U0001F9E6'}}
-  {% endif -%}
-  {% endmacro -%}
-  {{ weekly_chores("Lucas") -}}<br>
-  {{ weekly_chores("Kyle") -}}<br>
 
   {% set people = states.person | selectattr('state','eq','not_home') | map(attribute='entity_id') | list -%}
   {% for person in people -%}

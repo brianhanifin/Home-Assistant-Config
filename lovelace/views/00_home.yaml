@@ -3,93 +3,43 @@ title: Control Panel
 path: home
 icon: fas:th
 panel: true
+background: center / cover no-repeat url("/local/images/grey-gradient.png")
 cards:
   - type: vertical-stack
     cards:
-      - type: custom:decluttering-card
-        template: notifications
-
       - type: custom:layout-card
         layout: horizontal
         cards:
+          # Column 1
           - type: vertical-stack
             cards:
-              - type: markdown
-                content: >
-                  ## Cameras
-              - type: horizontal-stack
-                cards:
-                  - type: picture-glance
-                    title: Driveway
-                    camera_image: camera.driveway
-                    camera_view: camera.driveway
-                    entities:
-                      - binary_sensor.driveway_motion
-                      - camera.driveway
-                    entity: binary_sensor.driveway_motion
-                    state_filter:
-                      "on": brightness(110%) saturate(1.2)
-                      "off": grayscale(100%)
-                    tap_action:
-                      action: call-service
-                      service: browser_mod.more_info
-                      service_data:
-                        entity_id: camera.driveway
-                      deviceID:
-                        - this
-                  - type: picture-glance
-                    title: Front Door
-                    camera_image: camera.front_door
-                    camera_view: camera.front_door
-                    entities:
-                      - binary_sensor.front_door_motion
-                      - camera.front_door
-                    entity: binary_sensor.front_door_motion
-                    state_filter:
-                      "on": brightness(110%) saturate(1.2)
-                      "off": brightness(70%) grayscale(100%)
-                    tap_action:
-                      action: call-service
-                      service: browser_mod.more_info
-                      service_data:
-                        entity_id: camera.front_door
-                      deviceID:
-                        - this
-                    # tap_action:
-                    #   action: call-service
-                    #   service: browser_mod.popup
-                    #   service_data:
-                    #     title: Security
-                    #     card:
-                    #       type: custom:decluttering-card
-                    #       template: popup_security
-                    #   deviceID:
-                    #     - this
+              - type: custom:mod-card
+                style: |
+                  ha-card {
+                    background: rgba(0, 0, 0, 0.3);
+                    margin-top: 5px;
+                    padding-bottom: 20px;
+                  }
+                card:
+                  type: custom:decluttering-card
+                  template: sidebar
 
+          # Column 2
           - type: vertical-stack
             cards:
-              # - type: custom:home-feed-card
-              #   title: Today
-              #   show_empty: false
-              #   calendars:
-              #     - calendar.brian
-              #     - calendar.nerene
-              #     - calendar.hanifins
-              #     - calendar.birthdays_anniversary
-              #     - calendar.holidays
-
+              # AREAS
               - type: custom:decluttering-card
-                template: heading
+                template: heading2
                 variables:
-                  - heading: "Areas / Lights"
-                  - subtext: "Click: quick toggle &middot; Long-press: more lights/switches"
+                  - heading: Areas
+              # Row 1
               - type: custom:decluttering-card
-                template: button_row3
+                template: button2_row3
                 variables:
                   - entity1: light.bedroom
                   - icon1: mdi:hotel
-                  - name1: Bed Room
-                  - hold_action1:
+                  - name1: Bed
+                  - tap_action1:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -102,7 +52,7 @@ cards:
                   - entity2: light.dining_room
                   - icon2: mdi:food
                   - name2: Dining
-                  - hold_action2:
+                  - tap_action2:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -115,7 +65,7 @@ cards:
                   - entity3: light.entry
                   - icon3: mdi:door
                   - name3: Entry
-                  - hold_action3:
+                  - tap_action3:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -125,9 +75,9 @@ cards:
                           template: popup_entry
                         deviceID:
                           - this
-
+              # Row 2
               - type: custom:decluttering-card
-                template: button_row3
+                template: button2_row3
                 variables:
                   - entity1: light.family_room
                   - icon1: mdi:television
@@ -157,24 +107,24 @@ cards:
                           - this
                   - entity3: switch.landscape_lights
                   - icon3: mdi:tree
-                  - name3: Landscape
+                  - name3: Outdoor
                   - hold_action3:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
-                        title: Outdoor
+                        title: Landscape
                         card:
                           type: custom:decluttering-card
                           template: popup_outdoor
                         deviceID:
                           - this
-
+              # Row 3
               - type: custom:decluttering-card
-                template: button_row3
+                template: button2_row3
                 variables:
                   - entity1: light.play_room
                   - icon1: mdi:gamepad-variant
-                  - name1: Play Room
+                  - name1: Play
                   - hold_action1:
                       action: call-service
                       service: browser_mod.popup
@@ -185,204 +135,57 @@ cards:
                           template: popup_playroom
                         deviceID:
                           - this
-
                   - entity2: light.upstairs_bathroom_nightlight
                   - name2: Bath⬆
                   - icon2: fas:rocket
-
                   - template3: button_blank
-                  # - entity3: switch.xmas_tree
-                  # - icon3: mdi:pine-tree
-                  # - name3: Xmas
 
+          # Column 3
           - type: vertical-stack
             cards:
               - type: custom:decluttering-card
-                template: heading
+                template: heading2
                 variables:
-                  - heading: "Devices"
-              - type: custom:decluttering-card
-                template: button_row3
-                variables:
-                  - entity1: switch.bedroom_fan
-                  - icon1: mdi:fan
-                  - name1: Bed Room
-
-                  - entity2: switch.family_room_fan
-                  - icon2: mdi:fan
-                  - name2: Family
-
-                  - entity3: switch.play_room_fan
-                  - icon3: mdi:fan
-                  - name3: Play Room
-
-              - type: custom:decluttering-card
-                template: button_row3
-                variables:
-                  - entity1: switch.hot_water_pump
-                  - icon1: mdi:hot-tub
-                  - name1: Hot Water
-
-                  - entity2: lock.front_door
-                  - icon2: mdi:lock
-                  - name2: Front Door
-                  - lock2: true
-
-                  - entity3: cover.garage_door
-                  - icon3: mdi:garage
-                  - name3: Garage Door
-                  - lock3: true
-
-              - type: custom:decluttering-card
-                template: button_row3
-                variables:
-                  - entity1: switch.printers
-                  - icon1: mdi:printer
-                  - name1: Printers
-                  - hold_action1:
-                      action: call-service
-                      service: browser_mod.popup
-                      service_data:
-                        title: Color LaserJet M254dw
-                        card:
-                          type: custom:decluttering-card
-                          template: popup_printer
-                        deviceID:
-                          - this
-
-                  - entity2: climate.home
-                  - icon2: mdi:thermostat
-                  - name2: Thermostats
-                  - tap_action2:
-                      action: call-service
-                      service: browser_mod.popup
-                      service_data:
-                        title: Thermostats
-                        card:
-                          type: custom:decluttering-card
-                          template: popup_thermostats
-                        deviceID:
-                          - this
-
-                  - entity3: remote.family_room_hub
-                  - icon3: mdi:remote
-                  - name3: TV Activities
-                  - tap_action3:
-                      action: call-service
-                      service: browser_mod.popup
-                      service_data:
-                        title: TV Activities + Volume
-                        card:
-                          type: custom:decluttering-card
-                          template: popup_tv
-                        deviceID:
-                          - this
-
-              - type: vertical-stack
-                cards:
-                  - type: custom:decluttering-card
-                    template: heading
-                    variables:
-                      - heading: "Routines"
-                  - type: custom:decluttering-card
-                    template: button_row4
-                    variables:
-                      - template1: button_blank
-
-                      - entity2: script.goodbye_routine
-                      - icon2: mdi:exit-run
-                      - name2: Bye
-                      - lock2: true
-                      - show_state2: false
-                      - tap_action2:
-                          action: call-service
-                          service: script.turn_on
-                          service_data:
-                            entity_id: script.goodbye_routine
-
-                      - type3: entity-button
-                      - entity3: script.goodnight_routine
-                      - icon3: mdi:weather-night
-                      - name3: Night
-                      - lock3: true
-                      - show_state3: false
-                      - tap_action3:
-                          action: call-service
-                          service: script.turn_on
-                          service_data:
-                            entity_id: script.goodnight_routine
-
-                      - template4: button_blank
-
-          - type: vertical-stack
-            cards:
-              - type: custom:decluttering-card
-                template: heading
-                variables:
-                  - heading: "Sensors"
-              - type: glance
+                  - heading: Cameras
+              # - type: horizontal-stack
+              #   cards:
+              - type: picture-glance
+                title: Driveway
+                camera_image: camera.driveway
+                camera_view: camera.driveway
                 entities:
-                  - sensor.outside_illuminance
-                  - entity: sensor.medicine_buddy_given_today
-                    name: Buddy's Pills
-                    icon: mdi:pill
-                  - entity: variable.last_presence
-                    icon: mdi:presence-sensor
-                  - entity: sensor.glowforge_status
-                  - entity: sensor.washing_machine_status
-                    name: Washer
-
-              - type: vertical-stack
-                cards:
-                  - type: custom:swipe-card
-                    card_width: '90%'
-                    parameters:
-                      centeredSlides: true
-                      keyboard:
-                        enabled: true
-                        onlyInViewport: true
-                      pagination:
-                        #type: 'progressbar'
-                        type: 'bullets'
-                      navigation:
-                      slidesPerView: 'auto'
-                      spaceBetween: 8
-                    cards:
-                      - type: custom:decluttering-card
-                        template: graph
-                        variables:
-                          - name: Home Power
-                          - sensors:
-                              - entity: sensor.power_use
-                                name: Consumed
-                                color: orange
-                              - entity: sensor.solor_power_generation
-                                name: Generated
-                                color: lightgreen
-                          - group_by: hour
-                          - hours_to_show: 12
-                          - points_per_hour: 1
-                          - show:
-                              labels: true
-                      - type: custom:decluttering-card
-                        template: graph
-                        variables:
-                          - name: SDG&E
-                          - sensors:
-                              - entity: sensor.solar_difference_hourly
-                                color: lightblue
-                                name: Pulled from the grid
-                              # - entity: sensor.zero
-                              #   color: grey
-                              #   show_legend: false
-                              #   show_line: true
-                              #   show_points: false
-                              #   y_axis: secondary
-                          - group_by: hour
-                          - hours_to_show: 12
-                          #- points_per_hour: 1
-                          - show:
-                              graph: bar
-                              labels: true
-                              labels_secondary: false
-                              legend: false
+                  - binary_sensor.driveway_motion
+                  - camera.driveway
+                entity: binary_sensor.driveway_motion
+                state_filter:
+                  "on": brightness(110%) saturate(1.2)
+                  "off": grayscale(100%)
+                tap_action:
+                  action: call-service
+                  service: browser_mod.more_info
+                  service_data:
+                    entity_id: camera.driveway
+                    deviceID:
+                      - this
+              - type: picture-glance
+                style: |
+                  .box, .box .row {
+                    align: right;
+                  }
+                title: Front Door
+                camera_image: camera.front_door
+                camera_view: camera.front_door
+                entities:
+                  - binary_sensor.front_door_motion
+                  - camera.front_door
+                entity: binary_sensor.front_door_motion
+                state_filter:
+                  "on": brightness(110%) saturate(1.2)
+                  "off": brightness(70%) grayscale(100%)
+                tap_action:
+                  action: call-service
+                  service: browser_mod.more_info
+                  service_data:
+                    entity_id: camera.front_door
+                    deviceID:
+                      - this
