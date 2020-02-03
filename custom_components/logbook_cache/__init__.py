@@ -169,11 +169,12 @@ class MonkeyClass:
         if timestamp > dt_util.utcnow():
             return []
 
-        if only_cache:
+        next_timestamp = step_timestamp(timestamp)
+
+        if only_cache and next_timestamp < dt_util.utcnow():
             return []
 
         _LOGGER.debug(f"Loading {timestamp}")
-        next_timestamp = step_timestamp(timestamp)
         chunk = self.original_get_events(
             self.hass, logbook_config, timestamp, next_timestamp
         )
