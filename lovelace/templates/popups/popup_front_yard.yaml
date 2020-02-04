@@ -1,0 +1,46 @@
+---
+card:
+  type: vertical-stack
+  cards:
+    - type: horizontal-stack
+      cards:
+        - type: light
+          entity: light.porch
+          name: Porch
+        # - type: custom:decluttering-card
+        #   template: light_entity_card
+        #   variables:
+        #     - entity: light.porch
+        - type: entity-button
+          style: |
+            ha-card {
+              height: 93%;
+            }
+          entity: switch.landscape_lights
+          icon: mdi:tree
+          name: Landscape Lights
+
+    - type: custom:decluttering-card
+      template: graph2
+      variables:
+        - sensors1:
+            - sensor.outside_temperature
+        - sensors2:
+            - sensor.outside_humidity
+        - hours_to_show: 6
+        - line_width: 8
+        - points_per_hour: 4
+        - show:
+            icon: false
+            labels: false
+
+    - type: vertical-stack
+      cards:
+      - type: picture-glance
+        title: Driveway
+        camera_image: camera.driveway
+        camera_view: camera.driveway
+        entities:
+          - binary_sensor.driveway_motion
+          - camera.driveway
+        entity: binary_sensor.driveway_motion

@@ -1,0 +1,33 @@
+---
+card:
+  type: vertical-stack
+  cards:
+    - type: horizontal-stack
+      cards:
+        - type: light
+          entity: light.entry
+          name: Entry
+        - type: light
+          entity: light.porch
+          name: Porch
+
+    - type: custom:decluttering-card
+      template: button2_row3
+      variables:
+        - entity1: lock.front_door
+        - icon1: mdi:lock
+        - name1: Door
+        - lock1: true
+        - template2: button_blank
+        - template3: button_blank
+
+    - type: horizontal-stack
+      cards:
+        - type: picture-glance
+          title: Front Door
+          camera_image: camera.front_door
+          camera_view: camera.front_door
+          entities:
+            - binary_sensor.front_door_motion
+            - camera.front_door
+          entity: binary_sensor.front_door_motion

@@ -1,10 +1,10 @@
 ---
 >
-  <table width="100%">
+  <table style="padding:0;margin:0;" width="100%">
   <tr>
-  <td width="50%">{{ now().strftime("%A") }}</b><br>
+  <td width="52%">{{ now().strftime("%A") }}</b><br>
   <b>{{ now().strftime("%B") + ', ' + now().strftime("%d") }}</b></td>
-  <td width="50%"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
+  <td width="48%"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
   {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}° high, {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }}° low</td>
   </tr>
   <tr>
@@ -18,7 +18,7 @@
     <td>
       {%- set group_id = 'group.actionable_lights' -%}
       {%- set lights = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='name') | list -%}
-      {%- if lights|count > 5 -%}
+      {%- if lights|count > 4 -%}
       <b>{{ lights|count }}</b> 💡 are on
       {%- elif lights|count > 1 -%}
       {%- for light in lights -%}💡{%- endfor %} are on
@@ -33,7 +33,7 @@
       {% if name == states('input_select.responsibility_dishes_week') -%}
       {{ name }}: 🍽️
       {% else -%}
-      {{ name }}: 💩+🧺
+      {{ name }}: 🧺+💩
       {% endif -%}
       {% endmacro -%}
       {{ weekly_chores("Lucas") -}}

@@ -49,10 +49,23 @@ cards:
                           template: popup_bedroom
                         deviceID:
                           - this
-                  - entity2: light.dining_room
-                  - icon2: mdi:food
-                  - name2: Dining
+                  - entity2: light.bedroom
+                  - icon2: mdi:hotel
+                  - name2: Boys
                   - tap_action2:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Boys Bedroom
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_boys_bedroom
+                        deviceID:
+                          - this
+                  - entity3: light.dining_room
+                  - icon3: mdi:food
+                  - name3: Dining
+                  - tap_action3:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -62,10 +75,14 @@ cards:
                           template: popup_dining_room
                         deviceID:
                           - this
-                  - entity3: light.entry
-                  - icon3: mdi:door
-                  - name3: Entry
-                  - tap_action3:
+              # Row 2
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: light.entry
+                  - icon1: mdi:door
+                  - name1: Entry
+                  - tap_action1:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -75,14 +92,10 @@ cards:
                           template: popup_entry
                         deviceID:
                           - this
-              # Row 2
-              - type: custom:decluttering-card
-                template: button2_row3
-                variables:
-                  - entity1: light.family_room
-                  - icon1: mdi:television
-                  - name1: Family
-                  - hold_action1:
+                  - entity2: light.family_room
+                  - icon2: mdi:television
+                  - name2: Family
+                  - tap_action2:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -92,10 +105,27 @@ cards:
                           template: popup_family_room
                         deviceID:
                           - this
-                  - entity2: group.kitchen_lights
-                  - icon2: mdi:stove
-                  - name2: Kitchen
-                  - hold_action2:
+                  - entity3: switch.landscape_lights
+                  - icon3: mdi:tree
+                  - name3: Front
+                  - tap_action3:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Front Yard
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_front_yard
+                        deviceID:
+                          - this
+              # Row 3
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: group.kitchen_lights
+                  - icon1: mdi:stove
+                  - name1: Kitchen
+                  - tap_action1:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -105,27 +135,10 @@ cards:
                           template: popup_kitchen
                         deviceID:
                           - this
-                  - entity3: switch.landscape_lights
-                  - icon3: mdi:tree
-                  - name3: Outdoor
-                  - hold_action3:
-                      action: call-service
-                      service: browser_mod.popup
-                      service_data:
-                        title: Landscape
-                        card:
-                          type: custom:decluttering-card
-                          template: popup_outdoor
-                        deviceID:
-                          - this
-              # Row 3
-              - type: custom:decluttering-card
-                template: button2_row3
-                variables:
-                  - entity1: light.play_room
-                  - icon1: mdi:gamepad-variant
-                  - name1: Play
-                  - hold_action1:
+                  - entity2: light.play_room
+                  - icon2: mdi:gamepad-variant
+                  - name2: Play
+                  - tap_action2:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -135,10 +148,68 @@ cards:
                           template: popup_playroom
                         deviceID:
                           - this
-                  - entity2: light.upstairs_bathroom_nightlight
-                  - name2: Bath⬆
-                  - icon2: fas:rocket
-                  - template3: button_blank
+                  - entity3: switch.upstairs_bathroom_fan
+                  - name3: Up Bath
+                  - icon3: mdi:hot-tub
+                  - tap_action3:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Upstairs Bathroom
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_upstairs_bathroom
+                        deviceID:
+                          - this
+
+              # Special
+              - type: custom:decluttering-card
+                template: heading2
+                variables:
+                  - heading: Special
+              # Row 1
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: ""
+                  - icon1: mdi:cake-variant
+                  - name1: Dates
+                  - tap_action1:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Important Dates
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_dates
+                        deviceID:
+                          - this
+                  - entity2: ""
+                  - icon2: mdi:robot
+                  - name2: Routines
+                  - tap_action2:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Modes & Routines
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_routines
+                        deviceID:
+                          - this
+                  - entity3: ""
+                  - icon3: mdi:sprinkler-variant
+                  - name3: Watering
+                  - tap_action3:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Irrigation System
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_irrigation
+                        deviceID:
+                          - this
 
           # Column 3
           - type: vertical-stack

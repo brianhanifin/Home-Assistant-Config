@@ -1,22 +1,53 @@
 ---
 card:
-  type: custom:auto-entities
-  show_empty: true
-  card:
-    show_header_toggle: false
-    #title: Important Dates
-    type: entities
-  sort:
-    method: state
-    numeric: true
-  filter:
-    include:
-      - entity_id: /anniversary|birthday|wedding/
-        #state: < 120
-        options:
-          type: custom:secondaryinfo-entity-row
-          secondary_info: >-
-            [[ {entity}.attributes.date ]]  ( [[
-            {entity}.attributes.years_at_next_anniversary ]] Years )
-    exclude:
-      - entity_id: /automation.|calendar.|scene.|script./
+  type: custom:swipe-card
+  card_width: '90%'
+  parameters:
+    centeredSlides: true
+    keyboard:
+      enabled: true
+      onlyInViewport: true
+    navigation:
+    pagination:
+      #type: 'progressbar'
+      type: 'bullets'
+    slidesPerView: 'auto'
+    spaceBetween: 8
+  cards:
+    - type: custom:auto-entities
+      show_empty: true
+      card:
+        show_header_toggle: false
+        type: entities
+      sort:
+        method: state
+        numeric: true
+      filter:
+        include:
+          - entity_id: /anniversary|birthday|wedding/
+            state: < 180
+            options:
+              type: custom:secondaryinfo-entity-row
+              secondary_info: >-
+                [[ {entity}.attributes.date ]]  ( [[ {entity}.attributes.years_at_next_anniversary ]] Years )
+        exclude:
+          - entity_id: /automation.|calendar.|scene.|script./
+
+    - type: custom:auto-entities
+      show_empty: true
+      card:
+        show_header_toggle: false
+        type: entities
+      sort:
+        method: state
+        numeric: true
+      filter:
+        include:
+          - entity_id: /anniversary|birthday|wedding/
+            state: ">= 180"
+            options:
+              type: custom:secondaryinfo-entity-row
+              secondary_info: >-
+                [[ {entity}.attributes.date ]]  ( [[ {entity}.attributes.years_at_next_anniversary ]] Years )
+        exclude:
+          - entity_id: /automation.|calendar.|scene.|script./
