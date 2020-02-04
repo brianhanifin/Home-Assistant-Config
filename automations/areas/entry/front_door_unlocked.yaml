@@ -13,33 +13,19 @@ action:
       entity_id: timer.front_door_unlocked
 
   # Update Light Switch LED Status Color.
-  - service: script.inovelli_led
+  - service: script.inovelli_led_status_start
     data:
       entity_id: zwave.dimmer_family_room
       color: cyan
-      effect: chase
-      duration: 15 seconds
-      level: 4
-
-  - delay:
-      seconds: 14
-  - condition: state
-    entity_id: lock.front_door
-    state: 'unlocked'
-  - service: script.inovelli_led
-    data:
-      entity_id: zwave.dimmer_family_room
-      color: cyan
-      duration: indefinitely
-      effect: pulse
-      level: 4
+      state_entity: lock.front_door
+      state: "unlocked"
 
   ## ================================================================================================= ##
 
   # Skip turning on the entry lights in the middle of the day.
-  - condition: numeric_state
-    entity_id: sensor.outside_illuminance
-    below: 5000
+  - condition: template
+    value_template: "{{ states('sensor.outside_illuminance')|int < 2000 }}"
+
   # Store the current state of the porch + entry lights.
   - service: scene.create
     data:

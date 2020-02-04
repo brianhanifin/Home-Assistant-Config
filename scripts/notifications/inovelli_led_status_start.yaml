@@ -1,0 +1,22 @@
+---
+sequence:
+  - service: script.inovelli_led
+    data_template:
+      entity_id: "{{ entity_id }}"
+      color: "{{ color }}"
+      effect: chase
+      duration: 15 seconds
+      level: "{{ level|default('4') }}"
+
+  # If the state remains after a short delay then change the effect to something less attention grabbing.
+  - delay:
+      seconds: 14
+  - condition: template
+    value_template: "{{ state_entity == state }}"
+  - service: script.inovelli_led
+    data_template:
+      entity_id: "{{ entity_id }}"
+      color: "{{ color }}"
+      effect: pulse
+      duration: indefinitely
+      level: "{{ level|default('4') }}"
