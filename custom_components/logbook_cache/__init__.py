@@ -33,6 +33,12 @@ async def async_setup(hass, config):
     )
     logbook_config = config.get(lb.DOMAIN, {})
 
+    recorder_config = config.get("recorder", {})
+
+    _LOGGER.debug(
+        f"Setup, logbook_config={logbook_config}, recorder_config={recorder_config}"
+    )
+
     return True
 
 
@@ -101,6 +107,9 @@ class MonkeyClass:
         self.async_refresh_cache()
 
     def wrap_get_events(self, hass, config, start_day, end_day, entity_id=None):
+        _LOGGER.debug(
+            f"wrap_get_events(start_day={start_day}, end_day={end_day}, entity_id={entity_id})"
+        )
         only_cache = self.config_entry.options.get(ONLY_CACHE, DEFAULT_ONLY_CACHE)
 
         if entity_id is not None:
@@ -119,6 +128,7 @@ class MonkeyClass:
                 events.extend(self.load_chunk(timestamp, only_cache=only_cache))
                 timestamp = step_timestamp(timestamp)
 
+        _LOGGER.debug(f"Found {len(events)} events")
         return events
 
     def cache_start(self):
