@@ -24,15 +24,15 @@ card:
             entity: binary_sensor.irrigation_zone[[zone_number]]
             name: ""
           primary:
+            entity: sensor.irrigation_zone[[zone_number]]_next
+            name: Next Time
+          secondary:
             entity: sensor.irrigation_zone[[zone_number]]_remaining
             name: Remaining
-          # secondary:
-          #   entity: sensor.irrigation_zone[[zone_number]]_next
-          #   name: Next Time
         - type: "custom:button-entity-row"
           buttons:
             - entity: switch.irrigation_zone[[zone_number]]
-              name: Zone [[zone_number]]
+              name: "[[name]]"
               style:
                 background: lightgray
                 border-radius: 9999px
@@ -55,17 +55,11 @@ card:
             type: section
             label: Edit Schedule
           entities:
-            - entity: switch.irrigation_zone[[zone_number]]_schedule
-              name: Scheduled
-            - type: time-input-row
-              entity: "input_datetime.irrigation_zone[[zone_number]]_first"
-              name: First Run of the Day
-              icon: mdi:weather-sunset-up
-            - type: time-input-row
-              entity: "input_datetime.irrigation_zone[[zone_number]]_last"
-              name: First Run
-              icon: mdi:weather-sunset-up
-            # - input_select.irrigation_zone[[zone_number]]_duration
-            - entity: sensor.irrigation_zone[[zone_number]]_last
-              name: Last Run of the Day
-              secondary_info: last-changed
+            - type: custom:text-input-row
+              entity: input_text.irrigation_zone[[zone_number]]_times
+            - type: section
+              label: Duration in Minutes (0 = DISABLED)
+            - type: custom:slider-entity-row
+              entity: input_number.irrigation_zone[[zone_number]]_duration
+              full_row: true
+              hide_state: true
