@@ -292,13 +292,11 @@ homeassistant:
       <<: *customize
       friendly_name: "Battery Alert"
       icon: mdi:steam
-      control: hidden
 
     group.battery_status:
       <<: *customize
       friendly_name: "Battery Status"
       icon: mdi:battery-charging
-      control: hidden
 
     ################################################
     ## Automation
@@ -343,13 +341,11 @@ homeassistant:
 ################################################
 group:
   battery_view:
-    view: yes
     entities:
       - group.battery_status
       - group.battery_alert
 
   battery_alert:
-    control: hidden
     entities:
       - input_boolean.low_batteries
       - input_number.battery_alert_threshold_min
@@ -423,8 +419,7 @@ input_text:
 automation:
 - alias: battery_persistent_notification
   initial_state: 'on'
-  hide_entity: true
-  trigger:
+    trigger:
     - platform: time_pattern
       minutes: '/15'
       seconds: 00
@@ -492,8 +487,7 @@ automation:
 
 - alias: battery_persistent_notification_clear
   initial_state: 'on'
-  hide_entity: true
-  trigger:
+    trigger:
     - platform: time_pattern
       minutes: '/15'
       seconds: 00
@@ -536,8 +530,7 @@ automation:
 
 - alias: battery_notification_default
   initial_state: 'on'
-  hide_entity: true
-  trigger:
+    trigger:
     - platform: time
       at: '10:00:00'
     - platform: time
@@ -563,8 +556,7 @@ automation:
 
 - alias: battery_notification_slack
   initial_state: 'on'
-  hide_entity: true
-  trigger:
+    trigger:
     - platform: time
       at: '10:00:00'
     - platform: time
@@ -594,8 +586,7 @@ automation:
 
 - alias: battery_sensor_from_attributes
   initial_state: 'on'
-  hide_entity: true
-  trigger:
+    trigger:
     - platform: event
       event_type: state_changed
   condition:
@@ -744,8 +735,7 @@ automation:
 
 - alias: update_battery_status_group_members
   initial_state: 'on'
-  hide_entity: true
-  trigger:
+    trigger:
     - platform: time_pattern
       minutes: '/1'
       seconds: 00
@@ -778,8 +768,7 @@ automation:
 
 - alias: delete_battery_sensor
   initial_state: 'on'
-  hide_entity: true
-  trigger:
+    trigger:
     - platform: state
       entity_id:
         - input_text.delete_battery_sensor
