@@ -26,28 +26,28 @@ binary_sensor:
       irrigation_zone1:
         friendly_name: Irrigation Zone 1
         entity_id: sensor.irrigation_zone1_remaining
-        value_template: "{{ states('sensor.irrigation_zone1_remaining')|int > 0 }}"
+        value_template: "{{ is_state('switch.irrigation_zone1','on') }}"
 
   - platform: template
     sensors:
       irrigation_zone2:
         friendly_name: Irrigation Zone 2
         entity_id: sensor.irrigation_zone2_remaining
-        value_template: "{{ states('sensor.irrigation_zone2_remaining')|int > 0 }}"
+        value_template: "{{ is_state('switch.irrigation_zone2','on') }}"
 
   - platform: template
     sensors:
       irrigation_zone3:
         friendly_name: Irrigation Zone 3
         entity_id: sensor.irrigation_zone3_remaining
-        value_template: "{{ states('sensor.irrigation_zone3_remaining')|int > 0 }}"
+        value_template: "{{ is_state('switch.irrigation_zone3','on') }}"
 
   # - platform: template
   #   sensors:
   #     irrigation_zone4:
   #       friendly_name: Irrigation Zone 4
   #       entity_id: sensor.irrigation_zone4_remaining
-  #       value_template: "{{ states('sensor.irrigation_zone4_remaining')|int > 0 }}"
+  #       value_template: "{{ is_state('switch.irrigation_zone4','on') }}"
 
 input_text:
   irrigation_zone1_times:
