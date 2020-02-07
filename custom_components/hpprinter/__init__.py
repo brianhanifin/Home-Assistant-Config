@@ -3,10 +3,10 @@ This component provides support for HP Printers.
 For more details about this component, please refer to the documentation at
 https://home-assistant.io/components/hpprinter/
 """
-import voluptuous as vol
+from homeassistant.config_entries import ConfigEntry
 
-from homeassistant.const import (CONF_HOST, CONF_NAME, CONF_DEVICES)
-from homeassistant.helpers import config_validation as cv
+from homeassistant.const import (CONF_HOST, CONF_NAME)
+from homeassistant.core import HomeAssistant
 
 from .const import *
 from .HPDeviceData import *
@@ -14,61 +14,39 @@ from .home_assistant import HPPrinterHomeAssistant
 
 _LOGGER = logging.getLogger(__name__)
 
-DEVICE_SCHEMA = vol.Schema({
-    vol.Required(CONF_HOST): cv.string,
-    vol.Optional(CONF_NAME): cv.string
-})
 
-CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: vol.Schema({
-        vol.Required(CONF_DEVICES, []): vol.All(cv.ensure_list, [vol.Any(DEVICE_SCHEMA)])
-    }),
-}, extra=vol.ALLOW_EXTRA)
+async def async_setup(hass, config):
+    return True
 
 
-def setup(hass, config):
-    """Set up a Blue Iris component."""
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Set up a HPPrinter component."""
     _LOGGER.debug(f"Loading HP Printer domain")
 
-    initialized = False
-    devices_handlers = []
+    _LOGGER.debug(f"Starting async_setup_entry of {DOMAIN}")
+    entry_data = entry.data
 
-    conf = config[DOMAIN]
-    scan_interval = SCAN_INTERVAL
-    devices = conf.get(CONF_DEVICES, [])
+    host = entry_data.get(CONF_HOST)
+    data = {}
 
-    device_id = 0
+    if DATA_HP_PRINTER not in hass.data:
+        hass.data[DATA_HP_PRINTER] = data
 
-    for device in devices:
-        try:
-            device_id = device_id + 1
+    name = entry_data.get(CONF_NAME, f"{DEFAULT_NAME} #{len(data) + 1}")
 
-            host = device.get(CONF_HOST)
-            name = device.get(CONF_NAME, f"{DEFAULT_NAME} #{device_id}")
-            hp_data = None
+    if host is None:
+        _LOGGER.info("Invalid hostname")
+        return False
 
-            if host is not None:
-                hp_data = HPDeviceData(host, name)
+    if name in data:
+        _LOGGER.info(f"Printer {name} already defined")
+        return False
 
-            ha = HPPrinterHomeAssistant(hass, scan_interval, name, hp_data)
+    hp_data = HPDeviceData(host, name)
 
-            if host is not None:
-                ha.initialize()
+    ha = HPPrinterHomeAssistant(hass, SCAN_INTERVAL, name, hp_data)
+    ha.initialize()
 
-                devices_handlers.append(ha)
+    hass.data[DATA_HP_PRINTER][name] = ha
 
-                _LOGGER.debug(f"{name} is loaded")
-                initialized = True
-
-            else:
-                ha.notify_error_message(f"{name} was not configured correctly")
-
-        except Exception as ex:
-            exc_type, exc_obj, tb = sys.exc_info()
-            line_number = tb.tb_lineno
-
-            _LOGGER.error(f"Failed to create HA component, Error: {ex}, Line: {line_number}")
-
-    hass.data[DATA_HP_PRINTER] = devices_handlers
-
-    return initialized
+    return True

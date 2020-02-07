@@ -6,8 +6,8 @@ https://home-assistant.io/components/hpprinter/
 import sys
 import logging
 
-from homeassistant.const import (EVENT_HOMEASSISTANT_START, STATE_ON, STATE_OFF)
-from homeassistant.helpers.event import track_time_interval
+from homeassistant.const import (STATE_ON, STATE_OFF)
+from homeassistant.helpers.event import async_call_later, async_track_time_interval
 from homeassistant.util import slugify
 
 from .const import *
@@ -23,24 +23,28 @@ class HPPrinterHomeAssistant:
         self._hp_data = hp_data
 
     def initialize(self):
-        def refresh_data(event_time):
-            """Call BlueIris to refresh information."""
-            _LOGGER.debug(f"Updating {DOMAIN} component at {event_time}")
-
-            self.update()
-
-        def save_debug_data(service):
-            """Call BlueIris to refresh information."""
-            _LOGGER.debug(f"Saving debug data {DOMAIN} ({service})")
-
-            self._hp_data.get_data(self.store_data)
-
         if self._hp_data is not None:
-            self._hass.services.register(DOMAIN, 'save_debug_data', save_debug_data)
+            async_track_time_interval(self._hass, self.async_update, SCAN_INTERVAL)
 
-            track_time_interval(self._hass, refresh_data, self._scan_interval)
+            async_call_later(self._hass, 5, self.async_finalize)
 
-            self._hass.bus.listen_once(EVENT_HOMEASSISTANT_START, refresh_data)
+    async def async_finalize(self, event_time):
+        _LOGGER.debug(f"async_finalize called at {event_time}")
+
+        self._hass.services.async_register(DOMAIN, 'save_debug_data', self.save_debug_data)
+
+        self.update()
+
+    async def async_update(self, event_time):
+        _LOGGER.debug(f"async_update called at {event_time}")
+
+        self.update()
+
+    def save_debug_data(self, service_data):
+        """Call BlueIris to refresh information."""
+        _LOGGER.debug(f"Saving debug data {DOMAIN} ({service_data})")
+
+        self._hp_data.get_data(self.store_data)
 
     def notify_error(self, ex, line_number):
         _LOGGER.error(f"Error while initializing {DOMAIN}, exception: {ex},"
@@ -107,7 +111,7 @@ class HPPrinterHomeAssistant:
             "device_class": "connectivity"
         }
 
-        self._hass.states.set(entity_id, state, attributes)
+        self._hass.states.async_set(entity_id, state, attributes)
 
         return is_online
 
@@ -130,7 +134,7 @@ class HPPrinterHomeAssistant:
                 if key != HP_DEVICE_PRINTER_STATE:
                     attributes[key] = printer_data[key]
 
-            self._hass.states.set(entity_id, state, attributes)
+            self._hass.states.async_set(entity_id, state, attributes)
 
     def create_scanner_sensor(self, data):
         scanner_data = data.get(HP_DEVICE_SCANNER)
@@ -151,7 +155,7 @@ class HPPrinterHomeAssistant:
                 if key != HP_DEVICE_SCANNER_STATE:
                     attributes[key] = scanner_data[key]
 
-            self._hass.states.set(entity_id, state, attributes)
+            self._hass.states.async_set(entity_id, state, attributes)
 
     def create_cartridge_sensor(self, data, cartridge, key):
         name = data.get("Name", DEFAULT_NAME)
@@ -169,4 +173,4 @@ class HPPrinterHomeAssistant:
             if key != HP_DEVICE_CARTRIDGE_STATE:
                 attributes[key] = cartridge[key]
 
-        self._hass.states.set(entity_id, state, attributes)
+        self._hass.states.async_set(entity_id, state, attributes)
