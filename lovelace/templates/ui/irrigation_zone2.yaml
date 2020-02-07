@@ -15,9 +15,18 @@ card:
     - type: entities
       show_header_toggle: false
       entities:
+        - type: custom:decluttering-card
+          template: button_pill
+          variables:
+            - entity: switch.irrigation_zone[[zone_number]]
+            - label: Start Cycle
+
+        - type: custom:text-divider-row
+          text: Status
+
         - type: custom:multiple-entity-row
           entity: binary_sensor.irrigation_zone[[zone_number]]
-          name: "[[name]]"
+          name: 💧 Watering
           icon: "[[icon]]"
           hide_state: true
           info:
@@ -25,40 +34,23 @@ card:
             name: ""
           primary:
             entity: sensor.irrigation_zone[[zone_number]]_next
-            name: Next Time
+            name: ⏭️ Next Cycle
           secondary:
             entity: sensor.irrigation_zone[[zone_number]]_remaining
-            name: Remaining
-        - type: "custom:button-entity-row"
-          buttons:
-            - entity: switch.irrigation_zone[[zone_number]]
-              name: "[[name]]"
-              style:
-                background: lightgray
-                border-radius: 9999px
-              state_icons:
-                "off": "mdi:play"
-                "on": "mdi:stop"
-              state_styles:
-                "off":
-                  color: green
-                  font-weight: bold
-                "on":
-                  color: red
-                  font-weight: bold
+            name: ⏳ Remaining
 
-    - type: entities
-      show_header_toggle: false
-      entities:
         - type: custom:fold-entity-row
           head:
-            type: section
-            label: Edit Schedule
+            type: custom:text-divider-row
+            text: Scheduler
           entities:
             - type: custom:text-input-row
               entity: input_text.irrigation_zone[[zone_number]]_times
-            - type: section
-              label: Duration in Minutes (0 = DISABLED)
+            #- type: section
+            #  label: Duration in Minutes (0 = DISABLED)
+            - entity: sensor.irrigation_zone1_duration
+              name: Duration in Minutes
+              icon: mdi:timer-sand
             - type: custom:slider-entity-row
               entity: input_number.irrigation_zone[[zone_number]]_duration
               full_row: true

@@ -12,7 +12,7 @@ automation:
         data_template:
           title: "Irrigation System Offline"
           message: "The Irrigation System has been offline for 2 hours!"
-          id: "update"
+          id: "offline"
 
       - service: script.notify_mobile
         data_template:
@@ -25,29 +25,15 @@ binary_sensor:
     sensors:
       irrigation_zone1:
         friendly_name: Irrigation Zone 1
-        entity_id: sensor.irrigation_zone1_remaining
+        entity_id: switch.irrigation_zone1
         value_template: "{{ is_state('switch.irrigation_zone1','on') }}"
 
   - platform: template
     sensors:
       irrigation_zone2:
         friendly_name: Irrigation Zone 2
-        entity_id: sensor.irrigation_zone2_remaining
+        entity_id: switch.irrigation_zone2
         value_template: "{{ is_state('switch.irrigation_zone2','on') }}"
-
-  - platform: template
-    sensors:
-      irrigation_zone3:
-        friendly_name: Irrigation Zone 3
-        entity_id: sensor.irrigation_zone3_remaining
-        value_template: "{{ is_state('switch.irrigation_zone3','on') }}"
-
-  # - platform: template
-  #   sensors:
-  #     irrigation_zone4:
-  #       friendly_name: Irrigation Zone 4
-  #       entity_id: sensor.irrigation_zone4_remaining
-  #       value_template: "{{ is_state('switch.irrigation_zone4','on') }}"
 
 input_text:
   irrigation_zone1_times:
@@ -56,18 +42,11 @@ input_text:
   irrigation_zone2_times:
     name: List of Times (eg. 08:00,12:00,15:00)
     icon: mdi:clock-outline
-  irrigation_zone3_times:
-    name: List of Times (eg. 08:00,12:00,15:00)
-    icon: mdi:clock-outline
-  # irrigation_zone4_times:
-  #   name: List of Times (eg. 08:00,12:00,15:00)
-  #   icon: mdi:clock-outline
 
 input_number:
   irrigation_zone1_duration:
     name: Duration in Minutes
     icon: mdi:timer-sand
-    #initial: 0
     min: 0
     max: 60
     step: 1
@@ -76,26 +55,7 @@ input_number:
   irrigation_zone2_duration:
     name: Duration in Minutes
     icon: mdi:timer-sand
-    #initial: 0
     min: 0
     max: 60
     step: 1
     unit_of_measurement: "minutes"
-
-  irrigation_zone3_duration:
-    name: Duration in Minutes
-    icon: mdi:timer-sand
-    #initial: 0
-    min: 0
-    max: 60
-    step: 1
-    unit_of_measurement: "minutes"
-
-  # irrigation_zone4_duration:
-  #   name: Duration in Minutes
-  #   icon: mdi:timer-sand
-  #   #initial: 0
-  #   min: 0
-  #   max: 60
-  #   step: 1
-  #   unit_of_measurement: "minutes"
