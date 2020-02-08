@@ -1,0 +1,97 @@
+---
+#  Custom Header
+#
+# This addon is used to modify the header in Home Assistant.
+#
+# https://maykar.github.io/custom-header/#configuration/main
+#### #### #### #### #### #### #### #### #### #### #### ####
+
+compact_mode: true
+chevrons: false
+background: "rgba(0,0,0,.6)"
+notify_indicator_color: "#e80000"
+swipe: true
+swipe_wrap: false
+
+# Default things to hide for everyone else.
+hide_help: true
+notifications: hide
+options: hide
+voice: hide
+
+button_text:
+  options: "{{ hours12 }}:{{ minutesLZ }} <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°"
+
+# header_text: >-
+#   <style>
+#   #flipper {color:#999;}
+#   #flip {height:24px;overflow:hidden;}
+#   #flip > div > div {color:#fff;height:24px;margin-bottom:24px;display:inline-block;}
+#   #flip div:first-child {animation: show 10s linear infinite;}
+#   @keyframes show {
+#   0% {margin-top:-144px;}
+#   5% {margin-top:-96px;}
+#   33% {margin-top:-96px;}
+#   38% {margin-top:-48px;}
+#   66% {margin-top:-48px;}
+#   76% {margin-top:0px;}
+#   100% {margin-top:0px;}}
+#   #flipper p {position:fixed;color:#999; }
+#   </style>
+#   <div id=flipper><div id=flip><div><div>
+#   ... END OF LINE.</div></div><div><div>
+#   {{ "Plex viewers: <b>" + states('sensor.plex') + "</b></div></div><div><div>" if states('sensor.plex')|int > 0 }}
+#   {{ "Update <b>" + states('sensor.latest_release') + "</b> Available</div></div><div><div>" if is_state('binary_sensor.update_available','on') }}
+#   {{ states('sensor.forecast')|trim|replace('<br>','</div></div><div><div>') }}</div></div><div><div>
+
+tab_icons:
+  outdoors: "{{ state_attr('sensor.today_icon', 'icon') }}"
+
+exceptions:
+  - conditions:
+      user: brian
+    config:
+      background: "rgba(0,0,0,0.3)"
+      notifications: show
+      options: show
+      voice: show
+      split_mode: true
+      footer_mode: true
+
+  - conditions:
+      user: Kyle, Lucas
+    config:
+      default_tab: 2
+      disable_sidebar: true
+      hide_tabs: outdoors,wakeup,tools,lock,test
+
+  - conditions:
+      user: Nerene
+    config:
+      disable_sidebar: true
+      hide_tabs: tools,lock,test
+
+  # Windows App
+  - conditions:
+      user_agent: Electron
+    config:
+      menu_hide: true
+      voice_dropdown: true
+      button_text:
+        options: ""
+      header_text: ""
+      split_mode: false
+      footer_mode: false
+
+  - conditions:
+      user_agent: Mobile
+      media_query: "(max-width: 600px)"
+    config:
+      #background: "rgba(0,0,0,1)"
+      menu_hide: true
+      voice_dropdown: true
+      button_text:
+        options: ""
+      header_text: ""
+      split_mode: false
+      footer_mode: false

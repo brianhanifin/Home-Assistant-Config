@@ -11,7 +11,7 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **984 entities**, with **291 sensors** in Home Assistant. I am also using **23 custom components**.
+As of my last commit I have **1007 entities**, with **308 sensors** in Home Assistant. I am also using **24 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -29,9 +29,7 @@ My wife is really happy with how this is working and I am considering incorporat
 
 ### Official User Interface (Lovelace)
 
-| | | | | |
-| --- | --- | --- | --- | --- |
-| [![home][lovelace-01t]][lovelace-01] | [![rooms][lovelace-02t]][lovelace-02] | [![outside][lovelace-03t]][lovelace-03] | [![wakeup][lovelace-04t]][lovelace-04] | [![tools][lovelace-05t]][lovelace-05] |
+[![home][lovelace-00t]][lovelace-00]
 
 ---
 
@@ -154,6 +152,8 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
   
   <dt> Anniversaries </dt>
   
+  <dt> Lovelace Gen </dt>
+  
   <dt> Battery Level </dt>
   
   <dt> Illuminance </dt>
@@ -201,24 +201,15 @@ I just learned of Frenck recently, but he is a long time member of the community
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions](https://github.com/brianhanifin/Home-Assistant-Config/actions).
 
 
-[lovelace-01t]: ./README-images/01_home_t.jpeg
-[lovelace-02t]: ./README-images/02_rooms_t.jpeg
-[lovelace-03t]: ./README-images/03_outside_t.jpeg
-[lovelace-04t]: ./README-images/04_wakeup_t.jpeg
-[lovelace-05t]: ./README-images/05_tools_t.jpeg
-
-[lovelace-01]: ./README-images/01_home.jpeg
-[lovelace-02]: ./README-images/02_rooms.jpeg
-[lovelace-03]: ./README-images/03_outside.jpeg
-[lovelace-04]: ./README-images/04_wakeup.jpeg
-[lovelace-05]: ./README-images/05_tools.jpeg
+[lovelace-00]: ./README-images/_one_page_ui.jpeg
+[lovelace-00t]: ./README-images/_one_page_ui_t.jpeg
 
 [amazon-echo]: ./README-images/echo.jpeg
 [bedroom_switches]: ./README-images/xiaomi_double_switch.jpeg
 [button-medicine]: ./README-images/button_medicine.jpeg
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-0.105.0b4-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-0.105.2-41BDF5?logo=home%20assistant
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/build/badge.svg

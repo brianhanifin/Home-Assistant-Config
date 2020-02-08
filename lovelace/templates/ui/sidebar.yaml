@@ -104,6 +104,18 @@ card:
             - type: custom:decluttering-card
               template: icon_button
               variables:
+                - icon: mdi:menu
+                - tap_action:
+                    action: call-service
+                    service: browser_mod.navigate
+                    service_data:
+                      navigation_path: /config
+                      deviceID:
+                        - this
+
+            - type: custom:decluttering-card
+              template: icon_button
+              variables:
                 - icon: mdi:refresh
                 - tap_action:
                     action: call-service
@@ -139,21 +151,6 @@ card:
                       card:
                         type: custom:decluttering-card
                         template: popup_alexa
-                      deviceID:
-                        - this
-
-            - type: custom:decluttering-card
-              template: icon_button
-              variables:
-                - icon: mdi:account
-                - tap_action:
-                    action: call-service
-                    service: browser_mod.popup
-                    service_data:
-                      title: Presence
-                      card:
-                        type: custom:decluttering-card
-                        template: popup_presence
                       deviceID:
                         - this
 
