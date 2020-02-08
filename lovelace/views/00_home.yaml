@@ -172,9 +172,22 @@ cards:
                 template: button2_row3
                 variables:
                   - entity1: ""
-                  - icon1: mdi:cake-variant
-                  - name1: Dates
+                  - icon1: mdi:thermostat
+                  - name1: Climate
                   - tap_action1:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Thermostats
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_thermostats
+                        deviceID:
+                          - this
+                  - entity2: ""
+                  - icon2: mdi:cake-variant
+                  - name2: Dates
+                  - tap_action2:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -184,10 +197,70 @@ cards:
                           template: popup_dates
                         deviceID:
                           - this
+                  - entity3: ""
+                  - icon3: fas:calendar-day
+                  - name3: Events
+                  - tap_action3:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Event Reminders
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_events
+                        deviceID:
+                          - this
+              # Row 2
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: ""
+                  - icon1: mdi:sprinkler-variant
+                  - name1: Irrigate
+                  - tap_action1:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Irrigation Controller
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_irrigation
+                        deviceID:
+                          - this
                   - entity2: ""
-                  - icon2: mdi:robot
-                  - name2: Routines
+                  - icon2: mdi:hot-tub
+                  - name2: Other
                   - tap_action2:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Other Devices
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_other
+                        deviceID:
+                          - this
+                  - entity3: ""
+                  - icon3: mdi:heart-pulse
+                  - name3: Responsibilities
+                  - tap_action3:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: Family Responsibilities
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_responsibilities
+                        deviceID:
+                          - this
+              # Row 3
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: ""
+                  - icon1: mdi:robot
+                  - name1: Routines
+                  - tap_action1:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -197,17 +270,30 @@ cards:
                           template: popup_routines
                         deviceID:
                           - this
+                  - entity2: ""
+                  - icon2: mdi:remote
+                  - name2: TV
+                  - tap_action2:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: TV Activities + Volume
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_tv
+                        deviceID:
+                          - this
                   - entity3: ""
-                  - icon3: mdi:sprinkler-variant
-                  - name3: Irrigate
+                  - icon3: fas:user-clock
+                  - name3: Wakeup
                   - tap_action3:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
-                        title: Irrigation Controller
+                        title: Wakeup Lights
                         card:
                           type: custom:decluttering-card
-                          template: popup_irrigation
+                          template: popup_wakeup
                         deviceID:
                           - this
 
