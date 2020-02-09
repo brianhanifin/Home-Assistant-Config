@@ -4,7 +4,7 @@
   <tr>
   <td width="52%">{{ now().strftime("%A") }}</b><br>
   <b>{{ now().strftime("%B") + ', ' + now().strftime("%d") }}</b></td>
-  <td width="48%"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
+  <td align="right" width="48%"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
   {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}° high, {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }}° low</td>
   </tr>
   <tr>
@@ -15,7 +15,7 @@
       {% else %}Good evening 🌇
       {% endif %}
     </td>
-    <td>
+    <td align="right">
       {%- set group_id = 'group.actionable_lights' -%}
       {%- set lights = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='name') | list -%}
       {%- if lights|count > 4 -%}
@@ -38,7 +38,7 @@
       {% endmacro -%}
       {{ weekly_chores("Lucas") -}}
     </td>
-    <td>
+    <td align="right">
       {{ weekly_chores("Kyle") -}}
     </td>
   </tr>
