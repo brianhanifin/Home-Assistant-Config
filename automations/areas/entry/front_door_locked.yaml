@@ -7,17 +7,23 @@ trigger:
     from: 'unlocked'
     to: 'locked'
 action:
-  # Cancel and reset the timer.
+  # Cancel and reset the unlocked timer.
   - service: timer.cancel
     data_template:
       entity_id: timer.front_door_unlocked
-
-  # Restore the previous state of the porch + entry lights.
-  - service: scene.turn_on
-    data:
-      entity_id: scene.front_door_locked_lights_snapshot
 
   # Update Light Switch LED Status Color.
   - service: script.inovelli_led_off
     data:
       entity_id: zwave.dimmer_family_room
+
+  ## ================================================================================================= ##
+
+  # Skip turning on the entry lights in the middle of the day.
+  - condition: template
+    value_template: "{{ states('sensor.outside_illuminance')|int < 2000 }}"
+
+  # Restore the previous state of the porch + entry lights.
+  - service: scene.turn_on
+    data:
+      entity_id: scene.front_door_locked_lights_snapshot
