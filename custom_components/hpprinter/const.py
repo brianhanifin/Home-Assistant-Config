@@ -1,5 +1,9 @@
 from datetime import timedelta
 
+from homeassistant.components.binary_sensor import DOMAIN as DOMAIN_BINARY_SENSOR
+from homeassistant.components.sensor import DOMAIN as DOMAIN_SENSOR
+
+MANUFACTURER = "HP"
 DEFAULT_NAME = 'HP Printer'
 DOMAIN = "hpprinter"
 DATA_HP_PRINTER = f'data_{DOMAIN}'
@@ -7,12 +11,30 @@ SIGNAL_UPDATE_HP_PRINTER = f'updates_{DOMAIN}'
 NOTIFICATION_ID = f'{DOMAIN}_notification'
 NOTIFICATION_TITLE = f'{DEFAULT_NAME} Setup'
 
-SCAN_INTERVAL = timedelta(minutes=60)
+# SCAN_INTERVAL = timedelta(minutes=60)
+SCAN_INTERVAL = timedelta(seconds=30)
 
 SENSOR_ENTITY_ID = 'sensor.{}_{}'
 BINARY_SENSOR_ENTITY_ID = 'binary_sensor.{}_{}'
 
-NAMESPACES_TO_REMOVE = ["ccdyn", "ad", "dd", "dd2", "pudyn", "psdyn", "xsd", "pscat", "locid"]
+NAMESPACES_TO_REMOVE = ["ccdyn", "ad", "dd", "dd2", "pudyn", "psdyn", "xsd", "pscat", "locid", "prdcfgdyn2", "prdcfgdyn"]
+
+ENTITY_ICON = 'icon'
+ENTITY_STATE = 'state'
+ENTITY_ATTRIBUTES = 'attributes'
+ENTITY_NAME = 'name'
+ENTITY_MODEL = 'model'
+
+PRINTER_SENSOR = "Printer"
+
+INK_ICON = 'mdi:cup-water'
+PAGES_ICON = 'mdi:book-open-page-variant'
+SCANNER_ICON = 'mdi:scanner'
+
+PROTOCOLS = {
+    True: 'https',
+    False: 'http'
+}
 
 IGNORE_ITEMS = [
     "@xsi:schemaLocation",
@@ -26,16 +48,21 @@ IGNORE_ITEMS = [
     "@xmlns:psdyn",
     "@xmlns:pscat",
     "@xmlns:locid",
+    "@xmlns:locid",
+    "@xmlns:prdcfgdyn",
+    "@xmlns:prdcfgdyn2",
+    "@xmlns:pudyn",
     "PECounter"
 ]
 
 ARRAY_KEYS = {
     "UsageByMedia": [],
     "SupportedConsumable": ["ConsumableTypeEnum", "ConsumableLabelCode"],
-    "SupportedConsumableInfo": ["ConsumableUsageType"]
+    "SupportedConsumableInfo": ["ConsumableUsageType"],
+    "EmailAlertCategories": ["AlertCategory"]
 }
 
-ARRAY_AS_DEFAULT = ["AlertDetailsUserAction", "ConsumableStateAction"]
+ARRAY_AS_DEFAULT = ["AlertDetailsUserAction", "ConsumableStateAction", "AlertCategory", "ResourceURI", "Language"]
 
 HP_DEVICE_STATUS = "Status"
 HP_DEVICE_PRINTER = "Printer"

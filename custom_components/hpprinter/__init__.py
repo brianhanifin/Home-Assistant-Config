@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 
 from .const import *
 from .HPDeviceData import *
-from .home_assistant import HPPrinterHomeAssistant
+from .home_assistant import HPPrinterHomeAssistant, _get_printers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,10 +27,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     entry_data = entry.data
 
     host = entry_data.get(CONF_HOST)
-    data = {}
 
-    if DATA_HP_PRINTER not in hass.data:
-        hass.data[DATA_HP_PRINTER] = data
+    data = _get_printers(hass)
 
     name = entry_data.get(CONF_NAME, f"{DEFAULT_NAME} #{len(data) + 1}")
 
@@ -38,15 +36,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.info("Invalid hostname")
         return False
 
-    if name in data:
-        _LOGGER.info(f"Printer {name} already defined")
-        return False
+    for printer in data:
+        if printer.name == name:
+            _LOGGER.info(f"Printer {name} already defined")
+            return False
 
-    hp_data = HPDeviceData(host, name)
-
-    ha = HPPrinterHomeAssistant(hass, SCAN_INTERVAL, name, hp_data)
+    ha = HPPrinterHomeAssistant(hass, name, host, entry)
     ha.initialize()
 
-    hass.data[DATA_HP_PRINTER][name] = ha
+    hass.data[DATA_HP_PRINTER].append(ha)
 
     return True

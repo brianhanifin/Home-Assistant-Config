@@ -1,18 +1,20 @@
-from .HPPrinterData import *
+from .HPPrinterAPI import *
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class HPDeviceData:
-    def __init__(self, host, name, external_data_provider=None):
-        self._usage_data_manager = ProductUsageDynPrinterData(host, external_data_provider=external_data_provider)
-        self._consumable_data_manager = ConsumableConfigDynPrinterData(host, external_data_provider=external_data_provider)
+    def __init__(self, hass, host, name, reader=None):
+        self._usage_data_manager = ProductUsageDynPrinterDataAPI(hass, host, reader=reader)
+        self._consumable_data_manager = ConsumableConfigDynPrinterDataAPI(hass, host, reader=reader)
+        self._product_config_manager = ProductConfigDynDataAPI(hass, host, reader=reader)
 
         self._name = name
         self._host = host
 
         self._usage_data = None
         self._consumable_data = None
+        self._product_config_data = None
 
         self._device_data = {
             "Name": name,
@@ -24,16 +26,20 @@ class HPDeviceData:
 
         return data
 
-    def get_data(self, store=None):
+    async def get_data(self, store=None):
         try:
-            self._usage_data = self._usage_data_manager.get_data(store)
-            self._consumable_data = self._consumable_data_manager.get_data(store)
+            self._usage_data = await self._usage_data_manager.get_data(store)
+            self._consumable_data = await self._consumable_data_manager.get_data(store)
+            self._product_config_data = await self._product_config_manager.get_data(store)
 
-            is_online = self._usage_data is not None and self._consumable_data is not None
+            is_online = self._usage_data is not None and \
+                        self._consumable_data is not None and \
+                        self._product_config_data is not None
 
             if is_online:
                 self.set_usage_data()
                 self.set_consumable_data()
+                self.set_product_config_data()
 
             self._device_data[HP_DEVICE_IS_ONLINE] = is_online
 
@@ -69,6 +75,19 @@ class HPDeviceData:
             error_details = f"Error: {ex}, Line: {line_number}"
 
             _LOGGER.error(f'Failed to parse consumable data ({self._name} @{self._host}), {error_details}')
+
+    def set_product_config_data(self):
+        try:
+            if self._product_config_data is not None:
+                root = self._product_config_data.get("ProductConfigDyn", {})
+                product_information = root.get("ProductInformation", {})
+                self._device_data[ENTITY_MODEL] = product_information.get("MakeAndModel")
+
+        except Exception as ex:
+            exc_type, exc_obj, tb = sys.exc_info()
+            line_number = tb.tb_lineno
+
+            _LOGGER.error(f'Failed to parse usage data ({self._name} @{self._host}), Error: {ex}, Line: {line_number}')
 
     def set_usage_data(self):
         try:

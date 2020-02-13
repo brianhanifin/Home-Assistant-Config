@@ -14,21 +14,29 @@ class FileInformation:
         self.name = name
 
 
+def should_try_releases(repository):
+    """Return a boolean indicating whether to download releases or not."""
+    if repository.ref == repository.information.default_branch:
+        return False
+    if repository.information.category not in ["plugin", "theme"]:
+        return False
+    if not repository.releases.releases:
+        return False
+    return True
+
+
 def gather_files_to_download(repository):
     """Return a list of file objects to be downloaded."""
     files = []
     tree = repository.tree
+    ref = f"{repository.ref}".replace("tags/", "")
     releaseobjects = repository.releases.objects
     category = repository.information.category
     remotelocation = repository.content.path.remote
 
-    if (
-        repository.releases.releases
-        and releaseobjects
-        and category in ["plugin", "theme"]
-    ):
+    if should_try_releases(repository):
         for release in releaseobjects or []:
-            if repository.status.selected_tag == release.tag_name:
+            if ref == release.tag_name:
                 for asset in release.assets or []:
                     files.append(asset)
         if files:
@@ -36,7 +44,7 @@ def gather_files_to_download(repository):
 
     if repository.content.single:
         for treefile in tree:
-            if treefile.filename == repository.information.filename:
+            if treefile.filename == repository.information.file_name:
                 files.append(
                     FileInformation(
                         treefile.download_url, treefile.full_path, treefile.filename
@@ -50,6 +58,12 @@ def gather_files_to_download(repository):
                 if not remotelocation:
                     if treefile.filename != repository.information.file_name:
                         continue
+                if remotelocation == "dist" and not treefile.filename.startswith(
+                    "dist"
+                ):
+                    continue
+                if treefile.is_directory:
+                    continue
                 files.append(
                     FileInformation(
                         treefile.download_url, treefile.full_path, treefile.filename
