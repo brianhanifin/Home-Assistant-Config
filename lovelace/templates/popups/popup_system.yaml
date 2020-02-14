@@ -42,43 +42,40 @@ card:
     - type: entities
       entities:
         - type: custom:multiple-entity-row
-          entity: sensor.current_version
+          entity: sensor.processor_use
           name: VM
           icon: mdi:home-assistant
-          hide_state: true
-          primary:
-            entity: sensor.processor_use
-            name: CPU
-          secondary:
-            entity: sensor.memory_free
-            name: RAM
-          tertiary:
-            entity: sensor.disk_use_percent
-            name: Storage use
+          show_state: false
+          entities:
+            - entity: sensor.processor_use
+              name: CPU
+            - entity: sensor.memory_free
+              name: RAM
+            - entity: sensor.disk_use_percent
+              name: HDD
 
         - type: custom:multiple-entity-row
           entity: sensor.uptime
           name: Uptime
-          hide_state: true
-          info:
+          show_state: false
+          secondary_info:
             entity: sensor.uptime
             name: ""
-          primary:
-            entity: sensor.last_boot
-            name: Last Reboot
+          entities:
+            - entity: sensor.last_boot
+              name: Last Reboot
         - type: custom:multiple-entity-row
           entity: sensor.current_version
           name: Current Version
-          hide_state: true
-          info:
+          show_state: false
+          secondary_info:
             entity: sensor.current_version
             name: ""
-          primary:
-            entity: sensor.latest_release
-            name: Stable
-          secondary:
-            entity: sensor.latest_beta
-            name: Beta
+          entities:
+            - entity: sensor.latest_release
+              name: Stable
+            - entity: sensor.latest_beta
+              name: Beta
 
     - type: custom:auto-entities
       show_empty: false
@@ -100,28 +97,26 @@ card:
         - type: custom:multiple-entity-row
           entity: sensor.unifi_gateway_lan
           name: LAN
-          hide_state: true
-          info:
+          show_state: false
+          secondary_info:
             entity: sensor.unifi_gateway_lan
             name: ""
-          primary:
-            entity: sensor.unifi_gateway_wlan
-            name: WLAN
-          secondary:
-            entity: sensor.unifi_gateway_wan
-            name: WAN
-          tertiary:
-            entity: sensor.unifi_gateway_www
-            name: WWW
+          entities:
+            - entity: sensor.unifi_gateway_wlan
+              name: WLAN
+            - entity: sensor.unifi_gateway_wan
+              name: WAN
+            - entity: sensor.unifi_gateway_www
+              name: WWW
         # - type: custom:multiple-entity-row
         #   entity: sensor.unifi_gateway_alerts
         #   name: Alerts
         #   icon: mdi:bell-alert
-        #   hide_state: true
-        #   info:
+        #   show_state: false
+        #   secondary_info:
         #     entity: sensor.unifi_gateway_alerts
         #     name: ""
-        #   secondary:
+        #   entities:
         #     entity: sensor.unifi_gateway_firmware_upgradable
         #     name: Firmware Upgrades
 
@@ -146,62 +141,57 @@ card:
           entity: sensor.adguard_dns_queries_blocked_ratio
           name: Blocked
           icon: mdi:shield-check
-          hide_state: true
-          info:
+          show_state: false
+          secondary_info:
             entity: sensor.adguard_dns_queries_blocked_ratio
             name: ""
-          primary:
-            entity: sensor.adguard_dns_queries
-            name: Queries
-          secondary:
-            entity: sensor.adguard_average_processing_speed
-            name: Avg Response
+          entities:
+            - entity: sensor.adguard_dns_queries
+              name: Queries
+            - entity: sensor.adguard_average_processing_speed
+              name: Avg Response
         - type: custom:multiple-entity-row
           entity: sensor.adguard_safe_searches_enforced
           name: Safe Searches
           icon: mdi:shield-check
-          hide_state: true
-          info:
+          show_state: false
+          secondary_info:
             entity: sensor.adguard_safe_searches_enforced
             name: ""
-          primary:
-            entity: sensor.adguard_parental_control_blocked
-            name: Parent Control
-          secondary:
-            entity: sensor.adguard_safe_browsing_blocked
-            name: Safe Browsing
+          entities:
+            - entity: sensor.adguard_parental_control_blocked
+              name: Parent Control
+            - entity: sensor.adguard_safe_browsing_blocked
+              name: Safe Browsing
 
         - type: section
         - type: custom:multiple-entity-row
           entity: switch.adguard_filtering
           name: Protection
           icon: mdi:shield-check
-          hide_state: true
-          primary:
-            entity: switch.adguard_protection
-            name: Enabled
-            toggle: true
-          secondary:
-            entity: switch.adguard_filtering
-            name: Filtering
-            toggle: true
-          tertiary:
-            entity: switch.adguard_safe_browsing
-            name: Browsing
-            toggle: true
+          show_state: false
+          entities:
+            - entity: switch.adguard_protection
+              name: Enabled
+              toggle: true
+            - entity: switch.adguard_filtering
+              name: Filtering
+              toggle: true
+            - entity: switch.adguard_safe_browsing
+              name: Browsing
+              toggle: true
         - type: custom:multiple-entity-row
           entity: switch.adguard_parental_control
           name: Parental Control
           icon: mdi:shield-check
-          hide_state: true
-          primary:
-            entity: switch.adguard_parental_control
-            name: Enabled
-            toggle: true
-          secondary:
-            entity: switch.adguard_safe_search
-            name: Safe Search
-            toggle: true
+          show_state: false
+          entities:
+            - entity: switch.adguard_parental_control
+              name: Enabled
+              toggle: true
+            - entity: switch.adguard_safe_search
+              name: Safe Search
+              toggle: true
 
     #     - sensor.adguard_dns_queries_blocked
     #     - sensor.adguard_rules_count

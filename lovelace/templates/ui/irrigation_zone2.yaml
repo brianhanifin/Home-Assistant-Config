@@ -28,16 +28,16 @@ card:
           entity: binary_sensor.irrigation_zone[[zone_number]]
           name: 💧 Watering
           icon: "[[icon]]"
-          hide_state: true
-          info:
+          show_state: false
+          secondary_info:
             entity: binary_sensor.irrigation_zone[[zone_number]]
             name: ""
-          primary:
-            entity: sensor.irrigation_zone[[zone_number]]_next
-            name: ⏭️ Next Cycle
-          secondary:
-            entity: sensor.irrigation_zone[[zone_number]]_remaining
-            name: ⏳ Remaining
+          entities:
+            - entity: sensor.irrigation_zone[[zone_number]]_next
+              name: ⏭️ Next
+            - entity: sensor.irrigation_zone[[zone_number]]_remaining
+              name: ⏳ Remaining
+              unit: min
 
         - type: custom:fold-entity-row
           head:

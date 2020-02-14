@@ -186,7 +186,6 @@ class HPDeviceData:
             color = self.clean_parameter(printer_consumable_data, "MarkerColor")
             head_type = self.clean_parameter(printer_consumable_data, "ConsumableTypeEnum")
             station = self.clean_parameter(printer_consumable_data, "ConsumableStation")
-            remaining = self.clean_parameter(printer_consumable_data, "ConsumableRawPercentageLevelRemaining")
 
             cartridge_key = f"{head_type} {color}"
 
@@ -204,7 +203,6 @@ class HPDeviceData:
                 cartridge = {}
                 should_create_cartridge = True
 
-            cartridge[HP_DEVICE_CARTRIDGE_STATE] = remaining
             cartridge["Color"] = color
             cartridge["Type"] = head_type
             cartridge["Station"] = station
@@ -228,6 +226,7 @@ class HPDeviceData:
             head_type = self.clean_parameter(printer_consumable_data, "ConsumableTypeEnum")
             product_number = self.clean_parameter(printer_consumable_data, "ProductNumber")
             serial_number = self.clean_parameter(printer_consumable_data, "SerialNumber")
+            remaining = self.clean_parameter(printer_consumable_data, "ConsumablePercentageLevelRemaining", "0")
 
             installation = printer_consumable_data.get("Installation", {})
             installation_data = self.clean_parameter(installation, "Date")
@@ -266,7 +265,6 @@ class HPDeviceData:
             if head_type == HP_HEAD_TYPE_PRINT_HEAD:
                 cartridge["Color"] = color
                 cartridge["Type"] = head_type
-                cartridge[HP_DEVICE_CARTRIDGE_STATE] = 0
 
             else:
                 cartridge["Product Number"] = product_number
@@ -276,6 +274,7 @@ class HPDeviceData:
                 cartridge["Warranty Expiration Date"] = expiration_date
 
             cartridge["Installed At"] = installation_data
+            cartridge[HP_DEVICE_CARTRIDGE_STATE] = remaining
 
             if should_create_cartridge:
                 cartridges[cartridge_key] = cartridge

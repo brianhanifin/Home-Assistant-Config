@@ -23,10 +23,13 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
     _LOGGER.debug(f"Starting async_setup_entry")
 
     try:
-        printers = _get_printers(hass)
+        entry_data = config_entry.data
+        name = entry_data.get(CONF_NAME)
         entities = []
 
-        for printer in printers:
+        data = _get_printers(hass)
+        if name in data:
+            printer = data[name]
             _LOGGER.debug(f"{printer}")
             for sensor_name in printer.sensors:
                 sensor = printer.get_sensor(sensor_name)
@@ -52,6 +55,7 @@ class PrinterSensor(Entity):
         self._hass = hass
         self._printer_name = printer_name
         self._sensor = sensor
+        self._remove_dispatcher = None
 
     @property
     def unique_id(self) -> Optional[str]:
@@ -96,15 +100,19 @@ class PrinterSensor(Entity):
 
     async def async_added_to_hass(self):
         """Register callbacks."""
-        async_dispatcher_connect(self._hass, SIGNAL_UPDATE_HP_PRINTER, self.update_data)
+        self._remove_dispatcher = async_dispatcher_connect(self._hass, SIGNAL_UPDATE_HP_PRINTER, self.update_data)
+
+    async def async_will_remove_from_hass(self) -> None:
+        if self._remove_dispatcher is not None:
+            self._remove_dispatcher()
 
     @callback
     def update_data(self):
         _LOGGER.debug(f"update_data: {self.name} | {self.unique_id}")
 
         printers = _get_printers(self._hass)
-        for printer in printers:
-            if printer.name == self._printer_name:
-                self._sensor = printer.get_sensor(self.name)
+        if self._printer_name in printers:
+            printer = printers[self._printer_name]
+            self._sensor = printer.get_sensor(self.name)
 
-                self.async_schedule_update_ha_state(True)
+            self.async_schedule_update_ha_state(True)

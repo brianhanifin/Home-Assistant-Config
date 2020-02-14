@@ -6,7 +6,6 @@ https://home-assistant.io/components/hpprinter/
 import sys
 import logging
 
-from homeassistant.const import (STATE_ON, STATE_OFF)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_call_later, async_track_time_interval
 from homeassistant.helpers.dispatcher import async_dispatcher_send
@@ -27,6 +26,7 @@ class HPPrinterHomeAssistant:
         self._sensors = {}
         self._config_entry = config_entry
         self._components_hash = None
+        self._remove_async_track_time = None
 
     @property
     def name(self):
@@ -48,8 +48,6 @@ class HPPrinterHomeAssistant:
 
     def initialize(self):
         if self._hp_data is not None:
-            async_track_time_interval(self._hass, self.async_update, SCAN_INTERVAL)
-
             async_call_later(self._hass, 5, self.async_finalize)
 
     async def async_finalize(self, event_time):
@@ -58,6 +56,16 @@ class HPPrinterHomeAssistant:
         self._hass.services.async_register(DOMAIN, 'save_debug_data', self.save_debug_data)
 
         await self.async_update(None)
+
+        self._remove_async_track_time = async_track_time_interval(self._hass, self.async_update, SCAN_INTERVAL)
+
+    async def async_remove(self):
+        _LOGGER.debug(f"async_remove called")
+
+        self._hass.services.async_remove(DOMAIN, 'save_debug_data')
+
+        if self._remove_async_track_time is not None:
+            self._remove_async_track_time()
 
     def save_debug_data(self, service_data):
         """Call BlueIris to refresh information."""
@@ -246,7 +254,7 @@ class HPPrinterHomeAssistant:
 
 def _get_printers(hass: HomeAssistant):
     if DATA_HP_PRINTER not in hass.data:
-        hass.data[DATA_HP_PRINTER] = []
+        hass.data[DATA_HP_PRINTER] = {}
 
     printers = hass.data[DATA_HP_PRINTER]
 

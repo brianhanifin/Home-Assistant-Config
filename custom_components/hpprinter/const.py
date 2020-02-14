@@ -3,6 +3,8 @@ from datetime import timedelta
 from homeassistant.components.binary_sensor import DOMAIN as DOMAIN_BINARY_SENSOR
 from homeassistant.components.sensor import DOMAIN as DOMAIN_SENSOR
 
+from homeassistant.const import (CONF_HOST, CONF_NAME)
+
 MANUFACTURER = "HP"
 DEFAULT_NAME = 'HP Printer'
 DOMAIN = "hpprinter"
@@ -62,7 +64,15 @@ ARRAY_KEYS = {
     "EmailAlertCategories": ["AlertCategory"]
 }
 
-ARRAY_AS_DEFAULT = ["AlertDetailsUserAction", "ConsumableStateAction", "AlertCategory", "ResourceURI", "Language"]
+ARRAY_AS_DEFAULT = [
+    "AlertDetailsUserAction",
+    "ConsumableStateAction",
+    "AlertCategory",
+    "ResourceURI",
+    "Language",
+    "AutoOnEvent",
+    "DaysOfWeek"
+]
 
 HP_DEVICE_STATUS = "Status"
 HP_DEVICE_PRINTER = "Printer"

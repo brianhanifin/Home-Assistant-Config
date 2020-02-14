@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @config_entries.HANDLERS.register(DOMAIN)
-class HPPrinterlowHandler(config_entries.ConfigFlow):
+class HPPrinterFlowHandler(config_entries.ConfigFlow):
     """Handle a HPPrinter config flow."""
 
     VERSION = 1
@@ -23,13 +23,13 @@ class HPPrinterlowHandler(config_entries.ConfigFlow):
         _LOGGER.debug(f"Starting async_step_user of {DOMAIN}")
 
         fields = {
-            vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
+            vol.Required(CONF_NAME, default=DEFAULT_NAME): str,
             vol.Required(CONF_HOST): str
         }
 
         if user_input is not None:
             return self.async_create_entry(
-                title=DEFAULT_NAME,
+                title=user_input.get(CONF_NAME, DEFAULT_NAME),
                 data={
                     CONF_NAME: user_input.get(CONF_NAME, DEFAULT_NAME),
                     CONF_HOST: user_input.get(CONF_HOST)
