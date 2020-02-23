@@ -12,5 +12,10 @@ trigger:
     to: idle
 action:
   - service: light.turn_off
+    entity_id: light.entry
+  - service: light.turn_off
+    entity_id: light.garage_entry
+
+  - service: light.turn_off
     data_template:
       entity_id: "light.{{ trigger.entity_id[21:] }}"
