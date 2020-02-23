@@ -5,5 +5,12 @@ card:
     - type: custom:weather-card
       entity: weather.dark_sky
 
-    - type: picture-entity
-      entity: camera.radar
+    - type: custom:state-switch
+      entity: binary_sensor.today_rain
+      states:
+        "on":
+          type: picture-entity
+          entity: camera.radar
+        # "off":
+        #   type: markdown
+        #   content: "No rain."
