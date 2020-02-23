@@ -8,13 +8,16 @@ class HPDeviceData:
         self._usage_data_manager = ProductUsageDynPrinterDataAPI(hass, host, reader=reader)
         self._consumable_data_manager = ConsumableConfigDynPrinterDataAPI(hass, host, reader=reader)
         self._product_config_manager = ProductConfigDynDataAPI(hass, host, reader=reader)
+        self._product_status_manager = ProductStatusDynDataAPI(hass, host, reader=reader)
 
+        self._hass = hass
         self._name = name
         self._host = host
 
         self._usage_data = None
         self._consumable_data = None
         self._product_config_data = None
+        self._product_status_data = None
 
         self._device_data = {
             "Name": name,
@@ -31,15 +34,27 @@ class HPDeviceData:
             self._usage_data = await self._usage_data_manager.get_data(store)
             self._consumable_data = await self._consumable_data_manager.get_data(store)
             self._product_config_data = await self._product_config_manager.get_data(store)
+            self._product_status_data = await self._product_status_manager.get_data(store)
 
-            is_online = self._usage_data is not None and \
-                        self._consumable_data is not None and \
-                        self._product_config_data is not None
+            data_list = [
+                self._usage_data,
+                self._consumable_data,
+                self._product_config_data,
+                self._product_status_data
+            ]
+
+            is_online = True
+
+            for item in data_list:
+                if item is None:
+                    is_online = False
+                    break
 
             if is_online:
                 self.set_usage_data()
                 self.set_consumable_data()
                 self.set_product_config_data()
+                self.set_product_status_data()
 
             self._device_data[HP_DEVICE_IS_ONLINE] = is_online
 
@@ -63,10 +78,12 @@ class HPDeviceData:
                 root = self._consumable_data.get("ConsumableConfigDyn", {})
                 consumables_info = root.get("ConsumableInfo", [])
 
-                for consumable_key in consumables_info:
-                    consumable = consumables_info[consumable_key]
+                if "ConsumableLabelCode" in consumables_info:
+                    self.set_printer_consumable_data(consumables_info)
+                else:
+                    for consumable_key in consumables_info:
+                        consumable = consumables_info[consumable_key]
 
-                    if consumable is not None:
                         self.set_printer_consumable_data(consumable)
 
         except Exception as ex:
@@ -82,6 +99,29 @@ class HPDeviceData:
                 root = self._product_config_data.get("ProductConfigDyn", {})
                 product_information = root.get("ProductInformation", {})
                 self._device_data[ENTITY_MODEL] = product_information.get("MakeAndModel")
+
+        except Exception as ex:
+            exc_type, exc_obj, tb = sys.exc_info()
+            line_number = tb.tb_lineno
+
+            _LOGGER.error(f'Failed to parse usage data ({self._name} @{self._host}), Error: {ex}, Line: {line_number}')
+
+    def set_product_status_data(self):
+        try:
+            if self._product_status_data is not None:
+                root = self._product_status_data.get("ProductStatusDyn", {})
+                status = root.get("Status", [])
+                printer_status = ""
+
+                if "StatusCategory" in status:
+                    printer_status = self.clean_parameter(status, "StatusCategory")
+                else:
+                    for item in status:
+                        status_item = status[item]
+                        if "LocString" not in status_item:
+                            printer_status = self.clean_parameter(status_item, "StatusCategory")
+
+                self._device_data[PRINTER_CURRENT_STATUS] = PRINTER_STATUS.get(printer_status, printer_status)
 
         except Exception as ex:
             exc_type, exc_obj, tb = sys.exc_info()
@@ -107,11 +147,14 @@ class HPDeviceData:
                     printer_consumables = consumables_data.get("Consumable")
 
                     if printer_consumables is not None:
-                        for key in printer_consumables:
-                            consumable = printer_consumables.get(key)
+                        if "ConsumableTypeEnum" in printer_consumables:
+                            self.set_printer_consumable_usage_data(printer_consumables)
+                        else:
+                            for key in printer_consumables:
+                                consumable = printer_consumables.get(key)
 
-                            if consumable is not None:
-                                self.set_printer_consumable_usage_data(consumable)
+                                if consumable is not None:
+                                    self.set_printer_consumable_usage_data(consumable)
 
         except Exception as ex:
             exc_type, exc_obj, tb = sys.exc_info()
@@ -184,7 +227,7 @@ class HPDeviceData:
     def set_printer_consumable_usage_data(self, printer_consumable_data):
         try:
             color = self.clean_parameter(printer_consumable_data, "MarkerColor")
-            head_type = self.clean_parameter(printer_consumable_data, "ConsumableTypeEnum")
+            head_type = self.clean_parameter(printer_consumable_data, "ConsumableTypeEnum").capitalize()
             station = self.clean_parameter(printer_consumable_data, "ConsumableStation")
 
             cartridge_key = f"{head_type} {color}"
@@ -223,7 +266,7 @@ class HPDeviceData:
     def set_printer_consumable_data(self, printer_consumable_data):
         try:
             consumable_label_code = self.clean_parameter(printer_consumable_data, "ConsumableLabelCode")
-            head_type = self.clean_parameter(printer_consumable_data, "ConsumableTypeEnum")
+            head_type = self.clean_parameter(printer_consumable_data, "ConsumableTypeEnum").capitalize()
             product_number = self.clean_parameter(printer_consumable_data, "ProductNumber")
             serial_number = self.clean_parameter(printer_consumable_data, "SerialNumber")
             remaining = self.clean_parameter(printer_consumable_data, "ConsumablePercentageLevelRemaining", "0")
@@ -232,7 +275,7 @@ class HPDeviceData:
             installation_data = self.clean_parameter(installation, "Date")
 
             manufacturer = printer_consumable_data.get("Manufacturer", {})
-            manufactured_by = self.clean_parameter(manufacturer, "Name")
+            manufactured_by = self.clean_parameter(manufacturer, "Name").rstrip()
             manufactured_at = self.clean_parameter(manufacturer, "Date")
 
             warranty = printer_consumable_data.get("Warranty", {})
