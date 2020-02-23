@@ -3,10 +3,10 @@ alias: front_door_unlocked_timer_expired
 initial_state: true
 # When a timer finishes.
 trigger:
-  - platform: state
-    entity_id: timer.front_door_unlocked
-    from: active
-    to: idle
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.front_door_unlocked
 condition:
   # Guest mode overrides automatic door locking.
   - condition: state
