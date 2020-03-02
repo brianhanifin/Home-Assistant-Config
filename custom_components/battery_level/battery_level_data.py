@@ -72,43 +72,49 @@ class BatteryLevelData:
             try:
                 state = self._hass.states.get(entity_id)
 
-                if ATTR_FRIENDLY_NAME in state.attributes:
-                    entity_friendly_name = state.attributes[ATTR_FRIENDLY_NAME]
-                else:
-                    entity_friendly_name: state.name
+                if state is not None:
+                    state_dict = state.as_dict()
 
-                if ATTR_BATTERY_LEVEL in state.attributes:
-                    battery_level_entity_id = f'{entity_id}_battery_level'.replace(domain, SENSOR_DOMAIN)
-                    battery_level_state = state.attributes[ATTR_BATTERY_LEVEL]
+                    if "attributes" in state_dict:
+                        attributes = state_dict.get("attributes", {})
 
-                    if str(battery_level_state).replace(".", "").isdigit():
-                        battery_level_friendly_name = f'{entity_friendly_name} Battery Level'
-                        battery_level_attributes = {
-                            ATTR_FRIENDLY_NAME: battery_level_friendly_name,
-                            ATTR_UNIT_OF_MEASUREMENT: '%'
-                        }
-
-                        should_update = True
-
-                        log_message = f'Sensor {battery_level_friendly_name} of entity_id: {entity_friendly_name}'
-                        if battery_level_entity_id in self._entity_ids:
-                            current_state = self._hass.states.get(battery_level_entity_id).state
-
-                            if str(current_state) == str(battery_level_state):
-                                _LOGGER.debug(f'{log_message} was not updated')
-                                should_update = False
-                            else:
-                                _LOGGER.info(f'{log_message} updated from {current_state} to {battery_level_state}')
+                        if ATTR_FRIENDLY_NAME in attributes:
+                            entity_friendly_name = state.attributes[ATTR_FRIENDLY_NAME]
                         else:
-                            _LOGGER.info(f'{log_message} created, Level: {battery_level_state}')
-                            self._entity_ids.append(battery_level_entity_id)
+                            entity_friendly_name: state.name
 
-                        if should_update:
-                            self._hass.states.set(battery_level_entity_id, battery_level_state,
-                                                  battery_level_attributes)
-                    else:
-                        _LOGGER.info(
-                            f'Invalid Entity battery_level attribute for {entity_id}: {battery_level_state}')
+                        if ATTR_BATTERY_LEVEL in attributes:
+                            battery_level_entity_id = f'{entity_id}_battery_level'.replace(domain, SENSOR_DOMAIN)
+                            battery_level_state = attributes[ATTR_BATTERY_LEVEL]
+
+                            if str(battery_level_state).replace(".", "").isdigit():
+                                battery_level_friendly_name = f'{entity_friendly_name} Battery Level'
+                                battery_level_attributes = {
+                                    ATTR_FRIENDLY_NAME: battery_level_friendly_name,
+                                    ATTR_UNIT_OF_MEASUREMENT: '%'
+                                }
+
+                                should_update = True
+
+                                log_message = f'Sensor {battery_level_friendly_name} of entity_id: {entity_friendly_name}'
+                                if battery_level_entity_id in self._entity_ids:
+                                    current_state = self._hass.states.get(battery_level_entity_id).state
+
+                                    if str(current_state) == str(battery_level_state):
+                                        _LOGGER.debug(f'{log_message} was not updated')
+                                        should_update = False
+                                    else:
+                                        _LOGGER.info(f'{log_message} updated from {current_state} to {battery_level_state}')
+                                else:
+                                    _LOGGER.info(f'{log_message} created, Level: {battery_level_state}')
+                                    self._entity_ids.append(battery_level_entity_id)
+
+                                if should_update:
+                                    self._hass.states.set(battery_level_entity_id, battery_level_state,
+                                                          battery_level_attributes)
+                            else:
+                                _LOGGER.info(
+                                    f'Invalid Entity battery_level attribute for {entity_id}: {battery_level_state}')
             except Exception as ex:
                 exc_type, exc_obj, tb = sys.exc_info()
                 line_number = tb.tb_lineno
