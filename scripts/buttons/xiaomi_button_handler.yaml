@@ -7,11 +7,11 @@ sequence:
 
   - service_template: >
       {# Medicine: Buddy #}
-      {%- if button == "binary_sensor.medicine_buddy_button" -%}
-        script.medicine_buddy_button
       {# Bedroom Wall Double Switch  #}
       {%- elif button.startswith("binary_sensor.bedroom_switch_button") -%}
         script.bedroom_switch_buttons
+      {%- elif button == "binary_sensor.medicine_buddy_button" -%}
+        script.medicine_buddy_button
       {%- endif %}
     data_template:
       type: "{{ type }}"

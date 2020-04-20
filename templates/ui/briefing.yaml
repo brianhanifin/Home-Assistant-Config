@@ -44,10 +44,6 @@
   </tr>
   </table>
 
-  {% if states('sensor.medicine_buddy_given_today') != 'Today' -%}
-  Buddy's 💊
-  {% endif -%}
-
   {% set people = states.person | selectattr('state','eq','not_home') | map(attribute='entity_id') | list -%}
   {% for person in people -%}
     {% if is_state(person, 'not_home') -%}

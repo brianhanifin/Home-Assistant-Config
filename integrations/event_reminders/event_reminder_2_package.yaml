@@ -9,10 +9,6 @@ automation:
     condition:
       condition: and
       conditions:
-        # Only proceed if Buddy's medicine has not already been given.
-        - condition: template
-          value_template: "{{ not is_state('sensor.medicine_buddy_given_today','Today') }}"
-
         # ... and today one of the selected days.
         - condition: template
           value_template: >
@@ -26,6 +22,11 @@ automation:
             {%- elif day_name == 'sunday'    and is_state('input_boolean.event_reminder_2_sun','on') -%}{{true}}
             {%- else -%}{{false}}{%- endif %}
     action:
+      # - service: persistent_notification.create
+      #   data_template:
+      #     title: "DEBUG"
+      #     message: "automation.event_reminder_2"
+
       - service_template: >
           {% if is_state('input_boolean.event_reminder_2_skipnext', 'on') %}
             script.event_reminder_skipnext
@@ -35,41 +36,73 @@ automation:
         data_template:
           media_player: "{{ states('input_select.event_reminder_2_echo') }}"
           skipnext: >
-            {% if is_state('sensor.event_reminder_2_2', states('sensor.time')) %}
+            {% if is_state('sensor.event_reminder_2_2',states('sensor.time')) %}
               input_boolean.event_reminder_2_skipnext
             {% endif %}
-          message: >-
-            {% if is_state('sensor.event_reminder_2_1',states('sensor.time')) %}
-              {{ states('input_text.event_reminder_2_1') }}
-            {% else %}
-              {{ states('input_text.event_reminder_2_2') }}
-            {% endif %}
+          say_dark_outside: "{{ states('input_boolean.event_reminder_2_say_dark_outside') }}"
+          say_door_window_check: "{{ states('input_boolean.event_reminder_2_say_door_window_check') }}"
+          say_goodbye: "{{ states('input_boolean.event_reminder_2_say_goodbye') }}"
+          say_goodnight: "{{ states('input_boolean.event_reminder_2_say_goodnight') }}"
+          say_greeting: "{{ states('input_boolean.event_reminder_2_say_greeting') }}"
+          say_inside_weather: "{{ states('input_boolean.event_reminder_2_say_inside_weather') }}"
+          say_light_check: "{{ states('input_boolean.event_reminder_2_say_light_check') }}"
+          say_outside_weather: "{{ states('input_boolean.event_reminder_2_say_outside_weather') }}"
+          say_responsibilities: "{{ states('input_boolean.event_reminder_2_say_responsibilities') }}"
+
+# script:
+#   event_reminder_2_announce_test:
+#     sequence:
+#       - service: script.event_reminder_announce
+#         data_template:
+#           media_player: "{{ states('input_select.event_reminder_2_echo') }}"
+#           say_dark_outside: "{{ states('input_boolean.event_reminder_2_say_dark_outside') }}"
+#           say_door_window_check: "{{ states('input_boolean.event_reminder_2_say_door_window_check') }}"
+#           say_goodbye: "{{ states('input_boolean.event_reminder_2_say_goodbye') }}"
+#           say_goodnight: "{{ states('input_boolean.event_reminder_2_say_goodnight') }}"
+#           say_greeting: "{{ states('input_boolean.event_reminder_2_say_greeting') }}"
+#           say_inside_weather: "{{ states('input_boolean.event_reminder_2_say_inside_weather') }}"
+#           say_light_check: "{{ states('input_boolean.event_reminder_2_say_light_check') }}"
+#           say_outside_weather: "{{ states('input_boolean.event_reminder_2_say_outside_weather') }}"
+#           say_responsibilities: "{{ states('input_boolean.event_reminder_2_say_responsibilities') }}"
 
 input_boolean:
   event_reminder_2_skipnext:
     name: Skip Next Reminder
     icon: mdi:alarm-check
+
   event_reminder_2_mon:
     name: Monday
-    icon: mdi:checkbox-marked-circle
   event_reminder_2_tue:
     name: Tuesday
-    icon: mdi:checkbox-marked-circle
   event_reminder_2_wed:
     name: Wednesday
-    icon: mdi:checkbox-marked-circle
   event_reminder_2_thu:
     name: Thursday
-    icon: mdi:checkbox-marked-circle
   event_reminder_2_fri:
     name: Friday
-    icon: mdi:checkbox-marked-circle
   event_reminder_2_sat:
     name: Saturday
-    icon: mdi:checkbox-marked-circle
   event_reminder_2_sun:
     name: Sunday
-    icon: mdi:checkbox-marked-circle
+
+  event_reminder_2_say_dark_outside:
+    name: Dark Outside
+  event_reminder_2_say_door_window_check:
+    name: Door+Windows
+  event_reminder_2_say_goodbye:
+    name: Goodbye
+  event_reminder_2_say_goodnight:
+    name: Goodnight
+  event_reminder_2_say_greeting:
+    name: Greeting
+  event_reminder_2_say_inside_weather:
+    name: Indoor Temp
+  event_reminder_2_say_light_check:
+    name: Light Check
+  event_reminder_2_say_outside_weather:
+    name: Outdoor Weather
+  event_reminder_2_say_responsibilities:
+    name: Responsibilities
 
 input_datetime:
   event_reminder_2_1:
@@ -87,11 +120,11 @@ input_select:
     options: !include ../../templates/speech/tts_rooms.yaml
     icon: mdi:amazon-alexa
 
-input_text:
-  event_reminder_2_1:
-    name: First Announcement
-  event_reminder_2_2:
-    name: Second Announcement
+# input_text:
+#   event_reminder_2_1:
+#     name: First Announcement
+#   event_reminder_2_2:
+#     name: Second Announcement
 
 sensor:
   - platform: template

@@ -26,7 +26,6 @@ card:
         - type: custom:card-templater
           entities:
             - group.actionable_lights
-            - sensor.medicine_buddy_given_today
             - sensor.time
             - variable.left_home
           card:
@@ -42,7 +41,58 @@ card:
                 margin-top: -2em;
                 opacity: 0.65;
               }
-            content_template: !include ../../../templates/ui/briefing.yaml
+            #content_template: !include ../../../templates/ui/briefing.yaml
+            content_template: >
+              <table style="padding:0;margin:0;" width="100%">
+              <tr>
+              <td width="52%">{{ now().strftime("%A") }}</b><br>
+              <b>{{ now().strftime("%B") + ', ' + now().strftime("%d") }}</b></td>
+              <td align="right" width="48%"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
+              {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}° high, {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }}° low</td>
+              </tr>
+              <tr>
+                <td>
+                  {% if now().hour < 5 %}Goodnight 😴
+                  {% elif now().hour < 11 %}Good morning 🌄
+                  {% elif now().hour < 18 %}Good afternoon ☀️
+                  {% else %}Good evening 🌇
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  {% macro weekly_chores(name) -%}
+                  {% if name == states('input_select.responsibility_dishes_week') -%}
+                  {{ name }}: 🍽️
+                  {% else -%}
+                  {{ name }}: 🧺+💩
+                  {% endif -%}
+                  {% endmacro -%}
+                  {{ weekly_chores("Lucas") -}}
+                </td>
+                <td align="right">
+                  {{ weekly_chores("Kyle") -}}
+                </td>
+              </tr>
+              </table>
+
+              {% set people = states.person | selectattr('state','eq','not_home') | map(attribute='entity_id') | list -%}
+              {% for person in people -%}
+                {% if is_state(person, 'not_home') -%}
+                  {% set name = state_attr(person,'friendly_name') -%}
+                  {% set left = state_attr('variable.left_home',name) -%}
+                  {% if left is not none -%}
+                    {% set minutes_away = ((as_timestamp(now())|int - as_timestamp(left)|int) / 60)|int -%}
+                    {% set hours_away = (minutes_away / 60)|int -%}
+              {% if hours_away > 1 and hours_away < 24 -%}
+              {{ name }}: away for {{ hours_away }} hr<br>
+              {% elif minutes_away < 60 -%}
+              {{ name }}: away for {{ minutes_away|int }} min<br>
+              {%- endif %}
+                  {%- endif %}
+                {%- endif %}
+              {%- endfor %}
+
 
         - type: custom:home-feed-card
           style: |
