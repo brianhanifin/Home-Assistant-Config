@@ -8,7 +8,7 @@ sequence:
   - service_template: >
       {# Medicine: Buddy #}
       {# Bedroom Wall Double Switch  #}
-      {%- elif button.startswith("binary_sensor.bedroom_switch_button") -%}
+      {%- if button.startswith("binary_sensor.bedroom_switch_button") -%}
         script.bedroom_switch_buttons
       {%- elif button == "binary_sensor.medicine_buddy_button" -%}
         script.medicine_buddy_button
