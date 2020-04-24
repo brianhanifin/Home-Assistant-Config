@@ -1,0 +1,14 @@
+---
+alias: washing_cycle_standby
+initial_state: true
+trigger:
+  # Set to Standby when the washer is first turned on.
+  - platform: state
+    entity_id: binary_sensor.washer
+    from: "off"
+    to: "on"
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.washing_machine_status
+      option: Standby

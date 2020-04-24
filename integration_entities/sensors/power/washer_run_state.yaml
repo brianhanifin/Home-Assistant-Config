@@ -1,0 +1,12 @@
+---
+platform: template
+sensors:
+  washer_run_state:
+    friendly_name: Washer Run State
+    icon_template: mdi:washing-machine
+    value_template: >-
+      {% if state_attr('sensor.washer','run_state') != '-' %}
+        {{ state_attr('sensor.washer','run_state') }}
+      {% else %}
+        Off
+      {% endif %}

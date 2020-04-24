@@ -1,25 +1,24 @@
 ---
-alias: wash_cycle_complete
+alias: wash_cycle_error
 initial_state: true
 trigger:
   - platform: state
-    entity_id: binary_sensor.washer_wash_completed
+    entity_id: binary_sensor.washer_error_state
     from: "off"
     to: "on"
 action:
   - service: input_select.select_option
     data:
       entity_id: input_select.washing_machine_status
-      option: Clean
+      option: Error
 
   - service: script.notify_speech
     data_template:
       media_player: group.alexa_downstairs
-      message: The washing cycle is complete.
+      message: "Error. The washing machine has an error. ... {{ state_attr('sensor.washer','error_message') }}"
 
   - service: script.notify_mobile
     data_template:
-      title: Washing Machine
-      #message: "Clothes are clean! Finished @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
-      message: Clothes are clean!
+      title: "ERROR: Washing Machine"
+      message: "{{ state_attr('sensor.washer','error_message') }}"
       who: brian

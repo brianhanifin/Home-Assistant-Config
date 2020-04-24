@@ -1,0 +1,12 @@
+---
+alias: wash_cycle_off
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: sensor.washer
+    to: "off"
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.washing_machine_status
+      option: "Off"
