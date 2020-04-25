@@ -1,0 +1,168 @@
+---
+automation:
+  - alias: wakeup_light_timeout
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id:
+          - timer.wakeup_timeout_bedroom
+          - timer.wakeup_timeout_boys_wakeup
+          - timer.wakeup_timeout_brian
+          - timer.wakeup_timeout_glowforge
+        from: active
+        to: idle
+    action:
+      - service: light.turn_off
+        entity_id: light.entry
+      - service: light.turn_off
+        entity_id: light.garage_entry
+
+      - service: light.turn_off
+        data_template:
+          entity_id: "light.{{ trigger.entity_id[21:] }}"
+
+  - alias: wakeup_warmup_water
+    initial_state: true
+    trigger:
+      # Trigger at wakeup time.
+      platform: template
+      value_template: >-
+        {% macro add_time(time, add_minutes) %}
+          {% if time|lower != 'unavailable' %}
+            {% set time = time.split(':') %}
+            {% set hour = time[0]|int %}
+            {% set minutes = time[1]|int %}
+            {% if (minutes + add_minutes) < 60 %}
+              {{ "%0.02d:%0.02d"|format(hour, minutes + add_minutes) }}
+            {% else %}
+              {{ "%0.02d:%0.02d"|format(hour + 1, (minutes + add_minutes) - 60) }}
+            {% endif %}
+          {% endif %}
+        {% endmacro %}
+
+        # Trigger the automation 10 minutes after the wakeup time.
+        {% set add_minutes = 10 %}
+        {% set current_time = states('sensor.time') %}
+        {% set boys = add_time(states('sensor.boys_room_next_alarm'),add_minutes) %}
+        {% set brian = add_time(states('sensor.wakeup_brian_time'),add_minutes) %}
+        {% set nerene = add_time(states('sensor.wakeup_nerene_time'),add_minutes) %}
+
+        {{ current_time in [boys,brian,nerene] }}
+    condition:
+      # Continue if skipnext is not enabled.
+      - condition: template
+        value_template: >-
+          {% set current_time = states('sensor.time') %}
+          {% if current_time == states('sensor.boys_room_next_alarm') %}
+            {{ is_state('input_boolean.wakeup_boys_skipnext','on') }}
+          {% elif current_time == states('sensor.wakeup_brian_time') %}
+            {{ is_state('input_boolean.wakeup_brian_skipnext','on') }}
+          {% elif current_time == states('sensor.wakeup_nerene_time') %}
+            {{ is_state('input_boolean.wakeup_nerene_skipnext','on') }}
+          {% endif %}
+    action:
+      - service: switch.turn_on
+        entity_id: switch.hot_water_pump
+
+
+script:
+  wakeup_light_start:
+    sequence:
+      # - service: persistent_notification.create
+      #   data_template:
+      #     title: "DEBUG"
+      #     message: "script.wakeup_light_start"
+
+      # Activate a scene that turns on appropriate lights downstairs
+      - service: scene.turn_on
+        data_template:
+          entity_id: "{{ scene|default('none') }}"
+
+      # Start lights at ~20% and increment by ~10% every minute for 9 minutes.
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 50
+      - delay: 00:00:01
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 50
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 75
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 100
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 125
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 150
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 175
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 200
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 225
+
+      - delay: 00:01:00
+      - condition: template
+        value_template: "{{ is_state(light,'on') }}"
+      - service: light.turn_on
+        data_template:
+          entity_id: "{{ light }}"
+          brightness: 255
+
+      # Start a countdown timer which triggers and automation upon its conclusion.
+      # see: automation.wakeup_light_timeout
+      - service: timer.start
+        data_template:
+          entity_id: "timer.wakeup_timeout_{{ light[6:] }}"
+
+  wakeup_skipnext:
+    sequence:
+      - delay:
+          seconds: 15
+      - service: input_boolean.turn_off
+        data_template:
+          entity_id: "{{ skipnext }}"

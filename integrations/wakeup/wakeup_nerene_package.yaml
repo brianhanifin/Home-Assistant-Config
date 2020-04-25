@@ -1,0 +1,124 @@
+---
+automation:
+  alias: wakeup_nerene_light
+  #initial_state: true
+  trigger:
+    platform: template
+    value_template: "{{ states('sensor.time') == states('sensor.wakeup_nerene_light')|timestamp_custom('%H:%M', false) }}"
+  condition:
+    - condition: state
+      entity_id: person.nerene
+      state: home
+    # Continue today is a wakeup day.
+    - condition: state
+      entity_id: binary_sensor.wakeup_nerene_day
+      state: "on"
+  action:
+    # - service: persistent_notification.create
+    #   data_template:
+    #     title: "DEBUG"
+    #     message: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_nerene_skipnext', 'on') else 'script.wakeup_light_start' }}"
+
+    - service_template: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_nerene_skipnext', 'on') else 'script.wakeup_light_start' }}"
+      data_template:
+        light: "light.glowforge"
+        scene: "scene.wakeup_nerene"
+        skipnext: "input_boolean.wakeup_nerene_skipnext"
+
+binary_sensor:
+  - platform: template
+    sensors:
+      wakeup_nerene_day:
+        entity_id: sensor.date
+        friendly_name: Wakeup Nerene Today?
+        value_template: >-
+          {% set   day_name = now().strftime("%A")|lower -%}
+          {%- if   day_name == 'monday'    and is_state('input_boolean.wakeup_nerene_mon','on') -%}{{true}}
+          {%- elif day_name == 'tuesday'   and is_state('input_boolean.wakeup_nerene_tue','on') -%}{{true}}
+          {%- elif day_name == 'wednesday' and is_state('input_boolean.wakeup_nerene_wed','on') -%}{{true}}
+          {%- elif day_name == 'thursday'  and is_state('input_boolean.wakeup_nerene_thu','on') -%}{{true}}
+          {%- elif day_name == 'friday'    and is_state('input_boolean.wakeup_nerene_fri','on') -%}{{true}}
+          {%- elif day_name == 'saturday'  and is_state('input_boolean.wakeup_nerene_sat','on') -%}{{true}}
+          {%- elif day_name == 'sunday'    and is_state('input_boolean.wakeup_nerene_sun','on') -%}{{true}}
+          {%- else -%}{{false}}{%- endif %}
+
+input_boolean:
+  wakeup_nerene_status:
+    name: Activate Alarm
+    icon: mdi:alarm-check
+  wakeup_nerene_skipnext:
+    name: Skip Next Alarm
+    icon: mdi:alarm-check
+  wakeup_nerene_sun:
+    name: Sunday
+    icon: mdi:checkbox-marked-circle
+  wakeup_nerene_mon:
+    name: Monday
+    icon: mdi:checkbox-marked-circle
+  wakeup_nerene_tue:
+    name: Tuesday
+    icon: mdi:checkbox-marked-circle
+  wakeup_nerene_wed:
+    name: Wednesday
+    icon: mdi:checkbox-marked-circle
+  wakeup_nerene_thu:
+    name: Thursday
+    icon: mdi:checkbox-marked-circle
+  wakeup_nerene_fri:
+    name: Friday
+    icon: mdi:checkbox-marked-circle
+  wakeup_nerene_sat:
+    name: Saturday
+    icon: mdi:checkbox-marked-circle
+
+input_datetime:
+  wakeup_nerene_time:
+    name: Wakeup Time
+    has_date: false
+    has_time: true
+
+scene:
+  - name: Wakeup Nerene
+    entities:
+      switch.bedroom_fan: off
+      light.entry:
+        state: on
+        brightness_pct: '40'
+      light.garage_entry:
+        state: on
+        brightness_pct: '25'
+
+sensor:
+  - platform: template
+    sensors:
+      wakeup_nerene_light:
+        friendly_name: Light Fade-in Start
+        icon_template: mdi:lightbulb-on-outline
+        entity_id: input_datetime.wakeup_nerene_time
+        value_template: >-
+          {%  set wakeup_time    = states("input_datetime.wakeup_nerene_time") -%}
+          {%- set wakeup_hour    = wakeup_time.split(':')[0] -%}
+          {%- set wakeup_minutes = wakeup_time.split(':')[1] -%}
+          {%- if (wakeup_minutes | int >= 10) -%}
+            {{ "%0.02d:%0.02d"|format(wakeup_hour|int, wakeup_minutes|int -10) }}
+          {%- else -%}
+            {{ "%0.02d:%0.02d"|format(wakeup_hour|int -1, wakeup_minutes|int +50) }}
+          {%- endif -%}
+
+  - platform: template
+    sensors:
+      wakeup_nerene_time:
+        friendly_name: Wakeup Time
+        icon_template: mdi:clock-outline
+        entity_id: input_datetime.wakeup_nerene_time
+        value_template: >-
+          {%  set wakeup_nerene_time    = states("input_datetime.wakeup_nerene_time") -%}
+          {%- set wakeup_nerene_hour    = wakeup_nerene_time.split(':')[0] -%}
+          {%- set wakeup_nerene_minutes = wakeup_nerene_time.split(':')[1] -%}
+          {{ "%0.02d:%0.02d" | format(wakeup_nerene_hour|int, wakeup_nerene_minutes|int) }}
+
+timer:
+  wakeup_timeout_bedroom:
+    duration: "01:00:00"
+  wakeup_timeout_glowforge:
+    duration: "01:00:00"
