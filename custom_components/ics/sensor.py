@@ -53,6 +53,9 @@ class ics_Sensor(Entity):
 		self._force_update = config.get(CONF_FORCE_UPDATE)
 		self._show_remaining = config.get(CONF_SHOW_REMAINING)
 		self._show_ongoing = config.get(CONF_SHOW_ONGOING)
+		self._group_events = config.get(CONF_GROUP_EVENTS)
+		self._n_skip = config.get(CONF_N_SKIP)
+		self._description_in_state = config.get(CONF_DESCRIPTION_IN_STATE)
 
 		_LOGGER.debug("ICS config: ")
 		_LOGGER.debug("\tname: "+self._name)
@@ -65,6 +68,9 @@ class ics_Sensor(Entity):
 		_LOGGER.debug("\tforce_update: "+str(self._force_update))
 		_LOGGER.debug("\tshow_remaining: "+str(self._show_remaining))
 		_LOGGER.debug("\tshow_ongoing: "+str(self._show_ongoing))
+		_LOGGER.debug("\tgroup_events: "+str(self._group_events))
+		_LOGGER.debug("\tn_skip: "+str(self._n_skip))
+		_LOGGER.debug("\tdescription_in_state: "+str(self._description_in_state))
 
 		self._lastUpdate = -1
 		self.ics = {
@@ -75,6 +81,7 @@ class ics_Sensor(Entity):
 				'description':"-",
 				'location': '-',
 				'last_updated': None,
+				'reload_at': None,
 				},
 			'pickup_date': "-",
 			}
@@ -117,7 +124,7 @@ class ics_Sensor(Entity):
 
 	# make sure all elements are timezone aware datetimes
 	def check_fix_date_tz(self, event):
-		if(isinstance(event.dt, datetime.date)):
+		if(isinstance(event.dt, datetime.date) and not(isinstance(event.dt, datetime.datetime))):
 			event.dt = datetime.datetime(event.dt.year,event.dt.month,event.dt.day)
 		try:
 			if(event.dt.tzinfo == None or event.dt.utcoffset() == None):
@@ -132,15 +139,17 @@ class ics_Sensor(Entity):
 		for event in calendar.walk('vevent'):
 			if(event.has_key("RRULE")):
 				if(event["RRULE"].has_key("UNTIL")):
-					if(isinstance(event["DTSTART"].dt,datetime.date) and isinstance(event["RRULE"]["UNTIL"][0],datetime.datetime)):
-						event["RRULE"]["UNTIL"][0] = event["RRULE"]["UNTIL"][0].date()
+					# different
+					if(type(event["DTSTART"].dt) != type(event["RRULE"]["UNTIL"][0])):
+						if(type(event["DTSTART"].dt) == datetime.datetime):
+							d = event["RRULE"]["UNTIL"][0]
+							event["RRULE"]["UNTIL"][0] =  datetime.datetime(d.year,d.month,d.day)
+						else:
+							event["RRULE"]["UNTIL"][0] = event["RRULE"]["UNTIL"][0].date()
 						fix+=1
-					elif(isinstance(event["DTSTART"].dt,datetime.datetime) and isinstance(event["RRULE"]["UNTIL"][0],datetime.date)):
-						fix+=1
-						d = event["RRULE"]["UNTIL"][0]
-						event["RRULE"]["UNTIL"][0] =  datetime.datetime(d.year,d.month,d.day)
-						if(event["DTSTART"].dt.tzinfo != None):
-							event["RRULE"]["UNTIL"][0] = event["RRULE"]["UNTIL"][0].replace(tzinfo=event["DTSTART"].dt.tzinfo)
+					# tz fixing
+					if(type(event["RRULE"]["UNTIL"][0]) == datetime.datetime):
+						event["RRULE"]["UNTIL"][0] = event["RRULE"]["UNTIL"][0].replace(tzinfo=datetime.timezone.utc)
 		return fix
 
 
@@ -170,52 +179,109 @@ class ics_Sensor(Entity):
 			except:
 				self.exc()
 
-			et = None
 			self.ics['pickup_date'] = "no next event"
 			self.ics['extra']['last_updated'] = datetime.datetime.now(get_localzone()).replace(microsecond=0)
+			self.ics['extra']['reload_at'] = None
 			self.ics['extra']['start'] = None
 			self.ics['extra']['end'] = None
 			self.ics['extra']['remaining'] = -1
 			self.ics['extra']['description'] = "-"
 			self.ics['extra']['location'] = "-"
 
+			et = None
+			skip_et = None
+			n_skip = self._n_skip
+			skip_reload_at = None
+			event_date = None
+			event_end_date = None
+			
 			if(len(reoccuring_events)>0):
 				for e in reoccuring_events:
+					# load start / end
 					event_date = e["DTSTART"].dt
 					if(e.has_key("DTEND")):
 						event_end_date = e["DTEND"].dt
 					else:
 						event_end_date = event_date
 
-					event_summary = ""
+					# handle empty or non existing summary field
+					event_summary = self.fix_text(self._show_blank)
 					if(e.has_key("SUMMARY")):
-						event_summary = self.fix_text(e["SUMMARY"])
-					elif(self._show_blank):
-						event_summary = self.fix_text(self._show_blank)
-
+						if(self.fix_text(e["SUMMARY"]) != ""):
+							event_summary = self.fix_text(e["SUMMARY"])
+					
+					# get now to check if events have started
 					now = datetime.datetime.now(get_localzone())
 
 					if(event_summary):
-						if(event_summary.startswith(self.fix_text(self._sw))):
+						if(event_summary.lower().startswith(self.fix_text(self._sw).lower())):
 							if((event_date > now) or (self._show_ongoing and event_end_date > now)):
+
+								# logic to skip events, but save certain details, e.g. reload / and timeslot for grouping
+								if(n_skip>0 or skip_et!=None):
+									# note first  event_date as reload time
+									if(skip_reload_at == None):
+										skip_reload_at = event_date
+									# if this event is the at the exact same time as the last and we're grouping
+									if(skip_et != None and skip_et == event_date and self._group_events):
+										# increase it temporary, will besically abolish the next line
+										n_skip += 1
+									n_skip -= 1
+									skip_et = event_date
+									if(n_skip>=0):
+										continue
+									else:
+										skip_et = None
+								
+								# if we hit this timeslot the firsttime, store everything
 								if(et == None):
 									self.ics['pickup_date'] = event_date.strftime(self._timeformat)
 									self.ics['extra']['remaining'] = (event_date.date() - now.date()).days
 									self.ics['extra']['description'] = event_summary
-									self.ics['extra']['start'] = event_date
-									self.ics['extra']['end'] = event_end_date
+									self.ics['extra']['start'] = event_date.astimezone()
+									self.ics['extra']['end'] = event_end_date.astimezone()
 									if(e.has_key("LOCATION")):
 										self.ics['extra']['location'] = self.fix_text(e["LOCATION"])
 									et = event_date
-								elif(event_date == et):
+
+								# if grouping is active and we hat it again, append
+								elif((event_date == et) and (self._group_events)):
 									self.ics['extra']['description'] += " / " + event_summary
 									if(e.has_key("LOCATION")):
 										self.ics['extra']['location'] += " / " + self.fix_text(e["LOCATION"])
 									# store earliest end time
 									if(self.ics['extra']['end'] > e["DTEND"].dt):
-										self.ics['extra']['end'] = e["DTEND"].dt
+										self.ics['extra']['end'] = e["DTEND"].dt.astimezone()
+								
+								# this event hat a differnt timeslot then the first, so we don't append it and end here
 								else:
 									break
+
+			############## start of reload calucation ###########################
+			# base line for relaod is daybreak
+			self.ics['extra']['reload_at'] = now.replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=1)
+			
+			# check if the skip_reload at is easlier
+			if(skip_reload_at != None):
+				if(skip_reload_at < self.ics['extra']['reload_at']):
+					self.ics['extra']['reload_at'] = skip_reload_at
+			
+			# if we have a interval reload
+			if(self._force_update > 0):
+				force_reload_at = now + datetime.timedelta(seconds=self._force_update)
+				if(force_reload_at < self.ics['extra']['reload_at']):
+					self.ics['extra']['reload_at'] = force_reload_at
+			
+			# check if the next appointment is even earlier
+			if(self._show_ongoing and event_end_date != None):
+					if(event_end_date < self.ics['extra']['reload_at']):
+						self.ics['extra']['reload_at'] = event_end_date
+			elif(event_date != None):
+					if(event_date < self.ics['extra']['reload_at']):
+						self.ics['extra']['reload_at'] = event_date
+
+			self.ics['extra']['reload_at'] = self.ics['extra']['reload_at'].replace(microsecond=0)
+			############## end of reload calucation ###########################
 		except:
 			self.ics['pickup_date'] = "failure"
 			self.exc()
@@ -227,32 +293,20 @@ class ics_Sensor(Entity):
 		"""
 		try:
 			# first run
-			if(self.ics['extra']['last_updated']==None):
+			if(self.ics['extra']['reload_at'] == None):
+				self.get_data()
+			# check if we're past reload_at
+			elif(self.ics['extra']['reload_at'] < datetime.datetime.now(get_localzone())):
 				self.get_data()
 
-			# update at midnight
-			elif(self.ics['extra']['last_updated'].day != datetime.datetime.now().day):
-				self.get_data()
-
-			# update if datetime exists (there was an event in reach) and it is past now (look for the next event)
-			if(self.ics['extra']['start']!=None):
-				if(self._show_ongoing):
-					if(self.ics['extra']['end']<datetime.datetime.now(get_localzone())):
-						self.get_data()
-				else:
-					if(self.ics['extra']['start']<datetime.datetime.now(get_localzone())):
-						self.get_data()
-
-			# force updates (this should be last in line to avoid running twice)
-			if(self.ics['extra']['last_updated']!=None and self._force_update>0):
-				if(self.ics['extra']['last_updated']+datetime.timedelta(seconds=self._force_update) < datetime.datetime.now(get_localzone())):
-					self.get_data()
 
 			# update states
 			self._state_attributes = self.ics['extra']
 			self._state = self.ics['pickup_date']
 			if(self._show_remaining):
 				self._state += ' (%02i)' % self.ics['extra']['remaining']
+			if(self._description_in_state):
+				self._state += ' '+self.ics['extra']['description']
 		except:
 			self._state = "error"
 			self.exc()

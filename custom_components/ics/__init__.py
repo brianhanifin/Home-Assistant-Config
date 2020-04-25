@@ -10,7 +10,6 @@ from .const import *
 
 async def async_setup(hass, config):
 	# log startup message
-	store_hass(hass)
 	_LOGGER.info(
 		CC_STARTUP_VERSION.format(name=DOMAIN, version=VERSION, issue_link=ISSUE_URL)
 	)
@@ -19,6 +18,7 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, config_entry):
 	"""Set up this integration using UI/YAML."""
+	config_entry.data = ensure_config(config_entry.data, hass) # make sure that missing storage values will be default (const function)
 	config_entry.options = config_entry.data
 	config_entry.add_update_listener(update_listener)
 	# Add sensor

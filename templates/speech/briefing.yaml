@@ -298,14 +298,12 @@
 
   {%- macro responsibilities() -%}
     {%- set trash = responsibility_trash() -%}
-    {%- set buddy = responsibility_medicine_buddy() -%}
     {%- set boys_weekly = responsibility_boys_weekly() -%}
 
-    {%- if trash|length > 10 or buddy|length > 10 or boys_weekly|length > 10 -%}
+    {%- if trash|length > 10 or boys_weekly|length > 10 -%}
       <voice name="Brian">
       Family Responsibilities{{ pause() }}
       {{ trash }}
-      {{ buddy }}
       {{ boys_weekly }}
       </voice>
     {%- endif %}
