@@ -1,0 +1,19 @@
+---
+alias: octoprint_complete
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: binary_sensor.octoprint_printing
+    from: "on"
+    to: "off"
+action:
+  - service: script.notify_speech
+    data_template:
+      media_player: group.alexa_downstairs
+      message: Your 3D Print is complete.
+
+  - service: script.notify_mobile
+    data_template:
+      title: 3D Print
+      message: Your print is complete!s
+      who: brian
