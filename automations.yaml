@@ -1,2 +1,20 @@
 ---
-[]
+- id: '1587853788536'
+  alias: Temperature Cooler Outside
+  description: Notify me to open up the house when the temperature is cooler than
+    inside.
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.home_temperature")|int > (states("sensor.outside_temperature")|int
+      - 2) }}'
+  condition: []
+  action:
+  - data:
+      message: It is cooler outside. Please open up the house.
+      title: Cool off!
+      who: brian
+    service: script.notify_mobile
+  - data:
+      media_player: group.alexa_downstairs
+      message: It is cooler outside. Please open up the house.
+    service: script.notify_speech
