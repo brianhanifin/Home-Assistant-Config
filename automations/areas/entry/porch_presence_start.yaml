@@ -11,24 +11,6 @@ trigger:
     from: 'off'
     to: 'on'
 action:
-  # Stream the camera feed to Apple TV.
-  - service: camera.play_stream
-    data:
-      entity_id: camera.front_door
-      media_player: media_player.family_room_apple_tv
-
-  # Stream the camera feed to all Home Assistant displays.
-  - service: browser_mod.command
-    data:
-      command: more-info
-      entity_id: camera.front_door
-
-  # Display the message as a toast notification
-  - service: script.toast
-    data:
-      message: "Someone is at the front door."
-      duration: 0
-
   # Only activate the lights after sunset.
   - condition: sun
     after: sunset

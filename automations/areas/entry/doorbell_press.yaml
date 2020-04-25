@@ -7,9 +7,23 @@ trigger:
     entity_id: binary_sensor.doorbell_press
     to: 'on'
 action:
-  - service: script.debug
+  # Stream the camera feed to Apple TV.
+  - service: camera.play_stream
     data:
-      message: "Doorbell Button Press Detected!"
+      entity_id: camera.front_door
+      media_player: media_player.family_room_apple_tv
+
+  # Stream the camera feed to all Home Assistant displays.
+  - service: browser_mod.command
+    data:
+      command: more-info
+      entity_id: camera.front_door
+
+  # Display the message as a toast notification
+  - service: script.toast
+    data:
+      message: "Someone pressed the doorbell!"
+      duration: 0
 
   # - service: media_player.turn_on
   #   entity_id: media_player.family_room_speaker
