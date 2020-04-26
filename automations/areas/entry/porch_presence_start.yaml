@@ -10,10 +10,11 @@ trigger:
     entity_id: binary_sensor.doorbell_presence
     from: 'off'
     to: 'on'
-action:
+condition:
   # Only activate the lights after sunset.
   - condition: sun
     after: sunset
+action:
 
   # Store the current state of the porch light.
   - service: scene.create
