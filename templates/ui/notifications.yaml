@@ -12,53 +12,76 @@
 #     on: DETECTED
 
 # Doors + Windows
+- entity: lock.front_door
+  content_template: '{{display_name}} is Unlocked'
+  name: Front Door
+  exclude_states:
+    - locked
+- entity: timer.front_door_unlocked
+  content_template: 'Lock countdown is Active'
+  exclude_states:
+    - idle
 - entity: binary_sensor.front_door
+  content_template: '{{display_name}} is Open'
   name: Front Door
   exclude_states:
     - "off"
   state_map:
     on: open
 - entity: cover.garage_door
+  content_template: '{{display_name}} is Open'
   exclude_states:
     - closed
 - entity: binary_sensor.network_closet_door
+  content_template: '{{display_name}} is Open'
   exclude_states:
     - "off"
   state_map:
     on: open
-- entity: lock.front_door
-  name: Front Door
-  exclude_states:
-    - locked
 - entity: binary_sensor.upstairs_bathroom_window
+  content_template: '{{display_name}} is Open'
   exclude_states:
     - "off"
-  state_map:
-    on: open
+
+# Guest Mode
+- entity: input_boolean.guest_mode
+  content_template: '{{display_name}} is Active'
+  exclude_states:
+    - "off"
+- entity: input_boolean.away_mode
+  content_template: '{{display_name}} is Active'
+  exclude_states:
+    - "off"
 
 # ESPHome Devices
 # - entity: binary_sensor.ble_hub_status
+#   content_template: '{{display_name}} is Offline'
 #   exclude_states:
 #     - "on"
 - entity: binary_sensor.irrigation_controller_status
+  content_template: '{{display_name}} is Offline'
   exclude_states:
     - "on"
 
 # Harmony Hubs
 - entity: device_tracker.iot_harmonyhub_living_room #binary_sensor.family_room_hub_status
+  content_template: '{{display_name}} is Offline'
   exclude_states:
     - "home"
 # - entity: device_tracker.iot_harmonyhub_play_room #binary_sensor.play_room_hub_status
+#   content_template: '{{display_name}} is Offline'
 #   exclude_states:
 #     - "home"
 
 # Plex streams
 - entity: sensor.plex
+  content_template: 'Plex viewers: {{state}}'
   exclude_states:
     - "0"
 
 # Hassio Update
 - entity: binary_sensor.update_available
+  content_template: 'Home Assistant has an update available.'
   exclude_states:
     - "off"
 

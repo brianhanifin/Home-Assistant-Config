@@ -8,9 +8,9 @@ trigger:
     to: 'unlocked'
 action:
   # Start a countdown timer to relock the front door.
-  - service: timer.start
-    data_template:
-      entity_id: timer.front_door_unlocked
+  - service: script.start_front_door_lock_countdown
+
+  ## ================================================================================================= ##
 
   # Update Light Switch LED Status Color.
   - service: script.inovelli_led_status_start

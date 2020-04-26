@@ -7,6 +7,10 @@ trigger:
     from: 'off'
     to: 'on'
 action:
+  # Disable the front door lock countdown.
+  - service: timer.cancel
+    entity_id: timer.front_door_unlocked
+
   # Disable circadian light dimming.
   - service: switch.turn_off
     entity_id: switch.circadian_lighting

@@ -3,11 +3,13 @@ alias: guest_mode_off
 initial_state: true
 trigger:
   - platform: state
-    entity_id:
-      - input_boolean.guest_mode
+    entity_id: input_boolean.guest_mode
     from: 'on'
     to: 'off'
 action:
+  # Start a countdown timer to relock the front door.
+  - service: script.start_front_door_lock_countdown
+
   # Enable circadian light dimming.
   - service: switch.turn_on
     entity_id: switch.circadian_lighting
