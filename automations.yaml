@@ -3,7 +3,9 @@
   description: Notify me to open up the house when the temperature is cooler than
     inside.
   trigger:
-  - platform: template
+  - for:
+      minutes: 15
+    platform: template
     value_template: '{{ states("sensor.home_temperature")|int > (states("sensor.outside_temperature")|int
       - 2) }}'
   condition: []
@@ -20,3 +22,4 @@
       media_player: group.alexa_welcome
       message: It is cooler outside. Please open up the house.
     service: script.notify_speech
+
