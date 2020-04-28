@@ -12,21 +12,23 @@ action:
       topic: "hass/status"
       payload: "online"
 
-  # - service: frontend.set_theme
-  #   data:
-  #     name: ios-dark-mode-modified # midnight
+  - service: frontend.set_theme
+    data:
+      name: ios-dark-mode-modified # midnight
 
   # Sometimes the garage entry light turns on at startup,
   # so turn it back off.
   - service: light.turn_off
     entity_id: light.garage_entry
 
-  # Create group.actionable_lights to replace group.all_lights.
-  - service: script.turn_on
-    entity_id: script.create_actionable_lights_group
-
   # Display the message as a toast notification
   - service: script.toast
     data:
       message: "We're back online!"
       duration: 5000
+
+  # Create group.actionable_lights to replace group.all_lights.
+  - delay:
+      seconds: 30
+  - service: script.turn_on
+    entity_id: script.create_actionable_lights_group
