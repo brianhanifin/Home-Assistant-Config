@@ -2,6 +2,7 @@
 default:
   - zone_number: 1
   - name: Zone 1
+  - icon: mdi:seedling
 
 card:
   type: vertical-stack
@@ -9,58 +10,48 @@ card:
     - type: custom:decluttering-card
       template: heading
       variables:
-        - heading: "Zone [[zone_number]]: [[name]]"
+        - heading: "[[name]]"
 
     - type: entities
       show_header_toggle: false
       entities:
-        - entity: binary_sensor.irrigation_zone[[zone_number]]
-          secondary_info: last-changed
-        - entity: sensor.irrigation_zone[[zone_number]]_remaining
-          name: Time Remaining
-        - type: "custom:paper-buttons-row"
-          buttons:
+        - type: custom:decluttering-card
+          template: button_pill
+          variables:
             - entity: switch.irrigation_zone[[zone_number]]
-              name: Zone [[zone_number]]
-              style:
-                button:
-                  background: lightgray
-                  border-radius: 9999px
-                  font-weight: bold
-              state_icons:
-                "off": "mdi:play"
-                "on": "mdi:stop"
-              state_styles:
-                "off":
-                  button:
-                    color: green
-                  ripple:
-                    color: green
-                "on":
-                  button:
-                    color: red
-                  ripple:
-                    color: red
+            - label: Start Cycle
 
-    - type: entities
-      show_header_toggle: false
-      entities:
+        - type: custom:text-divider-row
+          text: Status
+
+        - type: custom:multiple-entity-row
+          entity: binary_sensor.irrigation_zone[[zone_number]]
+          name: 💧 Watering
+          icon: "[[icon]]"
+          show_state: false
+          secondary_info:
+            entity: binary_sensor.irrigation_zone[[zone_number]]
+            name: ""
+          entities:
+            - entity: sensor.irrigation_zone[[zone_number]]_next
+              name: ⏭️ Next
+            - entity: sensor.irrigation_zone[[zone_number]]_remaining
+              name: ⏳ Remaining
+              unit: min
+
         - type: custom:fold-entity-row
           head:
-            type: section
-            label: Edit Schedule
+            type: custom:text-divider-row
+            text: Scheduler
           entities:
-            - entity: switch.irrigation_zone[[zone_number]]_schedule
-              name: Scheduled
-            - type: time-input-row
-              entity: "input_datetime.irrigation_zone[[zone_number]]_first"
-              name: First Run of the Day
-              icon: mdi:weather-sunset-up
-            - type: time-input-row
-              entity: "input_datetime.irrigation_zone[[zone_number]]_last"
-              name: First Run
-              icon: mdi:weather-sunset-up
-            # - input_select.irrigation_zone[[zone_number]]_duration
-            - entity: sensor.irrigation_zone[[zone_number]]_last
-              name: Last Run of the Day
-              secondary_info: last-changed
+            - type: custom:text-input-row
+              entity: input_text.irrigation_zone[[zone_number]]_times
+            #- type: section
+            #  label: Duration in Minutes (0 = DISABLED)
+            - entity: sensor.irrigation_zone[[zone_number]]_duration
+              name: Duration in Minutes
+              icon: mdi:timer-sand
+            - type: custom:slider-entity-row
+              entity: input_number.irrigation_zone[[zone_number]]_duration
+              full_row: true
+              hide_state: true
