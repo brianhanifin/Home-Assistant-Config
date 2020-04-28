@@ -102,6 +102,6 @@ class HacsPlugin(HacsRepository):
             if "type: module" in line:
                 self.information.javascript_type = "module"
                 break
-            elif "type: js" in line:
+            elif "type: module" in line:
                 self.information.javascript_type = "js"
                 break
