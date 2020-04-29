@@ -18,62 +18,29 @@ card:
       template: heading
       variables:
         - heading: "Boy's Wakeup Light"
-
     - type: entities
       show_header_toggle: false
       entities:
-        - type: "custom:paper-buttons-row"
-          buttons:
-            - entity: automation.wakeup_boys_light
-              name: Enable
-              style:
-                button:
-                  background: lightgray
-                  border-radius: 9999px
-                  font-weight: bold
-              state_icons:
-                "off": "mdi:bell-off"
-                "on": "mdi:bell"
-              state_styles:
-                "off":
-                  button:
-                    color: red
-                  ripple:
-                    color: red
-                "on":
-                  button:
-                    color: green
-                  ripple:
-                    color: green
-
-            - entity: input_boolean.wakeup_boys_skipnext
-              name: Skip Next
-              style:
-                button:
-                  background: lightgray
-                  border-radius: 9999px
-                  font-weight: bold
-              state_icons:
-                "off": "mdi:skip-next-circle"
-                "on": "mdi:skip-next-circle"
-              state_styles:
-                "off":
-                  button:
-                    color: green
-                  ripple:
-                    color: green
-                "on":
-                  button:
-                    color: red
-                  ripple:
-                    color: red
-
+        - type: custom:decluttering-card
+          template: button_pill2
+          variables:
+            - entity1: automation.wakeup_boys_light
+            - label1_on: Disabled
+            - label1_off: Enabled
+            - color1_on: red
+            - color1_off: green
+            - entity2: input_boolean.wakeup_boys_skipnext
+            - label2_on: Next Disabled
+            - label2_off: Next Enabled
+            - color2_on: red
+            - color2_off: green
 
         - type: custom:text-divider-row
           text: Alexa's Next Alarm
 
         - entity: sensor.boys_room_next_alarm
           name: Wakeup Time
+
         - entity: sensor.wakeup_boys_light
           icon: mdi:weather-sunset-up
 

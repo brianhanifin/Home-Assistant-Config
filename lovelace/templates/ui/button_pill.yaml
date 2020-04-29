@@ -1,7 +1,6 @@
 ---
 default:
   - entity: ""
-  - label: Enable
   - icon_on: mdi:play
   - icon_off: mdi:stop
   - style:
@@ -9,13 +8,15 @@ default:
         background: lightgray
         border-radius: 9999px
         font-weight: bold
+  - label_on:  "Enabled"
+  - label_off: "Disabled"
   - state_styles:
-      "off":
+      "on":
         button:
           color: red
         ripple:
           color: red
-      "on":
+      "off":
         button:
           color: green
         ripple:
@@ -25,9 +26,12 @@ card:
   type: custom:paper-buttons-row
   buttons:
     - entity: "[[entity]]"
-      name: "[[label]]"
+      name: "[[label_on]]"
+      state_text:
+        "on": "[[label_on]]"
+        "off": "[[label_off]]"
       state_icons:
-        "off": "[[icon_on]]"
         "on": "[[icon_off]]"
+        "off": "[[icon_on]]"
       style: "[[style]]"
       state_styles: "[[state_styles]]"
