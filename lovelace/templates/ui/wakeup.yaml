@@ -10,63 +10,19 @@ card:
     - type: entities
       show_header_toggle: false
       entities:
-        - type: "custom:paper-buttons-row"
-          buttons:
-            - entity: automation.wakeup_[[id]]_light
-              name: Enabled
-              style:
-                button:
-                  background: lightgray
-                  border-radius: 9999px
-                  font-weight: bold
-              state_icons:
-                "off": "mdi:bell-off"
-                "on": "mdi:bell"
-              state_text:
-                "off": "Disabled"
-                "on": "Enabled"
-              state_styles:
-                "off":
-                  button:
-                    color: red
-                  ripple:
-                    color: red
-                "on":
-                  button:
-                    color: green
-                  ripple:
-                    color: green
-
-              # tap_action:
-              #   action: call-service
-              #   service: homeassistant.toggle
-              #   service_data:
-              #     entity_id: automation.wakeup_[[id]]_light
-
-            - entity: input_boolean.wakeup_[[id]]_skipnext
-              name: Skip Next
-              icon: mdi:skip-next-circle
-              style:
-                button:
-                  background: lightgray
-                  border-radius: 9999px
-                  font-weight: bold
-              state_styles:
-                "off":
-                  button:
-                    color: red
-                  ripple:
-                    color: red
-                "on":
-                  button:
-                    color: green
-                  ripple:
-                    color: green
-              # tap_action:
-              #   action: call-service
-              #   service: homeassistant.toggle
-              #   service_data:
-              #     entity_id: input_boolean.wakeup_[[id]]_skipnext
+        - type: custom:decluttering-card
+          template: button_pill2
+          variables:
+            - entity1: automation.wakeup_[[id]]_light
+            - label1_on:  Enabled
+            - label1_off: Disabled
+            - color1_on: green
+            - color1_off: red
+            - entity2: input_boolean.wakeup_[[id]]_skipnext
+            - label2_on: Next Disabled
+            - label2_off:  Next Enabled
+            - color2_on: red
+            - color2_off: green
 
         - type: custom:text-divider-row
           text: Days and times

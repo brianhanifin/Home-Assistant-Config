@@ -229,9 +229,22 @@ cards:
                         deviceID:
                           - this
                   - entity2: ""
-                  - icon2: mdi:hot-tub
-                  - name2: Other
+                  - icon2: mdi:printer-3d-nozzle
+                  - name2: Making
                   - tap_action2:
+                      action: call-service
+                      service: browser_mod.popup
+                      service_data:
+                        title: 3D Printing
+                        card:
+                          type: custom:decluttering-card
+                          template: popup_making
+                        deviceID:
+                          - this
+                  - entity3: ""
+                  - icon3: mdi:hot-tub
+                  - name3: Other
+                  - tap_action3:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -241,10 +254,14 @@ cards:
                           template: popup_other
                         deviceID:
                           - this
-                  - entity3: ""
-                  - icon3: mdi:heart-pulse
-                  - name3: Responsibilities
-                  - tap_action3:
+              # Row 3
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: ""
+                  - icon1: mdi:heart-pulse
+                  - name1: Responsibilities
+                  - tap_action1:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -254,14 +271,10 @@ cards:
                           template: popup_responsibilities
                         deviceID:
                           - this
-              # Row 3
-              - type: custom:decluttering-card
-                template: button2_row3
-                variables:
-                  - entity1: ""
-                  - icon1: mdi:robot
-                  - name1: Routines
-                  - tap_action1:
+                  - entity2: ""
+                  - icon2: mdi:robot
+                  - name2: Routines
+                  - tap_action2:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -271,10 +284,10 @@ cards:
                           template: popup_routines
                         deviceID:
                           - this
-                  - entity2: ""
-                  - icon2: mdi:remote
-                  - name2: TV
-                  - tap_action2:
+                  - entity3: ""
+                  - icon3: mdi:remote
+                  - name3: TV
+                  - tap_action3:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -284,10 +297,14 @@ cards:
                           template: popup_tv
                         deviceID:
                           - this
-                  - entity3: ""
-                  - icon3: fas:user-clock
-                  - name3: Wakeup
-                  - tap_action3:
+              # Row 4
+              - type: custom:decluttering-card
+                template: button2_row3
+                variables:
+                  - entity1: ""
+                  - name1: Wakeup
+                  - icon1: fas:user-clock
+                  - tap_action1:
                       action: call-service
                       service: browser_mod.popup
                       service_data:
@@ -297,6 +314,8 @@ cards:
                           template: popup_wakeup
                         deviceID:
                           - this
+                  - template2: button_blank
+                  - template3: button_blank
 
           # Column 3
           - type: vertical-stack
@@ -326,10 +345,6 @@ cards:
                     deviceID:
                       - this
               - type: picture-glance
-                style: |
-                  .box, .box .row {
-                    align: right;
-                  }
                 title: Front Door
                 camera_image: camera.front_door
                 camera_view: camera.front_door
@@ -338,8 +353,8 @@ cards:
                   - camera.front_door
                 entity: binary_sensor.front_door_motion
                 state_filter:
-                  "on": brightness(110%) saturate(1.2)
-                  "off": brightness(70%) grayscale(100%)
+                  "on": brightness(90%) saturate(1.2)
+                  "off": brightness(40%) grayscale(100%)
                 tap_action:
                   action: call-service
                   service: browser_mod.more_info

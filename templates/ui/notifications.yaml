@@ -81,9 +81,18 @@
 
 # Hassio Update
 - entity: binary_sensor.update_available
-  content_template: 'Home Assistant has an update available.'
+  content_template: Home Assistant has an update available.
   exclude_states:
     - "off"
+
+- entity: sensor.octoprint_current_state
+  content_template: '3D Printer is {{state}}'
+  include_states:
+    - Printing
+  # exclude_states:
+  #   - Operational
+  #   - "Unknown"
+  #   - ""
 
 
 #   <style>
