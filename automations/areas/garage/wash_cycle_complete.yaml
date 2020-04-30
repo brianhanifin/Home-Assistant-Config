@@ -2,10 +2,10 @@
 alias: wash_cycle_complete
 initial_state: true
 trigger:
-  - platform: state
-    entity_id: binary_sensor.washer_running
-    from: "on"
-    to: "off"
+  # - platform: state
+  #   entity_id: binary_sensor.washer_running
+  #   from: "on"
+  #   to: "off"
   - platform: state
     entity_id: binary_sensor.washer_wash_completed
     from: "off"
@@ -21,9 +21,8 @@ action:
       media_player: group.alexa_downstairs
       message: The washing cycle is complete.
 
-  - service: script.notify_mobile
-    data_template:
-      title: Washing Machine
-      #message: "Clothes are clean! Finished @ {{ as_timestamp(now()) | timestamp_custom('%I:%M:%S %p %d %b %Y', true) }}"
-      message: Clothes are clean!
-      who: brian
+  # - service: script.notify_mobile
+  #   data_template:
+  #     title: Washing Machine
+  #     message: Clothes are clean!
+  #     who: brian
