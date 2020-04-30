@@ -5,7 +5,7 @@ from typing import Optional
 from .device import (
     Device,
     DeviceStatus,
-    STATE_OPTIONITEM_OFF,
+    STATE_OPTIONITEM_NONE,
 )
 
 from .dryer_states import (
@@ -15,7 +15,6 @@ from .dryer_states import (
     DRYERDRYLEVELS,
     DRYERTEMPS,
     DRYERREFERRORS,
-    DRYERERRORS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -23,6 +22,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class DryerDevice(Device):
     """A higher-level interface for a dryer."""
+    def __init__(self, client, device):
+        super().__init__(client, device, DryerStatus(self, None))
 
     def poll(self) -> Optional["DryerStatus"]:
         """Poll the device's current state."""
@@ -31,7 +32,8 @@ class DryerDevice(Device):
         if not res:
             return None
 
-        return DryerStatus(self, res)
+        self._status = DryerStatus(self, res)
+        return self._status
 
 
 class DryerStatus(DeviceStatus):
@@ -49,6 +51,8 @@ class DryerStatus(DeviceStatus):
     def _get_run_state(self):
         if not self._run_state:
             state = self.lookup_enum(["State", "state"])
+            if not state:
+                return STATE_DRYER.POWER_OFF
             self._run_state = self._set_unknown(
                 state=DRYERSTATES.get(state, None), key=state, type="status"
             )
@@ -57,6 +61,8 @@ class DryerStatus(DeviceStatus):
     def _get_pre_state(self):
         if not self._pre_state:
             state = self.lookup_enum(["PreState", "preState"])
+            if not state:
+                return STATE_DRYER.POWER_OFF
             self._pre_state = self._set_unknown(
                 state=DRYERSTATES.get(state, None), key=state, type="status"
             )
@@ -65,6 +71,8 @@ class DryerStatus(DeviceStatus):
     def _get_error(self):
         if not self._error:
             error = self.lookup_reference(["Error", "error"])
+            if not error:
+                return STATE_DRYER_ERROR.OFF
             self._error = self._set_unknown(
                 state=DRYERREFERRORS.get(error, None), key=error, type="error_status"
             )
@@ -104,27 +112,32 @@ class DryerStatus(DeviceStatus):
 
     @property
     def error_state(self):
+        if not self.is_on:
+            return STATE_OPTIONITEM_NONE
         error = self._get_error()
         return error.value
 
     @property
     def current_course(self):
-        course = self.lookup_reference(
-            ["APCourse", "Course", "courseFL24inchBaseTitan"]
-        )
-        if course == "-":
-            return STATE_OPTIONITEM_OFF
+        if self.is_api_v2:
+            course_key = self._device.model_info.config_value(
+                "courseType"
+            )
+        else:
+            course_key = ["APCourse", "Course"]
+        course = self.lookup_reference(course_key)
         return course
 
     @property
     def current_smartcourse(self):
-        smartcourse = self.lookup_reference(
-            ["SmartCourse", "smartCourseFL24inchBaseTitan"]
-        )
-        if smartcourse == "-":
-            return STATE_OPTIONITEM_OFF
+        if self.is_api_v2:
+            course_key = self._device.model_info.config_value(
+                "smartCourseType"
+            )
         else:
-            return smartcourse
+            course_key = "SmartCourse"
+        smart_course = self.lookup_reference(course_key)
+        return smart_course
 
     @property
     def remaintime_hour(self):
@@ -165,8 +178,8 @@ class DryerStatus(DeviceStatus):
     @property
     def temp_control_option_state(self):
         temp_control = self.lookup_enum(["TempControl", "tempControl"])
-        if temp_control == "-":
-            return STATE_OPTIONITEM_OFF
+        if not temp_control:
+            return STATE_OPTIONITEM_NONE
         return self._set_unknown(
             state=DRYERTEMPS.get(temp_control, None), key=temp_control, type="TempControl",
         ).value
@@ -174,8 +187,8 @@ class DryerStatus(DeviceStatus):
     @property
     def dry_level_option_state(self):
         dry_level = self.lookup_enum(["DryLevel", "dryLevel"])
-        if dry_level == "-":
-            return STATE_OPTIONITEM_OFF
+        if not dry_level:
+            return STATE_OPTIONITEM_NONE
         return self._set_unknown(
             state=DRYERDRYLEVELS.get(dry_level, None), key=dry_level, type="DryLevel",
         ).value
@@ -184,6 +197,18 @@ class DryerStatus(DeviceStatus):
     def time_dry_option_state(self):
         """Get the time dry setting."""
         time_dry = self.lookup_enum("TimeDry")
-        if time_dry == "-":
-            return STATE_OPTIONITEM_OFF
+        if not time_dry:
+            return STATE_OPTIONITEM_NONE
         return time_dry
+
+    @property
+    def doorlock_state(self):
+        if self.is_api_v2:
+            return self.lookup_bit_v2("doorLock")
+        return self.lookup_bit("DoorLock")
+
+    @property
+    def childlock_state(self):
+        if self.is_api_v2:
+            return self.lookup_bit_v2("childLock")
+        return self.lookup_bit("ChildLock")

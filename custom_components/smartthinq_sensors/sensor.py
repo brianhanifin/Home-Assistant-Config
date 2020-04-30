@@ -73,6 +73,9 @@ ATTR_DOOROPEN_STATE = "door_open_state"
 ATTR_SMARTSAVING_MODE = "smart_saving_mode"
 ATTR_SMARTSAVING_STATE = "smart_saving_state"
 ATTR_ECOFRIENDLY_STATE = "eco_friendly_state"
+ATTR_ICEPLUS_STATE = "ice_plus_state"
+ATTR_FRESHAIRFILTER_STATE = "fresh_air_filter_state"
+ATTR_WATERFILTERUSED_MONTH = "water_filter_used_month"
 
 STATE_LOOKUP = {
     STATE_OPTIONITEM_OFF: STATE_OFF,
@@ -377,13 +380,13 @@ class LGEWasherSensor(LGESensor):
             ATTR_REMAIN_TIME: self._remain_time,
             ATTR_INITIAL_TIME: self._initial_time,
             ATTR_RESERVE_TIME: self._reserve_time,
-            ATTR_CREASECARE_MODE: self._creasecare_mode,
+            ATTR_DOORLOCK_MODE: self._doorlock_mode,
             ATTR_CHILDLOCK_MODE: self._childlock_mode,
+            ATTR_REMOTESTART_MODE: self._remotestart_mode,
+            ATTR_CREASECARE_MODE: self._creasecare_mode,
             ATTR_STEAM_MODE: self._steam_mode,
             ATTR_STEAM_SOFTENER_MODE: self._steam_softener_mode,
-            ATTR_DOORLOCK_MODE: self._doorlock_mode,
             ATTR_PREWASH_MODE: self._prewash_mode,
-            ATTR_REMOTESTART_MODE: self._remotestart_mode,
             ATTR_TURBOWASH_MODE: self._turbowash_mode,
         }
         return data
@@ -398,21 +401,14 @@ class LGEWasherSensor(LGESensor):
     @property
     def _current_run_state(self):
         if self._api.state:
-            if self._api.state.is_on:
-                run_state = self._api.state.run_state
-                return run_state
+            run_state = self._api.state.run_state
+            return run_state
         return "-"
-
-    # @property
-    # def run_list(self):
-    #     return list(RUNSTATES.values())
 
     @property
     def _pre_state(self):
         if self._api.state:
             pre_state = self._api.state.pre_state
-            if pre_state == STATE_OPTIONITEM_OFF:
-                return "-"
             return pre_state
         return "-"
 
@@ -449,38 +445,33 @@ class LGEWasherSensor(LGESensor):
     @property
     def _current_course(self):
         if self._api.state:
-            course = self._api.state.current_course
-            smartcourse = self._api.state.current_smartcourse
             if self._api.state.is_on:
-                if course == "Download course":
+                course = self._api.state.current_course
+                if course:
+                    return course
+                smartcourse = self._api.state.current_smartcourse
+                if smartcourse:
                     return smartcourse
-                elif course == STATE_OPTIONITEM_OFF:
-                    return "-"
-                return course
         return "-"
 
     @property
     def _error_state(self):
         if self._api.state:
-            if self._api.state.is_on:
-                if self._api.state.is_error:
-                    return STATE_ON
+            if self._api.state.is_error:
+                return STATE_ON
         return STATE_OFF
 
     @property
     def _error_msg(self):
         if self._api.state:
-            if self._api.state.is_on:
-                error = self._api.state.error_state
-                return error
+            error = self._api.state.error_state
+            return error
         return "-"
 
     @property
     def _spin_option_state(self):
         if self._api.state:
             spin_option = self._api.state.spin_option_state
-            if spin_option == STATE_OPTIONITEM_OFF:
-                return "-"
             return spin_option
         return "-"
 
@@ -488,8 +479,6 @@ class LGEWasherSensor(LGESensor):
     def _watertemp_option_state(self):
         if self._api.state:
             watertemp_option = self._api.state.water_temp_option_state
-            if watertemp_option == STATE_OPTIONITEM_OFF:
-                return "-"
             return watertemp_option
         return "-"
 
@@ -497,74 +486,71 @@ class LGEWasherSensor(LGESensor):
     def _drylevel_option_state(self):
         if self._api.state:
             drylevel_option = self._api.state.dry_level_option_state
-            if not drylevel_option:
-                return None
-            if drylevel_option == STATE_OPTIONITEM_OFF:
-                return "-"
             return drylevel_option
         return "-"
 
     @property
-    def _creasecare_mode(self):
+    def _tubclean_count(self):
         if self._api.state:
-            mode = self._api.state.creasecare_state
-            return mode
-        return STATE_OPTIONITEM_OFF
-
-    @property
-    def _childlock_mode(self):
-        if self._api.state:
-            mode = self._api.state.childlock_state
-            return mode
-        return STATE_OPTIONITEM_OFF
-
-    @property
-    def _steam_mode(self):
-        if self._api.state:
-            mode = self._api.state.steam_state
-            return mode
-        return STATE_OPTIONITEM_OFF
-
-    @property
-    def _steam_softener_mode(self):
-        if self._api.state:
-            mode = self._api.state.steam_softener_state
-            return mode
-        return STATE_OPTIONITEM_OFF
-
-    @property
-    def _prewash_mode(self):
-        if self._api.state:
-            mode = self._api.state.prewash_state
-            return mode
-        return STATE_OPTIONITEM_OFF
+            tubclean_count = self._api.state.tubclean_count
+            return tubclean_count
+        return "N/A"
 
     @property
     def _doorlock_mode(self):
         if self._api.state:
             mode = self._api.state.doorlock_state
             return mode
-        return STATE_OPTIONITEM_OFF
+        return None
+
+    @property
+    def _childlock_mode(self):
+        if self._api.state:
+            mode = self._api.state.childlock_state
+            return mode
+        return None
 
     @property
     def _remotestart_mode(self):
         if self._api.state:
             mode = self._api.state.remotestart_state
             return mode
-        return STATE_OPTIONITEM_OFF
+        return None
+
+    @property
+    def _creasecare_mode(self):
+        if self._api.state:
+            mode = self._api.state.creasecare_state
+            return mode
+        return None
+
+    @property
+    def _steam_mode(self):
+        if self._api.state:
+            mode = self._api.state.steam_state
+            return mode
+        return None
+
+    @property
+    def _steam_softener_mode(self):
+        if self._api.state:
+            mode = self._api.state.steam_softener_state
+            return mode
+        return None
+
+    @property
+    def _prewash_mode(self):
+        if self._api.state:
+            mode = self._api.state.prewash_state
+            return mode
+        return None
 
     @property
     def _turbowash_mode(self):
         if self._api.state:
             mode = self._api.state.turbowash_state
             return mode
-        return STATE_OPTIONITEM_OFF
-
-    @property
-    def _tubclean_count(self):
-        if self._api.state:
-            return self._api.state.tubclean_count
-        return "N/A"
+        return None
 
 
 class LGEDryerSensor(LGESensor):
@@ -589,6 +575,8 @@ class LGEDryerSensor(LGESensor):
             ATTR_REMAIN_TIME: self._remain_time,
             ATTR_INITIAL_TIME: self._initial_time,
             ATTR_RESERVE_TIME: self._reserve_time,
+            ATTR_DOORLOCK_MODE: self._doorlock_mode,
+            ATTR_CHILDLOCK_MODE: self._childlock_mode,
         }
         return data
 
@@ -602,17 +590,14 @@ class LGEDryerSensor(LGESensor):
     @property
     def _current_run_state(self):
         if self._api.state:
-            if self._api.state.is_on:
-                run_state = self._api.state.run_state
-                return run_state
+            run_state = self._api.state.run_state
+            return run_state
         return "-"
 
     @property
     def _pre_state(self):
         if self._api.state:
             pre_state = self._api.state.pre_state
-            if pre_state == STATE_OPTIONITEM_OFF:
-                return "-"
             return pre_state
         return "-"
 
@@ -649,38 +634,33 @@ class LGEDryerSensor(LGESensor):
     @property
     def _current_course(self):
         if self._api.state:
-            course = self._api.state.current_course
-            smartcourse = self._api.state.current_smartcourse
             if self._api.state.is_on:
-                if course == "Download course":
+                course = self._api.state.current_course
+                if course:
+                    return course
+                smartcourse = self._api.state.current_smartcourse
+                if smartcourse:
                     return smartcourse
-                elif course == STATE_OPTIONITEM_OFF:
-                    return "-"
-                return course
         return "-"
 
     @property
     def _error_state(self):
         if self._api.state:
-            if self._api.state.is_on:
-                if self._api.state.is_error:
-                    return STATE_ON
+            if self._api.state.is_error:
+                return STATE_ON
         return STATE_OFF
 
     @property
     def _error_msg(self):
         if self._api.state:
-            if self._api.state.is_on:
-                error = self._api.state.error_state
-                return error
+            error = self._api.state.error_state
+            return error
         return "-"
 
     @property
     def _tempcontrol_option_state(self):
         if self._api.state:
             temp_option = self._api.state.temp_control_option_state
-            if temp_option == STATE_OPTIONITEM_OFF:
-                return "-"
             return temp_option
         return "-"
 
@@ -688,8 +668,6 @@ class LGEDryerSensor(LGESensor):
     def _drylevel_option_state(self):
         if self._api.state:
             drylevel_option = self._api.state.dry_level_option_state
-            if drylevel_option == STATE_OPTIONITEM_OFF:
-                return "-"
             return drylevel_option
         return "-"
 
@@ -697,10 +675,22 @@ class LGEDryerSensor(LGESensor):
     def _timedry_option_state(self):
         if self._api.state:
             timedry_option = self._api.state.time_dry_option_state
-            if timedry_option == STATE_OPTIONITEM_OFF:
-                return "-"
             return timedry_option
         return "-"
+
+    @property
+    def _doorlock_mode(self):
+        if self._api.state:
+            mode = self._api.state.doorlock_state
+            return mode
+        return None
+
+    @property
+    def _childlock_mode(self):
+        if self._api.state:
+            mode = self._api.state.childlock_state
+            return mode
+        return None
 
 
 class LGERefrigeratorSensor(LGESensor):
@@ -720,6 +710,9 @@ class LGERefrigeratorSensor(LGESensor):
             ATTR_SMARTSAVING_MODE: self._smart_saving_mode,
             ATTR_SMARTSAVING_STATE: self._smart_saving_state,
             ATTR_ECOFRIENDLY_STATE: self._eco_friendly_state,
+            ATTR_ICEPLUS_STATE: self._ice_plus_state,
+            ATTR_FRESHAIRFILTER_STATE: self._freshair_filter_state,
+            ATTR_WATERFILTERUSED_MONTH: self._water_filter_used_month,
         }
         return data
 
@@ -759,10 +752,28 @@ class LGERefrigeratorSensor(LGESensor):
     def _smart_saving_state(self):
         if self._api.state:
             return self._api.state.smart_saving_state
-        return STATE_OPTIONITEM_OFF
+        return None
 
     @property
     def _eco_friendly_state(self):
         if self._api.state:
             return self._api.state.eco_friendly_state
+        return None
+
+    @property
+    def _ice_plus_state(self):
+        if self._api.state:
+            return self._api.state.ice_plus_status
+        return None
+
+    @property
+    def _freshair_filter_state(self):
+        if self._api.state:
+            return self._api.state.fresh_air_filter_status
+        return None
+
+    @property
+    def _water_filter_used_month(self):
+        if self._api.state:
+            return self._api.state.water_filter_used_month
         return None
