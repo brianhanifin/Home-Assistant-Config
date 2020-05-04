@@ -1,0 +1,12 @@
+---
+# Tracks 3 humidity readings over 10 minutes. If the change is greater than 10%, evals to true. (10/(60*10))
+#
+# Source: https://community.home-assistant.io/t/automation-shower-detection-trigger-when-humidity-increases-in-10-minutes/162250/2
+#
+platform: trend
+sensors:
+  upstairs_bathroom_humidity_increase:
+    max_samples: 3
+    entity_id: sensor.upstairs_bathroom_humidity
+    sample_duration: 600
+    min_gradient: 0.01666
