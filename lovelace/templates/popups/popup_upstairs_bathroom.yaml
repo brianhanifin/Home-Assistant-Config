@@ -17,12 +17,60 @@ card:
       template: graph2
       variables:
         - sensors1:
-            - sensor.upstairs_bathroom_temperature
+            - entity: sensor.upstairs_bathroom_temperature
+              name: Bathroom
+            - entity: sensor.home_temperature
+              name: Home
+        - color1:
+            - orange
+            - grey
         - sensors2:
-            - sensor.upstairs_bathroom_humidity
+            - entity: sensor.upstairs_bathroom_humidity
+              name: Bathroom
+            - entity: sensor.home_humidity
+              name: Home
+        - color2:
+            - lightblue
+            - grey
         - hours_to_show: 6
         - line_width: 8
         - points_per_hour: 4
         - show:
             icon: false
             labels: false
+
+
+    - type: custom:decluttering-card
+      template: graph
+      variables:
+        - sensors:
+            - sensor.upstairs_bathroom_humidity
+            - sensor.home_humidity
+        - color:
+            - lightblue
+            - grey
+        - hours_to_show: 6
+        - line_width: 8
+        - name: Humidity
+        - points_per_hour: 4
+        - show:
+            icon: false
+            labels: false
+
+    - type: custom:decluttering-card
+      template: graph
+      variables:
+        - sensors:
+            - sensor.upstairs_bathroom_temperature
+            - sensor.home_temperature
+        - color:
+            - orange
+            - grey
+        - hours_to_show: 6
+        - line_width: 8
+        - name: Temperature
+        - points_per_hour: 4
+        - show:
+            icon: false
+            labels: false
+
