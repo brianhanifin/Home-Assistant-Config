@@ -1,0 +1,22 @@
+---
+##############################################################################
+###  Family All Departed
+##############################################################################
+alias: family_all_departured
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: group.family
+    from: 'home'
+    to: 'not_home'
+    for:
+      minutes: 5
+      seconds: 0
+condition:
+  # Only turn on Away Mode if guest mode override is off.
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: "off"
+action:
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.away_mode
