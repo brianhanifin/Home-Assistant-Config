@@ -30,8 +30,14 @@
     platform: template
     value_template: '{{ states("sensor.home_temperature")|int > (states("sensor.outside_temperature")|int
       - 2) }}'
-  condition: []
+  condition:
+  - condition: state
+    entity_id: input_boolean.cooler_outside_notification
+    state: '"false"'
   action:
+  - data: {}
+    entity_id: input_boolean.cooler_outside_notification
+    service: input_boolean.turn_on
   - data:
       message: It is cooler outside. Please open up the house.
       title: Cool off!
@@ -44,4 +50,66 @@
       media_player: group.alexa_welcome
       message: It is cooler outside. Please open up the house.
     service: script.notify_speech
-
+- id: '1588556714529'
+  alias: Maintenance Daily
+  description: Runs every night at midnight.
+  trigger:
+  - event_data: {}
+    event_type: midnight
+    platform: event
+  condition: []
+  action:
+  - data:
+      message: Daily maintenance.
+    service: script.toast
+  - data: {}
+    entity_id: input_boolean.cooler_outside_notification
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.guest_mode
+    service: input_boolean.turn_off
+  - data: {}
+    service: script.create_actionable_lights_group
+  - data: {}
+    service: script.update_responsibility_dishes_week
+  - delay: 'minutes: 1'
+  - data: {}
+    service: script.holiday_sensors_update
+  - data: {}
+    service: recorder.purge
+- id: '1588557125177'
+  alias: Startup
+  description: Actions to run at startup.
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      payload: online
+      topic: hass/status
+    service: mqtt.publish
+  - data:
+      name: ios-dark-mode-modified
+    service: frontend.set_theme
+  - data: {}
+    entity_id: light.garage_entry
+    service: light.turn_off
+  - data:
+      duration: 5000
+      message: We're back online!
+    service: script.toast
+  - delay: 'seconds: 30'
+  - data: {}
+    entity_id: script.create_actionable_lights_group
+    service: script.create_actionable_lights_group
+- id: '1588557204708'
+  alias: Midnight - Custom Event
+  description: Fire a custom event at midnight.
+  trigger:
+  - at: 00:00:01
+    platform: time
+  condition: []
+  action:
+  - event: 'event: midnight'
+    event_data: {}

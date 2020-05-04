@@ -11,6 +11,7 @@ from datetime import timedelta
 from .wideq.core import Client
 from .wideq.core_v2 import ClientV2
 from .wideq.device import DeviceType
+from .wideq.dishwasher import DishWasherDevice
 from .wideq.dryer import DryerDevice
 from .wideq.washer import WasherDevice
 from .wideq.refrigerator import RefrigeratorDevice
@@ -218,7 +219,6 @@ class LGEDevice:
 
         self._device = device
         self._name = name
-        self._state = device.status
         self._device_id = device.device_info.id
         self._type = device.device_info.type
         self._mac = device.device_info.macaddress
@@ -227,6 +227,7 @@ class LGEDevice:
         self._model = f"{device.device_info.model_name}"
         self._id = f"{self._type.name}:{self._device_id}"
 
+        self._state = None
         self._retry_count = 0
         self._disconnected = True
         self._not_logged = False
@@ -275,6 +276,7 @@ class LGEDevice:
 
     def init_device(self):
         self._device.init_device_info()
+        self._state = self._device.status
         self._model = f"{self._model}-{self._device.model_info.model_type}"
 
     def _restart_monitor(self):
@@ -383,6 +385,9 @@ async def lge_devices_setup(hass, client) -> dict:
         elif device.type == DeviceType.DRYER:
             base_name = device_name
             dev = LGEDevice(DryerDevice(client, device), base_name)
+        elif device.type == DeviceType.DISHWASHER:
+            base_name = device_name
+            dev = LGEDevice(DishWasherDevice(client, device), base_name)
         elif device.type == DeviceType.REFRIGERATOR:
             base_name = device_name
             dev = LGEDevice(RefrigeratorDevice(client, device), base_name)

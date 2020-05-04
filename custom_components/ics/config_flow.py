@@ -1,36 +1,32 @@
-""" config flow """
+"""Provide the config flow."""
 from homeassistant.core import callback
-from homeassistant.helpers.entity import async_generate_entity_id
-from homeassistant.components.sensor import ENTITY_ID_FORMAT
 from homeassistant import config_entries
 import voluptuous as vol
 import logging
-
-import datetime
-from tzlocal import get_localzone
-from icalendar import Calendar, Event
 from .const import *
-import traceback
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @config_entries.HANDLERS.register(DOMAIN)
 class IcsFlowHandler(config_entries.ConfigFlow):
-	# Initial setup
+	"""Provide the initial setup."""
+
 	CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 	VERSION = 1
 
-	# called once the flow is started by the user
 	def __init__(self):
+		"""Provide the init function of the config flow."""
+		# Called once the flow is started by the user
 		self._errors = {}
 
 	# will be called by sending the form, until configuration is done
 	async def async_step_user(self, user_input=None):   # pylint: disable=unused-argument
+		"""Provide the first page of the config flow."""
 		self._errors = {}
 		if user_input is not None:
 			# there is user input, check and save if valid (see const.py)
-			self._errors = check_data(user_input,self.hass)
+			self._errors = check_data(user_input, self.hass)
 			if self._errors == {}:
 				self.data = user_input
 				return await self.async_step_finish()
@@ -39,6 +35,7 @@ class IcsFlowHandler(config_entries.ConfigFlow):
 
 	# will be called by sending the form, until configuration is done
 	async def async_step_finish(self, user_input=None):   # pylint: disable=unused-argument
+		"""Provide the second page of the config flow."""
 		self._errors = {}
 		if user_input is not None:
 			# there is user input, check and save if valid (see const.py)
@@ -52,6 +49,7 @@ class IcsFlowHandler(config_entries.ConfigFlow):
 	# TODO .. what is this good for?
 	async def async_step_import(self, user_input):  # pylint: disable=unused-argument
 		"""Import a config entry.
+
 		Special type of import, we're not actually going to store any data.
 		Instead, we're going to rely on the values that are in config file.
 		"""
@@ -60,22 +58,25 @@ class IcsFlowHandler(config_entries.ConfigFlow):
 
 		return self.async_create_entry(title="configuration.yaml", data={})
 
-	# call back to start the change flow
 	@staticmethod
 	@callback
 	def async_get_options_flow(config_entry):
+		"""Call back to start the change flow."""
 		return OptionsFlowHandler(config_entry)
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
-	# change an entity via GUI
+	"""Change an entity via GUI."""
+
 	def __init__(self, config_entry):
+		"""Set initial parameter to grab them later on."""
 		# store old entry for later
 		self.data = config_entry.data
 		self.own_id = config_entry.data[CONF_ID]
 
 	# will be called by sending the form, until configuration is done
 	async def async_step_init(self, user_input=None):   # pylint: disable=unused-argument
+		"""Call this as first page."""
 		self._errors = {}
 		if user_input is not None:
 			# there is user input, check and save if valid (see const.py)
@@ -91,6 +92,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
 	# will be called by sending the form, until configuration is done
 	async def async_step_finish(self, user_input=None):   # pylint: disable=unused-argument
+		"""Call this as second page."""
 		self._errors = {}
 		if user_input is not None:
 			self.data.update(user_input)
