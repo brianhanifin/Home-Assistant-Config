@@ -78,7 +78,7 @@ card:
               box-shadow: none;
               letter-spacing: 0.06em;
               opacity: 0.65;
-              margin-top: -2.5em;
+              margin-top: -3em;
             }
           entities:
             - entity: input_select.brian
@@ -96,6 +96,23 @@ card:
             - entity: input_select.heather
               tap_action:
                 action: more-info
+
+        - type: custom:card-templater
+          entities:
+            - variable.left_home
+          card:
+            type: markdown
+            style: |
+              ha-card {
+                background: none;
+                box-shadow: none;
+                font-size: 1.1em;
+                font-weight: 400;
+                letter-spacing: 0.03em;
+                margin: -1.75em 0 -0.5em 0;
+                opacity: 0.65;
+              }
+            content_template: !include ../../../templates/ui/chores.yaml
 
         - type: horizontal-stack
           cards:
