@@ -28,20 +28,13 @@ action:
     data:
       variable: left_home
       attributes_template: >
-        {%- macro person_left(name) %}
-          {%- if name == trigger.to_state.attributes.friendly_name %}
-            {{- now() }}
-          {%- else %}
-            {{- state_attr('variable.left_home','name') }}
-          {%- endif %}
-        {%- endmacro %}
         {
-          "Brian": "{{ person_left("Brian") }}",
-          "Eric": "{{ person_left("Eric") }}",
-          "Heather": "{{ person_left("Heather") }}",
-          "Lucas": "{{ person_left("Lucas") }}",
-          "Nerene": "{{ person_left("Nerene") }}",
-          "Sandy": "{{ person_left("Sandy") }}",
+          "Brian": "{{   now() if 'Brian'   == trigger.to_state.attributes.friendly_name else state_attr('variable.left_home','Brian') }}",
+          "Eric": "{{    now() if 'Eric'    == trigger.to_state.attributes.friendly_name else state_attr('variable.left_home','Eric') }}",
+          "Heather": "{{ now() if 'Heather' == trigger.to_state.attributes.friendly_name else state_attr('variable.left_home','Heather') }}",
+          "Lucas": "{{   now() if 'Lucas'   == trigger.to_state.attributes.friendly_name else state_attr('variable.left_home','Lucas') }}",
+          "Nerene": "{{  now() if 'Nerene'  == trigger.to_state.attributes.friendly_name else state_attr('variable.left_home','Nerene') }}",
+          "Sandy": "{{   now() if 'Sandy'   == trigger.to_state.attributes.friendly_name else state_attr('variable.left_home','Sandy') }}",
           "last_updated": "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
         }
     data_template:
