@@ -71,7 +71,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 	def __init__(self, config_entry):
 		"""Set initial parameter to grab them later on."""
 		# store old entry for later
-		self.data = config_entry.data
+		self.data = {}
+		self.data.update(config_entry.data.items())
 		self.own_id = config_entry.data[CONF_ID]
 
 	# will be called by sending the form, until configuration is done
