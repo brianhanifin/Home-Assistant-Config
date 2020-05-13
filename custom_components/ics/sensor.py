@@ -161,10 +161,10 @@ class ics_Sensor(Entity):
 						event["RRULE"]["UNTIL"][0] = event["RRULE"]["UNTIL"][0].replace(tzinfo=datetime.timezone.utc)
 		return fix
 
-	def get_data(self):
+	async def get_data(self):
 		"""Update the actual data."""
 		try:
-			cal_string = load_data(self._url)
+			cal_string = await async_load_data(self.hass, self._url)
 			cal = Calendar.from_ical(cal_string)
 
 			# fix RRULE
@@ -297,18 +297,18 @@ class ics_Sensor(Entity):
 			self.ics['pickup_date'] = "failure"
 			self.exc()
 
-	def update(self):
-		"""Fetch new state data for the sensor.
 
+	async def async_update(self):
+		"""Fetch new state data for the sensor.
 		This is the only method that should fetch new data for Home Assistant.
 		"""
 		try:
 			# first run
 			if(self.ics['extra']['reload_at'] is None):
-				self.get_data()
+				await self.get_data()
 			# check if we're past reload_at
 			elif(self.ics['extra']['reload_at'] < datetime.datetime.now(get_localzone())):
-				self.get_data()
+				await self.get_data()
 
 			# update states
 			self._state_attributes = self.ics['extra']

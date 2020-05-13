@@ -2,6 +2,7 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA, ENTITY_ID_FORMAT
 from homeassistant.helpers.entity import async_generate_entity_id
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from functools import partial
 import traceback
 import logging
 import datetime
@@ -225,3 +226,13 @@ def load_data(url):
 		req = Request(url=url, data=None, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'})
 		return urlopen(req).read().decode('ISO-8859-1')
 	return requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}, allow_redirects=True).content
+
+async def async_load_data(hass, url):
+	"""Load data from URL, exported to const to call it from sensor and from config_flow."""
+	if(url.lower().startswith("file://")):
+		req = Request(url=url, data=None, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'})
+		ret = urlopen(req)
+		ret = await hass.async_add_executor_job(ret.read)
+		return ret.decode('ISO-8859-1')
+	ret = await hass.async_add_executor_job(partial(requests.get, url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}, allow_redirects=True))
+	return ret.content
