@@ -2,32 +2,78 @@
 card:
   type: vertical-stack
   cards:
-    - type: custom:decluttering-card
-      template: button2_row3
-      variables:
-        - entity1: switch.upstairs_bathroom_fan
-        - icon1: mdi:air-filter
-        - name1: Exhaust
-        - entity2: light.upstairs_bathroom_nightlight
-        - icon2: mdi:rocket
-        - name2: Night
-        - template3: button_blank
+    # - type: custom:decluttering-card
+    #   template: button2_row2
+    #   variables:
+    #     - entity1: switch.upstairs_bathroom_fan
+    #     - icon1: mdi:air-filter
+    #     - name1: Exhaust
+    #     - entity2: light.upstairs_bathroom_nightlight
+    #     - icon2: mdi:rocket
+    #     - name2: Night
+    #     - template3: button_blank
+
+    - type: horizontal-stack
+      cards:
+        - type: custom:button-card
+          entity: switch.upstairs_bathroom_fan
+          name: Exhaust
+          icon: mdi:air-filter
+          styles:
+            grid:
+              - grid-template-areas: '"i" "n" "s"'
+              - grid-template-columns: 1fr
+              - grid-template-rows: 1fr min-content min-content
+            img_cell:
+              - align-self: start
+              - text-align: start
+            name:
+              - justify-self: start
+              - padding-left: 10px
+              - font-weight: bold
+              - text-transform: lowercase
+            state:
+              - justify-self: start
+              - padding-left: 10px
+          state:
+            - value: 'off'
+              styles:
+                card:
+                  - filter: opacity(50%)
+                icon:
+                  - filter: grayscale(100%)
+            - value: unavailable
+              styles:
+                card:
+                  - filter: opacity(25%)
+                icon:
+                  - filter: grayscale(100%)
+
+        - type: glance
+          #show_icon: false
+          entities:
+            - entity: sensor.upstairs_bathroom_fan_trigger
+              name: Trigger
+            - entity: binary_sensor.upstairs_bathroom_window
+              name: Window
 
     - type: history-graph
       title: Exhaust Fan
-      hours_to_show: 12
+      hours_to_show: 6
       entities:
-        - sensor.upstairs_bathroom_humidity_difference
-        - switch.upstairs_bathroom_fan
+        - entity: switch.upstairs_bathroom_fan
+          name: State
+        - entity: sensor.upstairs_bathroom_fan_trigger
+          name: Trigger
 
     - type: custom:decluttering-card
-      template: graph2
+      template: graph3
       variables:
         - sensors1:
             - entity: sensor.upstairs_bathroom_temperature
               name: Bathroom
             - entity: sensor.home_temperature
-              name: Home
+              name: Downstairs
         - color1:
             - orange
             - grey
@@ -35,9 +81,17 @@ card:
             - entity: sensor.upstairs_bathroom_humidity
               name: Bathroom
             - entity: sensor.home_humidity
-              name: Home
+              name: Downstairs
         - color2:
             - lightblue
+            - grey
+        - sensors3:
+            - entity: sensor.upstairs_bathroom_humidity_difference
+              name: Bathroom
+            - entity: sensor.15
+              name: Threshold
+        - color3:
+            - fuchsia
             - grey
         - hours_to_show: 6
         - line_width: 8
