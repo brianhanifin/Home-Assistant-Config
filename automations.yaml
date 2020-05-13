@@ -78,7 +78,7 @@
   - data: {}
     service: recorder.purge
 - id: '1588557125177'
-  alias: Startup
+  alias: Startup (New)
   description: Actions to run at startup.
   trigger:
   - event: start
@@ -95,14 +95,13 @@
   - data: {}
     entity_id: light.garage_entry
     service: light.turn_off
-  - data:
-      duration: 5000
-      message: We're back online!
-    service: script.toast
   - delay: 'seconds: 30'
   - data: {}
     entity_id: script.create_actionable_lights_group
     service: script.create_actionable_lights_group
+  - data:
+      message: 'Group: actionable_lights created!'
+    service: script.toast
 - id: '1588557204708'
   alias: Midnight - Custom Event
   description: Fire a custom event at midnight.
