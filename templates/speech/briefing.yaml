@@ -266,14 +266,15 @@
       "partlycoudly": "mostly cloudy skies",
       "sunny": "clear skies and sun"
     } -%}
-    {%- if conditions[states('weather.dark_sky')] is string -%}
-      {%- set condition = conditions[states('weather.dark_sky')] -%}
+    {%- if conditions[states('weather.openweathermap')] is string -%}
+      {%- set condition = conditions[states('weather.openweathermap')] -%}
     {%- else -%}
-      {%- set condition = states('weather.dark_sky') -%}
+      {%- set condition = states('weather.openweathermap') -%}
     {%- endif -%}
 
-    {{ ['Currently', 'Right now']|random }} in Santee, it is {{ state_attr('weather.dark_sky','temperature')|int }} degrees fahrenheit, with {{ condition }}.
-    Today's forecast is {{ state_attr('weather.dark_sky', 'forecast')[0]['condition'] }}, with a high of {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}, and a low of {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }} degrees.
+    {{ ['Currently', 'Right now']|random }} in Santee, it is {{ state_attr('weather.openweathermap','temperature')|int }} degrees fahrenheit, with {{ condition }}.
+    Today's forecast is {{ state_attr('weather.openweathermap', 'forecast')[0]['condition'] }}, with a high of {{ state_attr('weather.openweathermap', 'forecast')[0]['temperature'] }}, 
+    {%- if states('sensor.today_low') > 0 %}, and a low of {{ states('sensor.today_low') }} degrees{%- endif %}.
     {{ pause() }}
   {%- endmacro -%}
 

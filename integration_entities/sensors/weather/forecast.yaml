@@ -2,15 +2,16 @@
 platform: template
 sensors:
   forecast:
-    entity_id: weather.dark_sky
-    friendly_name: "Forecast"
+    entity_id: weather.openweathermap
+    friendly_name: Forecast
     value_template: >
       {% if states('sensor.san_diego_county_inland_valleys')|int > 0 %}
         {{ trigger.event.data.event }}: {{ trigger.event.data.area }}<br>
       {% endif %}
       {% set hour = states("sensor.time").split(':')[0]|int %}
       {% if hour < 17 %}
-        Today's forecast is {{ state_attr('weather.dark_sky', 'forecast')[0]['condition']|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.dark_sky', 'forecast')[0]['temperature'] }}, and a low of {{ state_attr('weather.dark_sky', 'forecast')[0]['templow'] }} degrees.
+        Today's forecast is {{ states('weather.openweathermap')|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.openweathermap', 'forecast')[1]['temperature']|int }}
+        {%- if states('sensor.today_low') > 0 %}, and a low of {{ states('sensor.today_low') }} degrees{%- endif %}.
       {% else %}
-        Tomorrow's forecast is {{ state_attr('weather.dark_sky', 'forecast')[1]['condition']|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.dark_sky', 'forecast')[1]['temperature'] }}, and a low of {{ state_attr('weather.dark_sky', 'forecast')[1]['templow'] }} degrees.
+        Tomorrow's forecast is {{ state_attr('weather.openweathermap', 'forecast')[1]['condition']|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.openweathermap', 'forecast')[1]['temperature']|int }}.
       {% endif %}
