@@ -11,7 +11,7 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **1077 entities**, with **335 sensors** in Home Assistant. I am also using **26 custom components**.
+As of my last commit I have **1136 entities**, with **361 sensors** in Home Assistant. I am also using **27 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -129,6 +129,8 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
   <dt> HACS (Home Assistant Community Store) </dt>
   
   <dd> Manage (Install, track, upgrade) and discover custom elements for Home Assistant. </dd>
+  
+  <dt> Weatherbit </dt>
   
   <dt> Logbook Cache </dt>
   

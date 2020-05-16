@@ -45,10 +45,10 @@ card:
             content_template: >
               <table style="padding:0;margin:0;" width="100%">
               <tr>
-              <td width="52%">{{ now().strftime("%A") }}</b><br>
+              <td width="30%">{{ now().strftime("%A") }}</b><br>
               <b>{{ now().strftime("%B") + ', ' + now().strftime("%d") }}</b></td>
               <td align="right" width="48%"><b>Currently: <ha-icon icon={{ state_attr('sensor.today_icon', 'icon') }}></ha-icon> {{ states('sensor.outside_temperature') }}°</b><br>
-              {{ state_attr('weather.openweathermap', 'forecast')[0]['temperature'] }}° high, {{ state_attr('weather.openweathermap', 'forecast')[0]['templow'] }}° low</td>
+              {{ state_attr('weather.weatherbit', 'forecast')[0]['temperature']|round }}° high, {{ state_attr('weather.weatherbit', 'forecast')[0]['templow']|round }}° low</td>
               </tr>
               </table>
 
@@ -95,12 +95,15 @@ card:
             - entity: input_select.nerene
               tap_action:
                 action: more-info
+            - entity: input_select.lucas
+              tap_action:
+                action: more-info
             - entity: input_select.eric
               tap_action:
                 action: more-info
-            - entity: input_select.sandy
-              tap_action:
-                action: more-info
+            # - entity: input_select.sandy
+            #   tap_action:
+            #     action: more-info
             - entity: input_select.heather
               tap_action:
                 action: more-info
