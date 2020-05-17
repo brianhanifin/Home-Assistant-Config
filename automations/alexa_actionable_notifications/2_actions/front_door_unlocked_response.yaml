@@ -1,0 +1,19 @@
+---
+alias: "Alexa Actionable Notifications: Action - Leave front door unlocked"
+trigger:
+  platform: event
+  event_type: alexa_actionable_notification
+  event_data:
+    event_id: actionable_notification_leave_unlocked
+    #event_response: ResponseYes
+
+action:
+  - service_template: >-
+      {#- User responds "YES". -#}
+      {% if trigger.event.data.event_response == "ResponseYes" %}
+        input_boolean.turn_on
+      {#- User responds "NO" or User does not respond (NONE). -#}
+      {% else %}
+        input_boolean.turn_off
+      {% endif %}
+    entity_id: input_boolean.leave_unlocked

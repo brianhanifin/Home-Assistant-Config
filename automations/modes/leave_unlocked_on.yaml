@@ -1,0 +1,16 @@
+---
+alias: leave_unlocked_on
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: input_boolean.leave_unlocked
+    from: 'off'
+    to: 'on'
+action:
+  # Cancel the relock countdown timer.
+  - condition: state
+    entity_id: input_boolean.leave_unlocked
+    state: "on"
+  - service: timer.cancel
+    data_template:
+      entity_id: timer.front_door_unlocked

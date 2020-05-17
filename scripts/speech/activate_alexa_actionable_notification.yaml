@@ -1,0 +1,37 @@
+---
+description: Activates an actionable notification on a specific echo device
+fields:
+  text:
+    description: The text you would like alexa to speak.
+  event_id:
+    description: Correlation ID for event responses
+  alexa_device:
+    description: Alexa device you want to trigger
+sequence:
+  - service: input_text.set_value
+    data_template:
+      entity_id: input_text.alexa_actionable_notification
+      value: '{"text": "{{ text }}", "event": "{{ event_id }}"}'
+
+  - service: media_player.play_media
+    data_template:
+      entity_id: "{{ alexa_device }}"
+      media_content_type: skill
+      media_content_id: !secret alexa_actions_skill_id
+
+  - service: mqtt.publish
+    data_template:
+      topic: "hass/storage/last_message/state"
+      retain: true
+      payload: "{{ text|striptags }}"
+  - service: mqtt.publish
+    data_template:
+      topic: "hass/storage/last_message/attributes"
+      retain: true
+      payload: >-
+        {
+          "target": "{{ alexa_device }}",
+          "day": "{{ as_timestamp(now())|timestamp_custom('%A %B %-d') }}",
+          "time": "{{ as_timestamp(now())|timestamp_custom('%h:%M %p') }}",
+          "event": "{{ event_id }}"
+        }

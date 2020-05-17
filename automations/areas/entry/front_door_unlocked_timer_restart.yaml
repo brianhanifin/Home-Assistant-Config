@@ -8,10 +8,15 @@ trigger:
     from: "off"
     to: "on"
 condition:
-  # Guest mode overrides automatic door locking.
-  - condition: state
-    entity_id: input_boolean.guest_mode
-    state: "off"
+  # Only restart the countdown timer when both Guest Mode and Leave Unlocked Mode are disabled.
+  condition: and
+  conditions:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: "off"
+    - condition: state
+      entity_id: input_boolean.leave_unlocked
+      state: "off"
 action:
   - service: timer.cancel
     data_template:

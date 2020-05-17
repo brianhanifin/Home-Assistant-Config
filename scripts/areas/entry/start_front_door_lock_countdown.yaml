@@ -5,12 +5,15 @@ sequence:
   #     title: "script.start_front_door_lock_countdown"
   #     message: "start"
 
-  # Only continue when the Front Door is unlocked and Guest Mode is disabled.
+  # Only continue when the Front Door is unlocked and both Guest Mode and Leave Unlocked Mode are disabled.
   - condition: state
     entity_id: lock.front_door
     state: "unlocked"
   - condition: state
     entity_id: input_boolean.guest_mode
+    state: "off"
+  - condition: state
+    entity_id: input_boolean.leave_unlocked
     state: "off"
 
   # Start a countdown timer to relock the front door.

@@ -8,10 +8,15 @@ trigger:
     event_data:
       entity_id: timer.front_door_unlocked
 condition:
-  # Guest mode overrides automatic door locking.
-  - condition: state
-    entity_id: input_boolean.guest_mode
-    state: "off"
+  # Only lock the door when both Guest Mode and Leave Unlocked Mode are disabled.
+  condition: and
+  conditions:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: "off"
+    - condition: state
+      entity_id: input_boolean.leave_unlocked
+      state: "off"
 action:
   - service: lock.lock
     entity_id: lock.front_door
