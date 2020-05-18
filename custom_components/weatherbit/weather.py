@@ -14,6 +14,8 @@ from homeassistant.components.weather import (
     ATTR_FORECAST_TEMP,
     ATTR_FORECAST_TEMP_LOW,
     ATTR_FORECAST_TIME,
+    ATTR_FORECAST_WIND_BEARING,
+    ATTR_FORECAST_WIND_SPEED,
     WeatherEntity,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -37,8 +39,12 @@ from homeassistant.util.distance import convert as convert_distance
 from homeassistant.util.pressure import convert as convert_pressure
 
 from .const import (
+    ATTR_WEATHERBIT_AQI,
     ATTR_WEATHERBIT_CLOUDINESS,
+    ATTR_WEATHERBIT_IS_NIGHT,
     ATTR_WEATHERBIT_WIND_GUST,
+    ATTR_WEATHERBIT_PRECIPITATION,
+    ATTR_WEATHERBIT_UVI,
     ENTITY_ID_SENSOR_FORMAT,
     DEFAULT_ATTRIBUTION,
 )
@@ -47,7 +53,9 @@ _LOGGER = logging.getLogger(__name__)
 
 # Used to map condition from API results
 CONDITION_CLASSES = {
+    "clear-night": [8000],
     "cloudy": [803, 804],
+    "exceptional": [],
     "fog": [741],
     "hail": [623],
     "lightning": [230, 231],
@@ -57,10 +65,9 @@ CONDITION_CLASSES = {
     "rainy": [300, 301, 302, 500, 501, 511, 520, 521],
     "snowy": [600, 601, 602, 621, 622, 623],
     "snowy-rainy": [610, 611, 612],
-    "sunny": [800, 801, 802],
+    "sunny": [800],
     "windy": [],
     "windy-variant": [],
-    "exceptional": [],
 }
 
 # 5 minutes between retrying connect to API again
@@ -146,7 +153,7 @@ class WeatherbitWeather(WeatherEntity):
                 self._forecasts = await self.get_weather_forecast()
                 self._current = await self.get_weather_current()
                 self._fail_count = 0
-                _LOGGER.debug("Weatherbit Forecast Updated")
+                _LOGGER.debug("WEATHERBIT: FORECAST UPDATED")
 
         except (asyncio.TimeoutError, WeatherbitError):
             _LOGGER.error("Failed to connect to Weatherbit API, retry in 5 minutes")
@@ -197,22 +204,18 @@ class WeatherbitWeather(WeatherEntity):
         """Return the wind speed."""
         speed_m_s = self._current[0].wind_spd
         if self._is_metric or speed_m_s is None:
-            return speed_m_s
+            return round(float(speed_m_s) * 3.6, 1)
 
-        speed_mi_s = convert_distance(speed_m_s, LENGTH_METERS, LENGTH_MILES)
-        speed_mi_h = speed_mi_s / 3600.0
-        return int(round(speed_mi_h))
+        return round(float(speed_m_s * 2.23693629), 2)
 
     @property
     def wind_gust(self) -> float:
         """Return the wind Gust."""
         speed_m_s = self._forecasts[0].wind_gust_spd
         if self._is_metric or speed_m_s is None:
-            return speed_m_s
+            return round(speed_m_s, 1)
 
-        speed_mi_s = convert_distance(speed_m_s, LENGTH_METERS, LENGTH_MILES)
-        speed_mi_h = speed_mi_s / 3600.0
-        return int(round(speed_mi_h))
+        return round(float(speed_m_s * 2.23693629), 2)
 
     @property
     def wind_bearing(self) -> int:
@@ -220,6 +223,14 @@ class WeatherbitWeather(WeatherEntity):
         if self._current is not None:
             return self._current[0].wind_dir
         return None
+
+    @property
+    def precipitation(self) -> float:
+        """Return the precipitation."""
+        if self._is_metric or self._current[0].precip is None:
+            return round(float(self._current[0].precip), 1)
+
+        return round(float(self._current[0].precip) / 25.4, 2)
 
     @property
     def ozone(self) -> float:
@@ -255,23 +266,58 @@ class WeatherbitWeather(WeatherEntity):
         return None
 
     @property
+    def uv(self) -> int:
+        """Return the UV Index."""
+        if self._current is not None:
+            return round(self._current[0].uv, 1)
+        return None
+
+    @property
+    def aqi(self) -> int:
+        """Return the Air Quality Index."""
+        if self._current is not None:
+            return self._current[0].aqi
+        return None
+
+    @property
+    def is_night(self) -> bool:
+        """Return True if after Sunset at Location."""
+        if self._current is not None:
+            return self._current[0].is_night
+        return None
+
+    @property
     def condition(self) -> str:
         """Return the weather condition."""
         if self._current is None:
             return None
-        return next(
-            (
-                k
-                for k, v in CONDITION_CLASSES.items()
-                if int(self._current[0].weather_code) in v
-            ),
-            None,
-        )
+
+        wcode = int(self._current[0].weather_code)
+
+        # If Night convert to Clear Night
+        if wcode == 800 and self.is_night:
+            wcode = wcode * 10
+
+        return next((k for k, v in CONDITION_CLASSES.items() if wcode in v), None,)
 
     @property
     def attribution(self) -> str:
         """Return the attribution."""
         return DEFAULT_ATTRIBUTION
+
+    @property
+    def device_state_attributes(self) -> Dict:
+        """Return Weatherbit specific attributes."""
+        attrs = {}
+
+        attrs[ATTR_WEATHERBIT_AQI] = self.aqi
+        attrs[ATTR_WEATHERBIT_CLOUDINESS] = self.cloudiness
+        attrs[ATTR_WEATHERBIT_IS_NIGHT] = self.is_night
+        attrs[ATTR_WEATHERBIT_PRECIPITATION] = self.precipitation
+        attrs[ATTR_WEATHERBIT_WIND_GUST] = self.wind_gust
+        attrs[ATTR_WEATHERBIT_UVI] = self.uv
+
+        return attrs
 
     @property
     def forecast(self) -> List:
@@ -287,20 +333,28 @@ class WeatherbitWeather(WeatherEntity):
                 None,
             )
 
+            # Convert Wind Speed
+            if self._is_metric or forecast.wind_spd is None:
+                wspeed = round(float(forecast.wind_spd) * 3.6, 1)
+            else:
+                wspeed = round(float(forecast.wind_spd * 2.23693629), 1)
+
+            # Convert Precipitation
+            if self._is_metric or forecast.precip is None:
+                precip = round(forecast.precip, 1)
+            else:
+                precip = round(float(forecast.precip) / 25.4, 2)
+
             data.append(
                 {
                     ATTR_FORECAST_TIME: forecast.valid_date,
                     ATTR_FORECAST_TEMP: forecast.max_temp,
                     ATTR_FORECAST_TEMP_LOW: forecast.min_temp,
-                    ATTR_FORECAST_PRECIPITATION: round(forecast.precip, 1),
+                    ATTR_FORECAST_PRECIPITATION: precip,
                     ATTR_FORECAST_CONDITION: condition,
+                    ATTR_FORECAST_WIND_SPEED: wspeed,
+                    ATTR_FORECAST_WIND_BEARING: forecast.wind_dir,
                 }
             )
 
         return data
-
-    @property
-    def device_state_attributes(self) -> Dict:
-        """Return Weatherbit specific attributes."""
-        if self.cloudiness:
-            return {ATTR_WEATHERBIT_CLOUDINESS: self.cloudiness}
