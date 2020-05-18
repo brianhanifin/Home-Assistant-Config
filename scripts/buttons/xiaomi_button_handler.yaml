@@ -6,12 +6,12 @@ sequence:
   #     message: "button: {{ button }}\ntype: {{ type }}\nscript.{{ button|replace('binary_sensor.','') }}"
 
   - service_template: >
-      {# Medicine: Buddy #}
       {# Bedroom Wall Double Switch  #}
       {%- if button.startswith("binary_sensor.bedroom_switch_button") -%}
         script.bedroom_switch_buttons
-      {%- elif button == "binary_sensor.medicine_buddy_button" -%}
-        script.medicine_buddy_button
+      {# Printer Power Button #}
+      {%- elif button == "binary_sensor.printer_power_button" -%}
+        script.printer_power_button
       {%- endif %}
     data_template:
       type: "{{ type }}"
