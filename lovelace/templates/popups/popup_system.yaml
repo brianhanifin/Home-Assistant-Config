@@ -27,18 +27,6 @@ card:
         - name3: 🥼 CI Prep
         - show_state3: false
 
-    # - type: custom:auto-entities
-    #   show_empty: false
-    #   filter:
-    #     include:
-    #       - entity_id: persistent_notification.1337
-    #   card:
-    #     type: markdown
-    #     content: >
-    #       ### {{ state_attr('persistent_notification.1337','title') }}
-
-    #       {{ state_attr('persistent_notification.1337','message') }}
-
     - type: entities
       entities:
         - type: custom:multiple-entity-row
@@ -108,17 +96,6 @@ card:
               name: WAN
             - entity: sensor.unifi_gateway_www
               name: WWW
-        # - type: custom:multiple-entity-row
-        #   entity: sensor.unifi_gateway_alerts
-        #   name: Alerts
-        #   icon: mdi:bell-alert
-        #   show_state: false
-        #   secondary_info:
-        #     entity: sensor.unifi_gateway_alerts
-        #     name: ""
-        #   entities:
-        #     entity: sensor.unifi_gateway_firmware_upgradable
-        #     name: Firmware Upgrades
 
     - type: custom:auto-entities
       show_empty: false
@@ -136,6 +113,7 @@ card:
       variables:
         - heading: AdGuard
     - type: entities
+      show_header_toggle: false
       entities:
         - type: custom:multiple-entity-row
           entity: sensor.adguard_dns_queries_blocked_ratio
