@@ -1,0 +1,17 @@
+---
+##############################################
+###  Bedroom
+##############################################
+alias: bedroom_presence_start
+initial_state: true
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.bedroom_presence
+    from: 'off'
+    to: 'on'
+action:
+  # Push hot water into the bedroom in case someone will use the sink.
+  # It will turn itself off automatically after a few minutes.
+  - service: switch.turn_on
+    entity_id: switch.hot_water_pump

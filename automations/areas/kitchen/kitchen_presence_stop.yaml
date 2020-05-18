@@ -6,9 +6,24 @@
 alias: kitchen_presence_stop
 initial_state: true
 trigger:
-  - platform: template
-    value_template: "{% if is_state('binary_sensor.kitchen_1_presence', 'off')
-                      and is_state('binary_sensor.kitchen_2_presence', 'off') %}true{% else %}false{% endif %}"
+  # - platform: template
+  #   value_template: "{% if is_state('binary_sensor.kitchen_1_presence', 'off')
+  #                     and is_state('binary_sensor.kitchen_2_presence', 'off') %}true{% else %}false{% endif %}"
+  # If either motion sensor returns to off.
+  - platform: state
+    entity_id:
+      - binary_sensor.kitchen_1_presence
+      - binary_sensor.kitchen_2_presence
+    from: "on"
+    to: "off"
+condition:
+  # Only continue if both motions sensors are off.
+  - condition: state
+    entity_id: binary_sensor.kitchen_1_presence
+    state: "off"
+  - condition: state
+    entity_id: binary_sensor.kitchen_2_presence
+    state: "off"
     # for:
     #   minutes: 2
     #   seconds: 00

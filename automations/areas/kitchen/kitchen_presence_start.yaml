@@ -2,15 +2,15 @@
 ##############################################
 ###  Kitchen
 ##############################################
-# Kitchen Presence Light On
 alias: kitchen_presence_start
 initial_state: true
 trigger:
+  # Trigger if either motion sensor are on.
   - platform: state
     entity_id:
       - binary_sensor.kitchen_1_presence
       - binary_sensor.kitchen_2_presence
-    from: 'off'
+    #from: 'off'
     to: 'on'
 # condition:
 #   # We don't need to turn on the light when the dogs are alone.
@@ -18,5 +18,11 @@ trigger:
 #     entity_id: input_boolean.away_mode
 #     state: 'off'
 action:
+  # Kitchen Presence Light On
   - service: light.turn_on
     entity_id: light.kitchen_cabinet
+
+  # Push hot water into the kitchen in the likely case someone will use the sink.
+  # It will turn itself off automatically after a few minutes.
+  - service: switch.turn_on
+    entity_id: switch.hot_water_pump
