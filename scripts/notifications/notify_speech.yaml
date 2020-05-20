@@ -2,6 +2,14 @@
 sequence:
   - service: script.say
     data_template:
-      media_player: "{{ media_player|default('media_player.kitchen') }}"
-      message: "{{ message }}"
+      media_player: >-
+        {%- if media_player == empty %}
+          {%- set media_player = alexa_device %}
+        {%- endif %}
+        {{ media_player|default('media_player.kitchen') }}
+      message: >-
+        {%- if message == empty %}
+          {%- set message = text %}
+        {%- endif %}
+        {{ message }}
       say_greeting: "false"

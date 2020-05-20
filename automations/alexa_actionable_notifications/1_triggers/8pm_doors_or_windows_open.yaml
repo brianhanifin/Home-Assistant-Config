@@ -1,0 +1,78 @@
+---
+# Warn us if any doors or windows are open or unlocked
+#
+alias: "Alexa Actionable Notifications: Trigger - 8pm Door & Windows Check"
+initial_state: true
+trigger:
+  platform: time
+  at: "20:00:00"
+condition:
+  condition: or
+  conditions:
+    - condition: state
+      entity_id: cover.garage_door
+      state: 'open'
+    - condition: state
+      entity_id: binary_sensor.front_door
+      state: 'on'
+    - condition: state
+      entity_id: lock.front_door
+      state: 'unlocked'
+    - condition: state
+      entity_id: binary_sensor.upstairs_bathroom_window
+      state: 'on'
+action:
+  # Generate a simple announcement for items we cannot close or
+  # generate an actionable inquiry to close/lock doors.
+  - service_template: >-
+      {%- if is_state('cover.garage_door','open') or (is_state('lock.front_door','unlocked') and is_state('binary_sensor.front_door','off')) %}
+        script.activate_alexa_actionable_notification
+      {%- else -%}
+        script.notify_speech
+      {%- endif -%}
+    data_template:
+      alexa_device: media_player.family_room
+      event_id: actionable_notification_close_doors
+      text: >-
+        {%- set entities = [
+          'lock.front_door',
+          'cover.garage_door',
+          'binary_sensor.front_door',
+          'binary_sensor.upstairs_bathroom_window'
+        ] -%}
+        {%- set open_states = ['open','on','unlocked'] -%}
+        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list -%}
+
+        {%- if open_entities|length > 0 -%}
+          It is getting late.
+          {%- for entity in open_entities -%}
+            {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
+          {%- endfor -%}
+          {%- if is_state('cover.garage_door','open') or (is_state('lock.front_door','unlocked') and is_state('binary_sensor.front_door','off')) %}
+            Would you like me to close your doors?
+          {%- endif -%}
+        {%- endif -%}
+
+
+  - delay:
+      minutes: 5
+
+  - service: script.notify_mobile
+    data_template:
+      who: "parents"
+      title: Doors and Windows Check
+      message: >
+        {%- set entities = [
+          'binary_sensor.front_door',
+          'lock.front_door',
+          'cover.garage_door',
+          'binary_sensor.upstairs_bathroom_window'
+        ] -%}
+        {%- set open_states = ['open','on','unlocked'] -%}
+        {%- set open_entities = states | selectattr('entity_id','in',entities) | selectattr('state','in',open_states) | map(attribute='entity_id') | list -%}
+
+        {%- if open_entities|length > 0 -%}
+          {%- for entity in open_entities -%}
+            {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
+          {%- endfor -%}
+        {%- endif -%}
