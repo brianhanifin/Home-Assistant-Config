@@ -11,7 +11,7 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **1131 entities**, with **361 sensors** in Home Assistant. I am also using **27 custom components**.
+As of my last commit I have **1129 entities**, with **380 sensors** in Home Assistant. I am also using **29 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -156,7 +156,11 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
   
   <dt> Battery Level </dt>
   
+  <dt> Reolink IP camera </dt>
+  
   <dt> Illuminance </dt>
+  
+  <dt> Climacell weather </dt>
   
   <dt> UI Logs </dt>
   
@@ -215,7 +219,7 @@ All of my configuration files are tested against the most stable version of home
 [button-medicine]: ./README-images/button_medicine.jpeg
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-0.109.6-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-0.110.0-41BDF5?logo=home%20assistant
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/build/badge.svg

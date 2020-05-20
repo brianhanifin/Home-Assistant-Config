@@ -93,12 +93,12 @@
       topic: hass/status
     service: mqtt.publish
   - data:
-      name: ios-dark-mode-modified
+      name: ios-dark-mode-blue-red-alternative
     service: frontend.set_theme
   - data: {}
     entity_id: light.garage_entry
     service: light.turn_off
-  - delay: 'seconds: 30'
+  - delay: 00:00:30
   - data: {}
     entity_id: script.create_actionable_lights_group
     service: script.create_actionable_lights_group
@@ -115,3 +115,23 @@
   action:
   - event: 'event: midnight'
     event_data: {}
+- id: '1589907143194'
+  alias: Homekit Start
+  description: Homekit will delay startup until all devices are available.
+  trigger:
+  - event_data: {}
+    event_type: zwave.network_ready
+    platform: event
+  - event_data: {}
+    event_type: zwave.network_complete
+    platform: event
+  - event_data: {}
+    event_type: zwave.network_complete_some_dead
+    platform: event
+  condition: []
+  action:
+  - data: {}
+    service: homekit.start
+  - data:
+      message: 'Homekit: UI service has started.'
+    service: script.toast
