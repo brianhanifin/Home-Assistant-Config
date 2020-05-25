@@ -135,3 +135,29 @@
   - data:
       message: 'Homekit: UI service has started.'
     service: script.toast
+- id: '1590292820143'
+  alias: 'Printers: Power Down When Idle'
+  description: 'When one printer has been idle for 15 minutes, turn the printers off
+    if the other printer is also currently idle. '
+  trigger:
+  - entity_id: sensor.hp_colorlaserjet
+    for: 15 minutes
+    platform: state
+    to: idle
+  - entity_id: sensor.hp_officejet
+    for: 15 minutes
+    platform: state
+    to: idle
+  condition:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: sensor.hp_colorlaserjet
+      state: idle
+    - condition: state
+      entity_id: sensor.hp_officejet
+      state: idle
+  action:
+  - data: {}
+    entity_id: switch.printers
+    service: switch.turn_off
