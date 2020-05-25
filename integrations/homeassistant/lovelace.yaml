@@ -1,11 +1,19 @@
 ---
-# Lovelace component for confuring the UI.
-#
-# I use Lovelace in manual YAML mode. Pro: I can have my Lovelace in Git
-# with easy. Cons: I do not have access to the Lovelace UI editor.
-#
 # https://www.home-assistant.io/lovelace/
 # https://www.home-assistant.io/lovelace/yaml-mode/
 #
+# It loads all resources for Lovelace dynamically from subfolders
+# inside the `lovelace/resources` directory.
+#
+# Additional Dashboards are defined here.
 lovelace:
   mode: yaml
+  resources: !include_dir_list ../../lovelace/resources
+  dashboards: !include_dir_named ../../lovelace/dashboards
+  # dashboards:
+  #   dashboard-contributions:
+  #     mode: yaml
+  #     title: Family Contributions
+  #     icon: fas:th
+  #     show_in_sidebar: true
+  #     filename: ui-contributions.yaml
