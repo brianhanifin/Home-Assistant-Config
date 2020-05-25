@@ -37,6 +37,7 @@ from homeassistant.helpers import aiohttp_client
 from homeassistant.util import Throttle, slugify
 from homeassistant.util.distance import convert as convert_distance
 from homeassistant.util.pressure import convert as convert_pressure
+import homeassistant.helpers.device_registry as dr
 
 from .const import (
     ATTR_WEATHERBIT_AQI,
@@ -91,9 +92,6 @@ async def async_setup_entry(
         hass.config.units.is_metric,
         session,
     )
-    entity.entity_id = ENTITY_ID_SENSOR_FORMAT.format(
-        slugify(entry.data[CONF_ID]).replace(" ", "_")
-    )
 
     async_add_entities([entity], True)
 
@@ -121,24 +119,10 @@ class WeatherbitWeather(WeatherEntity):
         self._is_metric = is_metric
         self._forecasts = None
         self._current = None
-        self._unsub_track_units = None
         self._fail_count = 0
         self._api = Weatherbit(
             self._api_key, self._latitude, self._longitude, "en", "M", session=session
         )
-
-    async def async_added_to_hass(self):
-        """Ensure Right Unit System."""
-        self._unsub_track_units = self.hass.bus.async_listen(
-            EVENT_CORE_CONFIG_UPDATE, self._core_config_updated
-        )
-
-    async def _core_config_updated(self, _event):
-        """Handle core config updated."""
-        if self._unsub_track_units:
-            self._unsub_track_units()
-            self._unsub_track_units = None
-        await self.async_update()
 
     @property
     def unique_id(self) -> str:
@@ -308,16 +292,14 @@ class WeatherbitWeather(WeatherEntity):
     @property
     def device_state_attributes(self) -> Dict:
         """Return Weatherbit specific attributes."""
-        attrs = {}
-
-        attrs[ATTR_WEATHERBIT_AQI] = self.aqi
-        attrs[ATTR_WEATHERBIT_CLOUDINESS] = self.cloudiness
-        attrs[ATTR_WEATHERBIT_IS_NIGHT] = self.is_night
-        attrs[ATTR_WEATHERBIT_PRECIPITATION] = self.precipitation
-        attrs[ATTR_WEATHERBIT_WIND_GUST] = self.wind_gust
-        attrs[ATTR_WEATHERBIT_UVI] = self.uv
-
-        return attrs
+        return {
+            ATTR_WEATHERBIT_AQI: self.aqi,
+            ATTR_WEATHERBIT_CLOUDINESS: self.cloudiness,
+            ATTR_WEATHERBIT_IS_NIGHT: self.is_night,
+            ATTR_WEATHERBIT_PRECIPITATION: self.precipitation,
+            ATTR_WEATHERBIT_WIND_GUST: self.wind_gust,
+            ATTR_WEATHERBIT_UVI: self.uv,
+        }
 
     @property
     def forecast(self) -> List:
