@@ -28,6 +28,13 @@ condition:
     entity_id: sensor.uptime
     above: 0.2
 action:
+  # - service: script.debug
+  #   data_template:
+  #     title: "automation.xpresence_location_update"
+  #     message: >
+  #       input_select.{{ trigger.entity_id.split('.')[1] }}
+  #       timer.xpresence_{{ trigger.to_state.object_id }}
+
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
     data_template:
@@ -41,5 +48,5 @@ action:
 
   - service: timer.start
     data_template:
-      entity_id: "timer.xpresence_{{ trigger.friendly_name|lower }}"
+      entity_id: "timer.xpresence_{{ trigger.to_state.object_id }}"
       duration: "00:10:00"
