@@ -3,7 +3,10 @@ platform: template
 sensors:
   date_labor:
     entity_id: sensor.date_next_labor
+    friendly_name: Labor Day
     icon_template: mdi:hotel
+    attribute_templates:
+      type: "Holiday"
     value_template: >
       {%- set today = states('sensor.date') -%}
       {%- set this_event = states('sensor.date_labor') -%}

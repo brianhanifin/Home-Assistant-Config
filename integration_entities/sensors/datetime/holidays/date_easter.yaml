@@ -3,7 +3,10 @@ platform: template
 sensors:
   date_easter:
     entity_id: sensor.date_next_easter
+    friendly_name: Easter
     icon_template: fas:egg
+    attribute_templates:
+      type: "Holiday"
     value_template: >
       {%- set today = states('sensor.date') -%}
       {%- set this_event = states('sensor.date_easter') -%}

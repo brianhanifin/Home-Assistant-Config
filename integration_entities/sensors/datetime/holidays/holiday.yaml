@@ -1,0 +1,27 @@
+---
+platform: template
+sensors:
+  holiday:
+    entity_id: sensor.date
+    friendly_name: Holiday
+    icon_template: mdi:calendar-today
+    value_template: >
+      {% macro todays_holidays() %}
+        {%- set todays_anniversaries = states.sensor | selectattr('attributes.weeks_remaining') | selectattr('state','eq','0') | map(attribute='entity_id') | list -%}
+        {%- for anniversary in todays_anniversaries -%}
+          {{ state_attr(anniversary, 'friendly_name') + '\n' }}
+        {%- endfor -%}
+
+        {% set holidays = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
+        {%- for holiday in holidays -%}
+          {%- set part = states(holiday).split('-') -%}
+          {%- if part|length > 1 -%}
+            {%- set holiday_date = "%s/%s"|format(part[1]|int, part[2]|int) -%}
+            {{ state_attr(holiday, 'friendly_name') + '\n' if today == holiday_date }}
+          {%- else -%}
+            {{ state_attr(holiday, 'friendly_name') + '\n' if today == holiday }}
+          {%- endif -%}
+        {%- endfor %}
+      {% endmacro %}
+
+      {{ todays_holidays()|trim|replace('\n',',') }}
