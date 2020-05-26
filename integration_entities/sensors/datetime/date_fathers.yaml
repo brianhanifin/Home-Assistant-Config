@@ -10,7 +10,7 @@ platform: template
 sensors:
   date_fathers:
     entity_id: sensor.date
-    friendly_name: Memorial Day
+    friendly_name: "Father's Day"
     icon_template: mdi:human-male-boy
     value_template: >
       {%- macro main() -%}
@@ -26,11 +26,12 @@ sensors:
           {%- set event_year = now().strftime('%Y')|int -%}
         {%- endif -%}
 
-        {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year) -%}
+        {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year) | replace("00:00:00","") -%}
 
         {# When we are past the event date, but are in the same month, recalcluate for the next event.  #}
         {%- if event_month == this_month -%}
-          {%- set event_day = event_date.strftime('%d')|int -%}
+          {#%- set event_day = event_date.strftime('%d')|int -%#}
+          {%- set event_day = event_date.split('-')[2]|int -%}
           {%- set this_day = now().strftime('%d')|int -%}
 
           {%- if this_day > event_day -%}
