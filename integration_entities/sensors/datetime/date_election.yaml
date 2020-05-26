@@ -1,0 +1,14 @@
+---
+platform: template
+sensors:
+  date_election:
+    entity_id: sensor.date_next_election
+    icon_template: fas:flag-usa
+    value_template: >
+      {%- set today = states('sensor.date') -%}
+      {%- set this_event = states('sensor.date_election') -%}
+      {%- if today == this_event -%}
+        {{ states('sensor.date') }}
+      {%- else -%}
+        {{ states('sensor.date_next_election') }}
+      {%- endif -%}

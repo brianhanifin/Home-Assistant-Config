@@ -1,47 +1,26 @@
 ---
-# Sensor updates once every 24 hours.
-platform: rest
-resource: https://raw.githubusercontent.com/brianhanifin/Home-Assistant-Config/master/json_data/dates.json
-name: Holiday
-scan_interval: 86400
-value_template: >
-  {% set today = now().month  ~ '/' ~ now().day  -%}
-  {%- set personal = value_json.PERSONAL[ today ]|trim -%}
-  {%- set holiday = value_json.MAJOR_US[ today ]|trim -%}
-
-  {%- macro pcase(text) -%}
-    {{ text[0]|upper}}{{text[1:] }}
-  {%- endmacro -%}
-
-  {%- macro get_dynamic_holiday(event) -%}
-    {%- set today = states('sensor.date') -%}
-    {%- if today == event -%}
-      {%- set date_parts = states(event).split('-') -%}
-      {%- set event_name = event.split('_')[1] -%}
-      {%- if event_name == "easter" -%}
-        {{ "Easter Sunday" }}
-      {%- elif event_name == "presidents" -%}
-        {{ "Presidents' Day"}}
-      {%- else -%}
-        {{ pcase(event_name ~ " ")|replace("s ","'s ") ~ "Day" }}
-      {%- endif -%}
-    {%- endif -%}
-  {%- endmacro -%}
-
-  {%- if holiday == '' -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_easter') -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_fathers') -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_labor') -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_memorial') -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_mlk') -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_mothers') -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_presidents') -%}
-    {%- set holiday = get_dynamic_holiday('sensor.date_thanksgiving') -%}
-  {%- endif -%}
-
-  {%- if personal != '' -%}
-    {{ personal }}
-    {%- if holiday != '' -%}{{ ' and ' }}{%- endif -%}
-  {%- endif -%}
-
-  {{ holiday }}
+platform: template
+sensors:
+  holiday:
+    entity_id: sensor.date
+    friendly_name: Holiday
+    icon_template: mdi:calendar-today
+    value_template: >
+      {%- set sensors = ['sensor.date_easter', 'sensor.date_fathers', 'sensor.date_labor', 'sensor.date_memorial', 'sensor.date_mlk', 'sensor.date_mothers', 'sensor.date_presidents', 'sensor.date_thanksgiving'] %}
+      {%- set special = [['4/4','Independance Day'], ['6/14','Flag Day'], ['9/17','Constitution Day']] -%}
+      {%- set today = "%s/%s"|format(now().month, now().day)  -%}
+      
+      {%- set holiday_found = "false" -%}
+      {%- for holiday in sensors -%}
+        {%- set part = states(holiday).split('-') -%}
+        {%- set holiday_date = "%s/%s"|format(part[1]|int, part[2]|int) -%}
+        {%- if today == holiday_date -%}
+          {{ state_attr(holiday, 'friendly_name') }}
+        {%- endif -%}
+      {%- endfor %}
+      
+      {%- for holiday in special -%}
+        {%- if today == holiday[0] -%}
+          {{ holiday[1] }}
+        {%- endif -%}
+      {%- endfor -%}
