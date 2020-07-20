@@ -8,6 +8,13 @@ platform: template
 sensors:
   upstairs_bathroom_humidity_difference:
     friendly_name: "Bathroom Humidity Change"
-    value_template: "{{ (states('sensor.upstairs_bathroom_humidity') | int ) - (states('sensor.home_humidity') | int)}}"
+    value_template: >
+      {# Use alternate humidity sensor should ecobee's humidity sensor be offline. #}
+      {%- if is_state('sensor.home_humidity','unavailable') -%}
+        {%- set home_humidity = states('sensor.guest_room_humidity') -%}
+      {%- else -%}
+        {%- set home_humidity = states('sensor.home_humidity') -%}
+      {%- endif -%}
+      {{ (states('sensor.upstairs_bathroom_humidity') | int) - home_humidity|int }}
     device_class: "humidity"
     unit_of_measurement: '%'

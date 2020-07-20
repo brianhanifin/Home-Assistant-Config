@@ -1,0 +1,7 @@
+---
+platform: template
+sensors:
+  rain_today:
+    entity_id: sensor.weatherbit_rain_today
+    friendly_name: Will it rain today?
+    value_template: "{{ states('sensor.weatherbit_rain_today')|default(0)|float >= 0.2 }}"

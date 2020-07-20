@@ -28,7 +28,7 @@
   - for:
       minutes: 15
     platform: template
-    value_template: '{{ states("sensor.home_temperature")|int > (states("sensor.outside_temperature")|int
+    value_template: '{{ states("sensor.home_temperature")|int > (states("weather.weatherbit_temperature")|int
       - 2) }}'
   condition:
   - condition: state
@@ -113,7 +113,7 @@
     platform: time
   condition: []
   action:
-  - event: 'event: midnight'
+  - event: midnight
     event_data: {}
 - id: '1589907143194'
   alias: Homekit Start
