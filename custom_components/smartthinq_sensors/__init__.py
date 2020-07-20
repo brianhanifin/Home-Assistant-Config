@@ -8,6 +8,7 @@ import logging
 import time
 from datetime import timedelta
 from requests import exceptions as reqExc
+from typing import Dict
 
 from .wideq.core import Client
 from .wideq.core_v2 import ClientV2
@@ -18,16 +19,17 @@ from .wideq.washer import WasherDevice
 from .wideq.refrigerator import RefrigeratorDevice
 
 from .wideq.core_exceptions import (
+    InvalidCredentialError,
     NotConnectedError,
     NotLoggedInError,
     TokenError,
 )
 
 import voluptuous as vol
+import homeassistant.helpers.config_validation as cv
 
 from homeassistant import config_entries
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.update_coordinator import UpdateFailed
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.util import Throttle
 
@@ -52,6 +54,7 @@ ATTR_MAC_ADDRESS = "mac_address"
 MAX_RETRIES = 3
 MAX_CONN_RETRIES = 2
 MAX_LOOP_WARN = 3
+MAX_UPDATE_FAIL_ALLOWED = 10
 # not stress to match cloud if multiple call
 MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=10)
 
@@ -63,7 +66,16 @@ SMARTTHINQ_SCHEMA = vol.Schema(
     }
 )
 
-CONFIG_SCHEMA = vol.Schema({DOMAIN: SMARTTHINQ_SCHEMA}, extra=vol.ALLOW_EXTRA)
+CONFIG_SCHEMA = vol.Schema(
+    vol.All(
+        cv.deprecated(DOMAIN),
+        {
+            DOMAIN: SMARTTHINQ_SCHEMA
+        },
+    ),
+    extra=vol.ALLOW_EXTRA,
+)
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -89,12 +101,12 @@ class LGEAuthentication:
 
         try:
             login_url = client.gateway.oauth_url()
-        except:
-            pass
+        except Exception:
+            _LOGGER.exception("Error retrieving login URL from ThinQ")
 
         return login_url
 
-    def getOAuthInfoFromUrl(self, callback_url) -> str:
+    def getOAuthInfoFromUrl(self, callback_url) -> Dict[str, str]:
 
         oauth_info = None
         try:
@@ -102,9 +114,8 @@ class LGEAuthentication:
                 oauth_info = ClientV2.oauthinfo_from_url(callback_url)
             else:
                 oauth_info = Client.oauthinfo_from_url(callback_url)
-        except Exception as ex:
-            _LOGGER.error(ex)
-            pass
+        except Exception:
+            _LOGGER.exception("Error retrieving OAuth info from ThinQ")
 
         return oauth_info
 
@@ -118,9 +129,8 @@ class LGEAuthentication:
                 )
             else:
                 client = Client.from_token(token, self._region, self._language)
-        except Exception as ex:
-            _LOGGER.error(ex)
-            pass
+        except Exception:
+            _LOGGER.exception("Error connecting to ThinQ")
 
         return client
 
@@ -153,16 +163,32 @@ async def async_setup_entry(hass: HomeAssistantType, config_entry):
         lgeauth.createClientFromToken, refresh_token, oauth_url, oauth_user_num
     )
     if not client:
-        _LOGGER.warning("Connection not available. SmartThinQ platform not ready.")
+        _LOGGER.warning("Connection not available. SmartThinQ platform not ready")
         raise ConfigEntryNotReady()
 
     if not client.hasdevices:
-        _LOGGER.error("No SmartThinQ devices found. Component setup aborted.")
+        _LOGGER.error("No SmartThinQ devices found. Component setup aborted")
         return False
 
-    _LOGGER.info("SmartThinQ client connected.")
+    _LOGGER.info("SmartThinQ client connected")
 
-    lge_devices = await lge_devices_setup(hass, client)
+    try:
+        lge_devices = await lge_devices_setup(hass, client)
+    except Exception:
+        _LOGGER.warning(
+            "Connection not available. SmartThinQ platform not ready",
+            exc_info=True,
+        )
+        raise ConfigEntryNotReady()
+
+    if not use_apiv2:
+        _LOGGER.warning(
+            "Integration configuration is using ThinQ APIv1 that is obsolete"
+            " and not able to manage all ThinQ devices."
+            " Please remove and re-add integration from HA user interface to"
+            " enable the use of ThinQ APIv2"
+        )
+
     hass.data.setdefault(DOMAIN, {}).update(
         {
             CLIENT: client,
@@ -233,10 +259,18 @@ class LGEDevice:
         self._retry_count = 0
         self._disconnected = True
         self._not_logged = False
+        self._update_fail_count = 0
+        self._not_logged_count = 0
+        self._refresh_gateway = False
 
     @property
     def available(self) -> bool:
-        return True
+        return self._not_logged_count <= MAX_UPDATE_FAIL_ALLOWED
+
+    @property
+    def assumed_state(self) -> bool:
+        """Return True if unable to access real state of the entity."""
+        return self.available and self._disconnected
 
     @property
     def name(self) -> str:
@@ -283,12 +317,31 @@ class LGEDevice:
             return True
         return False
 
+    def _critical_status(self):
+        return (
+            self._not_logged_count == MAX_UPDATE_FAIL_ALLOWED or (
+                    self._not_logged_count > 0 and
+                    self._not_logged_count % 60 == 0
+            )
+        )
+
+    def _log_error(self, msg, *args, **kwargs):
+        if self._critical_status():
+            _LOGGER.error(msg, *args, **kwargs)
+        else:
+            _LOGGER.debug(msg, *args, **kwargs)
+
     def _restart_monitor(self):
         """Restart the device monitor"""
 
+        refresh_gateway = False
+        if self._refresh_gateway:
+            refresh_gateway = True
+            self._refresh_gateway = False
+
         try:
             if self._not_logged:
-                self._device.client.refresh()
+                self._device.client.refresh(refresh_gateway)
                 self._not_logged = False
                 self._disconnected = True
 
@@ -296,42 +349,71 @@ class LGEDevice:
             self._disconnected = False
 
         except NotConnectedError:
-            _LOGGER.debug("Device not connected. Status not available.")
+            self._log_error("Device not connected. Status not available")
             self._disconnected = True
 
         except NotLoggedInError:
-            _LOGGER.info("ThinQ Session expired. Refreshing.")
+            self._log_error("ThinQ Session expired. Refreshing")
+            self._not_logged = True
+
+        except InvalidCredentialError:
+            self._log_error("Connection to ThinQ failed. Check your login credential")
             self._not_logged = True
 
         except (reqExc.ConnectionError, reqExc.ConnectTimeout, reqExc.ReadTimeout):
-            _LOGGER.error("Connection to ThinQ failed. Network connection error")
+            self._log_error("Connection to ThinQ failed. Network connection error")
             self._disconnected = True
             self._not_logged = True
 
-        except Exception as ex:
+        except Exception:
+            self._log_error("ThinQ error while updating device status", exc_info=True)
             self._not_logged = True
-            raise UpdateFailed(ex)
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
     def device_update(self):
         """Update device state"""
-        _LOGGER.debug("Updating smartthinq device %s.", self.name)
+        _LOGGER.debug("Updating smartthinq device %s", self.name)
+
+        if self._disconnected or self._not_logged:
+            if self._update_fail_count < MAX_UPDATE_FAIL_ALLOWED:
+                self._update_fail_count += 1
+            if self._not_logged:
+                self._not_logged_count += 1
+            else:
+                self._not_logged_count = 0
 
         for iteration in range(MAX_RETRIES):
             _LOGGER.debug("Polling...")
 
             if self._disconnected or self._not_logged:
                 if iteration >= MAX_CONN_RETRIES and iteration > 0:
-                    _LOGGER.debug("Connection not available. Status update failed.")
+                    _LOGGER.debug("Connection not available. Status update failed")
                     return
 
                 self._retry_count = 0
                 self._restart_monitor()
 
+            if self._disconnected or self._not_logged:
+                if self._update_fail_count >= MAX_UPDATE_FAIL_ALLOWED:
+
+                    if self._critical_status():
+                        _LOGGER.error(
+                            "Connection to ThinQ for device %s is not available. Connection will be retried",
+                            self.name,
+                        )
+                        if self._not_logged_count >= 60:
+                            self._refresh_gateway = True
+                        self._not_logged_count += 1
+
+                    if self._state.is_on:
+                        self._state = self._device.reset_status()
+                        return
+
             if self._disconnected:
                 return
 
             if not (self._disconnected or self._not_logged):
+
                 try:
                     state = self._device.poll()
 
@@ -343,14 +425,20 @@ class LGEDevice:
                     return
                     # time.sleep(1)
 
-                except (reqExc.ConnectionError, reqExc.ConnectTimeout, reqExc.ReadTimeout):
-                    _LOGGER.error("Connection to ThinQ failed. Network connection error")
+                except InvalidCredentialError:
+                    self._log_error("Connection to ThinQ failed. Check your login credential")
                     self._not_logged = True
                     return
 
-                except Exception as ex:
+                except (reqExc.ConnectionError, reqExc.ConnectTimeout, reqExc.ReadTimeout):
+                    self._log_error("Connection to ThinQ failed. Network connection error")
                     self._not_logged = True
-                    raise UpdateFailed(ex)
+                    return
+
+                except Exception:
+                    self._log_error("ThinQ error while updating device status", exc_info=True)
+                    self._not_logged = True
+                    return
 
                 else:
                     if state:
@@ -358,12 +446,14 @@ class LGEDevice:
                         # l = dir(state)
                         # _LOGGER.debug('Status attributes: %s', l)
 
+                        self._update_fail_count = 0
+                        self._not_logged_count = 0
                         self._retry_count = 0
                         self._state = state
 
                         return
                     else:
-                        _LOGGER.debug("No status available yet.")
+                        _LOGGER.debug("No status available yet")
 
             # time.sleep(2 ** iteration)
             time.sleep(1)
@@ -373,10 +463,10 @@ class LGEDevice:
         # restart the task.
         if self._retry_count >= MAX_LOOP_WARN:
             self._retry_count = 0
-            _LOGGER.warning("Status update failed.")
+            _LOGGER.warning("Status update failed")
         else:
             self._retry_count += 1
-            _LOGGER.debug("Status update failed.")
+            _LOGGER.debug("Status update failed")
 
 
 async def lge_devices_setup(hass, client) -> dict:

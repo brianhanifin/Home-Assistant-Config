@@ -20,6 +20,7 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
     STATE_ON,
     STATE_OFF,
+    STATE_UNAVAILABLE,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT
 )
@@ -55,6 +56,7 @@ ATTR_CHILDLOCK_MODE = "childlock_mode"
 ATTR_STEAM_MODE = "steam_mode"
 ATTR_STEAM_SOFTENER_MODE = "steam_softener_mode"
 ATTR_DOORLOCK_MODE = "doorlock_mode"
+ATTR_DOORCLOSE_MODE = "doorclose_mode"
 ATTR_PREWASH_MODE = "prewash_mode"
 ATTR_REMOTESTART_MODE = "remotestart_mode"
 ATTR_TURBOWASH_MODE = "turbowash_mode"
@@ -353,9 +355,21 @@ class LGESensor(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
+        if not self.available:
+            return STATE_UNAVAILABLE
         if self._is_binary:
             return STATE_ON if self.is_on else STATE_OFF
         return self._def[ATTR_VALUE_FN](self)
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return self._api.available
+
+    @property
+    def assumed_state(self) -> bool:
+        """Return True if unable to access real state of the entity."""
+        return self._api.assumed_state
 
     @property
     def state_attributes(self):
@@ -429,6 +443,7 @@ class LGEWasherSensor(LGESensor):
             ATTR_INITIAL_TIME: self._initial_time,
             ATTR_RESERVE_TIME: self._reserve_time,
             ATTR_DOORLOCK_MODE: self._doorlock_mode,
+            ATTR_DOORCLOSE_MODE: self._doorclose_mode,
             ATTR_CHILDLOCK_MODE: self._childlock_mode,
             ATTR_REMOTESTART_MODE: self._remotestart_mode,
             ATTR_CREASECARE_MODE: self._creasecare_mode,
@@ -548,6 +563,13 @@ class LGEWasherSensor(LGESensor):
     def _doorlock_mode(self):
         if self._api.state:
             mode = self._api.state.doorlock_state
+            return mode
+        return None
+
+    @property
+    def _doorclose_mode(self):
+        if self._api.state:
+            mode = self._api.state.doorclose_state
             return mode
         return None
 

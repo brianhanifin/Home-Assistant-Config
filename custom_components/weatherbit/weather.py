@@ -1,13 +1,6 @@
 """Support for the Weatherbit weather service."""
-import asyncio
-from datetime import timedelta
 import logging
 from typing import Dict, List
-
-import aiohttp
-import async_timeout
-from weatherbitpypi import Weatherbit, WeatherbitError
-
 from homeassistant.components.weather import (
     ATTR_FORECAST_CONDITION,
     ATTR_FORECAST_PRECIPITATION,
@@ -20,11 +13,7 @@ from homeassistant.components.weather import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    CONF_LATITUDE,
-    CONF_LONGITUDE,
     CONF_ID,
-    CONF_API_KEY,
-    EVENT_CORE_CONFIG_UPDATE,
     LENGTH_METERS,
     LENGTH_MILES,
     LENGTH_KILOMETERS,
@@ -33,131 +22,65 @@ from homeassistant.const import (
     TEMP_CELSIUS,
 )
 from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.helpers import aiohttp_client
-from homeassistant.util import Throttle, slugify
 from homeassistant.util.distance import convert as convert_distance
 from homeassistant.util.pressure import convert as convert_pressure
+from homeassistant.util.dt import utc_from_timestamp
 import homeassistant.helpers.device_registry as dr
 
 from .const import (
+    DOMAIN,
+    ATTR_WEATHERBIT_ALT_CONDITION,
     ATTR_WEATHERBIT_AQI,
     ATTR_WEATHERBIT_CLOUDINESS,
     ATTR_WEATHERBIT_IS_NIGHT,
     ATTR_WEATHERBIT_WIND_GUST,
     ATTR_WEATHERBIT_PRECIPITATION,
+    ATTR_WEATHERBIT_FCST_POP,
     ATTR_WEATHERBIT_UVI,
-    ENTITY_ID_SENSOR_FORMAT,
+    ATTR_WEATHERBIT_SNOW,
+    ATTR_WEATHERBIT_UPDATED,
     DEFAULT_ATTRIBUTION,
+    DEVICE_TYPE_WEATHER,
+    CONDITION_CLASSES,
+    ALT_CONDITION_CLASSES,
 )
+from .entity import WeatherbitEntity
 
 _LOGGER = logging.getLogger(__name__)
-
-# Used to map condition from API results
-CONDITION_CLASSES = {
-    "clear-night": [8000],
-    "cloudy": [803, 804],
-    "exceptional": [],
-    "fog": [741],
-    "hail": [623],
-    "lightning": [230, 231],
-    "lightning-rainy": [200, 201, 202],
-    "partlycloudy": [801, 802],
-    "pouring": [502, 522],
-    "rainy": [300, 301, 302, 500, 501, 511, 520, 521],
-    "snowy": [600, 601, 602, 621, 622, 623],
-    "snowy-rainy": [610, 611, 612],
-    "sunny": [800],
-    "windy": [],
-    "windy-variant": [],
-}
-
-# 5 minutes between retrying connect to API again
-RETRY_TIMEOUT = 5 * 60
-
-MIN_TIME_BETWEEN_UPDATES = timedelta(minutes=30)
 
 
 async def async_setup_entry(
     hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
 ) -> None:
-    """Add a weather entity from map location."""
+    """Add a weather entity from mapped location."""
 
-    session = aiohttp_client.async_get_clientsession(hass)
+    fcst_coordinator = hass.data[DOMAIN][entry.entry_id]["fcst_coordinator"]
+    if not fcst_coordinator.data:
+        return
 
-    entity = WeatherbitWeather(
-        entry.data[CONF_ID],
-        entry.data[CONF_API_KEY],
-        entry.data[CONF_LATITUDE],
-        entry.data[CONF_LONGITUDE],
-        hass.config.units.is_metric,
-        session,
+    cur_coordinator = hass.data[DOMAIN][entry.entry_id]["cur_coordinator"]
+    if not cur_coordinator.data:
+        return
+
+    weather_entity = WeatherbitWeather(
+        fcst_coordinator, cur_coordinator, entry.data, hass.config.units.is_metric,
     )
 
-    async_add_entities([entity], True)
+    async_add_entities([weather_entity], True)
 
     return True
 
 
-class WeatherbitWeather(WeatherEntity):
+class WeatherbitWeather(WeatherbitEntity, WeatherEntity):
     """Representation of a weather entity."""
 
-    def __init__(
-        self,
-        name: str,
-        api_key: str,
-        latitude: str,
-        longitude: str,
-        is_metric: bool,
-        session: aiohttp.ClientSession = None,
-    ) -> None:
+    def __init__(self, fcst_coordinator, cur_coordinator, entries, is_metric) -> None:
         """Initialize the Weatherbit weather entity."""
-
-        self._name = name.capitalize()
-        self._api_key = api_key
-        self._latitude = latitude
-        self._longitude = longitude
-        self._is_metric = is_metric
-        self._forecasts = None
-        self._current = None
-        self._fail_count = 0
-        self._api = Weatherbit(
-            self._api_key, self._latitude, self._longitude, "en", "M", session=session
+        super().__init__(
+            fcst_coordinator, cur_coordinator, None, entries, DEVICE_TYPE_WEATHER
         )
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique id."""
-        return f"{self._latitude}, {self._longitude}"
-
-    @Throttle(MIN_TIME_BETWEEN_UPDATES)
-    async def async_update(self) -> None:
-        """Refresh the forecast data from Weatherbit weather API."""
-        try:
-            with async_timeout.timeout(10):
-                self._forecasts = await self.get_weather_forecast()
-                self._current = await self.get_weather_current()
-                self._fail_count = 0
-                _LOGGER.debug("WEATHERBIT: FORECAST UPDATED")
-
-        except (asyncio.TimeoutError, WeatherbitError):
-            _LOGGER.error("Failed to connect to Weatherbit API, retry in 5 minutes")
-            self._fail_count += 1
-            if self._fail_count < 3:
-                self.hass.helpers.event.async_call_later(
-                    RETRY_TIMEOUT, self.retry_update
-                )
-
-    async def retry_update(self, _):
-        """Retry refresh weather forecast."""
-        await self.async_update()
-
-    async def get_weather_forecast(self) -> []:
-        """Return the current forecasts from Weatherbit API."""
-        return await self._api.async_get_forecast_daily()
-
-    async def get_weather_current(self) -> []:
-        """Return the current weather from Weatherbit API."""
-        return await self._api.async_get_current_data()
+        self._name = f"{DOMAIN.capitalize()} {entries[CONF_ID].capitalize()}"
+        self._is_metric = is_metric
 
     @property
     def name(self) -> str:
@@ -168,7 +91,7 @@ class WeatherbitWeather(WeatherEntity):
     def temperature(self) -> int:
         """Return the temperature."""
         if self._current is not None:
-            return self._current[0].temp
+            return self._current.temp
         return None
 
     @property
@@ -180,13 +103,13 @@ class WeatherbitWeather(WeatherEntity):
     def humidity(self) -> int:
         """Return the humidity."""
         if self._current is not None:
-            return self._current[0].humidity
+            return self._current.humidity
         return None
 
     @property
     def wind_speed(self) -> float:
         """Return the wind speed."""
-        speed_m_s = self._current[0].wind_spd
+        speed_m_s = self._current.wind_spd
         if self._is_metric or speed_m_s is None:
             return round(float(speed_m_s) * 3.6, 1)
 
@@ -195,7 +118,7 @@ class WeatherbitWeather(WeatherEntity):
     @property
     def wind_gust(self) -> float:
         """Return the wind Gust."""
-        speed_m_s = self._forecasts[0].wind_gust_spd
+        speed_m_s = self._forecast.wind_gust_spd
         if self._is_metric or speed_m_s is None:
             return round(speed_m_s, 1)
 
@@ -205,28 +128,28 @@ class WeatherbitWeather(WeatherEntity):
     def wind_bearing(self) -> int:
         """Return the wind bearing."""
         if self._current is not None:
-            return self._current[0].wind_dir
+            return self._current.wind_dir
         return None
 
     @property
     def precipitation(self) -> float:
         """Return the precipitation."""
-        if self._is_metric or self._current[0].precip is None:
-            return round(float(self._current[0].precip), 1)
+        if self._is_metric or self._current.precip is None:
+            return round(float(self._current.precip), 1)
 
-        return round(float(self._current[0].precip) / 25.4, 2)
+        return round(float(self._current.precip) / 25.4, 2)
 
     @property
     def ozone(self) -> float:
         """Return the ozone."""
-        if self._forecasts is not None:
-            return self._forecasts[0].ozone
+        if self._forecast is not None:
+            return round(float(self._forecast.ozone), 1)
         return None
 
     @property
     def visibility(self) -> float:
         """Return the visibility."""
-        visibility_km = self._current[0].vis
+        visibility_km = self._current.vis
         if self._is_metric or visibility_km is None:
             return visibility_km
 
@@ -236,7 +159,7 @@ class WeatherbitWeather(WeatherEntity):
     @property
     def pressure(self) -> int:
         """Return the pressure."""
-        pressure_hpa = self._current[0].pres
+        pressure_hpa = self._current.pres
         if self._is_metric or pressure_hpa is None:
             return pressure_hpa
 
@@ -246,28 +169,28 @@ class WeatherbitWeather(WeatherEntity):
     def cloudiness(self) -> int:
         """Return the cloudiness."""
         if self._current is not None:
-            return self._current[0].clouds
+            return self._current.clouds
         return None
 
     @property
     def uv(self) -> int:
         """Return the UV Index."""
         if self._current is not None:
-            return round(self._current[0].uv, 1)
+            return round(self._current.uv, 1)
         return None
 
     @property
     def aqi(self) -> int:
         """Return the Air Quality Index."""
         if self._current is not None:
-            return self._current[0].aqi
+            return self._current.aqi
         return None
 
     @property
     def is_night(self) -> bool:
         """Return True if after Sunset at Location."""
         if self._current is not None:
-            return self._current[0].is_night
+            return self._current.is_night
         return None
 
     @property
@@ -276,13 +199,28 @@ class WeatherbitWeather(WeatherEntity):
         if self._current is None:
             return None
 
-        wcode = int(self._current[0].weather_code)
+        wcode = int(self._current.weather_code)
 
         # If Night convert to Clear Night
         if wcode == 800 and self.is_night:
             wcode = wcode * 10
 
         return next((k for k, v in CONDITION_CLASSES.items() if wcode in v), None,)
+
+    @property
+    def alt_condition(self) -> str:
+        """Return the alternative weather condition."""
+        if self._current is None:
+            return None
+
+        wcode = int(self._current.weather_code)
+
+        # If Night convert to night condition
+        if self.is_night:
+            if wcode in [800, 801, 802]:
+                wcode = wcode * 10
+
+        return next((k for k, v in ALT_CONDITION_CLASSES.items() if wcode in v), None,)
 
     @property
     def attribution(self) -> str:
@@ -295,21 +233,23 @@ class WeatherbitWeather(WeatherEntity):
         return {
             ATTR_WEATHERBIT_AQI: self.aqi,
             ATTR_WEATHERBIT_CLOUDINESS: self.cloudiness,
+            ATTR_WEATHERBIT_ALT_CONDITION: self.alt_condition,
             ATTR_WEATHERBIT_IS_NIGHT: self.is_night,
             ATTR_WEATHERBIT_PRECIPITATION: self.precipitation,
             ATTR_WEATHERBIT_WIND_GUST: self.wind_gust,
             ATTR_WEATHERBIT_UVI: self.uv,
+            ATTR_WEATHERBIT_UPDATED: getattr(self._current, "obs_time_local"),
         }
 
     @property
     def forecast(self) -> List:
         """Return the forecast."""
-        if self._forecasts is None or len(self._forecasts) < 2:
+        if self.fcst_coordinator.data is None or len(self.fcst_coordinator.data) < 2:
             return None
 
         data = []
 
-        for forecast in self._forecasts[1:]:
+        for forecast in self.fcst_coordinator.data:
             condition = next(
                 (k for k, v in CONDITION_CLASSES.items() if forecast.weather_code in v),
                 None,
@@ -327,12 +267,20 @@ class WeatherbitWeather(WeatherEntity):
             else:
                 precip = round(float(forecast.precip) / 25.4, 2)
 
+            # Convert Snowfall
+            if self._is_metric or forecast.snow is None:
+                snow = round(forecast.snow, 1)
+            else:
+                snow = round(float(forecast.snow) / 25.4, 2)
+
             data.append(
                 {
-                    ATTR_FORECAST_TIME: forecast.valid_date,
+                    ATTR_FORECAST_TIME: utc_from_timestamp(forecast.ts).isoformat(),
                     ATTR_FORECAST_TEMP: forecast.max_temp,
                     ATTR_FORECAST_TEMP_LOW: forecast.min_temp,
                     ATTR_FORECAST_PRECIPITATION: precip,
+                    ATTR_WEATHERBIT_SNOW: snow,
+                    ATTR_WEATHERBIT_FCST_POP: forecast.pop,
                     ATTR_FORECAST_CONDITION: condition,
                     ATTR_FORECAST_WIND_SPEED: wspeed,
                     ATTR_FORECAST_WIND_BEARING: forecast.wind_dir,

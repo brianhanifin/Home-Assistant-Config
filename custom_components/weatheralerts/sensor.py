@@ -1,6 +1,6 @@
 """
-A component which allows you to get weather alerts from weather.gov.
-For more details about this component, please refer to the documentation at
+An integration which allows you to get weather alerts from weather.gov.
+For more details about this integration, please refer to the documentation at
 
 https://github.com/custom-components/weatheralerts
 """
@@ -16,7 +16,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.entity import Entity
 import homeassistant.helpers.config_validation as cv
 
-__version__ = '0.1.1'
+__version__ = '0.1.3'
 
 CONF_STATE = "state"
 CONF_ZONE = "zone"
@@ -48,7 +48,7 @@ async def async_setup_platform(
     state = config[CONF_STATE].upper()
     zone_config = config[CONF_ZONE]
     county_config = config[CONF_COUNTY]
-    
+
     zone=zone_config
     county=county_config
     
@@ -85,7 +85,7 @@ async def async_setup_platform(
 
     # Check the zoneid and set sensor name to county name from zoneid alert feed
     try:
-        async with async_timeout.timeout(10, loop=hass.loop):
+        async with async_timeout.timeout(20, loop=hass.loop):
             zone_check_response = await session.get(URL_ID_CHECK.format(zoneid))
             zone_data = await zone_check_response.text()
 
@@ -94,7 +94,7 @@ async def async_setup_platform(
                 return False
 
         if len(county) == 3:
-             async with async_timeout.timeout(10, loop=hass.loop):
+             async with async_timeout.timeout(20, loop=hass.loop):
                 county_check_response = await session.get(URL_ID_CHECK.format(countyid))
                 county_data = await county_check_response.text()
 
@@ -102,7 +102,7 @@ async def async_setup_platform(
                     _LOGGER.critical("Compiled county ID '%s' is not valid", countyid)
                     return False
 
-        async with async_timeout.timeout(10, loop=hass.loop):
+        async with async_timeout.timeout(20, loop=hass.loop):
             response = await session.get(URL.format(zoneid))
             data = await response.json()
 
@@ -111,11 +111,11 @@ async def async_setup_platform(
                     _LOGGER.critical("Compiled zone ID '%s' is not valid", zoneid)
                     return False
 
-            _LOGGER.debug(data)
+            _LOGGER.info(data)
             name = data["title"].split("advisories for ")[1].split(" (")[0]
 
     except Exception as exception:  # pylint: disable=broad-except
-        _LOGGER.error("[%s] %s", sys.exc_info()[0].__name__, exception)
+        _LOGGER.warning("[%s] %s", sys.exc_info()[0].__name__, exception)
         raise PlatformNotReady
 
     add_entities([WeatherAlertsSensor(name, state, feedid, session)], True)
@@ -142,8 +142,8 @@ class WeatherAlertsSensor(Entity):  # pylint: disable=missing-docstring
                 response = await self.session.get(URL.format(self.feedid))
                 if response.status != 200:
                     self._state = "unavailable"
-                    _LOGGER.critical(
-                        "[%s] weatheralert download failure - HTTP status code %s",
+                    _LOGGER.warning(
+                        "[%s] Possible API outage. Currently unable to download from weather.gov - HTTP status code %s",
                         self.feedid,
                         response.status
                     )
@@ -154,6 +154,10 @@ class WeatherAlertsSensor(Entity):  # pylint: disable=missing-docstring
                         for alert in data["features"]:
                             if alert.get("properties") is not None:
                                 properties = alert["properties"]
+                                if properties["ends"] is None:
+                                    properties["endsExpires"] = properties.get("expires", "null")
+                                else:
+                                    properties["endsExpires"] = properties.get("ends", "null")
                                 alerts.append(
                                     {
                                         "area": properties.get("areaDesc", "null"),
@@ -168,8 +172,12 @@ class WeatherAlertsSensor(Entity):  # pylint: disable=missing-docstring
                                         "title": properties.get("headline", "null").split(" by ")[0],
                                         "urgency": properties.get("urgency", "null"),
                                         "NWSheadline": properties["parameters"].get("NWSheadline", "null"),
+                                        "hailSize": properties["parameters"].get("hailSize", "null"),
+                                        "windGust": properties["parameters"].get("windGust", "null"),
+                                        "waterspoutDetection": properties["parameters"].get("waterspoutDetection", "null"),
                                         "effective": properties.get("effective", "null"),
                                         "expires": properties.get("expires", "null"),
+                                        "endsExpires": properties.get("endsExpires", "null"),
                                         "onset": properties.get("onset", "null"),
                                         "status": properties.get("status", "null"),
                                         "messageType": properties.get("messageType", "null"),
@@ -180,7 +188,14 @@ class WeatherAlertsSensor(Entity):  # pylint: disable=missing-docstring
                                         "zoneid": self.feedid,
                                     }
                                 )
-                        alerts.sort(key=lambda x: (x['sent'], x['id']), reverse=True)
+                    alerts.sort(key=lambda x: (x['id']), reverse=True)
+
+                    for sorted_alert in alerts:
+                        _LOGGER.debug(
+                            "[%s] Sorted alert ID: %s",
+                            self.feedid,
+                            sorted_alert.get("id", "null")
+                        )
 
                     self._state = len(alerts)
                     self._attr = {
@@ -199,7 +214,7 @@ class WeatherAlertsSensor(Entity):  # pylint: disable=missing-docstring
             if self.connected:
                 if not connected:
                     self._state = "unavailable"
-                    _LOGGER.error(
+                    _LOGGER.warning(
                         "[%s] Could not update the sensor (%s)",
                         self.feedid,
                         self.exception,
@@ -210,7 +225,7 @@ class WeatherAlertsSensor(Entity):  # pylint: disable=missing-docstring
                     _LOGGER.info("[%s] Update of the sensor completed", self.feedid)
                 else:
                     self._state = "unavailable"
-                    _LOGGER.debug(
+                    _LOGGER.warning(
                         "[%s] Still no update (%s)", self.feedid, self.exception
                     )
 
@@ -239,7 +254,7 @@ class WeatherAlertsSensor(Entity):  # pylint: disable=missing-docstring
     @property
     def icon(self):
         """Return icon."""
-        return "mdi:weather-hurricane"
+        return "mdi:alert-octagram"
 
     @property
     def device_state_attributes(self):

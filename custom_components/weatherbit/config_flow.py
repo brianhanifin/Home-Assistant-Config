@@ -12,23 +12,84 @@ from homeassistant.const import (
     CONF_LATITUDE,
     CONF_LONGITUDE,
 )
-from homeassistant.config_entries import ConfigFlow
+from homeassistant import config_entries, core
 import homeassistant.helpers.config_validation as cv
+from homeassistant.core import callback
 
-from .const import DOMAIN
+from .const import (
+    DOMAIN,
+    DEFAULT_SCAN_INTERVAL,
+    DEFAULT_FORECAST_LANGUAGE,
+    CONF_ADD_SENSORS,
+    CONF_ADD_ALERTS,
+    CONF_CUR_UPDATE_INTERVAL,
+    CONF_FCS_UPDATE_INTERVAL,
+    CONF_FORECAST_LANGUAGE,
+    FORECAST_LANGUAGES,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-@config_entries.HANDLERS.register(DOMAIN)
-class WeatherbitFlowHandler(ConfigFlow):
-    """Config flow for Weatherbit component."""
+async def validate_input(hass: core.HomeAssistant, data):
+    """Validate the user input allows us to connect.
+    Data has the keys from DATA_SCHEMA with values provided by the user.
+    """
+    wbit_client = Weatherbit(
+        data[CONF_API_KEY], data[CONF_LATITUDE], data[CONF_LONGITUDE],
+    )
+
+    unique_id = await wbit_client.async_get_city_name()
+
+    return unique_id
+
+
+class WeatherbitConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Weatherbit configuration flow."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
+    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
-    async def _show_setup_form(self, errors=None):
-        """Show the setup form to the user."""
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return OptionsFlowHandler(config_entry)
+
+    async def async_step_user(self, user_input=None):
+        """Handle a flow initialized by the user."""
+        errors = {}
+
+        if user_input is not None:
+            await self.async_set_unique_id(
+                f"{user_input[CONF_LATITUDE]}_{user_input[CONF_LONGITUDE]}"
+            )
+            self._abort_if_unique_id_configured()
+            try:
+                info = await validate_input(self.hass, user_input)
+            except WeatherbitError:
+                errors = {"base": "connection_error"}
+
+            if "base" not in errors:
+                return self.async_create_entry(
+                    title=info,
+                    data={
+                        CONF_ID: info,
+                        CONF_API_KEY: user_input[CONF_API_KEY],
+                        CONF_LATITUDE: user_input[CONF_LATITUDE],
+                        CONF_LONGITUDE: user_input.get(CONF_LONGITUDE),
+                        CONF_FORECAST_LANGUAGE: user_input.get(CONF_FORECAST_LANGUAGE),
+                        CONF_FCS_UPDATE_INTERVAL: user_input.get(
+                            CONF_FCS_UPDATE_INTERVAL
+                        ),
+                        CONF_CUR_UPDATE_INTERVAL: user_input.get(
+                            CONF_CUR_UPDATE_INTERVAL
+                        ),
+                        CONF_ADD_SENSORS: user_input.get(CONF_ADD_SENSORS),
+                        CONF_ADD_ALERTS: user_input.get(CONF_ADD_ALERTS),
+                    },
+                )
+
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
@@ -40,41 +101,65 @@ class WeatherbitFlowHandler(ConfigFlow):
                     vol.Required(
                         CONF_LONGITUDE, default=self.hass.config.longitude
                     ): cv.longitude,
+                    vol.Optional(CONF_FORECAST_LANGUAGE, default="en"): vol.In(
+                        FORECAST_LANGUAGES
+                    ),
+                    vol.Optional(
+                        CONF_FCS_UPDATE_INTERVAL, default=DEFAULT_SCAN_INTERVAL
+                    ): vol.All(vol.Coerce(int), vol.Range(min=30, max=120)),
+                    vol.Optional(
+                        CONF_CUR_UPDATE_INTERVAL, default=DEFAULT_SCAN_INTERVAL
+                    ): vol.All(vol.Coerce(int), vol.Range(min=4, max=60)),
+                    vol.Optional(CONF_ADD_SENSORS, default=True): bool,
+                    vol.Optional(CONF_ADD_ALERTS, default=False): bool,
                 }
             ),
-            errors=errors or {},
+            errors=errors,
         )
 
-    async def async_step_user(self, user_input=None):
-        """Handle a flow initiated by the user."""
-        if user_input is None:
-            return await self._show_setup_form(user_input)
 
-        errors = {}
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle options."""
 
-        wbit_client = Weatherbit(
-            user_input[CONF_API_KEY],
-            user_input[CONF_LATITUDE],
-            user_input[CONF_LONGITUDE],
-        )
+    def __init__(self, config_entry):
+        """Initialize options flow."""
+        self.config_entry = config_entry
 
-        try:
-            unique_id = await wbit_client.async_get_city_name()
-        except WeatherbitError:
-            errors["base"] = "connection_error"
-            return await self._show_setup_form(errors)
+    async def async_step_init(self, user_input=None):
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
 
-        entries = self._async_current_entries()
-        for entry in entries:
-            if entry.data[CONF_ID] == unique_id:
-                return self.async_abort(reason="name_exists")
-
-        return self.async_create_entry(
-            title=unique_id,
-            data={
-                CONF_ID: unique_id,
-                CONF_API_KEY: user_input[CONF_API_KEY],
-                CONF_LATITUDE: user_input[CONF_LATITUDE],
-                CONF_LONGITUDE: user_input.get(CONF_LONGITUDE),
-            },
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_FORECAST_LANGUAGE,
+                        default=self.config_entry.options.get(
+                            CONF_FORECAST_LANGUAGE, DEFAULT_FORECAST_LANGUAGE
+                        ),
+                    ): vol.In(FORECAST_LANGUAGES),
+                    vol.Optional(
+                        CONF_FCS_UPDATE_INTERVAL,
+                        default=self.config_entry.options.get(
+                            CONF_FCS_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL
+                        ),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=30, max=120)),
+                    vol.Optional(
+                        CONF_CUR_UPDATE_INTERVAL,
+                        default=self.config_entry.options.get(
+                            CONF_CUR_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL
+                        ),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=4, max=60)),
+                    # vol.Optional(
+                    #     CONF_ADD_SENSORS,
+                    #     default=self.config_entry.options.get(CONF_ADD_SENSORS, True),
+                    # ): bool,
+                    # vol.Optional(
+                    #     CONF_ADD_ALERTS,
+                    #     default=self.config_entry.options.get(CONF_ADD_ALERTS, False),
+                    # ): bool,
+                }
+            ),
         )
