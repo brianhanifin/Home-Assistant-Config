@@ -26,13 +26,17 @@ action:
 
   # Turn on the notification lights
   - service: light.turn_on
-    entity_id: light.table_lamp
+    entity_id:
+      - light.table_lamp
+      - light.garage_entry
   - service: light.turn_on
     data:
-      entity_id:
-        - light.garage_entry
-        - light.table_lamp
+      entity_id: light.table_lamp
       brightness_pct: 40
+  - service: light.turn_on
+    data:
+      entity_id: light.table_lamp
+      brightness_pct: 100
 
   # Flash the bulbs to draw attention.
   - delay: "0:00:01"
@@ -88,13 +92,13 @@ action:
       level: 4
 
   # If after 5 minutes the garage is still open, dim the lights.
-  - delay: "0:05:00"
-  - condition: state
-    entity_id: cover.garage_door
-    state:     'open'
+  # - delay: "0:05:00"
+  # - condition: state
+  #   entity_id: cover.garage_door
+  #   state:     'open'
 
-  - service: light.turn_on
-    data:
-      entity_id: light.garage_entry
-      brightness_pct: 30
-      transition: 5
+  # - service: light.turn_on
+  #   data:
+  #     entity_id: light.garage_entry
+  #     brightness_pct: 30
+  #     transition: 5
