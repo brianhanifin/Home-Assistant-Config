@@ -1,29 +1,48 @@
 ---
 sequence:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "bedroom_switch_buttons"
+  #     message: |
+  #       {%- set button = side.split('_')[0]  %}
+  #       {%- set type = side.split('_')[1]  %}
+
+  #       {{ button }}
+  #       {{ type }}
+
+  #       {% if type == "double" -%}
+  #         switch.toggle
+  #       {% elif type == "single" -%}
+  #         light.toggle
+  #       {% endif %}
+
   - service_template: >
-      {%- if type in ["long", "double", "long_both", "double_both"] -%}
+      {%- set button = side.split('_')[0]  %}
+      {%- set type = side.split('_')[1]  %}
+
+      {%- if type == "double" -%}
         switch.toggle
-      {%- elif type in ["single", "both"] -%}
+      {%- elif type == "single" -%}
         light.toggle
       {%- endif %}
     data_template:
       entity_id: >
+        {%- set button = side.split('_')[0]  %}
+        {%- set type = side.split('_')[1]  %}
+
         {%- set button_press = {
             "left": {
               "single": "light.bedroom",
-              "double": "switch.sound_machine",
-              "long": "switch.sound_machine"
+              "double": "switch.sound_machine"
             },
             "right": {
               "single": "light.brian",
-              "double": "switch.bedroom_fan",
-              "long": "switch.bedroom_fan"
+              "double": "switch.bedroom_fan"
             },
             "both": {
-              "both": "light.glowforge",
-              "double_both": "switch.sound_machine, switch.bedroom_fan",
-              "long_both": "switch.sound_machine, switch.bedroom_fan"
+              "single": "light.glowforge",
+              "double": "switch.sound_machine, switch.bedroom_fan"
             }
           }
         -%}
-        {{ button_press[side][type] }}
+        {{ button_press[button][type] }}

@@ -1,0 +1,24 @@
+---
+alias: zha_button_click
+initial_state: true
+trigger:
+  platform: event
+  event_type: zha_event
+condition:
+  - condition: template
+    value_template: "{{ trigger.event.data.args.value != false }}"
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "zha_button_click"
+  #     message: "trigger.event.data: {{ trigger.event.data }}\n  args: {{ trigger.event.data.args }}"
+
+  #click_types: single, double, both_single, both_double
+  - service: script.zha_button_handler
+    data_template:
+      command: >
+        {{ trigger.event.data.command }}
+      device: >
+        {{ trigger.event.data.device_ieee }}
+      value: >
+        {{ trigger.event.data.args.value }}
