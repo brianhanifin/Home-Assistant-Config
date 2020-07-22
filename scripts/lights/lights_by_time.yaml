@@ -4,9 +4,11 @@
 ############################################
 sequence:
   # Only adjust light brightness if someone is home.
-  - condition: template
-    value_template: "{{ is_state('input_boolean.guest_mode','off')
-                    and is_state('input_boolean.away_mode','off') }}"
+  - condition: state
+    entity_id:
+      - input_boolean.away_mode
+      - input_boolean.guest_mode
+    state: "off"
 
   # Get the current list of lights that are one.
   - service: script.turn_on

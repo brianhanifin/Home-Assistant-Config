@@ -12,10 +12,9 @@ condition:
   condition: and
   conditions:
     - condition: state
-      entity_id: input_boolean.guest_mode
-      state: "off"
-    - condition: state
-      entity_id: input_boolean.leave_unlocked
+      entity_id:
+        - input_boolean.guest_mode
+        - input_boolean.leave_unlocked
       state: "off"
 action:
   - service: timer.cancel

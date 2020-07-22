@@ -13,9 +13,11 @@ sequence:
     value_template: "{{ not is_state('sensor.holiday_scene','standard') }}"
 
   # Both guest_mode and away_mode are inactive
-  - condition: template
-    value_template: "{{ is_state('input_boolean.guest_mode','off')
-                    and is_state('input_boolean.away_mode','off') }}"
+  - condition: state
+    entity_id:
+      - input_boolean.away_mode
+      - input_boolean.guest_mode
+    state: "off"
 
   # Change the color scene
   - service: scene.turn_on

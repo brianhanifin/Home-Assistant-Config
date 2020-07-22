@@ -13,14 +13,13 @@ condition:
       entity_id: cover.garage_door
       state: 'open'
     - condition: state
-      entity_id: binary_sensor.front_door
+      entity_id:
+        - binary_sensor.front_door
+        - binary_sensor.upstairs_bathroom_window
       state: 'on'
     - condition: state
       entity_id: lock.front_door
       state: 'unlocked'
-    - condition: state
-      entity_id: binary_sensor.upstairs_bathroom_window
-      state: 'on'
 action:
   # Generate a simple announcement for items we cannot close or
   # generate an actionable inquiry to close/lock doors.

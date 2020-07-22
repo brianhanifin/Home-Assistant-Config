@@ -33,7 +33,6 @@ action:
   - condition: template
     value_template: >
       {%- set current_state = states("input_select." + trigger.entity_id.split('_')[1]) -%}
-      {%- set next_option = {"Just Left": "Away"} -%}
       {{ current_state == "Away" }}
 
   # "Away" doesn't become "Extended Away" for 24 hours.
