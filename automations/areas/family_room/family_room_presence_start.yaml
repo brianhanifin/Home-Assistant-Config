@@ -1,0 +1,34 @@
+---
+alias: family_room_presence_start
+initial_state: true
+trigger:
+  # Trigger if either motion sensor is on.
+  - platform: state
+    entity_id: binary_sensor.family_room_1_presence_live
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.family_room_2_presence_live
+    from: 'off'
+    to: 'on'
+condition:
+  # Skip turning on the entry lights in the middle of the day.
+  # - condition: template
+  #   value_template: "{{ states('sensor.outside_illuminance')|int < 2000 }}"
+  - condition: numeric_state
+    entity_id: sensor.weatherbit_solar_radiation
+    below: 100
+
+  # We don't need to turn on the light when the dogs are alone.
+  # - condition: state
+  #   entity_id: input_boolean.away_mode
+  #   state: 'off'
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "family_room_presence_start"
+  #     message: "Triggered by: {{ trigger.to_state.attributes.friendly_name }}\nto_state: {{ trigger.to_state.state }}\nfrom_state: {{ trigger.from_state.state }}"
+
+  # Family Room Presence Light On
+  - service: scene.turn_on
+    entity_id: scene.family_room_normal

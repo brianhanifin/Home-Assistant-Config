@@ -5,12 +5,14 @@
 alias: kitchen_presence_start
 initial_state: true
 trigger:
-  # Trigger if either motion sensor are on.
+  # Trigger if either motion sensor is on.
   - platform: state
-    entity_id:
-      - binary_sensor.kitchen_1_presence
-      - binary_sensor.kitchen_2_presence
-    #from: 'off'
+    entity_id: binary_sensor.kitchen_1_presence_live
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.kitchen_2_presence_live
+    from: 'off'
     to: 'on'
 # condition:
 #   # We don't need to turn on the light when the dogs are alone.

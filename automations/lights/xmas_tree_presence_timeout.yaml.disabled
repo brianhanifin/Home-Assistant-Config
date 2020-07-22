@@ -1,7 +1,7 @@
 ---
 # NOTE: This experiment didn't work so well. It needs work.
 #
-# To conserve power: turn the Christmas tree lights off when no one 
+# To conserve power: turn the Christmas tree lights off when no one
 # has been seen nearby for a while.
 alias: xmas_tree_presence_timeout
 initial_state: true
@@ -10,7 +10,8 @@ trigger:
     entity_id:
       - binary_sensor.kitchen_1_presence
       - binary_sensor.kitchen_2_presence
-      - binary_sensor.family_room_presence
+      - binary_sensor.family_room_1_presence
+      - binary_sensor.family_room_2_presence
 action:
   # Store the current state of the tree lights.
   - service: variable.set_variable
@@ -30,7 +31,7 @@ action:
 
   - delay:
       minutes: 20
-  
+
   # - service: script.debug
   #   data_template:
   #     message: "seconds since last trigger = {{ (now() - trigger.from_state.last_changed).total_seconds() }}"
