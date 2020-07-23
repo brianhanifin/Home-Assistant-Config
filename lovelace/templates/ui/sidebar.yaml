@@ -54,37 +54,6 @@ card:
 
     - type: vertical-stack
       cards:
-        - type: glance
-          columns: 5
-          show_name: False
-          style: |
-            ha-card {
-              background: none;
-              box-shadow: none;
-              letter-spacing: 0.06em;
-              opacity: 0.65;
-              margin-top: -2.5em;
-            }
-          entities:
-            - entity: input_select.brian
-              tap_action:
-                action: more-info
-            - entity: input_select.nerene
-              tap_action:
-                action: more-info
-            - entity: input_select.lucas
-              tap_action:
-                action: more-info
-            - entity: input_select.eric
-              tap_action:
-                action: more-info
-            # - entity: input_select.sandy
-            #   tap_action:
-            #     action: more-info
-            - entity: input_select.heather
-              tap_action:
-                action: more-info
-
         - type: custom:card-templater
           entities:
             - variable.left_home
@@ -97,7 +66,7 @@ card:
                 font-size: 1.3em;
                 font-weight: 400;
                 letter-spacing: 0.03em;
-                margin: -1.5em auto;
+                margin: -2em auto 0 auto;
                 opacity: 0.65;
               }
             content_template: >
@@ -134,16 +103,17 @@ card:
                   {{ weekly_chores("Kyle") -}}
                 </td>
               </tr>
+              <!--
               <tr>
                 <td colspan="2">
-                  <!--
+
                   {% if now().hour < 5 %}Goodnight 😴
                   {% elif now().hour < 11 %}Good morning 🌄
                   {% elif now().hour < 18 %}Good afternoon ☀️
                   {% else %}Good evening 🌇
                   {% endif %}
                 </td>
-                <td align="right"> -->
+                <td align="right">
                   {%- set group_id = 'xgroup.actionable_lights' -%}
                   {%- if states(group_id) != 'unknown' -%}
                     {%- set lights = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='name') | list -%}
@@ -157,30 +127,83 @@ card:
                   {%- endif -%}
                 </td>
               </tr>
+              -->
               </table>
 
+    - type: vertical-stack
+      style: |
+        ha-card {
+          background: rgba(128, 0, 0, 0.3);
+          box-shadow: none;
+          border-radius: 0;
+          color: white;
+          max-height: 50%;
+          --paper-item-icon-color: white;
+          --paper-item-icon-active-color: white;
+          margin: 0;
+          padding: 0 1em 0 1em;
+        }
+        ha-card a {
+          color: white;
+        }
+      cards:
         - type: custom:home-feed-card
           style: |
             ha-card {
               background: rgba(128, 0, 0, 0.3);
               box-shadow: none;
               border-radius: 0;
-              color: white;
-              margin: 0 0 20px 0;
-              max-height: 50%;
-              --paper-item-icon-color: white;
-              --paper-item-icon-active-color: white;
-              padding: 20px 20px 0 20px;
-            }
-            ha-card a {
-              color: white;
+              margin: 0;
+              padding: 0 1.5em;
             }
           title: ""
-          compact_mode: true
+          compact_mode: false
           more_info_on_tap: true
           show_empty: false
           show_notification_title: true
           entities: !include ../../../templates/ui/notifications.yaml
+
+        - type: 'custom:auto-entities'
+          card:
+            type: entities
+            style: |
+              ha-card {
+                background: rgba(128, 0, 0, 0.3);
+                box-shadow: none;
+                border-radius: 0;
+                margin: 0;
+                padding: 0;
+              }
+          show_empty: false
+          sort:
+            method: state
+            numeric: true
+          filter:
+            include:
+              - entity_id: sensor.*_battery
+            exclude:
+              - state: '>30'
+              - entity_id: '*ipad*'
+              - entity_id: '*iphone*'
+              - entity_id: '*life360*'
+              - entity_id: '*macbook*'
+              - entity_id: '*watch*'
+
+    - type: vertical-stack
+      cards:
+        - type: entity-filter
+          entities:
+            - input_select.brian
+            - input_select.nerene
+            - input_select.lucas
+            - input_select.eric
+            - input_select.sandy
+            - input_select.heather
+          state_filter:
+            - Home
+            - Just Arrived
+          card:
+            type: 'custom:badge-card'
 
         - type: horizontal-stack
           cards:
