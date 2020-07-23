@@ -15,9 +15,12 @@ condition:
   # Skip turning on the entry lights in the middle of the day.
   # - condition: template
   #   value_template: "{{ states('sensor.outside_illuminance')|int < 2000 }}"
-  - condition: numeric_state
-    entity_id: sensor.weatherbit_solar_radiation
-    below: 100
+  # - condition: numeric_state
+  #   entity_id: sensor.weatherbit_solar_radiation
+  #   below: 100
+  - condition: state
+    entity_id: binary_sensor.dark_outside
+    state: "true"
 
   # We don't need to turn on the light when the dogs are alone.
   # - condition: state
