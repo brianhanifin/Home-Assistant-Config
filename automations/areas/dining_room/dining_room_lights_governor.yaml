@@ -4,6 +4,7 @@
 ##############################################
 alias: dining_room_light_governor
 initial_state: true
+mode: single
 trigger:
   platform: state
   entity_id: light.dining_room
@@ -14,3 +15,7 @@ action:
     data:
       entity_id: light.dining_room
       brightness: 255
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 1

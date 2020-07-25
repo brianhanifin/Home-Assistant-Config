@@ -3,6 +3,7 @@
 alias: Family Room Presence End
 id: family_room_presence_end
 initial_state: true
+mode: single
 trigger:
   # If both motion sensors returns to off.
   - platform: state
@@ -11,3 +12,7 @@ trigger:
 action:
   - service: scene.turn_on
     entity_id: scene.family_room_lights_off
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 10

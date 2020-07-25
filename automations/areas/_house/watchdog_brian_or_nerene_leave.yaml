@@ -2,6 +2,7 @@
 # Close the garage door + lock the front door if Brian or Nerene leave home.
 alias: watchdog_brian_or_nerene_leave
 initial_state: true
+mode: single
 trigger:
   - platform: state
     entity_id:
@@ -18,3 +19,7 @@ action:
     state:     'open'
   - service: cover.close_cover
     entity_id: cover.garage_door
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 5

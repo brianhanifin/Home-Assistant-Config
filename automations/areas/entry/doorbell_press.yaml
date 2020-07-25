@@ -2,6 +2,7 @@
 # PLay a doorbell sound when the button is pressed.
 alias: doorbell_press
 initial_state: true
+mode: single
 trigger:
   - platform: state
     entity_id: binary_sensor.doorbell_press
@@ -45,3 +46,8 @@ action:
   #     entity_id: media_player.family_room_speaker
   #     media_content_id: "http://10.0.0.5:8123/local/audio/jetsons-doorbell.mp3"
   #     media_content_type: music
+
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 10

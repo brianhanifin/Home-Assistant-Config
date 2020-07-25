@@ -1,6 +1,7 @@
 ---
 alias: hacs_update_notification
 initial_state: true
+mode: single
 trigger:
   platform: state
   entity_id: sensor.hacs
@@ -21,7 +22,7 @@ action:
 
           {% for repo in state_attr(trigger.entity_id, 'repositories') %}
             **{{ repo.display_name }}** _{{ repo["installed version"] }}_ -> _{{ repo["available version"] }}_
-          {% endfor %}          
+          {% endfor %}
       id: "update"
 
   - service: script.notify_mobile
@@ -35,3 +36,7 @@ action:
           **{{ repo.display_name }}** _{{ repo["installed version"] }}_ -> _{{ repo["available version"] }}_
         {% endfor %}
       who: "brian"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 15

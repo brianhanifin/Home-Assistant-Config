@@ -4,6 +4,7 @@
 ##############################################################################
 alias: family_departure
 initial_state: true
+mode: single
 trigger:
   - platform: state
     entity_id:
@@ -39,3 +40,7 @@ action:
         }
     data_template:
       value: "{{ trigger.to_state.attributes.friendly_name }}"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 5

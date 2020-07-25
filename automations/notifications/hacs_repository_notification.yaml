@@ -1,6 +1,7 @@
 ---
 alias: hacs_repository_notification
 initial_state: true
+mode: single
 trigger:
   platform: event
   event_type: hacs/repository
@@ -10,11 +11,15 @@ condition:
   condition: template
   value_template: "{{ trigger.event.data.repository is defined }}"
 action:
-  service: persistent_notification.create
-  data_template:
-    title: New repository in HACS
-    message: >-
-      {% set repo = trigger.event.data.repository %}
-      {% set id = trigger.event.data.repository_id %}
-      [{{ repo }}](/hacs/repository/{{ id }})
-      was just added to HACS.
+  - service: persistent_notification.create
+    data_template:
+      title: New repository in HACS
+      message: >-
+        {% set repo = trigger.event.data.repository %}
+        {% set id = trigger.event.data.repository_id %}
+        [{{ repo }}](/hacs/repository/{{ id }})
+        was just added to HACS.
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 15

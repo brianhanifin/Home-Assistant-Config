@@ -2,6 +2,7 @@
 # Notify when Nerene leaves work.
 alias: nerene_leaves_work
 initial_state: true
+mode: single
 trigger:
   platform: zone
   event: leave
@@ -21,3 +22,7 @@ action:
           "Your mom is on her way home from work."
         ]|random }}
       say_greeting: "false"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 60

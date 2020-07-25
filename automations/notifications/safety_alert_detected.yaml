@@ -1,6 +1,7 @@
 ---
 alias: safety_alert_detected
 initial_state: true
+mode: single
 trigger:
   - platform: numeric_state
     entity_id:
@@ -12,7 +13,7 @@ action:
     data_template:
       title: >
         {%-
-          set alarm_states = { 
+          set alarm_states = {
             "1" : "Smoke",
             "2" : "Carbon Monoxide",
             "12" : "Test Button Press"
@@ -22,7 +23,7 @@ action:
         {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} Detected!
       message: >
         {%-
-          set alarm_states = { 
+          set alarm_states = {
             "1" : "Smoke",
             "2" : "Carbon Monoxide",
             "12" : "Test Button Press"
@@ -38,7 +39,7 @@ action:
       media_player: group.alexa_downstairs
       message: >
         {%-
-          set alarm_states = { 
+          set alarm_states = {
             "1" : "Smoke",
             "2" : "Carbon Monoxide",
             "12" : "Test Button Press"
@@ -53,7 +54,7 @@ action:
     data_template:
       title: >
         {%-
-          set alarm_states = { 
+          set alarm_states = {
             "1" : "Smoke",
             "2" : "Carbon Monoxide",
             "12" : "Test Button Press"
@@ -63,7 +64,7 @@ action:
         {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} Detected!
       message: >
         {%-
-          set alarm_states = { 
+          set alarm_states = {
             "1" : "Smoke",
             "2" : "Carbon Monoxide",
             "12" : "Test Button Press"
@@ -73,3 +74,7 @@ action:
         {%- set room = trigger.to_state.name|replace("Safety Alarm: ","")|replace(" Type","") -%}
         {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} detected in the {{ room|upper }}
       id: "safety"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 5

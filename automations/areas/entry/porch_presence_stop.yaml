@@ -5,6 +5,7 @@
 # Porch Presence: Timeout
 alias: porch_presence_stop
 initial_state: true
+mode: single
 trigger:
   - platform: state
     entity_id: binary_sensor.doorbell_presence
@@ -23,3 +24,7 @@ action:
     data:
       entity_id: scene.doorbell_presence_lights_snapshot
       transition: 5
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 5

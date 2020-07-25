@@ -3,13 +3,15 @@
 #
 alias: watchdog_leak_sensors
 initial_state: true
+mode: single
 trigger:
   platform: state
   entity_id:
     - binary_sensor.downstairs_bathroom_leak
-    # - binary_sensor.garage_leak
+    # - binary_sensor.garage_water_heater_leak
     # - binary_sensor.goez_bathroom_1_leak
     # - binary_sensor.goez_bathroom_2_leak
+    # - binary_sensor.goez_water_heater_leak
     - binary_sensor.kitchen_leak
     - binary_sensor.master_bathroom_1_leak
     - binary_sensor.master_bathroom_2_leak
@@ -38,3 +40,7 @@ action:
         {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
         {{ room|upper }}: A leak has been detected!
       notification_id: "safety"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 5

@@ -2,6 +2,7 @@
 # Notify when Nerene is almost home!
 alias: nerene_is_nearby
 initial_state: true
+mode: single
 trigger:
   - platform: numeric_state
     entity_id: proximity.nerene_home
@@ -31,3 +32,7 @@ action:
           "Guess what? ... Chicken butt. ... Your mom is almost home. "
         ]|random }}
       say_greeting: "false"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 60

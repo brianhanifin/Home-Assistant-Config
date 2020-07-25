@@ -2,6 +2,7 @@
 # Brian or Nerene leave Costco.
 alias: leaving_costco
 initial_state: true
+mode: single
 trigger:
   platform: zone
   event: leave
@@ -28,7 +29,11 @@ action:
             {% set name = "mom" %}
           {% elif name == "Brian" %}
             {% set name = "dad" %}
-          {% endif %} 
-        {% endif %} 
+          {% endif %}
+        {% endif %}
         {{ message|replace("[name1]",name)|replace("[name2]",name) }}
       say_greeting: "false"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 5
