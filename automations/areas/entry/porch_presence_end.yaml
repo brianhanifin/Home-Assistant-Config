@@ -2,31 +2,29 @@
 ##############################################
 ###  Porch
 ##############################################
-# Porch Presence: Start
-alias: porch_presence_start
+# Porch Presence: Timeout
+alias: Porch Presence End
+id: porch_presence_end
 initial_state: true
 mode: single
 trigger:
   - platform: state
     entity_id: binary_sensor.doorbell_presence
-    from: 'off'
-    to: 'on'
+    from: 'on'
+    to: 'off'
+    # for:
+    #   minutes: 2
+    #   seconds: 00
 condition:
   # Only activate the lights after sunset.
   - condition: sun
     after: sunset
 action:
-
-  # Store the current state of the porch light.
-  - service: scene.create
-    data:
-      scene_id: doorbell_presence_lights_snapshot
-      snapshot_entities:
-        - light.porch
-
-  # Full brightness!
+  # Restore the previous state of the porch light.
   - service: scene.turn_on
-    entity_id: scene.front_full_brightness
+    data:
+      entity_id: scene.doorbell_presence_lights_snapshot
+      transition: 5
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
