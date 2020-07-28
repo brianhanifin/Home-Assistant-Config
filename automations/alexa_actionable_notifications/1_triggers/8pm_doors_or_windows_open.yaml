@@ -48,7 +48,7 @@ action:
             {{ 'T' if entity == open_entities|first else 't' }}he {{ state_attr(entity,'friendly_name') }} was left {{ 'unlocked' if 'lock' in entity else 'open' }}{{ '.' if entity == open_entities|last else ', ' }}{{ 'and ' if open_entities|length > 1 and entity != open_entities|last }}
           {%- endfor -%}
           {%- if is_state('cover.garage_door','open') or (is_state('lock.front_door','unlocked') and is_state('binary_sensor.front_door','off')) %}
-            Would you like me to close your doors?
+            Would you like me to close and lock your doors?
           {%- endif -%}
         {%- endif -%}
 

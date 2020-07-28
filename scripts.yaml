@@ -1,2 +1,43 @@
----
-[]
+test:
+  alias: test
+  mode: single
+  sequence:
+  - data:
+      node_id: '{{ state_attr(entity_id,''node_id'') }}'
+      parameter: '{%- set dimmer = dimmer|default(''true'') %} {{ "16" if dimmer ==
+        "true" else "8" }}
+
+        '
+      size: 4
+    data_template:
+      node_id: '{{ state_attr(entity_id,''node_id'') }}'
+      parameter: '{%- set dimmer = dimmer|default(''true'') %} {{ "16" if dimmer ==
+        "true" else "8" }}
+
+        '
+      size: 4
+      value: "{# Skip the calculations for effect = \"off\". #} {% if effect|title\
+        \ == \"Off\" %}\n  0\n{% else %}\n  {# Set default values if any needed values\
+        \ are missing. #}\n  {% set color = color|default(\"Yellow\") %}\n  {% set\
+        \ level = level|default(4) %}{# 1-10 #}\n  {% set duration = duration|default(\"\
+        Indefinitely\") %}\n  {% set effect = effect|default(\"Pulse\") %}\n  {# Let's\
+        \ make things easy by using descriptive text instead of hard to understand\
+        \ numbers. #}\n  {% set colors = {\n    \"Red\": 1,\n    \"Orange\": 21,\n\
+        \    \"Green\": 85,\n    \"Blue\": 170,\n    \"Pink\": 234,\n    \"Yellow\"\
+        : 42,\n    \"Cyan\": 127,\n  \"Purple\": 195\n  } %}\n  {% set durations =\
+        \ {\n    \"1 Second\": 1,\n    \"2 Seconds\": 2,\n    \"3 Seconds\": 3,\n\
+        \    \"4 Seconds\": 4,\n    \"5 Seconds\": 5,\n    \"6 Seconds\": 6,\n   \
+        \ \"7 Seconds\": 7,\n    \"8 Seconds\": 8,\n    \"9 Seconds\": 9,\n    \"\
+        10 Seconds\": 10,\n    \"15 Seconds\": 15,\n    \"20 Seconds\": 20,\n    \"\
+        25 Seconds\": 25,\n    \"30 Seconds\": 30,\n    \"35 Seconds\": 35,\n    \"\
+        40 Seconds\": 40,\n    \"45 Seconds\": 45,\n    \"50 Seconds\": 50,\n    \"\
+        55 Seconds\": 55,\n    \"60 Seconds\": 60,\n    \"2 Minutes\": 62,\n    \"\
+        3 Minutes\": 63,\n    \"4 Minutes\": 64,\n    \"15 Minutes\": 75,\n    \"\
+        30 Minutes\": 90,\n    \"45 Minutes\": 105,\n    \"1 Hour\": 120,\n    \"\
+        2 Hours\": 122,\n    \"Indefinitely\": 255\n  } %}\n  {% set effects = {\n\
+        \    \"Off\": 0,\n    \"Solid\": 1,\n    \"Chase\": 2,\n    \"Fast Blink\"\
+        : 3,\n    \"Slow Blink\": 4,\n    \"Blink\": 4,\n    \"Pulse\": 5,\n    \"\
+        Breath\": 5\n  } %}\n  {# Preform the Inovelli mind bending mathmatics automatically\
+        \ for us! :) #}\n  {{ colors[color|title] + (level * 256) + (durations[duration|title]\
+        \ * 65536) + (effects[effect|title] * 16777216) }}\n{% endif %}\n"
+    service: zwave.set_config_parameter

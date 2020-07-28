@@ -89,10 +89,6 @@
   condition: []
   action:
   - data:
-      payload: online
-      topic: hass/status
-    service: mqtt.publish
-  - data:
       name: ios-dark-mode-blue-red-alternative
     service: frontend.set_theme
   - data: {}
@@ -120,13 +116,13 @@
   description: Homekit will delay startup until all devices are available.
   trigger:
   - event_data: {}
-    event_type: zwave.network_ready
+    event_type: ozw.network_ready
     platform: event
   - event_data: {}
-    event_type: zwave.network_complete
+    event_type: ozw.network_complete
     platform: event
   - event_data: {}
-    event_type: zwave.network_complete_some_dead
+    event_type: ozw.network_complete_some_dead
     platform: event
   condition: []
   action:
@@ -141,8 +137,8 @@
     if the other printer is also currently idle. '
   trigger:
   - entity_id:
-      - sensor.hp_colorlaserjet
-      - sensor.hp_officejet
+    - sensor.hp_colorlaserjet
+    - sensor.hp_officejet
     for: 15 minutes
     platform: state
     to: idle
@@ -151,8 +147,8 @@
     conditions:
     - condition: state
       entity_id:
-        - sensor.hp_colorlaserjet
-        - sensor.hp_officejet
+      - sensor.hp_colorlaserjet
+      - sensor.hp_officejet
       state: idle
   action:
   - data: {}

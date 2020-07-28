@@ -1,24 +1,165 @@
 ---
-alias: zwave_button_taps
+alias: Zwave Button Taps
+id: zwave_button_taps
 initial_state: true
-mode: parallel
+mode: queued
 trigger:
   # GE Dimmers
   - platform: event
-    event_type: zwave.node_event
+    event_type: ozw.node_event
   # Inovelli dimmers
   - platform: event
-    event_type: zwave.scene_activated
+    event_type: ozw.scene_activated
 action:
   # - service: persistent_notification.create
   #   data_template:
   #     title: "zwave_button_taps"
-  #     message: "script: script.zwave_button_handler_{{ trigger.event.event_type[6:] }}\nevent_type: {{ trigger.event.event_type }}\nbutton: {{ trigger.event.data.entity_id }}\nbasic_level: {{ trigger.event.data.basic_level }}\nscene_id: {{ trigger.event.data.scene_id }}\nscene_data: {{ trigger.event.data.scene_data }}"
+  #     message: 'data:{{ trigger.event.data }}'
 
-  - service_template: >
-      script.zwave_button_handler_{{ trigger.event.event_type[6:] }}
-    data_template:
-      switch: "{{ trigger.event.data.entity_id }}"
-      level: "{{ trigger.event.data.basic_level|default('') }}"
-      scene_id: "{{ trigger.event.data.scene_id|default('') }}"
-      scene_data: "{{ trigger.event.data.scene_data|default('') }}"
+  - choose:
+    # Node 7: Bedroom Dimmer
+    # GE 14294 In-Wall Smart Dimmer
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.node_id == "7" }}'
+      sequence:
+        - service: persistent_notification.create
+          data_template:
+            title: "zwave_button_taps"
+            message: 'Bedroom Dimmer!!!\n\ndata:{{ trigger.event.data }}'
+
+    # NODE 3: Family Room Dimmer
+    # Inovelli LZW31-SN Dimmer Red Series
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.node_id|trim == "3" }}'
+      # Taps: 1x, 2x, 3x, 4x, 5x
+      sequence:
+        # - service: persistent_notification.create
+        #   data_template:
+        #     title: "zwave_button_taps"
+        #     message: "Family Room Dimmer!!!"
+
+        - choose:
+          # 1x: "Normal" Lighting
+          # - conditions:
+          #   - condition: template
+          #     value_template: '{{ trigger.event.data.scene_value_id|trim == "1" }}'
+          #   sequence:
+          #     # Buttons: DOWN, UP, CONFIG
+          #     choose:
+          #       # SCENE 2: Up
+          #       - conditions:
+          #         - condition: template
+          #           value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+          #         sequence:
+          #           - service: scene.turn_on
+          #             entity_id: scene.family_room_normal
+
+          #       # SCENE 1: Down
+          #       - conditions:
+          #         - condition: template
+          #           value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+          #         sequence:
+          #           - service: persistent_notification.create
+          #             data_template:
+          #               title: "zwave_button_taps"
+          #               message: "1x, Down"
+
+          #           - service: light.turn_off
+          #             entity_id:
+          #               - light.family_room_floor_lamp
+          #               - light.table_lamp
+          #               - light.family_room
+
+          # 2x: Floor Lamp
+          - conditions:
+            - condition: template
+              value_template: '{{ trigger.event.data.scene_value_id|trim == "4" }}'
+            sequence:
+              # Buttons: DOWN, UP
+              choose:
+                # SCENE 2: Up
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                  sequence:
+                    - service: scene.turn_on
+                      entity_id: scene.family_room_all_lights
+
+                # SCENE 1: Down
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                  sequence:
+                    - service: light.turn_off
+                      entity_id: light.family_room_floor_lamp
+
+          # 3x: Fan
+          - conditions:
+            - condition: template
+              value_template: '{{ trigger.event.data.scene_value_id|trim == "5" }}'
+            sequence:
+              # Buttons: DOWN, UP
+              choose:
+                # SCENE 2: Up
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                  sequence:
+                    - service: switch.turn_on
+                      entity_id: switch.family_room_fan
+
+                # SCENE 1: Down
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                  sequence:
+                    - service: switch.turn_off
+                      entity_id: switch.family_room_fan
+
+          # 4x: Party Areas
+          - conditions:
+            - condition: template
+              value_template: '{{ trigger.event.data.scene_value_id|trim == "6" }}'
+            sequence:
+              # Buttons: DOWN, UP
+              choose:
+                # SCENE 2: Up
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                  sequence:
+                    - service: scene.turn_on
+                      entity_id: scene.party_areas
+
+                # SCENE 1: Down
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                  sequence:
+                    - service: scene.turn_on
+                      entity_id: scene.downstairs_off
+
+          # 5x: Guest Mode
+          - conditions:
+            - condition: template
+              value_template: '{{ trigger.event.data.scene_value_id|trim == "7" }}'
+            sequence:
+              # Buttons: DOWN, UP
+              choose:
+                # SCENE 2: Up
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                  sequence:
+                    - service: input_boolean.turn_on
+                      entity_id: input_boolean.guest_mode
+
+                # SCENE 1: Down
+                - conditions:
+                  - condition: template
+                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                  sequence:
+                    - service: input_boolean.turn_off
+                      entity_id: input_boolean.guest_mode
