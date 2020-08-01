@@ -60,20 +60,21 @@ SENSORS = {
     "app_temp": ["Apparent Temperature", DEVICE_TYPE_TEMPERATURE, "thermometer"],
     "humidity": ["Humidity", DEVICE_TYPE_HUMIDITY, "water-percent"],
     "pres": ["Pressure", DEVICE_TYPE_PRESSURE, "gauge"],
+    "slp": ["Sea Level Pressure", DEVICE_TYPE_PRESSURE, "gauge"],
     "clouds": ["Cloud Coverage", "%", "cloud-outline"],
     "solar_rad": ["Solar Radiation", "W/m^2", "weather-sunny"],
     "wind_cdir": ["Wind Direction", "", "compass-outline"],
     "wind_dir": ["Wind Bearing", "°", "compass-outline"],
     "dewpt": ["Dewpoint", DEVICE_TYPE_TEMPERATURE, "thermometer"],
     "vis": ["Visibility", DEVICE_TYPE_DISTANCE, "eye-outline"],
-    "precip": ["Rain Today", DEVICE_TYPE_RAIN, "weather-rainy"],
+    "precip": ["Rain Rate", DEVICE_TYPE_RAIN, "weather-rainy"],
     "uv": ["UV Index", "UVI", "weather-sunny-alert"],
     "aqi": ["Air Quality", "AQI", "hvac"],
     "weather_text": ["Description", "", "text-short"],
     "weather_icon": ["Icon Code", "", "simple-icons"],
     "beaufort_value": ["Beaufort Value", "", "weather-tornado"],
     "beaufort_text": ["Beaufort Text", "", "weather-tornado"],
-    "snow": ["Snow", DEVICE_TYPE_SNOW, "weather-snowy-heavy"],
+    "snow": ["Snow Rate", DEVICE_TYPE_SNOW, "weather-snowy-heavy"],
 }
 
 ALERTS = {
@@ -281,7 +282,7 @@ class WeatherbitSensor(WeatherbitEntity, Entity):
             elif self._device_class == DEVICE_TYPE_HUMIDITY:
                 return "%"
             elif self._device_class == DEVICE_TYPE_RAIN:
-                return "mm" if self._is_metric else "in"
+                return "mm/hr" if self._is_metric else "in/hr"
             elif self._device_class == DEVICE_TYPE_SNOW:
                 return "mm/hr" if self._is_metric else "in/hr"
             elif self._device_class == DEVICE_TYPE_DISTANCE:

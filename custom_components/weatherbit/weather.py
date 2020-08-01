@@ -79,7 +79,7 @@ class WeatherbitWeather(WeatherbitEntity, WeatherEntity):
         super().__init__(
             fcst_coordinator, cur_coordinator, None, entries, DEVICE_TYPE_WEATHER
         )
-        self._name = f"{DOMAIN.capitalize()} {entries[CONF_ID].capitalize()}"
+        self._name = f"{DOMAIN.capitalize()} {entries[CONF_ID]}"
         self._is_metric = is_metric
 
     @property
