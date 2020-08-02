@@ -1,0 +1,25 @@
+---
+  platform: template
+  sensors:
+    devices_family_room_entry:
+      device_class: power
+      entity_id:
+        - light.entry
+        - light.family_room
+        - light.family_room_floor_lamp
+        - light.porch
+        - light.table_lamp
+        - lock.front_door
+        - media_player.family_room_appletv
+        - switch.family_room_fan
+      friendly_name: Family Room & Entryway Devices
+      value_template: "{{
+          is_state('light.entry', 'on')
+          or is_state('light.family_room', 'on')
+          or is_state('light.family_room_floor_lamp', 'on')
+          or is_state('light.porch', 'on')
+          or is_state('light.table_lamp', 'on')
+          or is_state('lock.front_door', 'on')
+          or is_state('media_player.family_room_appletv', 'playing')
+          or is_state('switch.family_room_fan', 'on')
+        }}"

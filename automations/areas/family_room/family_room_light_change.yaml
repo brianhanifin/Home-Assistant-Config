@@ -11,22 +11,29 @@ trigger:
     event_type: state_changed
     event_data:
       entity_id: "light.family_room"
+condition:
+  - condition: template
+    value_template: >
+      {{ trigger.event.data.old_state.state != trigger.event.data.new_state.state }}
 action:
-  # - service: persistent_notification.create
-  #   data_template:
-  #     title: "family_room_light_change"
-  #     message: "old_state: {{ trigger.event.data.old_state.state }}\nnew_state: {{ trigger.event.data.new_state.state }}\nbrightness: {{ trigger.event.data.new_state.attributes.brightness }}"
+  - service: persistent_notification.create
+    data_template:
+      title: "family_room_light_change"
+      message: >
+        old_state: {{ trigger.event.data.old_state.state }}
+        new_state: {{ trigger.event.data.new_state.state }}
+        {% if trigger.event.data.new_state.attributes.brightness|int > 0 %}brightness: {{ trigger.event.data.new_state.attributes.brightness }}{% endif %}
 
   - choose:
-    # Light On
-    - conditions:
-      - condition: template
-        value_template: >
-          {{ trigger.event.data.old_state.state == "off"
-          and trigger.event.data.new_state.state == "on" }}
-      sequence:
-        - service: scene.turn_on
-          entity_id: scene.family_room_normal
+    # # Light On
+    # - conditions:
+    #   - condition: template
+    #     value_template: >
+    #       {{ trigger.event.data.old_state.state == "off"
+    #       and trigger.event.data.new_state.state == "on" }}
+    #   sequence:
+    #     - service: scene.turn_on
+    #       entity_id: scene.family_room_normal
 
     # Light Off
     - conditions:
@@ -40,3 +47,6 @@ action:
             - light.family_room_floor_lamp
             - light.table_lamp
             - light.family_room
+
+  - delay:
+      seconds: 10
