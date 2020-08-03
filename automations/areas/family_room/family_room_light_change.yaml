@@ -16,13 +16,13 @@ condition:
     value_template: >
       {{ trigger.event.data.old_state.state != trigger.event.data.new_state.state }}
 action:
-  - service: persistent_notification.create
-    data_template:
-      title: "family_room_light_change"
-      message: >
-        old_state: {{ trigger.event.data.old_state.state }}
-        new_state: {{ trigger.event.data.new_state.state }}
-        {% if trigger.event.data.new_state.attributes.brightness|int > 0 %}brightness: {{ trigger.event.data.new_state.attributes.brightness }}{% endif %}
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "family_room_light_change"
+  #     message: >
+  #       old_state: {{ trigger.event.data.old_state.state }}
+  #       new_state: {{ trigger.event.data.new_state.state }}
+  #       {% if trigger.event.data.new_state.attributes.brightness|int > 0 %}brightness: {{ trigger.event.data.new_state.attributes.brightness }}{% endif %}
 
   - choose:
     # # Light On
