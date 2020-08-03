@@ -4,6 +4,10 @@ sequence:
     data_template:
       media_player: !include ../../templates/speech/media_player_friendly.yaml
       message: >
-        {{ "<voice name=\"" + voice + "\">" if voice != " " }}
-        {{ phrase }}
-        {{ "</voice>" if voice != " " }}
+        {%- if voice not in ('Alexa',' ') %}
+          {{ '<voice name="' + voice + '">' }}
+          {{ phrase }}
+          {{ '</voice>' }}
+        {%- else -%}
+          {{ phrase }}
+        {%- endif -%}

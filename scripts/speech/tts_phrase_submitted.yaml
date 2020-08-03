@@ -8,7 +8,7 @@ sequence:
     data_template:
       voice: "{{ states('input_select.tts_voices') }}"
       phrase: >
-        {%- if states('input_text.tts_phrase')|replace(' ','') != '' -%}
+        {% if states('input_text.tts_phrase')|replace(' ','') != '' -%}
           {{ states('input_text.tts_phrase') }}
         {%- else -%}
           {{ states('input_select.tts_phrases') }}

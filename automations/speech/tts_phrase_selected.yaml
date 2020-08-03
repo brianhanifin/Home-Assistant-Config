@@ -8,6 +8,7 @@ condition:
   - condition: template
     value_template: "{{ states('input_select.tts_phrases') not in ('None','') }}"
 action:
-  service: script.tts_phrase_say
-  data_template:
-    phrase: "{{ trigger.to_state.state }}"
+  - service: script.tts_phrase_say
+    data_template:
+      voice: "{{ states('input_select.tts_voices') }}"
+      phrase: "{{ states('input_select.tts_phrases') }}"
