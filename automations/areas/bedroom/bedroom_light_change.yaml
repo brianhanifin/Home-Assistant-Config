@@ -24,30 +24,30 @@ action:
   #       new_state: {{ trigger.event.data.new_state.state }}
   #       {% if trigger.event.data.new_state.attributes.brightness|int > 0 %}brightness: {{ trigger.event.data.new_state.attributes.brightness }}{% endif %}
 
-    - choose:
-        # Light On
-        - conditions:
+  - choose:
+      # Light On
+      - conditions:
           - condition: template
             value_template: >
               {{ trigger.event.data.old_state.state == "off"
               and trigger.event.data.new_state.state == "on" }}
-          sequence:
-            - service: homeassistant.turn_on
-              entity_id:
-                - light.brian
-                - light.glowforge
+        sequence:
+          - service: homeassistant.turn_on
+            entity_id:
+              - light.brian
+              - light.glowforge
 
-        # Light Off
-        - conditions:
+      # Light Off
+      - conditions:
           - condition: template
             value_template: >
               {{ trigger.event.data.old_state.state == "on"
               and trigger.event.data.new_state.state == "off" }}
-          sequence:
-            - service: homeassistant.turn_off
-              entity_id:
-                - light.brian
-                - light.glowforge
+        sequence:
+          - service: homeassistant.turn_off
+            entity_id:
+              - light.brian
+              - light.glowforge
 
   - delay:
       seconds: 10

@@ -32,16 +32,16 @@ action:
   - choose:
       # Printer Power Button
       - conditions:
-        - condition: template
-          value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
+          - condition: template
+            value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
         sequence:
           - service: switch.toggle
             entity_id: switch.printers
 
       # Xiaomi Mini Switch
       - conditions:
-        - condition: template
-          value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:05:bf:0f" }}'
+          - condition: template
+            value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:05:bf:0f" }}'
         sequence:
           - service: persistent_notification.create
             data_template:
@@ -50,49 +50,49 @@ action:
 
       # Bedroom Double Switch
       - conditions:
-        - condition: template
-          value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:83:e2:b6" }}'
+          - condition: template
+            value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:83:e2:b6" }}'
         sequence:
           choose:
             # Single Click: Left
             - conditions:
-              - condition: template
-                value_template: '{{ trigger.event.data.command == "left_single" }}'
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "left_single" }}'
               sequence:
                 - service: light.toggle
                   entity_id: light.bedroom
             # Single Click: Right
             - conditions:
-              - condition: template
-                value_template: '{{ trigger.event.data.command == "right_single" }}'
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "right_single" }}'
               sequence:
                 - service: light.toggle
                   entity_id: light.brian
             # Single Click: Both
             - conditions:
-              - condition: template
-                value_template: '{{ trigger.event.data.command == "both_single" }}'
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "both_single" }}'
               sequence:
                 - service: light.toggle
                   entity_id: light.glowforge
             # Double Click: Left
             - conditions:
-              - condition: template
-                value_template: '{{ trigger.event.data.command == "left_double" }}'
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "left_double" }}'
               sequence:
                 - service: switch.toggle
                   entity_id: switch.sound_machine
             # Double Click: Right
             - conditions:
-              - condition: template
-                value_template: '{{ trigger.event.data.command == "right_double" }}'
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "right_double" }}'
               sequence:
                 - service: switch.toggle
                   entity_id: switch.bedroom_fan
             # Double Click: Both
             - conditions:
-              - condition: template
-                value_template: '{{ trigger.event.data.command == "both_double" }}'
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "both_double" }}'
               sequence:
                 - service: switch.toggle
                   entity_id:
