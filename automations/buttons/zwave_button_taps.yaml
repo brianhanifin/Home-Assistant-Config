@@ -51,7 +51,7 @@ action:
                 # SCENE 2: Up
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
                   sequence:
                     - service: scene.turn_on
                       entity_id: scene.family_room_normal
@@ -59,18 +59,12 @@ action:
                 # SCENE 1: Down
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
                   sequence:
-                    - service: persistent_notification.create
-                      data_template:
-                        title: "zwave_button_taps"
-                        message: "1x, Down"
-
-                    - service: light.turn_off
+                    - service: homeassistant.turn_off
                       entity_id:
                         - light.family_room_floor_lamp
                         - light.table_lamp
-                        - light.family_room
 
           # 2x: Floor Lamp
           - conditions:
@@ -82,7 +76,7 @@ action:
                 # SCENE 2: Up
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
                   sequence:
                     - service: scene.turn_on
                       entity_id: scene.family_room_all_lights
@@ -90,7 +84,7 @@ action:
                 # SCENE 1: Down
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
                   sequence:
                     - service: light.turn_off
                       entity_id: light.family_room_floor_lamp
@@ -105,7 +99,7 @@ action:
                 # SCENE 2: Up
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
                   sequence:
                     - service: switch.turn_on
                       entity_id: switch.family_room_fan
@@ -113,7 +107,7 @@ action:
                 # SCENE 1: Down
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
                   sequence:
                     - service: switch.turn_off
                       entity_id: switch.family_room_fan
@@ -128,7 +122,7 @@ action:
                 # SCENE 2: Up
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
                   sequence:
                     - service: scene.turn_on
                       entity_id: scene.party_areas
@@ -136,7 +130,7 @@ action:
                 # SCENE 1: Down
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
                   sequence:
                     - service: scene.turn_on
                       entity_id: scene.downstairs_off
@@ -151,7 +145,7 @@ action:
                 # SCENE 2: Up
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 2" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
                   sequence:
                     - service: input_boolean.turn_on
                       entity_id: input_boolean.guest_mode
@@ -159,7 +153,7 @@ action:
                 # SCENE 1: Down
                 - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_label == "Scene 1" }}'
+                    value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
                   sequence:
                     - service: input_boolean.turn_off
                       entity_id: input_boolean.guest_mode
