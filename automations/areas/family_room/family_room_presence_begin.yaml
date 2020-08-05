@@ -35,22 +35,22 @@ action:
 
   # Restore the presence lights after 4 hours have passed since it was manually disabled.
   - choose:
-    - conditions:
-        # If it is disabled proceed to the next checkpoint.
-        - condition: template
-          value_template: "{{ is_state('input_boolean.presence_lights_family_room','off')  }}"
-      sequence:
-        - choose:
-          - conditions:
-            # If it has been disabled for more than 4 hours, reenable presence lights.
-            - condition: template
-              value_template: >
-                {% set last_changed = states.input_boolean.presence_lights_family_room.last_changed %}
-                {% set hours_since = (as_timestamp(now()) - as_timestamp(last_changed)) / 60 / 60 %}
-                {{ hours_since > 4 }}
-            sequence:
-              - service: input_boolean.turn_on
-                entity_id: input_boolean.presence_lights_family_room
+      - conditions:
+          # If it is disabled proceed to the next checkpoint.
+          - condition: template
+            value_template: "{{ is_state('input_boolean.presence_lights_family_room','off')  }}"
+        sequence:
+          - choose:
+            - conditions:
+              # If it has been disabled for more than 4 hours, reenable presence lights.
+              - condition: template
+                value_template: >
+                  {% set last_changed = states.input_boolean.presence_lights_family_room.last_changed %}
+                  {% set hours_since = (as_timestamp(now()) - as_timestamp(last_changed)) / 60 / 60 %}
+                  {{ hours_since > 4 }}
+              sequence:
+                - service: input_boolean.turn_on
+                  entity_id: input_boolean.presence_lights_family_room
 
   # Stop if the presence lights mode is disabled.
   - condition: state

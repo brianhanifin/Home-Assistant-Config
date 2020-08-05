@@ -1,17 +1,17 @@
 ---
-  platform: template
-  sensors:
-    devices_outside:
-      device_class: power
-      entity_id:
-        - light.porch
-        - switch.irrigation_zone1
-        - switch.irrigation_zone2
-        - switch.landscape_lights
-      friendly_name: Outside Devices
-      value_template: "{{
-          is_state('light.porch', 'on')
-          or is_state('switch.irrigation_zone1', 'on')
-          or is_state('switch.irrigation_zone2', 'on')
-          or is_state('switch.landscape_lights', 'on')
-        }}"
+platform: template
+sensors:
+  devices_outside:
+    device_class: power
+    entity_id:
+      - light.porch
+      - switch.irrigation_zone1
+      - switch.irrigation_zone2
+      - switch.landscape_lights
+    friendly_name: Outside Devices
+    value_template: "{{
+        is_state('light.porch', 'on')
+        or is_state('switch.irrigation_zone1', 'on')
+        or is_state('switch.irrigation_zone2', 'on')
+        or is_state('switch.landscape_lights', 'on')
+      }}"
