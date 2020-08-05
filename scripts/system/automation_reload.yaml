@@ -4,27 +4,48 @@ sequence:
       seconds: 1
 
   # Run the config_check
-  - service: script.config_check
-
-  # Restart only if the configuration is OK
-  - condition: template
-    value_template: "{{ is_state_attr('persistent_notification.1337','message','Configuration is OK!') }}"
-
-  # Clear any old config check notifications
-  - service: persistent_notification.dismiss
-    data:
-      notification_id: "1337"
+  #- service: script.config_check
 
   - service: script.toast
     data:
-      message: "✔️ = 👍"
-
-  - delay:
-      seconds: 2
-
-  - service: script.toast
-    data:
-      message: Reloading automations...
+      message: ✔️ config is running!
       duration: 5000
 
-  - service: automation.reload
+  # Run the config_check
+  - service: config_check.run
+
+  # Wait for the notification to appear
+  - wait_template: "{{ states('persistent_notification.1337') is string }}"
+    timeout: 00:03:00
+
+  - choose:
+    - conditions:
+        # Restart only if the configuration is OK
+        - condition: template
+          value_template: "{{ is_state_attr('persistent_notification.1337','message','Configuration is OK!') }}"
+      sequence:
+        # Clear any old config check notifications
+        - service: persistent_notification.dismiss
+          data:
+            notification_id: "1337"
+
+        - service: script.toast
+          data:
+            message: "✔️ = 👍"
+
+        - delay:
+            seconds: 2
+
+        - service: script.toast
+          data:
+            message: Reloading automations...
+            duration: 5000
+
+        - service: automation.reload
+
+    default:
+      # Display the message as a toast notification
+      - service: script.toast
+        data_template:
+          message: "{{ state_attr('persistent_notification.1337','message') }}"
+          duration: 0

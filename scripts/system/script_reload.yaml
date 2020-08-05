@@ -2,37 +2,55 @@
 sequence:
   # Reloading the script from a script breaks this script until scripts are reloaded
   # from the server control page. So, instead send the user to the page.
-  - service: browser_mod.navigate
-    data:
-      navigation_path: /config/server_control
-      deviceID:
-        - this
-
-  # - delay:
-  #     seconds: 1
-
-  # Run the config_check
-  - service: script.config_check
-
-  # Restart only if the configuration is OK
-  - condition: template
-    value_template: "{{ is_state_attr('persistent_notification.1337','message','Configuration is OK!') }}"
-
-  # Clear any old config check notifications
-  - service: persistent_notification.dismiss
-    data:
-      notification_id: "1337"
-
-  - service: script.toast
-    data:
-      message: "✔️ = 👍"
+  # - service: browser_mod.navigate
+  #   data:
+  #     navigation_path: /config/server_control
+  #     deviceID:
+  #       - this
 
   - delay:
-      seconds: 2
-
-  - service: shell_command.script_reload
-
+      seconds: 1
+      
   - service: script.toast
     data:
-      message: Reloading scripts...
+      message: ✔️ config is running!
       duration: 5000
+  
+  # Run the config_check
+  - service: config_check.run
+
+  # Wait for the notification to appear
+  - wait_template: "{{ states('persistent_notification.1337') is string }}"
+    timeout: 00:03:00
+
+  - choose:
+    - conditions:
+        # Restart only if the configuration is OK
+        - condition: template
+          value_template: "{{ is_state_attr('persistent_notification.1337','message','Configuration is OK!') }}"
+      sequence:
+        # Clear any old config check notifications
+        - service: persistent_notification.dismiss
+          data:
+            notification_id: "1337"
+
+        - service: script.toast
+          data:
+            message: "✔️ = 👍"
+
+        - delay:
+            seconds: 2
+
+        - service: script.toast
+          data:
+            message: Reloading scripts...
+            duration: 5000
+
+        - service: shell_command.script_reload
+
+    default:
+      # Display the message as a toast notification
+      - service: script.toast
+        data_template:
+          message: "{{ state_attr('persistent_notification.1337','message') }}"
+          duration: 0
