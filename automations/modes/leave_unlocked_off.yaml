@@ -11,6 +11,11 @@ action:
     data_template:
       entity_id: timer.front_door_unlocked
 
+  # Restart the timer if the front door is unlocked.
+  - condition: state
+    entity_id: lock.front_door
+    state: 'unlocked'
+
   - service: timer.start
     data_template:
       entity_id: timer.front_door_unlocked
