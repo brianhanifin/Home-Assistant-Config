@@ -36,13 +36,13 @@ action:
         {{ room|upper }}: A leak has been detected!
       who: "parents"
 
-  - service: persistent_notification.create
+  - service: script.notify_web
     data_template:
       title: "WATER LEAK DETECTED!"
       message: >
         {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
         {{ room|upper }}: A leak has been detected!
-      notification_id: "safety"
+      id: "safety"
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:

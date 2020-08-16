@@ -1,12 +1,17 @@
 ---
-alias: safety_alert_detected
+alias: Safety Alert Detected
+id: safety_alert_detected
 initial_state: true
 mode: single
 trigger:
   - platform: numeric_state
     entity_id:
-      - sensor.safety_alarm_bedroom_type
+      - sensor.safety_alarm_boys_bedroom_type
+      - sensor.safety_alarm_craft_room_type
+      - sensor.safety_alarm_goez_suite_type
       - sensor.safety_alarm_guest_room_type
+      - sensor.safety_alarm_master_bedroom_type
+      - sensor.safety_alarm_stairs_type
     below: 13
 action:
   - service: script.notify_mobile
@@ -33,6 +38,7 @@ action:
         {%- set room = trigger.to_state.name|replace("Safety Alarm: ","")|replace(" Type","") -%}
         {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} detected in the {{ room|upper }}
       who: "brian"
+      id: "safety"
 
   - service: script.notify_speech
     data_template:
