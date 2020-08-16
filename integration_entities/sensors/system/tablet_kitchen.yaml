@@ -1,0 +1,25 @@
+---
+# Fully Kiosk Browser Sensor
+platform: rest
+name: tablet_kitchen_fullykiosk
+json_attributes:
+  - batteryLevel
+  - kioskMode
+  - screenBrightness
+  - isScreenOn
+  - motionDetectorState
+  - maintenanceMode
+  - appFreeMemory
+  - appUsedMemory
+  - totalFreeMemory
+  - totalUsedMemory
+  #- hostname4
+  - ip4
+  - mac
+  # - locationLatitude
+  # - locationLongitude
+  # - locationAltitude
+  - startUrl
+  - currentPage
+resource: !secret tablet_kitchen_rest
+value_template: '{{ value_json.isScreenOn }}'
