@@ -284,5 +284,8 @@ class EntitiesCalendarData:
 
         events.sort(key=lambda x: x["start"]["date"] if x["allDay"] else x["start"]["dateTime"] )
 
-        self.event = events[0]
+        next_event = None
+        if events:
+          next_event = events[0]
+        self.event = next_event
         _LOGGER.debug("Updated %s", self._name)
