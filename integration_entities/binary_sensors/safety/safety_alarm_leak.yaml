@@ -1,0 +1,29 @@
+platform: template
+sensors:
+  safety_alarm_leak:
+    device_class: moisture
+    entity_id:
+      - binary_sensor.downstairs_bathroom_leak
+      - binary_sensor.garage_leak
+      - binary_sensor.goez_suite_1_leak
+      - binary_sensor.goez_suite_2_leak
+      - binary_sensor.goez_suite_water_heater_leak
+      - binary_sensor.kitchen_leak
+      - binary_sensor.master_bathroom_1_leak
+      - binary_sensor.master_bathroom_2_leak
+      - binary_sensor.upstairs_bathroom_leak
+    friendly_name: Safety Alarm Carbon Monoxide
+    icon_template: 'mdi:water-alert'
+    # 1=smoke, 2=co2, 12=test, 13=idle
+    value_template: >-
+      {{
+        is_state('binary_sensor.downstairs_bathroom_leak', 'on') or
+        is_state('binary_sensor.garage_leak', 'on') or
+        is_state('binary_sensor.goez_suite_1_leak', 'on') or
+        is_state('binary_sensor.goez_suite_2_leak', 'on') or
+        is_state('binary_sensor.goez_suite_water_heater_leak', 'on') or
+        is_state('binary_sensor.kitchen_leak', 'on') or
+        is_state('binary_sensor.master_bathroom_1_leak', 'on') or
+        is_state('binary_sensor.master_bathroom_2_leak', 'on') or
+        is_state('binary_sensor.upstairs_bathroom_leak', 'on')
+      }}
