@@ -4,6 +4,9 @@
 ############################################
 alias: Reboot Server
 sequence:
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.home_assistant_loaded
+    
   - service: script.toast
     data:
       message: Rebooting the server!

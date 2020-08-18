@@ -81,20 +81,26 @@
   - data: {}
     service: recorder.purge
 - id: '1588557125177'
-  alias: Startup (New)
+  alias: Startup
   description: Actions to run at startup.
   trigger:
   - event: start
     platform: homeassistant
   condition: []
   action:
+  - data: {}
+    entity_id: input_boolean.home_assistant_loaded
+    service: input_boolean.turn_off
   - data:
-      name: ios-dark-mode-blue-red-alternative
-    service: frontend.set_theme
+      navigation_path: /lovelace/home
+    service: browser_mod.navigate
   - data: {}
     entity_id: light.garage_entry
     service: light.turn_off
   - delay: 00:00:30
+  - data:
+      name: ios-dark-mode-blue-red-alternative
+    service: frontend.set_theme
   - data: {}
     service: browser_mod.lovelace_reload
   - data: {}
@@ -103,6 +109,10 @@
   - data:
       message: Startup complete
     service: script.toast
+  - delay: 00:00:30
+  - data: {}
+    entity_id: input_boolean.home_assistant_loaded
+    service: input_boolean.turn_on
   mode: single
 - id: '1588557204708'
   alias: Midnight - Custom Event
@@ -157,3 +167,25 @@
   - data: {}
     entity_id: switch.printers
     service: switch.turn_off
+- id: '1597766673630'
+  alias: Shutdown
+  description: Triggered when Home Assistant shuts down.
+  trigger:
+  - event: shutdown
+    platform: homeassistant
+  - event_data: {}
+    event_type: ' homeassistant_close'
+    platform: event
+  - event_data: {}
+    event_type: homeassistant_stop
+    platform: event
+  condition: []
+  action:
+  - data: {}
+    entity_id: input_boolean.home_assistant_loaded
+    service: input_boolean.turn_off
+  - data:
+      navigation_path: /lovelace/home
+    service: browser_mod.navigate
+  - delay: 00:00:02
+  mode: single
