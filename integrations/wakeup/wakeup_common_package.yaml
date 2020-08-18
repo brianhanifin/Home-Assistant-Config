@@ -44,8 +44,8 @@ automation:
         {% set add_minutes = 10 %}
         {% set current_time = states('sensor.time') %}
         {% set boys = add_time(states('sensor.boys_room_next_alarm'),add_minutes) %}
-        {% set brian = add_time(states('sensor.wakeup_brian_time'),add_minutes) %}
-        {% set nerene = add_time(states('sensor.wakeup_nerene_time'),add_minutes) %}
+        {% set brian = add_time(states('sensor.wakeup_brian_start'),add_minutes) %}
+        {% set nerene = add_time(states('sensor.wakeup_nerene_start'),add_minutes) %}
 
         {{ current_time in [boys,brian,nerene] }}
     condition:
@@ -55,9 +55,9 @@ automation:
           {% set current_time = states('sensor.time') %}
           {% if current_time == states('sensor.boys_room_next_alarm') %}
             {{ is_state('input_boolean.wakeup_boys_skipnext','on') }}
-          {% elif current_time == states('sensor.wakeup_brian_time') %}
+          {% elif current_time == states('sensor.wakeup_brian_start') %}
             {{ is_state('input_boolean.wakeup_brian_skipnext','on') }}
-          {% elif current_time == states('sensor.wakeup_nerene_time') %}
+          {% elif current_time == states('sensor.wakeup_nerene_start') %}
             {{ is_state('input_boolean.wakeup_nerene_skipnext','on') }}
           {% endif %}
     action:
