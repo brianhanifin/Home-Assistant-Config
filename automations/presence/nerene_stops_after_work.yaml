@@ -1,0 +1,41 @@
+---
+alias: Nerene stops after work
+id: nerene_stops_after_work
+initial_state: true
+mode: single
+trigger:
+  platform: template
+  value_template: '{{ is_state_attr("device_tracker.life360_nerene","driving",false) }}'
+  for:
+    minutes: 5
+condition:
+  # After 2:20pm.
+  - condition: time
+    after: '14:20:00'
+  # She is not near home.
+  - condition: numeric_state
+    entity_id: proximity.nerene_home
+    value_template: "{{ states('proximity.nerene_home')|float }}"
+    below: 1
+  # She left work in the past 30 minutes.
+  - condition: template
+    value_template: >
+      {% set left_work = state_attr("automation.nerene_leaves_work","last_triggered") %}  
+      {% set seconds_difference = (as_timestamp(now()) - as_timestamp(left_work)) %}
+      {% set minutes_difference = ((seconds_difference) / 60)|round %}
+      {{ minutes_difference < 30 }}
+action:
+  - service: script.say
+    data_template:
+      media_player: group.alexa_welcome
+      message: >
+        {{ [
+          "Nerene has made a stop on the way home from work. ",
+          "Nerene stopped at a store on the way home. ",
+          "Keep dinner warm, Nerene has taken a detour. "
+        ]|random }}
+      say_greeting: "false"
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 10
