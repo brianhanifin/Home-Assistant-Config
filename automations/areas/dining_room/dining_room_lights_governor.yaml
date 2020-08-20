@@ -7,13 +7,13 @@ initial_state: true
 mode: single
 trigger:
   platform: state
-  entity_id: light.dining_room
+  entity_id: group.dining_room_light
   from: "off"
   to: "on"
 action:
-  - service: light.turn_on
+  - service: homeassistant.turn_on
     data:
-      entity_id: light.dining_room
+      entity_id: group.dining_room_light
       brightness: 255
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.

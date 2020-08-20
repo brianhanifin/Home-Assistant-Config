@@ -14,4 +14,16 @@ sequence:
             color_name: "{{ color }}"
             transition: "{{ transition }}"
 
+        # Stop
+        - choose:
+          - conditions:
+            - condition: state
+              entity_id: group.dining_room_light
+              state: "off"
+            sequence:
+              - service: script.turn_off
+                entity_id:
+                  - script.light_sequence
+                  - script.light_sequence_color
+
   - delay: "{{ transition }}"
