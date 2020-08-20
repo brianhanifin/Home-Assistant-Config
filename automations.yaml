@@ -28,7 +28,7 @@
   - for:
       minutes: 15
     platform: template
-    value_template: '{{ states("sensor.home_temperature")|int > (states("weather.weatherbit_temperature")|int
+    value_template: '{{ states("sensor.home_temperature")|int > (states("sensor.weatherbit_temperature")|int
       - 2) }}'
   condition:
   - condition: state
@@ -44,12 +44,13 @@
       who: brian
     service: script.notify_mobile
   - after: '15:00'
-    before: '20:00'
+    before: '21:00'
     condition: time
   - data:
       media_player: group.alexa_welcome
       message: It is cooler outside. Please open up the house.
     service: script.notify_speech
+  mode: single
 - id: '1588556714529'
   alias: Maintenance Daily
   description: Runs every night at midnight.
@@ -72,6 +73,9 @@
     entity_id: input_boolean.leave_unlocked
     service: input_boolean.turn_off
   - data: {}
+    entity_id: input_boolean.presence_lights_family_room
+    service: input_boolean.turn_on
+  - data: {}
     service: script.create_actionable_lights_group
   - data: {}
     service: script.update_responsibility_dishes_week
@@ -80,6 +84,7 @@
     service: script.holiday_sensors_update
   - data: {}
     service: recorder.purge
+  mode: single
 - id: '1588557125177'
   alias: Startup
   description: Actions to run at startup.
