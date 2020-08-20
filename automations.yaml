@@ -23,7 +23,7 @@
 - id: '1587853788536'
   alias: Temperature Cooler Outside
   description: Notify me to open up the house when the temperature is cooler than
-    inside.
+    inside and the humidity outside isn't a lot higher.
   trigger:
   - for:
       minutes: 15
@@ -34,6 +34,9 @@
   - condition: state
     entity_id: input_boolean.cooler_outside_notification
     state: '"false"'
+  - condition: template
+    value_template: "{{ (states('sensor.weatherbit_humidity')|round\n  - states('sensor.home_humidity')|round)\
+      \ < 20 }}"
   action:
   - data: {}
     entity_id: input_boolean.cooler_outside_notification
