@@ -1,0 +1,63 @@
+---
+    mode: restart
+    sequence:
+      # Reset every bulb.
+      # - repeat:
+      #     count: "{{ state_attr(light_group,'entity_id')|count }}"
+      #     sequence:
+      #       - service: light.turn_on
+      #         data_template:
+      #           brightness: 50
+      #           entity_id: "{{ state_attr(light_group,'entity_id')[repeat.index-1] }}"
+      #           profile: energize
+      #           transition: "0"
+      #       - delay: "{{ delay|default(0.5) }}"
+
+      # - delay: "{{ transition }}"
+
+      # Loop through the colors.
+      - repeat:
+          count: "{{ colors|count }}"
+          sequence:
+            # Change all bulbs to this color one at a time.
+            - service: script.light_sequence_color
+              data_template:
+                light_group: "{{ light_group }}"
+                color: "{{ colors[repeat.index-1] }}"
+                delay: "{{ delay|default(0.5) }}"
+                transition: "{{ transition|default(5) }}"
+
+
+
+# Example service call data.
+# https://www.w3.org/TR/css-color-3/#svg-color
+# light_group: group.dining_room_light
+# delay: 0.5
+# transition: 5
+# colors:
+#   - aquamarine
+#   - blueviolet
+#   - cadetblue
+#   - coral
+#   - cornflowerblue
+#   - crimson
+#   - cyan
+#   - darkslateblue
+#   - darkgoldenrod
+#   - darkmagenta
+#   - darkslategrey
+#   - darkviolet
+#   - darkturquoise
+#   - deeppink
+#   - deepskyblue
+#   - firebrick
+#   - dodgerblue
+#   - forestgreen
+#   - gold
+#   - indigo
+#   - lavenderblush
+#   - lawngreen
+#   - lemonchiffon
+#   - lightblue
+#   - darkturquoise
+  

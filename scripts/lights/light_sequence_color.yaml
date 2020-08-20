@@ -1,0 +1,17 @@
+---
+mode: restart
+sequence:
+  # Change each bulb in the group.
+  - repeat:
+      count: "{{ state_attr(light_group,'entity_id')|count }}"
+      sequence:
+        - delay: "{{ delay }}"
+
+        - service: light.turn_on
+          data_template:
+            brightness: 255
+            entity_id: "{{ state_attr(light_group,'entity_id')[repeat.index-1] }}"
+            color_name: "{{ color }}"
+            transition: "{{ transition }}"
+
+  - delay: "{{ transition }}"
