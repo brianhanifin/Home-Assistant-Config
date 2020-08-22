@@ -1,0 +1,44 @@
+---
+alias: "Circadian Lighting: Force Light Groups To Stay Off"
+id: circadian_light_group_turn_off
+initial_state: true
+mode: parallel
+trigger:
+  - platform: state
+    entity_id:
+      - light.brian
+      - light.dining_room
+      - light.family_room_floor_lamp
+      - light.play_room_floor_lamp
+    to: "off"
+condition:
+  # Only when circadian lighting is enabled for this light group.
+  - condition: template
+    value_template: "{{ is_state(trigger.entity_id|replace('light.','switch.circadian_lighting_'), 'on') }}"
+action:
+  # Temporarily disable the circadian lighting mode for this fixture.
+  - service: switch.turn_off
+    data_template:
+      entity_id: "{{ trigger.entity_id|replace('light.','switch.circadian_lighting_') }}"
+
+  - alias: Turn the light group off repeatedly until it stays off.
+    repeat:
+      sequence:
+        - delay:
+            seconds: 5
+
+        # Turn the light group off, again.
+        - service: homeassistant.turn_off
+          data_template:
+            entity_id: "{{ trigger.entity_id|replace('light.','group.') + '_fixture' }}"
+      until:
+        - condition: template
+          value_template: "{{ is_state(trigger.entity_id, 'off') }}"
+
+  - delay:
+      seconds: 5
+
+  # Turn the circadian lighting mode back on.
+  - service: switch.turn_on
+    data_template:
+      entity_id: "{{ trigger.entity_id|replace('light.','switch.circadian_lighting_') }}"

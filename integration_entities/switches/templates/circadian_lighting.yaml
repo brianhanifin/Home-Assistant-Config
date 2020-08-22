@@ -4,28 +4,28 @@ switches:
   circadian_lighting:
     friendly_name: "Circadian Lighting"
     icon_template: mdi:weather-sunset
-    value_template: "{{ is_state('switch.circadian_lighting_all','on')
-                      or is_state('switch.circadian_lighting_holiday','on')}}"
+    value_template: "{{ is_state('group.circadian_all','on')
+                      or is_state('group.circadian_holiday','on')}}"
     turn_on:
-      - service: switch.turn_off
+      - service: homeassistant.turn_off
         data_template:
           entity_id: >-
             {% if is_state('sensor.holiday_scene','standard') %}
-              switch.circadian_lighting_holiday
+              group.circadian_holiday
             {% else %}
-              switch.circadian_lighting_all
+              group.circadian_all
             {% endif %}
-      - service: switch.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: >-
             {% if is_state('sensor.holiday_scene','standard') %}
-              switch.circadian_lighting_all
+              group.circadian_all
             {% else %}
-              switch.circadian_lighting_holiday
+              group.circadian_holiday
             {% endif %}
     turn_off:
-      - service: switch.turn_off
+      - service: homeassistant.turn_off
         data_template:
           entity_id:
-            - switch.circadian_lighting_all
-            - switch.circadian_lighting_holiday
+            - group.circadian_all
+            - group.circadian_holiday
