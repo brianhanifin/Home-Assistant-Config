@@ -22,6 +22,7 @@ CONF_ADD_ALERTS = "add_alerts"
 CONF_CUR_UPDATE_INTERVAL = "cur_update_interval"
 CONF_FCS_UPDATE_INTERVAL = "fcs_update_interval"
 CONF_FORECAST_LANGUAGE = "fcst_language"
+CONF_WIND_UNITS = "wind_unit"
 
 DOMAIN = "weatherbit"
 
@@ -37,6 +38,14 @@ DEVICE_TYPE_DISTANCE = "distance"
 TYPE_SENSOR = "sensor"
 TYPE_FORECAST = "forecast"
 TYPE_ALERT = "alert"
+
+UNIT_WIND_MS = "m/s"
+UNIT_WIND_KMH = "km/h"
+UNIT_WIND_KNOT = "knot"
+WIND_UNITS = [
+    UNIT_WIND_MS,
+    UNIT_WIND_KMH,
+]
 
 WEATHERBIT_PLATFORMS = [
     "weather",

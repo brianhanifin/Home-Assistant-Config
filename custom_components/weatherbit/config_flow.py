@@ -25,7 +25,10 @@ from .const import (
     CONF_CUR_UPDATE_INTERVAL,
     CONF_FCS_UPDATE_INTERVAL,
     CONF_FORECAST_LANGUAGE,
+    CONF_WIND_UNITS,
     FORECAST_LANGUAGES,
+    UNIT_WIND_MS,
+    WIND_UNITS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -78,6 +81,7 @@ class WeatherbitConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_API_KEY: user_input[CONF_API_KEY],
                         CONF_LATITUDE: user_input[CONF_LATITUDE],
                         CONF_LONGITUDE: user_input.get(CONF_LONGITUDE),
+                        CONF_WIND_UNITS: user_input.get(CONF_WIND_UNITS),
                         CONF_FORECAST_LANGUAGE: user_input.get(CONF_FORECAST_LANGUAGE),
                         CONF_FCS_UPDATE_INTERVAL: user_input.get(
                             CONF_FCS_UPDATE_INTERVAL
@@ -101,6 +105,9 @@ class WeatherbitConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         CONF_LONGITUDE, default=self.hass.config.longitude
                     ): cv.longitude,
+                    vol.Optional(CONF_WIND_UNITS, default=UNIT_WIND_MS): vol.In(
+                        WIND_UNITS
+                    ),
                     vol.Optional(CONF_FORECAST_LANGUAGE, default="en"): vol.In(
                         FORECAST_LANGUAGES
                     ),
@@ -135,6 +142,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Optional(
+                        CONF_WIND_UNITS,
+                        default=self.config_entry.options.get(
+                            CONF_WIND_UNITS, UNIT_WIND_MS
+                        ),
+                    ): vol.In(WIND_UNITS),
+                    vol.Optional(
                         CONF_FORECAST_LANGUAGE,
                         default=self.config_entry.options.get(
                             CONF_FORECAST_LANGUAGE, DEFAULT_FORECAST_LANGUAGE
@@ -152,14 +165,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             CONF_CUR_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL
                         ),
                     ): vol.All(vol.Coerce(int), vol.Range(min=4, max=60)),
-                    # vol.Optional(
-                    #     CONF_ADD_SENSORS,
-                    #     default=self.config_entry.options.get(CONF_ADD_SENSORS, True),
-                    # ): bool,
-                    # vol.Optional(
-                    #     CONF_ADD_ALERTS,
-                    #     default=self.config_entry.options.get(CONF_ADD_ALERTS, False),
-                    # ): bool,
                 }
             ),
         )

@@ -36,9 +36,12 @@ from .const import (
     CONF_ADD_ALERTS,
     CONF_ADD_SENSORS,
     CONF_FORECAST_LANGUAGE,
+    CONF_WIND_UNITS,
     DEFAULT_BRAND,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_FORECAST_LANGUAGE,
+    UNIT_WIND_MS,
+    UNIT_WIND_KMH,
     WEATHERBIT_PLATFORMS,
 )
 
@@ -63,6 +66,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
                 "fcs_update_interval": entry.data[CONF_FCS_UPDATE_INTERVAL],
                 "cur_update_interval": entry.data[CONF_CUR_UPDATE_INTERVAL],
                 "fcst_language": entry.data[CONF_FORECAST_LANGUAGE],
+                "wind_unit": entry.data.get(CONF_WIND_UNITS, UNIT_WIND_MS),
             },
         )
 
@@ -137,6 +141,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         "cur_coordinator": cur_coordinator,
         "alert_coordinator": alert_coordinator,
         "weatherbit": weatherbit,
+        "wind_unit_metric": entry.options.get(CONF_WIND_UNITS, UNIT_WIND_MS),
     }
 
     await _async_get_or_create_weatherbit_device_in_registry(hass, entry)
