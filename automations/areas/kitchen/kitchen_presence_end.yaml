@@ -1,8 +1,4 @@
 ---
-##############################################
-###  Kitchen
-##############################################
-# Kitchen Presence: Light Timeout
 alias: Kitchen Presence End
 id: kitchen_presence_end
 initial_state: true
@@ -29,5 +25,8 @@ condition:
     #   minutes: 2
     #   seconds: 00
 action:
+  # Turn the cabinet lights & tablet screen off.
   - service: light.turn_off
-    entity_id: light.kitchen_cabinet
+    entity_id:
+      - light.kitchen_cabinet
+      #- light.tablet_kitchen

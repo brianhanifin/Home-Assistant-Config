@@ -1,8 +1,5 @@
 ---
-##############################################
-###  Kitchen
-##############################################
-alias: Kitchen Present Begin
+alias: Kitchen Presence Begin
 id: kitchen_presence_begin
 initial_state: true
 mode: single
@@ -22,11 +19,8 @@ trigger:
 #     entity_id: input_boolean.away_mode
 #     state: 'off'
 action:
-  # Kitchen Presence Light On
+  # Turn the cabinet lights & tablet screen on.
   - service: light.turn_on
-    entity_id: light.kitchen_cabinet
-
-  # Push hot water into the kitchen in the likely case someone will use the sink.
-  # It will turn itself off automatically after a few minutes.
-  # - service: switch.turn_on
-  #   entity_id: switch.hot_water_pump
+    entity_id:
+      - light.kitchen_cabinet
+      #- light.tablet_kitchen
