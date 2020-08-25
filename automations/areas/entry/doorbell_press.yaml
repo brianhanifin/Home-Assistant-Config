@@ -1,6 +1,7 @@
 ---
 # PLay a doorbell sound when the button is pressed.
-alias: doorbell_press
+alias: Doorbell Press
+id: doorbell_press
 initial_state: true
 mode: single
 trigger:
@@ -8,17 +9,38 @@ trigger:
     entity_id: binary_sensor.doorbell_press
     to: 'on'
 action:
+  # Stream the camera feed to all open Home Assistant browsers.
+  - service: browser_mod.popup
+    data_template:
+      title: Front Door Camera
+      card:
+        type: picture-glance
+        title: Front Door Camera
+        camera_image: camera.front_door
+        camera_view: camera.front_door
+        entities:
+          - binary_sensor.front_door_motion
+          - camera.front_door
+        entity: binary_sensor.front_door_motion
+        state_filter:
+          'off': grayscale(100%)
+          'on': brightness(110%) saturate(1.2)
+      large: true
+      # Auto close after 2 minutes.
+      auto_close: true
+      time: '00:02:00'
+
   # Stream the camera feed to Apple TV.
+  - service: remote.turn_on
+    entity_id: remote.apple_tv_family_room
   - service: camera.play_stream
     data:
       entity_id: camera.front_door
-      media_player: media_player.family_room_apple_tv
+      media_player: media_player.apple_tv_family_room
 
-  # Stream the camera feed to all Home Assistant displays.
-  - service: browser_mod.command
-    data:
-      command: more-info
-      entity_id: camera.front_door
+  - service: timer.start
+    data_template:
+      entity_id: timer.doorbell_press
 
   # Display the message as a toast notification
   - service: script.toast
@@ -50,4 +72,4 @@ action:
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
-      minutes: 10
+      minutes: 5
