@@ -11,10 +11,10 @@ trigger:
       - light.family_room_floor_lamp
       - light.play_room_floor_lamp
     to: "off"
-condition:
-  # Only when circadian lighting is enabled for this light group.
-  - condition: template
-    value_template: "{{ is_state(trigger.entity_id|replace('light.','switch.circadian_lighting_'), 'on') }}"
+# condition:
+#   # Only when circadian lighting is enabled for this light group.
+#   - condition: template
+#     value_template: "{{ is_state(trigger.entity_id|replace('light.','switch.circadian_lighting_'), 'on') }}"
 action:
   # Temporarily disable the circadian lighting mode for this fixture.
   - service: switch.turn_off

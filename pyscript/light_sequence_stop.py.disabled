@@ -1,9 +1,17 @@
 @state_trigger("light.dining_room == 'off'")
 def light_sequence_stop(var_name=None):
   """Light Sequencer: Stop if light manually turned off"""
-
-  # Retrieve the entity_id of the trigger. 
-  #log.info(f"\nlight_sequence_stop:\n {trigger_entity_id}")
   
+
   # Stop light_sequence for this light group.
-  task.unique("light_sequence_running_" + var_name)
+  fixture_name = light_group.replace("group.","").replace("_fixture","")
+  task_id = "light_sequence_" + fixture_name
+  task.unique(task_id)
+  if debug == "true": log.info(f"{task_id}: stop triggered")
+
+
+  light.turn_off(triggered_light)
+  delay(5)  
+  light.turn_off(triggered_light)
+  delay(5)  
+  light.turn_off(triggered_light)
