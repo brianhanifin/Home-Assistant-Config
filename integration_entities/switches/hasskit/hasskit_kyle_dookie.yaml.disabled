@@ -1,18 +1,18 @@
 ---
 platform: template
 switches:
-  hasskit_kyle_dookie:
-    friendly_name: "Dookie"
-    icon_template: mdi:emoticon-poop
+  hasskit_kyle_Trash:
+    friendly_name: "Trash"
+    icon_template: mdi:washing-machine
     entity_id: sensor.date
     value_template: >-
-      {% set lastdone = (states('sensor.contribution_kyle_dookie'))|int %}
+      {% set lastdone = (states('sensor.contribution_kyle_Trash'))|int %}
       {% set rightnow = (as_timestamp(now()))|int %}
       {{ (rightnow - lastdone) < 86400 }}
     turn_on:
       - service: mqtt.publish
         data_template:
-          topic: homeassistant/sensor/contribution_kyle_dookie/state
+          topic: homeassistant/sensor/contribution_kyle_Trash/state
           payload_template: >
             {
               "timestamp": {{ (as_timestamp(now()))|int }},
@@ -23,5 +23,5 @@ switches:
       - delay:
           seconds: 1
       - service: homeassistant.update_entity
-        entity_id: sensor.hasskit_kyle_dookie
+        entity_id: sensor.hasskit_kyle_Trash
     turn_off:

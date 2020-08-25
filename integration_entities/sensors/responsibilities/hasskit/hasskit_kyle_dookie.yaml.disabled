@@ -1,14 +1,14 @@
 ---
 platform: template
 sensors:
-  hasskit_kyle_dookie:
+  hasskit_kyle_laundry:
     entity_id:
-      - sensors.contribution_kyle_dookie
-      - switch.hasskit_kyle_dookie
-    friendly_name: "Dookie"
-    icon_template: mdi:emoticon-poop
+      - sensors.contribution_kyle_laundry
+      - switch.hasskit_kyle_laundry
+    friendly_name: "Trash"
+    icon_template: mdi:washing-machine
     value_template: >-
-      {% set lastdone = (states('sensor.contribution_kyle_dookie'))|int %}
+      {% set lastdone = (states('sensor.contribution_kyle_laundry'))|int %}
       {% set rightnow = (as_timestamp(now()))|int %}
       {% set days = ((rightnow - lastdone)|int // 86400) %}
       {% if days == 0 %}
