@@ -429,9 +429,9 @@ class TimerSensor(AlexaMediaNotificationSensor):
             "remainingTime",
             account,
             f"next {self._type}",
-            "mdi:timer-outline-outline"
+            "mdi:timer-outline"
             if semver.compare(HA_VERSION, "0.113.0") >= 0
-            else "mdi:timer-outline",
+            else "mdi:timer",
         )
 
     @property
@@ -462,9 +462,9 @@ class TimerSensor(AlexaMediaNotificationSensor):
     def icon(self):
         """Return the icon of the sensor."""
         off_icon = (
-            "mdi:timer-outline-off-outline"
+            "mdi:timer-off-outline"
             if (semver.compare(HA_VERSION, "0.113.0") >= 0)
-            else "mdi:timer-outline-off"
+            else "mdi:timer-off"
         )
         return self._icon if not self.paused else off_icon
 
