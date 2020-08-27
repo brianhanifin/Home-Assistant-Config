@@ -5,4 +5,6 @@ sensors:
     entity_id: sensor.weatherbit_rain_today
     friendly_name: Will it rain today?
     # Rain rate: in/hr
-    value_template: "{{ states('sensor.weatherbit_rain_rate')|default(0)|float >= 0.1 }}"
+    value_template: >-
+      {{ states('sensor.weatherbit_rain_rate')|default(0)|float > 0.0
+      or states('sensor.santee_precipitation')|default(0)|float > 0.0 }}
