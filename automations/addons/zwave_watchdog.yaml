@@ -1,15 +1,15 @@
 ---
 # Restart the addon when it is unavailable.
-alias: deconz_watchdog
+alias: Zwave Startup Watchdog
+id: zwave_watchdog
 initial_state: true
 trigger:
-  # Use the Deconz generated daylight sensor to verify status.
   - platform: state
-    entity_id: light.brian1 #sensor.daylight
+    entity_id: light.family_room
     to: "unknown"
     for:
-      minutes: 5
+      minutes: 2
 action:
   - service: hassio.addon_restart
     data:
-      addon: core_deconz
+      addon: core_zwave
