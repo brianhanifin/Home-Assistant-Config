@@ -1,0 +1,772 @@
+"""Pyscript Jupyter kernel."""
+
+#
+# Based on simple_kernel.py by Doug Blank <doug.blank@gmail.com>
+#   https://github.com/dsblank/simple_kernel
+#   license: public domain
+#   Thanks Doug!
+#
+
+import asyncio
+import datetime
+import hashlib
+import hmac
+import json
+import logging
+import logging.handlers
+import re
+from struct import pack, unpack
+import traceback
+import uuid
+
+from .const import LOGGER_PATH
+from .handler import current_task
+
+_LOGGER = logging.getLogger(LOGGER_PATH + ".jupyter_kernel")
+
+# Globals:
+
+DELIM = b"<IDS|MSG>"
+
+def msg_id():
+    """ Return a new uuid for message id """
+    return str(uuid.uuid4())
+
+def str_to_bytes(string):
+    """Encode a string in bytes."""
+    return string.encode('ascii')
+
+def bind(socket, connection, port):
+    """Bind a socket."""
+    if port <= 0:
+        return socket.bind_to_random_port(connection)
+    # _LOGGER.debug(f"binding to %s:%s" % (connection, port))
+    socket.bind("%s:%s" % (connection, port))
+    return port
+
+class KernelBufferingHandler(logging.handlers.BufferingHandler):
+    """Memory-based handler for logging; send via stdout queue."""
+    def __init__(self, housekeep_q):
+        super().__init__(0)
+        self.housekeep_q = housekeep_q
+
+    def flush(self):
+        pass
+
+    def shouldFlush(self, record):
+        try:
+            self.housekeep_q.put_nowait(["stdout", self.format(record)])
+        except asyncio.QueueFull:
+            _LOGGER.error("housekeep_q unexpectedly full")
+
+
+################################################################
+#
+class ZmqSocket:
+    """Defines a minimal implementation of a small subset of ZMQ,
+allowing pyscript to work with Jupyter without the real zmq
+and pyzmq packages, which might not be available or easy to
+install on the wide set of HASS platforms."""
+    def __init__(self, reader, writer, sock_type):
+        """Initialize a ZMQ socket with the given type and reader/writer streams."""
+        self.writer = writer
+        self.reader = reader
+        self.type = sock_type
+
+    async def read_bytes(self, num_bytes):
+        """Read bytes from ZMQ socket."""
+        data = b''
+        while len(data) < num_bytes:
+            new_data = await self.reader.read(num_bytes - len(data))
+            if len(new_data) == 0:
+                raise EOFError
+            data += new_data
+        return data
+
+    async def write_bytes(self, raw_msg):
+        """Write bytes to ZMQ socket."""
+        self.writer.write(raw_msg)
+        await self.writer.drain()
+        
+    async def handshake(self):
+        """Do initial greeting handshake on a new ZMQ connection."""
+        await self.write_bytes(b'\xff\x00\x00\x00\x00\x00\x00\x00\x01\x7f')
+        _ = await self.read_bytes(10)
+        # _LOGGER.debug(f"handshake: got initial greeting {greeting}")
+        await self.write_bytes(b'\x03')
+        _ = await self.read_bytes(1)
+        await self.write_bytes(b'\x00' + "NULL".encode() + b'\x00' * 16 + b'\x00' + b'\x00' * 31)
+        _ = await self.read_bytes(53)
+        # _LOGGER.debug(f"handshake: got rest of greeting {greeting}")
+        params = [["Socket-Type", self.type]]
+        if self.type == "ROUTER":
+            params.append(["Identity", ""])
+        await self.send_cmd("READY", params)
+
+    async def recv(self, multipart=False):
+        """Receive a message from ZMQ socket."""
+        parts = []
+        while 1:
+            cmd = (await self.read_bytes(1))[0]
+            if cmd & 0x2:
+                msg_len = unpack(">Q", await self.read_bytes(8))[0]
+            else:
+                msg_len = (await self.read_bytes(1))[0]
+            msg_body = await self.read_bytes(msg_len)
+            if cmd & 0x4:
+                # _LOGGER.debug(f"recv: got cmd {msg_body}")
+                cmd_len = msg_body[0]
+                cmd = msg_body[1:cmd_len+1]
+                msg_body = msg_body[cmd_len+1:]
+                params = []
+                while len(msg_body) > 0:
+                    param_len = msg_body[0]
+                    param = msg_body[1:param_len+1]
+                    msg_body = msg_body[param_len+1:]
+                    value_len = unpack(">L", msg_body[0:4])[0]
+                    value = msg_body[4:4+value_len]
+                    msg_body = msg_body[4+value_len:]
+                    params.append([param, value])
+                # _LOGGER.debug(f"recv: got cmd={cmd}, params={params}")
+            else:
+                parts.append(msg_body)
+                if cmd == 0x0:
+                    # _LOGGER.debug(f"recv: got msg {parts}")
+                    if not multipart:
+                        return b''.join(parts)
+
+                    return parts
+
+    async def recv_multipart(self):
+        """Receive a multipart message from ZMQ socket."""
+        return await self.recv(multipart=True)
+
+    async def send_cmd(self, cmd, params):
+        """Send a command over ZMQ socket."""
+        raw_msg = bytearray([len(cmd)]) + cmd.encode()
+        for param in params:
+            raw_msg += bytearray([len(param[0])]) + param[0].encode()
+            raw_msg += pack(">L", len(param[1])) + param[1].encode()
+        len_msg = len(raw_msg)
+        if len_msg <= 255:
+            raw_msg = bytearray([0x4, len_msg]) + raw_msg
+        else:
+            raw_msg = bytearray([0x6]) + pack(">Q", len_msg) + raw_msg
+        # _LOGGER.debug(f"send_cmd: sending {raw_msg}")
+        await self.write_bytes(raw_msg)
+
+    async def send(self, msg):
+        """Send a message over ZMQ socket."""
+        len_msg = len(msg)
+        if len_msg <= 255:
+            raw_msg = bytearray([0x1, 0x0, 0x0, len_msg]) + msg
+        else:
+            raw_msg = bytearray([0x3, 0x0, 0x2]) + pack(">Q", len_msg) + msg
+        # _LOGGER.debug(f"send: sending {raw_msg}")
+        await self.write_bytes(raw_msg)
+
+    async def send_multipart(self, parts):
+        """Send multipart messages over ZMQ socket."""
+        raw_msg = b''
+        for i, part in enumerate(parts):
+            len_part = len(part)
+            cmd = 0x1 if i < len(parts) - 1 else 0x0
+            if len_part <= 255:
+                raw_msg += bytearray([cmd, len_part]) + part
+            else:
+                raw_msg += bytearray([cmd + 2]) + pack(">Q", len_part) + part
+        # _LOGGER.debug(f"send_multipart: sending {raw_msg}")
+        await self.write_bytes(raw_msg)
+
+    def close(self):
+        """Close the ZMQ socket."""
+        self.writer.close()
+
+
+##########################################
+class Kernel:
+    """Define a Jupyter Kernel class."""
+    def __init__(self, config, ast_ctx, global_ctx_name, global_ctx_mgr):
+        """Initialize a Kernel object, one instance per session."""
+        self.config = config.copy()
+        self.global_ctx_name = global_ctx_name
+        self.global_ctx_mgr = global_ctx_mgr
+        self.ast_ctx = ast_ctx
+
+        self.connection = self.config["transport"] + "://" + self.config["ip"]
+        self.secure_key = str_to_bytes(self.config["key"])
+        self.signature_schemes = {"hmac-sha256": hashlib.sha256}
+        self.auth = hmac.HMAC(
+            self.secure_key,
+            digestmod=self.signature_schemes[self.config["signature_scheme"]]
+        )
+        self.execution_count = 1
+        self.engine_id = str(uuid.uuid4())
+
+        self.heartbeat_server = None
+        self.iopub_server = None
+        self.control_server = None
+        self.stdin_server = None
+        self.shell_server = None
+
+        # there can be multiple iopub subscribers, with corresponding tasks
+        self.iopub_socket = set()
+
+        self.tasks = {}
+        self.task_cnt = 0
+        self.task_cnt_max = 0
+
+        self.housekeep_q = asyncio.Queue(0)
+
+        self.parent_header = None
+
+        self.console = KernelBufferingHandler(self.housekeep_q)
+        self.console.setLevel(logging.DEBUG)
+        # set a format which is just the message
+        formatter = logging.Formatter('%(message)s')
+        self.console.setFormatter(formatter)
+
+        # match alphanum or "." at end of line
+        self.completion_re = re.compile(r'.*?([\w.]*)$')
+
+        # see if line ends in a ":", with optional whitespace and comment
+        # note: this doesn't detect if we are inside a quoted string...
+        self.colon_end_re = re.compile(r'.*: *(#.*)?$')
+
+    def msg_sign(self, msg_lst):
+        """Sign a message with a secure signature."""
+        auth_hmac = self.auth.copy()
+        for msg in msg_lst:
+            auth_hmac.update(msg)
+        return str_to_bytes(auth_hmac.hexdigest())
+
+    def deserialize_wire_msg(self, wire_msg):
+        """Split the routing prefix and message frames from a message on the wire."""
+        delim_idx = wire_msg.index(DELIM)
+        identities = wire_msg[:delim_idx]
+        m_signature = wire_msg[delim_idx + 1]
+        msg_frames = wire_msg[delim_idx + 2:]
+
+        def decode(msg):
+            return json.loads(msg.decode('ascii'))
+
+        msg = {}
+        msg['header']        = decode(msg_frames[0])
+        msg['parent_header'] = decode(msg_frames[1])
+        msg['metadata']      = decode(msg_frames[2])
+        msg['content']       = decode(msg_frames[3])
+        check_sig = self.msg_sign(msg_frames)
+        if check_sig != m_signature:
+            raise ValueError("Signatures do not match")
+
+        return identities, msg
+
+    def new_header(self, msg_type):
+        """Make a new header."""
+        return {
+                "date": datetime.datetime.now().isoformat(),
+                "msg_id": msg_id(),
+                "username": "kernel",
+                "session": self.engine_id,
+                "msg_type": msg_type,
+                "version": "5.3",
+            }
+
+    async def send(self, stream, msg_type, content=None, parent_header=None, metadata=None, identities=None):
+        """Send message to the Jupyter client."""
+        header = self.new_header(msg_type)
+        if content is None:
+            content = {}
+        if parent_header is None:
+            parent_header = {}
+        if metadata is None:
+            metadata = {}
+
+        def encode(msg):
+            return str_to_bytes(json.dumps(msg))
+
+        msg_lst = [
+            encode(header),
+            encode(parent_header),
+            encode(metadata),
+            encode(content),
+        ]
+        signature = self.msg_sign(msg_lst)
+        parts = [DELIM,
+                 signature,
+                 msg_lst[0],
+                 msg_lst[1],
+                 msg_lst[2],
+                 msg_lst[3]]
+        if identities:
+            parts = identities + parts
+        if stream:
+            # _LOGGER.debug("send %s: %s", msg_type, parts)
+            for this_stream in stream if isinstance(stream, set) else {stream}:
+                await this_stream.send_multipart(parts)
+        # else:
+        #     _LOGGER.debug("send skipping msg_type %s since socket is None", msg_type)
+
+    async def shell_handler(self, shell_socket, msg):
+        """Handle shell messages."""
+        identities, msg = self.deserialize_wire_msg(msg)
+        # _LOGGER.debug("shell received %s: %s", msg.get('header', {}).get('msg_type', 'UNKNOWN'), msg)
+
+        self.parent_header = msg['header']
+
+        # process request:
+
+        if msg['header']["msg_type"] == "execute_request":
+            content = {
+                'execution_state': "busy",
+            }
+            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+
+            content = {
+                'execution_count': self.execution_count,
+                'code': msg['content']["code"],
+            }
+            await self.send(self.iopub_socket, 'execute_input', content, parent_header=msg['header'])
+
+            code = msg['content']["code"]
+            self.ast_ctx.parse(code)
+            exc = self.ast_ctx.get_exception_obj()
+            if exc is None:
+                result = await self.ast_ctx.eval()
+                exc = self.ast_ctx.get_exception_obj()
+            if exc:
+                traceback_mesg = self.ast_ctx.get_exception_long().split("\n")
+                metadata = {
+                    "dependencies_met": True,
+                    "engine": self.engine_id,
+                    "status": "error",
+                    "started": datetime.datetime.now().isoformat(),
+                }
+                content = {
+                    'execution_count': self.execution_count,
+                    'status': 'error',
+                    'ename': type(exc).__name__,   # Exception name, as a string
+                    'evalue': str(exc),  # Exception value, as a string
+                    'traceback': traceback_mesg,
+                }
+                _LOGGER.debug("Executing '%s' got exception: %s", code, content)
+                await self.send(shell_socket, 'execute_reply', content, metadata=metadata,
+                    parent_header=msg['header'], identities=identities)
+                del content["execution_count"], content["status"]
+                await self.send(self.iopub_socket, 'error', content, parent_header=msg['header'])
+                content = {
+                    'execution_state': "idle",
+                }
+                await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+                self.execution_count += 1
+                return
+
+            # if True or isinstance(self.ast_ctx.ast, ast.Expr):
+            _LOGGER.debug("Executing: '%s' got result %s", code, result)
+            if result is not None:
+                content = {
+                    'execution_count': self.execution_count,
+                    'data': {"text/plain": repr(result)},
+                    'metadata': {}
+                }
+                await self.send(self.iopub_socket, 'execute_result', content, parent_header=msg['header'])
+
+            content = {
+                'execution_state': "idle",
+            }
+            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+
+            metadata = {
+                "dependencies_met": True,
+                "engine": self.engine_id,
+                "status": "ok",
+                "started": datetime.datetime.now().isoformat(),
+            }
+            content = {
+                "status": "ok",
+                "execution_count": self.execution_count,
+                "user_variables": {},
+                "payload": [],
+                "user_expressions": {},
+            }
+            await self.send(shell_socket, 'execute_reply', content, metadata=metadata,
+                parent_header=msg['header'], identities=identities)
+            self.execution_count += 1
+        elif msg['header']["msg_type"] == "kernel_info_request":
+            content = {
+                'execution_state': "busy",
+            }
+            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+            content = {
+                "protocol_version": "5.3",
+                "ipython_version": [1, 1, 0, ""],
+                "language_version": [0, 0, 1],
+                "language": "python",
+                "implementation": "python",
+                "implementation_version": "3.7",
+                "language_info": {
+                    "name": "python",
+                    "version": "1.0",
+                    'mimetype': "",
+                    'file_extension': ".py",
+                    #'pygments_lexer': "",
+                    'codemirror_mode': "",
+                    'nbconvert_exporter': "",
+                },
+                "banner": ""
+            }
+            await self.send(shell_socket, 'kernel_info_reply', content, parent_header=msg['header'], identities=identities)
+            content = {
+                'execution_state': "idle",
+            }
+            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+        elif msg['header']["msg_type"] == "complete_request":
+            content = {
+                'execution_state': "busy",
+            }
+            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+
+            code = msg["content"]["code"]
+            posn = msg["content"]["cursor_pos"]
+            match = self.completion_re.match(code[0:posn].lower())
+            if match:
+                root = match[1].lower()
+                words = self.ast_ctx.state.completions(root)
+                words = words.union(await self.ast_ctx.handler.service_completions(root))
+                words = words.union(await self.ast_ctx.handler.func_completions(root))
+                words = words.union(self.ast_ctx.completions(root))
+            else:
+                root = ""
+                words = set()
+            # _LOGGER.debug(f"complete_request code={code}, posn={posn}, root={root}, words={words}")
+            content = {
+                "status": "ok",
+                "matches": sorted(list(words)),
+                "cursor_start": msg["content"]["cursor_pos"] - len(root),
+                "cursor_end": msg["content"]["cursor_pos"],
+                "metadata": {},
+            }
+            await self.send(shell_socket, 'complete_reply', content, parent_header=msg['header'], identities=identities)
+
+            content = {
+                'execution_state': "idle",
+            }
+            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+        elif msg['header']["msg_type"] == "is_complete_request":
+            code = msg['content']["code"]
+            self.ast_ctx.parse(code)
+            exc = self.ast_ctx.get_exception_obj()
+
+            # determine indent of last line
+            indent = 0
+            i = code.rfind("\n") 
+            if i >= 0:
+                while i + 1 < len(code) and code[i+1] == " ":
+                    i += 1
+                    indent += 1
+            if exc is None:
+                if indent == 0:
+                    content = {
+                        # One of 'complete', 'incomplete', 'invalid', 'unknown'
+                        "status": 'complete',
+                        # If status is 'incomplete', indent should contain the characters to use
+                        # to indent the next line. This is only a hint: frontends may ignore it
+                        # and use their own autoindentation rules. For other statuses, this
+                        # field does not exist.
+                        #"indent": str,
+                    }
+                else:
+                    content = {
+                        "status": 'incomplete',
+                        "indent": " " * indent,
+                    }
+            else:
+                #
+                # if the syntax error is right at the end, then we label it incomplete,
+                # otherwise it's invalid
+                #
+                if str(exc).find("EOF while") >= 0:
+                    # if error is at ":" then increase indent
+                    if hasattr(exc, "lineno"):
+                        line = code.split("\n")[exc.lineno-1]
+                        if self.colon_end_re.match(line):
+                            indent += 4
+                    content = {
+                        "status": 'incomplete',
+                        "indent": " " * indent,
+                    }
+                else:
+                    content = {
+                        "status": 'invalid',
+                    }
+            # _LOGGER.debug(f"is_complete_request code={code}, exc={exc}, content={content}")
+            await self.send(shell_socket, 'is_complete_reply', content, parent_header=msg['header'], identities=identities)
+        elif msg['header']["msg_type"] == "comm_info_request":
+            content = {
+                "comms": {}
+            }
+            await self.send(shell_socket, 'comm_info_reply', content, parent_header=msg['header'], identities=identities)
+        elif msg['header']["msg_type"] == "history_request":
+            content = {
+                "history": []
+            }
+            await self.send(shell_socket, 'history_reply', content, parent_header=msg['header'], identities=identities)
+        else:
+            _LOGGER.error("unknown msg_type: %s", msg['header']["msg_type"])
+
+
+    ##########################################
+    # Control:
+    async def control_listen(self, reader, writer):
+        """Task that listens to control messages."""
+        try:
+            # _LOGGER.debug("control_listen connected")
+            await self.housekeep_q.put(["register", "control", current_task()])
+            control_socket = ZmqSocket(reader, writer, "ROUTER")
+            await control_socket.handshake()
+            while 1:
+                wire_msg = await control_socket.recv_multipart()
+                _, msg = self.deserialize_wire_msg(wire_msg)
+                # _LOGGER.debug("control received %s: %s", msg.get('header', {}).get('msg_type', 'UNKNOWN'), msg)
+                if msg['header']["msg_type"] == "shutdown_request":
+                    await self.housekeep_q.put(["shutdown"])
+        except asyncio.CancelledError:  # pylint: disable=try-except-raise
+            raise
+        except EOFError:
+            # _LOGGER.debug("control_listen got eof")
+            await self.housekeep_q.put(["unregister", "control", current_task()])
+            control_socket.close()
+        except Exception as err:  # pylint: disable=broad-except
+            _LOGGER.error("control_listen exception %s", err)
+            await self.housekeep_q.put(["shutdown"])
+
+    ##########################################
+    # Stdin:
+    async def stdin_listen(self, reader, writer):
+        """Task that listens to stdin messages."""
+        try:
+            # _LOGGER.debug("stdin_listen connected")
+            await self.housekeep_q.put(["register", "stdin", current_task()])
+            stdin_socket = ZmqSocket(reader, writer, "ROUTER")
+            await stdin_socket.handshake()
+            while 1:
+                _ = await stdin_socket.recv_multipart()
+                # _LOGGER.debug("stdin_listen received %s", raw_msg)
+        except asyncio.CancelledError:  # pylint: disable=try-except-raise
+            raise
+        except EOFError:
+            # _LOGGER.debug("stdin_listen got eof")
+            await self.housekeep_q.put(["unregister", "stdin", current_task()])
+            stdin_socket.close()
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.error("stdin_listen exception %s", traceback.format_exc(-1))
+            await self.housekeep_q.put(["shutdown"])
+
+    ##########################################
+    # Shell:
+    async def shell_listen(self, reader, writer):
+        """Task that listens to shell messages."""
+        try:
+            # _LOGGER.debug("shell_listen connected")
+            await self.housekeep_q.put(["register", "shell", current_task()])
+            shell_socket = ZmqSocket(reader, writer, "ROUTER")
+            await shell_socket.handshake()
+            while 1:
+                msg = await shell_socket.recv_multipart()
+                await self.shell_handler(shell_socket, msg)
+        except asyncio.CancelledError:  # pylint: disable=try-except-raise
+            shell_socket.close()
+            raise
+        except EOFError:
+            # _LOGGER.debug("shell_listen got eof")
+            await self.housekeep_q.put(["unregister", "shell", current_task()])
+            shell_socket.close()
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.error("shell_listen exception %s", traceback.format_exc(-1))
+            await self.housekeep_q.put(["shutdown"])
+
+    ##########################################
+    # Heartbeat:
+    async def heartbeat_listen(self, reader, writer):
+        """Task that listens and responds to heart beat messages."""
+        try:
+            # _LOGGER.debug("heartbeat_listen connected")
+            await self.housekeep_q.put(["register", "heartbeat", current_task()])
+            heartbeat_socket = ZmqSocket(reader, writer, "REP")
+            await heartbeat_socket.handshake()
+            while 1:
+                msg = await heartbeat_socket.recv()
+                # _LOGGER.debug(f"heartbeat_listen: got {msg}")
+                await heartbeat_socket.send(msg)
+        except asyncio.CancelledError:  # pylint: disable=try-except-raise
+            raise
+        except EOFError:
+            # _LOGGER.debug("heartbeat_listen got eof")
+            await self.housekeep_q.put(["unregister", "heartbeat", current_task()])
+            heartbeat_socket.close()
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.error("heartbeat_listen exception: %s", traceback.format_exc(-1))
+            await self.housekeep_q.put(["shutdown"])
+
+    ##########################################
+    # IOPub/Sub:
+    async def iopub_listen(self, reader, writer):
+        """Task that listens to iopub messages."""
+        try:
+            # _LOGGER.debug("iopub_listen connected")
+            await self.housekeep_q.put(["register", "iopub", current_task()])
+            iopub_socket = ZmqSocket(reader, writer, "PUB")
+            await iopub_socket.handshake()
+            self.iopub_socket.add(iopub_socket)
+            while 1:
+                _ = await iopub_socket.recv_multipart()
+                # _LOGGER.debug("iopub received %s", wire_msg)
+        except asyncio.CancelledError:  # pylint: disable=try-except-raise
+            raise
+        except EOFError:
+            await self.housekeep_q.put(["unregister", "iopub", current_task()])
+            iopub_socket.close()
+            self.iopub_socket.discard(iopub_socket)
+            # _LOGGER.debug("iopub_listen got eof")
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.error("iopub_listen exception %s", traceback.format_exc(-1))
+            await self.housekeep_q.put(["shutdown"])
+
+    ##########################################
+    # Housekeeping
+    async def housekeep_run(self):
+        """Housekeeping, including closing servers after startup, and doing orderly shutdown."""
+        while True:
+            try:
+                msg = await self.housekeep_q.get()
+                if msg[0] == "stdout":
+                    content = {
+                        'name': "stdout",
+                        'text': msg[1] + "\n"
+                    }
+                    if self.iopub_socket:
+                        await self.send(self.iopub_socket, 'stream', content, parent_header=self.parent_header)
+                elif msg[0] == "register":
+                    if msg[1] not in self.tasks:
+                        self.tasks[msg[1]] = set()
+                    self.tasks[msg[1]].add(msg[2])
+                    self.task_cnt += 1
+                    self.task_cnt_max = max(self.task_cnt_max, self.task_cnt)
+                elif msg[0] == "unregister":
+                    if msg[1] in self.tasks:
+                        self.tasks[msg[1]].discard(msg[2])
+                    self.task_cnt -= 1
+                    #
+                    # if there are no connection tasks left, then shutdown the kernel
+                    #
+                    if self.task_cnt == 0 and self.task_cnt_max >= 4:
+                        asyncio.create_task(self.session_shutdown())
+                        await asyncio.sleep(10000)
+                elif msg[0] == "shutdown":
+                    asyncio.create_task(self.session_shutdown())
+                    await asyncio.sleep(10000)
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                raise
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.error("housekeep task exception: %s", traceback.format_exc(-1))
+
+    async def session_start(self):
+        """Start the kernel session."""
+        self.ast_ctx.add_logger_handler(self.console)
+        _LOGGER.info("Starting session %s", self.global_ctx_name)
+
+        self.tasks["housekeep"] = {asyncio.create_task(self.housekeep_run())}
+
+        self.iopub_server = await asyncio.start_server(self.iopub_listen, self.config["ip"], self.config["iopub_port"])
+        self.heartbeat_server = await asyncio.start_server(self.heartbeat_listen, self.config["ip"], self.config["hb_port"])
+        self.control_server = await asyncio.start_server(self.control_listen, self.config["ip"], self.config["control_port"])
+        self.stdin_server = await asyncio.start_server(self.stdin_listen, self.config["ip"], self.config["stdin_port"])
+        self.shell_server = await asyncio.start_server(self.shell_listen, self.config["ip"], self.config["shell_port"])
+
+        #
+        # For debugging, can use the real ZMQ library instead on certain sockets; comment out
+        # the corresponding asyncio.start_server() call above if you enable the ZMQ-based
+        # functions here.  The two most important ones are shown here.
+        #
+        #  import zmq
+        #  import zmq.asyncio
+        #
+        #  zmq_ctx = zmq.asyncio.Context()
+        #  ##########################################
+        #  # Shell using real ZMQ for debugging:
+        #  async def shell_listen_zmq():
+        #      """Task that listens to shell messages using ZMQ."""
+        #      try:
+        #          shell_socket = zmq_ctx.socket(zmq.ROUTER)  # pylint: disable=no-member
+        #          self.config["shell_port"] = bind(shell_socket, self.connection, self.config["shell_port"])
+        #          _LOGGER.debug("shell_listen_zmq connected")
+        #          while 1:
+        #              msg = await shell_socket.recv_multipart()
+        #              await self.shell_handler(shell_socket, msg)
+        #      except asyncio.CancelledError:  # pylint: disable=try-except-raise
+        #          raise
+        #      except Exception:  # pylint: disable=broad-except
+        #          _LOGGER.error("shell_listen exception %s", traceback.format_exc(-1))
+        #          await self.housekeep_q.put(["shutdown"])
+        #  
+        #  ##########################################
+        #  # IOPub using real ZMQ for debugging:
+        #  # IOPub/Sub:
+        #  async def iopub_listen_zmq():
+        #      """Task that listens to iopub messages using ZMQ."""
+        #      try:
+        #          _LOGGER.debug("iopub_listen_zmq connected")
+        #          iopub_socket = zmq_ctx.socket(zmq.PUB)  # pylint: disable=no-member
+        #          self.config["iopub_port"] = bind(self.iopub_socket, self.connection, self.config["iopub_port"])
+        #          self.iopub_socket.add(iopub_socket)
+        #          while 1:
+        #              wire_msg = await iopub_socket.recv_multipart()
+        #              _LOGGER.debug("iopub received %s", wire_msg)
+        #      except asyncio.CancelledError:  # pylint: disable=try-except-raise
+        #          raise
+        #      except EOFError:
+        #          await self.housekeep_q.put(["shutdown"])
+        #          _LOGGER.debug("iopub_listen got eof")
+        #      except Exception as err:  # pylint: disable=broad-except
+        #          _LOGGER.error("iopub_listen exception %s", err)
+        #          await self.housekeep_q.put(["shutdown"])
+        #
+        # self.tasks["shell"] = {asyncio.create_task(shell_listen_zmq())}
+        # self.tasks["iopub"] = {asyncio.create_task(iopub_listen_zmq())}
+        #
+
+    async def session_shutdown(self):
+        """Shutdown the kernel session."""
+        if not self.iopub_server:
+            # already shutdown, so quit
+            return
+        await self.global_ctx_mgr.delete(self.global_ctx_name)
+        self.ast_ctx.remove_logger_handler(self.console)
+        # logging.getLogger("homeassistant.components.pyscript.func.").removeHandler(self.console)
+        _LOGGER.info("Shutting down session %s", self.global_ctx_name)
+
+        for server in [self.heartbeat_server, self.control_server, self.stdin_server, self.shell_server, self.iopub_server]:
+            if server:
+                server.close()
+        self.heartbeat_server = None
+        self.iopub_server = None
+        self.control_server = None
+        self.stdin_server = None
+        self.shell_server = None
+
+        for task_set in self.tasks.values():
+            for task in task_set:
+                try:
+                    task.cancel()
+                    await task
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    pass
+        self.tasks = []
+
+        for sock in self.iopub_socket:
+            try:
+                sock.close()
+            except Exception as err:  # pylint: disable=broad-except
+                _LOGGER.error("iopub socket close exception: %s", err)
+
+        self.iopub_socket = set()
