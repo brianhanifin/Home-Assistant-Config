@@ -1,0 +1,27 @@
+platform: multiscrape
+name: CPAP Usage
+resource: https://www.mydreammapper.com/Home/Sleep
+verify_ssl: false
+#selector: "#Usage"
+selectors:
+  ahi:
+    name: AHI
+    select: "#Ahi"
+  mask_fit:
+    name: Mask Fit
+    select: "#MaskFit"
+  usage:
+    name: Usage
+    select: "#Usage"
+    #value_template: '{{ (value) }}'
+  last_recorded:
+    name: Last Recorded
+    select: "#LastUpdatedDate"
+prelogin:
+  preloginpage: https://www.mydreammapper.com/Account/LogOn
+  #preloginform: "/Account/LogOn"
+  preloginform: "form-horizontal"
+  username_field: "Email"
+  password_field: "Password"
+  username: !secret email1
+  password: !secret cpap_pass
