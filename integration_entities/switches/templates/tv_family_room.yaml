@@ -3,16 +3,14 @@ platform: template
 switches:
   tv_family_room:
     friendly_name: "TV: Family Room"
-    value_template: "{{ is_state('media_player.tv_family_room','on') }}"
-    turn_on:
-      - service: script.turn_on
-        entity_id: script.tv_family_room_apple_tv
-    turn_off:
-      - service: script.turn_on
-        entity_id: script.tv_family_room_off
+    value_template: "{{ states('media_player.tv_family_room') }}"
     icon_template: >-
-      {% if is_state('media_player.tv_family_room','on') %}
+      {% if states('media_player.tv_family_room') %}
         mdi:television
       {% else %}
         mdi:television-off
       {% endif %}
+    turn_on:
+      service: script.tv_family_room_apple_tv
+    turn_off:
+      service: script.tv_family_room_off
