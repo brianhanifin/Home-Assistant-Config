@@ -1,0 +1,24 @@
+---
+platform: template
+sensors:
+  uptime_relative:
+    entity_id: sensor.time
+    icon_template: mdi:clock
+    value_template: >-
+      {% set uptime = states('sensor.uptime')|float*60 %}
+      {% set days = uptime/60/24 %}
+      {% set up_dys = days|int %}
+      {% set hours = (days-up_dys)*24 %}
+      {% set up_hrs = hours|int %}
+      {% set up_mns = ((hours-up_hrs)*60)|int %}
+      {% if up_dys == 1 %}
+        1 day, 
+      {% elif up_dys > 1 %}
+        {{ up_dys }} days,
+      {% endif -%}
+      {% if up_hrs == 1 %}
+        1 hour, 
+      {% elif up_dys > 1 %}
+        {{ up_hrs }} hours, 
+      {% endif -%}
+      {% if up_hrs <= 1 %}{{ up_mns }} minutes{% endif %}

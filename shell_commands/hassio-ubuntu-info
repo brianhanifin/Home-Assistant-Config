@@ -1,0 +1,8 @@
+#!/bin/sh
+# This file is stored in /etc/cron.daily
+
+updates=$(/usr/lib/update-notifier/apt-check 2>&1)
+echo $updates | tee /usr/share/hassio/share/system_updates.out
+
+version=$(lsb_release -d 2>&1 | cut -d ':' -f 2 | sed 's/^\s*//g')
+echo $version | tee /usr/share/hassio/share/system_version.json
