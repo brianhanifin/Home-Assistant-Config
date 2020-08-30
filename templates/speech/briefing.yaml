@@ -311,14 +311,11 @@
   {%- endmacro -%}
 
   {%- macro responsibility_boys_weekly() -%}
-    {%- if "Monday" == as_timestamp(now())|timestamp_custom('%A') -%}
-      {%- set dishes_boy = states('input_select.responsibility_dishes_week') -%}
-      {%- set laundry_boy = "Lucas" if dishes_boy == "Kyle" else "Kyle" -%}
-      Listen up boys{{ pause() }}
-      It is {{ dishes_boy }}'s week to do the dishes.
-      And it is {{ laundry_boy }}'s week to take out the trash and wash the laundry.
-      {{ pause() }}
-    {%- endif -%}
+    {%- set dishes_boy = states('sensor.responsibility_dishes_week') -%}
+    {%- set laundry_boy = "Lucas" if dishes_boy == "Kyle" else "Kyle" -%}
+    Listen up boys{{ pause() }}
+    It is {{ dishes_boy }}'s week to do the dishes.
+    And it is {{ laundry_boy }}'s week to take out the trash and wash the laundry.{{ pause() }}
   {%- endmacro -%}
 
   {%- macro responsibility_medicine_buddy() -%}
@@ -516,6 +513,6 @@
   {%- endif -%}
 
   {#- Get briefing, and strip unnecessary characters. -#}
-  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace("...", "...") %}
+  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ") %}
     {{ get_briefing() }}
   {% endfilter %}
