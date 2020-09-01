@@ -20,7 +20,6 @@ import traceback
 import uuid
 
 from .const import LOGGER_PATH
-from .handler import current_task
 
 _LOGGER = logging.getLogger(LOGGER_PATH + ".jupyter_kernel")
 
@@ -35,14 +34,6 @@ def msg_id():
 def str_to_bytes(string):
     """Encode a string in bytes."""
     return string.encode('ascii')
-
-def bind(socket, connection, port):
-    """Bind a socket."""
-    if port <= 0:
-        return socket.bind_to_random_port(connection)
-    # _LOGGER.debug(f"binding to %s:%s" % (connection, port))
-    socket.bind("%s:%s" % (connection, port))
-    return port
 
 class KernelBufferingHandler(logging.handlers.BufferingHandler):
     """Memory-based handler for logging; send via stdout queue."""
@@ -61,7 +52,6 @@ class KernelBufferingHandler(logging.handlers.BufferingHandler):
 
 
 ################################################################
-#
 class ZmqSocket:
     """Defines a minimal implementation of a small subset of ZMQ,
 allowing pyscript to work with Jupyter without the real zmq
@@ -130,7 +120,7 @@ install on the wide set of HASS platforms."""
                 # _LOGGER.debug(f"recv: got cmd={cmd}, params={params}")
             else:
                 parts.append(msg_body)
-                if cmd == 0x0:
+                if cmd in (0x0, 0x2):
                     # _LOGGER.debug(f"recv: got msg {parts}")
                     if not multipart:
                         return b''.join(parts)
@@ -193,7 +183,6 @@ class Kernel:
         self.global_ctx_mgr = global_ctx_mgr
         self.ast_ctx = ast_ctx
 
-        self.connection = self.config["transport"] + "://" + self.config["ip"]
         self.secure_key = str_to_bytes(self.config["key"])
         self.signature_schemes = {"hmac-sha256": hashlib.sha256}
         self.auth = hmac.HMAC(
@@ -209,6 +198,14 @@ class Kernel:
         self.stdin_server = None
         self.shell_server = None
 
+        self.heartbeat_port = None
+        self.iopub_port = None
+        self.control_port = None
+        self.stdin_port = None
+        self.shell_port = None
+        # this should probably be a configuration parameter
+        self.avail_port = 50321
+
         # there can be multiple iopub subscribers, with corresponding tasks
         self.iopub_socket = set()
 
@@ -216,10 +213,16 @@ class Kernel:
         self.task_cnt = 0
         self.task_cnt_max = 0
 
+        self.session_cleanup_callback = None
+
         self.housekeep_q = asyncio.Queue(0)
 
         self.parent_header = None
 
+        #
+        # we create a logging handler so that output from the log functions
+        # gets delivered back to Jupyter as stdout
+        #
         self.console = KernelBufferingHandler(self.housekeep_q)
         self.console.setLevel(logging.DEBUG)
         # set a format which is just the message
@@ -257,6 +260,7 @@ class Kernel:
         msg['content']       = decode(msg_frames[3])
         check_sig = self.msg_sign(msg_frames)
         if check_sig != m_signature:
+            _LOGGER.error("signature mismatch: check_sig=%s, m_signature=%s, wire_msg=%s", check_sig, m_signature, wire_msg)
             raise ValueError("Signatures do not match")
 
         return identities, msg
@@ -307,20 +311,19 @@ class Kernel:
         # else:
         #     _LOGGER.debug("send skipping msg_type %s since socket is None", msg_type)
 
-    async def shell_handler(self, shell_socket, msg):
+    async def shell_handler(self, shell_socket, wire_msg):
         """Handle shell messages."""
-        identities, msg = self.deserialize_wire_msg(msg)
-        # _LOGGER.debug("shell received %s: %s", msg.get('header', {}).get('msg_type', 'UNKNOWN'), msg)
 
+        identities, msg = self.deserialize_wire_msg(wire_msg)
+        # _LOGGER.debug("shell received %s: %s", msg.get('header', {}).get('msg_type', 'UNKNOWN'), msg)
         self.parent_header = msg['header']
 
-        # process request:
+        content = {
+            'execution_state': "busy",
+        }
+        await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
 
         if msg['header']["msg_type"] == "execute_request":
-            content = {
-                'execution_state': "busy",
-            }
-            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
 
             content = {
                 'execution_count': self.execution_count,
@@ -336,6 +339,7 @@ class Kernel:
                 exc = self.ast_ctx.get_exception_obj()
             if exc:
                 traceback_mesg = self.ast_ctx.get_exception_long().split("\n")
+
                 metadata = {
                     "dependencies_met": True,
                     "engine": self.engine_id,
@@ -354,11 +358,13 @@ class Kernel:
                     parent_header=msg['header'], identities=identities)
                 del content["execution_count"], content["status"]
                 await self.send(self.iopub_socket, 'error', content, parent_header=msg['header'])
+
                 content = {
                     'execution_state': "idle",
                 }
                 await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
-                self.execution_count += 1
+                if msg['content'].get("store_history", True):
+                    self.execution_count += 1
                 return
 
             # if True or isinstance(self.ast_ctx.ast, ast.Expr):
@@ -370,11 +376,6 @@ class Kernel:
                     'metadata': {}
                 }
                 await self.send(self.iopub_socket, 'execute_result', content, parent_header=msg['header'])
-
-            content = {
-                'execution_state': "idle",
-            }
-            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
 
             metadata = {
                 "dependencies_met": True,
@@ -391,12 +392,10 @@ class Kernel:
             }
             await self.send(shell_socket, 'execute_reply', content, metadata=metadata,
                 parent_header=msg['header'], identities=identities)
-            self.execution_count += 1
+            if msg['content'].get("store_history", True):
+                self.execution_count += 1
+
         elif msg['header']["msg_type"] == "kernel_info_request":
-            content = {
-                'execution_state': "busy",
-            }
-            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
             content = {
                 "protocol_version": "5.3",
                 "ipython_version": [1, 1, 0, ""],
@@ -416,14 +415,8 @@ class Kernel:
                 "banner": ""
             }
             await self.send(shell_socket, 'kernel_info_reply', content, parent_header=msg['header'], identities=identities)
-            content = {
-                'execution_state': "idle",
-            }
-            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
+
         elif msg['header']["msg_type"] == "complete_request":
-            content = {
-                'execution_state': "busy",
-            }
             await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
 
             code = msg["content"]["code"]
@@ -448,10 +441,6 @@ class Kernel:
             }
             await self.send(shell_socket, 'complete_reply', content, parent_header=msg['header'], identities=identities)
 
-            content = {
-                'execution_state': "idle",
-            }
-            await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
         elif msg['header']["msg_type"] == "is_complete_request":
             code = msg['content']["code"]
             self.ast_ctx.parse(code)
@@ -501,74 +490,79 @@ class Kernel:
                     }
             # _LOGGER.debug(f"is_complete_request code={code}, exc={exc}, content={content}")
             await self.send(shell_socket, 'is_complete_reply', content, parent_header=msg['header'], identities=identities)
+
         elif msg['header']["msg_type"] == "comm_info_request":
             content = {
                 "comms": {}
             }
             await self.send(shell_socket, 'comm_info_reply', content, parent_header=msg['header'], identities=identities)
+
         elif msg['header']["msg_type"] == "history_request":
             content = {
                 "history": []
             }
             await self.send(shell_socket, 'history_reply', content, parent_header=msg['header'], identities=identities)
+
         else:
             _LOGGER.error("unknown msg_type: %s", msg['header']["msg_type"])
 
+        content = {
+            'execution_state': "idle",
+        }
+        await self.send(self.iopub_socket, 'status', content, parent_header=msg['header'])
 
-    ##########################################
-    # Control:
     async def control_listen(self, reader, writer):
         """Task that listens to control messages."""
         try:
-            # _LOGGER.debug("control_listen connected")
-            await self.housekeep_q.put(["register", "control", current_task()])
+            _LOGGER.debug("control_listen connected")
+            await self.housekeep_q.put(["register", "control", asyncio.current_task()])
             control_socket = ZmqSocket(reader, writer, "ROUTER")
             await control_socket.handshake()
             while 1:
                 wire_msg = await control_socket.recv_multipart()
-                _, msg = self.deserialize_wire_msg(wire_msg)
+                identities, msg = self.deserialize_wire_msg(wire_msg)
                 # _LOGGER.debug("control received %s: %s", msg.get('header', {}).get('msg_type', 'UNKNOWN'), msg)
                 if msg['header']["msg_type"] == "shutdown_request":
+                    content = {
+                        "restart": False,
+                    }
+                    await self.send(control_socket, 'shutdown_reply', content, parent_header=msg['header'], identities=identities)
                     await self.housekeep_q.put(["shutdown"])
         except asyncio.CancelledError:  # pylint: disable=try-except-raise
             raise
         except EOFError:
-            # _LOGGER.debug("control_listen got eof")
-            await self.housekeep_q.put(["unregister", "control", current_task()])
+            _LOGGER.debug("control_listen got eof")
+            await self.housekeep_q.put(["unregister", "control", asyncio.current_task()])
             control_socket.close()
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.error("control_listen exception %s", err)
             await self.housekeep_q.put(["shutdown"])
 
-    ##########################################
-    # Stdin:
     async def stdin_listen(self, reader, writer):
         """Task that listens to stdin messages."""
         try:
-            # _LOGGER.debug("stdin_listen connected")
-            await self.housekeep_q.put(["register", "stdin", current_task()])
+            _LOGGER.debug("stdin_listen connected")
+            await self.housekeep_q.put(["register", "stdin", asyncio.current_task()])
             stdin_socket = ZmqSocket(reader, writer, "ROUTER")
             await stdin_socket.handshake()
             while 1:
                 _ = await stdin_socket.recv_multipart()
-                # _LOGGER.debug("stdin_listen received %s", raw_msg)
+                # _LOGGER.debug("stdin_listen received %s", _)
         except asyncio.CancelledError:  # pylint: disable=try-except-raise
             raise
         except EOFError:
-            # _LOGGER.debug("stdin_listen got eof")
-            await self.housekeep_q.put(["unregister", "stdin", current_task()])
+            _LOGGER.debug("stdin_listen got eof")
+            await self.housekeep_q.put(["unregister", "stdin", asyncio.current_task()])
             stdin_socket.close()
         except Exception:  # pylint: disable=broad-except
             _LOGGER.error("stdin_listen exception %s", traceback.format_exc(-1))
             await self.housekeep_q.put(["shutdown"])
 
-    ##########################################
-    # Shell:
     async def shell_listen(self, reader, writer):
         """Task that listens to shell messages."""
         try:
-            # _LOGGER.debug("shell_listen connected")
-            await self.housekeep_q.put(["register", "shell", current_task()])
+            _LOGGER.debug("shell_listen connected")
+            await self.housekeep_q.put(["register", "shell", asyncio.current_task()])
             shell_socket = ZmqSocket(reader, writer, "ROUTER")
             await shell_socket.handshake()
             while 1:
@@ -578,62 +572,56 @@ class Kernel:
             shell_socket.close()
             raise
         except EOFError:
-            # _LOGGER.debug("shell_listen got eof")
-            await self.housekeep_q.put(["unregister", "shell", current_task()])
+            _LOGGER.debug("shell_listen got eof")
+            await self.housekeep_q.put(["unregister", "shell", asyncio.current_task()])
             shell_socket.close()
         except Exception:  # pylint: disable=broad-except
             _LOGGER.error("shell_listen exception %s", traceback.format_exc(-1))
             await self.housekeep_q.put(["shutdown"])
 
-    ##########################################
-    # Heartbeat:
     async def heartbeat_listen(self, reader, writer):
         """Task that listens and responds to heart beat messages."""
         try:
-            # _LOGGER.debug("heartbeat_listen connected")
-            await self.housekeep_q.put(["register", "heartbeat", current_task()])
+            _LOGGER.debug("heartbeat_listen connected")
+            await self.housekeep_q.put(["register", "heartbeat", asyncio.current_task()])
             heartbeat_socket = ZmqSocket(reader, writer, "REP")
             await heartbeat_socket.handshake()
             while 1:
                 msg = await heartbeat_socket.recv()
-                # _LOGGER.debug(f"heartbeat_listen: got {msg}")
+                # _LOGGER.debug("heartbeat_listen: got %s", msg)
                 await heartbeat_socket.send(msg)
         except asyncio.CancelledError:  # pylint: disable=try-except-raise
             raise
         except EOFError:
-            # _LOGGER.debug("heartbeat_listen got eof")
-            await self.housekeep_q.put(["unregister", "heartbeat", current_task()])
+            _LOGGER.debug("heartbeat_listen got eof")
+            await self.housekeep_q.put(["unregister", "heartbeat", asyncio.current_task()])
             heartbeat_socket.close()
         except Exception:  # pylint: disable=broad-except
             _LOGGER.error("heartbeat_listen exception: %s", traceback.format_exc(-1))
             await self.housekeep_q.put(["shutdown"])
 
-    ##########################################
-    # IOPub/Sub:
     async def iopub_listen(self, reader, writer):
         """Task that listens to iopub messages."""
         try:
-            # _LOGGER.debug("iopub_listen connected")
-            await self.housekeep_q.put(["register", "iopub", current_task()])
+            _LOGGER.debug("iopub_listen connected")
+            await self.housekeep_q.put(["register", "iopub", asyncio.current_task()])
             iopub_socket = ZmqSocket(reader, writer, "PUB")
             await iopub_socket.handshake()
             self.iopub_socket.add(iopub_socket)
             while 1:
                 _ = await iopub_socket.recv_multipart()
-                # _LOGGER.debug("iopub received %s", wire_msg)
+                # _LOGGER.debug("iopub received %s", _)
         except asyncio.CancelledError:  # pylint: disable=try-except-raise
             raise
         except EOFError:
-            await self.housekeep_q.put(["unregister", "iopub", current_task()])
+            await self.housekeep_q.put(["unregister", "iopub", asyncio.current_task()])
             iopub_socket.close()
             self.iopub_socket.discard(iopub_socket)
-            # _LOGGER.debug("iopub_listen got eof")
+            _LOGGER.debug("iopub_listen got eof")
         except Exception:  # pylint: disable=broad-except
             _LOGGER.error("iopub_listen exception %s", traceback.format_exc(-1))
             await self.housekeep_q.put(["shutdown"])
 
-    ##########################################
-    # Housekeeping
     async def housekeep_run(self):
         """Housekeeping, including closing servers after startup, and doing orderly shutdown."""
         while True:
@@ -652,6 +640,12 @@ class Kernel:
                     self.tasks[msg[1]].add(msg[2])
                     self.task_cnt += 1
                     self.task_cnt_max = max(self.task_cnt_max, self.task_cnt)
+                    #
+                    # now a couple of things are connected, call the session_cleanup_callback
+                    #
+                    if self.task_cnt > 1 and self.session_cleanup_callback:
+                        self.session_cleanup_callback()
+                        self.session_cleanup_callback = None
                 elif msg[0] == "unregister":
                     if msg[1] in self.tasks:
                         self.tasks[msg[1]].discard(msg[2])
@@ -670,35 +664,90 @@ class Kernel:
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.error("housekeep task exception: %s", traceback.format_exc(-1))
 
+    async def startup_timeout(self):
+        """Shut down the session if nothing connects after 30 seconds."""
+        await self.housekeep_q.put(["register", "startup_timeout", asyncio.current_task()])
+        await asyncio.sleep(30)
+        if self.task_cnt_max == 1:
+            #
+            # nothing started other than us, so shut down the session
+            #
+            _LOGGER.error("No connections to session %s; shutting down", self.global_ctx_name)
+            if self.session_cleanup_callback:
+                self.session_cleanup_callback()
+                self.session_cleanup_callback = None
+            await self.housekeep_q.put(["shutdown"])
+        await self.housekeep_q.put(["unregister", "startup_timeout", asyncio.current_task()])
+
+    async def start_one_server(self, callback):
+        """Start a server by finding an available port."""
+        first_port = self.avail_port
+        for _ in range(2048):
+            try:
+                server = await asyncio.start_server(callback, "0.0.0.0", self.avail_port)
+                return server, self.avail_port
+            except OSError:
+                self.avail_port += 1
+        _LOGGER.error("unable to find an available port from %d to %d", first_port, self.avail_port - 1)
+        return None, None
+
+    def get_ports(self):
+        """Return a dict of the port numbers this kernel session is listening to."""
+        return {
+            "iopub_port": self.iopub_port,
+            "hb_port": self.heartbeat_port,
+            "control_port": self.control_port,
+            "stdin_port": self.stdin_port,
+            "shell_port": self.shell_port,
+        }
+
+    def set_session_cleanup_callback(self, callback):
+        """Set a cleanup callback which is called right after the session has started."""
+        self.session_cleanup_callback = callback
+
     async def session_start(self):
         """Start the kernel session."""
         self.ast_ctx.add_logger_handler(self.console)
         _LOGGER.info("Starting session %s", self.global_ctx_name)
 
         self.tasks["housekeep"] = {asyncio.create_task(self.housekeep_run())}
+        self.tasks["startup_timeout"] = {asyncio.create_task(self.startup_timeout())}
 
-        self.iopub_server = await asyncio.start_server(self.iopub_listen, self.config["ip"], self.config["iopub_port"])
-        self.heartbeat_server = await asyncio.start_server(self.heartbeat_listen, self.config["ip"], self.config["hb_port"])
-        self.control_server = await asyncio.start_server(self.control_listen, self.config["ip"], self.config["control_port"])
-        self.stdin_server = await asyncio.start_server(self.stdin_listen, self.config["ip"], self.config["stdin_port"])
-        self.shell_server = await asyncio.start_server(self.shell_listen, self.config["ip"], self.config["shell_port"])
+        self.iopub_server, self.iopub_port = await self.start_one_server(self.iopub_listen)
+        self.heartbeat_server, self.heartbeat_port = await self.start_one_server(self.heartbeat_listen)
+        self.control_server, self.control_port = await self.start_one_server(self.control_listen)
+        self.stdin_server, self.stdin_port = await self.start_one_server(self.stdin_listen)
+        self.shell_server, self.shell_port = await self.start_one_server(self.shell_listen)
 
         #
         # For debugging, can use the real ZMQ library instead on certain sockets; comment out
         # the corresponding asyncio.start_server() call above if you enable the ZMQ-based
-        # functions here.  The two most important ones are shown here.
+        # functions here.  You can then turn of verbosity level 4 (-vvvv) in hass_pyscript_kernel.py
+        # to see all the byte data in case you need to debug the simple ZMQ implementation here.
+        # The two most important zmq functions are shown below.
         #
         #  import zmq
         #  import zmq.asyncio
         #
+        #  def zmq_bind(socket, connection, port):
+        #      """Bind a socket."""
+        #      if port <= 0:
+        #          return socket.bind_to_random_port(connection)
+        #      # _LOGGER.debug(f"binding to %s:%s" % (connection, port))
+        #      socket.bind("%s:%s" % (connection, port))
+        #      return port
+        #
         #  zmq_ctx = zmq.asyncio.Context()
+        #
         #  ##########################################
         #  # Shell using real ZMQ for debugging:
         #  async def shell_listen_zmq():
         #      """Task that listens to shell messages using ZMQ."""
         #      try:
+        #          _LOGGER.debug("shell_listen_zmq connected")
+        #          connection = self.config["transport"] + "://" + self.config["ip"]
         #          shell_socket = zmq_ctx.socket(zmq.ROUTER)  # pylint: disable=no-member
-        #          self.config["shell_port"] = bind(shell_socket, self.connection, self.config["shell_port"])
+        #          self.shell_port = zmq_bind(shell_socket, connection, -1)
         #          _LOGGER.debug("shell_listen_zmq connected")
         #          while 1:
         #              msg = await shell_socket.recv_multipart()
@@ -716,8 +765,9 @@ class Kernel:
         #      """Task that listens to iopub messages using ZMQ."""
         #      try:
         #          _LOGGER.debug("iopub_listen_zmq connected")
+        #          connection = self.config["transport"] + "://" + self.config["ip"]
         #          iopub_socket = zmq_ctx.socket(zmq.PUB)  # pylint: disable=no-member
-        #          self.config["iopub_port"] = bind(self.iopub_socket, self.connection, self.config["iopub_port"])
+        #          self.iopub_port = zmq_bind(self.iopub_socket, connection, -1)
         #          self.iopub_socket.add(iopub_socket)
         #          while 1:
         #              wire_msg = await iopub_socket.recv_multipart()

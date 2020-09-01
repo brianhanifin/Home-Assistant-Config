@@ -96,15 +96,15 @@
     platform: homeassistant
   condition: []
   action:
-  - data: {}
-    entity_id: input_boolean.home_assistant_loaded
+  - data:
+      message: Startup automation begins
+    service: script.toast
+  - data:
+      entity_id: input_boolean.home_assistant_loaded
     service: input_boolean.turn_off
   - data:
       navigation_path: /lovelace/home
     service: browser_mod.navigate
-  - data: {}
-    entity_id: light.garage_entry
-    service: light.turn_off
   - delay: 00:00:30
   - data:
       name: ios-dark-mode-blue-red-alternative
@@ -114,16 +114,14 @@
   - data: {}
     entity_id: script.create_actionable_lights_group
     service: script.create_actionable_lights_group
-  - data:
-      message: Startup complete
-    service: script.toast
   - delay: 00:00:30
-  - data: {}
-    entity_id: input_boolean.home_assistant_loaded
+  - data:
+      duration: 30000
+      message: Startup automation complete
+    service: script.toast
+  - data:
+      entity_id: input_boolean.home_assistant_loaded
     service: input_boolean.turn_on
-  - data: {}
-    entity_id: automation.persistent_notification_count_update
-    service: automation.turn_on
   mode: single
 - id: '1588557204708'
   alias: Midnight - Custom Event
@@ -185,7 +183,7 @@
   - event: shutdown
     platform: homeassistant
   - event_data: {}
-    event_type: ' homeassistant_close'
+    event_type: homeassistant_close
     platform: event
   - event_data: {}
     event_type: homeassistant_stop
@@ -195,8 +193,4 @@
   - data: {}
     entity_id: input_boolean.home_assistant_loaded
     service: input_boolean.turn_off
-  - data:
-      navigation_path: /lovelace/home
-    service: browser_mod.navigate
-  - delay: 00:00:02
   mode: single
