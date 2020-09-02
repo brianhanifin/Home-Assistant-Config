@@ -1,7 +1,7 @@
 ---
 alias: Persistent Notifications Count
 id: persistent_notification_count_update
-initial_state: false
+initial_state: true
 mode: restart
 trigger:
   - platform: event
@@ -14,6 +14,10 @@ trigger:
     event_data:
       domain: persistent_notification
       service: dismiss
+condition:
+  condition: state
+  entity_id: input_boolean.home_assistant_loaded
+  state: "on"
 action:
   - service: homeassistant.update_entity
     entity_id: sensor.persistent_notification_count

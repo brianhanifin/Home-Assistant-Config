@@ -1,0 +1,30 @@
+---
+platform: template
+sensors:
+  addon_updates:
+    entity_id:
+      - input_boolean.home_assistant_loaded
+    icon_template: mdi:counter
+    value_template: |
+      {%- macro addon_updates() -%}
+        {%- set sensors = states.sensor | map(attribute='entity_id') | list -%}
+        {%- for sensor in sensors if sensor.startswith('sensor.addon') -%}
+          {%- if state_attr(sensor,'version') != state_attr(sensor,'version_latest') -%}
+            {{ sensor + '\t' }}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endmacro -%}
+      {%- set updates = addon_updates()|trim -%}
+      {{ updates.split('\t')|count }}
+    attribute_templates:
+      entities: |
+        {%- macro addon_updates() -%}
+          {%- set sensors = states.sensor | map(attribute='entity_id') | list -%}
+          {%- for sensor in sensors if sensor.startswith('sensor.addon') -%}
+            {%- if state_attr(sensor,'version') != state_attr(sensor,'version_latest') -%}
+              {{ sensor + '\t' }}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endmacro -%}
+        {%- set updates = addon_updates()|trim -%}
+        {{ updates|replace('\t',',') }}

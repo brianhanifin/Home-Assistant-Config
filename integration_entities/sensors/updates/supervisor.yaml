@@ -1,0 +1,17 @@
+---
+platform: rest
+name: supervisor
+resource: http://hassos.local:8123/api/hassio/supervisor/info
+value_template: '{{ value_json.data.version }}'
+scan_interval: 1800 # 60 seconds * 30 minutes = 1/2 hour worth of seconds
+headers:
+  Authorization: !secret rest_token
+  Content-Type: application/json
+json_attributes_path: "$.data"
+json_attributes:
+  - channel
+  - healthy
+  - supported
+  - version
+  - version_latest
+

@@ -1,0 +1,18 @@
+---
+platform: template
+sensors:
+  core_supervisor_updates:
+    entity_id:
+      - binary_sensor.update_available
+      - sensor.supervisor
+    friendly_name: 'Core + Supervisor Updates'
+    icon_template: mdi:counter
+    value_template: >
+      {% set updates = 0 %}
+      {% if is_state("binary_sensor.update_available","on") %}
+        {% set updates = updates + 1 %}
+      {% endif %}
+      {% if state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") %}
+        {% set updates = updates + 1 %}
+      {% endif %}
+      {{ updates }}

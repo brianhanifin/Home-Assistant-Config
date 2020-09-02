@@ -1,0 +1,10 @@
+---
+platform: command_line
+name: Supervisor2
+command: 'curl http://supervisor/supervisor/info -H "Authorization: Bearer $(printenv SUPERVISOR_TOKEN)" | jq ''{"newest_version":.data.version_latest,"current_version":.data.version,"addons":[.data.addons[] | select(.version != .installed)]}'''
+json_attributes:
+  - newest_version
+  - current_version
+  - addons
+scan_interval: 3600
+value_template: "{{ value_json.current_version }}"

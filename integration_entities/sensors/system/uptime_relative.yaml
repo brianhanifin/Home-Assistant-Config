@@ -11,14 +11,14 @@ sensors:
       {% set hours = (days-up_dys)*24 %}
       {% set up_hrs = hours|int %}
       {% set up_mns = ((hours-up_hrs)*60)|int %}
-      {% if up_dys == 1 %}
-        1 day, 
-      {% elif up_dys > 1 %}
-        {{ up_dys }} days,
+      {% if up_dys > 1 %}
+        {{ up_dys }} days
+      {% elif up_dys == 1 %}
+        1 day 
       {% endif -%}
-      {% if up_hrs == 1 %}
-        1 hour, 
-      {% elif up_dys > 1 %}
-        {{ up_hrs }} hours, 
+      {% if up_hrs > 1 %}
+        {{ up_hrs }} hours
+      {% elif up_hrs == 1 %}
+        1 hour 
       {% endif -%}
-      {% if up_hrs <= 1 %}{{ up_mns }} minutes{% endif %}
+      {% if up_hrs < 1 %}{{ up_mns }} minutes{% endif %}

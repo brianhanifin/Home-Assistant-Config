@@ -1,0 +1,12 @@
+---
+platform: rest
+name: addons
+resource: http://hassos.local:8123/api/hassio/supervisor/info
+value_template: '{{ value_json.data.addons|count }}'
+scan_interval: 1800 # 60 seconds * 30 minutes = 1/2 hour worth of seconds
+headers:
+  Authorization: !secret rest_token
+  Content-Type: application/json
+json_attributes_path: "$.data"
+json_attributes:
+  - addons
