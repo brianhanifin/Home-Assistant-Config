@@ -15,53 +15,10 @@ action:
   - service: script.toast
     data_template:
       message: |
-        {%- set combined_updates = states("sensor.home_assistant_updates")|int|default("0")
-                                + states("sensor.ubuntu_total_updates")|int|default("0")
-                                + states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
-        {%- if combined_updates == 1 %} 
-          There is an update available.
-        {%- else %}
-          There are {{ combined_updates }} updates available.
-        {%- endif %}
-        {%- if is_state_attr("sensor.home_assistant_updates","core","True") %}
-            * There is a Core update.
-        {%- endif %}
-        {%- if is_state_attr("sensor.home_assistant_updates","supervisor","True") %}
-            * There is a Supervisor update.
-        {%- endif %}
-        {%- set updates = states("sensor.ubuntu_system_updates")|int|default("0") %}
-        {%- if updates > 0 %}
-          {%- if updates == 1 %}
-              * There is one Ubuntu update.
-          {%- else %}
-              * There are {{ updates }} Ubuntu updates.
-          {%- endif %}
-        {%- endif %}
-        {%- set updates = states("sensor.ubuntu_security_updates")|int|default("0") %}
-        {%- if updates > 0 %}
-          {%- if updates == 1 %}
-              * There is one Ubuntu Security update.
-          {%- else %}
-              * There are {{ updates }} Ubuntu Security updates.
-          {%- endif %}
-        {%- endif %}
-        {%- set updates = states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
-        {%- if updates > 0 %}
-          {% if updates == 1 %}
-              * There is one Unifi Firmware update.
-          {% else %}
-              * There are {{ updates }} Unifi Firmware updates.
-          {% endif %}
-        {%- endif %}        
-      duration: 10000
-
-  - service: script.notify_mobile
-    data_template:
-      title: "Home Assistant Update"
-      message: |
-        {%- set combined_updates = states("sensor.home_assistant_updates")|int|default("0")
-                                + states("sensor.ubuntu_total_updates")|int|default("0")
-                                + states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
+        {%- set combined_updates =
+            states("sensor.home_assistant_updates")|int|default("0") +
+            states("sensor.ubuntu_total_updates")|int|default("0") +
+            states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
         {%- if combined_updates == 1 %} 
           There is an update available.
         {%- else %}
@@ -76,41 +33,102 @@ action:
         {%- if is_state_attr("sensor.home_assistant_updates","hacs","True") %}
           {%- set updates = states("sensor.hacs")|int|default("0") %}
           {%- if updates == 1 %}
-              * There is one HACS update.
+            * There is one HACS update.
           {%- else %}
-              * There are {{ updates }} HACS updates.
+            * There are {{ updates }} HACS updates.
           {%- endif %}
         {%- endif %}
         {%- if is_state_attr("sensor.home_assistant_updates","addons","True") %}
           {%- set updates = states("sensor.addon_updates")|int|default("0") %}
           {%- if updates == 1 %}
-              * There is one Addon update.
+            * There is one Addon update.
           {%- else %}
-              * There are {{ updates }} Addon updates.
+            * There are {{ updates }} Addon updates.
           {%- endif %}
         {%- endif %}
         {%- set updates = states("sensor.ubuntu_system_updates")|int|default("0") %}
         {%- if updates > 0 %}
           {%- if updates == 1 %}
-              * There is one Ubuntu update.
+            * There is one Ubuntu update.
           {%- else %}
-              * There are {{ updates }} Ubuntu updates.
+            * There are {{ updates }} Ubuntu updates.
           {%- endif %}
         {%- endif %}
         {%- set updates = states("sensor.ubuntu_security_updates")|int|default("0") %}
         {%- if updates > 0 %}
           {%- if updates == 1 %}
-              * There is one Ubuntu Security update.
+            * There is one Ubuntu Security update.
           {%- else %}
-              * There are {{ updates }} Ubuntu Security updates.
+            * There are {{ updates }} Ubuntu Security updates.
           {%- endif %}
         {%- endif %}
         {%- set updates = states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
         {%- if updates > 0 %}
-          {% if updates == 1 %}
-              * There is one Unifi Firmware update.
-          {% else %}
-              * There are {{ updates }} Unifi Firmware updates.
-          {% endif %}
+          {%- if updates == 1 %}
+            * There is one Unifi Firmware update.
+          {%- else %}
+            * There are {{ updates }} Unifi Firmware updates.
+          {%- endif %}
+        {%- endif %}
+      duration: 10000
+
+  - service: script.notify_mobile
+    data_template:
+      title: "Home Assistant Update"
+      message: |
+        {%- set combined_updates =
+            states("sensor.home_assistant_updates")|int|default("0") +
+            states("sensor.ubuntu_total_updates")|int|default("0") +
+            states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
+        {%- if combined_updates == 1 %} 
+          There is an update available.
+        {%- else %}
+          There are {{ combined_updates }} updates available.
+        {%- endif %}
+        {%- if is_state_attr("sensor.home_assistant_updates","core","True") %}
+            * There is a Core update.
+        {%- endif %}
+        {%- if is_state_attr("sensor.home_assistant_updates","supervisor","True") %}
+            * There is a Supervisor update.
+        {%- endif %}
+        {%- if is_state_attr("sensor.home_assistant_updates","hacs","True") %}
+          {%- set updates = states("sensor.hacs")|int|default("0") %}
+          {%- if updates == 1 %}
+            * There is one HACS update.
+          {%- else %}
+            * There are {{ updates }} HACS updates.
+          {%- endif %}
+        {%- endif %}
+        {%- if is_state_attr("sensor.home_assistant_updates","addons","True") %}
+          {%- set updates = states("sensor.addon_updates")|int|default("0") %}
+          {%- if updates == 1 %}
+            * There is one Addon update.
+          {%- else %}
+            * There are {{ updates }} Addon updates.
+          {%- endif %}
+        {%- endif %}
+        {%- set updates = states("sensor.ubuntu_system_updates")|int|default("0") %}
+        {%- if updates > 0 %}
+          {%- if updates == 1 %}
+            * There is one Ubuntu update.
+          {%- else %}
+            * There are {{ updates }} Ubuntu updates.
+          {%- endif %}
+        {%- endif %}
+        {%- set updates = states("sensor.ubuntu_security_updates")|int|default("0") %}
+        {%- if updates > 0 %}
+          {%- if updates == 1 %}
+            * There is one Ubuntu Security update.
+          {%- else %}
+            * There are {{ updates }} Ubuntu Security updates.
+          {%- endif %}
+        {%- endif %}
+        {%- set updates = states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
+        {%- if updates > 0 %}
+          {%- if updates == 1 %}
+            * There is one Unifi Firmware update.
+          {%- else %}
+            * There are {{ updates }} Unifi Firmware updates.
+          {%- endif %}
         {%- endif %}
       who: "brian"
