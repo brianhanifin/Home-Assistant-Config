@@ -298,13 +298,13 @@
   {%- endmacro -%}
 
   {%- macro responsibilities() -%}
-    {%- set trash = responsibility_trash() -%}
+    {%- set trash_to_curb = responsibility_trash_to_curb() -%}
     {%- set boys_weekly = responsibility_boys_weekly() -%}
 
     {%- if trash|length > 10 or boys_weekly|length > 10 -%}
       <voice name="Brian">
       Family Responsibilities{{ pause() }}
-      {{ trash }}
+      {{ trash_to_curb }}
       {{ boys_weekly }}
       </voice>
     {%- endif %}
@@ -325,7 +325,7 @@
     {%- endif %}
   {%- endmacro -%}
 
-  {%- macro responsibility_trash() -%}
+  {%- macro responsibility_trash_to_curb() -%}
     {%- if now().strftime('%a') == 'Mon' -%}
       {%- set last_curb = states('sensor.contribution_trash_to_curb')|int|timestamp_custom('%m%d') -%}
       {%- set today = as_timestamp(now())|timestamp_custom('%m%d') %}
