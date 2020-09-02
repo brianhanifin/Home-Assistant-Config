@@ -79,3 +79,102 @@ action:
                   entity_id:
                     - switch.sound_machine
                     - switch.bedroom_fan
+
+      # IDEA: If we setup a wait_template with a 1 seconds timeout, would we be able to detect double-clicks?
+      # Downside: This would delay all single click actions by 1 second.
+      # Upside: 5 more commands are possible.
+
+      # Brian's Ikea 5 button remote
+      - conditions:
+          - condition: template
+            value_template: '{{ trigger.event.data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee" }}'
+        sequence:
+          choose:
+            # Single Click: Power (middle)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "toggle" }}'
+              sequence:
+                - service: switch.toggle
+                  entity_id: switch.family_room_fan
+            # Single Click: Brightness Up (top)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "step_with_on_off" }}'
+              sequence:
+                - service: light.turn_on
+                  data:
+                    entity_id:
+                      - light.family_room
+                      - light.table_lamp
+                      brightness_pct: 100
+            # Single Click: Brightness down (bottom)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "step" }}'
+              sequence:
+                - service: light.turn_off
+                  entity_id:
+                    - light.family_room
+                    - light.table_lamp
+            # Single Click: Arrow left (left)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "press"
+                                  and trigger.event.data.args[0]|int == 256 }}'
+              sequence:
+                - service: light.turn_on
+                  data:
+                    entity_id: light.family_room_floor_lamp
+                    brightness_pct: 100
+            # Single Click: Arrow right (right)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "press"
+                                    and trigger.event.data.args[0]|int == 257 }}'
+              sequence:
+                - service: light.turn_off
+                  entity_id: light.family_room_floor_lamp
+
+            # Hold: Brightness Up (top)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "move" }}'
+              sequence:
+                - service: light.turn_on
+                  data:
+                    entity_id:
+                      - light.family_room
+                      - light.table_lamp
+                    brightness_step_pct: "-20"
+            # Hold: Brightness down (bottom)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "move_with_on_off" }}'
+              sequence:
+                - service: light.turn_on
+                  data:
+                    entity_id:
+                      - light.family_room
+                      - light.table_lamp
+                    brightness_step_pct: "20"
+            # Hold: Arrow left (left)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "hold"
+                                  and trigger.event.data.args[0]|int == 3329 }}'
+              sequence:
+                - service: light.turn_on
+                  data:
+                    entity_id: light.family_room_floor_lamp
+                    brightness_step_pct: "-20"
+            # Hold: Arrow right (right)
+            - conditions:
+                - condition: template
+                  value_template: '{{ trigger.event.data.command == "hold"
+                                    and trigger.event.data.args[0]|int == 3328 }}'
+              sequence:
+                - service: light.turn_on
+                  data:
+                    entity_id: light.family_room_floor_lamp
+                    brightness_step_pct: "20"
