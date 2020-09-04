@@ -7,7 +7,7 @@ trigger:
   platform: event
   event_type: zha_event
 condition:
-  # Ignore button release events.
+  # Ignore Xiaomi button release events.
   - condition: template
     value_template: '{{ trigger.event.data.args.value != false }}'
 action:
@@ -81,10 +81,6 @@ action:
                     - switch.sound_machine
                     - switch.bedroom_fan
 
-      # IDEA: If we setup a wait_template with a 1 seconds timeout, would we be able to detect double-clicks?
-      # Downside: This would delay all single click actions by 1 second.
-      # Upside: 5 more commands are possible.
-
       # Brian's Ikea 5 button remote
       - conditions:
           - condition: template
@@ -96,21 +92,20 @@ action:
                 - condition: template
                   value_template: '{{ trigger.event.data.command == "toggle" }}'
               sequence:
-                - service: variable.set_variable
-                  data:
-                    variable: zha_clicks
-                    attributes_template: >
-                      {% set click = as_timestamp(now())|float %}
-                      {% set previous_click = state_attr("variable.zha_clicks","click")|float %}
-                      {
-                        "click_delta": "{{ click - previous_click }}",
-                        "click": "{{ as_timestamp(now()) }}",
-                        "previous_click": "{{ variable.attributes.click }}",
-                        "previous_command": "{{ variable.state }}",
-                        "last_updated":   "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
-                      }
+                # Store the previous click values.
+                - service: input_text.set_value
                   data_template:
-                    value: '{{ trigger.event.data.command }}'
+                    entity_id: input_text.zha_click
+                    # CSV Order: click_delta, click, command
+                    # {% set click_delta = states("input_text.zha_click").split(",")[0] %}
+                    # {% set click       = states("input_text.zha_click").split(",")[1] %}
+                    # {% set command     = states("input_text.zha_click").split(",")[2] %}
+                    value: >-
+                      {%- set click = as_timestamp(now())|float %}
+                      {%- set previous_click =  states("input_text.zha_click").split(",")[1]|float %}
+                      {{- click - previous_click }},
+                      {{- click }},
+                      {{- trigger.event.data.command }}
 
                 - choose:
                     # Double click
@@ -118,8 +113,8 @@ action:
                     - conditions:
                         - condition: template
                           value_template: |
-                            {% set click_delta = state_attr("variable.zha_clicks","click_delta")|float %}
-                            {% set previous_command = states("variable.zha_clicks") %}
+                            {% set click_delta = states("input_text.zha_click").split(",")[0]|float %}
+                            {% set previous_command = states("input_text.zha_click").split(",")[2]|trim %}
                             {{ click_delta <= 0.5 and previous_command == "toggle" }}
                       sequence:
                         - service: switch.toggle
