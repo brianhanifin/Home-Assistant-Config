@@ -1,7 +1,8 @@
 ---
 alias: zha_button_click
 initial_state: true
-mode: parallel
+#mode: parallel
+mode: restart # Force restart to pickup double click
 trigger:
   platform: event
   event_type: zha_event
@@ -90,13 +91,51 @@ action:
             value_template: '{{ trigger.event.data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee" }}'
         sequence:
           choose:
-            # Single Click: Power (middle)
+            # Button: Power (middle)
             - conditions:
                 - condition: template
                   value_template: '{{ trigger.event.data.command == "toggle" }}'
               sequence:
-                - service: switch.toggle
-                  entity_id: switch.family_room_fan
+                - service: variable.set_variable
+                  data:
+                    variable: zha_clicks
+                    attributes_template: >
+                      {% set click = as_timestamp(now())|float %}
+                      {% set previous_click = state_attr("variable.zha_clicks","click")|float %}
+                      {
+                        "click_delta": "{{ click - previous_click }}",
+                        "click": "{{ as_timestamp(now()) }}",
+                        "previous_click": "{{ variable.attributes.click }}",
+                        "previous_command": "{{ variable.state }}",
+                        "last_updated":   "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
+                      }
+                  data_template:
+                    value: '{{ trigger.event.data.command }}'
+
+                - choose:
+                    # Double click
+                    #   * second click must occur within 1/2 second of the first click. 
+                    - conditions:
+                        - condition: template
+                          value_template: |
+                            {% set click_delta = state_attr("variable.zha_clicks","click_delta")|float %}
+                            {% set previous_command = states("variable.zha_clicks") %}
+                            {{ click_delta <= 0.5 and previous_command == "toggle" }}
+                      sequence:
+                        - service: switch.toggle
+                          entity_id: switch.tv_family_room
+
+                  # Single Click
+                  default:
+                    # Delay 1/2 second to allow for a second click to cancel the first action.
+                    - delay:
+                        seconds: 0.5
+                    
+                    # Toggle the fan.
+                    - service: switch.toggle
+                      entity_id: switch.family_room_fan
+                
+                
             # Single Click: Brightness Up (top)
             - conditions:
                 - condition: template
