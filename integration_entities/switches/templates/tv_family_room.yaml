@@ -3,7 +3,7 @@ platform: template
 switches:
   tv_family_room:
     friendly_name: "TV: Family Room"
-    value_template: "{{ states('media_player.tv_family_room') }}"
+    value_template: "{{ states('remote.family_room_hub') }}"
     icon_template: >-
       {% if states('media_player.tv_family_room') %}
         mdi:television
@@ -11,6 +11,21 @@ switches:
         mdi:television-off
       {% endif %}
     turn_on:
-      service: script.tv_family_room_apple_tv
+      service: remote.turn_on
+      data_template:
+        entity_id: remote.family_room_hub
+        activity: >
+          {%-
+          set activities = {
+            "PowerOff": -1,
+            "Apple TV": 18768213,
+            "Computer": 34587914,
+            "Movie Disc": 18768214
+          }
+          -%}
+          {{ activities["Apple TV"] }}
     turn_off:
-      service: script.tv_family_room_off
+      service: remote.turn_on
+      data_template:
+        entity_id: remote.family_room_hub
+        activity: "-1"
