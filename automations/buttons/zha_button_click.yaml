@@ -6,13 +6,16 @@ mode: restart # Force restart to pickup double click
 trigger:
   platform: event
   event_type: zha_event
-condition:
-  # Ignore Xiaomi button release events.
-  - condition: template
-    value_template: '{{ trigger.event.data.args.value != false }}'
+  # event_data:
+  #   data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee"
+# condition:
+#   # Ignore Xiaomi button release events.
+#   - condition: template
+#     value_template: '{{ trigger.event.data.args.value != false }}'
 action:
   - choose:
       # Printer Power Button
+      #   * Xiaomi Mijia Wireless Switch (round)
       - conditions:
           - condition: template
             value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
@@ -20,15 +23,15 @@ action:
           - service: switch.toggle
             entity_id: switch.printers
 
-      # Xiaomi Mini Switch
+      # Unused
+      #   * Xiaomi Aqara Wireless Mini Switch (square)
       - conditions:
           - condition: template
             value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:05:bf:0f" }}'
         sequence:
-          - service: persistent_notification.create
+          - service: script.toast
             data_template:
-              title: "test_switch_button"
-              message: "Button pressed"
+              message: "Xiaomi Aqara Wireless Mini Switch Pressed"
 
       # Bedroom Double Switch
       - conditions:
@@ -81,7 +84,8 @@ action:
                     - switch.sound_machine
                     - switch.bedroom_fan
 
-      # Brian's Ikea 5 button remote
+      # Family Room 5 button remote
+      #   * IKEA Tradfri Remote Control
       - conditions:
           - condition: template
             value_template: '{{ trigger.event.data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee" }}'
@@ -92,45 +96,70 @@ action:
                 - condition: template
                   value_template: '{{ trigger.event.data.command == "toggle" }}'
               sequence:
-                # Store the previous click values.
-                - service: input_text.set_value
+                # Store the previous click values and decide if this click was a double click or not.
+                - service: script.zha_store_click
                   data_template:
-                    entity_id: input_text.zha_click
-                    # CSV Order: click_delta, click, command
-                    # {% set click_delta = states("input_text.zha_click").split(",")[0] %}
-                    # {% set click       = states("input_text.zha_click").split(",")[1] %}
-                    # {% set command     = states("input_text.zha_click").split(",")[2] %}
-                    value: >-
-                      {%- set click = as_timestamp(now())|float %}
-                      {%- set previous_click =  states("input_text.zha_click").split(",")[1]|float %}
-                      {{- click - previous_click }},
-                      {{- click }},
-                      {{- trigger.event.data.command }}
+                    device: '{{ trigger.event.data.device_ieee }}'
+                    command: '{{ trigger.event.data.command }}'
 
                 - choose:
                     # Double click
-                    #   * second click must occur within 1/2 second of the first click. 
                     - conditions:
+                        # Click count: returned by 4th value
                         - condition: template
                           value_template: |
-                            {% set click_delta = states("input_text.zha_click").split(",")[0]|float %}
-                            {% set previous_command = states("input_text.zha_click").split(",")[2]|trim %}
-                            {{ click_delta <= 0.5 and previous_command == "toggle" }}
+                            {% set click_count = states("input_text.zha_click").split(",")[3]|int %}
+                            {{ click_count == 2 }}
                       sequence:
+                        # Delay 0.5 second to allow for a second click to cancel the second action.
+                        - delay:
+                            seconds: 0.5
+                        
                         - service: switch.toggle
                           entity_id: switch.tv_family_room
 
+                    # Triple click
+                    - conditions:
+                        # Click count: returned by 4th value
+                        - condition: template
+                          value_template: |
+                            {% set click_count = states("input_text.zha_click").split(",")[3]|int %}
+                            {{ click_count == 3 }}
+                      sequence:
+                        # Delay 0.5 second to allow for a second click to cancel the third action.
+                        - delay:
+                            seconds: 0.5
+                        
+                        - choose:
+                            # The door us locked
+                            - conditions:
+                                - condition: template
+                                  value_template: '{{ states("lock.front_door")|lower|trim == "locked" }}'
+                              sequence:
+                                - service: lock.unlock
+                                  entity_id: lock.front_door
+                                
+                                - service: input_boolean.turn_on
+                                  entity_id: input_boolean.leave_unlocked
+
+                          # The door is unlocked
+                          default:
+                            - service: input_boolean.turn_off
+                              entity_id: input_boolean.leave_unlocked
+                            
+                            - service: lock.lock
+                              entity_id: lock.front_door
+
                   # Single Click
                   default:
-                    # Delay 1/2 second to allow for a second click to cancel the first action.
+                    # Delay 0.5 second to allow for a second click to cancel the first action.
                     - delay:
                         seconds: 0.5
-                    
+
                     # Toggle the fan.
                     - service: switch.toggle
                       entity_id: switch.family_room_fan
-                
-                
+
             # Single Click: Brightness Up (top)
             - conditions:
                 - condition: template

@@ -1,0 +1,40 @@
+---
+# The click data is stored in CSV format in the order: device_ieee, command, click, click_count
+#
+# Note: you can extract the data from the input_text list like so.
+# {% set data = states("input_text.zha_click").split(",") %}
+# {% set previous_device  = data[0] %}
+# {% set previous_command = data[1] %}
+# {% set previous_click   = data[2] %}
+# {% set click_count      = data[3] %}
+mode: queued
+sequence:
+  # Store the previous click values, and whether or not the current click is a double click.
+  #   * second click must occur within 0.5 second of the first click
+  #   * must be the same remote
+  #   * must be sending the same command
+  - service: input_text.set_value
+    data_template:
+      entity_id: input_text.zha_click
+      # CSV Order: device_ieee, command, click, click_count
+      # {% set device      = states("input_text.zha_click").split(",")[0] %}
+      # {% set command     = states("input_text.zha_click").split(",")[1] %}
+      # {% set click       = states("input_text.zha_click").split(",")[2] %}
+      # {% set click_count = states("input_text.zha_click").split(",")[3] %}
+      value: >-
+        {%- set data = states("input_text.zha_click").split(",") %}
+        {%- set previous_device = data[0]|trim %}
+        {%- set previous_command = data[1]|trim %}
+        {%- set click = as_timestamp(now())|float %}
+        {%- set previous_click = data[2]|float %}
+        {%- set click_delta = click - previous_click %}
+        {%- set click_count = data[3]|int %}
+        {{- device|trim }},
+        {{- command|trim }},
+        {{- click }},
+        {%- if click_delta <= 0.5 and previous_device == device|trim and previous_command == command %}
+          {{- click_count + 1 }}
+        {%- else %}
+          {{- 1 }}
+        {%- endif %}
+#        ,{{ click_delta }}
