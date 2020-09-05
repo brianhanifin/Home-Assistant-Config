@@ -2,134 +2,29 @@
 
 import ast
 import asyncio
+import builtins
 import importlib
+import inspect
+import keyword
 import logging
 import sys
 
-from .const import ALLOWED_IMPORTS, LOGGER_PATH
+from .const import ALLOWED_IMPORTS, DOMAIN, LOGGER_PATH
+from .handler import Handler
+from .state import State
 
 _LOGGER = logging.getLogger(LOGGER_PATH + ".eval")
 
 #
-# Built-in functions available.  Certain functions are excluded
-# to avoid potential security issues.
+# Built-ins to exclude to improve security or avoid i/o
 #
-BUILTIN_FUNCS = {
-    "abs": abs,
-    "all": all,
-    "any": any,
-    "ascii": ascii,
-    "bin": bin,
-    "bool": bool,
-    "bytearray": bytearray,
-    "bytearray.fromhex": bytearray.fromhex,
-    "bytes": bytes,
-    "bytes.fromhex": bytes.fromhex,
-    "callable": callable,
-    "chr": chr,
-    "complex": complex,
-    "dict": dict,
-    "divmod": divmod,
-    "enumerate": enumerate,
-    "filter": filter,
-    "float": float,
-    "format": format,
-    "frozenset": frozenset,
-    "hash": hash,
-    "hex": hex,
-    "int": int,
-    "isinstance": isinstance,
-    "issubclass": issubclass,
-    "iter": iter,
-    "len": len,
-    "list": list,
-    "map": map,
-    "max": max,
-    "min": min,
-    "next": next,
-    "oct": oct,
-    "ord": ord,
-    "pow": pow,
-    "range": range,
-    "repr": repr,
-    "reversed": reversed,
-    "round": round,
-    "set": set,
-    "slice": slice,
-    "sorted": sorted,
-    "str": str,
-    "sum": sum,
-    "tuple": tuple,
-    "type": type,
-    "zip": zip,
-}
-
-
-BUILTIN_EXCEPTIONS = {
-    "BaseException": BaseException,
-    "SystemExit": SystemExit,
-    "KeyboardInterrupt": KeyboardInterrupt,
-    "GeneratorExit": GeneratorExit,
-    "Exception": Exception,
-    "StopIteration": StopIteration,
-    "StopAsyncIteration": StopAsyncIteration,
-    "ArithmeticError": ArithmeticError,
-    "FloatingPointError": FloatingPointError,
-    "OverflowError": OverflowError,
-    "ZeroDivisionError": ZeroDivisionError,
-    "AssertionError": AssertionError,
-    "AttributeError": AttributeError,
-    "BufferError": BufferError,
-    "EOFError": EOFError,
-    "ImportError": ImportError,
-    "ModuleNotFoundError": ModuleNotFoundError,
-    "LookupError": LookupError,
-    "IndexError": IndexError,
-    "KeyError": KeyError,
-    "MemoryError": MemoryError,
-    "NameError": NameError,
-    "UnboundLocalError": UnboundLocalError,
-    "OSError": OSError,
-    "BlockingIOError": BlockingIOError,
-    "ChildProcessError": ChildProcessError,
-    "ConnectionError": ConnectionError,
-    "BrokenPipeError": BrokenPipeError,
-    "ConnectionAbortedError": ConnectionAbortedError,
-    "ConnectionRefusedError": ConnectionRefusedError,
-    "ConnectionResetError": ConnectionResetError,
-    "FileExistsError": FileExistsError,
-    "FileNotFoundError": FileNotFoundError,
-    "InterruptedError": InterruptedError,
-    "IsADirectoryError": IsADirectoryError,
-    "NotADirectoryError": NotADirectoryError,
-    "PermissionError": PermissionError,
-    "ProcessLookupError": ProcessLookupError,
-    "TimeoutError": TimeoutError,
-    "ReferenceError": ReferenceError,
-    "RuntimeError": RuntimeError,
-    "NotImplementedError": NotImplementedError,
-    "RecursionError": RecursionError,
-    "SyntaxError": SyntaxError,
-    "IndentationError": IndentationError,
-    "TabError": TabError,
-    "SystemError": SystemError,
-    "TypeError": TypeError,
-    "ValueError": ValueError,
-    "UnicodeError": UnicodeError,
-    "UnicodeDecodeError": UnicodeDecodeError,
-    "UnicodeEncodeError": UnicodeEncodeError,
-    "UnicodeTranslateError": UnicodeTranslateError,
-    "Warning": Warning,
-    "DeprecationWarning": DeprecationWarning,
-    "PendingDeprecationWarning": PendingDeprecationWarning,
-    "RuntimeWarning": RuntimeWarning,
-    "SyntaxWarning": SyntaxWarning,
-    "UserWarning": UserWarning,
-    "FutureWarning": FutureWarning,
-    "ImportWarning": ImportWarning,
-    "UnicodeWarning": UnicodeWarning,
-    "BytesWarning": BytesWarning,
-    "ResourceWarning": ResourceWarning,
+BUILTIN_EXCLUDE = {
+    "breakpoint",
+    "compile",
+    "input",
+    "memoryview",
+    "open",
+    "print",
 }
 
 
@@ -137,13 +32,7 @@ def ast_eval_exec_factory(ast_ctx, str_type):
     """Generate a function that executes eval() or exec() with given ast_ctx."""
 
     async def eval_func(arg_str, eval_globals=None, eval_locals=None):
-        eval_ast = AstEval(
-            ast_ctx.name,
-            global_ctx=ast_ctx.global_ctx,
-            state_func=ast_ctx.state,
-            event_func=ast_ctx.event,
-            handler_func=ast_ctx.handler,
-        )
+        eval_ast = AstEval(ast_ctx.name, ast_ctx.global_ctx)
         eval_ast.parse(arg_str, f"{str_type}()")
         if eval_ast.exception_obj:
             raise eval_ast.exception_obj  # pylint: disable=raising-bad-type
@@ -217,7 +106,8 @@ BUILTIN_AST_FUNCS_FACTORY = {
 
 
 #
-# Objects returned by return, break and continue statements that change execution flow
+# Objects returned by return, break and continue statements that change execution flow,
+# or objects returned that capture particular information
 #
 class EvalStopFlow:
     """Denotes a statement or action that stops execution flow, eg: return, break etc."""
@@ -230,13 +120,25 @@ class EvalReturn(EvalStopFlow):
         """Initialize return statement value."""
         self.value = value
 
+    def name(self):  # pylint: disable=no-self-use
+        """Return short name."""
+        return "return"
+
 
 class EvalBreak(EvalStopFlow):
     """Break statement."""
 
+    def name(self):  # pylint: disable=no-self-use
+        """Return short name."""
+        return "break"
+
 
 class EvalContinue(EvalStopFlow):
     """Continue statement."""
+
+    def name(self):  # pylint: disable=no-self-use
+        """Return short name."""
+        return "continue"
 
 
 class EvalName:
@@ -249,6 +151,23 @@ class EvalName:
     def __getattr__(self, attr):
         """Get attribute for EvalName."""
         raise NameError(f"name '{self.name}.{attr}' is not defined")
+
+
+class EvalAttrSet:
+    """Class for object and attribute on lhs of assignment."""
+
+    def __init__(self, obj, attr):
+        """Initialize identifier to name."""
+        self.obj = obj
+        self.attr = attr
+
+    def setattr(self, value):
+        """Set the attribute value."""
+        setattr(self.obj, self.attr, value)
+
+    def getattr(self):
+        """Get the attribute value."""
+        return getattr(self.obj, self.attr)
 
 
 class EvalFunc:
@@ -295,11 +214,16 @@ class EvalFunc:
         for dec in self.func_def.decorator_list:
             if isinstance(dec, ast.Call) and isinstance(dec.func, ast.Name):
                 args = []
+                kwargs = {}
                 for arg in dec.args:
                     args.append(await ast_ctx.aeval(arg))
-                self.decorators.append([dec.func.id, args])
+                for keyw in dec.keywords:
+                    kwargs[keyw.arg] = await ast_ctx.aeval(keyw.value)
+                if len(kwargs) == 0:
+                    kwargs = None
+                self.decorators.append([dec.func.id, args, kwargs])
             elif isinstance(dec, ast.Name):
-                self.decorators.append([dec.id, None])
+                self.decorators.append([dec.id, None, None])
             else:
                 _LOGGER.error(
                     "function %s has unexpected decorator type %s", self.name, dec
@@ -406,15 +330,7 @@ class EvalFunc:
 class AstEval:
     """Python interpreter AST object evaluator."""
 
-    def __init__(
-        self,
-        name,
-        global_ctx=None,
-        state_func=None,
-        event_func=None,
-        handler_func=None,
-        logger_name=None,
-    ):
+    def __init__(self, name, global_ctx, logger_name=None):
         """Initialize an interpreter execution context."""
         self.name = name
         self.str = None
@@ -431,14 +347,16 @@ class AstEval:
         self.exception = None
         self.exception_obj = None
         self.exception_long = None
-        self.state = state_func
-        self.handler = handler_func
-        self.event = event_func
         self.lineno = 1
         self.col_offset = 0
         self.logger_handlers = set()
         self.logger = None
         self.set_logger_name(logger_name if logger_name is not None else self.name)
+        self.allow_all_imports = (
+            global_ctx.hass.data[DOMAIN]["allow_all_imports"]
+            if global_ctx.hass is not None
+            else False
+        )
 
     async def ast_not_implemented(self, arg, *args):
         """Raise NotImplementedError exception for unimplemented AST types."""
@@ -471,13 +389,13 @@ class AstEval:
         for arg1 in arg.body:
             val = await self.aeval(arg1)
             if isinstance(val, EvalStopFlow):
-                return val
+                raise SyntaxError(f"{val.name()} statement outside function")
         return val
 
     async def ast_import(self, arg):
         """Execute import."""
         for imp in arg.names:
-            if imp.name not in ALLOWED_IMPORTS:
+            if not self.allow_all_imports and imp.name not in ALLOWED_IMPORTS:
                 raise ModuleNotFoundError(f"import of {imp.name} not allowed")
             if imp.name not in sys.modules:
                 mod = importlib.import_module(imp.name)
@@ -487,16 +405,21 @@ class AstEval:
 
     async def ast_importfrom(self, arg):
         """Execute from X import Y."""
-        if arg.module not in ALLOWED_IMPORTS:
+        if not self.allow_all_imports and arg.module not in ALLOWED_IMPORTS:
             raise ModuleNotFoundError(f"import from {arg.module} not allowed")
         if arg.module not in sys.modules:
             mod = importlib.import_module(arg.module)
         else:
             mod = sys.modules[arg.module]
         for imp in arg.names:
-            self.sym_table[imp.name if imp.asname is None else imp.asname] = getattr(
-                mod, imp.name
-            )
+            if imp.name == "*":
+                for name, value in mod.__dict__.items():
+                    if name[0] != "_":
+                        self.sym_table[name] = value
+            else:
+                self.sym_table[
+                    imp.name if imp.asname is None else imp.asname
+                ] = getattr(mod, imp.name)
 
     async def ast_if(self, arg):
         """Execute if statement."""
@@ -515,21 +438,17 @@ class AstEval:
 
     async def ast_for(self, arg):
         """Execute for statement."""
-        loop_var = await self.aeval(arg.target)
-        loop_iter = await self.aeval(arg.iter)
-        for i in loop_iter:
-            self.sym_table[loop_var] = i
+        for loop_var in await self.aeval(arg.iter):
+            await self.recurse_assign(arg.target, loop_var)
             for arg1 in arg.body:
                 val = await self.aeval(arg1)
                 if isinstance(val, EvalStopFlow):
                     break
             if isinstance(val, EvalBreak):
                 break
-            if isinstance(val, EvalContinue):
-                continue
             if isinstance(val, EvalReturn):
                 return val
-        if not isinstance(val, EvalBreak):
+        else:
             for arg1 in arg.orelse:
                 val = await self.aeval(arg1)
                 if isinstance(val, EvalReturn):
@@ -538,25 +457,61 @@ class AstEval:
 
     async def ast_while(self, arg):
         """Execute while statement."""
-        while 1:
-            val = await self.aeval(arg.test)
-            if not val:
-                break
+        while await self.aeval(arg.test):
             for arg1 in arg.body:
                 val = await self.aeval(arg1)
                 if isinstance(val, EvalStopFlow):
                     break
             if isinstance(val, EvalBreak):
                 break
-            if isinstance(val, EvalContinue):
-                continue
             if isinstance(val, EvalReturn):
                 return val
-        if not isinstance(val, EvalBreak):
+        else:
             for arg1 in arg.orelse:
                 val = await self.aeval(arg1)
                 if isinstance(val, EvalReturn):
                     return val
+        return None
+
+    async def ast_classdef(self, arg):
+        """Evaluate class definition."""
+        bases = [(await self.aeval(base)) for base in arg.bases]
+        sym_table = {}
+        self.sym_table_stack.append(self.sym_table)
+        self.sym_table = sym_table
+        for arg1 in arg.body:
+            val = await self.aeval(arg1)
+            if isinstance(val, EvalStopFlow):
+                raise SyntaxError(f"{val.name()} statement outside function")
+        self.sym_table = self.sym_table_stack.pop()
+
+        for name, func in sym_table.items():
+            if not isinstance(func, EvalFunc):
+                continue
+
+            def class_func_factory(func):
+                async def class_func_wrapper(this_self, *args, **kwargs):
+                    method_args = [this_self, *args]
+                    return await func.call(self, method_args, kwargs)
+
+                return class_func_wrapper
+
+            sym_table[name] = class_func_factory(func)
+
+        if "__init__" in sym_table:
+            sym_table["__init__evalfunc_wrap__"] = sym_table["__init__"]
+            del sym_table["__init__"]
+        self.sym_table[arg.name] = type(arg.name, tuple(bases), sym_table)
+
+    async def ast_functiondef(self, arg):
+        """Evaluate function definition."""
+        func = EvalFunc(arg, self.code_list, self.code_str)
+        await func.eval_defaults(self)
+        await func.eval_decorators(self)
+        self.sym_table[func.get_name()] = func
+        if self.sym_table == self.global_sym_table:
+            # set up any triggers if this function is in the global context
+            await self.global_ctx.trigger_init(func)
         return None
 
     async def ast_try(self, arg):
@@ -566,7 +521,6 @@ class AstEval:
                 val = await self.aeval(arg1)
                 if isinstance(val, EvalStopFlow):
                     return val
-                print(f"exception_obj = {self.exception_obj}")
                 if self.exception_obj is not None:
                     raise self.exception_obj  # pylint: disable=raising-bad-type
         except Exception as err:  # pylint: disable=broad-except
@@ -633,36 +587,57 @@ class AstEval:
 
     async def ast_return(self, arg):
         """Execute return statement - return special class."""
-        val = await self.aeval(arg.value)
-        return EvalReturn(val)
+        return EvalReturn(await self.aeval(arg.value) if arg.value else None)
 
     async def ast_global(self, arg):
         """Execute global statement."""
-        if self.curr_func:
-            for var_name in arg.names:
-                self.curr_func.global_names.add(var_name)
+        if not self.curr_func:
+            raise SyntaxError("global statement outside function")
+        for var_name in arg.names:
+            self.curr_func.global_names.add(var_name)
 
     async def ast_nonlocal(self, arg):
         """Execute nonlocal statement."""
-        if self.curr_func:
-            for var_name in arg.names:
-                self.curr_func.nonlocal_names.add(var_name)
+        if not self.curr_func:
+            raise SyntaxError("nonlocal statement outside function")
+        for var_name in arg.names:
+            self.curr_func.nonlocal_names.add(var_name)
 
     async def recurse_assign(self, lhs, val):
         """Recursive assignment."""
         if isinstance(lhs, ast.Tuple):
             try:
-                val_len = len(val)
-            except TypeError:
+                vals = [*(val.__iter__())]
+            except Exception:  # pylint: disable=broad-except
                 raise TypeError("cannot unpack non-iterable object")
-            if len(lhs.elts) < val_len:
+            got_star = 0
+            for lhs_elt in lhs.elts:
+                if isinstance(lhs_elt, ast.Starred):
+                    got_star = 1
+                    break
+            if len(lhs.elts) > len(vals) + got_star:
+                if got_star:
+                    err_msg = f"at least {len(lhs.elts) - got_star}"
+                else:
+                    err_msg = f"{len(lhs.elts)}"
+                raise ValueError(f"too few values to unpack (expected {err_msg})")
+            if len(lhs.elts) < len(vals) and got_star == 0:
                 raise ValueError(
                     f"too many values to unpack (expected {len(lhs.elts)})"
                 )
-            if len(lhs.elts) > val_len:
-                raise ValueError(f"too few values to unpack (expected {len(lhs.elts)})")
-            for lhs_elt, val_elt in zip(lhs.elts, val):
-                await self.recurse_assign(lhs_elt, val_elt)
+            val_idx = 0
+            for lhs_elt in lhs.elts:
+                if isinstance(lhs_elt, ast.Starred):
+                    star_len = len(vals) - len(lhs.elts) + 1
+                    star_name = lhs_elt.value.id
+                    await self.recurse_assign(
+                        ast.Name(id=star_name, ctx=ast.Store()),
+                        vals[val_idx : val_idx + star_len],
+                    )
+                    val_idx += star_len
+                else:
+                    await self.recurse_assign(lhs_elt, vals[val_idx])
+                    val_idx += 1
         elif isinstance(lhs, ast.Subscript):
             var = await self.aeval(lhs.value)
             if isinstance(lhs.slice, ast.Index):
@@ -675,48 +650,66 @@ class AstEval:
                 var[slice(lower, upper, step)] = val
         else:
             var_name = await self.aeval(lhs)
+            if isinstance(var_name, EvalAttrSet):
+                var_name.setattr(val)
+                return
+            if not isinstance(var_name, str):
+                raise NotImplementedError(
+                    f"unknown lhs type {lhs} (got {var_name}) in assign"
+                )
             if var_name.find(".") >= 0:
-                self.state.set(var_name, val)
-            else:
-                if self.curr_func and var_name in self.curr_func.global_names:
-                    self.global_sym_table[var_name] = val
-                elif self.curr_func and var_name in self.curr_func.nonlocal_names:
-                    for sym_table in reversed(self.sym_table_stack[1:]):
-                        if var_name in sym_table:
-                            sym_table[var_name] = val
-                            break
-                    else:
-                        raise TypeError(
-                            f"can't find nonlocal '{var_name}' for assignment"
-                        )
-                else:
-                    self.sym_table[var_name] = val
+                State.set(var_name, val)
+                return
+            if self.curr_func and var_name in self.curr_func.global_names:
+                self.global_sym_table[var_name] = val
+                return
+            if self.curr_func and var_name in self.curr_func.nonlocal_names:
+                for sym_table in reversed(self.sym_table_stack[1:]):
+                    if var_name in sym_table:
+                        sym_table[var_name] = val
+                        return
+                raise TypeError(f"can't find nonlocal '{var_name}' for assignment")
+            self.sym_table[var_name] = val
 
     async def ast_assign(self, arg):
         """Execute assignment statement."""
-        await self.recurse_assign(arg.targets[0], await self.aeval(arg.value))
+        rhs = await self.aeval(arg.value)
+        for target in arg.targets:
+            await self.recurse_assign(target, rhs)
 
     async def ast_augassign(self, arg):
         """Execute augmented assignment statement (lhs <BinOp>= value)."""
         var_name = await self.aeval(arg.target)
-        val = await self.aeval(
-            ast.BinOp(
-                left=ast.Name(id=var_name, ctx=ast.Load()), op=arg.op, right=arg.value
+        if isinstance(var_name, EvalAttrSet):
+            val = await self.aeval(
+                ast.BinOp(
+                    left=ast.Constant(value=var_name.getattr()),
+                    op=arg.op,
+                    right=arg.value,
+                )
             )
-        )
-        if self.curr_func and var_name in self.curr_func.global_names:
-            self.global_sym_table[var_name] = val
-        elif self.curr_func and var_name in self.curr_func.nonlocal_names:
-            for sym_table in reversed(self.sym_table_stack[1:]):
-                if var_name in sym_table:
-                    sym_table[var_name] = val
-                    break
-            else:
-                raise TypeError(f"can't find nonlocal '{var_name}' for assignment")
-        elif self.state.exist(var_name):
-            self.state.set(var_name, val)
+            var_name.setattr(val)
         else:
-            self.sym_table[var_name] = val
+            val = await self.aeval(
+                ast.BinOp(
+                    left=ast.Name(id=var_name, ctx=ast.Load()),
+                    op=arg.op,
+                    right=arg.value,
+                )
+            )
+            if self.curr_func and var_name in self.curr_func.global_names:
+                self.global_sym_table[var_name] = val
+            elif self.curr_func and var_name in self.curr_func.nonlocal_names:
+                for sym_table in reversed(self.sym_table_stack[1:]):
+                    if var_name in sym_table:
+                        sym_table[var_name] = val
+                        break
+                else:
+                    raise TypeError(f"can't find nonlocal '{var_name}' for assignment")
+            elif State.exist(var_name):
+                State.set(var_name, val)
+            else:
+                self.sym_table[var_name] = val
 
     async def ast_delete(self, arg):
         """Execute del statement."""
@@ -760,7 +753,14 @@ class AstEval:
             else:
                 raise NotImplementedError(f"unknown target type {arg1} in del")
 
-    async def ast_attribute_collapse(self, arg):  # pylint: disable=no-self-use
+    async def ast_assert(self, arg):
+        """Execute assert statement."""
+        if not await self.aeval(arg.test):
+            if arg.msg:
+                raise AssertionError(await self.aeval(arg.msg))
+            raise AssertionError
+
+    async def ast_attribute_collapse(self, arg):
         """Combine dotted attributes to allow variable names to have dots."""
         # collapse dotted names, eg:
         #   Attribute(value=Attribute(value=Name(id='i', ctx=Load()), attr='j', ctx=Load()), attr='k', ctx=Store())
@@ -771,11 +771,10 @@ class AstEval:
             val = val.value
         if isinstance(val, ast.Name):
             name = val.id + "." + name
-            if isinstance(arg.ctx, ast.Load):
-                # ensure the first portion of name is undefined
-                val = await self.ast_name(ast.Name(id=val.id, ctx=arg.ctx))
-                if not isinstance(val, EvalName):
-                    return None
+            # ensure the first portion of name is undefined
+            val = await self.ast_name(ast.Name(id=val.id, ctx=ast.Load()))
+            if not isinstance(val, EvalName):
+                return None
             return name
         return None
 
@@ -789,6 +788,8 @@ class AstEval:
             if not isinstance(val, EvalName):
                 return val
         val = await self.aeval(arg.value)
+        if isinstance(arg.ctx, ast.Store):
+            return EvalAttrSet(val, arg.attr)
         return getattr(val, arg.attr)
 
     async def ast_name(self, arg):
@@ -815,25 +816,23 @@ class AstEval:
                 return self.local_sym_table[arg.id]
             if arg.id in self.global_sym_table:
                 return self.global_sym_table[arg.id]
-            if arg.id in BUILTIN_FUNCS:
-                return BUILTIN_FUNCS[arg.id]
             if arg.id in BUILTIN_AST_FUNCS_FACTORY:
                 return BUILTIN_AST_FUNCS_FACTORY[arg.id](self)
-            if self.handler.get(arg.id):
-                return self.handler.get(arg.id)
+            if (
+                hasattr(builtins, arg.id)
+                and arg.id not in BUILTIN_EXCLUDE
+                and arg.id[0] != "_"
+            ):
+                return getattr(builtins, arg.id)
+            if Handler.get(arg.id):
+                return Handler.get(arg.id)
             num_dots = arg.id.count(".")
             #
             # any single-dot name could be a state variable
             # a two-dot name for state.attr needs to exist
             #
-            if num_dots == 2:
-                _LOGGER.debug(
-                    "ast_name: arg = {arg.id}, exist = {self.state.exist(arg.id)}"
-                )
-            if num_dots == 1 or (num_dots == 2 and self.state.exist(arg.id)):
-                return self.state.get(arg.id)
-            if arg.id in BUILTIN_EXCEPTIONS:
-                return BUILTIN_EXCEPTIONS[arg.id]
+            if num_dots == 1 or (num_dots == 2 and State.exist(arg.id)):
+                return State.get(arg.id)
             #
             # Couldn't find it, so return just the name wrapped in EvalName to
             # distinguish from a string variable value.  This is to support
@@ -988,17 +987,35 @@ class AstEval:
         val = []
         for arg in elts:
             if isinstance(arg, ast.Starred):
-                for this_val in await self.aeval(arg.value):
-                    val.append(this_val)
+                val += await self.aeval(arg.value)
             else:
-                this_val = await self.aeval(arg)
-                val.append(this_val)
+                val.append(await self.aeval(arg))
         return val
 
     async def ast_list(self, arg):
         """Evaluate list."""
         if isinstance(arg.ctx, ast.Load):
             return await self.eval_elt_list(arg.elts)
+
+    async def listcomp_loop(self, generators, elt):
+        """Recursive list comprehension."""
+        out = []
+        gen = generators[0]
+        for loop_var in await self.aeval(gen.iter):
+            await self.recurse_assign(gen.target, loop_var)
+            for cond in gen.ifs:
+                if not await self.aeval(cond):
+                    break
+            else:
+                if len(generators) == 1:
+                    out.append(await self.aeval(elt))
+                else:
+                    out += await self.listcomp_loop(generators[1:], elt)
+        return out
+
+    async def ast_listcomp(self, arg):
+        """Evaluate list comprehension."""
+        return await self.listcomp_loop(arg.generators, arg.elt)
 
     async def ast_tuple(self, arg):
         """Evaluate Tuple."""
@@ -1015,12 +1032,52 @@ class AstEval:
                 val[await self.aeval(key_ast)] = this_val
         return val
 
+    async def dictcomp_loop(self, generators, key, value):
+        """Recursive dict comprehension."""
+        out = {}
+        gen = generators[0]
+        for loop_var in await self.aeval(gen.iter):
+            await self.recurse_assign(gen.target, loop_var)
+            for cond in gen.ifs:
+                if not await self.aeval(cond):
+                    break
+            else:
+                if len(generators) == 1:
+                    out[await self.aeval(key)] = await self.aeval(value)
+                else:
+                    out.update(await self.dictcomp_loop(generators[1:], key, value))
+        return out
+
+    async def ast_dictcomp(self, arg):
+        """Evaluate dict comprehension."""
+        return await self.dictcomp_loop(arg.generators, arg.key, arg.value)
+
     async def ast_set(self, arg):
         """Evaluate set."""
-        val = set()
+        ret = set()
         for elt in await self.eval_elt_list(arg.elts):
-            val.add(elt)
-        return val
+            ret.add(elt)
+        return ret
+
+    async def setcomp_loop(self, generators, elt):
+        """Recursive list comprehension."""
+        out = set()
+        gen = generators[0]
+        for loop_var in await self.aeval(gen.iter):
+            await self.recurse_assign(gen.target, loop_var)
+            for cond in gen.ifs:
+                if not await self.aeval(cond):
+                    break
+            else:
+                if len(generators) == 1:
+                    out.add(await self.aeval(elt))
+                else:
+                    out.update(await self.setcomp_loop(generators[1:], elt))
+        return out
+
+    async def ast_setcomp(self, arg):
+        """Evaluate set comprehension."""
+        return await self.setcomp_loop(arg.generators, arg.elt)
 
     async def ast_subscript(self, arg):
         """Evaluate subscript."""
@@ -1069,6 +1126,14 @@ class AstEval:
             func_name = arg.func.attr
         else:
             func_name = "<other>"
+        if inspect.isclass(func) and hasattr(func, "__init__evalfunc_wrap__"):
+            #
+            # since our __init__ function is async, create the class instance
+            # without arguments and then call the async __init__evalfunc_wrap__
+            #
+            inst = func()
+            await inst.__init__evalfunc_wrap__(*args, **kwargs)
+            return inst
         if callable(func):
             _LOGGER.debug(
                 "%s: calling %s(%s, %s)", self.name, func_name, arg_str, kwargs
@@ -1077,17 +1142,6 @@ class AstEval:
                 return await func(*args, **kwargs)
             return func(*args, **kwargs)
         raise NameError(f"function '{func_name}' is not callable (got {func})")
-
-    async def ast_functiondef(self, arg):
-        """Evaluate function definition."""
-        func = EvalFunc(arg, self.code_list, self.code_str)
-        await func.eval_defaults(self)
-        await func.eval_decorators(self)
-        self.sym_table[func.get_name()] = func
-        if self.sym_table == self.global_sym_table:
-            # set up any triggers if this function is in the global context
-            await self.global_ctx.trigger_init(func)
-        return None
 
     async def ast_ifexp(self, arg):
         """Evaluate if expression."""
@@ -1287,8 +1341,13 @@ class AstEval:
                                 words.add(f"{name}.{attr}")
                 except Exception:  # pylint: disable=broad-except
                     pass
+        for keyw in set(keyword.kwlist) - {"yield", "lambda", "with", "assert"}:
+            if keyw.lower().startswith(root):
+                words.add(keyw)
         sym_table = BUILTIN_AST_FUNCS_FACTORY.copy()
-        sym_table.update(BUILTIN_FUNCS)
+        for name, value in builtins.__dict__.items():
+            if name[0] != "_" and name not in BUILTIN_EXCLUDE:
+                sym_table[name] = value
         sym_table.update(self.global_sym_table.items())
         for name, value in sym_table.items():
             if name.lower().startswith(root):
