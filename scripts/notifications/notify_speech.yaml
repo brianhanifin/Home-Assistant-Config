@@ -1,15 +1,21 @@
 ---
 sequence:
-  - service: script.say
-    data_template:
-      media_player: >-
-        {%- if media_player == empty %}
-          {%- set media_player = alexa_device %}
-        {%- endif %}
-        {{ media_player|default('media_player.kitchen') }}
-      message: >-
-        {%- if message == empty %}
-          {%- set message = text %}
-        {%- endif %}
-        {{ message }}
-      say_greeting: "false"
+  # Only speak when there is something to say. ;)
+  choose:
+    conditions:
+      - condition: template
+        value_template: '{{ not (message is undefined and text is undefined) }}'
+    sequence:
+      - service: script.say
+        data_template:
+          media_player: >-
+            {%- if media_player is undefined %}
+              {%- set media_player = alexa_device %}
+            {%- endif %}
+            {{ media_player|default('media_player.kitchen') }}
+          message: >-
+            {%- if message == empty %}
+              {%- set message = text %}
+            {%- endif %}
+            {{ message }}
+          say_greeting: "false"

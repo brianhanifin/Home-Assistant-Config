@@ -1,0 +1,25 @@
+---
+alias: TTS Phrase Submitted
+id: tts_phrase_submitted
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: input_select.tts_phrases
+action:
+  - service: script.notify_speech
+    data_template:
+      media_player: !include ../../templates/speech/media_player_friendly.yaml
+      message: |
+        {%- if states("input_text.tts_phrase")|trim != "" %}
+          {%- set phrase = states("input_text.tts_phrase") %}
+        {%- elif states("input_select.tts_phrases")|trim not in ("None","") %}
+          {%- set phrase = states("input_select.tts_phrases") %}
+        {%- endif %}
+        {%- set voice = states('input_select.tts_voices')|trim %}
+        {%- if voice not in ("Alexa","") %}
+          {{ '<voice name="' + voice + '">' }}
+          {{ phrase }}
+          {{ '</voice>' }}
+        {%- else -%}
+          {{ phrase }}
+        {%- endif -%}
