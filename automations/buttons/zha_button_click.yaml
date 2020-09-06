@@ -114,13 +114,11 @@ action:
                     command: '{{ trigger.event.data.command }}'
 
                 - choose:
-                    # Double click
+                    # 2 clicks
                     - conditions:
                         # Click count: returned by 4th value
                         - condition: template
-                          value_template: |
-                            {% set click_count = states("input_text.zha_click").split(",")[3]|int %}
-                            {{ click_count == 2 }}
+                          value_template: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
                       sequence:
                         # Delay 0.5 second to allow for a second click to cancel the second action.
                         - delay:
@@ -129,13 +127,11 @@ action:
                         - service: switch.toggle
                           entity_id: switch.tv_family_room
 
-                    # Triple click
+                    # 3 clicks
                     - conditions:
                         # Click count: returned by 4th value
                         - condition: template
-                          value_template: |
-                            {% set click_count = states("input_text.zha_click").split(",")[3]|int %}
-                            {{ click_count == 3 }}
+                          value_template: '{{ 3 == states("input_text.zha_click").split(",")[3]|int }}'
                       sequence:
                         # Delay 0.5 second to allow for a second click to cancel the third action.
                         - delay:
@@ -160,6 +156,19 @@ action:
                             
                             - service: lock.lock
                               entity_id: lock.front_door
+
+                    # 4 clicks
+                    - conditions:
+                        # Click count: returned by 4th value
+                        - condition: template
+                          value_template: '{{ 4 == states("input_text.zha_click").split(",")[3]|int}}'
+                      sequence:
+                        # Delay 0.5 second to allow for a second click to cancel the third action.
+                        #- delay:
+                        #    seconds: 0.5
+                        
+                        - service: input_boolean.toggle
+                          entity_id: input_boolean.guest_mode
 
                   # Single Click
                   default:
