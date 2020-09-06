@@ -32,7 +32,7 @@ sequence:
         {{- device|trim }},
         {{- command|trim }},
         {{- click }},
-        {%- if click_delta <= 0.5 and previous_device == device|trim and previous_command == command %}
+        {%- if click_delta <= seconds|default('0.5')|float and previous_device == device|trim and previous_command == command|trim %}
           {{- click_count + 1 }}
         {%- else %}
           {{- 1 }}
