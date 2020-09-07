@@ -1,18 +1,18 @@
 ---
 # "Alexa, turn on the fan"
 sequence:
-  - service: switch.turn_on
+  - service: homeassistant.turn_on
     data_template:
       entity_id: >-
         {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
         {%-
           set fan = {
-            "kitchen" : "switch.family_room_fan",
-            "family_room" : "switch.family_room_fan",
+            "kitchen" : "fan.family_room",
+            "family_room" : "fan.family_room",
             "garage" : "switch.garage_fan",
-            "master_bedroom" : "switch.bedroom_fan",
-            "play_room": "switch.play_room_fan",
-            "upstairs_bathroom": "switch.upstairs_bathroom_fan"
+            "master_bedroom" : "fan.bedroom",
+            "play_room": "fan.play_room",
+            "upstairs_bathroom": "fan.upstairs_bathroom"
           }
         -%}
         {{ fan[room] }}
