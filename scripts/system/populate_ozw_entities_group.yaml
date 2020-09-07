@@ -1,0 +1,8 @@
+---
+sequence:
+  # Create both a group and a variable list.
+  - service: group.set
+    data_template:
+      object_id: "ozw_entities"
+      entities: >
+        {{ states | selectattr("attributes.node_id") | map(attribute="entity_id") | join(",") }}

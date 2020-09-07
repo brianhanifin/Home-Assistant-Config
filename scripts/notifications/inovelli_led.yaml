@@ -8,14 +8,19 @@
 #   July 22, 2020: Incorporating changes from Kevin Schlichter.
 #   https://github.com/kschlichter/Home-Assistant-Inovelli-Red-Dimmer-Switch
 sequence:
-  #- service: zwave.set_config_parameter
-  - service: ozw.set_config_parameter
+  # - service_template: |
+  #     {% if entity_id.split(".")[0] == "zwave" %}
+  #       zwave.set_config_parameter
+  #     {% else %}
+  #       ozw.set_config_parameter
+  #     {% endif %}
+  - service_template: ozw.set_config_parameter
     data_template:
       node_id: "{{ state_attr(entity_id,'node_id') }}"
       parameter: >
         {%- set dimmer = dimmer|default('true') %}
         {{ "16" if dimmer == "true" else "8" }}
-      #size: 4
+      size: 4
       value: >
         {% if effect|title == "Off" %}
           0
@@ -97,5 +102,5 @@ sequence:
           {% endif %}
 
           {# Perform the Inovelli math #}
-          {{ colors[color|title] + (level * 256) + (durations[duration|title] * 65536) + (effects[effect|title] * 16777216) }}
+          {{ colors[color|title]|int + (level|int * 256) + (durations[duration|title]|int * 65536) + (effects[effect|title]|int * 16777216) }}
         {% endif %}
