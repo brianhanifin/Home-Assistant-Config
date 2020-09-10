@@ -1,43 +1,33 @@
 ---
-alias: Zwave Button Taps
-id: zwave_button_taps
+alias: Zwave Button Clicks
+id: zwave_button_click
 initial_state: true
-mode: queued
+mode: parallel
+#mode: restart # Force restart to pickup double click
 trigger:
   # GE Dimmers
-  - platform: event
-    event_type: ozw.node_event
+  # - platform: event
+  #   event_type: ozw.node_event
   # Inovelli dimmers
   - platform: event
     event_type: ozw.scene_activated
 action:
   # - service: persistent_notification.create
   #   data_template:
-  #     title: "zwave_button_taps"
+  #     title: "zwave_button_click"
   #     message: 'data:{{ trigger.event.data }}'
 
   - choose:
-      # Node 7: Bedroom Dimmer
-      # GE 14294 In-Wall Smart Dimmer
-      - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.node_id == "7" }}'
-        sequence:
-          - service: persistent_notification.create
-            data_template:
-              title: "zwave_button_taps"
-              message: 'Bedroom Dimmer!!!\n\ndata:{{ trigger.event.data }}'
-
       # NODE 3: Family Room Dimmer
       # Inovelli LZW31-SN Dimmer Red Series
       - conditions:
           - condition: template
             value_template: '{{ trigger.event.data.node_id|trim == "3" }}'
-        # Taps: 1x, 2x, 3x, 4x, 5x
+        # click: 1x, 2x, 3x, 4x, 5x
         sequence:
           # - service: persistent_notification.create
           #   data_template:
-          #     title: "zwave_button_taps"
+          #     title: "zwave_button_click"
           #     message: "Family Room Dimmer!!!"
 
           - choose:

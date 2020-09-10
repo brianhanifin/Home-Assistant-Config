@@ -1,0 +1,184 @@
+---
+alias: Zwave GE Button Click
+id: zwave_ge_button_click
+initial_state: true
+#mode: parallel
+mode: restart # Force restart to pickup double click
+trigger:
+  # Kitchen Light Switch
+  - platform: mqtt
+    topic: OpenZWave/1/node/4/instance/1/commandclass/37/value/71909392/
+  # Kitchen Prep Light Switch
+  - platform: mqtt
+    topic: OpenZWave/1/node/5/instance/1/commandclass/37/value/88686608/
+  # Bedroom Dimmer
+  - platform: mqtt
+    topic: OpenZWave/1/node/6/instance/1/commandclass/38/value/105480209/
+  # Laundry Dimmer
+  - platform: mqtt
+    topic: OpenZWave/1/node/19/instance/1/commandclass/38/value/323584017/
+condition:
+  # Don't allow status change immediately at startup to avoid phantom changes.
+  - condition: numeric_state
+    entity_id: sensor.uptime
+    above: 0.2
+action:
+  # - service: persistent_notification.create
+  #   data_template:
+  #     title: "zwave_ge_button_click"
+  #     #message: 'data: {{ trigger.payload_json }}'
+  #     message: |
+  #       Node: {{ trigger.payload_json["Node"] }}
+  #       Value: {{ trigger.payload_json["Value"] }}
+  #       TimeStamp: {{ trigger.payload_json["TimeStamp"] }}
+  #       Event: {{ trigger.payload_json["Event"] }}
+
+#        data: {{ trigger.payload_json }}
+
+  # Store the previous click values and decide if this click was a double click or not.
+  - service: script.zwave_store_click
+    data_template:
+      node: '{{ trigger.payload_json["Node"] }}'
+      event: '{{ trigger.payload_json["Event"] }}'
+      click: '{{ trigger.payload_json["TimeStamp"] }}'
+      value: '{{ trigger.payload_json["Value"] }}'
+      seconds: 1
+
+  - choose:
+    # Node 6
+    #   * Bedroom Dimmer
+    - conditions:
+        - condition: template
+          value_template: '{{ trigger.payload_json["Node"] == "6" }}'
+      sequence:
+        - choose: 
+            # Off clicks
+            - conditions:
+              - condition: template
+                value_template: '{{ trigger.payload_json["Value"] == "0"
+                                  or trigger.payload_json["Value"] == "False" }}'
+              sequence:
+                choose:
+                  # 2 clicks
+                  - conditions:
+                      # Click count: returned by 4th value
+                      - condition: template
+                        value_template: '{{ 2 == states("input_text.zwave_click").split(",")[3]|int }}'
+                    sequence:
+                      - service: script.debug
+                        data:
+                          message: "2 clicks"
+
+                      # Delay 1.0 second to allow for a second click to cancel the second action.
+                      - delay:
+                          seconds: 1.0
+                      
+                      # Toggle lights
+                      - service: light.turn_off
+                        entity_id:
+                          - light.brian
+                          - light.glowforge
+
+                  # 3 clicks
+                  - conditions:
+                      # Click count: returned by 4th value
+                      - condition: template
+                        value_template: '{{ 3 == states("input_text.zwave_click").split(",")[3]|int }}'
+                    sequence:
+                      - service: script.debug
+                        data:
+                          message: "3 clicks"
+
+                      # Delay 1.0 second to allow for a second click to cancel the third action.
+                      - delay:
+                          seconds: 1.0
+                                
+                      - service: fan.turn_off
+                        entity_id: fan.bedroom
+
+                # Single Click
+                default:
+                  - service: script.debug
+                    data:
+                      message: "1 click"
+
+                  # Delay 1.0 second to allow for a second click to cancel the first action.
+                  - delay:
+                      seconds: 1.0
+
+                  # Toggle lights
+                  # - service: light.turn_off
+                  #   entity_id:
+                  #     - light.brian
+                  #     - light.glowforge
+
+            # On clicks
+            - conditions:
+              - condition: template
+                value_template: '{{ trigger.payload_json["Value"]|int == "99"
+                                  or trigger.payload_json["Value"] == "True" }}'
+              sequence:
+                choose:
+                  # 2 clicks
+                  - conditions:
+                      # Click count: returned by 4th value
+                      - condition: template
+                        value_template: '{{ 2 == states("input_text.zwave_click").split(",")[3]|int }}'
+                    sequence:
+                      - service: script.debug
+                        data:
+                          message: "2 clicks"
+
+                      # Delay 1.0 second to allow for a second click to cancel the second action.
+                      - delay:
+                          seconds: 1.0
+
+                      # Toggle lights
+                      - service: light.turn_on
+                        entity_id:
+                          - light.brian
+                          - light.glowforge
+
+                  # 3 clicks
+                  - conditions:
+                      # Click count: returned by 4th value
+                      - condition: template
+                        value_template: '{{ 3 == states("input_text.zwave_click").split(",")[3]|int }}'
+                    sequence:
+                      - service: script.debug
+                        data:
+                          message: "3 clicks"
+
+                      # Delay 1.0 second to allow for a second click to cancel the third action.
+                      - delay:
+                          seconds: 1.0
+                                
+                      - service: fan.turn_on
+                        entity_id: fan.bedroom
+
+                # Single Click
+                default:
+                  - service: script.debug
+                    data:
+                      message: "1 click"
+
+                  # Delay 1.0 second to allow for a second click to cancel the first action.
+                  # - delay:
+                  #     seconds: 1.0
+
+                  # Toggle lights
+                  # - service: light.turn_on
+                  #   entity_id:
+                  #     - light.brian
+                  #     - light.glowforge
+
+
+    # Node 19
+    #   * Laundry Dimmer
+    - conditions:
+        - condition: template
+          value_template: '{{ trigger.payload_json["Node"] == "19" }}'
+      sequence:
+        - service: script.debug
+          data:
+            message: "Laundry dimmer click"

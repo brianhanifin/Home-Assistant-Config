@@ -7,32 +7,34 @@ id: bedroom_light_change
 initial_state: true
 mode: single
 trigger:
-  - platform: event
-    event_type: state_changed
-    event_data:
-      entity_id: "light.bedroom"
+  # - platform: event
+  #   event_type: state_changed
+  #   event_data:
+  #     entity_id: "light.bedroom"
+  - platform: state
+    entity_id: light.bedroom
+
 condition:
   - condition: template
     value_template: >
       {{ trigger.event.data.old_state.state != trigger.event.data.new_state.state }}
 action:
-  # - service: persistent_notification.create
-  #   data_template:
-  #     title: "family_room_light_change"
-  #     message: >
-  #       old_state: {{ trigger.event.data.old_state.state }}
-  #       new_state: {{ trigger.event.data.new_state.state }}
-  #       {% if trigger.event.data.new_state.attributes.brightness|int > 0 %}brightness: {{ trigger.event.data.new_state.attributes.brightness }}{% endif %}
+  - service: persistent_notification.create
+    data_template:
+      title: "bedroom_light_change"
+      message: >
+        old_state: {{ trigger.event.data.old_state.state }}
+        new_state: {{ trigger.event.data.new_state.state }}
+        {% if trigger.event.data.new_state.attributes.brightness|int > 0 %}brightness: {{ trigger.event.data.new_state.attributes.brightness }}{% endif %}
 
   - choose:
       # Light On
       - conditions:
           - condition: template
             value_template: >
-              {{ trigger.event.data.old_state.state == "off"
-              and trigger.event.data.new_state.state == "on" }}
+              {{ trigger.event.data.new_state.state == "on" }}
         sequence:
-          - service: homeassistant.turn_on
+          - service: light.turn_on
             entity_id:
               - light.brian
               - light.glowforge
@@ -41,10 +43,9 @@ action:
       - conditions:
           - condition: template
             value_template: >
-              {{ trigger.event.data.old_state.state == "on"
-              and trigger.event.data.new_state.state == "off" }}
+              {{ trigger.event.data.new_state.state == "off" }}
         sequence:
-          - service: homeassistant.turn_off
+          - service: light.turn_off
             entity_id:
               - light.brian
               - light.glowforge
