@@ -4,10 +4,14 @@ id: nerene_stops_after_work
 initial_state: true
 mode: single
 trigger:
-  platform: template
-  value_template: '{{ is_state_attr("device_tracker.life360_nerene","driving",false) }}'
-  for:
-    minutes: 5
+  # - platform: template
+  #   value_template: '{{ is_state_attr("device_tracker.life360_nerene","driving",false) }}'
+  - platform: state
+    entity_id: device_tracker.life360_nerene
+    attribute: driving
+    to: "false"
+    for:
+      minutes: 5
 condition:
   # After 2:20pm.
   - condition: time

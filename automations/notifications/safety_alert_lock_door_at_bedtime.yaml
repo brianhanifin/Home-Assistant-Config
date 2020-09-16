@@ -5,8 +5,12 @@ id: safety_alert_lock_door_at_bedtime
 initial_state: true
 trigger:
   # When Brian's phone is charging.
-  - platform: template
-    value_template: '{{ state_attr("device_tracker.life360_brian", "battery_charging") }}'
+  # - platform: template
+  #   value_template: '{{ state_attr("device_tracker.life360_brian", "battery_charging") }}'
+  - platform: state
+    entity_id: device_tracker.life360_brian
+    attribute: battery_charging
+    to: "true"
 condition:
   condition: and
   conditions:
