@@ -1,0 +1,16 @@
+---
+platform: rest
+name: os
+resource: http://127.0.0.1:8123/api/hassio/os/info
+value_template: '{{ value_json.data.version }}'
+scan_interval: 1800 # 60 seconds * 30 minutes = 1/2 hour worth of seconds
+headers:
+  Authorization: !secret rest_token
+  Content-Type: application/json
+json_attributes_path: "$.data"
+json_attributes:
+  - board
+  - boot
+  - version
+  - version_latest
+
