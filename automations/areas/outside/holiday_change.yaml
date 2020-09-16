@@ -7,10 +7,9 @@ trigger:
     entity_id:
       - sensor.holiday
 condition:
-  - condition: template
-    value_template: "{{ trigger.to_state.state is not none
-                    and trigger.to_state.state|trim != 'unknown'
-                    and trigger.to_state.state|trim != '' }}"
+  - "{{ trigger.to_state.state is not none
+        and trigger.to_state.state|trim != 'unknown'
+        and trigger.to_state.state|trim != '' }}"
 action:
   # - service: script.notify_web
   #   data_template:
