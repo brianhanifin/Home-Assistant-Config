@@ -9,6 +9,9 @@ trigger:
   event_type: zha_event
   # event_data:
   #   data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee"
+condition:
+  # Ignore Xiaomi button release events.
+  - '{{ trigger.event.data.args.value != false }}'
 action:
   - choose:
       # Printer Power Button
@@ -26,15 +29,14 @@ action:
       #   * Xiaomi Aqara Wireless Mini Switch (square)
       - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:05:bf:0f" }}'
         sequence:
-
-          - service: script.toast
-            data_template:
-              message: Xiaomi Aqara Wireless Mini Switch Clicked
-
-          # - service: script.debug
+          # - service: script.toast
           #   data_template:
           #     message: Xiaomi Aqara Wireless Mini Switch Clicked
-          #     id: '{{ as_timestamp(now()) }}'
+
+          - service: script.debug
+            data_template:
+              message: Xiaomi Aqara Wireless Mini Switch Clicked
+              id: '{{ as_timestamp(now()) }}'
 
       # Bedroom Double Switch
       #   * Xiaomi Double Rockers, Battery Powered
