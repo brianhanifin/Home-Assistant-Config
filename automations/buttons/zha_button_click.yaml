@@ -13,9 +13,7 @@ action:
   - choose:
       # Printer Power Button
       #   * Xiaomi Mijia Wireless Switch (round)
-      - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
+      - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
         sequence:
           # Ignore Xiaomi button duplicate event.
           # - condition: template
@@ -26,9 +24,7 @@ action:
 
       # Unused
       #   * Xiaomi Aqara Wireless Mini Switch (square)
-      - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:05:bf:0f" }}'
+      - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:05:bf:0f" }}'
         sequence:
 
           - service: script.toast
@@ -42,9 +38,7 @@ action:
 
       # Bedroom Double Switch
       #   * Xiaomi Double Rockers, Battery Powered
-      - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:83:e2:b6" }}'
+      - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:83:e2:b6" }}'
         sequence:
           # Ignore Xiaomi button duplicate event.
           # - condition: template
@@ -52,44 +46,32 @@ action:
 
           - choose:
               # Single Click: Left
-              - conditions:
-                  - condition: template
-                    value_template: '{{ trigger.event.data.command == "left_single" }}'
+              - conditions: '{{ trigger.event.data.command == "left_single" }}'
                 sequence:
                   - service: light.toggle
                     entity_id: light.bedroom
               # Single Click: Right
-              - conditions:
-                  - condition: template
-                    value_template: '{{ trigger.event.data.command == "right_single" }}'
+              - conditions: '{{ trigger.event.data.command == "right_single" }}'
                 sequence:
                   - service: light.toggle
                     entity_id: light.brian
               # Single Click: Both
-              - conditions:
-                  - condition: template
-                    value_template: '{{ trigger.event.data.command == "both_single" }}'
+              - conditions: '{{ trigger.event.data.command == "both_single" }}'
                 sequence:
                   - service: light.toggle
                     entity_id: light.glowforge
               # Double Click: Left
-              - conditions:
-                  - condition: template
-                    value_template: '{{ trigger.event.data.command == "left_double" }}'
+              - conditions: '{{ trigger.event.data.command == "left_double" }}'
                 sequence:
                   - service: switch.toggle
                     entity_id: switch.sound_machine
               # Double Click: Right
-              - conditions:
-                  - condition: template
-                    value_template: '{{ trigger.event.data.command == "right_double" }}'
+              - conditions: '{{ trigger.event.data.command == "right_double" }}'
                 sequence:
                   - service: switch.toggle
                     entity_id: switch.bedroom_fan
               # Double Click: Both
-              - conditions:
-                  - condition: template
-                    value_template: '{{ trigger.event.data.command == "both_double" }}'
+              - conditions: '{{ trigger.event.data.command == "both_double" }}'
                 sequence:
                   - service: switch.toggle
                     entity_id:
@@ -98,9 +80,7 @@ action:
 
       # Family Room 5 button remote
       #   * IKEA Tradfri Remote Control
-      - conditions:
-          - condition: template
-            value_template: '{{ trigger.event.data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee" }}'
+      - conditions: '{{ trigger.event.data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee" }}'
         sequence:
           choose:
             # Button: Power (middle)
@@ -116,10 +96,7 @@ action:
 
                 - choose:
                     # 2 clicks
-                    - conditions:
-                        # Click count: returned by 4th value
-                        - condition: template
-                          value_template: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
+                    - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
                       sequence:
                         # Delay 0.5 second to allow for a second click to cancel the second action.
                         - delay:
@@ -129,10 +106,7 @@ action:
                           entity_id: switch.tv_family_room
 
                     # 3 clicks
-                    - conditions:
-                        # Click count: returned by 4th value
-                        - condition: template
-                          value_template: '{{ 3 == states("input_text.zha_click").split(",")[3]|int }}'
+                    - conditions: '{{ 3 == states("input_text.zha_click").split(",")[3]|int }}'
                       sequence:
                         # Delay 0.5 second to allow for a second click to cancel the third action.
                         - delay:
@@ -140,9 +114,7 @@ action:
                         
                         - choose:
                             # The door us locked
-                            - conditions:
-                                - condition: template
-                                  value_template: '{{ states("lock.front_door")|lower|trim == "locked" }}'
+                            - conditions: '{{ states("lock.front_door")|lower|trim == "locked" }}'
                               sequence:
                                 - service: lock.unlock
                                   entity_id: lock.front_door
@@ -159,10 +131,7 @@ action:
                               entity_id: lock.front_door
 
                     # 4 clicks
-                    - conditions:
-                        # Click count: returned by 4th value
-                        - condition: template
-                          value_template: '{{ 4 == states("input_text.zha_click").split(",")[3]|int}}'
+                    - conditions: '{{ 4 == states("input_text.zha_click").split(",")[3]|int}}'
                       sequence:
                         # Delay 0.5 second to allow for a second click to cancel the third action.
                         #- delay:
@@ -182,9 +151,7 @@ action:
                       entity_id: switch.family_room_fan
 
             # Single Click: Brightness Up (top)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "step_with_on_off" }}'
+            - conditions: '{{ trigger.event.data.command == "step_with_on_off" }}'
               sequence:
                 # Store the previous click values and decide if this click was a double click or not.
                 - service: script.zha_store_click
@@ -194,17 +161,12 @@ action:
 
                 - choose:
                   # Double click
-                  - conditions:
-                      # Click count: returned by 4th value
-                      - condition: template
-                        value_template: |
-                          {% set click_count = states("input_text.zha_click").split(",")[3]|int %}
-                          {{ click_count == 2 }}
+                  - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
                     sequence:
                       # Delay 0.5 second to allow for a second click to cancel the second action.
                       - delay:
                           seconds: 0.5
-                      
+
                       - service: light.turn_on
                         data:
                           entity_id: light.table_lamp
@@ -221,9 +183,7 @@ action:
                         brightness_pct: 100
 
             # Single Click: Brightness down (bottom)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "step" }}'
+            - conditions: '{{ trigger.event.data.command == "step" }}'
               sequence:
                 # Store the previous click values and decide if this click was a double click or not.
                 - service: script.zha_store_click
@@ -233,12 +193,7 @@ action:
 
                 - choose:
                   # Double click
-                  - conditions:
-                      # Click count: returned by 4th value
-                      - condition: template
-                        value_template: |
-                          {% set click_count = states("input_text.zha_click").split(",")[3]|int %}
-                          {{ click_count == 2 }}
+                  - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
                     sequence:
                       # Delay 0.5 second to allow for a second click to cancel the second action.
                       - delay:
@@ -258,28 +213,22 @@ action:
                         - light.table_lamp
 
             # Single Click: Arrow left (left)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "press"
-                                  and trigger.event.data.args[0]|int == 256 }}'
+            - conditions: '{{ trigger.event.data.command == "press"
+                          and trigger.event.data.args[0]|int == 256 }}'
               sequence:
                 - service: light.turn_on
                   data:
                     entity_id: light.family_room_floor_lamp
                     brightness_pct: 100
             # Single Click: Arrow right (right)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "press"
-                                    and trigger.event.data.args[0]|int == 257 }}'
+            - conditions: '{{ trigger.event.data.command == "press"
+                          and trigger.event.data.args[0]|int == 257 }}'
               sequence:
                 - service: light.turn_off
                   entity_id: light.family_room_floor_lamp
 
             # Hold: Brightness Up (top)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "move" }}'
+            - conditions: '{{ trigger.event.data.command == "move" }}'
               sequence:
                 - service: light.turn_on
                   data:
@@ -288,9 +237,7 @@ action:
                       - light.table_lamp
                     brightness_step_pct: "-20"
             # Hold: Brightness down (bottom)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "move_with_on_off" }}'
+            - conditions: '{{ trigger.event.data.command == "move_with_on_off" }}'
               sequence:
                 - service: light.turn_on
                   data:
@@ -299,20 +246,16 @@ action:
                       - light.table_lamp
                     brightness_step_pct: "20"
             # Hold: Arrow left (left)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "hold"
-                                  and trigger.event.data.args[0]|int == 3329 }}'
+            - conditions: '{{ trigger.event.data.command == "hold"
+                          and trigger.event.data.args[0]|int == 3329 }}'
               sequence:
                 - service: light.turn_on
                   data:
                     entity_id: light.family_room_floor_lamp
                     brightness_step_pct: "-20"
             # Hold: Arrow right (right)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "hold"
-                                    and trigger.event.data.args[0]|int == 3328 }}'
+            - conditions: '{{ trigger.event.data.command == "hold"
+                          and trigger.event.data.args[0]|int == 3328 }}'
               sequence:
                 - service: light.turn_on
                   data:

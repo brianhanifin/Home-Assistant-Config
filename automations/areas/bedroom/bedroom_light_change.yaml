@@ -15,9 +15,7 @@ trigger:
     entity_id: light.bedroom
 
 condition:
-  - condition: template
-    value_template: >
-      {{ trigger.event.data.old_state.state != trigger.event.data.new_state.state }}
+  - '{{ trigger.event.data.old_state.state != trigger.event.data.new_state.state }}'
 action:
   - service: persistent_notification.create
     data_template:
