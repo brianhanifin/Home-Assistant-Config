@@ -1,6 +1,6 @@
----
 automation:
-  alias: wakeup_brian_light
+  alias: Wakeup Brian Light
+  id: wakeup_brian_light
   # Trigger at the prescribed time everyday.
   trigger:
     platform: template
@@ -36,7 +36,7 @@ automation:
       data_template:
         light: "light.glowforge"
         scene: "scene.wakeup_brian"
-        skipnext: "input_boolean.wakeup_brian_skipnext"
+        who: "brian"
 
 input_boolean:
   wakeup_brian_status:
@@ -97,5 +97,5 @@ sensor:
           {%- endif -%}
 
 timer:
-  wakeup_timeout_brian_wakeup:
+  wakeup_timeout_brian:
     duration: "01:00:00"

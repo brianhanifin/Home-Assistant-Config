@@ -1,6 +1,7 @@
 ---
 automation:
-  - alias: wakeup_light_timeout
+  - alias: Wakeup Light Timeout
+    id: wakeup_light_timeout
     initial_state: true
     trigger:
       - platform: state
@@ -9,17 +10,25 @@ automation:
           - timer.wakeup_timeout_boys_wakeup
           - timer.wakeup_timeout_brian
           - timer.wakeup_timeout_glowforge
+          - timer.wakeup_timeout_play_room_lights
         from: active
         to: idle
     action:
-      - service: light.turn_off
-        entity_id: light.entry
-      - service: light.turn_off
-        entity_id: light.garage_entry
+      - service: homeassistant.turn_off
+        entity_id:
+          - homeassistant.entry
+          - homeassistant.garage_entry
 
-      - service: light.turn_off
+      - service: homeassistant.turn_off
         data_template:
-          entity_id: "light.{{ trigger.entity_id[21:] }}"
+          entity_id: |
+            {%- set id = trigger.entity_id[21:] %}
+            {#- Use the light domain, unless that entity does not exist, then assume a group. #}
+            {%- if states("homeassistant." ~ id) != "unknown" %}
+              homeassistant.{{ id }}
+            {%- else %}
+              group.{{ id }}
+            {%- endif %}
 
   - alias: wakeup_warmup_water
     initial_state: true
@@ -45,6 +54,7 @@ automation:
         {% set current_time = states('sensor.time') %}
         {% set boys = add_time(states('sensor.boys_room_next_alarm'),add_minutes) %}
         {% set brian = add_time(states('sensor.wakeup_brian_start'),add_minutes) %}
+        {% set lucas = add_time(states('sensor.wakeup_lucas_start'),add_minutes) %}
         {% set nerene = add_time(states('sensor.wakeup_nerene_start'),add_minutes) %}
 
         {{ current_time in [boys,brian,nerene] }}
@@ -57,6 +67,8 @@ automation:
             {{ is_state('input_boolean.wakeup_boys_skipnext','on') }}
           {% elif current_time == states('sensor.wakeup_brian_start') %}
             {{ is_state('input_boolean.wakeup_brian_skipnext','on') }}
+          {% elif current_time == states('sensor.wakeup_lucas_start') %}
+            {{ is_state('input_boolean.wakeup_lucas_skipnext','on') }}
           {% elif current_time == states('sensor.wakeup_nerene_start') %}
             {{ is_state('input_boolean.wakeup_nerene_skipnext','on') }}
           {% endif %}
@@ -79,12 +91,12 @@ script:
           entity_id: "{{ scene|default('none') }}"
 
       # Start lights at ~20% and increment by ~10% every minute for 9 minutes.
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 50
       - delay: 00:00:01
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 50
@@ -92,7 +104,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 75
@@ -100,7 +112,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 100
@@ -108,7 +120,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 125
@@ -116,7 +128,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 150
@@ -124,7 +136,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 175
@@ -132,7 +144,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 200
@@ -140,7 +152,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 225
@@ -148,7 +160,7 @@ script:
       - delay: 00:01:00
       - condition: template
         value_template: "{{ is_state(light,'on') }}"
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         data_template:
           entity_id: "{{ light }}"
           brightness: 255
@@ -157,7 +169,7 @@ script:
       # see: automation.wakeup_light_timeout
       - service: timer.start
         data_template:
-          entity_id: "timer.wakeup_timeout_{{ light[6:] }}"
+          entity_id: '{{ "timer.wakeup_timeout_" ~ who }}'
 
   wakeup_skipnext:
     sequence:
@@ -165,4 +177,4 @@ script:
           seconds: 15
       - service: input_boolean.turn_off
         data_template:
-          entity_id: "{{ skipnext }}"
+          entity_id: '{{ "input_boolean.wakeup_" ~ who ~ "_skipnext" }}'
