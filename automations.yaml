@@ -22,27 +22,27 @@
     service: script.notify_speech
 - id: '1587853788536'
   alias: Temperature Cooler Outside
-  description: Notify me to open up the house when the temperature is cooler than
-    inside and the humidity outside isn't a lot higher.
+  description: Notify me to open up the house when the temperature is getting cooler
+    outside and the humidity outside isn't a lot higher.
   trigger:
   - for:
       minutes: 15
     platform: template
-    value_template: '{{ states("sensor.home_temperature")|int > (states("sensor.weatherbit_temperature")|int
-      - 2) }}'
+    value_template: '{{ states("sensor.home_temperature")|int >= (states("sensor.openweathermap_temperature")|int)
+      }}'
   condition:
   - condition: state
     entity_id: input_boolean.cooler_outside_notification
-    state: '"false"'
+    state: 'false'
   - condition: template
-    value_template: "{{ (states('sensor.weatherbit_humidity')|round\n  - states('sensor.home_humidity')|round)\
-      \ < 20 }}"
+    value_template: '{{ (states("sensor.openweathermap_humidity")|round - states("sensor.home_humidity")|round)
+      < 20 }}'
   action:
   - data: {}
     entity_id: input_boolean.cooler_outside_notification
     service: input_boolean.turn_on
   - data:
-      message: It is cooler outside. Please open up the house.
+      message: It is getting cooler outside. Consider opening up the house.
       title: Cool off!
       who: brian
     service: script.notify_mobile
@@ -51,7 +51,7 @@
     condition: time
   - data:
       media_player: group.alexa_welcome
-      message: It is cooler outside. Please open up the house.
+      message: It is getting cooler outside. Consider opening up the house.
     service: script.notify_speech
   mode: single
 - id: '1588556714529'
