@@ -10,25 +10,26 @@ mode: single
 trigger:
   - platform: state
     entity_id: binary_sensor.doorbell_presence
-    from: 'off'
+    #from: 'off'
     to: 'on'
-condition:
-  # Only activate the lights after sunset.
-  - condition: sun
-    after: sunset
 action:
+  - choose:
+    - conditions:
+        # Only activate the lights after sunset.
+        - condition: sun
+          after: sunset
+      sequence:
+        # Store the current state of the porch light.
+        - service: scene.create
+          data:
+            scene_id: doorbell_presence_lights_snapshot
+            snapshot_entities:
+              - light.porch
 
-  # Store the current state of the porch light.
-  - service: scene.create
-    data:
-      scene_id: doorbell_presence_lights_snapshot
-      snapshot_entities:
-        - light.porch
+        # Full brightness!
+        - service: scene.turn_on
+          entity_id: scene.front_full_brightness
 
-  # Full brightness!
-  - service: scene.turn_on
-    entity_id: scene.front_full_brightness
-
-  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
-  - delay:
-      minutes: 5
+        # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+        - delay:
+            minutes: 5
