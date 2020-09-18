@@ -3,14 +3,30 @@
 #  Call "notify_mobile" like this:
 #    action:
 #      service: script.notify_mobile
-#      data_template:
-#        title: 'Startup: Home Assistant is Up and Running!'
+#      data:
+#        title: "Startup: Home Assistant is Up and Running!"
 #        message: "{{ trigger.to_state.state }}"
 #        who: "brian | nerene | lucas | kyle | family | parents"
-#        id: messages with same id are grouped
-#        image: "{{ trigger.event.data.entity_picture }}"
+#        image: "/local/brian.png"
+#        camera: camera.front_door
 #        url: "{{ trigger.event.data.url }}"
+#        category: "insecure_door"
+#        id: messages with same id are grouped
 ######################################################################################################
+# Set local variables for reuse in this script.
+variables:
+  notification_service: 'notify.{{ who|default("brian") }}'
+  # Every notification should have a sound. Actionable notifications should grab your attention.
+  sound_file: |
+    {%- if sound is string %}
+      {{ sound }}
+    {%- else %}
+      {%- if category is string %}
+        Update.caf
+      {% else %}
+        sms-received1.caf
+      {% endif %}
+    {%- endif %}
 sequence:
   # Only send if globally enabled.
   - condition: state
@@ -22,7 +38,7 @@ sequence:
     - conditions:
         - '{{ camera is string }}'
       sequence:
-        - service: 'notify.{{ who|default("brian") }}'
+        - service: '{{ notification_service }}'
           data:
             title: '{{ title }}'
             message: '{{ message }}'
@@ -30,19 +46,17 @@ sequence:
               attachment:
                 content-type: jpeg
               entity_id: '{{ camera }}'
-              apns_headers:
-                apns-collapse-id: >-
-                  {%- if replaceable_id is not string -%}{%- set replaceable_id = none -%}{%- endif -%}
-                  {{ replaceable_id }}
-              thread-id: >-
-                {%- if id is not string -%}{%- set id = "HOMEASSISTANT" -%}{%- endif -%}
-                {{ id|upper }}
+              push:
+                sound: '{{ sound_file }}'
+                apns_headers:
+                  apns-collapse-id: 'camera'
+                thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
 
     # Send an image.
     - conditions:
         - '{{ image is string }}'
       sequence:
-        - service: 'notify.{{ who|default("brian") }}'
+        - service: '{{ notification_service }}'
           data:
             title: '{{ title }}'
             message: '{{ message }}'
@@ -54,39 +68,23 @@ sequence:
                 {{ extension|replace("jpg","jpeg") }}
               hide-thumbnail: false
               push:
+                sound: '{{ sound_file }}'
                 apns_headers:
-                  apns-collapse-id: >-
-                    {%- if replaceable_id is not string -%}{%- set replaceable_id = none -%}{%- endif -%}
-                    {{ replaceable_id }}
-                thread-id: >-
-                  {%- if id is not string -%}{%- set id = "HOMEASSISTANT" -%}{%- endif -%}
-                  {{ id|upper }}
+                  apns-collapse-id: 'image'
+                thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
 
     # Send a basic message.
     default:
-      - service: 'notify.{{ who|default("brian") }}'
+      - service: '{{ notification_service }}'
         data:
           title: '{{ title }}'
           message: '{{ message }}'
           data:
             push:
               category: '{{ category }}'
-              sound: |
-                {%- if sound is not string %}
-                  {%- if category is string %}
-                    Update.caf
-                  {% else %}
-                    sms-received1.caf
-                  {% endif %}
-                {%- else %}
-                  {{ sound }}
-                {%- endif %}
+              sound: '{{ sound_file }}'
               url: '{{ link or url }}'
 
               apns_headers:
-                apns-collapse-id: >-
-                  {%- if replaceable_id is not string -%}{%- set replaceable_id = none -%}{%- endif -%}
-                  {{ replaceable_id }}
-              thread-id: >-
-                {%- if id is not string -%}{%- set id = "HOMEASSISTANT" -%}{%- endif -%}
-                {{ id|upper }}
+                apns-collapse-id: '{{ category }}'
+              thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
