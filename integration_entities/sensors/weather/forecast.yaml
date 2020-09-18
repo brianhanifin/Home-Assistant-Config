@@ -5,9 +5,6 @@ sensors:
     #entity_id: weather.santee
     friendly_name: Forecast
     value_template: >
-      {% if states('sensor.san_diego_county_inland_valleys')|int > 0 %}
-        {{ trigger.event.data.event }}: {{ trigger.event.data.area }}<br>
-      {% endif %}
       {% set hour = now().hour|int %}
       {% if hour < 17 %}
         Today's forecast is {{ states('weather.santee')|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.santee', 'forecast')[0]['temperature']|round }}
