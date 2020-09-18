@@ -12,13 +12,13 @@ variables:
     {% if state_attr(entity_id, 'product_name') is string %}
       {%- if 'LZW31' in state_attr(entity_id, 'product_name') %}
         dimmer
-      {%- elif 'LZW36' in state_attr(entity_id, 'product_name') and Type == 'Light' %}
+      {%- elif 'LZW36' in state_attr(entity_id, 'product_name') %}
         combo_light
-      {%- elif 'LZW36' in state_attr(entity_id, 'product_name') and Type == 'Fan' %}
-        combo_fan
       {%- else %}
         switch
       {%- endif %}
+    {%- else %}
+      {{ model }}
     {%- endif %}
   parameters:
     dimmer: 16
