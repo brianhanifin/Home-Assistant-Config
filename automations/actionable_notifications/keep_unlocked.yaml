@@ -1,0 +1,52 @@
+---
+# Warn us if any doors or windows are open or unlocked
+#
+alias: "KEEP UNLOCKED: Actionable Notification"
+id: keep_unlocked_actionable_notification
+initial_state: true
+trigger:
+  # Trigger the notification when the door unlocks.
+  - platform: state
+    entity_id: lock.front_door
+    to: "unlocked"
+
+  # Action has been requested!
+  - platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: KEEP_UNLOCKED
+  - platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: ALLOW_TO_LOCK
+action:
+  - choose:
+    # Take the requested action!
+    - conditions:
+        - '{{ trigger.event.data.actionName == "KEEP_UNLOCKED"
+            or trigger.event.data.actionName == "ALLOW_TO_LOCK" }}'
+      sequence:
+        # Take the requested action!
+        - choose:
+          - conditions:
+              - '{{ trigger.event.data.actionName == "KEEP_UNLOCKED" }}'
+            sequence:
+              # Keep the front door unlocked.
+              - service: input_boolean.turn_on
+                entity_id: input_boolean.leave_unlocked
+
+          - conditions:
+              - '{{ trigger.event.data.actionName == "ALLOW_TO_LOCK" }}'
+            sequence:
+              # Allow the door to lock automatically after the timer expires.
+              - service: input_boolean.turn_off
+                entity_id: input_boolean.leave_unlocked
+
+    # Send the actionable notification.
+    default:
+      - service: script.notify_mobile
+        data:
+          who: 'brian'
+          title: 'Door Unlocked'
+          message: 'Would you like the door to remain unlocked indefinitely?'
+          category: 'keep_unlocked'
