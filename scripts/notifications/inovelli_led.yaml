@@ -6,10 +6,24 @@
 #
 # Changes:
 #   July 22, 2020: Incorporating changes from Kevin Schlichter.
-#   https://github.com/kschlichter/Home-Assistant-Inovelli-Red-Dimmer-Switch
+#     https://github.com/kschlichter/Home-Assistant-Inovelli-Red-Dimmer-Switch
+#
+#   September 17, 2020: There are some massive improvements to my version of this code. Here are the highlights:
+#     1. Choose - using the recently added choose: feature a separate call has been created for the Z-wave and OZW
+#        versions of the service call.
+#     2. Variables - using 0.115’s new variables: feature the variables sent each service call only have to be 
+#        calculated once.
+#     3. Supported Features - I realized that I could probably tell the difference between modules using the 
+#        “supported_features” attribute of each switch. For example my dimmer’s supported features is “33”.
+#
+#   September 18, 2020: Added "model" parameter with options of dimmer, switch, combo_light, combo_fan. This replaces
+#     supported_features as the combo fan/light switch also had the same supported_features value.
+#
 variables:
   model: |
-    {% if state_attr(entity_id, 'product_name') is string %}
+    {% if model is string %}
+      {{ model }}
+    {%- elif state_attr(entity_id, 'product_name') is string %}
       {%- if 'LZW31' in state_attr(entity_id, 'product_name') %}
         dimmer
       {%- elif 'LZW36' in state_attr(entity_id, 'product_name') %}
@@ -18,7 +32,7 @@ variables:
         switch
       {%- endif %}
     {%- else %}
-      {{ model }}
+      dimmer
     {%- endif %}
   parameters:
     dimmer: 16
