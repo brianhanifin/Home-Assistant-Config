@@ -92,16 +92,16 @@ action:
                         - condition: template
                           value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
                       sequence:
-                        - service: switch.turn_on
-                          entity_id: switch.family_room_fan
+                        - service: fan.turn_on
+                          entity_id: fan.family_room
 
                     # SCENE 1: Down
                     - conditions:
                         - condition: template
                           value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
                       sequence:
-                        - service: switch.turn_off
-                          entity_id: switch.family_room_fan
+                        - service: fan.turn_off
+                          entity_id: fan.family_room
 
               # 4x: Party Areas
               - conditions:

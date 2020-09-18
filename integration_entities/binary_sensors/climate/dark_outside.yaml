@@ -1,0 +1,9 @@
+---
+platform: template
+sensors:
+  dark_outside:
+    value_template: >
+      {{ state_attr("sun.sun","elevation")|float < 3
+      or (state_attr("sun.sun","elevation")|float < 4.5 and states("sensor.santee_cloud_cover")|float > 80)
+      or (state_attr("sun.sun","elevation")|float < 6.5 and states("sensor.santee_cloud_cover")|float > 85)
+      or (state_attr("sun.sun","elevation")|float < 30  and states("sensor.santee_cloud_cover")|float > 90) }}

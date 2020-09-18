@@ -2,17 +2,17 @@
 platform: template
 sensors:
   forecast:
-    #entity_id: weather.weatherbit_santee
+    #entity_id: weather.santee
     friendly_name: Forecast
     value_template: >
       {% if states('sensor.san_diego_county_inland_valleys')|int > 0 %}
         {{ trigger.event.data.event }}: {{ trigger.event.data.area }}<br>
       {% endif %}
-      {% set hour = states("sensor.time").split(':')[0]|int %}
+      {% set hour = now().hour|int %}
       {% if hour < 17 %}
-        Today's forecast is {{ states('weather.weatherbit_santee')|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.weatherbit_santee', 'forecast')[1]['temperature']|round }}
-        {%- if states('sensor.today_low')|float > 0 %}, and a low of {{ states('sensor.today_low')|round }} degrees{%- endif %}.
+        Today's forecast is {{ states('weather.santee')|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.santee', 'forecast')[0]['temperature']|round }}
+        {%- if state_attr('weather.santee', 'forecast')[0]['templow']|round > 0 %}, and a low of {{ state_attr('weather.santee', 'forecast')[0]['templow']|round }} degrees{%- endif %}.
       {% else %}
-        Tomorrow's forecast is {{ states('sensor.weatherbit_forecast_day_1')|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('sensor.weatherbit_forecast_day_1', 'temperature')|round }}
-        {%- if state_attr('sensor.weatherbit_forecast_day_1', 'templow')|round > 0 %}, and a low of {{ state_attr('sensor.weatherbit_forecast_day_1', 'templow')|round }} degrees{%- endif %}.
+        Tomorrow's forecast is {{ state_attr('weather.santee', 'forecast')[1]['condition']|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ state_attr('weather.santee', 'forecast')[1]['temperature']|round }}
+        {%- if state_attr('weather.santee', 'forecast')[1]['templow']|round > 0 %}, and a low of {{ state_attr('weather.santee', 'forecast')[1]['templow']|round }} degrees{%- endif %}.
       {% endif %}
