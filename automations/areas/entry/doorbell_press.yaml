@@ -9,6 +9,13 @@ trigger:
     entity_id: binary_sensor.doorbell_press
     to: 'on'
 action:
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: Doorbell rang
+      message: Someone pushed the doorbell.
+      camera: camera.front_door
+
   # Stream the camera feed to all open Home Assistant browsers.
   - service: browser_mod.popup
     data_template:
