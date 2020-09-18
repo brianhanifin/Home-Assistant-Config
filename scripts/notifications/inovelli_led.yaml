@@ -24,7 +24,7 @@ variables:
   # 1-10
   level: '{{ level|default(4) }}'
   duration: '{{ duration|default("Indefinitely") }}'
-  effect: '{{ effect|default("Pulse") }}'
+  effect: '{{ effect|default("Blink") }}'
   colors:
     "Off": 0
     "Red": 1
@@ -87,6 +87,7 @@ variables:
     "Pulse": 4
     "Breath": 4
 sequence:
+  # Preform the Inovelli math.
   - variables:
       color: '{{ colors[color|title]|int }}'
       duration: '{{ durations[duration|title]|int }}'
