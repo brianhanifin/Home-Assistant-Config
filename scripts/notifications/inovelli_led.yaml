@@ -8,8 +8,9 @@
 #   July 22, 2020: Incorporating changes from Kevin Schlichter.
 #   https://github.com/kschlichter/Home-Assistant-Inovelli-Red-Dimmer-Switch
 variables:
+  # The dimmer's "supported_features" attribute is 33.
   parameter: |
-    {%- if dimmer|default("true") == "true" %}
+    {%- if state_attr(entity_id,"supported_features")|int == 33 %}
       16
     {%- else %}
       8
@@ -91,7 +92,7 @@ sequence:
       duration: '{{ durations[duration|title]|int }}'
       effect_original: '{{ effect }}'
       effect: |
-        {% if dimmer|default("true") == "true" %}
+        {% if state_attr(entity_id,"supported_features")|int == 33 %}
           {{- effects_dimmer[effect|title]|int }}
         {%- else %}
           {{- effects_switch[effect|title]|int }}
@@ -105,34 +106,46 @@ sequence:
 
   # - service: script.debug
   #   data:
-  #     id: "inovelli_led2"
+  #     id: "inovelli_led"
   #     message: |
   #       node_id: '{{ state_attr(entity_id,"node_id") }}'
   #       parameter: '{{ parameter }}'
   #       value: '{{ inovelli_math }}'
 
-  # - choose:
-  #   - conditions:
-  #       - '{{ entity_id.split(".")[0] == "zwave" }}'
-  #     sequence:
-  #       - service: script.toast
-  #         data:
-  #           message: "zwave.set_config_parameter"
+  - choose:
+    # The Z-wave integration requires this service call.
+    - conditions:
+        - '{{ entity_id.split(".")[0] == "zwave" }}'
+      sequence:
+        # Clear the previous effect.
+        - service: zwave.set_config_parameter
+          data_template:
+            node_id: '{{ state_attr(entity_id,"node_id") }}'
+            parameter: '{{ parameter }}'
+            size: 4
+            value: '0'
 
-  #       - service: zwave.set_config_parameter
-  #         data_template:
-  #           node_id: '{{ state_attr(entity_id,"node_id") }}'
-  #           parameter: '{{ parameter }}'
-  #           size: 4
-  #           value: '{{ inovelli_math }}'
+        # Start the new effect.
+        - service: zwave.set_config_parameter
+          data_template:
+            node_id: '{{ state_attr(entity_id,"node_id") }}'
+            parameter: '{{ parameter }}'
+            size: 4
+            value: '{{ inovelli_math }}'
 
-  #   default:
-  #     - service: script.toast
-  #       data:
-  #         message: "ozw.set_config_parameter"
 
-  - service: ozw.set_config_parameter
-    data_template:
-      node_id: '{{ state_attr(entity_id,"node_id") }}'
-      parameter: '{{ parameter }}'
-      value: '{{ inovelli_math }}'
+    # The OZW integration requires this service call.
+    default:
+      # Clear the previous effect.
+      - service: ozw.set_config_parameter
+        data_template:
+          node_id: '{{ state_attr(entity_id,"node_id") }}'
+          parameter: '{{ parameter }}'
+          value: '0'
+
+        # Start the new effect.
+      - service: ozw.set_config_parameter
+        data_template:
+          node_id: '{{ state_attr(entity_id,"node_id") }}'
+          parameter: '{{ parameter }}'
+          value: '{{ inovelli_math }}'
