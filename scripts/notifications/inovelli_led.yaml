@@ -8,13 +8,23 @@
 #   July 22, 2020: Incorporating changes from Kevin Schlichter.
 #   https://github.com/kschlichter/Home-Assistant-Inovelli-Red-Dimmer-Switch
 variables:
-  # The dimmer's "supported_features" attribute is 33.
-  parameter: |
-    {%- if state_attr(entity_id,"supported_features")|int == 33 %}
-      16
-    {%- else %}
-      8
-    {% endif %}
+  model: |
+    {% if state_attr(entity_id, 'product_name') is string %}
+      {%- if 'LZW31' in state_attr(entity_id, 'product_name') %}
+        dimmer
+      {%- elif 'LZW36' in state_attr(entity_id, 'product_name') and Type == 'Light' %}
+        combo_light
+      {%- elif 'LZW36' in state_attr(entity_id, 'product_name') and Type == 'Fan' %}
+        combo_fan
+      {%- else %}
+        switch
+      {%- endif %}
+    {%- endif %}
+  parameters:
+    dimmer: 16
+    combo_light: 24
+    combo_fan: 25
+    switch: 8
   color: |
     {%- if color is not number %}
       {{ color|default("Yellow") }}
@@ -89,20 +99,20 @@ variables:
 sequence:
   # Preform the Inovelli math.
   - variables:
-      color: '{{ colors[color|title]|int }}'
-      duration: '{{ durations[duration|title]|int }}'
-      effect_original: '{{ effect }}'
+      parameter: '{{ parameters[model|default("dimmer")] }}'
+      color: '{{ colors[color|default("purple")|title] }}'
+      duration: '{{ durations[duration|default("10 Seconds")|title] }}'
       effect: |
-        {% if state_attr(entity_id,"supported_features")|int == 33 %}
-          {{- effects_dimmer[effect|title]|int }}
+        {% if model == "switch" %}
+          {{- effects_switch[effect|default("Blink")|title]|int }}
         {%- else %}
-          {{- effects_switch[effect|title]|int }}
+          {{- effects_dimmer[effect|default("Blink")|title]|int }}
         {% endif %}
       inovelli_math: |
-        {%- if effect_original|title == "Off" %}
-          0
-        {%- else %}
+        {%- if effect|int > 0 %}
           {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
+        {%- else %}
+          0
         {% endif %}
 
   # - service: script.debug
