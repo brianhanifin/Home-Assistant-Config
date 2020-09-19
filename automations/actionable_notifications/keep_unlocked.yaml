@@ -9,6 +9,8 @@ trigger:
   - platform: state
     entity_id: lock.front_door
     to: "unlocked"
+    for:
+      seconds: 15
 
   # Action has been requested!
   - platform: event
@@ -48,5 +50,5 @@ action:
         data:
           who: 'brian'
           title: 'Door Unlocked'
-          message: 'Would you like the door to remain unlocked indefinitely?'
+          message: 'Would you like the door to remain unlocked?'
           category: 'keep_unlocked'
