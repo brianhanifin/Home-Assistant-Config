@@ -163,17 +163,17 @@ action:
                     command: '{{ trigger.event.data.command }}'
 
                 - choose:
-                  # Double click
-                  - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
-                    sequence:
-                      # Delay 0.5 second to allow for a second click to cancel the second action.
-                      - delay:
-                          seconds: 0.5
+                    # Double click
+                    - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
+                      sequence:
+                        # Delay 0.5 second to allow for a second click to cancel the second action.
+                        - delay:
+                            seconds: 0.5
 
-                      - service: light.turn_on
-                        data:
-                          entity_id: light.table_lamp
-                          brightness_pct: 100
+                        - service: light.turn_on
+                          data:
+                            entity_id: light.table_lamp
+                            brightness_pct: 100
 
                   # Single Click
                   default:
@@ -195,15 +195,15 @@ action:
                     command: '{{ trigger.event.data.command }}'
 
                 - choose:
-                  # Double click
-                  - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
-                    sequence:
-                      # Delay 0.5 second to allow for a second click to cancel the second action.
-                      - delay:
-                          seconds: 0.5
+                    # Double click
+                    - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
+                      sequence:
+                        # Delay 0.5 second to allow for a second click to cancel the second action.
+                        - delay:
+                            seconds: 0.5
 
-                      - service: light.turn_off
-                        entity_id: light.table_lamp
+                        - service: light.turn_off
+                          entity_id: light.table_lamp
 
                   # Single Click
                   default:

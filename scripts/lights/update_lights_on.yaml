@@ -13,15 +13,15 @@ sequence:
           {{ entities }}
         {%- endif -%}
 
-  - service: variable.set_variable
-    data:
-      variable: lights_on
-      value_template: >
-        {%- set group_id = 'group.actionable_lights' -%}
-        {%- set entities = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | join(', ') -%}
-        {%- if "light." not in entities -%}
-          {{ " " }}
-        {%- else -%}
-          {{ entities }}
-        {%- endif -%}
+  # - service: variable.set_variable
+  #   data:
+  #     variable: lights_on
+  #     value_template: >
+  #       {%- set group_id = 'group.actionable_lights' -%}
+  #       {%- set entities = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | join(', ') -%}
+  #       {%- if "light." not in entities -%}
+  #         {{ " " }}
+  #       {%- else -%}
+  #         {{ entities }}
+  #       {%- endif -%}
 

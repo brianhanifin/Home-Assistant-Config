@@ -1,35 +1,35 @@
 ---
-  sequence:
-    - service: notify.alexa_media
-      data_template:
-        data:
-          type: announce
-          method: all
-        title: >
-          {%- if title is not string -%}
-            Home Assistant
-          {%- else -%}
-            {{ title }}
-          {%- endif -%}
-        message: "{{ briefing }}"
-        target: "{{ media_player }}"
-  
-    - service: mqtt.publish
-      data_template:
-        topic: "homeassistant/storage/last_message/state"
-        retain: true
-        payload: "{{ briefing|striptags }}"
-    - service: mqtt.publish
-      data_template:
-        topic: "homeassistant/storage/last_message/attributes"
-        retain: true
-        payload: >-
-          {
-            "target": "{{ media_player }}",
-            "day": "{{ as_timestamp(now())|timestamp_custom('%A %B %-d') }}",
-            "time": "{{ as_timestamp(now())|timestamp_custom('%H:%M %p') }}"
-          }
-    - service: script.toast
-      data_template:
-        message: "{{ briefing|striptags }}"
-        duration: 30000
+sequence:
+  - service: notify.alexa_media
+    data_template:
+      data:
+        type: announce
+        method: all
+      title: >
+        {%- if title is not string -%}
+          Home Assistant
+        {%- else -%}
+          {{ title }}
+        {%- endif -%}
+      message: "{{ briefing }}"
+      target: "{{ media_player }}"
+
+  - service: mqtt.publish
+    data_template:
+      topic: "homeassistant/storage/last_message/state"
+      retain: true
+      payload: "{{ briefing|striptags }}"
+  - service: mqtt.publish
+    data_template:
+      topic: "homeassistant/storage/last_message/attributes"
+      retain: true
+      payload: >-
+        {
+          "target": "{{ media_player }}",
+          "day": "{{ as_timestamp(now())|timestamp_custom('%A %B %-d') }}",
+          "time": "{{ as_timestamp(now())|timestamp_custom('%H:%M %p') }}"
+        }
+  - service: script.toast
+    data_template:
+      message: "{{ briefing|striptags }}"
+      duration: 30000

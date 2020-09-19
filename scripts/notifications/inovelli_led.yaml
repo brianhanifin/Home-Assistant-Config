@@ -138,25 +138,25 @@ sequence:
   #       value: '{{ inovelli_math }}'
 
   - choose:
-    # The Z-wave integration requires this service call.
-    - conditions:
-        - '{{ entity_id.split(".")[0] == "zwave" }}'
-      sequence:
-        # Clear the previous effect.
-        - service: zwave.set_config_parameter
-          data_template:
-            node_id: '{{ state_attr(entity_id,"node_id") }}'
-            parameter: '{{ parameter }}'
-            size: 4
-            value: '0'
+      # The Z-wave integration requires this service call.
+      - conditions:
+          - '{{ entity_id.split(".")[0] == "zwave" }}'
+        sequence:
+          # Clear the previous effect.
+          - service: zwave.set_config_parameter
+            data_template:
+              node_id: '{{ state_attr(entity_id,"node_id") }}'
+              parameter: '{{ parameter }}'
+              size: 4
+              value: '0'
 
-        # Start the new effect.
-        - service: zwave.set_config_parameter
-          data_template:
-            node_id: '{{ state_attr(entity_id,"node_id") }}'
-            parameter: '{{ parameter }}'
-            size: 4
-            value: '{{ inovelli_math }}'
+          # Start the new effect.
+          - service: zwave.set_config_parameter
+            data_template:
+              node_id: '{{ state_attr(entity_id,"node_id") }}'
+              parameter: '{{ parameter }}'
+              size: 4
+              value: '{{ inovelli_math }}'
 
 
     # The OZW integration requires this service call.

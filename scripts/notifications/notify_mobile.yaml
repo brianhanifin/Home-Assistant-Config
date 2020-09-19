@@ -34,44 +34,44 @@ sequence:
     state: 'on'
   
   - choose:
-    # Send camera stream.
-    - conditions:
-        - '{{ camera is string }}'
-      sequence:
-        - service: '{{ notification_service }}'
-          data:
-            title: '{{ title }}'
-            message: '{{ message }}'
+      # Send camera stream.
+      - conditions:
+          - '{{ camera is string }}'
+        sequence:
+          - service: '{{ notification_service }}'
             data:
-              attachment:
-                content-type: jpeg
-              entity_id: '{{ camera }}'
-              push:
-                sound: '{{ sound_file }}'
-                apns_headers:
-                  apns-collapse-id: 'camera'
-                thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
+              title: '{{ title }}'
+              message: '{{ message }}'
+              data:
+                attachment:
+                  content-type: jpeg
+                entity_id: '{{ camera }}'
+                push:
+                  sound: '{{ sound_file }}'
+                  apns_headers:
+                    apns-collapse-id: 'camera'
+                  thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
 
-    # Send an image.
-    - conditions:
-        - '{{ image is string }}'
-      sequence:
-        - service: '{{ notification_service }}'
-          data:
-            title: '{{ title }}'
-            message: '{{ message }}'
+      # Send an image.
+      - conditions:
+          - '{{ image is string }}'
+        sequence:
+          - service: '{{ notification_service }}'
             data:
-              url: '{{ image }}'
-              content-type: |
-                {%- set filename = image.split(".") %}
-                {%- set extension = filename[filename|length - 1] %}
-                {{ extension|replace("jpg","jpeg") }}
-              hide-thumbnail: false
-              push:
-                sound: '{{ sound_file }}'
-                apns_headers:
-                  apns-collapse-id: 'image'
-                thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
+              title: '{{ title }}'
+              message: '{{ message }}'
+              data:
+                url: '{{ image }}'
+                content-type: |
+                  {%- set filename = image.split(".") %}
+                  {%- set extension = filename[filename|length - 1] %}
+                  {{ extension|replace("jpg","jpeg") }}
+                hide-thumbnail: false
+                push:
+                  sound: '{{ sound_file }}'
+                  apns_headers:
+                    apns-collapse-id: 'image'
+                  thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
 
     # Send a basic message.
     default:

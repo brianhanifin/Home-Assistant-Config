@@ -241,7 +241,7 @@
   {%- endmacro -%}
 
   {%- macro light_check() -%}
-    {% set lights_on = states('variable.lights_on').split(',') %}
+    {% set lights_on = states('group.lights_on').split(',') %}
     {% if lights_on|length > 0 and lights_on != [''] %}
 
       {%- if lights_on|length == 1 %}
