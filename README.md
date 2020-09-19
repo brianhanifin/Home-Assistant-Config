@@ -11,7 +11,7 @@ I started using Home Assistant in the spring of 2018 when I outgrew the limited 
 
 Home Assistant now manages our smart home devices with lots of intelligence handled by my automations. It is important that our devices can be controlled by standard wall switches where possible, but we use Alexa to control our devices with our voice. Not only can we talk to Alexa, but she can let us know when the laundry wash cycle (or our Glowforge laser job) is complete, thanks to the help of a power monitoring smart plug.
 
-As of my last commit I have **1071 entities**, with **383 sensors** in Home Assistant. I am also using **29 custom components**.
+As of my last commit I have **1202 entities**, with **430 sensors** in Home Assistant. I am also using **26 custom components**.
 
 ## User Interface
 ### Amazon Alexa
@@ -120,67 +120,61 @@ I have added some GE Z-Wave in-wall switches in the kitchen since we don't care 
 
 <dl>
   
-  <dt> variable </dt>
+  <dt> Reolink IP camera </dt>
   
-  <dt> National Weather Service Radar </dt>
-  
-  <dt> Breaking Changes </dt>
+  <dt> Fontawesome icons </dt>
   
   <dt> HACS </dt>
   
   <dd> Manage (Install, track, upgrade) and discover custom elements for Home Assistant. </dd>
   
-  <dt> Weatherbit </dt>
-  
-  <dt> Logbook Cache </dt>
-  
-  <dt> Browser mod </dt>
-  
-  <dt> ics </dt>
-  
-  <dt> Weatheralerts </dt>
-  
-  <dt> Config Check </dt>
-  
-  <dt> Alexa Media Player </dt>
-  
-  <dt> Amcrest Camera </dt>
-  
-  <dt> Youtube Sensor </dt>
-  
-  <dt> UniFi Gateway </dt>
-  
-  <dt> Anniversaries </dt>
-  
-  <dt> Lovelace Gen </dt>
-  
-  <dt> Battery Level </dt>
-  
-  <dt> Reolink IP camera </dt>
-  
-  <dt> Illuminance </dt>
-  
-  <dt> Climacell weather </dt>
-  
-  <dt> UI Logs </dt>
-  
-  <dt> Lutron Caséta Smart Bridge PRO / RA2 Select </dt>
-  
-  <dt> Apple TV </dt>
-  
-  <dt> UI Logs </dt>
+  <dt> Average </dt>
   
   <dt> Generate readme </dt>
   
   <dd> Generates this awesome readme file. </dd>
   
-  <dt> Circadian Lighting </dt>
+  <dt> Climacell weather </dt>
   
-  <dt> Fontawesome icons </dt>
+  <dt> Weatheralerts </dt>
+  
+  <dt> iPhone Device Tracker </dt>
+  
+  <dt> Lutron Caséta Smart Bridge PRO / RA2 Select </dt>
+  
+  <dt> Pyscript Python scripting </dt>
+  
+  <dt> ics Calendar </dt>
   
   <dt> SmartThinQ LGE Sensors </dt>
   
+  <dt> MultiScrape </dt>
+  
+  <dt> Youtube Sensor </dt>
+  
+  <dt> Anniversaries </dt>
+  
+  <dt> Scheduler integration </dt>
+  
+  <dt> Alexa Media Player </dt>
+  
+  <dt> Places </dt>
+  
+  <dt> Browser mod </dt>
+  
+  <dt> National Weather Service Radar </dt>
+  
+  <dt> Circadian Lighting </dt>
+  
+  <dt> Apple TV </dt>
+  
+  <dt> UniFi Gateway </dt>
+  
   <dt> Rainforest </dt>
+  
+  <dt> Breaking Changes </dt>
+  
+  <dt> Config Check </dt>
   </dt>
 
 
@@ -219,7 +213,7 @@ All of my configuration files are tested against the most stable version of home
 [button-medicine]: ./README-images/button_medicine.jpeg
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-0.110.3-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-0.115.1-41BDF5?logo=home%20assistant
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/build/badge.svg
