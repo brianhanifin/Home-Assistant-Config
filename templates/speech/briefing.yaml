@@ -241,8 +241,8 @@
   {%- endmacro -%}
 
   {%- macro light_check() -%}
-    {% set lights_on = states('group.lights_on').split(',') %}
-    {% if lights_on|length > 0 and lights_on != [''] %}
+    {% set lights_on = state_attr('group.lights_on','entity_id')|list %}
+    {% if lights_on|length|default(0)|int > 0 and lights_on != [''] %}
 
       {%- if lights_on|length == 1 %}
         There is 1 light on right now.
