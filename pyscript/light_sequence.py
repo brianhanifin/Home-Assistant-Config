@@ -49,7 +49,7 @@ fields:
     for color in colors:
       #if debug == "true": log.info(f"state.get('{light_group}'): {state.get(light_group)}")
       if state.get(light_group) == "off" or stop_now == "true":
-        if debug == "true": log.info(f"{light_group}: OFF")
+        #if debug == "true": log.info(f"{light_group}: OFF")
         stop_now = "true"
         break
       else:
@@ -59,7 +59,7 @@ fields:
 
           # Stop if light fixture was manually turned off.
           if state.get(light_group) == "off":
-            if debug == "true": log.info(f"{light_group}: OFF")
+            #if debug == "true": log.info(f"{light_group}: OFF")
             stop_now = "true"
             break
 
@@ -72,18 +72,24 @@ fields:
 
       task.sleep(transition)
 
-    if state.get(light_group) == "off" or stop_now == "true":
+    if stop_now == "true":
       if debug == "true": log.info(f"{light_group}: OFF")
+
       task.unique(task_id)
+
+      # Turn off the light group.
       service.call("homeassistant", "turn_off", light_group)
       task.sleep(transition)
+
+      # Make sure each bulb is off.
       for entity_id in bulbs:
         light.turn_off(entity_id=entity_id)
 
-    # task.sleep(transition * 2)
-    # if switch.circadian_lighting == "on":
-    #   switch.turn_on(entity_id=circadian_fixture_switch)
-    
+    # Reenable the circadian lighting switch if the mode is globally enabled.
+    task.sleep(transition * 2)
+    if switch.circadian_lighting == "on":
+      switch.turn_on(entity_id=circadian_fixture_switch)
+
     if debug == "true": log.info(f"{task_id}: end")
 
 # Example service call data.
