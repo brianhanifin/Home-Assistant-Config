@@ -1,12 +1,32 @@
 ---
 platform: climacell
 api_key: !secret climacell_apikey
-name: Climacell
-# latitude: !secret gps_geo_home_lt
-# longitude: !secret gps_geo_home_ln
+name: Santee
 monitored_conditions:
+  daily:
+    conditions:
+      - temperature
+      - precipitation_probability
+    scan_interval:
+      days: 1
+      hours: 0
+
   realtime:
     conditions:
+      - temperature
+      - humidity
+      - wind_speed
+      - wind_direction
+      - wind_gust
+      #- pressure
+      - precipitation
+      - precipitation_type
+      - sunset
+      - sunrise
+      - visibility
+      - cloud_cover
+      - weather_condition
+
       - pm25
       - pm10
       - o3
@@ -20,30 +40,7 @@ monitored_conditions:
       - pollen_weed
       - pollen_grass
       - fire_index
-scan_interval:
-  days: 0
-  hours: 1
-  minutes: 0
-  seconds: 0
-  milliseconds: 0
-
-#     - weather_condition
-#     - temperature
-#     - feels_like
-#     - humidity
-#     - visibility
-#     - cloud_cover
-#     - precipitation
-#     - precipitation_type
-#     - pressure
-#     - wind_speed
-#     - wind_direction
-#     - wind_gust
-#     - moon_phase
-#     - sunset
-#     - sunrise
-#   forecast:
-#     - weather_condition
-#     - temperature
-#     - precipitation
-#     - precipitation_probability
+    scan_interval:
+      days: 0
+      hours: 1
+      minutes: 0
