@@ -1,0 +1,56 @@
+---
+platform: template
+sensors:
+  update_message:
+    friendly_name: Update
+    icon_template: 'mdi:update'
+    value_template: |
+      There is an update available.
+        * There is a Core update.
+      {%- set combined_updates = states("sensor.updates")|int|default("0") +
+        states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
+      {%- if combined_updates == 1 %} 
+        There is an update available.
+      {% elif combined_updates > 1 %}
+        There are {{ combined_updates }} updates available.
+      {% endif %}
+
+      {%- if is_state_attr("sensor.updates","core_update","True") %}
+        * There is a Core update.
+      {%- endif %}
+
+      {%- if is_state_attr("sensor.updates","os_update","True") %}
+        * There is an OS update.
+      {%- endif %}
+
+      {%- if is_state_attr("sensor.updates","supervisor_update","True") %}
+        * There is a Supervisor update.
+      {%- endif %}
+      
+      {%- if is_state_attr("sensor.updates","hacs_update","True") %}
+        {%- set updates = states("sensor.hacs")|int|default("0") %}
+        {%- if updates == 1 %}
+          * There is one HACS update.
+        {%- else %}
+          * There are {{ updates }} HACS updates.
+        {%- endif %}
+      {%- endif %}
+
+      {%- if is_state_attr("sensor.updates","addon_update","True") %}
+        {%- set updates = states("sensor.addon_updates")|int|default("0") %}
+        {%- if updates == 1 %}
+          * There is one Addon update.
+        {%- else %}
+          * There are {{ updates }} Addon updates.
+        {%- endif %}
+      {%- endif %}
+
+      {%- set updates = states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
+
+      {%- if updates > 0 %}
+        {%- if updates == 1 %}
+          * There is one Unifi Firmware update.
+        {%- else %}
+          * There are {{ updates }} Unifi Firmware updates.
+        {%- endif %}
+      {%- endif %}
