@@ -1,12 +1,26 @@
 ---
+variables:
+  entity_id: '{{ entity_id|default("light.family_room") }}'
+  model: |
+    {% set models = {
+      light.family_room: "dimmer"
+    } %}
+    {{ models[entity_id] }}
+  color: '{{ color|default("red") }}'
+  effect: '{{ effect|default("chase") }}'
+  duration: '{{ duration|default("15 seconds") }}'
+  level: '{{ level|default("8") }}'
+  state_entity: '{{ state_entity|default("none") }}'
+  state: '{{ state|default("false") }}'
 sequence:
   - service: script.inovelli_led
     data_template:
       entity_id: "{{ entity_id }}"
+      model: "{{ model }}"
       color: "{{ color }}"
-      effect: chase
-      duration: 15 seconds
-      level: "{{ level|default('4') }}"
+      effect: "{{ effect }}"
+      duration: "{{ duration }}"
+      level: "{{ level }}"
 
   # If the state remains after a short delay then change the effect to something less attention grabbing.
   - delay:
@@ -17,7 +31,8 @@ sequence:
   - service: script.inovelli_led
     data_template:
       entity_id: "{{ entity_id }}"
+      model: "{{ model }}"
       color: "{{ color }}"
       effect: solid
       duration: indefinitely
-      level: "{{ level|default('4') }}"
+      level: 4
