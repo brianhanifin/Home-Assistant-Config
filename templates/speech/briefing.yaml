@@ -1,14 +1,6 @@
 ---
 >
   {# UTILITY FUNCTIONS #}
-  {%- macro get_friendly_list(list) -%}
-    {%- set comma = joiner(', ') -%}
-    {%- for item in list|sort if list|length > 0 -%}
-      {{ ' and' if loop.last and not loop.first else comma() }}
-      {{ item|title }}
-    {%- endfor -%}
-  {%- endmacro -%}
-
   {%- macro get_friendly_names(entity_list) -%}
     {% set comma = joiner(', ') %}
     {%- for entity_id in entity_list -%}
