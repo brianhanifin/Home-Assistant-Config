@@ -7,27 +7,38 @@ sensors:
     friendly_name: Outdoor Illuminance Educated Guessor
     icon_template: mdi:brightness-auto
     unit_of_measurement: lx
-    #illuminance * sun_factor
-    value_template: |
-      {% macro get_illuminance() %}
+    attribute_templates:
+      current_condition: |
+        {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
+        
+        {% if states("sensor.openweathermap_condition") != "unknown" %}
+          {% set current_condition = states("sensor.openweathermap_condition") %}
+        {% elif states("sensor.cc_santee_weather_condition") != "unknown" %}
+          {% set current_condition = states("sensor.cc_santee_weather_condition") %}
+        {% elif states("weather.santee") != "unknown" %}
+          {% set current_condition = states("weather.santee") %}
+        {% endif %}
+        {% set current_condition = current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
+        {{ current_condition }}
+      condition_factor: |
+        {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
+
         {% set condition_factors = {
-          "10000": ("clear", "clearnight", "sunny", "windy"),
+          "10000": ("clear", "clearnight", "sunny", "windy", "exceptional"),
           "7500": ("partlycloudy", "partlysunny", "mostlysunny", "mostlyclear", "hazy", "hazysunshine", "intermittentclouds"),
           "2500": ("cloudy", "mostlycloudy"),
-          "1000": ("fog", "rainy", "showers", "snowy", "snowyrainy", "flurries", "chanceflurries", "chancerain", "chancesleet", "drearyovercast", "sleet"),
+          "1000": ("fog", "rainy", "showers", "snowy", "snowyheavy", "snowyrainy", "flurries", "chanceflurries", "chancerain", "chancesleet", "drearyovercast", "sleet"),
           "200": ("hail", "lightning", "tstorms")
         } %}
-        {% set current_condition = states('weather.santee') or states("sensor.openweathermap_condition") or states("sensor.cc_santee_weather_condition") %}
-        {% set current_condition = current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
-      
+        {% set current_condition = state_attr("sensor.illuminance","current_condition") %}
         {%- for factor in condition_factors %}
           {%- if current_condition in condition_factors[factor] -%}
             {{ factor }}
           {%- endif %}
         {%- endfor %}
-      {% endmacro %}
-      
-      {% macro get_sun_factor() %}
+      sun_factor: |
+        {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
+
         {%- set right_now = as_timestamp(now()) %}
 
         {%- set sunrise = as_timestamp(states("sensor.sunrise")) %}
@@ -36,19 +47,26 @@ sensors:
         {%- set sunrise_end = as_timestamp(states("sensor.dusk")) %}
         {%- set sunset_begin = sunset - (40 * 60) %}
         {%- set sunset_end = sunset + (20 * 60) %}
-      
+
         {% if sunrise_end < right_now and right_now < sunset_begin %}
-          1
+          {%- set sun_factor = 1 %}
         {% elif sunset_end < right_now or right_now < sunrise_begin %}
-          0
+          {%- set sun_factor = 0 %}
         {%- elif right_now <= sunrise_end -%}
-          {{ (right_now - sunrise_begin) / (60*60*60) }}
+          {%- set sun_factor = ((right_now - sunrise_begin) / (60*60*60)) * 10 %}
         {%- else -%}
-          {{ (sunset_end - right_now) / (60*60*60) }}
+          {%- set sun_factor = ((sunset_end - right_now) / (60*60*60)) * 10 %}
         {% endif %}
-      {% endmacro %}
+
+        {%- if sun_factor|float < 1.0 %}
+          {{ sun_factor }}
+        {%- else %}
+          1
+        {% endif %}
+    value_template: |
+      {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
+
+      {% set condition_factor = state_attr("sensor.illuminance","condition_factor") %}
+      {% set sun_factor = state_attr("sensor.illuminance","sun_factor") %}
       
-      {% set sun_factor = get_sun_factor() %}
-      {% set illuminance = get_illuminance() %}
-      
-      {{ (sun_factor|float * illuminance|float) | round}}
+      {{ (sun_factor|float * condition_factor|float) | round }}
