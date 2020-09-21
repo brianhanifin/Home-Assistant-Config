@@ -1,0 +1,15 @@
+alias: Alexa Media Player Relogin Required
+id: alexa_media_relogin_required
+trigger:  
+  - platform: event
+    event_type: call_service
+    event_data:
+      domain: persistent_notification
+      service: create
+      notification_id: alexa_media_relogin_required
+action:
+  - service: script.notify_mobile
+    data:
+      title: Alexa Media Player Relogin Required
+      message: Please relogin under Integrations.
+      who: brian
