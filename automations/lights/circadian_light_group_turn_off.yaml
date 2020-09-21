@@ -10,31 +10,39 @@ trigger:
       - light.dining_room
       - light.family_room_floor_lamp
       - light.play_room_floor_lamp
+    from: "on"
     to: "off"
-condition:
-  # Only when circadian lighting is enabled for this light group.
-  - condition: template
-    value_template: "{{ is_state(trigger.entity_id|replace('light.','switch.circadian_lighting_'), 'on') }}"
-
-  - condition: state
-    entity_id: input_boolean.home_assistant_loaded
-    state: "true"
+variables:
+  circadian_toggle: '{{ trigger.entity_id|replace("light.","switch.circadian_lighting_") }}'
+  group_fixture: '{{ trigger.entity_id|replace("light.","group.") + "_fixture" }}'
+# condition:
+#   - condition: state
+#     entity_id: input_boolean.home_assistant_loaded
+#     state: "true"
 action:
+  # - service: script.debug
+  #   data:
+  #     title: 'automation.circadian_light_group_turn_off'
+  #     message: |
+  #       circadian_toggle: {{ circadian_toggle }}
+  #       group_fixture: {{ group_fixture }}
+
+
   # Temporarily disable the circadian lighting mode for this fixture.
   - service: switch.turn_off
-    data_template:
-      entity_id: "{{ trigger.entity_id|replace('light.','switch.circadian_lighting_') }}"
+    data:
+      entity_id: "{{ circadian_toggle }}"
 
   - alias: Turn the light group off repeatedly until it stays off.
     repeat:
       sequence:
         - delay:
-            seconds: 5
+            seconds: 1 #5
 
         # Turn the light group off, again.
         - service: homeassistant.turn_off
           data_template:
-            entity_id: "{{ trigger.entity_id|replace('light.','group.') + '_fixture' }}"
+            entity_id: "{{ group_fixture }}"
       until:
         - condition: template
           value_template: "{{ is_state(trigger.entity_id, 'off') }}"
@@ -44,5 +52,5 @@ action:
 
   # Turn the circadian lighting mode back on.
   - service: switch.turn_on
-    data_template:
-      entity_id: "{{ trigger.entity_id|replace('light.','switch.circadian_lighting_') }}"
+    data:
+      entity_id: "{{ circadian_toggle }}"
