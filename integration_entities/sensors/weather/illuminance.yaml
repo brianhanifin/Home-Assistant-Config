@@ -1,0 +1,54 @@
+---
+# pnbruckner's sensor component as a template.
+# https://github.com/pnbruckner/ha-illuminance/blob/master/custom_components/illuminance/sensor.py
+platform: template
+sensors:
+  illuminance:
+    friendly_name: Outdoor Illuminance Educated Guessor
+    icon_template: mdi:brightness-auto
+    unit_of_measurement: lx
+    #illuminance * sun_factor
+    value_template: |
+      {% macro get_illuminance() %}
+        {% set condition_factors = {
+          "10000": ("clear", "clearnight", "sunny", "windy"),
+          "7500": ("partlycloudy", "partlysunny", "mostlysunny", "mostlyclear", "hazy", "hazysunshine", "intermittentclouds"),
+          "2500": ("cloudy", "mostlycloudy"),
+          "1000": ("fog", "rainy", "showers", "snowy", "snowyrainy", "flurries", "chanceflurries", "chancerain", "chancesleet", "drearyovercast", "sleet"),
+          "200": ("hail", "lightning", "tstorms")
+        } %}
+        {% set current_condition = states('weather.santee') or states("sensor.openweathermap_condition") or states("sensor.cc_santee_weather_condition") %}
+        {% set current_condition = current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
+      
+        {%- for factor in condition_factors %}
+          {%- if current_condition in condition_factors[factor] -%}
+            {{ factor }}
+          {%- endif %}
+        {%- endfor %}
+      {% endmacro %}
+      
+      {% macro get_sun_factor() %}
+        {%- set right_now = as_timestamp(now()) %}
+
+        {%- set sunrise = as_timestamp(states("sensor.sunrise")) %}
+        {%- set sunset = as_timestamp(states("sensor.sunset")) %}
+        {%- set sunrise_begin = as_timestamp(states("sensor.dawn")) %}
+        {%- set sunrise_end = as_timestamp(states("sensor.dusk")) %}
+        {%- set sunset_begin = sunset - (40 * 60) %}
+        {%- set sunset_end = sunset + (20 * 60) %}
+      
+        {% if sunrise_end < right_now and right_now < sunset_begin %}
+          1
+        {% elif sunset_end < right_now or right_now < sunrise_begin %}
+          0
+        {%- elif right_now <= sunrise_end -%}
+          {{ (right_now - sunrise_begin) / (60*60*60) }}
+        {%- else -%}
+          {{ (sunset_end - right_now) / (60*60*60) }}
+        {% endif %}
+      {% endmacro %}
+      
+      {% set sun_factor = get_sun_factor() %}
+      {% set illuminance = get_illuminance() %}
+      
+      {{ (sun_factor|float * illuminance|float) | round}}
