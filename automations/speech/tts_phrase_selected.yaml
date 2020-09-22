@@ -1,0 +1,20 @@
+---
+alias: TTS Phrase Selected
+id: tts_phrase_selected
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: input_select.tts_phrases
+variables:
+  selected_phrase: |
+    {%- set selection = states("input_select.tts_phrases")|trim %}
+    {%- if selection not in ("None","") %}
+      {{ selection }}
+    {%- endif %}
+action:
+  - condition: template
+    value_template: '{{ selected_phrase|trim != "" }}'
+
+  - service: script.tts_phrase_say
+    data:
+      selected_phrase: '{{ selected_phrase }}'
