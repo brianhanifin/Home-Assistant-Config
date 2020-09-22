@@ -1,0 +1,12 @@
+---
+alias: dryer_off
+initial_state: true
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.sonoff_s31_04_power
+    below: 1
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.dryer_status
+      option: "Off"
