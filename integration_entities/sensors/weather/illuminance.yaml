@@ -40,13 +40,12 @@ sensors:
         {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
 
         {%- set right_now = as_timestamp(now()) %}
-
         {%- set sunrise = as_timestamp(states("sensor.sunrise")) %}
-        {%- set sunset = as_timestamp(states("sensor.sunset")) %}
         {%- set sunrise_begin = as_timestamp(states("sensor.dawn")) %}
-        {%- set sunrise_end = as_timestamp(states("sensor.dusk")) %}
+        {%- set sunrise_end =  sunrise + (40 * 60) %}
+        {%- set sunset = as_timestamp(states("sensor.sunset")) %}
         {%- set sunset_begin = sunset - (40 * 60) %}
-        {%- set sunset_end = sunset + (20 * 60) %}
+        {%- set sunset_end = as_timestamp(states("sensor.dusk")) %}
 
         {% if sunrise_end < right_now and right_now < sunset_begin %}
           {%- set sun_factor = 1 %}
