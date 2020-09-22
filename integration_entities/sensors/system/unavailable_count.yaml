@@ -1,0 +1,7 @@
+---
+platform: template
+sensors:
+  unavailable_count:
+    friendly_name: Unavailable
+    icon_template: mdi:alert
+    value_template: '{{ states | selectattr("state","eq","unavailable") | map(attribute="entity_id") | list | count }}'
