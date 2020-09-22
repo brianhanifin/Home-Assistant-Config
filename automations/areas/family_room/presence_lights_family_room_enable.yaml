@@ -3,16 +3,14 @@ alias: "Presence Lights: Family Room Enable"
 id: presence_lights_family_room_enable
 initial_state: true
 trigger:
-  # Restore the presence lights mode when it gets dark again.
-  # - platform: state
-  #   entity_id: binary_sensor.dark_outside
-  #   to: "on"
-  # Also restore the presence lights mode when the light is manually turned on and it is currently dark outside.
-  # - platform: template
-  #   value_template: "{{ is_state('light.family_room','on') and is_state('binary_sensor.dark_outside','on') }}"
-  # Reset at midnight so the lights may turn on in the morning.
-  - platform: event
-    event_type: midnight
+  # Enable at 6am
+  - platform: time
+    at: "06:00:00"
+
+  # Enable just before sunset
+  - platform: sun
+    event: sunset
+    offset: "-00:40:00"
 action:
   - service: input_boolean.turn_on
     entity_id: input_boolean.presence_lights_family_room

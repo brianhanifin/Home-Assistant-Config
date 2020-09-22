@@ -3,6 +3,10 @@ alias: "Presence Lights: Family Room Disable"
 id: presence_lights_family_room_disable
 initial_state: true
 trigger:
+  # Disable at 9pm
+  - platform: time
+    at: "21:00:00"
+
   # Disable the presence lights mode when the light is manually turned off...
   - platform: state
     entity_id: light.family_room
