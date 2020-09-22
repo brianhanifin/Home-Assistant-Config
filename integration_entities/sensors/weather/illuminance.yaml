@@ -9,7 +9,7 @@ sensors:
     unit_of_measurement: lx
     attribute_templates:
       current_condition: |
-        {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
+        {% set FORCE_UPDATE_WORKAROUND = states.sensor.time.last_updated.timestamp() %}
         
         {% if states("sensor.openweathermap_condition") != "unknown" %}
           {% set current_condition = states("sensor.openweathermap_condition") %}
@@ -19,9 +19,12 @@ sensors:
           {% set current_condition = states("weather.santee") %}
         {% endif %}
         {% set current_condition = current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
+
         {{ current_condition }}
       condition_factor: |
-        {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
+        {% set FORCE_UPDATE_WORKAROUND = states.sensor.time.last_updated.timestamp() %}
+        {% set factors = namespace(condition='') %}
+        {% set current_condition = state_attr("sensor.illuminance","current_condition") %}
 
         {% set condition_factors = {
           "10000": ("clear", "clearnight", "sunny", "windy", "exceptional"),
@@ -30,42 +33,74 @@ sensors:
           "1000": ("fog", "rainy", "showers", "snowy", "snowyheavy", "snowyrainy", "flurries", "chanceflurries", "chancerain", "chancesleet", "drearyovercast", "sleet"),
           "200": ("hail", "lightning", "tstorms")
         } %}
-        {% set current_condition = state_attr("sensor.illuminance","current_condition") %}
-        {%- for factor in condition_factors %}
-          {%- if current_condition in condition_factors[factor] -%}
-            {{ factor }}
-          {%- endif %}
+        {%- for factor in condition_factors if current_condition in condition_factors[factor] %}
+          {%- set factors.condition = factor %}
         {%- endfor %}
-      sun_factor: |
-        {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
 
-        {%- set right_now = as_timestamp(now()) %}
+        {{ factors.condition }}
+      sun_factor: |
+        {% set factors = namespace(sun='') %}
+
+        {%- set right_now = states.sensor.time.last_updated.timestamp() %}
         {%- set sunrise = as_timestamp(states("sensor.sunrise")) %}
         {%- set sunrise_begin = as_timestamp(states("sensor.dawn")) %}
         {%- set sunrise_end =  sunrise + (40 * 60) %}
         {%- set sunset = as_timestamp(states("sensor.sunset")) %}
         {%- set sunset_begin = sunset - (40 * 60) %}
         {%- set sunset_end = as_timestamp(states("sensor.dusk")) %}
-
         {% if sunrise_end < right_now and right_now < sunset_begin %}
-          {%- set sun_factor = 1 %}
+          {%- set factors.sun = 1 %}
         {% elif sunset_end < right_now or right_now < sunrise_begin %}
-          {%- set sun_factor = 0 %}
+          {%- set factors.sun = 0 %}
         {%- elif right_now <= sunrise_end -%}
-          {%- set sun_factor = ((right_now - sunrise_begin) / (60*60*60)) * 10 %}
+          {%- set factors.sun = ((right_now - sunrise_begin) / (60*60*60)) * 10 %}
         {%- else -%}
-          {%- set sun_factor = ((sunset_end - right_now) / (60*60*60)) * 10 %}
+          {%- set factors.sun = ((sunset_end - right_now) / (60*60*60)) * 10 %}
         {% endif %}
 
-        {%- if sun_factor|float < 1.0 %}
-          {{ sun_factor }}
-        {%- else %}
-          1
-        {% endif %}
+        {{ factors.sun }}
     value_template: |
-      {% set FORCE_UPDATE_WORKAROUND = states("binary_sensor.true_every_5_minutes") %}
+      {%- set factors = namespace(condition='',sun='') %}
 
-      {% set condition_factor = state_attr("sensor.illuminance","condition_factor") %}
-      {% set sun_factor = state_attr("sensor.illuminance","sun_factor") %}
+      {#- Retrieve the current condition and normalize the value #}
+      {%- if states("sensor.openweathermap_condition") != "unknown" %}
+        {%- set current_condition = states("sensor.openweathermap_condition") %}
+      {%- elif states("sensor.cc_santee_weather_condition") != "unknown" %}
+        {%- set current_condition = states("sensor.cc_santee_weather_condition") %}
+      {%- elif states("weather.santee") != "unknown" %}
+        {%- set current_condition = states("weather.santee") %}
+      {%- endif %}
+      {%- set current_condition = current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
       
-      {{ (sun_factor|float * condition_factor|float) | round }}
+      {#- Assign a seemingly arbitrary number to the condition factor #}
+      {%- set condition_factors = {
+        "10000": ("clear", "clearnight", "sunny", "windy", "exceptional"),
+        "7500": ("partlycloudy", "partlysunny", "mostlysunny", "mostlyclear", "hazy", "hazysunshine", "intermittentclouds"),
+        "2500": ("cloudy", "mostlycloudy"),
+        "1000": ("fog", "rainy", "showers", "snowy", "snowyheavy", "snowyrainy", "flurries", "chanceflurries", "chancerain", "chancesleet", "drearyovercast", "sleet"),
+        "200": ("hail", "lightning", "tstorms")
+      } %}
+      {%- for factor in condition_factors if current_condition in condition_factors[factor] %}
+        {%- set factors.condition = factor %}
+      {%- endfor %}
+      
+      {#- Compute Sun Factor #}
+      {%- set right_now = states.sensor.time.last_updated.timestamp() %}
+      {%- set sunrise = as_timestamp(states("sensor.sunrise")) %}
+      {%- set sunrise_begin = as_timestamp(states("sensor.dawn")) %}
+      {%- set sunrise_end =  sunrise + (40 * 60) %}
+      {%- set sunset = as_timestamp(states("sensor.sunset")) %}
+      {%- set sunset_begin = sunset - (40 * 60) %}
+      {%- set sunset_end = as_timestamp(states("sensor.dusk")) %}
+      {%- if sunrise_end < right_now and right_now < sunset_begin %}
+        {%- set factors.sun = 1 %}
+      {%- elif sunset_end < right_now or right_now < sunrise_begin %}
+        {%- set factors.sun = 0 %}
+      {%- elif right_now <= sunrise_end %}
+        {%- set factors.sun = ((right_now - sunrise_begin) / (60*60*60)) * 10 %}
+      {%- else %}
+        {%- set factors.sun = ((sunset_end - right_now) / (60*60*60)) * 10 %}
+      {%- endif %}
+      
+      {# Take an educated guess #}
+      {{ (factors.sun|float * factors.condition|float) | round }}
