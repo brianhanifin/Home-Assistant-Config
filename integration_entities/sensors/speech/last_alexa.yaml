@@ -3,13 +3,5 @@ platform: template
 sensors:
   last_alexa:
     icon_template: mdi:amazon-alexa
-    entity_id:
-      - media_player.boys_room
-      - media_player.family_room
-      - media_player.garage
-      - media_player.kitchen
-      - media_player.play_room
-      - media_player.master_bedroom
-      - media_player.upstairs_bathroom
     value_template: >
       {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}

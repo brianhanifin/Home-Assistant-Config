@@ -2,9 +2,6 @@
 platform: template
 sensors:
   ubuntu_total_updates:
-    entity_id:
-      - sensor.ubuntu_system_updates
-      - sensor.ubuntu_security_updates
     icon_template: mdi:counter
     value_template: >
       {{ states("sensor.ubuntu_system_updates")|int|default("0") + states("sensor.ubuntu_security_updates")|int|default("0") }}

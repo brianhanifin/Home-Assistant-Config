@@ -2,9 +2,6 @@
 platform: template
 sensors:
   addon_updates:
-    # entity_id:
-    #   - input_boolean.home_assistant_loaded
-    #   - sensor.addons
     friendly_name: Addon Updates
     icon_template: mdi:counter
     value_template: |
@@ -21,7 +18,7 @@ sensors:
         0
       {%- else -%}
         {{ updates.split('\t')|count }}
-      {%- endif -%}
+      {%- endif %}
     attribute_templates:
       addons: |
         {%- macro addon_updates() -%}

@@ -15,14 +15,12 @@ sequence:
       title: "update_date_labor"
       message: "Updating sensor.date_labor."
 
-  - service: homeassistant.update_entity
-    entity_id: sensor.date_next_labor
+  - service: homeassistant.update_entity_next_labor
 
   - delay:
       seconds: 15
 
-  - service: homeassistant.update_entity
-    entity_id: sensor.date_labor
+  - service: homeassistant.update_entity_labor
 
   - service: persistent_notification.create
     data:
