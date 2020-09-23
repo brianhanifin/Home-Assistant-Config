@@ -504,6 +504,6 @@
   {%- endif -%}
 
   {#- Get briefing, and strip unnecessary characters. -#}
-  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ") %}
+  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace(". .",". ")|replace(", ,",", ")|trim %}
     {{ get_briefing() }}
   {% endfilter %}
