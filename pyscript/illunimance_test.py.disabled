@@ -1,0 +1,29 @@
+@service
+def illuminance_test(sunrise_begin,sunrise,sunrise_end,sunset_begin,sunset,sunset_end):
+    import datetime
+    from datetime import timedelta
+    #now = datetime.datetime.now()
+    now = datetime.datetime(2020, 9, 23, 7, 16, 2)
+    now = now.timestamp()
+
+    log.info(f"illuminance_test({now},{sunrise_begin},{sunrise},{sunrise_end},{sunset_begin},{sunset},{sunset_end})")
+
+    if sunrise_end < now < sunset_begin:
+        # Daytime
+        sun_factor = 1
+    elif now < sunrise_begin or sunset_end < now:
+        # Nighttime
+        sun_factor = 0
+    elif now <= sunrise_end:
+        # Sunrise
+        #(now-sunrise_begin).total_seconds() / (60*60)
+        delta = timedelta(seconds=(now - sunrise_begin))
+        sun_factor = delta.total_seconds() / (60*60)
+        log.info(f"\nnow: {now}\nsunrise_begin: {sunrise_begin}\n{now} - {sunrise_begin}= {delta.total_seconds()}")
+    else:
+        # Sunset
+        delta = timedelta(seconds=(sunset_end - now))
+        sun_factor = delta.total_seconds() / (60*60)
+        log.info(f"\nsunset_end: {sunset_end}\nnow: {now}\n{sunset_end}-{now} = {delta.total_seconds()}")
+
+    log.info(f"\nsun_factor: {sun_factor}")
