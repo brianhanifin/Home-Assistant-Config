@@ -1,0 +1,113 @@
+---
+  script:
+    blackpc_wake:
+      # To enable see https://www.home-assistant.io/components/wake_on_lan/
+      alias: "BlackPC Wake"
+      sequence:
+        - service: wake_on_lan.send_magic_packet
+          data:
+            mac: "70:85:C2:63:9F:11"
+  
+    blackpc_shutdown:
+      alias: "BlackPC Shutdown"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/shutdown"
+            payload: ""
+  
+    blackpc_suspend:
+      alias: "BlackPC Suspend"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/suspend"
+            payload: ""
+  
+    blackpc_hibernate:
+      alias: "BlackPC Hibernate"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/hibernate"
+            payload: ""
+  
+    blackpc_reboot:
+      alias: "BlackPC Reboot"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/reboot"
+            payload: ""
+  
+    blackpc_lock:
+      alias: "BlackPC Lock"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/lock"
+            payload: ""
+  
+    blackpc_logoff:
+      alias: "BlackPC Logoff"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/logoff"
+            payload: ""
+  
+    blackpc_vol_mute:
+      alias: "BlackPC Toggle Mute"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/volume/mute"
+            payload: ""
+  
+    blackpc_vol_max:
+      alias: "BlackPC Vol Max"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/volume/set"
+            payload: "100"
+  
+    blackpc_displays_on:
+      alias: "BlackPC Displays ON"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/displays/on"
+            payload: ""
+  
+    blackpc_displays_off:
+      alias: "BlackPC Displays OFF"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/displays/off"
+            payload: ""
+  
+    blackpc_refresh:
+      alias: "BlackPC Refresh"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/refresh"
+            payload: ""
+  
+    blackpc_notify:
+      alias: "BlackPC Notify"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/notify"
+            payload: '{ "title": "My Notification Title", "message": "This is an example of notification using IOT Link", "launchParams": "toast://open/https://iotlink.gitlab.io" }'
+  
+    blackpc_run_chrome:
+      alias: "BlackPC Run Chrome"
+      sequence:
+        - service: mqtt.publish
+          data:
+            topic: "iotlink/workgroup/blackpc/commands/run"
+            payload: '{ "command": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", "args": "https://iotlink.gitlab.io", "path": "C:\\Program Files (x86)\\Google\\Chrome\\Application", "user": "", "visible": true, "fallback": true }'
