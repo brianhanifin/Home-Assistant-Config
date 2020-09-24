@@ -20,8 +20,13 @@ action:
       - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
         sequence:
           # Ignore Xiaomi button duplicate event.
-          # - condition: template
-          #   value_template: '{{ trigger.event.data.args.value|int == 1 }}'
+          - condition: template
+            value_template: '{{ trigger.event.data.args.value|int == 1 }}'
+
+          # - service: script.debug
+          #   data_template:
+          #     message: Xiaomi Mijia Wireless Switch (round) Clicked
+          #     id: '{{ as_timestamp(now()) }}'
 
           - service: switch.toggle
             entity_id: switch.printers
