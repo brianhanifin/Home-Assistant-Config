@@ -16,13 +16,13 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
-      - name: "Disable troublesome default integrations (as they do not run on GitHub)"
-        run: rm -f ./integrations/stream.yaml;
-              rm -f ./integrations/breaking_changes.yaml;
+      # - name: "Disable troublesome default integrations (as they do not run on GitHub)"
+      #   run:  rm -f ./integrations/home_assistant/stream.yaml;
       - name: "Disable custom components (as they do not exist on GitHub)"
-        run: rm -rf ./integration_entities/cameras;
+        run:  rm -f ./integrations/*.yaml;
+              rm -rf ./integration_entities/cameras;
               rm -f ./integration_entities/calendars/z_holiday.yaml;
-              rm -rf ./integration_entities/notify/platforms/;
+              rm -rf ./integration_entities/notify/platforms;
               rm -f ./integration_entities/sensors/climate/downstairs_temperature_average.yaml;
               rm -f ./integration_entities/sensors/climate/home_temperature_average.yaml;
               rm -f ./integration_entities/sensors/integrations/unifigateway.yaml;
@@ -33,11 +33,11 @@ jobs:
               rm -rf ./integration_entities/sensors/youtube;
               rm -rf ./integration_entities/switches/circadian_lighting;
       - name: "Disable rest sensors (as their urls are scrambled in secrets)"
-        run: rm -rf ./integration_entities/sensors/updates;
-              rm -rf ./integration_entities/sensors/datetime/;
+        run:  rm -rf ./integration_entities/sensors/updates;
+              rm -rf ./integration_entities/sensors/datetime;
               rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
       - name: Activate dummy secrets.yaml
-        run: mv ./tests/fake_secrets.yaml ./secrets.yaml
+        run:  mv ./tests/fake_secrets.yaml ./secrets.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
@@ -53,13 +53,13 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
-      - name: "Disable troublesome default integrations (as they do not run on GitHub)"
-        run: rm -f ./integrations/stream.yaml;
-              rm -f ./integrations/breaking_changes.yaml;
+      # - name: "Disable troublesome default integrations (as they do not run on GitHub)"
+      #   run:  rm -f ./integrations/home_assistant/stream.yaml;
       - name: "Disable custom components (as they do not exist on GitHub)"
-        run: rm -rf ./integration_entities/cameras;
+        run:  rm -f ./integrations/*.yaml;
+              rm -rf ./integration_entities/cameras;
               rm -f ./integration_entities/calendars/z_holiday.yaml;
-              rm -rf ./integration_entities/notify/platforms/;
+              rm -rf ./integration_entities/notify/platforms;
               rm -f ./integration_entities/sensors/climate/downstairs_temperature_average.yaml;
               rm -f ./integration_entities/sensors/climate/home_temperature_average.yaml;
               rm -f ./integration_entities/sensors/integrations/unifigateway.yaml;
@@ -70,11 +70,11 @@ jobs:
               rm -rf ./integration_entities/sensors/youtube;
               rm -rf ./integration_entities/switches/circadian_lighting;
       - name: "Disable rest sensors (as their urls are scrambled in secrets)"
-        run: rm -rf ./integration_entities/sensors/updates;
-              rm -rf ./integration_entities/sensors/datetime/;
+        run:  rm -rf ./integration_entities/sensors/updates;
+              rm -rf ./integration_entities/sensors/datetime;
               rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
       - name: Activate dummy secrets.yaml
-        run: mv ./tests/fake_secrets.yaml ./secrets.yaml
+        run:  mv ./tests/fake_secrets.yaml ./secrets.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:beta"
         with:
@@ -90,13 +90,13 @@ jobs:
   #   steps:
   #     - name: Getting your configuration from GitHub
   #       uses: actions/checkout@v1
-  #     - name: "Disable troublesome default integrations (as they do not run on GitHub)"
-  #       run: rm -f ./integrations/stream.yaml;
-  #             rm -f ./integrations/breaking_changes.yaml;
+  #     # - name: "Disable troublesome default integrations (as they do not run on GitHub)"
+  #     #   run:  rm -f ./integrations/home_assistant/stream.yaml;
   #     - name: "Disable custom components (as they do not exist on GitHub)"
-  #       run: rm -rf ./integration_entities/cameras;
+  #       run:  rm -f ./integrations/*.yaml;
+  #             rm -rf ./integration_entities/cameras;
   #             rm -f ./integration_entities/calendars/z_holiday.yaml;
-  #             rm -rf ./integration_entities/notify/platforms/;
+  #             rm -rf ./integration_entities/notify/platforms;
   #             rm -f ./integration_entities/sensors/climate/downstairs_temperature_average.yaml;
   #             rm -f ./integration_entities/sensors/climate/home_temperature_average.yaml;
   #             rm -f ./integration_entities/sensors/integrations/unifigateway.yaml;
@@ -107,11 +107,11 @@ jobs:
   #             rm -rf ./integration_entities/sensors/youtube;
   #             rm -rf ./integration_entities/switches/circadian_lighting;
   #     - name: "Disable rest sensors (as their urls are scrambled in secrets)"
-  #       run: rm -rf ./integration_entities/sensors/updates;
-  #             rm -rf ./integration_entities/sensors/datetime/;
+  #       run:  rm -rf ./integration_entities/sensors/updates;
+  #             rm -rf ./integration_entities/sensors/datetime;
   #             rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
   #     - name: Activate dummy secrets.yaml
-  #       run: mv ./tests/fake_secrets.yaml ./secrets.yaml
+  #       run:  mv ./tests/fake_secrets.yaml ./secrets.yaml
   #     - name: Home Assistant Version
   #       uses: "docker://homeassistant/home-assistant:dev"
   #       with:
