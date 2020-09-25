@@ -3,7 +3,7 @@
 # https://github.com/pnbruckner/ha-illuminance/blob/master/custom_components/illuminance/sensor.py
 platform: template
 sensors:
-  illuminance:
+  outdoor_illuminance:
     friendly_name: Outdoor Illuminance Educated Guessor
     icon_template: mdi:brightness-auto
     unit_of_measurement: lx
@@ -118,8 +118,9 @@ sensors:
       {%- else %}
         {%- set factors.sun = (sunset_end - right_now) / (60*60) %}
       {%- endif %}
-
       {%- set factors.sun = 1 if factors.sun > 1 else factors.sun %}
       
       {# Take an educated guess #}
-      {{ (factors.sun|float * factors.condition|float) | round }}
+      {%- set illuminance = (factors.sun|float * factors.condition|float) | round %}
+      {%- set illuminance = 10 if illuminance < 10 else illuminance %}
+      {{ illuminance }}
