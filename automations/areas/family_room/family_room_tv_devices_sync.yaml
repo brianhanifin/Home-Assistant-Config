@@ -22,60 +22,60 @@ action:
 
   # TV or Apple TV go from Off -> On
   - choose:
-    - conditions:
-        - '{{ trigger.from_state.state == "off"
-            and trigger.to_state.state == "on" }}'
-      sequence:
-        - service: remote.turn_on
-          entity_id: remote.family_room_hub
-        - service: media_player.turn_on
-          entity_id: media_player.apple_tv_family_room
+      - conditions:
+          - '{{ trigger.from_state.state == "off"
+              and trigger.to_state.state == "on" }}'
+        sequence:
+          - service: remote.turn_on
+            entity_id: remote.family_room_hub
+          - service: media_player.turn_on
+            entity_id: media_player.apple_tv_family_room
 
-        - delay:
-            seconds: 5
-        - service: homeassistant.update_entity
-          entity_id: sensor.family_room_soundbar_power
-        - delay:
-            seconds: 15
-        # Toggle the power on if the soundbar power draw is low.
-        - choose:
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.family_room_soundbar_power
-                below: 2.0
-            sequence:
-              - service: remote.send_command
-                data:
-                  entity_id: remote.family_room_hub
-                  command:
-                    - PowerToggle
-                  device: "Samsung Amp"
+          - delay:
+              seconds: 5
+          - service: homeassistant.update_entity
+            entity_id: sensor.family_room_soundbar_power
+          - delay:
+              seconds: 15
+          # Toggle the power on if the soundbar power draw is low.
+          - choose:
+              - conditions:
+                  - condition: numeric_state
+                    entity_id: sensor.family_room_soundbar_power
+                    below: 2.0
+                sequence:
+                  - service: remote.send_command
+                    data:
+                      entity_id: remote.family_room_hub
+                      command:
+                        - PowerToggle
+                      device: "Samsung Amp"
 
   # TV or Apple TV go from On -> Off
   - choose:
-    - conditions:
-        - '{{ trigger.from_state.state == "on"
-            and trigger.to_state.state == "off" }}'
-      sequence:
-        - service: remote.turn_off
-          entity_id: remote.family_room_hub
-        - service: media_player.turn_off
-          entity_id: media_player.apple_tv_family_room
+      - conditions:
+          - '{{ trigger.from_state.state == "on"
+              and trigger.to_state.state == "off" }}'
+        sequence:
+          - service: remote.turn_off
+            entity_id: remote.family_room_hub
+          - service: media_player.turn_off
+            entity_id: media_player.apple_tv_family_room
 
-        - service: homeassistant.update_entity
-          entity_id: sensor.family_room_soundbar_power
-        - delay:
-            seconds: 30
-        # Toggle the power off if the soundbar power draw is high.
-        - choose:
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.family_room_soundbar_power
-                above: 2.0
-            sequence:
-              - service: remote.send_command
-                data:
-                  entity_id: remote.family_room_hub
-                  command:
-                    - PowerToggle
-                  device: "Samsung Amp"
+          - service: homeassistant.update_entity
+            entity_id: sensor.family_room_soundbar_power
+          - delay:
+              seconds: 30
+          # Toggle the power off if the soundbar power draw is high.
+          - choose:
+              - conditions:
+                  - condition: numeric_state
+                    entity_id: sensor.family_room_soundbar_power
+                    above: 2.0
+                sequence:
+                  - service: remote.send_command
+                    data:
+                      entity_id: remote.family_room_hub
+                      command:
+                        - PowerToggle
+                      device: "Samsung Amp"

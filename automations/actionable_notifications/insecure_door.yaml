@@ -15,49 +15,49 @@ trigger:
       actionName: SECURE_DOOR
 action:
   - choose:
-    # Take the requested action!
-    - conditions:
-        - '{{ trigger.event.data.actionName == "SECURE_DOOR" }}'
-      sequence:
-        # Lock the front door.
-        - choose:
-            - conditions:
-                - condition: state
-                  entity_id: lock.front_door
-                  state: "unlocked"
-              sequence:
-                - service: lock.lock
-                  entity_id: lock.front_door
+      # Take the requested action!
+      - conditions:
+          - '{{ trigger.event.data.actionName == "SECURE_DOOR" }}'
+        sequence:
+          # Lock the front door.
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: lock.front_door
+                    state: "unlocked"
+                sequence:
+                  - service: lock.lock
+                    entity_id: lock.front_door
 
-        # Close the garage door.
-        - choose:
-            - conditions:
-                - condition: state
-                  entity_id: cover.garage_door
-                  state: "open"
-              sequence:
-                - service: cover.close_cover
-                  entity_id: cover.garage_door
+          # Close the garage door.
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: cover.garage_door
+                    state: "open"
+                sequence:
+                  - service: cover.close_cover
+                    entity_id: cover.garage_door
 
     # Send the actionable notification.
     default:
-        # Lock the front door.
-        - choose:
-            - conditions:
-                - condition: state
-                  entity_id: lock.front_door
-                  state: "unlocked"
-                - condition: state
-                  entity_id: cover.garage_door
-                  state: "open"
-              sequence:
-                - service: script.notify_mobile
-                  data:
-                    who: 'brian'
-                    title: 'Insecure Door{% if states("cover.garage_door") == "unlocked" and states("cover.garage_door") == "open" %}s{% endif %}'
-                    message: |
-                      {% if states("lock.front_door") == "unlocked" %}The Front Door is unlocked!
-                      {% endif -%}
-                      {% if states("cover.garage_door") == "open" %}The Garage Door is open!
-                      {% endif %}
-                    category: "insecure_door"
+      # Lock the front door.
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: lock.front_door
+                state: "unlocked"
+              - condition: state
+                entity_id: cover.garage_door
+                state: "open"
+            sequence:
+              - service: script.notify_mobile
+                data:
+                  who: 'brian'
+                  title: 'Insecure Door{% if states("cover.garage_door") == "unlocked" and states("cover.garage_door") == "open" %}s{% endif %}'
+                  message: |
+                    {% if states("lock.front_door") == "unlocked" %}The Front Door is unlocked!
+                    {% endif -%}
+                    {% if states("cover.garage_door") == "open" %}The Garage Door is open!
+                    {% endif %}
+                  category: "insecure_door"
