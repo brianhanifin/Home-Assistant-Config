@@ -1,0 +1,15 @@
+---
+alias: "Presence Lights: Turn off when bright"
+id: presence_lights_turn_off_when_bright
+trigger:
+  - platform: numeric_state
+    entity_id: input_boolean.presence_lights_family_room
+    above: 1000
+  - platform: state
+    entity_id: binary_sensor.dark_outside
+    to: "off"
+action:
+  - service: light.turn_off
+    entity_id:
+      - light.family_room
+      - light.table_lamp
