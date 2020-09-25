@@ -16,22 +16,28 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
+      - name: "Disable troublesome default integrations (as they do not run on GitHub)"
+        run: rm -f ./integrations/stream.yaml;
+              rm -f ./integrations/breaking_changes.yaml;
+      - name: "Disable custom components (as they do not exist on GitHub)"
+        run: rm -rf ./integration_entities/cameras;
+              rm -f ./integration_entities/calendars/z_holiday.yaml;
+              rm -rf ./integration_entities/notify/platforms/;
+              rm -f ./integration_entities/sensors/climate/downstairs_temperature_average.yaml;
+              rm -f ./integration_entities/sensors/climate/home_temperature_average.yaml;
+              rm -f ./integration_entities/sensors/integrations/unifigateway.yaml;
+              rm -f ./integration_entities/sensors/power/power_use.yaml;
+              rm -f ./integration_entities/sensors/weather/climacell.yaml; 
+              rm -f ./integration_entities/sensors/weather/sun2.yaml; 
+              rm -f ./integration_entities/sensors/weather/weatheralerts.yaml;
+              rm -rf ./integration_entities/sensors/youtube;
+              rm -rf ./integration_entities/switches/circadian_lighting;
+      - name: "Disable rest sensors (as their urls are scrambled in secrets)"
+        run: rm -rf ./integration_entities/sensors/updates;
+              rm -rf ./integration_entities/sensors/datetime/;
+              rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
       - name: Activate dummy secrets.yaml
         run: mv ./tests/fake_secrets.yaml ./secrets.yaml
-      - name: "Disable troublesome component: notify.alexa_media"
-        run: rm -rf ./integration_entities/notify/platforms/
-      - name: "Disable troublesome component: Stream"
-        run: rm -f ./integrations/stream.yaml
-      - name: "Disable troublesome component: NWS Camera"
-        run: rm -f ./integration_entities/cameras/nwsradar.yaml
-      - name: "Disable troublesome component: Prusa Camera"
-        run: rm -f ./integration_entities/cameras/prusa.yaml
-      - name: "Disable troublesome component: iCS Calendar"
-        run: rm -f ./integration_entities/calendars/holidays.yaml
-      - name: "Disable troublesome component: Breaking Changes"
-        run: rm -f ./integrations/breaking_changes.yaml
-      - name: "Disable rest sensors"
-        run: rm -rf ./integration_entities/sensors/updates; rm -rf ./integration_entities/sensors/datetime/; rm ./integration_entities/sensors/system/tablet_kitchen.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
@@ -47,22 +53,28 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
+      - name: "Disable troublesome default integrations (as they do not run on GitHub)"
+        run: rm -f ./integrations/stream.yaml;
+              rm -f ./integrations/breaking_changes.yaml;
+      - name: "Disable custom components (as they do not exist on GitHub)"
+        run: rm -rf ./integration_entities/cameras;
+              rm -f ./integration_entities/calendars/z_holiday.yaml;
+              rm -rf ./integration_entities/notify/platforms/;
+              rm -f ./integration_entities/sensors/climate/downstairs_temperature_average.yaml;
+              rm -f ./integration_entities/sensors/climate/home_temperature_average.yaml;
+              rm -f ./integration_entities/sensors/integrations/unifigateway.yaml;
+              rm -f ./integration_entities/sensors/power/power_use.yaml;
+              rm -f ./integration_entities/sensors/weather/climacell.yaml; 
+              rm -f ./integration_entities/sensors/weather/sun2.yaml; 
+              rm -f ./integration_entities/sensors/weather/weatheralerts.yaml;
+              rm -rf ./integration_entities/sensors/youtube;
+              rm -rf ./integration_entities/switches/circadian_lighting;
+      - name: "Disable rest sensors (as their urls are scrambled in secrets)"
+        run: rm -rf ./integration_entities/sensors/updates;
+              rm -rf ./integration_entities/sensors/datetime/;
+              rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
       - name: Activate dummy secrets.yaml
         run: mv ./tests/fake_secrets.yaml ./secrets.yaml
-      - name: "Disable troublesome component: notify.alexa_media"
-        run: rm -rf ./integration_entities/notify/platforms/
-      - name: "Disable troublesome component: Stream"
-        run: rm -f ./integrations/stream.yaml
-      - name: "Disable troublesome component: NWS Camera"
-        run: rm -f ./integration_entities/cameras/nwsradar.yaml
-      - name: "Disable troublesome component: Prusa Camera"
-        run: rm -f ./integration_entities/cameras/prusa.yaml
-      - name: "Disable troublesome component: iCS Calendar"
-        run: rm -f ./integration_entities/calendars/holidays.yaml
-      - name: "Disable troublesome component: Breaking Changes"
-        run: rm -f ./integrations/breaking_changes.yaml
-      - name: "Disable rest sensors"
-        run: rm -rf ./integration_entities/sensors/updates; rm -rf ./integration_entities/sensors/datetime/; rm ./integration_entities/sensors/system/tablet_kitchen.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:beta"
         with:
@@ -78,22 +90,28 @@ jobs:
   #   steps:
   #     - name: Getting your configuration from GitHub
   #       uses: actions/checkout@v1
+  #     - name: "Disable troublesome default integrations (as they do not run on GitHub)"
+  #       run: rm -f ./integrations/stream.yaml;
+  #             rm -f ./integrations/breaking_changes.yaml;
+  #     - name: "Disable custom components (as they do not exist on GitHub)"
+  #       run: rm -rf ./integration_entities/cameras;
+  #             rm -f ./integration_entities/calendars/z_holiday.yaml;
+  #             rm -rf ./integration_entities/notify/platforms/;
+  #             rm -f ./integration_entities/sensors/climate/downstairs_temperature_average.yaml;
+  #             rm -f ./integration_entities/sensors/climate/home_temperature_average.yaml;
+  #             rm -f ./integration_entities/sensors/integrations/unifigateway.yaml;
+  #             rm -f ./integration_entities/sensors/power/power_use.yaml;
+  #             rm -f ./integration_entities/sensors/weather/climacell.yaml; 
+  #             rm -f ./integration_entities/sensors/weather/sun2.yaml; 
+  #             rm -f ./integration_entities/sensors/weather/weatheralerts.yaml;
+  #             rm -rf ./integration_entities/sensors/youtube;
+  #             rm -rf ./integration_entities/switches/circadian_lighting;
+  #     - name: "Disable rest sensors (as their urls are scrambled in secrets)"
+  #       run: rm -rf ./integration_entities/sensors/updates;
+  #             rm -rf ./integration_entities/sensors/datetime/;
+  #             rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
   #     - name: Activate dummy secrets.yaml
   #       run: mv ./tests/fake_secrets.yaml ./secrets.yaml
-  #     - name: "Disable troublesome component: notify.alexa_media"
-  #       run: rm -rf ./integration_entities/notify/platforms/
-  #     - name: "Disable troublesome component: Stream"
-  #       run: rm -f ./integrations/stream.yaml
-  #     - name: "Disable troublesome component: NWS Camera"
-  #       run: rm -f ./integration_entities/cameras/nwsradar.yaml
-  #     - name: "Disable troublesome component: iCS Calendar"
-  #       run: rm -f ./integration_entities/calendars/holidays.yaml
-  #     - name: "Disable troublesome component: Breaking Changes"
-  #       run: rm -f ./integrations/breaking_changes.yaml
-  #     - name: "Disable rest sensor: sensor.date_next_easter"
-  #       run: rm -f ./integration_entities/sensors/datetime/date_next_easter.yaml
-  #     - name: "Disable rest sensor: sensor.date_next_labor"
-  #       run: rm -f ./integration_entities/sensors/datetime/date_next_labor.yaml
   #     - name: Home Assistant Version
   #       uses: "docker://homeassistant/home-assistant:dev"
   #       with:
