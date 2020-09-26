@@ -8,38 +8,25 @@ sensors:
     icon_template: mdi:brightness-auto
     unit_of_measurement: lx
     attribute_templates:
-      # sunrise: |
-      #   {#- We need this morning's sunrise, not tomorrow's. #}
-      #   {%- set next_sunrise = state_attr("sun.sun","next_rising") %}
-      #   {%- set last_sunrise = state_attr("sensor.illuminance","sunrise") %}
-      #   {%- if now().day == next_sunrise %}
-      #     {{ next_sunrise }}
-      #   {# In case it gets lost during a reboot. #}
-      #   {%- elif last_sunrise == "None" %}
-      #     {# Estimate this mornings sunset based on tomorrow's time. It should be very close. #}
-      #     {%- set next_sunrise = next_sunrise|as_timestamp %}
-      #     {{ next_sunrise|timestamp_custom("%Y-%m-") ~ now().day ~ next_sunrise|timestamp_custom(" %H:%M:%S") ~ "-07:00" }}
-      #   {%- else %}
-      #     {{ last_sunrise }}
-      #   {% endif %}
       current_condition: |
-        {% set FORCE_UPDATE_WORKAROUND = states.sensor.time.last_updated.timestamp() %}
-        
+        {%- set factors = namespace(current_condition='') %}
+
         {#- Retrieve the current condition and normalize the value #}
-        {%- if states("sensor.openweathermap_condition") != "unknown" %}
-          {%- set current_condition = states("sensor.openweathermap_condition") %}
-        {%- elif states("sensor.cc_santee_weather_condition") != "unknown" %}
-          {%- set current_condition = states("sensor.cc_santee_weather_condition") %}
-        {%- elif states("weather.santee") != "unknown" %}
-          {%- set current_condition = states("weather.santee") %}
-        {%- endif %}
-        {%- set current_condition = current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
-  
+        {%- set weather_sensors = [
+          "sensor.openweathermap_condition",
+          "sensor.cc_santee_weather_condition",
+          "weather.santee"
+        ] %}
+        {%- for sensor in weather_sensors if states(sensor) != "unknown" %}
+          {%- set factors.current_condition = states(sensor) if factors.current_condition == "" else "" %}
+        {%- endfor %}
+        {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
+
         {{ current_condition }}
       condition_factor: |
         {% set FORCE_UPDATE_WORKAROUND = states.sensor.time.last_updated.timestamp() %}
         {% set factors = namespace(condition='') %}
-        {% set current_condition = state_attr("sensor.illuminance","current_condition") %}
+        {% set current_condition = state_attr("sensor.outdoor_illuminance","current_condition") %}
 
         {%- set condition_factors = {
           "10000": ("clear", "clearnight", "sunny", "windy", "exceptional"),
@@ -77,18 +64,19 @@ sensors:
 
         {{ factors.sun }}
     value_template: |
-      {%- set factors = namespace(condition='',sun='') %}
+      {%- set factors = namespace(condition='',sun='',current_condition='') %}
 
       {#- Retrieve the current condition and normalize the value #}
-      {%- if states("sensor.openweathermap_condition") != "unknown" %}
-        {%- set current_condition = states("sensor.openweathermap_condition") %}
-      {%- elif states("sensor.cc_santee_weather_condition") != "unknown" %}
-        {%- set current_condition = states("sensor.cc_santee_weather_condition") %}
-      {%- elif states("weather.santee") != "unknown" %}
-        {%- set current_condition = states("weather.santee") %}
-      {%- endif %}
-      {%- set current_condition = current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
-      
+      {%- set weather_sensors = [
+        "weather.santee",
+        "sensor.openweathermap_condition",
+        "sensor.cc_santee_weather_condition"
+      ] %}
+      {%- for sensor in weather_sensors if states(sensor) != "unknown" %}
+        {%- set factors.current_condition = states(sensor) if factors.current_condition == "" else "" %}
+      {%- endfor %}
+      {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
+
       {#- Assign a seemingly arbitrary number to the condition factor #}
       {%- set condition_factors = {
         "10000": ("clear", "clearnight", "sunny", "windy", "exceptional"),
@@ -100,7 +88,7 @@ sensors:
       {%- for factor in condition_factors if current_condition in condition_factors[factor] %}
         {%- set factors.condition = factor %}
       {%- endfor %}
-      
+
       {#- Compute Sun Factor #}
       {%- set right_now = states.sensor.time.last_updated.timestamp() %}
       {%- set sunrise = states("sensor.sunrise") | as_timestamp %}
@@ -119,7 +107,7 @@ sensors:
         {%- set factors.sun = (sunset_end - right_now) / (60*60) %}
       {%- endif %}
       {%- set factors.sun = 1 if factors.sun > 1 else factors.sun %}
-      
+
       {# Take an educated guess #}
       {%- set illuminance = (factors.sun|float * factors.condition|float) | round %}
       {%- set illuminance = 10 if illuminance < 10 else illuminance %}
