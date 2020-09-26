@@ -1,0 +1,109 @@
+---
+variables:
+  model: |
+    {% if model is string %}
+      {{ model }}
+    {%- elif state_attr(entity_id, 'product_name') is string %}
+      {%- if 'LZW31' in state_attr(entity_id, 'product_name') %}
+        dimmer
+      {%- elif 'LZW36' in state_attr(entity_id, 'product_name') %}
+        combo_light
+      {%- else %}
+        switch
+      {%- endif %}
+    {%- else %}
+      dimmer
+    {%- endif %}
+  node_id: '{{ state_attr(entity_id,"node_id") }}'
+  parameters:
+    dimmer:
+      color: 13
+      level_on: 14
+      level_off: 15
+    combo_light:
+      color: 18
+      level_on: 19
+      level_off: 22
+    combo_fan:
+      color: 20
+      level_on: 21
+      level_off: 23
+    switch:
+      color: 5
+      level_on: 6
+      level_off: 7
+  colors:
+    "Off": 0
+    "Red": 1
+    "Orange": 21
+    "Yellow": 42
+    "Green": 85
+    "Cyan": 127
+    "Teal": 145
+    "Blue": 170
+    "Purple": 195
+    "Light Pink": 220
+    "Pink": 234
+sequence:
+  - variables:
+      color: '{{ colors[color|default("Blue")|title] }}'
+      level_on: '{{ level_on|default("10") }}'
+      level_off: '{{ level_off|default("3") }}'
+      color_parameter: '{{ parameters[model]["color"] }}'
+      level_on_parameter: '{{ parameters[model]["level_on"] }}'
+      level_off_parameter: '{{ parameters[model]["level_off"] }}'
+
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       node_id: '{{ node_id }}'
+  #       parameter: '{{ parameters[model]["color"] }}'
+  #       color: '{{ color }}'
+  #       level_on: '{{ level_on }}'
+  #       level_off: '{{ level_off }}'
+
+  - choose:
+      # The Z-wave integration requires this service call.
+      - conditions:
+          - '{{ entity_id.split(".")[0] == "zwave" }}'
+        sequence:
+          - service: zwave.set_config_parameter
+            data:
+              node_id: '{{ node_id }}'
+              parameter: '{{ color_parameter }}'
+              size: 2
+              value: '{{ color }}'
+
+          - service: zwave.set_config_parameter
+            data:
+              node_id: "{{ node_id }}"
+              parameter: '{{ level_on_parameter }}'
+              size: 1
+              value: '{{ level_on }}'
+
+          - service: zwave.set_config_parameter
+            data:
+              node_id: "{{ node_id }}"
+              parameter: '{{ level_off_parameter }}'
+              size: 1
+              value: '{{ level_off }}'
+
+    # The OZW integration requires this service call.
+    default:
+      - service: ozw.set_config_parameter
+        data:
+          node_id: '{{ node_id }}'
+          parameter: '{{ color_parameter }}'
+          value: '{{ color }}'
+
+      - service: ozw.set_config_parameter
+        data:
+          node_id: "{{ node_id }}"
+          parameter: '{{ level_on_parameter }}'
+          value: '{{ level_on }}'
+
+      - service: ozw.set_config_parameter
+        data:
+          node_id: "{{ node_id }}"
+          parameter: '{{ level_off_parameter }}'
+          value: '{{ level_off }}'
