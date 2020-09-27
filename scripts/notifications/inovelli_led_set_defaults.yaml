@@ -17,6 +17,9 @@ variables:
       dimmer
     {%- endif %}
   node_id: '{{ state_attr(entity_id,"node_id") }}'
+  color: '{{ color|default("Blue") }}'
+  level_on: '{{ level_on|default("10") }}'
+  level_off: '{{ level_off|default("3") }}'
   parameters:
     dimmer:
       color: 13
@@ -47,16 +50,21 @@ variables:
     "Light Pink": 220
     "Pink": 234
 sequence:
+  # - service: script.debug
+  #   data:
+  #     id: 01
+  #     message: |
+  #       color: '{{ color|title }}'
+
   - variables:
-      color: '{{ colors[color|default("Blue")|title] }}'
-      level_on: '{{ level_on|default("10") }}'
-      level_off: '{{ level_off|default("3") }}'
+      color: '{{ colors[color|title] }}'
       color_parameter: '{{ parameters[model]["color"] }}'
       level_on_parameter: '{{ parameters[model]["level_on"] }}'
       level_off_parameter: '{{ parameters[model]["level_off"] }}'
 
   # - service: script.debug
   #   data:
+  #     id: 02
   #     message: |
   #       node_id: '{{ node_id }}'
   #       parameter: '{{ parameters[model]["color"] }}'
