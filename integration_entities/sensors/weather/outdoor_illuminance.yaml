@@ -20,7 +20,7 @@ sensors:
         {%- for sensor in weather_sensors if states(sensor) != "unknown" %}
           {%- set factors.current_condition = states(sensor) if factors.current_condition == "" else "" %}
         {%- endfor %}
-        {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
+        {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","")|replace(" ", "") %}
 
         {{ current_condition }}
       condition_factor: |
@@ -75,7 +75,7 @@ sensors:
       {%- for sensor in weather_sensors if states(sensor) != "unknown" %}
         {%- set factors.current_condition = states(sensor) if factors.current_condition == "" else "" %}
       {%- endfor %}
-      {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace(" ", "")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","") %}
+      {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","")|replace(" ", "") %}
 
       {#- Assign a seemingly arbitrary number to the condition factor #}
       {%- set condition_factors = {
