@@ -42,14 +42,14 @@ variables:
     switch: 8
   color: |
     {%- if color is not number %}
-      {{ color|default("Yellow") }}
+      {{ color|default("Yellow")|title }}
     {%- else %}
       {{ color|int }}
     {% endif %}
   # 1-10
-  level: '{{ level|default(4) }}'
-  duration: '{{ duration|default("Indefinitely") }}'
-  effect: '{{ effect|default("Blink") }}'
+  level: '{{ level|default(4)|int }}'
+  duration: '{{ duration|default("Indefinitely")|title }}'
+  effect: '{{ effect|default("Blink")|title }}'
   colors:
     "Off": 0
     "Red": 1
@@ -112,16 +112,25 @@ variables:
     "Pulse": 4
     "Breath": 4
 sequence:
+  # - service: script.debug
+  #   data:
+  #     id: "inovelli_led"
+  #     message: |
+  #       color: '{{ color|title }}'
+  #       level: '{{ level }}'
+  #       duration: '{{ duration|title }}'
+  #       effect: '{{ effect|title }}'
+
   # Preform the Inovelli math.
   - variables:
-      parameter: '{{ parameters[model|default("dimmer")] }}'
-      color: '{{ colors[color|default("purple")|title] }}'
-      duration: '{{ durations[duration|default("10 Seconds")|title] }}'
+      parameter: '{{ parameters[model|lower] }}'
+      color: '{{ colors[color|title]|int }}'
+      duration: '{{ durations[duration|title] }}'
       effect: |
         {% if model == "switch" %}
-          {{- effects_switch[effect|default("Blink")|title]|int }}
+          {{- effects_switch[effect|title] }}
         {%- else %}
-          {{- effects_dimmer[effect|default("Blink")|title]|int }}
+          {{- effects_dimmer[effect|title] }}
         {% endif %}
       inovelli_math: |
         {%- if effect|int > 0 %}
@@ -134,7 +143,7 @@ sequence:
   #   data:
   #     id: "inovelli_led"
   #     message: |
-  #       node_id: '{{ state_attr(entity_id,"node_id") }}'
+  #       node_id: '{{ node_id }}'
   #       parameter: '{{ parameter }}'
   #       value: '{{ inovelli_math }}'
 
@@ -146,32 +155,31 @@ sequence:
           # Clear the previous effect.
           - service: zwave.set_config_parameter
             data_template:
-              node_id: '{{ state_attr(entity_id,"node_id") }}'
+              node_id: '{{ node_id }}'
               parameter: '{{ parameter }}'
               size: 4
-              value: '0'
+              value: 0
 
           # Start the new effect.
           - service: zwave.set_config_parameter
             data_template:
-              node_id: '{{ state_attr(entity_id,"node_id") }}'
+              node_id: '{{ node_id }}'
               parameter: '{{ parameter }}'
               size: 4
               value: '{{ inovelli_math }}'
-
 
     # The OZW integration requires this service call.
     default:
       # Clear the previous effect.
       - service: ozw.set_config_parameter
         data_template:
-          node_id: '{{ state_attr(entity_id,"node_id") }}'
+          node_id: '{{ node_id }}'
           parameter: '{{ parameter }}'
-          value: '0'
+          value: 0
 
         # Start the new effect.
       - service: ozw.set_config_parameter
         data_template:
-          node_id: '{{ state_attr(entity_id,"node_id") }}'
+          node_id: '{{ node_id }}'
           parameter: '{{ parameter }}'
           value: '{{ inovelli_math }}'
