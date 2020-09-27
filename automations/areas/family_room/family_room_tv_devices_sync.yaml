@@ -1,7 +1,7 @@
 ---
 alias: Family Room TV Device Sync
 id: family_room_tv_device_sync
-description: Toggle all TV devices when the 
+description: Toggle all TV devices when the tv changes state.
 initial_state: true
 mode: single
 trigger:
@@ -9,73 +9,30 @@ trigger:
     entity_id: media_player.tv_family_room
     for:
       seconds: 10
-  # - platform: state
-  #   entity_id: media_player.apple_tv_family_rooms
-  #   for:
-  #     minutes: 1
 action:
   # - service: script.debug
   #   data:
   #     message: |
   #       {{ trigger.from_state }}
   #       {{ trigger.to_state }}
-
-  # TV or Apple TV go from Off -> On
+  
   - choose:
+      # TV or Apple TV go from Off -> On
       - conditions:
           - '{{ trigger.from_state.state == "off"
               and trigger.to_state.state == "on" }}'
         sequence:
           - service: remote.turn_on
-            entity_id: remote.family_room_hub
-          - service: media_player.turn_on
-            entity_id: media_player.apple_tv_family_room
+            entity_id: remote.apple_tv_family_room
+          - service: switch.turn_on
+            entity_id: switch.soundbar
 
-          - delay:
-              seconds: 5
-          - service: homeassistant.update_entity
-            entity_id: sensor.family_room_soundbar_power
-          - delay:
-              seconds: 15
-          # Toggle the power on if the soundbar power draw is low.
-          - choose:
-              - conditions:
-                  - condition: numeric_state
-                    entity_id: sensor.family_room_soundbar_power
-                    below: 2.0
-                sequence:
-                  - service: remote.send_command
-                    data:
-                      entity_id: remote.family_room_hub
-                      command:
-                        - PowerToggle
-                      device: "Samsung Amp"
-
-  # TV or Apple TV go from On -> Off
-  - choose:
+      # TV or Apple TV go from On -> Off
       - conditions:
           - '{{ trigger.from_state.state == "on"
               and trigger.to_state.state == "off" }}'
         sequence:
           - service: remote.turn_off
-            entity_id: remote.family_room_hub
-          - service: media_player.turn_off
-            entity_id: media_player.apple_tv_family_room
-
-          - service: homeassistant.update_entity
-            entity_id: sensor.family_room_soundbar_power
-          - delay:
-              seconds: 30
-          # Toggle the power off if the soundbar power draw is high.
-          - choose:
-              - conditions:
-                  - condition: numeric_state
-                    entity_id: sensor.family_room_soundbar_power
-                    above: 2.0
-                sequence:
-                  - service: remote.send_command
-                    data:
-                      entity_id: remote.family_room_hub
-                      command:
-                        - PowerToggle
-                      device: "Samsung Amp"
+            entity_id: remote.apple_tv_family_room
+          - service: switch.turn_ff
+            entity_id: switch.soundbar

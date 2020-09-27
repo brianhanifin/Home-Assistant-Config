@@ -1,0 +1,59 @@
+---
+platform: template
+switches:
+  soundbar:
+    friendly_name: "Soundbar"
+    value_template: "{{ states('sensor.family_room_soundbar_power')|float > 2.0 }}"
+    icon_template: >-
+      {% if states('sensor.family_room_soundbar_power')|float > 2.0 %}
+        mdi:speaker
+      {% else %}
+        mdi:speaker-off
+      {% endif %}
+    turn_on:
+      - choose:
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.family_room_soundbar_power
+                below: 2.0
+            sequence:
+              - service: remote.send_command
+                data:
+                  entity_id: remote.family_room_hub
+                  command:
+                    - PowerToggle
+                  device: "Samsung Amp"
+
+              - service: homeassistant.update_entity
+                entity_id: sensor.family_room_soundbar_power
+
+              - wait_for_trigger:
+                  - platform: numeric_state
+                    entity_id: sensor.family_room_soundbar_power
+                    above: 2.0
+                timeout:
+                  minutes: 2
+            
+    turn_off:
+      - choose:
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.family_room_soundbar_power
+                above: 2.0
+            sequence:
+              - service: remote.send_command
+                data:
+                  entity_id: remote.family_room_hub
+                  command:
+                    - PowerToggle
+                  device: "Samsung Amp"
+
+              - service: homeassistant.update_entity
+                entity_id: sensor.family_room_soundbar_power
+
+              - wait_for_trigger:
+                  - platform: numeric_state
+                    entity_id: sensor.family_room_soundbar_power
+                    below: 2.0
+                timeout:
+                  minutes: 2
