@@ -118,8 +118,8 @@
     data:
       entity_id: light.family_room
       color: teal
-      level_on: 10
-      level_off: 2
+      level_on: 3
+      level_off: 1
   - data:
       entity_id: input_boolean.home_assistant_loaded
     service: input_boolean.turn_on
@@ -138,26 +138,6 @@
   action:
   - event: midnight
     event_data: {}
-- id: '1589907143194'
-  alias: Homekit Start
-  description: Homekit will delay startup until all devices are available.
-  trigger:
-  - event_data: {}
-    event_type: ozw.network_ready
-    platform: event
-  - event_data: {}
-    event_type: ozw.network_complete
-    platform: event
-  - event_data: {}
-    event_type: ozw.network_complete_some_dead
-    platform: event
-  condition: []
-  action:
-  - data: {}
-    service: homekit.start
-  - data:
-      message: 'Homekit: UI service has started.'
-    service: script.toast
 - id: '1590292820143'
   alias: 'Printers: Power Down When Idle'
   description: 'When one printer has been idle for 15 minutes, turn the printers off
@@ -198,4 +178,15 @@
   - data: {}
     entity_id: input_boolean.home_assistant_loaded
     service: input_boolean.turn_off
+  mode: single
+- id: '1601178260005'
+  alias: Shopping List Add
+  description: ''
+  trigger:
+  - platform: webhook
+    webhook_id: shopping_list_add
+  condition: []
+  action:
+  - service: shopping_list.add_item
+    data: {}
   mode: single
