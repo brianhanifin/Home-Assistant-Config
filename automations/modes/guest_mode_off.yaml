@@ -10,20 +10,26 @@ action:
   # Start a countdown timer to relock the front door.
   - service: script.start_front_door_lock_countdown
 
-  # Enable circadian light dimming.
-  - service: switch.turn_on
-    entity_id: switch.circadian_lighting
-
   # Adjust the lights back to circadian levels.
   - service: light.turn_on
-    data_template:
-      entity_id: group.lights_on
-      kelvin: "{{ state_attr('sensor.circadian_values','colortemp') }}"
+    data:
+      entity_id: |
+        {% set group_id = 'group.guest_mode_lights' -%}
+        {%- set entities = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | join(', ') -%}
+        {{ "none" if "light." not in entities else entities }}
+      brightness_pct: "{{ states('sensor.circadian_values')|round }}"
+      kelvin: "{{ state_attr('sensor.circadian_values','colortemp')|round }}"
 
   - service: script.say
-    data_template:
+    data:
       message: >
         {{ [
         "Guest Mode has been disabled.",
         "Guest Mode disabled."
         ] | random }}
+
+  # Enable circadian light dimming.
+  - delay:
+      seconds: 5
+  - service: switch.turn_on
+    entity_id: switch.circadian_lighting
