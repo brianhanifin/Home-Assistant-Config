@@ -7,57 +7,66 @@ trigger:
   # Trigger the notification at 8pm.
   - platform: time
     at: "20:00:00"
-
-  # Action has been requested!
-  - platform: event
-    event_type: ios.notification_action_fired
-    event_data:
-      actionName: SECURE_DOOR
 action:
+  # Send the actionable notification.
   - choose:
-      # Take the requested action!
-      - conditions:
-          - '{{ trigger.event.data.actionName == "SECURE_DOOR" }}'
-        sequence:
-          # Lock the front door.
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: lock.front_door
-                    state: "unlocked"
-                sequence:
-                  - service: lock.lock
-                    entity_id: lock.front_door
+    - conditions:
+        - condition: state
+          entity_id: lock.front_door
+          state: "unlocked"
+        - condition: state
+          entity_id: cover.garage_door
+          state: "open"
+      sequence:
+        - service: script.notify_mobile
+          data:
+            who: 'brian'
+            title: 'Insecure Door{% if states("cover.garage_door") == "unlocked" and states("cover.garage_door") == "open" %}s{% endif %}'
+            message: |
+              {% if states("lock.front_door") == "unlocked" %}The Front Door is unlocked!
+              {% endif -%}
+              {% if states("cover.garage_door") == "open" %}The Garage Door is open!
+              {% endif %}
+            category: 'insecure_door'
 
-          # Close the garage door.
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: cover.garage_door
-                    state: "open"
-                sequence:
-                  - service: cover.close_cover
-                    entity_id: cover.garage_door
+        # Wait for the requested response, or secure the doors after the timeout elapses.
+        - wait_for_trigger:
+            - platform: event
+              event_type: ios.notification_action_fired
+              event_data:
+                actionName: SECURE_DOOR
+          timeout:
+            minutes: "15"
+          continue_on_timeout: true
 
-    # Send the actionable notification.
-    default:
-      # Lock the front door.
-      - choose:
-          - conditions:
-              - condition: state
-                entity_id: lock.front_door
-                state: "unlocked"
-              - condition: state
-                entity_id: cover.garage_door
-                state: "open"
-            sequence:
-              - service: script.notify_mobile
-                data:
-                  who: 'brian'
-                  title: 'Insecure Door{% if states("cover.garage_door") == "unlocked" and states("cover.garage_door") == "open" %}s{% endif %}'
-                  message: |
-                    {% if states("lock.front_door") == "unlocked" %}The Front Door is unlocked!
-                    {% endif -%}
-                    {% if states("cover.garage_door") == "open" %}The Garage Door is open!
-                    {% endif %}
-                  category: "insecure_door"
+        # Lock the front door.
+        - choose:
+            - conditions:
+                - condition: state
+                  entity_id: lock.front_door
+                  state: "unlocked"
+              sequence:
+                - service: lock.lock
+                  entity_id: lock.front_door
+
+        # Close the garage door.
+        - choose:
+            - conditions:
+                - condition: state
+                  entity_id: cover.garage_door
+                  state: "open"
+              sequence:
+                - service: cover.close_cover
+                  entity_id: cover.garage_door
+
+        # Replace the actionable notification.
+        - delay:
+            seconds: 30
+        - service: script.notify_mobile
+          data:
+            who: 'brian'
+            title: 'Secure Doors Action Taken'
+            message: |
+              Front Door is {{ states("lock.front_door") }}.
+              Garage Door is {{ states("cover.garage_door") }}.
+            replaceable_id: 'insecure_door'

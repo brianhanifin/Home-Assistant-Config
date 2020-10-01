@@ -73,7 +73,7 @@ sequence:
                     apns-collapse-id: 'image'
                   thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
 
-    # Send a basic message.
+    # Send a basic, link, or actionable notification message.
     default:
       - service: '{{ notification_service }}'
         data:
@@ -86,5 +86,5 @@ sequence:
               url: '{{ link or url }}'
 
               apns_headers:
-                apns-collapse-id: '{{ category }}'
+                apns-collapse-id: '{{ replaceable_id|default(category) }}'
               thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
