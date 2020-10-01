@@ -19,11 +19,12 @@ sensors:
         {%- set event_month     = 1 -%}
 
         {# If the event has passed for this year, get next year's event. #}
-        {%- set this_month = now().strftime('%m')|int -%}
+        {%- set today = states("sensor.date").split("-") -%}        
+        {%- set this_month = today[1]|int -%}
         {%- if event_month < this_month -%}
-          {%- set event_year = now().strftime('%Y')|int + 1 -%}
+          {%- set event_year = today[0]|int + 1 -%}
         {%- else -%}
-          {%- set event_year = now().strftime('%Y')|int -%}
+          {%- set event_year = today[0]|int -%}
         {%- endif -%}
 
         {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, event_year) | replace("00:00:00","") -%}

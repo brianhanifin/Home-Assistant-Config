@@ -1,15 +1,15 @@
 ---
 sequence:
   # Update upcoming dynamic holidays.
-  - service: script.update_date_easter
-  - service: script.update_date_election
-  - service: script.update_date_fathers
-  - service: script.update_date_labor
-  - service: script.update_date_memorial
-  - service: script.update_date_mlk
-  - service: script.update_date_mothers
-  - service: script.update_date_presidents
-  - service: script.update_date_thanksgiving
+  - service: script.update_next_holiday
+    data:
+      holiday: easter
+  - service: script.update_next_holiday
+    data:
+      holiday: election
+  - service: script.update_next_holiday
+    data:
+      holiday: labor
 
   # Update the holiday sensors.
   - service: homeassistant.update_entity
