@@ -4,23 +4,29 @@ sensors:
   holiday:
     friendly_name: Holiday
     icon_template: mdi:calendar-today
-    value_template: >
-      {% macro todays_holidays() %}
-        {%- set todays_anniversaries = states.sensor | selectattr('attributes.weeks_remaining') | selectattr('state','eq','0') | map(attribute='entity_id') | list -%}
-        {%- for anniversary in todays_anniversaries -%}
-          {{ state_attr(anniversary, 'friendly_name') + '\n' }}
-        {%- endfor -%}
+    value_template: |
+      {%- set events = namespace(anniversary='',holiday='') %}
 
-        {% set holidays = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
-        {%- for holiday in holidays -%}
-          {%- set part = states(holiday).split('-') -%}
-          {%- if part|length > 1 -%}
-            {%- set holiday_date = "%s/%s"|format(part[1]|int, part[2]|int) -%}
-            {{ state_attr(holiday, 'friendly_name') + '\n' if today == holiday_date }}
-          {%- else -%}
-            {{ state_attr(holiday, 'friendly_name') + '\n' if today == holiday }}
-          {%- endif -%}
-        {%- endfor %}
-      {% endmacro %}
+      {%- set event = states.sensor | selectattr('attributes.weeks_remaining') | selectattr('state','eq','0') | map(attribute='entity_id') | first %}
+      {%- set events.anniversary = state_attr(event,"friendly_name") if event|length > 0 else "" %}
 
-      {{ todays_holidays()|trim|replace('\n',',') }}
+      {%- set holidays = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
+      {%- for holiday in holidays -%}
+        {%- set holiday_date = states(holiday) %}
+        {%- set today = '{:04}-{:02}-{:02}'.format(now().year,now().month,now().day) %}
+
+        {%- if holiday_date|length > 10 %}
+          {%- set holiday_date = holiday_date[:10] -%}
+        {%- elif holiday_date|length < 10 %}
+          {%- set part = (holiday_date|replace("/","-")).split("-") -%}
+          {%- set holiday_date = '{:04}-{:02}-{:02}'.format(now().year, part[0]|int, part[1]|int) -%}
+        {%- endif %}
+        {%- if holiday_date == today %}
+          {%- set events.holiday = events.holiday ~ ',' if events.holiday != '' %}
+          {%- set events.holiday = events.holiday ~ state_attr(holiday, 'friendly_name') %}
+        {%- endif %}
+      {%- endfor %}
+
+      {{ events.anniversary }}
+      {{- "," if events.anniversary != '' and events.holiday != '' }}
+      {{- events.holiday }}
