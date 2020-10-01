@@ -6,7 +6,7 @@ sequence:
       {%- set today = states('sensor.date') -%}
       {%- set event = states('sensor.date_easter') -%}
       {%- set date_parts = event.split('-') -%}
-      {%- set day_after_event = date_parts[0] ~'-'~ date_parts[1] ~'-'~ (date_parts[2]|int+1) %}
+      {%- set day_after_event = '{:04}-{:02}-{:02}'.format(date_parts[0]|int, date_parts[1]|int, (date_parts[2]|int+1)) -%}
       {{ today == day_after_event
         or event == 'unknown' }}
 
@@ -15,12 +15,14 @@ sequence:
       title: "update_date_easter"
       message: "Updating sensor.date_easter."
 
-  - service: homeassistant.update_entity_next_easter
+  - service: homeassistant.update_entity
+    entity_id: sensor.date_next_easter
 
   - delay:
       seconds: 15
 
-  - service: homeassistant.update_entity_easter
+  - service: homeassistant.update_entity
+    entity_id: sensor.date_easter
 
   - service: persistent_notification.create
     data:

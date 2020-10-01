@@ -15,12 +15,14 @@ sequence:
       title: "update_date_election"
       message: "Updating sensor.date_election."
 
-  - service: homeassistant.update_entity_next_election
+  - service: homeassistant.update_entity
+    entity_id: sensor.date_next_election
 
   - delay:
       seconds: 15
 
-  - service: homeassistant.update_entity_election
+  - service: homeassistant.update_entity
+    entity_id: sensor.date_election
 
   - service: persistent_notification.create
     data:
