@@ -1,0 +1,52 @@
+---
+variables:
+  topic_attributes: "custom/sensor/{{ id }}/attributes"
+  topic_state: "custom/sensor/{{ id }}/state"
+  payload_state: "{{ briefing|striptags }}"
+  payload_attributes: |
+    {
+      "target": "{{ media_player }}",
+      "day": "{{ as_timestamp(now())|timestamp_custom('%A %B %-d') }}",
+      "time": "{{ as_timestamp(now())|timestamp_custom('%H:%M %p') }}"
+    }
+  # sensor_topic: "homeassistant/sensor/custom/tts/{{ id }}"
+  # sensor_payload: |
+  #   {
+  #     "name": "TTS Last Message",
+  #     "icon": "{{ icon }}",
+  #     "json_attributes_topic": "{{ topic_attributes }}",
+  #     "state_topic": "{{ topic_state }}",
+  #     "unique_id": "{{ id }}",
+  #     "device": {
+  #       "identifiers": [
+  #         "Home_Assistant"
+  #       ],
+  #       "name": "{{ name|default(id) }}",
+  #       "manufacturer": "Nabu Casa",
+  #       "model": "Home Assistant",
+  #       "sw_version": "{{ states('sensor.current_version') }}"
+  #     }
+  #   }
+sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: "{{ topic_state }}"
+      payload: "{{ payload_state }}"
+      retain: true
+  - service: mqtt.publish
+    data_template:
+      topic: "{{ topic_attributes }}"
+      payload: "{{ payload_attributes }}"
+      retain: true
+
+  # - service: mqtt.publish
+  #   data:
+  #     topic: "{{ sensor_topic }}"
+  #     payload: "{{ sensor_payload }}"
+  #     retain: true
+
+  # Attempt at autodiscovery sensor.
+  # - service: script.debug
+  #   data:
+  #     title: "{{ sensor_topic }}"
+  #     message: "{{ sensor_payload }}"

@@ -1,4 +1,17 @@
 ---
+variables:
+  media_player: !include ../../templates/speech/media_player.yaml
+  briefing: !include ../../templates/speech/briefing.yaml
+  title: '{{ "Home Assistant" if title is not string else title }}'
+
+  mqtt_topic: "custom/sensor/last_message"
+  mqtt_state: "{{ briefing|striptags }}"
+  mqtt_attributes: |
+    {
+      "target": "{{ media_player }}",
+      "voice": "{{ voice }}",
+      "timestamp": "{{ now()|as_local }}"
+    }
 sequence:
   - condition: state
     entity_id: input_boolean.audio_notifications
@@ -17,10 +30,32 @@ sequence:
           # Update the values that may be needed for the briefing.
           - service: script.turn_on
             entity_id: script.update_lights_on
-  
-  # Speak and store the message for later recall.
-  - service: script.speech_processing
+
+  - service: notify.alexa_media
     data_template:
-      media_player: !include ../../templates/speech/media_player.yaml
-      briefing: !include ../../templates/speech/briefing.yaml
-      title: "{{ title }}"
+      data:
+        type: announce
+        method: all
+      title: '{{ title }}'
+      message: '{{ briefing }}'
+      target: '{{ media_player }}'
+
+  - variables:
+      briefing: "{{ briefing|striptags }}"
+
+  - service: script.toast
+    data:
+      message: "{{ briefing }}"
+      duration: 30000
+
+  - service: mqtt.publish
+    data_template:
+      topic: "{{ mqtt_topic }}/state"
+      payload: "{{ mqtt_state }}"
+      retain: true
+  - service: mqtt.publish
+    data_template:
+      topic: "{{ mqtt_topic }}/attributes"
+      payload: |
+        {{ mqtt_attributes }}
+      retain: true
