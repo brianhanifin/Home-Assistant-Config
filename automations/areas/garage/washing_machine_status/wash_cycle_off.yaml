@@ -5,6 +5,9 @@ trigger:
   - platform: state
     entity_id: sensor.washer
     to: "off"
+  - platform: numeric_state
+    entity_id: sensor.sonoff_s31_02_power
+    below: 1
 action:
   - service: input_select.select_option
     data:

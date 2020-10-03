@@ -7,6 +7,10 @@ trigger:
     entity_id: binary_sensor.washer
     from: "off"
     to: "on"
+  - platform: numeric_state
+    entity_id: sensor.sonoff_s31_02_power
+    above: 1
+    below: 20
 action:
   - service: input_select.select_option
     data:

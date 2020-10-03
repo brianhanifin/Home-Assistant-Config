@@ -1,0 +1,52 @@
+---
+alias: Laundry Status
+id: laundry_status
+initial_state: true
+trigger:
+  - platform: state
+    entity_id: input_select.washing_machine_status
+  - platform: state
+    entity_id: input_select.dryer_status
+variables:
+  washer_status: '{{ states("input_select.washing_machine_status") }}'
+  dryer_status: '{{ states("input_select.dryer_status") }}'
+  previous_status: '{{ trigger.from_state.state }}'
+action:
+  - choose:
+      - conditions:
+          - '{{ washer_status == "Off" and dryer_status == "Off" }}'
+        sequence:
+          service: input_select.select_option
+          data:
+            entity_id: input_select.laundry_status
+            option: "Off"
+
+      - conditions:
+          - '{{ washer_status in ["Running","Finishing"] }}'
+        sequence:
+          service: input_select.select_option
+          data:
+            entity_id: input_select.laundry_status
+            option: Washing
+
+      - conditions:
+          - '{{ (washer_status == "Off" and previous_status in ["Finishing","Clean"]) and dryer_status == "Running" }}'
+        sequence:
+          service: input_select.select_option
+          data:
+            entity_id: input_select.laundry_status
+            option: Waiting for Dryer
+
+      - conditions:
+          - '{{ washer_status in ["Complete","Off"] and dryer_status == "Complete" }}'
+        sequence:
+          service: input_select.select_option
+          data:
+            entity_id: input_select.laundry_status
+            option: Dry
+
+    default:
+      service: input_select.select_option
+      data:
+        entity_id: input_select.laundry_status
+        option: "Unknown"
