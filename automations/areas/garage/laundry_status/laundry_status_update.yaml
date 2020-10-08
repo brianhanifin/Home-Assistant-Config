@@ -14,7 +14,7 @@ variables:
 action:
   - choose:
       - conditions:
-          - '{{ washer_status == "Off" and dryer_status == "Off" }}'
+          - '{{ (washer_status == "Off" and dryer_status == "Off") and previous_action not in ["Running","Finishing","Clean","Complete"] }}'
         sequence:
           service: input_select.select_option
           data:
@@ -30,15 +30,31 @@ action:
             option: Washing
 
       - conditions:
+          - '{{ dryer_status == "Running" and washer_status not in ["Running","Finishing"] }}'
+        sequence:
+          service: input_select.select_option
+          data:
+            entity_id: input_select.laundry_status
+            option: Drying
+
+      - conditions:
           - '{{ (washer_status == "Off" and previous_status in ["Finishing","Clean"]) and dryer_status == "Running" }}'
         sequence:
           service: input_select.select_option
           data:
             entity_id: input_select.laundry_status
-            option: Waiting for Dryer
+            option: Waiting for running dryer
 
       - conditions:
-          - '{{ washer_status in ["Complete","Off"] and dryer_status == "Complete" }}'
+          - '{{ (washer_status == "Off" and previous_status in ["Finishing","Clean"]) and dryer_status != "Running" }}'
+        sequence:
+          service: input_select.select_option
+          data:
+            entity_id: input_select.laundry_status
+            option: Please transfer to dryer
+
+      - conditions:
+          - '{{ washer_status in ["Complete","Off"] and (dryer_status == "Complete" or last_status == "Complete") }}'
         sequence:
           service: input_select.select_option
           data:
