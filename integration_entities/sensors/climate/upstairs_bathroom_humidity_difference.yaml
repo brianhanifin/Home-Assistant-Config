@@ -10,10 +10,11 @@ sensors:
     friendly_name: "Bathroom Humidity Change"
     # Use alternate humidity sensor should Ecobee's humidity sensor is offline.
     value_template: >
-      {% set home_humidity = states('sensor.home_humidity')|lower %}
-      {%- if home_humidity in ['unknown','unavailable'] -%}
-        {%- set home_humidity = states('sensor.guest_room_humidity') -%}
+      {% set bathroom_humidity = states('sensor.upstairs_bathroom_humidity') %}
+      {%-  set home_humidity = states('sensor.home_humidity') %}
+      {%- if home_humidity|lower in ['unknown','unavailable'] -%}
+        {%- set home_humidity = states('sensor.guest_room_humidity')|default(bathroom_humidity) -%}
       {%- endif -%}
-      {{ (states('sensor.upstairs_bathroom_humidity') | int) - home_humidity|int }}
+      {{ (bathroom_humidity|int) - home_humidity|int }}
     device_class: "humidity"
-    unit_of_measurement: '%'
+    unit_of_measurement: "%"
