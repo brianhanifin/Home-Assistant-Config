@@ -22,12 +22,12 @@ sequence:
   # Say goodnight.
   - service: script.say
     data_template:
-      media_player: media_player.family_room
+      media_player: media_player.alexa_family_room
       say_goodnight: "true"
 
   # Leave these lights on unless someone requested it from bed.
   - condition: template
-    value_template: "{{ is_state('sensor.last_alexa','media_player.master_bedroom') }}"
+    value_template: "{{ is_state('sensor.last_alexa','media_player.alexa_bedroom') }}"
   - service: homeassistant.turn_off
     entity_id:
       - group.bedroom_lights

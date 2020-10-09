@@ -5,7 +5,7 @@ automation:
   trigger:
     platform: template
     value_template: >
-      {%- set next_alarm = states("sensor.boys_room_next_alarm") -%}
+      {%- set next_alarm = states("sensor.alexa_boys_room_next_alarm") -%}
       {%- if next_alarm == "unknown" -%}
         false
       {%- else -%}
@@ -46,9 +46,9 @@ sensor:
       wakeup_boys_light:
         friendly_name: Light Fade-in Start
         icon_template: mdi:lightbulb-on-outline
-        entity_id: sensor.boys_room_next_alarm
+        entity_id: sensor.alexa_boys_room_next_alarm
         value_template: >-
-          {%- set next_alarm = states('sensor.boys_room_next_alarm') -%}
+          {%- set next_alarm = states('sensor.alexa_boys_room_next_alarm') -%}
           {%- if next_alarm != "unknown" -%}
             {%- set wakeup_time    = next_alarm.split("T")[1].split("-")[0] -%}
           {%- else -%}

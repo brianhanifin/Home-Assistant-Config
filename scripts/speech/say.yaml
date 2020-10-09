@@ -1,9 +1,9 @@
 ---
 variables:
   media_player: !include ../../templates/speech/media_player.yaml
-  is_google: '{{ media_player.startswith("media_player.google_") }}'
+  speakers: '{{ expand(media_player) | map(attribute="entity_id") | list }}'
   briefing: !include ../../templates/speech/briefing.yaml
-  title: '{{ "Home Assistant" if title is not string else title }}'
+  title: '{{ title|default("Home Assistant") }}'
 
   mqtt_message_topic: "custom/sensor/last_message"
   mqtt_message_state: "{{ briefing|striptags }}"
@@ -32,32 +32,29 @@ sequence:
             entity_id: script.update_lights_on
 
   - choose:
-      # Use Google TTS when the target is a Google Home device.
-      - conditions:
-          - '{{ is_google }}'
-        sequence:
-          - service: tts.google_cloud_say
+    # Use Alexa Media Notify when the target is an Alexa device.
+    - conditions:
+        - '{{ media_player.startswith("media_player.alexa_") }}'
+      sequence:
+        - service: notify.alexa_media
+          data_template:
             data:
-              entity_id: '{{ media_player }}'
-              message: '{{ briefing }}'
+              type: announce
+              method: all
+            target: '{{ media_player }}'
+            title: '{{ title }}'
+            message: '{{ message }}'
 
     # Use the Alexa Notification service when the target is an Echo device.
     default:
-      - service: notify.alexa_media
-        data_template:
-          data:
-            type: announce
-            method: all
-          title: '{{ title }}'
-          message: '{{ briefing }}'
-          target: '{{ media_player }}'
-
-  - variables:
-      briefing: "{{ briefing|striptags }}"
+      - service: tts.google_cloud_say
+        data:
+          entity_id: '{{ media_player }}'
+          message: '{{ message|striptags }}'
 
   - service: script.toast
     data:
-      message: "{{ briefing }}"
+      message: "{{ mqtt_message_state }}"
       duration: 30000
 
   # Store Last Message
