@@ -5,7 +5,7 @@ fields:
     description: The text you would like alexa to speak.
   event_id:
     description: Correlation ID for event responses
-  alexa_device:
+  smart_speaker:
     description: Alexa device you want to trigger
 sequence:
   - service: input_text.set_value
@@ -15,7 +15,7 @@ sequence:
 
   - service: media_player.play_media
     data_template:
-      entity_id: "{{ alexa_device }}"
+      entity_id: "{{ smart_speaker }}"
       media_content_type: skill
       media_content_id: !secret alexa_actions_skill_id
 
@@ -30,7 +30,7 @@ sequence:
       retain: true
       payload: >-
         {
-          "target": "{{ alexa_device }}",
+          "target": "{{ smart_speaker }}",
           "day": "{{ as_timestamp(now())|timestamp_custom('%A %B %-d') }}",
           "time": "{{ as_timestamp(now())|timestamp_custom('%h:%M %p') }}",
           "event": "{{ event_id }}"

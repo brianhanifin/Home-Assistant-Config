@@ -1,12 +1,13 @@
 ---
 variables:
   media_player: !include ../../templates/speech/media_player.yaml
+  is_google: '{{ media_player.startswith("media_player.google_") }}'
   briefing: !include ../../templates/speech/briefing.yaml
   title: '{{ "Home Assistant" if title is not string else title }}'
 
-  mqtt_topic: "custom/sensor/last_message"
-  mqtt_state: "{{ briefing|striptags }}"
-  mqtt_attributes: |
+  mqtt_message_topic: "custom/sensor/last_message"
+  mqtt_message_state: "{{ briefing|striptags }}"
+  mqtt_message_attributes: |
     {
       "target": "{{ media_player }}",
       "voice": "{{ voice }}",
@@ -24,21 +25,32 @@ sequence:
   # Only update group.lights_on when say_light_check is requested.
   - choose:
       - conditions:
-          - condition: template
-            value_template: '{{ say_light_check == True }}'
+          - '{{ say_light_check == True }}'
         sequence:
           # Update the values that may be needed for the briefing.
           - service: script.turn_on
             entity_id: script.update_lights_on
 
-  - service: notify.alexa_media
-    data_template:
-      data:
-        type: announce
-        method: all
-      title: '{{ title }}'
-      message: '{{ briefing }}'
-      target: '{{ media_player }}'
+  - choose:
+      # Use Google TTS when the target is a Google Home device.
+      - conditions:
+          - '{{ is_google }}'
+        sequence:
+          - service: tts.google_cloud_say
+            data:
+              entity_id: '{{ media_player }}'
+              message: '{{ briefing }}'
+
+    # Use the Alexa Notification service when the target is an Echo device.
+    default:
+      - service: notify.alexa_media
+        data_template:
+          data:
+            type: announce
+            method: all
+          title: '{{ title }}'
+          message: '{{ briefing }}'
+          target: '{{ media_player }}'
 
   - variables:
       briefing: "{{ briefing|striptags }}"
@@ -48,14 +60,15 @@ sequence:
       message: "{{ briefing }}"
       duration: 30000
 
+  # Store Last Message
   - service: mqtt.publish
-    data_template:
-      topic: "{{ mqtt_topic }}/state"
-      payload: "{{ mqtt_state }}"
+    data:
+      topic: "{{ mqtt_message_topic }}/state"
+      payload: "{{ mqtt_message_state }}"
       retain: true
   - service: mqtt.publish
-    data_template:
-      topic: "{{ mqtt_topic }}/attributes"
+    data:
+      topic: "{{ mqtt_message_topic }}/attributes"
       payload: |
-        {{ mqtt_attributes }}
+        {{ mqtt_message_attributes }}
       retain: true
