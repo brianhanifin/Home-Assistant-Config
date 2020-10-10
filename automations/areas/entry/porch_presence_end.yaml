@@ -23,6 +23,12 @@ action:
           - condition: sun
             after: sunset
         sequence:
+          # Restore circadian lighting
+          - service: switch.turn_on
+            entity_id:
+              - switch.circadian_lighting_porch
+              - switch.circadian_lighting_entry
+
           # Restore the previous state of the porch light.
           - service: scene.turn_on
             data:

@@ -25,7 +25,14 @@ action:
             data:
               scene_id: doorbell_presence_lights_snapshot
               snapshot_entities:
+                - light.entry
                 - light.porch
+
+          # Disable circadian lighting
+          - service: switch.turn_off
+            entity_id:
+              - switch.circadian_lighting_porch
+              - switch.circadian_lighting_entry
 
           # Full brightness!
           - service: light.turn_on
@@ -34,6 +41,11 @@ action:
               kelvin: 3500
               brightness: 255
 
+          - service: light.turn_on
+            data:
+              entity_id: light.entry
+              brightness: 255
+
           # Cool down timer. When "mode: single" this stops this automation from running more often than this.
           - delay:
-              minutes: 5
+              minutes: 10
