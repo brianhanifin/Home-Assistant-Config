@@ -1,9 +1,10 @@
 ---
-alias: lights_outside_illuminance_off
+alias: 'Outside Illuminance: Turn "Auto Lights" Off'
+id: lights_outside_illuminance_off
 initial_state: true
 trigger:
   - platform: numeric_state
-    entity_id: sensor.outside_illuminance
+    entity_id: sensor.outdoor_illuminance
     above: 5000
 condition:
   # Only the lights off if guest mode override is off.
@@ -11,8 +12,15 @@ condition:
     entity_id: input_boolean.guest_mode
     state: "off"
 action:
-  - service: light.turn_off
-    entity_id:
-      - light.table_lamp
-      - light.family_room_floor_lamp
-      - light.family_room
+  # Family Room: Only if the "Auto Lights" are enabled.
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.presence_lights_family_room
+            state: "on"
+        sequence:
+          - service: light.turn_off
+            entity_id:
+              - light.table_lamp
+              - light.family_room_floor_lamp
+              - light.family_room
