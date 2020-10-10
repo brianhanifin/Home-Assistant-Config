@@ -1,26 +1,71 @@
 ---
-######################################################################################################
-#  Script to turn on scene for the appropriate month for the front of the house but only when the sun is down.
-#  action:
-#   - service: script.holiday_color_scene
-#
-#   scenes should be named holiday_[01-12]_colors (holiday_06_colors)
-# Color help - http://www.esbnyc.com/explore/tower-lights/calendar
-######################################################################################################
+# Color Table - http://www.colorhexa.com/color-names
+variables:
+  holiday_scene: |
+    {% set holiday_scene = states('sensor.holiday') -%}
+    {%- if holiday_scene is not none and holiday_scene != "" -%}
+      {%- set holiday_scene = holiday_scene|lower|trim|replace("'","")|replace(" ","_")|replace(",_eve","")|replace("_day","") -%}
+      {%- if holiday_scene in ["constitution","flag","independence","memorial","mlk","presidents","veterans"] -%}
+        {{ "usa" }}
+      {%- else -%}
+        {%- set last_word = holiday_scene.split('_')|last -%}
+        {%- if last_word == "birthday" -%}
+          {{ "birthday" }}
+        {%- elif last_word == "christmas" -%}
+          {{ "christmas" }}
+        {%- else -%}
+          {{ holiday_scene|replace("mothers","valentine")|replace("earth","st_patty") }}
+        {%- endif -%}
+      {%- endif %}
+    {%- else -%}
+      {{ "standard" }}
+    {%- endif %}
+  holiday_colors:
+    birthday: "Purple"
+    christmas: "Green"
+    easter: "Orchid"
+    fathers: "Orange"
+    halloween: "OrangeRed"
+    marti_gras: "Purple"
+    new_years: "Violet"
+    pi: "Blue"
+    st_patty: "DarkGreen"
+    starwars: "Red"
+    thanksgiving: "Orange"
+    usa: "Blue"
+    valentine: "Crimson"
+
+  color: '{{ holiday_colors[holiday_scene] }}'
 sequence:
+  - service: script.debug
+    data:
+      message: |
+        holiday_scene: "{{ holiday_scene }}"
+        {{ holiday_scene != "standard" }}
+
   # When a Holiday scene is active (ie. NOT 'standard')
-  - condition: template
-    value_template: "{{ not is_state('sensor.holiday_scene','standard') }}"
+  - choose:
+      - conditions:
+          - '{{ holiday_scene != "standard" }}'
+        sequence:
+          # Both guest_mode and away_mode are inactive
+          - condition: state
+            entity_id:
+              - input_boolean.away_mode
+              - input_boolean.guest_mode
+            state: "off"
 
-  # Both guest_mode and away_mode are inactive
-  - condition: state
-    entity_id:
-      - input_boolean.away_mode
-      - input_boolean.guest_mode
-    state: "off"
+          - service: light.turn_on
+            data:
+              entity_id:
+                - light.porch
+                - light.table_lamp
+              color_name: "{{ color }}"
 
-  # Change the color scene
-  - service: scene.turn_on
-    data_template:
-      entity_id: "scene.holiday_{{ states('sensor.holiday_scene.state') }}_colors"
-      transition: 5
+    default:
+      - service: light.turn_on
+        data:
+          entity_id:
+            - light.porch
+            - light.table_lamp
+          kelvin: 4000

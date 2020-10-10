@@ -28,8 +28,11 @@ action:
                 - light.porch
 
           # Full brightness!
-          - service: scene.turn_on
-            entity_id: scene.front_full_brightness
+          - service: light.turn_on
+            data:
+              entity_id: light.porch
+              kelvin: 3500
+              brightness: 255
 
           # Cool down timer. When "mode: single" this stops this automation from running more often than this.
           - delay:

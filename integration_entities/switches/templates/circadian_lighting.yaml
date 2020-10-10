@@ -10,7 +10,7 @@ switches:
       - service: homeassistant.turn_off
         data_template:
           entity_id: >-
-            {% if is_state('sensor.holiday_scene','standard') %}
+            {% if is_state('sensor.holiday','') %}
               group.circadian_holiday
             {% else %}
               group.circadian_all
@@ -18,7 +18,7 @@ switches:
       - service: homeassistant.turn_on
         data_template:
           entity_id: >-
-            {% if is_state('sensor.holiday_scene','standard') %}
+            {% if is_state('sensor.holiday','') %}
               group.circadian_all
             {% else %}
               group.circadian_holiday
