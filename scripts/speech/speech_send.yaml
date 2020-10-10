@@ -17,13 +17,13 @@ sequence:
               entity_id: '{{ media_player }}'
               message: '{{ message|striptags }}'
 
-      # Use the Alexa Notification service when the target is an Echo device.
-      default:
-        - service: notify.alexa_media
-          data_template:
-            data:
-              type: announce
-              method: all
-            target: '{{ media_player }}'
-            title: '{{ title }}'
-            message: '{{ message }}'
+    # Use the Alexa Notification service when the target is an Echo device.
+    default:
+      - service: notify.alexa_media
+        data_template:
+          data:
+            type: announce
+            method: all
+          target: '{{ media_player }}'
+          title: '{{ title }}'
+          message: '{{ message }}'
