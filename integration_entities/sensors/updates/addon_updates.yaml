@@ -5,29 +5,25 @@ sensors:
     friendly_name: Addon Updates
     icon_template: mdi:counter
     value_template: |
-      {%- macro addon_updates() -%}
+      {%- set storage = namespace(addons="") %}
+      {%- set addons = state_attr("sensor.addons","addons") -%}
+      {%- for addon in addons -%}
+        {%- if addon.installed != addon.version -%}
+          {%- set storage.addons = storage.addons ~ " " ~ addon.name %}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- set storage.addons = storage.addons|trim -%}
+      {%- set storage.addons = storage.addons.split(" ") if storage.addons|length > 0 else "" %}
+      {{ storage.addons|count }}
+    attribute_templates:
+      addons: |
+        {%- set storage = namespace(addons="") %}
         {%- set addons = state_attr("sensor.addons","addons") -%}
         {%- for addon in addons -%}
           {%- if addon.installed != addon.version -%}
-            {{ addon.name + '\t' }}
+            {%- set storage.addons = storage.addons ~ " " ~ addon.name %}
           {%- endif -%}
         {%- endfor -%}
-      {%- endmacro -%}
-      {%- set updates = addon_updates()|trim -%}
-      {%- if updates|trim == '' -%}
-        0
-      {%- else -%}
-        {{ updates.split('\t')|count }}
-      {%- endif %}
-    attribute_templates:
-      addons: |
-        {%- macro addon_updates() -%}
-          {%- set addons = state_attr("sensor.addons","addons") -%}
-          {%- for addon in addons -%}
-            {%- if addon.installed != addon.version -%}
-              {{ addon.name + '\t' }}
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endmacro -%}
-        {%- set updates = addon_updates()|trim -%}
-        {{ updates.split('\t')|replace('[','')|replace(']','') }}
+        {%- set storage.addons = storage.addons|trim -%}
+        {%- set storage.addons = storage.addons.split(" ") if storage.addons|length > 0 else "" %}
+        {{ storage.addons }}

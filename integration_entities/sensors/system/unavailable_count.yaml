@@ -4,4 +4,21 @@ sensors:
   unavailable_count:
     friendly_name: Unavailable
     icon_template: mdi:alert
-    value_template: '{{ states | selectattr("state","eq","unavailable") | map(attribute="entity_id") | list | count }}'
+    #value_template: '{{ states | selectattr("state","eq","unavailable") | map(attribute="entity_id") | list | count }}'
+    value_template: |
+      {% set storage = namespace(entities="") %}
+      {% set entities = states | selectattr("state","eq","unavailable") | map(attribute="entity_id") | list %}
+      {%- for entity in entities if not entity.startswith("sensor.alexa_") and not entity.startswith("switch.alexa_") and not entity.startswith("sensor.this_device") %}
+        {%- set storage.entities = storage.entities ~ ' ' ~ entity %}
+      {%- endfor %}
+      {% set storage.entities = storage.entities|trim %}
+      {{ storage.entities.split(" ")|count }}
+    attribute_templates:
+      entities: |
+        {% set storage = namespace(entities="") %}
+        {% set entities = states | selectattr("state","eq","unavailable") | map(attribute="entity_id") | list %}
+        {%- for entity in entities if not entity.startswith("sensor.alexa_") and not entity.startswith("switch.alexa_") and not entity.startswith("sensor.this_device") %}
+          {%- set storage.entities = storage.entities ~ ' ' ~ entity %}
+        {%- endfor %}
+        {% set storage.entities = storage.entities|trim %}
+        {{ storage.entities|replace(" ",", ") }}
