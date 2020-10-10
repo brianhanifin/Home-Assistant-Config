@@ -9,12 +9,13 @@ initial_state: true
 mode: single
 trigger:
   - platform: state
-    entity_id: binary_sensor.doorbell_presence
-    #from: 'on'
+    entity_id:
+      - binary_sensor.front_door_motion
+      - binary_sensor.doorbell_motion
+    from: 'on'
     to: 'off'
-    # for:
-    #   minutes: 2
-    #   seconds: 00
+    for:
+      minutes: 10
 action:
   - choose:
       - conditions:
