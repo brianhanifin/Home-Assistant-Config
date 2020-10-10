@@ -10,14 +10,88 @@ trigger:
   event_type: zha_event
   # event_data:
   #   data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee"
+variables:
+  debug_output: False
+  delay_seconds: 0.5
+
+  remotes:
+    # Hue
+    "00:17:88:01:08:07:ab:4b": "remote_hue_unused"
+
+    # Ikea
+    "ec:1b:bd:ff:fe:23:9c:ee": "remote_family_room"
+    "cc:cc:cc:ff:fe:e6:70:82": "remote_ikea_rocker_unused"
+
+    # Xiaomi
+    "00:15:8d:00:01:2d:d7:c3": "button_printer_power"
+    "00:15:8d:00:02:83:e2:b6": "remote_bedroom_double_rocker"
+    "00:15:8d:00:02:05:bf:0f": "button_xiaomi_square_unused"
+  manufacturers:
+    "00:17:88:01": "hue"
+    "ec:1b:bd:ff": "ikea"
+    "cc:cc:cc:ff": "ikea"
+    "00:15:8d:00": "xiaomi"
+
+  device_ieee: '{{ trigger.event.data.device_ieee }}'
+  remote: '{{ remotes[device_ieee] }}'
+  manufacturer: '{{ manufacturers[device_ieee[0:11]] }}'
+
+  click_count: |
+    {% if manufacturer in ["xiaomi"] %}
+      {%- set count = trigger.event.data.args.value %}
+      {%- if count == False or count is not number %}
+        {{- 0 }}
+      {%- else %}
+        {{ count|int }}
+      {%- endif %}
+    {%- endif %}
+  command: |
+    {% set command = trigger.event.data.command %}
+    {#- Ignore Xiaomi button release events and Hue long press "step" events. #}
+    {%- if (manufacturer in ["xiaomi"] and click_count|int == 0)
+        or (manufacturer in ["hue"] and command == "step") %}
+      {%- set command = "ignore" %}
+    {%- endif %}
+    {{ command }}
 condition:
-  # Ignore Xiaomi button release events.
-  - '{{ trigger.event.data.args.value != false }}'
+  - '{{ command not in ["ignore"] }}'
 action:
+  # - service: script.toast
+  #   data:
+  #     message: 'manufacturer: {{ manufacturer }}'
+
   - choose:
+      # Unused Remotes
+      #   * Xiaomi Aqara Wireless Mini Switch (square)
+      #   * Ikea On/Off Switch
+      #   * Hue Dimmer Switch
+      - conditions: '{{ remote in ["button_xiaomi_square_unused","remote_ikea_rocker_unused","remote_hue_unused"] }}'
+        sequence:
+          # Store the previous click values and decide if this click was a double click or not.
+          - service: script.zha_store_click
+            data_template:
+              device: '{{ trigger.event.data.device_ieee }}'
+              command: '{{ trigger.event.data.command }}'
+
+          # Delay 0.5 second to allow for a second click to cancel the second action.
+          - delay:
+              seconds: '{{ delay_seconds|float }}'
+
+          - service: script.debug
+            data_template:
+              title: '"{{ remote }}" click'
+              message: |
+                command: {{ command }}
+                click_count: {{ click_count }}
+                manufacturer: {{ manufacturer }}
+
+                {{ trigger.event.data }}
+              id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+
       # Printer Power Button
       #   * Xiaomi Mijia Wireless Switch (round)
-      - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
+      #- conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:01:2d:d7:c3" }}'
+      - conditions: '{{ remote == "button_printer_power" }}'
         sequence:
           # Ignore Xiaomi button duplicate event.
           - condition: template
@@ -31,22 +105,9 @@ action:
           - service: switch.toggle
             entity_id: switch.printers
 
-      # Unused
-      #   * Xiaomi Aqara Wireless Mini Switch (square)
-      - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:05:bf:0f" }}'
-        sequence:
-          # - service: script.toast
-          #   data_template:
-          #     message: Xiaomi Aqara Wireless Mini Switch Clicked
-
-          - service: script.debug
-            data_template:
-              message: Xiaomi Aqara Wireless Mini Switch Clicked
-              id: '{{ as_timestamp(now()) }}'
-
       # Bedroom Double Switch
       #   * Xiaomi Double Rockers, Battery Powered
-      - conditions: '{{ trigger.event.data.device_ieee == "00:15:8d:00:02:83:e2:b6" }}'
+      - conditions: '{{ remote == "remote_bedroom_double_rocker" }}'
         sequence:
           # Ignore Xiaomi button duplicate event.
           # - condition: template
@@ -54,32 +115,32 @@ action:
 
           - choose:
               # Single Click: Left
-              - conditions: '{{ trigger.event.data.command == "left_single" }}'
+              - conditions: '{{ command == "left_single" }}'
                 sequence:
                   - service: light.toggle
                     entity_id: light.bedroom
               # Single Click: Right
-              - conditions: '{{ trigger.event.data.command == "right_single" }}'
+              - conditions: '{{ command == "right_single" }}'
                 sequence:
                   - service: light.toggle
                     entity_id: light.brian
               # Single Click: Both
-              - conditions: '{{ trigger.event.data.command == "both_single" }}'
+              - conditions: '{{ command == "both_single" }}'
                 sequence:
                   - service: light.toggle
                     entity_id: light.glowforge
               # Double Click: Left
-              - conditions: '{{ trigger.event.data.command == "left_double" }}'
+              - conditions: '{{ command == "left_double" }}'
                 sequence:
                   - service: switch.toggle
                     entity_id: switch.sound_machine
               # Double Click: Right
-              - conditions: '{{ trigger.event.data.command == "right_double" }}'
+              - conditions: '{{ command == "right_double" }}'
                 sequence:
                   - service: switch.toggle
                     entity_id: switch.bedroom_fan
               # Double Click: Both
-              - conditions: '{{ trigger.event.data.command == "both_double" }}'
+              - conditions: '{{ command == "both_double" }}'
                 sequence:
                   - service: switch.toggle
                     entity_id:
@@ -88,184 +149,198 @@ action:
 
       # Family Room 5 button remote
       #   * IKEA Tradfri Remote Control
-      - conditions: '{{ trigger.event.data.device_ieee == "ec:1b:bd:ff:fe:23:9c:ee" }}'
+      - conditions: '{{ remote == "remote_family_room" }}'
         sequence:
-          choose:
-            # Button: Power (middle)
-            - conditions:
-                - condition: template
-                  value_template: '{{ trigger.event.data.command == "toggle" }}'
-              sequence:
-                # Store the previous click values and decide if this click was a double click or not.
-                - service: script.zha_store_click
-                  data_template:
-                    device: '{{ trigger.event.data.device_ieee }}'
-                    command: '{{ trigger.event.data.command }}'
+          # Store the previous click values and decide if this click was a double click or not.
+          - service: script.zha_store_click
+            data_template:
+              device: '{{ device_ieee }}'
+              command: '{{ command }}'
 
-                - choose:
-                    # 2 clicks
-                    - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
-                      sequence:
-                        # Delay 0.5 second to allow for a second click to cancel the second action.
-                        - delay:
-                            seconds: 0.5
-                        
-                        - service: switch.toggle
-                          entity_id: switch.tv_family_room
+          # Retrieve the current click count from storage.
+          - variables:
+              click_count: '{{ states("input_text.zha_click").split(",")[3]|int }}'
 
-                    # 3 clicks
-                    - conditions: '{{ 3 == states("input_text.zha_click").split(",")[3]|int }}'
-                      sequence:
-                        # Delay 0.5 second to allow for a second click to cancel the third action.
-                        - delay:
-                            seconds: 0.5
-                        
-                        - choose:
-                            # The door us locked
-                            - conditions: '{{ states("lock.front_door")|lower|trim == "locked" }}'
-                              sequence:
-                                - service: lock.unlock
-                                  entity_id: lock.front_door
-                                
-                                - service: input_boolean.turn_on
-                                  entity_id: input_boolean.leave_unlocked
+          - choose:
+              # Button: Power (middle)
+              - conditions:
+                  - condition: template
+                    value_template: '{{ command == "toggle" }}'
+                sequence:
+                  - choose:
+                      # 2 clicks
+                      - conditions: '{{ click_count|int == 2 }}'
+                        sequence:
+                          # Delay 0.5 second to allow for a second click to cancel the second action.
+                          - delay:
+                              seconds: '{{ delay_seconds|float }}'
+                          
+                          - service: switch.toggle
+                            entity_id: switch.tv_family_room
 
-                          # The door is unlocked
-                          default:
-                            - service: input_boolean.turn_off
-                              entity_id: input_boolean.leave_unlocked
-                            
-                            - service: lock.lock
-                              entity_id: lock.front_door
+                      # 3 clicks
+                      - conditions: '{{ click_count|int == 3 }}'
+                        sequence:
+                          # Delay 0.5 second to allow for a second click to cancel the third action.
+                          - delay:
+                              seconds: '{{ delay_seconds|float }}'
+                          
+                          - choose:
+                              # The door us locked
+                              - conditions: '{{ states("lock.front_door")|lower|trim == "locked" }}'
+                                sequence:
+                                  - service: lock.unlock
+                                    entity_id: lock.front_door
+                                  
+                                  - service: input_boolean.turn_on
+                                    entity_id: input_boolean.leave_unlocked
 
-                    # 4 clicks
-                    - conditions: '{{ 4 == states("input_text.zha_click").split(",")[3]|int}}'
-                      sequence:
-                        # Delay 0.5 second to allow for a second click to cancel the third action.
-                        #- delay:
-                        #    seconds: 0.5
-                        
-                        - service: input_boolean.toggle
-                          entity_id: input_boolean.guest_mode
+                            # The door is unlocked
+                            default:
+                              - service: input_boolean.turn_off
+                                entity_id: input_boolean.leave_unlocked
+                              
+                              - service: lock.lock
+                                entity_id: lock.front_door
 
-                  # Single Click
-                  default:
-                    # Delay 0.5 second to allow for a second click to cancel the first action.
-                    - delay:
-                        seconds: 0.5
+                      # 4 clicks
+                      - conditions: '{{ click_count|int == 4 }}'
+                        sequence:
+                          # Delay 0.5 second to allow for a second click to cancel the third action.
+                          #- delay:
+                          #    seconds: '{{ delay_seconds|float }}'
+                          
+                          - service: input_boolean.toggle
+                            entity_id: input_boolean.guest_mode
 
-                    # Toggle the fan.
-                    - service: fan.toggle
-                      entity_id: fan.family_room
-                      
-            # Single Click: Brightness Up (top)
-            - conditions: '{{ trigger.event.data.command == "step_with_on_off" }}'
-              sequence:
-                # Store the previous click values and decide if this click was a double click or not.
-                - service: script.zha_store_click
-                  data_template:
-                    device: '{{ trigger.event.data.device_ieee }}'
-                    command: '{{ trigger.event.data.command }}'
+                    # Single Click
+                    default:
+                      # Delay 0.5 second to allow for a second click to cancel the first action.
+                      - delay:
+                          seconds: '{{ delay_seconds|float }}'
 
-                - choose:
-                    # Double click
-                    - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
-                      sequence:
-                        # Delay 0.5 second to allow for a second click to cancel the second action.
-                        - delay:
-                            seconds: 0.5
+                      # Toggle the fan.
+                      - service: fan.toggle
+                        entity_id: fan.family_room
 
-                        - service: light.turn_on
-                          data:
+              # Single Click: Brightness Up (top)
+              - conditions: '{{ command == "step_with_on_off" }}'
+                sequence:
+                  - choose:
+                      # Double click
+                      - conditions: '{{ click_count|int == 2 }}'
+                        sequence:
+                          # Delay 0.5 second to allow for a second click to cancel the second action.
+                          - delay:
+                              seconds: '{{ delay_seconds|float }}'
+
+                          - service: light.turn_on
+                            data:
+                              entity_id: light.table_lamp
+                              brightness_pct: 100
+
+                    # Single Click
+                    default:
+                      # Delay 0.5 second to allow for a second click to cancel the first action.
+                      - delay:
+                          seconds: '{{ delay_seconds|float }}'
+                      - service: light.turn_on
+                        data:
+                          entity_id: light.family_room
+                          brightness_pct: 100
+
+              # Single Click: Brightness down (bottom)
+              - conditions: '{{ command == "step" }}'
+                sequence:
+                  - choose:
+                      # Double click
+                      - conditions: '{{ click_count|int == 2}}'
+                        sequence:
+                          # Delay 0.5 second to allow for a second click to cancel the second action.
+                          - delay:
+                              seconds: '{{ delay_seconds|float }}'
+
+                          - service: light.turn_off
                             entity_id: light.table_lamp
-                            brightness_pct: 100
 
-                  # Single Click
-                  default:
-                    # Delay 0.5 second to allow for a second click to cancel the first action.
-                    - delay:
-                        seconds: 0.5
-                    - service: light.turn_on
-                      data:
-                        entity_id: light.family_room
-                        brightness_pct: 100
+                    # Single Click
+                    default:
+                      # Delay 0.5 second to allow for a second click to cancel the first action.
+                      - delay:
+                          seconds: '{{ delay_seconds|float }}'
+                      - service: light.turn_off
+                        entity_id:
+                          - light.family_room
+                          - light.table_lamp
 
-            # Single Click: Brightness down (bottom)
-            - conditions: '{{ trigger.event.data.command == "step" }}'
-              sequence:
-                # Store the previous click values and decide if this click was a double click or not.
-                - service: script.zha_store_click
-                  data_template:
-                    device: '{{ trigger.event.data.device_ieee }}'
-                    command: '{{ trigger.event.data.command }}'
+              # Single Click: Arrow left (left)
+              - conditions: '{{ command == "press"
+                            and trigger.event.data.args[0]|int == 256 }}'
+                sequence:
+                  - service: light.turn_on
+                    data:
+                      entity_id: light.family_room_floor_lamp
+                      brightness_pct: 100
+              # Single Click: Arrow right (right)
+              - conditions: '{{ command == "press"
+                            and trigger.event.data.args[0]|int == 257 }}'
+                sequence:
+                  - service: light.turn_off
+                    entity_id: light.family_room_floor_lamp
 
-                - choose:
-                    # Double click
-                    - conditions: '{{ 2 == states("input_text.zha_click").split(",")[3]|int }}'
-                      sequence:
-                        # Delay 0.5 second to allow for a second click to cancel the second action.
-                        - delay:
-                            seconds: 0.5
-
-                        - service: light.turn_off
-                          entity_id: light.table_lamp
-
-                  # Single Click
-                  default:
-                    # Delay 0.5 second to allow for a second click to cancel the first action.
-                    - delay:
-                        seconds: 0.5
-                    - service: light.turn_off
+              # Hold: Brightness Up (top)
+              - conditions: '{{ command == "move" }}'
+                sequence:
+                  - service: light.turn_on
+                    data:
                       entity_id:
                         - light.family_room
                         - light.table_lamp
+                      brightness_step_pct: "-20"
+              # Hold: Brightness down (bottom)
+              - conditions: '{{ command == "move_with_on_off" }}'
+                sequence:
+                  - service: light.turn_on
+                    data:
+                      entity_id:
+                        - light.family_room
+                        - light.table_lamp
+                      brightness_step_pct: "20"
+              # Hold: Arrow left (left)
+              - conditions: '{{ command == "hold"
+                            and trigger.event.data.args[0]|int == 3329 }}'
+                sequence:
+                  - service: light.turn_on
+                    data:
+                      entity_id: light.family_room_floor_lamp
+                      brightness_step_pct: "-20"
+              # Hold: Arrow right (right)
+              - conditions: '{{ command == "hold"
+                            and trigger.event.data.args[0]|int == 3328 }}'
+                sequence:
+                  - service: light.turn_on
+                    data:
+                      entity_id: light.family_room_floor_lamp
+                      brightness_step_pct: "20"
 
-            # Single Click: Arrow left (left)
-            - conditions: '{{ trigger.event.data.command == "press"
-                          and trigger.event.data.args[0]|int == 256 }}'
-              sequence:
-                - service: light.turn_on
-                  data:
-                    entity_id: light.family_room_floor_lamp
-                    brightness_pct: 100
-            # Single Click: Arrow right (right)
-            - conditions: '{{ trigger.event.data.command == "press"
-                          and trigger.event.data.args[0]|int == 257 }}'
-              sequence:
-                - service: light.turn_off
-                  entity_id: light.family_room_floor_lamp
+  - choose:
+    - conditions: '{{ debug_output == True }}'
+      sequence:
+        - service: script.debug
+          data_template:
+            title: '"{{ remote }}" click'
+            message: |
+              command: {{ command }}
+              click_count: {{ click_count }}
+              manufacturer: {{ manufacturer }}
 
-            # Hold: Brightness Up (top)
-            - conditions: '{{ trigger.event.data.command == "move" }}'
-              sequence:
-                - service: light.turn_on
-                  data:
-                    entity_id:
-                      - light.family_room
-                      - light.table_lamp
-                    brightness_step_pct: "-20"
-            # Hold: Brightness down (bottom)
-            - conditions: '{{ trigger.event.data.command == "move_with_on_off" }}'
-              sequence:
-                - service: light.turn_on
-                  data:
-                    entity_id:
-                      - light.family_room
-                      - light.table_lamp
-                    brightness_step_pct: "20"
-            # Hold: Arrow left (left)
-            - conditions: '{{ trigger.event.data.command == "hold"
-                          and trigger.event.data.args[0]|int == 3329 }}'
-              sequence:
-                - service: light.turn_on
-                  data:
-                    entity_id: light.family_room_floor_lamp
-                    brightness_step_pct: "-20"
-            # Hold: Arrow right (right)
-            - conditions: '{{ trigger.event.data.command == "hold"
-                          and trigger.event.data.args[0]|int == 3328 }}'
-              sequence:
-                - service: light.turn_on
-                  data:
-                    entity_id: light.family_room_floor_lamp
-                    brightness_step_pct: "20"
+              {{ trigger.event.data }}
+            id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+
+  # Clear previous click values.
+  - delay:
+      seconds: '{{ delay_seconds * 2 }}'
+  - service: script.zha_store_click
+    data_template:
+      device: ''
+      command: ''
