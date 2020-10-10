@@ -190,3 +190,31 @@
   - service: shopping_list.add_item
     data: {}
   mode: single
+- id: '1602281671100'
+  alias: 'Bedroom Lights: turn off all lights when switched off'
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_off
+    device_id: e250865f011311eba1ae472e94fb9889
+    entity_id: light.bedroom
+    domain: light
+  condition: []
+  action:
+  - type: turn_off
+    device_id: 4f2fbaafac2446c2b58d0bc0969a661f
+    entity_id: light.glowforge
+    domain: light
+  - type: turn_off
+    device_id: 789732c26297462f8f7ebc624c9394ee
+    entity_id: light.brian1
+    domain: light
+  - type: turn_off
+    device_id: f23c6c2806a045899047ea62f07f35c3
+    entity_id: light.brian2
+    domain: light
+  - type: turn_off
+    device_id: d77f02df805043fc8eb0896488c2385a
+    entity_id: light.brian3
+    domain: light
+  mode: single
