@@ -32,18 +32,18 @@ sequence:
             entity_id: script.update_lights_on
 
   - choose:
-    # Use Alexa Media Notify when the target is an Alexa device.
-    - conditions:
-        - '{{ media_player.startswith("media_player.alexa_") }}'
-      sequence:
-        - service: notify.alexa_media
-          data_template:
-            data:
-              type: announce
-              method: all
-            target: '{{ media_player }}'
-            title: '{{ title }}'
-            message: '{{ message }}'
+      # Use Alexa Media Notify when the target is an Alexa device.
+      - conditions:
+          - '{{ media_player.startswith("media_player.alexa_") }}'
+        sequence:
+          - service: notify.alexa_media
+            data_template:
+              data:
+                type: announce
+                method: all
+              target: '{{ media_player }}'
+              title: '{{ title }}'
+              message: '{{ message }}'
 
     # Use the Alexa Notification service when the target is an Echo device.
     default:
