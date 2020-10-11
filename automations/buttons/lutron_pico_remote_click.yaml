@@ -60,18 +60,18 @@ condition:
     value_template: '{{ command != "release" }}'
 action:
   - choose:
-    - conditions: '{{ debug_output == True }}'
-      sequence:
-        - service: script.debug
-          data_template:
-            title: '"{{ remote }}" click'
-            message: |
-              area: {{ area }}
-              remote: {{ remote }}
+      - conditions: '{{ debug_output == True }}'
+        sequence:
+          - service: script.debug
+            data_template:
+              title: '"{{ remote }}" click'
+              message: |
+                area: {{ area }}
+                remote: {{ remote }}
 
-              device: {{ device }}
-              command: {{ command }}
-          #id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+                device: {{ device }}
+                command: {{ command }}
+            #id: '{{ remote ~"_"~ as_timestamp(now()) }}'
 
   - choose:
       - conditions: '{{ command in ["on","off"] and device != "" }}'
