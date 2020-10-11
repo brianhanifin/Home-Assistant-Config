@@ -9,18 +9,103 @@ trigger:
     - sensor.entry_remote
     - sensor.play_room_1_remote
     - sensor.play_room_2_remote
+variables:
+  debug_output: False
+
+  area: '{{ trigger.to_state.attributes.area_name|lower|trim|replace(" ","_")|replace("playroom","play_room") }}'
+  button: '{{ trigger.to_state.state }}'
+  remote: '{{ trigger.to_state.entity_id|replace("sensor.","")|replace("_remote","") }}'
+
+  commands:
+    "0": "release"
+    "1": "on"
+    "4": "off"
+    "2": "middle"
+    "8": "step_up"
+    "16": "step_down"
+  command: '{{ commands[button]|default("") }}'
+
+  devices:
+    dining_room:
+      "on": "light.dining_room"
+      "off": "light.dining_room"
+      middle: "group.kitchen"
+      step_up: "light.dining_room"
+      step_down: "light.dining_room"
+    entry:
+      "on": "light.entry"
+      "off": "light.entry"
+      middle: ""
+      step_up: "light.entry"
+      step_down: "light.entry"
+
+    play_room_1:
+      "on": "light.play_room"
+      "off": "group.play_room_lights"
+      middle: "light.play_room_floor_lamp"
+      step_up: "group.play_room_lights"
+      step_down: "group.play_room_lights"
+
+    play_room_2:
+      "on": "light.play_room"
+      "off": "group.garage_entry_lights"
+      middle: "light.garage_entry"
+      step_up: "group.play_room_lights"
+      step_down: "group.play_room_lights"
+
+  device: '{{ devices[remote][command]|default("") }}'
+
 condition:
   - condition: template
-    value_template: "{{ trigger.to_state.state != '0' }}"
+    value_template: '{{ command != "release" }}'
 action:
-  # - service: persistent_notification.create
-  #   data_template:
-  #     title: "lutron_pico_remote_click"
-  #     message: "{{ trigger.to_state }}"
+  - choose:
+    - conditions: '{{ debug_output == True }}'
+      sequence:
+        - service: script.debug
+          data_template:
+            title: '"{{ remote }}" click'
+            message: |
+              area: {{ area }}
+              remote: {{ remote }}
 
-  #buttons: 0=none, 1=on, 4=off, 8=dim_up, 16=dim_down, 2=preset
-  - service: script.lutron_pico_button_handler
-    data_template:
-      remote: "{{ trigger.to_state.entity_id }}"
-      button: "{{ trigger.to_state.state }}"
-      area:   "{{ trigger.to_state.attributes.area_name }}"
+              device: {{ device }}
+              command: {{ command }}
+          #id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+
+  - choose:
+      - conditions: '{{ command in ["on","off"] and device != "" }}'
+        sequence:
+          - service: 'homeassistant.turn_{{ command }}'
+            data:
+              entity_id: '{{ device }}'
+
+          # Enable circadian lighting when turned off.
+          - delay:
+              seconds: 5
+          - service: homeassistant.turn_on
+            data:
+              entity_id: 'group.circadian_lighting_{{ area }}'
+
+      - conditions: '{{ command == "middle" and device != "" }}'
+        sequence:
+          - service: 'homeassistant.turn_{{ "off" if is_state(device,"on") else "on" }}'
+            data:
+              entity_id: '{{ device }}'
+
+      - conditions: '{{ command in ["step_up","step_down"] and device != "" }}'
+        sequence:
+          - choose:
+              - conditions: '{{ is_states("group.circadian_lighting_" ~ area,"off") }}'
+                sequence:
+                  # Disable circadian lighting for manual dimming control.
+                  - service: homeassistant.turn_off
+                    data:
+                      entity_id: 'group.circadian_lighting_{{ area }}'
+                  - delay:
+                      seconds: 1
+
+          - service: homeassistant.turn_on
+            data:
+              entity_id: '{{ device }}'
+              brightness_step_pct: '{{ "-" if command == "step_down" }}20'
