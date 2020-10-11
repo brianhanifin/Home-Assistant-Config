@@ -1,0 +1,17 @@
+---
+sequence:
+  - service: mqtt.publish
+    data:
+      topic: "custom/sensor/{{ name }}/state"
+      payload: "{{ state }}"
+      retain: true
+
+  # Only add attributes if they are presence.
+  - choose:
+      - conditions: '{{ attributes != "" }}'
+        sequence:
+          - service: mqtt.publish
+            data:
+              topic: "custom/sensor/{{ name }}/attributes"
+              payload: '{{ attributes }}'
+              retain: true
