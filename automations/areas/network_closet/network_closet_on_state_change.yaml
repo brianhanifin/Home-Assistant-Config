@@ -1,0 +1,17 @@
+---
+alias: Network Closet Door on State Change
+id: network_closet_door_on_state_change
+initial_state: true
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: binary_sensor.network_closet_door
+variables:
+  old_state: '{{ trigger.event.data.old_state.state }}'
+  new_state: '{{ trigger.event.data.new_state.state }}'
+condition:
+  - '{{ old_state != new_state }}'
+action:
+  - service: 'light.turn_{{ "on" if new_state == "on" else "off" }}'
+    entity_id: light.network_closet
