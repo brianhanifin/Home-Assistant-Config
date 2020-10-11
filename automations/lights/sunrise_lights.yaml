@@ -1,0 +1,21 @@
+---
+##############################################
+## Turn certain lights off after sunrise
+##############################################
+alias: Sunrise Lights
+id: sunrise_lights
+initial_state: true
+trigger:
+  - platform: sun
+    event: sunrise
+    offset: '+0:30:00'
+action:
+  # Turn off the night time lights.
+  - service: homeassistant.turn_off
+    data:
+      transition: 5
+      entity_id:
+        - light.entry
+        - light.porch
+        - switch.landscape_lights
+        #- switch.xmas_tree

@@ -10,8 +10,11 @@ trigger:
     entity_id: binary_sensor.family_room_presence
     to: "off"
 action:
-  - service: scene.turn_on
-    entity_id: scene.family_room_lights_off
+  - service: lights.turn_off
+    entity_id:
+      - light.family_room
+      - light.table_lamp
+      - light.family_room_floor_lamp
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:

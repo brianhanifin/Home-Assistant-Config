@@ -2,23 +2,34 @@
 ##############################################
 ## Turn certain lights on at Sunset
 ##############################################
-alias: lights_evening
+alias: Sunset Lights
+id: sunset_lights
 initial_state: true
 trigger:
   - platform: sun
     event: sunset
     offset: "-00:15:00"
 action:
-  - service: scene.turn_on
+  - service: light.turn_on
     data:
-      entity_id: scene.sunset
+      brightness: 255
+      kelvin: 3500
       transition: 5
+      entity_id: light.porch
+
+  - service: light.turn_on
+    data:
+      brightness: 153 # ~60%
+      transition: 5
+      entity_id: light.entry
+
+  - service: switch.turn_on
+    entity_id:
+      - switch.landscape_lights
+      #- switch.xmas_tree
 
   - service: script.turn_on
     entity_id: script.holiday_color_change
-
-  # - service: switch.turn_on
-  #   entity_id: switch.xmas_tree
 
   - service: script.say
     data_template:
