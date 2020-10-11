@@ -1,0 +1,23 @@
+---
+# "Alexa, turn on the lights"
+variables:
+  room: '{{ states("sensor.last_alexa")|replace("media_player.alexa_","") }}'
+  lights:
+    boys_room: "light.boys_wakeup"
+    kitchen: "group.kitchen_lights"
+    #family_room: "group.family_room_lights"
+    garage: "light.laundry"
+    #master_bedroom: "group.bedroom_lights"
+    play_room: "light.play_room, light.play_room_floor_lamp"
+
+  entity_id: '{{ lights[room] }}'
+sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       room: '{{ room }}'
+  #       entity_id: '{{ entity_id }}'
+
+  - service: homeassistant.turn_on
+    data:
+      entity_id: '{{ entity_id }}'
