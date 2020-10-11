@@ -1,21 +1,21 @@
 ---
-alias: Zwave Button Clicks
-id: zwave_button_click
+alias: Open Z-Wave Button Click
+id: ozw_button_click
 initial_state: true
 mode: parallel
 #mode: restart # Force restart to pickup double click
 #max_exceeded: silent
 trigger:
-  # GE Dimmers
-  # - platform: event
-  #   event_type: zwave.node_event
   # Inovelli dimmers
   - platform: event
     event_type: ozw.scene_activated
+  # GE Dimmers
+  # - platform: event
+  #   event_type: zwave.node_event
 action:
   # - service: persistent_notification.create
   #   data_template:
-  #     title: "zwave_button_click"
+  #     title: "ozw_button_clicks"
   #     message: 'data:{{ trigger.event.data }}'
 
   - choose:
@@ -26,11 +26,6 @@ action:
             value_template: '{{ trigger.event.data.node_id|trim == "3" }}'
         # click: 1x, 2x, 3x, 4x, 5x
         sequence:
-          # - service: persistent_notification.create
-          #   data_template:
-          #     title: "zwave_button_click"
-          #     message: "Family Room Dimmer!!!"
-
           - choose:
             # 1x: "Normal" Lighting
               - conditions:
