@@ -1,0 +1,36 @@
+---
+##############################################
+## Bed Room Light Automations
+##############################################
+alias: Bedroom Light on State Change
+id: bedroom_light_on_state_change
+initial_state: true
+mode: single
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: light.bedroom
+variables:
+  light_sync_enabled: '{{ states("input_boolean.bedroom_light_sync") }}'
+
+  old_state: '{{ trigger.event.data.old_state.state }}'
+  new_state: '{{ trigger.event.data.new_state.state }}'
+condition:
+  # Skip if sync is disabled or the on/off state hasn't changed.
+  - '{{
+        light_sync_enabled == "on"
+        and old_state != new_state
+      }}'
+action:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       old_state: {{ old_state }}
+  #       new_state: {{ new_state }}
+
+  - service: 'light.turn_{{ "on" if new_state == "on" else "off" }}'
+    entity_id:
+      - light.brian
+      - light.glowforge
+
