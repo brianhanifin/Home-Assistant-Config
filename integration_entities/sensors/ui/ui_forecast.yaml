@@ -1,0 +1,9 @@
+---
+# Pre-render text for the UI to lighten the browser's workload.
+platform: template
+sensors:
+  ui_forecast:
+    value_template: |
+      <b><ha-icon icon={{ state_attr("sensor.today_icon", "icon") }}></ha-icon> {{ states("sensor.santee_temperature") }}°</b> currently
+      {{ state_attr("weather.santee", "forecast")[0]["temperature"]|round }}° high, {{ state_attr("weather.santee", "forecast")[0]["templow"]|round }}° low
+

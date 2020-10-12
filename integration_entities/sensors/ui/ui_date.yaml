@@ -1,0 +1,9 @@
+---
+# Pre-render text for the UI to lighten the browser's workload.
+platform: template
+sensors:
+  ui_date:
+    value_template: |
+      {%- set update_entity = states("sensor.date") %}
+      <b>{{ now().strftime("%A") }}</b>
+      {{ now().strftime("%B") + ", <b>" + now().strftime("%d") + "</b>" }}

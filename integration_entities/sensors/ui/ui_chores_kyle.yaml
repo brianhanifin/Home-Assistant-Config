@@ -1,0 +1,12 @@
+---
+# Pre-render text for the UI to lighten the browser's workload.
+platform: template
+sensors:
+  ui_chores_kyle:
+    value_template: |
+      {% set name = "Kyle" %}
+      {% if name == states("input_select.responsibility_dishes_week") -%}
+        <ha-icon icon="mdi:silverware-fork-knife"></ha-icon> <b> {{ name }}</b>
+      {% else -%}
+        <b>{{ name }}</b><ha-icon icon="mdi:trash-can"></ha-icon><ha-icon icon="mdi:washing-machine"></ha-icon>
+      {% endif -%}
