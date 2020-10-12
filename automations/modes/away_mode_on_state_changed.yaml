@@ -1,0 +1,28 @@
+---
+alias: Away Mode
+id: away_mode_on_state_change
+initial_state: true
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: input_boolean.away_mode
+variables:
+  old_state: '{{ trigger.event.data.old_state.state }}'
+  new_state: '{{ trigger.event.data.new_state.state }}'
+condition:
+  - '{{ old_state != new_state }}'
+action:
+  - choose:
+    - conditions: '{{ new_state == "on" }}'
+      sequence:
+        # Close the garage door (if it was inadvertently left open).
+        - choose:
+            - conditions: '{{ states("cover.garage_door") != "closed" }}'
+              sequence:
+                - service: cover.close_cover
+                  entity_id: cover.garage_door
+
+        # Run the shutdown/goodbye routine (without the verbal confirmation).
+        - service: script.turn_on
+          entity_id: script.shutdown_routine

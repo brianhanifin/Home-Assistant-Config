@@ -11,6 +11,11 @@ condition:
   - condition: state
     entity_id: input_boolean.guest_mode
     state: "off"
+
+  # Only in the morning.
+  - condition: time
+    after: '06:00:00'
+    before: '12:00:00'
 action:
   # Family Room: Only if the "Auto Lights" are enabled.
   - choose:

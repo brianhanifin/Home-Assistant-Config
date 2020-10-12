@@ -1,0 +1,67 @@
+---
+alias: Guest Mode
+id: guest_mode_on_state_change
+initial_state: true
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: input_boolean.guest_mode
+variables:
+  old_state: '{{ trigger.event.data.old_state.state }}'
+  new_state: '{{ trigger.event.data.new_state.state }}'
+
+  lights_on: |
+    {% set group_id = 'group.guest_mode_lights' -%}
+    {%- set entities = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | join(', ') -%}
+    {{ "none" if "light." not in entities else entities }}
+  brightness: '{{ 255 if new_state == "on" else states("sensor.circadian_values")|round }}'
+  kelvin: '{{ 4000 if new_state == "on" else state_attr("sensor.circadian_values","colortemp")|round }}'
+
+  speech: |
+    {% if new_state == "on" %}
+      {{ [
+        "Guest Mode has been enabled for the rest of the day.",
+        "Switching to guest mode! ",
+        "I have enabled guest mode for the rest of the day. ",
+        "System Guest Mode has been enabled.",
+        "Guest mode enabled.",
+        "Awesome! I will take the rest of the day off.  Guest mode has been enabled.",
+        "Guest Mode enabled.  In other words, Manual Mode engaged.",
+        "Guest mode enabled.  Have Fun!",
+        "Family, Friends and Fun.  Guest mode has been enabled today.",
+        "Guest Mode enabled.  I am still doing stuff behind the scenes but probably will not turn off the lights on you."
+      ] | random }}
+    {% else %}
+      {{ [
+        "Guest Mode has been disabled.",
+        "Guest Mode disabled."
+        ] | random }}
+    {% endif %}
+condition:
+  - '{{ old_state != new_state }}'
+action:
+  - choose:
+      - conditions: '{{ new_state == "on" }}'
+        sequence:
+          # Disable the front door lock countdown.
+          - service: timer.cancel
+            entity_id: timer.front_door_unlocked
+
+    default:
+      # Start a countdown timer to relock the front door.
+      - service: script.start_front_door_lock_countdown
+
+  - service: script.say
+    data_template:
+      message: '{{ speech }}'
+
+  - service: 'switch.turn_{{ "on" if new_state == "off" else "off" }}'
+    data:
+      entity_id: switch.circadian_lighting
+
+  - service: light.turn_on
+    data:
+      entity_id: '{{ lights_on }}'
+      brightness_pct: "{{ brightness }}"
+      kelvin: "{{ kelvin }}"
