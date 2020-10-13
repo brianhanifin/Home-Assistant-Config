@@ -1,7 +1,14 @@
 ---
 variables:
   media_player: !include ../../templates/speech/media_player.yaml
-  speakers: '{{ expand(media_player) | map(attribute="entity_id") | list }}'
+  tts_service: |
+    {%- if "alexa" in media_player %}
+      alexa
+    {%- elif "google" in media_player %}
+      google
+    {%- else %}
+      speaker_group
+    {% endif %}
   briefing: !include ../../templates/speech/briefing.yaml
   title: '{{ title|default("Home Assistant") }}'
 
@@ -31,26 +38,11 @@ sequence:
           - service: script.turn_on
             entity_id: script.update_lights_on
 
-  - choose:
-      # Use Alexa Media Notify when the target is an Alexa device.
-      - conditions:
-          - '{{ media_player.startswith("media_player.alexa_") }}'
-        sequence:
-          - service: notify.alexa_media
-            data_template:
-              data:
-                type: announce
-                method: all
-              target: '{{ media_player }}'
-              title: '{{ title }}'
-              message: '{{ message }}'
-
-    # Use the Alexa Notification service when the target is an Echo device.
-    default:
-      - service: tts.google_cloud_say
-        data:
-          entity_id: '{{ media_player }}'
-          message: '{{ message|striptags }}'
+  - service: 'script.say_{{ tts_service }}'
+    data:
+      media_player: '{{ media_player }}'
+      title: '{{ title }}'
+      message: '{{ message }}'
 
   - service: script.toast
     data:
