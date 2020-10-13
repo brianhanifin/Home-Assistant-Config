@@ -6,80 +6,43 @@ mode: single
 trigger:
   - platform: numeric_state
     entity_id:
+      - sensor.safety_alarm_bedroom_type
       - sensor.safety_alarm_boys_bedroom_type
       - sensor.safety_alarm_craft_room_type
       - sensor.safety_alarm_garage_type
       - sensor.safety_alarm_goez_suite_type
       - sensor.safety_alarm_guest_room_type
-      - sensor.safety_alarm_master_bedroom_type
       - sensor.safety_alarm_stairs_type
     below: 13
+variables:
+  type: '{{ trigger.to_state.state }}'
+  room: '{{ trigger.to_state.name|replace("Safety Alarm: ","")|replace(" Type","") }}'
+
+  alarm_states:
+    "1": "Smoke"
+    "2": "Carbon Monoxide"
+    "12": "Test Button Press"
+  alert_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }}'
+  
+  title: '{{ alert_state }} Detected!'
+  message: '{{ alarm_state }} detected in the {{ room|upper }}.'
 action:
   - service: script.notify_mobile
     data_template:
-      title: >
-        {%-
-          set alarm_states = {
-            "1" : "Smoke",
-            "2" : "Carbon Monoxide",
-            "12" : "Test Button Press"
-          }
-        -%}
-        {%- set type = trigger.to_state.state -%}
-        {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} Detected!
-      message: >
-        {%-
-          set alarm_states = {
-            "1" : "Smoke",
-            "2" : "Carbon Monoxide",
-            "12" : "Test Button Press"
-          }
-        -%}
-        {%- set type = trigger.to_state.state -%}
-        {%- set room = trigger.to_state.name|replace("Safety Alarm: ","")|replace(" Type","") -%}
-        {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} detected in the {{ room|upper }}
+      title: '{{ title }}'
+      message: '{{ message }}'
       who: "brian"
       id: "safety"
 
   - service: script.notify_speech
     data_template:
-      media_player: group.alexa_downstairs
-      message: >
-        {%-
-          set alarm_states = {
-            "1" : "Smoke",
-            "2" : "Carbon Monoxide",
-            "12" : "Test Button Press"
-          }
-        -%}
-        {%- set type = trigger.to_state.state -%}
-        {%- set room = trigger.to_state.name|replace("Safety Alarm: ","")|replace(" Type","") -%}
-        {%- set danger = alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" -%}
-        Safety Alert! ...  {{ danger }} detected in the {{ room }}! ... Safety Alert! ... {{ danger }} detected in the {{ room }}!
+      media_player: group.smart_speakers_downstairs
+      message: '{{ message }}'
 
   - service: script.notify_web
     data_template:
-      title: >
-        {%-
-          set alarm_states = {
-            "1" : "Smoke",
-            "2" : "Carbon Monoxide",
-            "12" : "Test Button Press"
-          }
-        -%}
-        {%- set type = trigger.to_state.state -%}
-        {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} Detected!
-      message: >
-        {%-
-          set alarm_states = {
-            "1" : "Smoke",
-            "2" : "Carbon Monoxide",
-            "12" : "Test Button Press"
-          }
-        -%}
-        {%- set type = trigger.to_state.state -%}
-        {%- set room = trigger.to_state.name|replace("Safety Alarm: ","")|replace(" Type","") -%}
-        {{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }} detected in the {{ room|upper }}
+      title: '{{ title }}'
+      message: '{{ message }}'
       id: "safety"
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
