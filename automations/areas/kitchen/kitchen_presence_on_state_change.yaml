@@ -33,7 +33,7 @@ action:
             entity_id: light.kitchen_cabinet
 
       # Presence timeout turns lights off.
-      - conditions: '{{ both_motion_off == True }}'
+      - conditions: '{{ new_state == "off" and both_motion_off|lower == "true" }}'
         sequence:
           - service: light.turn_off
             entity_id: light.kitchen_cabinet
