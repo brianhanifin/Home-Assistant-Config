@@ -19,16 +19,12 @@ sequence:
       media_content_type: skill
       media_content_id: !secret alexa_actions_skill_id
 
-  - service: mqtt.publish
-    data_template:
-      topic: "homeassistant/storage/last_message/state"
-      retain: true
-      payload: "{{ text|striptags }}"
-  - service: mqtt.publish
-    data_template:
-      topic: "homeassistant/storage/last_message/attributes"
-      retain: true
-      payload: >-
+  # Store Last Message
+  - service: script.store_mqtt_sensor
+    data:
+      name: 'last_message'
+      state: '{{ text|striptags }}'
+      attributes: >-
         {
           "target": "{{ smart_speaker }}",
           "day": "{{ as_timestamp(now())|timestamp_custom('%A %B %-d') }}",

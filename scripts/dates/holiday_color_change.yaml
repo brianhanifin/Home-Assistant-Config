@@ -1,6 +1,20 @@
 ---
 # Color Table - http://www.colorhexa.com/color-names
 variables:
+  holiday_colors:
+    birthday: "Purple"
+    christmas: "Green"
+    easter: "Orchid"
+    fathers: "Orange"
+    halloween: "OrangeRed"
+    marti_gras: "Purple"
+    new_years: "Violet"
+    pi: "Blue"
+    st_patty: "DarkGreen"
+    starwars: "Red"
+    thanksgiving: "Orange"
+    usa: "Blue"
+    valentine: "Crimson"
   holiday_scene: |
     {% set holiday_scene = states('sensor.holiday') -%}
     {%- if holiday_scene is not none and holiday_scene != "" -%}
@@ -20,20 +34,6 @@ variables:
     {%- else -%}
       {{ "standard" }}
     {%- endif %}
-  holiday_colors:
-    birthday: "Purple"
-    christmas: "Green"
-    easter: "Orchid"
-    fathers: "Orange"
-    halloween: "OrangeRed"
-    marti_gras: "Purple"
-    new_years: "Violet"
-    pi: "Blue"
-    st_patty: "DarkGreen"
-    starwars: "Red"
-    thanksgiving: "Orange"
-    usa: "Blue"
-    valentine: "Crimson"
 
   color: '{{ holiday_colors[holiday_scene] }}'
 sequence:
