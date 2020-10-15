@@ -1,0 +1,211 @@
+compact-header:
+  card-mod-theme: compact-header
+  # Header
+  card-mod-root-yaml: |
+    paper-tabs$: |
+      .not-visible {
+        display: none;
+      }
+      #selectionBar {
+        bottom: unset !important;
+      }
+    ha-app-layout$: |
+      /* This corrects top padding for the view. */
+      #contentContainer {
+        /* Change this to 0px if you want the header on the bottom */
+        padding-top: 0 !important;
+      }
+    ha-button-menu$mwc-menu$mwc-menu-surface$: |
+      .mdc-menu-surface {
+        margin: 10px;
+        box-shadow: var(--ha-card-box-shadow, 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12));
+      }
+    .: |
+      /* This hides the unused portion of the header. */
+      app-toolbar {
+        {% if user != "Brian" %}
+        display: none !important;
+        {% endif %}
+        height: 0;
+      }
+      /* This forces background-color and text-color. */
+      .edit-mode, app-header, app-toolbar {
+        background-color: transparent !important;
+        color: var(--primary-text-color) !important;
+      }
+      app-header {
+        top: calc(100vh - 60px) !important;
+        bottom: 0 !important;
+        transform: unset !important;
+      }
+      hui-masonry-view {
+        padding-bottom: 60px !important;
+      }
+      /* This gives the header in edit mode a different look from the standard header. */
+      app-header.edit-mode {
+        border-top: 2px var(--primary-color) solid;
+        padding-top: 2px;
+      }
+      /* Make the color of the plus white instead of black. */
+      #add-view ha-svg-icon {
+        color: #EEE !important;
+      }
+      /* Bring voice button back down */
+      app-toolbar:not([class="edit-mode"]) mwc-icon-button[label] {
+        top: 0;
+        right: calc(48px * 1);
+        z-index: 2;
+        position: absolute;
+      }
+      /* Bring help button back in */
+      a[href="https://www.home-assistant.io/lovelace/"] > mwc-icon-button {
+        right: calc(48px * 2);
+        position: absolute;
+        z-index: 2;
+      }
+      /* Bring close button back in */
+      mwc-icon-button[title="Close"] {
+        top: 0;
+        left: 0;
+        position: absolute;
+        z-index: 2;
+      }
+      /* Bring add view button back in */
+      mwc-icon-button#add-view {
+        position: fixed;
+        right: 48px;
+      }
+
+      /* Bring edit UI overflow menu back in */
+      ha-button-menu {
+        top: 0;
+        right: 0;
+        z-index: 2;
+        position: absolute;
+        /*Uncomment this out to hide the overflow menu
+        display: none;
+        */
+      }
+      /* Hide the title */
+      app-toolbar > [main-title] {
+        display: none;
+      }
+      /* Bring sidebar button back in */
+      ha-menu-button {
+        z-index: 2;
+        top: 24px;
+      }
+      
+      paper-tabs {
+        display: none;
+      }
+      /* When not in edit mode, shrink the left margin */
+      app-toolbar:not(.edit-mode) > div > paper-tabs {
+        margin-left: 6px !important;
+      }
+      
+      /* Make help button have contrast */
+      app-toolbar a {
+        color: var(--primary-text-color) !important;
+      }
+
+      /* Styles for mobile */
+      @media (orientation: portrait) {
+        app-toolbar {
+          display: none !important;
+          height: 0;
+        }
+      }
+
+  card-mod-view: |
+    #view {
+      height: 100vh;
+    }
+
+
+  # Caule Black Purple Glass
+  # Change the value below 8px to 0px to remove the rounded corners
+  ha-card-border-radius: 8px
+  # Place the backgrounds in the folder  config/www/images/backgrounds 
+  lovelace-background: 'center / cover no-repeat fixed url("/hacsfiles/themes/caule-themes-pack-1/purple.jpg")'
+  # Main colors
+  primary-color: "#904eab"
+  light-primary-color: "#c983e4"
+  graph-color: var(--primary-color)
+  primary-background-color: "#0c0c0c"
+  secondary-background-color: var(--primary-background-color)
+  divider-color: "#2c2c2c"
+  disabled-color: "#5b5b5b"
+  # Text colors
+  primary-text-color: "#e5e5e5"
+  secondary-text-color: var(--disabled-color)
+  text-primary-color: "#E5E5E5"
+  disabled-text-color: var(--disabled-color)
+  # Sidebar colors
+  sidebar-icon-color: var(--primary-color)
+  sidebar-text-color: var(--primary-text-color)
+  sidebar-selected-background-color: var(--primary-background-color)
+  sidebar-selected-icon-color: var(--light-primary-color)
+  sidebar-selected-text-color: var(--sidebar-selected-icon-color)
+  # Icons colors
+  state-icon-color: var(--disabled-color)
+  state-icon-active-color: var(--primary-color)
+  state-icon-unavailable-color: var(--primary-background-color)
+  # Settins and colors of Mini Media Player
+  mini-media-player-icon-color: var(--primary-color)
+  mini-media-player-accent-color: var(--primary-color)
+  mini-media-player-progress-height: 8px
+  # Papers slider colors
+  paper-slider-knob-color: var(--primary-color)
+  paper-slider-knob-start-color: var(--paper-slider-knob-color)
+  paper-slider-pin-color: var(--paper-slider-knob-color)
+  paper-slider-active-color: var(--paper-slider-knob-color)
+  paper-slider-container-color: var(--disabled-color)
+  # Labels colors
+  label-badge-background-color: var(--divider-color)
+  label-badge-text-color: var(--primary-text-color)
+  label-badge-red: var(--primary-color)
+  label-badge-blue: var(--light-primary-color)
+  # Cards colors
+  ha-card-background: "rgba(100, 100, 100, 0.15)"
+  paper-card-background-color: var(--ha-card-background)
+  paper-listbox-background-color: var(--primary-background-color)
+  # Toggle button colors
+  paper-toggle-button-checked-button-color: var(--primary-color)
+  paper-toggle-button-checked-bar-color: var(--light-primary-color)
+  paper-toggle-button-unchecked-button-color: var(--disabled-color)
+  paper-toggle-button-unchecked-bar-color: var(--primary-background-color)
+  # Switch colors
+  switch-checked-color: var(--paper-toggle-button-checked-button-color)
+  switch-unchecked-button-color: var(--paper-toggle-button-unchecked-button-color)
+  switch-unchecked-color: var(--paper-toggle-button-unchecked-bar-color)
+  switch-unchecked-track-color: var(--paper-toggle-button-unchecked-bar-color)
+  # Table colors
+  table-row-background-color: var(--divider-color)
+  table-row-alternative-background-color: var(--secondary-background-color)
+  card-background-color: var(--primary-background-color)
+  #Animated icons
+  weather-icon-clear-night: url("/hacsfiles/themes/caule-themes-pack-1/clear-night.svg")
+  weather-icon-cloudy: url("/hacsfiles/themes/caule-themes-pack-1/cloudy.svg")
+  weather-icon-fog: url("/hacsfiles/themes/caule-themes-pack-1/fog.svg")
+  weather-icon-lightning: url("/hacsfiles/themes/caule-themes-pack-1/lightning.svg")
+  weather-icon-lightning-rainy: url("/hacsfiles/themes/caule-themes-pack-1/lightning-rainy.svg")
+  weather-icon-partlycloudy: url("/hacsfiles/themes/caule-themes-pack-1/partlycloudy.svg")
+  weather-icon-pouring: url("/hacsfiles/themes/caule-themes-pack-1/pouring.svg")
+  weather-icon-rainy: url("/hacsfiles/themes/caule-themes-pack-1/rainy.svg")
+  weather-icon-hail: url("/hacsfiles/themes/caule-themes-pack-1/hail.svg")
+  weather-icon-snowy: url("/hacsfiles/themes/caule-themes-pack-1/snowy.svg")
+  weather-icon-snowy-rainy: url("/hacsfiles/themes/caule-themes-pack-1/snowy-rainy.svg")
+  weather-icon-sunny: url("/hacsfiles/themes/caule-themes-pack-1/sunny.svg")
+  weather-icon-windy: url("/hacsfiles/themes/caule-themes-pack-1/windy.svg")
+  weather-icon-windy-variant: url("/hacsfiles/themes/caule-themes-pack-1/windy-variant.svg")
+  weather-icon-exceptional: url("/hacsfiles/themes/caule-themes-pack-1/exceptional.svg")
+  # Shadown
+  ha-card-box-shadow: 'inset 0px 0px 0px 0px var(--divider-color)'
+  # HACS
+  hacs-badge-color: var(--primary-color)
+  link-text-color: var(--disabled-color)
+  markdown-code-background-color: var(--divider-color)
+  google-blue-500: var(--primary-color)
+  accent-color: var(--light-primary-color)
+  hacs-chip-color: var(--primary-color)
