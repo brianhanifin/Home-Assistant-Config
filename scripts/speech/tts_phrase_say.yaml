@@ -1,6 +1,23 @@
 ---
 variables:
-  media_player: !include ../../templates/speech/media_player_rooms.yaml
+  media_player: '{{ media_player if media_player is defined else states("input_select.tts_phrase_room") }}'
+  room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","") }}'
+  smart_speakers:
+    bedroom: "media_player.google_bedroom"
+    boys_bedroom: "media_player.alexa_boys_room"
+    boys_sleeping: "group.smart_speakers_boys_sleeping"
+    downstairs: "group.smart_speakers_downstairs"
+    kitchen/garage: "group.smart_speakers_welcome"
+    kitchen: "media_player.alexa_kitchen"
+    family_room: "media_player.google_family_room"
+    garage: "media_player.alexa_garage"
+    guest_room: "media_player.alexa_guest_room"
+    play_room: "media_player.google_play_room"
+    upstairs: "group.smart_speakers_upstairs"
+    upstairs_bathroom: "media_player.alexa_upstairs_bathroom"
+
+  smart_speaker: '{{ smart_speakers[room] }}'
+
   selected_phrase: |
     {%- if selected_phrase|trim not in ("None","") %}
       {{ selected_phrase|trim }}
@@ -32,6 +49,6 @@ sequence:
 
   - service: script.notify_speech
     data_template:
-      media_player: '{{ media_player }}'
+      media_player: '{{ smart_speaker }}'
       message: '{{ message }}'
       voice: '{{ voice }}'

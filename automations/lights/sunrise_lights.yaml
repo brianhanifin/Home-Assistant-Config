@@ -11,11 +11,15 @@ trigger:
     offset: '+0:30:00'
 action:
   # Turn off the night time lights.
-  - service: homeassistant.turn_off
+  - service: light.turn_off
     data:
       transition: 5
       entity_id:
-        - light.entry
+        - light.home_entry
         - light.porch
+  
+  - service: switch.turn_off
+    data:
+      entity_id:
         - switch.landscape_lights
         #- switch.xmas_tree
