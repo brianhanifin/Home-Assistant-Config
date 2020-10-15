@@ -3,7 +3,6 @@ alias: Announce Plant Info
 sequence:
   - service: script.notify_speech
     data_template:
-      entity_id: !include ../../templates/speech/media_player.yaml
       message: >
         {% if is_state_attr('sensor.plant_problems','water_number',0) %}
         No plants need watering.

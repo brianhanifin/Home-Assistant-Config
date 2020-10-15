@@ -6,13 +6,12 @@ sequence:
   # These lights are always turned off for the Goodbye routine,
   # but not always for the Goodnight routine.
   - service: homeassistant.turn_off
-    entity_id:
-      - group.bedroom_lights
+    entity_id: group.bedroom_lights
 
   # Say goodnight.
   - service: script.say
     data:
-      media_player: !include ../../templates/speech/media_player_requestor.yaml
+      media_player: 'group.smart_speakers_downstairs'
 
   # Delay locking the front door slightly in case we are leaving by it.
   - delay:

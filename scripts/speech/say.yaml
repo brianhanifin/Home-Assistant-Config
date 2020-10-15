@@ -1,6 +1,13 @@
 ---
 variables:
-  media_player: !include ../../templates/speech/media_player.yaml
+  media_player: |
+    {% if media_player is defined %}
+      {{ media_player }}
+    {%- elif states('sensor.last_alexa') is string -%}
+      {{ states('sensor.last_alexa') }}
+    {%- else -%}
+      media_player.alexa_kitchen
+    {%- endif -%}
   tts_service: |
     {%- if "alexa" in media_player %}
       alexa
