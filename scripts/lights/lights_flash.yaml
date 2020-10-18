@@ -1,0 +1,52 @@
+---
+variables:
+  number_of_flashes: 3
+  delay_between_flashes: 1
+  flash_transition_delay: 0.5
+
+  is_hue: '{{ state_attr(entity_id,"effect_list") is sequence }}'
+sequence:
+  # Store the current state of the light.
+  - service: scene.create
+    data:
+      scene_id: lights_flash_snapshot
+      snapshot_entities: '{{ entity_id }}'
+
+  - repeat:
+      count: '{{ number_of_flashes }}'
+      sequence:
+        # Use Hue built in flash when available.
+        - choose:
+            - conditions:
+                - '{{ is_hue }}'
+              sequence:
+                - service: light.turn_on
+                  data_template:
+                    entity_id: "{{ entity_id }}"
+                    flash: "short"
+
+          default:
+            - service: light.turn_on
+              data_template:
+                entity_id: "{{ entity_id }}"
+                transition: 0
+
+            - delay:
+                seconds: '{{ flash_transition_delay }}'
+
+            - service: light.turn_off
+              data_template:
+                entity_id: "{{ entity_id }}"
+                transition: 0
+
+        # Delay between flashes.
+        - delay:
+            seconds: '{{ delay_between_flashes }}'
+
+  # Restore the previous state of the porch light.
+  - delay:
+      seconds: 2
+  - service: scene.turn_on
+    data:
+      entity_id: scene.lights_flash_snapshot
+      transition: 5
