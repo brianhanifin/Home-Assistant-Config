@@ -1,0 +1,36 @@
+---
+alias: Compact Header Mode
+id: compact_header_mode_on_state_change
+initial_state: true
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: input_boolean.compact_header_mode
+variables:
+  old_state: '{{ trigger.event.data.old_state.state }}'
+  new_state: '{{ trigger.event.data.new_state.state }}'
+
+  theme: '{{ "Caule Black Purple Glass" if new_state == "off" else "compact-header" }}'
+condition:
+  - '{{ old_state != new_state }}'
+action:
+  - service: script.toast
+    data:
+      message: '{{ theme }}'
+
+  # - service: browser_mod.command
+  #   data:
+  #     command: set-theme
+  #     name: '{{ theme }}'
+  #     deviceID:
+  #       - this
+
+  - service: frontend.set_theme
+    data_template:
+      name: '{{ theme }}'
+
+  - delay:
+      seconds: 0.5
+
+  - service: browser_mod.lovelace_reload

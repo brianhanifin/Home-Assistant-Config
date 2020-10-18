@@ -6,14 +6,16 @@ compact-header:
       .not-visible {
         display: none;
       }
+      /*
       #selectionBar {
         bottom: unset !important;
       }
+      */
     ha-app-layout$: |
       /* This corrects top padding for the view. */
       #contentContainer {
         /* Change this to 0px if you want the header on the bottom */
-        padding-top: 0 !important;
+        padding-top: 48px !important;
       }
     ha-button-menu$mwc-menu$mwc-menu-surface$: |
       .mdc-menu-surface {
@@ -30,9 +32,11 @@ compact-header:
       }
       /* This forces background-color and text-color. */
       .edit-mode, app-header, app-toolbar {
-        background-color: transparent !important;
+        background-color: var(--primary-background-color) !important;
         color: var(--primary-text-color) !important;
       }
+
+      /*
       app-header {
         top: calc(100vh - 60px) !important;
         bottom: 0 !important;
@@ -41,10 +45,12 @@ compact-header:
       hui-masonry-view {
         padding-bottom: 60px !important;
       }
+      */
+
       /* This gives the header in edit mode a different look from the standard header. */
       app-header.edit-mode {
-        border-top: 2px var(--primary-color) solid;
-        padding-top: 2px;
+        border-bottom: 2px var(--primary-color) solid;
+        padding-bottom: 2px;
       }
       /* Make the color of the plus white instead of black. */
       #add-view ha-svg-icon {
@@ -57,12 +63,12 @@ compact-header:
         z-index: 2;
         position: absolute;
       }
-      /* Bring help button back in */
+      /* Bring help button back in
       a[href="https://www.home-assistant.io/lovelace/"] > mwc-icon-button {
         right: calc(48px * 2);
         position: absolute;
         z-index: 2;
-      }
+      } */
       /* Bring close button back in */
       mwc-icon-button[title="Close"] {
         top: 0;
@@ -96,9 +102,12 @@ compact-header:
         top: 24px;
       }
       
+      {% if user != "Brian" %}
       paper-tabs {
         display: none;
       }
+      {% endif %}
+
       /* When not in edit mode, shrink the left margin */
       app-toolbar:not(.edit-mode) > div > paper-tabs {
         margin-left: 6px !important;
@@ -119,7 +128,7 @@ compact-header:
 
   card-mod-view: |
     #view {
-      height: 100vh;
+      height: calc(100vh + 60px);
     }
 
 
