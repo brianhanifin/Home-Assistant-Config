@@ -15,6 +15,7 @@ sensors:
       {%- if home_humidity|lower in ['unknown','unavailable'] -%}
         {%- set home_humidity = states('sensor.guest_room_humidity')|default(bathroom_humidity) -%}
       {%- endif -%}
-      {{ (bathroom_humidity|int) - home_humidity|int }}
+      {% set diff = (bathroom_humidity|int) - home_humidity|int %}
+      {{ ([0, diff, 99]|sort)[1] }}
     device_class: "humidity"
     unit_of_measurement: "%"
