@@ -14,15 +14,15 @@ condition:
   - '{{ old_state != new_state }}'
 action:
   - choose:
-    - conditions: '{{ new_state == "on" }}'
-      sequence:
-        # Close the garage door (if it was inadvertently left open).
-        - choose:
-            - conditions: '{{ states("cover.garage_door") != "closed" }}'
-              sequence:
-                - service: cover.close_cover
-                  entity_id: cover.garage_door
+      - conditions: '{{ new_state == "on" }}'
+        sequence:
+          # Close the garage door (if it was inadvertently left open).
+          - choose:
+              - conditions: '{{ states("cover.garage_door") != "closed" }}'
+                sequence:
+                  - service: cover.close_cover
+                    entity_id: cover.garage_door
 
-        # Run the shutdown/goodbye routine (without the verbal confirmation).
-        - service: script.turn_on
-          entity_id: script.shutdown_routine
+          # Run the shutdown/goodbye routine (without the verbal confirmation).
+          - service: script.turn_on
+            entity_id: script.shutdown_routine
