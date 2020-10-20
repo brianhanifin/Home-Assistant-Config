@@ -17,8 +17,8 @@ sensors:
           "sensor.openweathermap_condition",
           "sensor.cc_santee_weather_condition"
         ] %}
-        {%- for sensor in weather_sensors if states(sensor) != "unknown" %}
-          {%- set factors.current_condition = states(sensor) if factors.current_condition == "" else "" %}
+        {%- for sensor in weather_sensors if states(sensor) != "unknown" and factors.current_condition == "" %}
+          {%- set factors.current_condition = states(sensor) %}
         {%- endfor %}
         {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","")|replace(" ", "") %}
 
@@ -72,8 +72,8 @@ sensors:
         "sensor.openweathermap_condition",
         "sensor.cc_santee_weather_condition"
       ] %}
-      {%- for sensor in weather_sensors if states(sensor) != "unknown" %}
-        {%- set factors.current_condition = states(sensor) if factors.current_condition == "" else "" %}
+      {%- for sensor in weather_sensors if states(sensor) != "unknown" and factors.current_condition == "" %}
+        {%- set factors.current_condition = states(sensor) %}
       {%- endfor %}
       {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","")|replace(" ", "") %}
 
