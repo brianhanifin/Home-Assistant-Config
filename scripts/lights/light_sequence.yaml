@@ -3,22 +3,27 @@ mode: restart
 max_exceeded: silent
 variables:
   color_count: '{{ colors|count }}'
-  state: '{{ state|default("on") }}'
+  circadian_toggle: '{{ entity_id|replace("light.","switch.circadian_lighting_") }}'
 sequence:
-  - condition: template
-    value_template: '{{ state == "on" }}'
-
   # Stop this automation if it is running.
   - service: automation.turn_off
     entity_id: automation.circadian_light_group_turn_off
+  
+  - service: switch.turn_off
+    data:
+      entity_id: '{{ circadian_toggle }}'
 
   # Turn on light group before we start.
-  - service: homeassistant.turn_on
-    data:
-      entity_id: '{{ entity_id }}'
-      transition: 1
-  - delay:
-      seconds: 1
+  - repeat:
+      count: '{{ color_count|int }}'
+      sequence:
+        - service: script.light_sequence_color
+          data:
+            entity_id: "{{ entity_id }}"
+            brightness: 255
+            color: "white"
+            delay: "0"
+            transition: "0"
 
   # Loop through the colors.
   - repeat:
@@ -46,6 +51,12 @@ sequence:
                   data:
                     entity_id: '{{ entity_id }}'
 
+  - delay:
+      seconds: "{{ transition }}"
+
+  - service: switch.turn_on
+    data:
+      entity_id: '{{ circadian_toggle }}'
 
 # Example service call data.
 # https://www.w3.org/TR/css-color-3/#svg-color

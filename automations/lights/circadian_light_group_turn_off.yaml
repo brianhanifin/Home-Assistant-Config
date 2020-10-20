@@ -9,23 +9,30 @@ trigger:
       - light.brian
       - light.dining_room
       - light.play_room_floor_lamp
+      - group.brian_fixture
+      - group.dining_room_fixture
+      - group.play_room_floor_lamp_fixture
     from: "on"
     to: "off"
 variables:
-  circadian_toggle: '{{ trigger.entity_id|replace("light.","switch.circadian_lighting_") }}'
-  group_fixture: '{{ trigger.entity_id|replace("light.","group.") + "_fixture" }}'
+  circadian_toggle: '{{ trigger.entity_id|replace("group.","switch.circadian_lighting_")|replace("_fixture","") if trigger.entity_id.startswith("group") else trigger.entity_id|replace("light.","switch.circadian_lighting_") }}'
+  group_fixture: '{{ trigger.entity_id if trigger.entity_id.startswith("group") else trigger.entity_id|replace("light.","group.") + "_fixture" }}'
 # condition:
 #   - condition: state
 #     entity_id: input_boolean.home_assistant_loaded
 #     state: "true"
 action:
-  - service: script.debug
-    data:
-      title: 'automation.circadian_light_group_turn_off'
-      message: |
-        circadian_toggle: {{ circadian_toggle }}
-        group_fixture: {{ group_fixture }}
+  # - service: script.debug
+  #   data:
+  #     title: 'automation.circadian_light_group_turn_off'
+  #     message: |
+  #       circadian_toggle: {{ circadian_toggle }}
+  #       group_fixture: {{ group_fixture }}
 
+  - service: script.turn_off
+    entity_id:
+      - script.light_sequence
+      - script.light_sequence_color
 
   # Temporarily disable the circadian lighting mode for this fixture.
   - service: switch.turn_off
@@ -36,11 +43,16 @@ action:
     repeat:
       sequence:
         - delay:
-            seconds: 1 #5
+            seconds: 5
+
+        # Turn the light off, again.
+        - service: light.turn_off
+          data:
+            entity_id: "{{ trigger.entity_id }}"
 
         # Turn the light group off, again.
         - service: homeassistant.turn_off
-          data_template:
+          data:
             entity_id: "{{ group_fixture }}"
       until:
         - condition: template
