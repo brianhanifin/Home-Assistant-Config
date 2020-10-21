@@ -20,22 +20,22 @@ sequence:
   #       bulb_count: {{ bulb_count }}
 
   - choose:
-    - conditions:
-        - '{{ bulb_count|int > 1 }}'
-      sequence:
-        # Change each bulb in the group.
-        - repeat:
-            count: "{{ bulb_count }}"
-            sequence:
-              - delay:
-                  seconds: "{{ delay }}"
+      - conditions:
+          - '{{ bulb_count|int > 1 }}'
+        sequence:
+          # Change each bulb in the group.
+          - repeat:
+              count: "{{ bulb_count }}"
+              sequence:
+                - delay:
+                    seconds: "{{ delay }}"
 
-              - service: light.turn_on
-                data:
-                  brightness: 255
-                  entity_id: '{{ state_attr(entity,"entity_id")[repeat.index-1] }}'
-                  color_name: "{{ color }}"
-                  transition: "{{ transition }}"
+                - service: light.turn_on
+                  data:
+                    brightness: 255
+                    entity_id: '{{ state_attr(entity,"entity_id")[repeat.index-1] }}'
+                    color_name: "{{ color }}"
+                    transition: "{{ transition }}"
 
     default:
       - delay:
