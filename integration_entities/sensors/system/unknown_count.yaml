@@ -8,4 +8,4 @@ sensors:
 
     attribute_templates:
       entities: |
-        {{ states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list | replace("[","") | replace("]","") | replace("'","") }}
+        {{ states | selectattr("state","eq","unknown") | map(attribute="entity_id") | join(', ') }}

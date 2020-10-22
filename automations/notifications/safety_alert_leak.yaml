@@ -19,28 +19,24 @@ trigger:
 condition:
   - condition: template
     value_template: '{{ trigger.to_state.name|trim != "" }}'
+variables:
+  room: '{{ trigger.to_state.name|lower|replace(" leak sensor", "")|replace(" leak", "")|trim }}'
 action:
   - service: script.notify_speech
     data_template:
       media_player: group.smart_speakers
-      message: >
-        {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
-        A leak has been detected in the {{ room }}!
+      message: 'A leak has been detected in the {{ room }}!'
 
   - service: script.notify_mobile
     data_template:
       title: "WATER LEAK DETECTED!"
-      message: >
-        {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|replace(' leak', '')|trim -%}
-        {{ room|upper }}: A leak has been detected!
+      message: '{{ room|upper }}: A leak has been detected!'
       who: "parents"
 
   - service: script.notify_web
     data_template:
       title: "WATER LEAK DETECTED!"
-      message: >
-        {% set room = trigger.to_state.name|lower|replace(' leak sensor', '')|trim -%}
-        {{ room|upper }}: A leak has been detected!
+      message: '{{ room|upper }}: A leak has been detected!'
       id: "safety"
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.

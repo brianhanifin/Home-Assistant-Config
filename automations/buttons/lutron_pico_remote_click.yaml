@@ -17,19 +17,19 @@ variables:
   remote: '{{ trigger.to_state.entity_id|replace("sensor.","")|replace("_remote","") }}'
 
   commands:
-    "0": "release"
-    "1": "on"
-    "4": "off"
-    "2": "middle"
-    "8": "step_up"
-    "16": "step_down"
+    0: "release"
+    1: "on"
+    4: "off"
+    2: "middle"
+    8: "step_up"
+    16: "step_down"
   command: '{{ commands[button]|default("") }}'
 
   devices:
     dining_room:
       "on": "light.dining_room"
       "off": "light.dining_room"
-      middle: "group.kitchen"
+      middle: "group.kitchen_lights"
       step_up: "light.dining_room"
       step_down: "light.dining_room"
     entry:
@@ -68,6 +68,9 @@ action:
               message: |
                 area: {{ area }}
                 remote: {{ remote }}
+
+                button: {{ button }}
+                commands: {{ commands }}
 
                 device: {{ device }}
                 command: {{ command }}

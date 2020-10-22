@@ -236,10 +236,64 @@ variables:
     "Wipe Random":
       id: 4
 
+  palettes:
+      "Default": 0
+      "Random Cycle": 1
+      "Primary color": 2
+      "Based on primary": 3
+      "Set colors": 4
+      "Based on set": 5
+      "Party": 6
+      "Cloud": 7
+      "Lava": 8
+      "Ocean": 9
+      "Forest": 10
+      "Rainbow": 11
+      "Rainbow bands": 12
+      "Sunset": 13
+      "Rivendell": 14
+      "Breeze": 15
+      "Red & Blue": 16
+      "Yellowout": 17
+      "Analoguous": 18
+      "Splash": 19
+      "Pastel": 20
+      "Sunset 2": 21
+      "Beech": 22
+      "Vintage": 23
+      "Departure": 24
+      "Landscape": 25
+      "Beach": 26
+      "Sherbet": 27
+      "Hult": 28
+      "Hult 64": 29
+      "Drywet": 30
+      "Jul": 31
+      "Grintage": 32
+      "Rewhi": 33
+      "Tertiary": 34
+      "Fire": 35
+      "Icefire": 36
+      "Cyane": 37
+      "Light Pink": 38
+      "Autumn": 39
+      "Magenta": 40
+      "Magred": 41
+      "Yelmag": 42
+      "Yelblu": 43
+      "Orange & Teal": 44
+      "Tiamat": 45
+      "April Night": 46
+      "Orangery": 47
+      "C9": 48
+      "Sakura": 49
+      "Aurora": 50
+
   entity_id: '{{ entity_id|default("all") }}'
   turn_on_entity: '{{ "group.wled_lights" if entity_id == "all" else entity_id }}'
 
   effect: '{{ effects[name]["id"] }}'
+  palette_value: '{{ palettes[palette|default("Default")] }}'
   brightness_value: |
     {% if brightness is defined %}
       {% if brightness is not number %}
@@ -280,6 +334,7 @@ sequence:
   #     message: |
   #       entity_id: {{ entity_id }}
   #       effect: {{ effect }}
+  #       palette: {{ palette }}
   #       speed: {{ speed_value }}
   #       intensity: {{ intensity_value }}
 
@@ -292,5 +347,6 @@ sequence:
     data:
       entity_id: '{{ entity_id }}'
       effect: '{{ effect }}'
+      palette: '{{ palette_value }}'
       speed: '{{ speed_value }}'
       intensity: '{{ intensity_value }}'

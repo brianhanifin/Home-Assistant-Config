@@ -16,14 +16,14 @@ trigger:
     below: 13
 variables:
   type: '{{ trigger.to_state.state }}'
-  room: '{{ trigger.to_state.name|replace("Safety Alarm: ","")|replace(" Type","") }}'
+  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety Alarm ","")|replace(" Type","") }}'
 
   alarm_states:
     "1": "Smoke"
     "2": "Carbon Monoxide"
     "12": "Test Button Press"
   alert_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }}'
-  
+
   title: '{{ alert_state }} Detected!'
   message: '{{ alarm_state }} detected in the {{ room|upper }}.'
 action:
