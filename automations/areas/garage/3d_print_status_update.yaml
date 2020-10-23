@@ -1,0 +1,36 @@
+---
+alias: 3D Print Status Update
+id: 3d_print_status_update
+description: Notify me when a 3D Print status changes.
+mode: single
+trigger:
+  - platform: state
+    entity_id: binary_sensor.octoprint_printing
+    from: 'on'
+    to: 'off'
+condition:
+  - condition: time
+    after: '08:00'
+    before: '20:00'
+variables:
+  error: '{{ is_state("binary_sensor.octoprint_printing_error","on") }}'
+  state: '{{ sensor.octoprint_current_state }}'
+  message: |
+    {% if error == True %}
+      Your 3D print has paused with an error.
+    {% elif state in ["pausing","paused"] %}
+      Your 3D print has paused.
+    {% else %}
+      Your 3D print is complete.
+    {% endif %}
+action:
+  - service: script.notify_mobile
+    data:
+      title: 3D Print Status Change
+      message: '{{ message }}'
+      who: brian
+
+  - service: script.notify_speech
+    data:
+      media_player: group.smart_speakers_downstairs
+      message: '{{ message }}'
