@@ -1,18 +1,24 @@
 ---
 variables:
-  speakers: '{{ expand(media_player) | map(attribute="entity_id") | list }}'
-  speaker_count: '{{ speakers | count }}'
+  #speakers: '{{ expand(media_player) | map(attribute="entity_id") | list }}'
+  speakers: '{{ expand(media_player) | map(attribute="entity_id") | join(" ") }}'
+  #speaker_count: '{{ speakers | count }}'
+  speaker_count: '{{ speakers.split(" ") | count }}'
 sequence:
-  # - service: script.debug
-  #   data:
-  #     title: 'Smart Speaker "Say" Service'
-  #     message: 'Speakers: "{{ speaker_count }}".'
+  - service: script.debug
+    data:
+      title: 'Smart Speaker "Say" Service'
+      message: |
+        Speakers: {{ speakers }}
+        Count: {{ speaker_count }}
+
 
   - repeat:
       count: "{{ speaker_count|int }}"
       sequence:
         - variables:
-            speaker: '{{ speakers[repeat.index-1] }}'
+            #speaker: '{{ speakers[repeat.index-1] }}'
+            speaker: '{{ speakers.split(" ")[repeat.index-1] }}'
             tts_service: '{{ "alexa" if "alexa" in speaker else "google" }}'
 
         - service: 'script.say_{{ tts_service }}'

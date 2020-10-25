@@ -6,7 +6,7 @@ variables:
     {%- elif states('sensor.last_alexa') is string -%}
       {{ states('sensor.last_alexa') }}
     {%- else -%}
-      media_player.alexa_kitchen
+      media_player.google_kitchen
     {%- endif -%}
   tts_service: |
     {%- if "alexa" in media_player %}
@@ -49,7 +49,7 @@ sequence:
     data:
       media_player: '{{ media_player }}'
       title: '{{ title }}'
-      message: '{{ message }}'
+      message: '{{ briefing }}'
 
   - service: script.toast
     data:
