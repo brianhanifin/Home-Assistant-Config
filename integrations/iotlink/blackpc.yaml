@@ -98,16 +98,23 @@ script:
 
   blackpc_notify:
     alias: "BlackPC Notify"
+    variables:
+      title: '{{ title | default("Home Assistant Notification") }}'
+      message: '{{ message | default("This is an example of notification using IOT Link") }}'
+      link: '{{ link | default("http://homeassistant.local:8123") }}'
     sequence:
       - service: mqtt.publish
         data:
           topic: "iotlink/workgroup/blackpc/commands/notify"
-          payload: '{ "title": "My Notification Title", "message": "This is an example of notification using IOT Link", "launchParams": "toast://open/https://iotlink.gitlab.io" }'
+          payload: '{ "title": "{{ title }}", "message": "{{ message }}", "launchParams": "toast://open/{{ link }}" }'
 
-  blackpc_run_chrome:
-    alias: "BlackPC Run Chrome"
+  blackpc_open_firefox:
+    alias: "BlackPC Open Firefox"
+    variables:
+      link: '{{ link | default("http://homeassistant.local:8123") }}'
     sequence:
       - service: mqtt.publish
         data:
           topic: "iotlink/workgroup/blackpc/commands/run"
-          payload: '{ "command": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", "args": "https://iotlink.gitlab.io", "path": "C:\\Program Files (x86)\\Google\\Chrome\\Application", "user": "", "visible": true, "fallback": true }'
+          payload: >
+            '{ "command": "C:\\Program Files\\Mozilla Firefox\\firefox.exe", "args": "{{ link }}", "path": "C:\\Program Files\\Mozilla Firefox", "user": "", "visible": true, "fallback": true }'

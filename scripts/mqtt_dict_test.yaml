@@ -1,0 +1,25 @@
+---
+variables:
+  name: "mqtt_dict_test"
+  attributes: >
+    { 
+      "name": "{{ name }}"
+    }
+  #attributes: '{"name":"{{ name }}"}'
+
+sequence:
+  # This one succeeds.
+  - service: mqtt.publish
+    data:
+      topic: "custom/sensor/{{ name }}/state"
+      payload: "{{ name }}"
+      retain: true
+
+  # This one errors: "payload must be a string, bytearray, int, float or None."
+  - service: mqtt.publish
+    data:
+      topic: "custom/sensor/{{ name }}/attributes"
+      payload: "{{ attributes }}"
+      #payload: '{"name":"{{ name }}"}'
+      #payload: '{"test":"test"}'
+      retain: true
