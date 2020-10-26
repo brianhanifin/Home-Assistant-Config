@@ -4,3 +4,11 @@ sequence:
     data:
       entity_id: '{{ media_player }}'
       message: '{{ message|striptags }}'
+
+  # Remove "speaker" icon from screen by turning the kitchen media player off.
+  - condition: template
+    value_template: '{{ media_player in ["media_player.google_kitchen","media_player.google_downstairs"] }}'
+  - delay:
+      seconds: 10
+  - service: media_player.turn_off
+    entity_id: media_player.google_kitchen
