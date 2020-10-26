@@ -19,14 +19,8 @@ variables:
   briefing: !include ../../templates/speech/briefing.yaml
   title: '{{ title|default("Home Assistant") }}'
 
-  mqtt_message_name: "last_message"
   mqtt_message_state: "{{ briefing|striptags }}"
-  mqtt_message_attributes: |
-    {
-      "target": "{{ media_player }}",
-      "voice": "{{ voice }}",
-      "timestamp": "{{ now()|as_local }}"
-    }
+  #mqtt_message_attributes: '{"target":"{{ media_player }}"}'
 sequence:
   - condition: state
     entity_id: input_boolean.audio_notifications
@@ -59,6 +53,12 @@ sequence:
   # Store Last Message
   - service: script.store_mqtt_sensor
     data:
-      name: '{{ mqtt_message_name }}'
+      name: 'last_message'
       state: '{{ mqtt_message_state }}'
-      attributes: '{{ mqtt_message_attributes }}'
+      #attributes: '{{ mqtt_message_attributes }}'
+
+  # Store Last Speaker
+  - service: script.store_mqtt_sensor
+    data:
+      name: 'last_speaker'
+      state: '{{ media_player }}'

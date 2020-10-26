@@ -4,4 +4,4 @@ sensors:
   last_alexa:
     icon_template: mdi:amazon-alexa
     value_template: >
-      {{ expand(states.group.smart_speakers) | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+      {{ expand(states.group.alexa_speakers) | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
