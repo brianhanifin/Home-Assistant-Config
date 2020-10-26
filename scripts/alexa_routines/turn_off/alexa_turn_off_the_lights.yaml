@@ -12,6 +12,12 @@ variables:
 
   entity_id: '{{ lights[room] }}'
 sequence:
-  - service: homeassistant.turn_off
-    data:
-      entity_id: '{{ entity_id }}'
+  # - service: homeassistant.turn_off
+  #   data:
+  #     entity_id: '{{ entity_id }}'
+
+    - service: script.say
+      data:
+        media_player: '{{ states("sensor.last_alexa") }}'
+        message: "Hey Google! ... Turn off the lights."
+        say_greeting: "false"

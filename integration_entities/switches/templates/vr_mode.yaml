@@ -1,0 +1,40 @@
+---
+platform: template
+switches:
+  vr_mode:
+    friendly_name: VR Mode
+    icon_template: mdi:virtual-reality
+    turn_on:
+      - service: switch.turn_off
+        entity_id: switch.circadian_lighting_play_room
+      - service: switch.turn_off
+        entity_id: switch.circadian_lighting_play_room_floor_lamp
+
+      - service: light.turn_on
+        data:
+          entity_id: light.play_room
+          brightness_pct: 50
+      - service: light.turn_on
+        data:
+          entity_id: light.play_room_floor_lamp
+          brightness_pct: 50
+      - service: light.turn_on
+        data:
+          entity_id: light.play_room_entry
+          brightness_pct: 100
+
+    turn_off:
+      - service: light.turn_off
+        entity_id: light.play_room
+      - service: light.turn_off
+        entity_id:  light.play_room_floor_lamp
+      - service: light.turn_off
+        entity_id: light.play_room_entry
+    
+      - delay:
+          seconds: 5
+    
+      - service: switch.turn_on
+        entity_id: switch.circadian_lighting_play_room
+      - service: switch.turn_on
+        entity_id: switch.circadian_lighting_play_room_floor_lamp

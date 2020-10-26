@@ -18,6 +18,12 @@ sequence:
   #       room: '{{ room }}'
   #       entity_id: '{{ entity_id }}'
 
-  - service: homeassistant.turn_on
+  # - service: homeassistant.turn_on
+  #   data:
+  #     entity_id: '{{ entity_id }}'
+
+  - service: script.say
     data:
-      entity_id: '{{ entity_id }}'
+      media_player: '{{ states("sensor.last_alexa") }}'
+      message: "Hey Google! ... Turn on the lights."
+      say_greeting: "false"
