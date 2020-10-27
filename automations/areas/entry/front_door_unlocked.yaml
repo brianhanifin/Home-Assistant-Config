@@ -37,6 +37,14 @@ action:
         - light.home_entry
         - light.porch
 
+  # Disable Adaptive Lighting automated control.
+  - service: adaptive_lighting.set_manual_control
+    data:
+      entity_id:
+        - switch.adaptive_lighting_home_entry
+        - switch.adaptive_lighting_porch
+      manual_control: true
+
   # Full brightness!
   - service: light.turn_on
     entity_id:

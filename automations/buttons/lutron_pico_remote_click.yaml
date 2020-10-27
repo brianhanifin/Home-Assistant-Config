@@ -2,6 +2,7 @@
 alias: lutron_pico_remote_click
 initial_state: true
 mode: parallel
+
 trigger:
   platform: state
   entity_id:
@@ -9,6 +10,7 @@ trigger:
     - sensor.entry_remote
     - sensor.play_room_1_remote
     - sensor.play_room_2_remote
+
 variables:
   debug_output: False
 
@@ -58,12 +60,13 @@ variables:
 condition:
   - condition: template
     value_template: '{{ command != "release" }}'
+
 action:
   - choose:
       - conditions: '{{ debug_output == True }}'
         sequence:
           - service: script.debug
-            data_template:
+            data:
               title: '"{{ remote }}" click'
               message: |
                 area: {{ area }}
@@ -83,31 +86,17 @@ action:
             data:
               entity_id: '{{ device }}'
 
-          # Enable circadian lighting when turned off.
-          # - delay:
-          #     seconds: 5
-          # - service: homeassistant.turn_on
-          #   data:
-          #     entity_id: 'group.circadian_lighting_{{ area }}'
-
       - conditions: '{{ command == "middle" and device != "" }}'
         sequence:
-          - service: 'homeassistant.turn_{{ "off" if is_state(device,"on") else "on" }}'
+          - variables:
+              command: '{{ "off" if is_state(device,"on") else "on" }}'
+
+          - service: 'homeassistant.turn_{{ command }}'
             data:
               entity_id: '{{ device }}'
 
       - conditions: '{{ command in ["step_up","step_down"] and device != "" }}'
         sequence:
-          # - choose:
-          #     - conditions: '{{ is_states("group.circadian_lighting_" ~ area,"off") }}'
-          #       sequence:
-          #         # Disable circadian lighting for manual dimming control.
-          #         - service: homeassistant.turn_off
-          #           data:
-          #             entity_id: 'group.circadian_lighting_{{ area }}'
-          #         - delay:
-          #             seconds: 1
-
           - service: homeassistant.turn_on
             data:
               entity_id: '{{ device }}'

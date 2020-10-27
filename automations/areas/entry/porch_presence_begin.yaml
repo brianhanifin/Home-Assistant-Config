@@ -28,11 +28,11 @@ action:
                 - light.home_entry
                 - light.porch
 
-          # Disable circadian lighting
-          # - service: switch.turn_off
-          #   entity_id:
-          #     - switch.circadian_lighting_porch
-          #     - switch.circadian_lighting_entry
+          # Disable Adaptive Lighting automated control.
+          - service: adaptive_lighting.set_manual_control
+            data:
+              entity_id: switch.adaptive_lighting_porch
+              manual_control: true
 
           # Full brightness!
           - service: light.turn_on

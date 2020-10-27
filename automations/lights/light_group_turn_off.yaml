@@ -1,0 +1,45 @@
+---
+alias: "Light Group Turn Off - Force To Stay Off"
+id: light_group_turn_off
+initial_state: true
+mode: single
+
+trigger:
+  - platform: state
+    entity_id:
+      - light.brian
+      - light.dining_room
+      - light.play_room_floor_lamp
+    from: "on"
+    to: "off"
+
+variables:
+  light: '{{ trigger.entity_id }}'
+  group: '{{ light | replace("light.","group.") + "_fixture" }}'
+  bulbs: '{{ expand(group) | map(attribute="entity_id") | list }}'
+
+action:
+  - service: script.turn_off
+    entity_id:
+      - script.light_sequence
+      - script.light_sequence_color
+
+  - alias: Turn the light group off repeatedly until it stays off.
+    repeat:
+      sequence:
+        - delay:
+            seconds: 5
+
+        # Turn off the individual bulbs one at a time.
+        - repeat:
+            count: "{{ bulbs|count }}"
+            sequence:
+              - service: light.turn_off
+                data:
+                  entity_id: '{{ bulbs[repeat.index-1] }}'
+      until:
+        - condition: template
+          value_template: "{{ is_state(light, 'off') }}"
+
+  # - delay:
+  #     seconds: 5

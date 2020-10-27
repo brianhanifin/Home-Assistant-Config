@@ -11,12 +11,18 @@ variables:
   old_state: '{{ trigger.event.data.old_state.state }}'
   new_state: '{{ trigger.event.data.new_state.state }}'
 
+  adaptive_switches: |
+    {% set data = namespace(switches="") %}
+    {% set switches = expand(states.switch) | map(attribute="entity_id") | list %}
+    {% for switch in switches if switch[:24] == "switch.adaptive_lighting" and switch[25:30] not in ["adapt","sleep"] %}
+      {% set data.switches = data.switches|trim ~ " " ~ switch %}
+    {% endfor %}
+    {{ data.switches.split(" ") }}
+
   lights_on: |
     {% set group_id = 'group.guest_mode_lights' -%}
     {%- set entities = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | join(', ') -%}
     {{ "none" if "light." not in entities else entities }}
-  brightness: '{{ 255 if new_state == "on" else states("sensor.circadian_values")|round }}'
-  kelvin: '{{ 4000 if new_state == "on" else state_attr("sensor.circadian_values","colortemp")|round }}'
 
   speech: |
     {% if new_state == "on" %}
@@ -48,20 +54,26 @@ action:
           - service: timer.cancel
             entity_id: timer.front_door_unlocked
 
+          # Disable Adaptive Lighting automated control.
+          - service: switch.turn_off
+            data:
+              entity_id: '{{ adaptive_switches }}'
+
+          - service: light.turn_on
+            data:
+              entity_id: '{{ lights_on }}'
+              brightness: 255
+              kelvin: 4000
+
     default:
       # Start a countdown timer to relock the front door.
       - service: script.start_front_door_lock_countdown
 
+      # Restore Adaptive Lighting automated control.
+      - service: switch.turn_on
+        data:
+          entity_id: '{{ adaptive_switches }}'
+
   - service: script.say
     data_template:
       message: '{{ speech }}'
-
-  - service: 'switch.turn_{{ "on" if new_state == "off" else "off" }}'
-    data:
-      entity_id: switch.circadian_lighting
-
-  - service: light.turn_on
-    data:
-      entity_id: '{{ lights_on }}'
-      brightness_pct: "{{ brightness }}"
-      kelvin: "{{ kelvin }}"

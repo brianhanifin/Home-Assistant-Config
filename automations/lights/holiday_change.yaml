@@ -6,17 +6,12 @@ trigger:
   - platform: state
     entity_id:
       - sensor.holiday
-condition:
-  - "{{ trigger.to_state.state is not none
-        and trigger.to_state.state|trim != 'unknown'
-        and trigger.to_state.state|trim != '' }}"
+# condition:
+#   - "{{ trigger.to_state.state is not none
+#         and trigger.to_state.state|trim != 'unknown'
+#         and trigger.to_state.state|trim != '' }}"
 action:
-  # - service: script.notify_web
-  #   data_template:
-  #     title: '{{ trigger.to_state.state }}'
-  #     message: 'Today is {{ trigger.to_state.state }}.'
   - service: script.notify_mobile
     data_template:
       title: '{{ trigger.to_state.state }}'
       message: 'Today is {{ trigger.to_state.state }}.'
-      #who: "family"

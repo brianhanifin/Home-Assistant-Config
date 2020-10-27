@@ -23,11 +23,11 @@ action:
           - condition: sun
             after: sunset
         sequence:
-          # Restore circadian lighting
-          # - service: switch.turn_on
-          #   entity_id:
-          #     - switch.circadian_lighting_porch
-          #     - switch.circadian_lighting_entry
+          # Restore Adaptive Lighting automated control.
+          - service: adaptive_lighting.set_manual_control
+            data:
+              entity_id: switch.adaptive_lighting_porch
+              manual_control: false
 
           # Restore the previous state of the porch light.
           - service: scene.turn_on

@@ -1,17 +1,22 @@
 ---
 mode: restart
 max_exceeded: silent
+
 variables:
   color_count: '{{ colors|count }}'
-  #circadian_toggle: '{{ entity_id|replace("light.","switch.circadian_lighting_") }}'
+  #adaptive_lighting: '{{ entity_id | replace("light.","switch.adaptive_lighting_") }}'
+
 sequence:
-  # Stop this automation if it is running.
-  # - service: automation.turn_off
-  #   entity_id: automation.circadian_light_group_turn_off
-  
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       entity_id: '{{ entity_id }}'
+  #       adaptive_lighting: '{{ adaptive_lighting }}'
+
+  # Disable Adaptive Lighting automated control.
   # - service: switch.turn_off
   #   data:
-  #     entity_id: '{{ circadian_toggle }}'
+  #     entity_id: '{{ adaptive_lighting }}'
 
   # Turn on light group before we start.
   - repeat:
@@ -51,12 +56,12 @@ sequence:
                   data:
                     entity_id: '{{ entity_id }}'
 
+  # Restore Adaptive Lighting automated control.
   # - delay:
   #     seconds: "{{ transition }}"
-
   # - service: switch.turn_on
   #   data:
-  #     entity_id: '{{ circadian_toggle }}'
+  #     entity_id: '{{ adaptive_lighting }}'
 
 # Example service call data.
 # https://www.w3.org/TR/css-color-3/#svg-color
