@@ -3,15 +3,15 @@ mode: restart
 max_exceeded: silent
 variables:
   color_count: '{{ colors|count }}'
-  circadian_toggle: '{{ entity_id|replace("light.","switch.circadian_lighting_") }}'
+  #circadian_toggle: '{{ entity_id|replace("light.","switch.circadian_lighting_") }}'
 sequence:
   # Stop this automation if it is running.
-  - service: automation.turn_off
-    entity_id: automation.circadian_light_group_turn_off
+  # - service: automation.turn_off
+  #   entity_id: automation.circadian_light_group_turn_off
   
-  - service: switch.turn_off
-    data:
-      entity_id: '{{ circadian_toggle }}'
+  # - service: switch.turn_off
+  #   data:
+  #     entity_id: '{{ circadian_toggle }}'
 
   # Turn on light group before we start.
   - repeat:
@@ -51,12 +51,12 @@ sequence:
                   data:
                     entity_id: '{{ entity_id }}'
 
-  - delay:
-      seconds: "{{ transition }}"
+  # - delay:
+  #     seconds: "{{ transition }}"
 
-  - service: switch.turn_on
-    data:
-      entity_id: '{{ circadian_toggle }}'
+  # - service: switch.turn_on
+  #   data:
+  #     entity_id: '{{ circadian_toggle }}'
 
 # Example service call data.
 # https://www.w3.org/TR/css-color-3/#svg-color

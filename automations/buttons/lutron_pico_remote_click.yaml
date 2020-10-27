@@ -84,11 +84,11 @@ action:
               entity_id: '{{ device }}'
 
           # Enable circadian lighting when turned off.
-          - delay:
-              seconds: 5
-          - service: homeassistant.turn_on
-            data:
-              entity_id: 'group.circadian_lighting_{{ area }}'
+          # - delay:
+          #     seconds: 5
+          # - service: homeassistant.turn_on
+          #   data:
+          #     entity_id: 'group.circadian_lighting_{{ area }}'
 
       - conditions: '{{ command == "middle" and device != "" }}'
         sequence:
@@ -98,15 +98,15 @@ action:
 
       - conditions: '{{ command in ["step_up","step_down"] and device != "" }}'
         sequence:
-          - choose:
-              - conditions: '{{ is_states("group.circadian_lighting_" ~ area,"off") }}'
-                sequence:
-                  # Disable circadian lighting for manual dimming control.
-                  - service: homeassistant.turn_off
-                    data:
-                      entity_id: 'group.circadian_lighting_{{ area }}'
-                  - delay:
-                      seconds: 1
+          # - choose:
+          #     - conditions: '{{ is_states("group.circadian_lighting_" ~ area,"off") }}'
+          #       sequence:
+          #         # Disable circadian lighting for manual dimming control.
+          #         - service: homeassistant.turn_off
+          #           data:
+          #             entity_id: 'group.circadian_lighting_{{ area }}'
+          #         - delay:
+          #             seconds: 1
 
           - service: homeassistant.turn_on
             data:
