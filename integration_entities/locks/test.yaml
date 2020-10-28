@@ -1,0 +1,10 @@
+---
+platform: template
+name: Test door
+value_template: "{{ states('input_boolean.test') }}"
+lock:
+  service: input_boolean.turn_on
+  entity_id: input_boolean.test
+unlock:
+  service: input_boolean.turn_off
+  entity_id: input_boolean.test
