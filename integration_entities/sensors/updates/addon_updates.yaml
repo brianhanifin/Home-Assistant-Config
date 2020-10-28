@@ -4,26 +4,6 @@ sensors:
   addon_updates:
     friendly_name: Addon Updates
     icon_template: mdi:counter
-    value_template: |
-      {%- set storage = namespace(addons="") %}
-      {%- set addons = state_attr("sensor.addons","addons") -%}
-      {%- for addon in addons -%}
-        {%- if addon.installed != addon.version -%}
-          {%- set storage.addons = storage.addons ~ " " ~ addon.name %}
-        {%- endif -%}
-      {%- endfor -%}
-      {%- set storage.addons = storage.addons|trim -%}
-      {%- set storage.addons = storage.addons.split(" ") if storage.addons|length > 0 else "" %}
-      {{ storage.addons|count }}
+    value_template: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list | count }}'
     attribute_templates:
-      addons: |
-        {%- set storage = namespace(addons="") %}
-        {%- set addons = state_attr("sensor.addons","addons") -%}
-        {%- for addon in addons -%}
-          {%- if addon.installed != addon.version -%}
-            {%- set storage.addons = storage.addons ~ " " ~ addon.name %}
-          {%- endif -%}
-        {%- endfor -%}
-        {%- set storage.addons = storage.addons|trim -%}
-        {%- set storage.addons = storage.addons.split(" ") if storage.addons|length > 0 else "" %}
-        {{ storage.addons }}
+      addons: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list }}'
