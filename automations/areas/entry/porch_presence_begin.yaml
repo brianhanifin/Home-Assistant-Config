@@ -11,7 +11,8 @@ trigger:
   - platform: state
     entity_id:
       - binary_sensor.front_door_motion
-      - binary_sensor.doorbell_motion
+      #- binary_sensor.doorbell_motion
+    from: 'off'
     to: 'on'
 action:
   - choose:
@@ -41,11 +42,6 @@ action:
               kelvin: 3500
               brightness: 255
 
-          - service: light.turn_on
-            data:
-              entity_id: light.home_entry
-              brightness: 255
-
           # Cool down timer. When "mode: single" this stops this automation from running more often than this.
           - delay:
-              minutes: 10
+              minutes: 5 #10

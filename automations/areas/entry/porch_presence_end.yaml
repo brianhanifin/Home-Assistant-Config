@@ -11,11 +11,11 @@ trigger:
   - platform: state
     entity_id:
       - binary_sensor.front_door_motion
-      - binary_sensor.doorbell_motion
+      #- binary_sensor.doorbell_motion
     from: 'on'
     to: 'off'
-    for:
-      minutes: 10
+    # for:
+    #   minutes: 10
 action:
   - choose:
       - conditions:
@@ -28,6 +28,9 @@ action:
             data:
               entity_id: switch.adaptive_lighting_porch
               manual_control: false
+
+          - delay:
+              seconds: 1
 
           # Restore the previous state of the porch light.
           - service: scene.turn_on

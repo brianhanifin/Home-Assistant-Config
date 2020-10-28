@@ -4,11 +4,64 @@ initial_state: true
 trigger:
   - platform: state
     entity_id: lock.front_door
-    #from: 'locked'
+    from: 'locked'
     to: 'unlocked'
+
+  # - platform: state
+  #   entity_id: lock.test_door
+  #   from: 'locked'
+  #   to: 'unlocked'
+variables:
+  lock: '{{ trigger.entity_id }}'
+  state: '{{ trigger.to_state.state }}'
+
 action:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       entity_id: '{{ lock }}'
+  #       state: '{{ state }}'
+
   # Start a countdown timer to relock the front door.
-  - service: script.start_front_door_lock_countdown
+  - choose:
+      - conditions: '{{ state == "unlocked"
+                      and "off" == states("input_boolean.guest_mode")
+                      and "off" == states("input_boolean.leave_unlocked") }}'
+        sequence:
+          # Start a countdown timer to relock the front door.
+          - service: timer.start
+            data_template:
+              entity_id: timer.front_door_unlocked
+
+  ## ================================================================================================= ##
+
+  # Skip turning on the entry lights in the middle of the day.
+  - choose:
+      - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+        sequence:
+          # Store the current state of the porch + entry lights.
+          - service: scene.create
+            data:
+              scene_id: front_door_locked_lights_snapshot
+              snapshot_entities:
+                - light.home_entry
+                - light.porch
+
+          # Disable Adaptive Lighting automated control.
+          - service: adaptive_lighting.set_manual_control
+            data:
+              entity_id:
+                - switch.adaptive_lighting_home_entry
+                - switch.adaptive_lighting_porch
+              manual_control: true
+
+          # Full brightness!
+          - service: light.turn_on
+            data:
+              brightness: 255
+              entity_id:
+                - light.home_entry
+                - light.porch
 
   ## ================================================================================================= ##
 
@@ -16,39 +69,6 @@ action:
   - service: script.inovelli_led_status_start
     data:
       entity_id: light.family_room
-      color: cyan
+      color: pink
       state_entity: lock.front_door
       state: "unlocked"
-
-  ## ================================================================================================= ##
-
-  # Skip turning on the entry lights in the middle of the day.
-  - condition: template
-    value_template: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
-  # - condition: numeric_state
-  #   entity_id: sensor.weatherbit_solar_radiation
-  #   below: 100
-
-  # Store the current state of the porch + entry lights.
-  - service: scene.create
-    data:
-      scene_id: front_door_locked_lights_snapshot
-      snapshot_entities:
-        - light.home_entry
-        - light.porch
-
-  # Disable Adaptive Lighting automated control.
-  - service: adaptive_lighting.set_manual_control
-    data:
-      entity_id:
-        - switch.adaptive_lighting_home_entry
-        - switch.adaptive_lighting_porch
-      manual_control: true
-
-  # Full brightness!
-  - service: light.turn_on
-    entity_id:
-      - light.home_entry
-      - light.porch
-    data:
-      brightness: 255
