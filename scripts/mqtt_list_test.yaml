@@ -1,0 +1,31 @@
+---
+variables:
+  name: "mqtt_list_test"
+  state: "Testing, 1, 2, 3."
+  # attributes: >-
+  #   {
+  #     target: "media_player.google_family_room"
+  #   }
+  attributes:
+    "target": "media_player.google_family_room"
+
+sequence:
+  - service: mqtt.publish
+    data:
+      topic: "custom/sensor/{{ name }}/state"
+      payload: "{{ state }}"
+      retain: true
+
+  # Only add attributes if they are presence.
+  - choose:
+      - conditions: '{{ attributes != "" }}'
+        sequence:
+          - service: mqtt.publish
+            data:
+              topic: "custom/sensor/{{ name }}/attributes"
+              # payload: >-
+              #   {
+              #     target: "{{ media_player }}"
+              #   }
+              payload: '{{ attributes }}'
+              retain: true
