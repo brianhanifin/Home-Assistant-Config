@@ -1,5 +1,5 @@
 ---
-alias: ZHA Button Clicks
+alias: ZHA Button Click
 id: zha_button_click
 initial_state: true
 #mode: parallel
@@ -54,7 +54,7 @@ variables:
     {%- endif %}
     {{ command }}
 condition:
-  - '{{ command not in ["ignore"] }}'
+  - '{{ command not in ["ignore","checkin"] }}'
 action:
   - choose:
       # Unused Remotes
@@ -145,10 +145,6 @@ action:
       #   * IKEA Tradfri Remote Control
       - conditions: '{{ remote == "remote_family_room" }}'
         sequence:
-          # Retrieve the current click count from storage.
-          - variables:
-              click_count: '{{ states("input_text.button_click").split(",")[3]|int }}'
-
           - choose:
               # Button: Power (middle)
               - conditions:
@@ -162,6 +158,14 @@ action:
                       command: '{{ command }}'
                       delay: '{{ delay_seconds }}'
 
+                  # Retrieve the current click count from storage.
+                  - variables:
+                      click_count: '{{ states("input_text.button_click").split(",")[3]|int }}'
+
+                  # - service: script.toast
+                  #   data:
+                  #     message: 'clicks: {{ click_count }}'
+
                   - choose:
                       # 2 clicks
                       - conditions: '{{ click_count|int == 2 }}'
@@ -169,7 +173,7 @@ action:
                           # Delay 0.5 second to allow for a second click to cancel the second action.
                           - delay:
                               seconds: '{{ delay_seconds|float }}'
-                          
+
                           - service: switch.toggle
                             entity_id: switch.tv_family_room
 
@@ -221,6 +225,17 @@ action:
               # Single Click: Brightness Up (top)
               - conditions: '{{ command == "step_with_on_off" }}'
                 sequence:
+                  # Store the previous click values and decide if this click was a double click or not.
+                  - service: script.button_store_click
+                    data_template:
+                      device: '{{ device_ieee }}'
+                      command: '{{ command }}'
+                      delay: '{{ delay_seconds }}'
+
+                  # Retrieve the current click count from storage.
+                  - variables:
+                      click_count: '{{ states("input_text.button_click").split(",")[3]|int }}'
+
                   - choose:
                       # Double click
                       - conditions: '{{ click_count|int == 2 }}'
@@ -236,7 +251,7 @@ action:
 
                     # Single Click
                     default:
-                      # Delay 0.5 second to allow for a second click to cancel the first action.
+                    # Delay 0.5 second to allow for a second click to cancel the first action.
                       - delay:
                           seconds: '{{ delay_seconds|float }}'
                       - service: light.turn_on
@@ -247,10 +262,22 @@ action:
               # Single Click: Brightness down (bottom)
               - conditions: '{{ command == "step" }}'
                 sequence:
+                  # Store the previous click values and decide if this click was a double click or not.
+                  - service: script.button_store_click
+                    data_template:
+                      device: '{{ device_ieee }}'
+                      command: '{{ command }}'
+                      delay: '{{ delay_seconds }}'
+
+                  # Retrieve the current click count from storage.
+                  - variables:
+                      click_count: '{{ states("input_text.button_click").split(",")[3]|int }}'
+
                   - choose:
                       # Double click
                       - conditions: '{{ click_count|int == 2}}'
                         sequence:
+
                           # Delay 0.5 second to allow for a second click to cancel the second action.
                           - delay:
                               seconds: '{{ delay_seconds|float }}'
@@ -267,6 +294,10 @@ action:
                         entity_id:
                           - light.family_room
                           - light.table_lamp
+
+              #############################################################################################
+              # SINGLE CLICK BUTTONS
+              #############################################################################################
 
               # Single Click: Arrow left (left)
               - conditions: '{{ command == "press"
