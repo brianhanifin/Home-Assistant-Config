@@ -4,4 +4,9 @@ sensors:
   responsibilities_kyle:
     friendly_name: ""
     icon_template: 'mdi:{{ "silverware-fork-knife" if is_state("input_select.responsibility_dishes_week","Kyle") else "trash-can" }}'
-    value_template: 'Kyle: {{ "Dishes" if is_state("input_select.responsibility_dishes_week","Kyle") else "Trash and Laundry" }}'
+    value_template: |
+      {% if is_state('input_select.responsibility_dishes_week','Kyle') %}
+        It is Kyle's week to do the Dishes.
+      {% else %}
+        It is Kyle's week to take out the Trash and wash the Laundry.
+      {% endif %}
