@@ -56,13 +56,14 @@ action:
           {{ click_count }}
         {%- endif %}
       command: |
-        {% set command = trigger.event.data.command %}
-        {#- Ignore Xiaomi button release events and Hue "step" events. #}
-        {%- if (manufacturer in ["xiaomi"] and click_count == 0)
-            or (manufacturer in ["hue"] and command == "step") %}
-          {%- set command = "ignore" %}
+        {%- if (manufacturer == "xiaomi" and click_count == 0)
+            or (manufacturer == "hue" and command == "step")
+            or (manufacturer == "ikea" and command == "checkin")
+            or remote|trim == "" %}
+          {{ "ignore" }}
+        {% else %}
+          {{ trigger.event.data.command }}
         {%- endif %}
-        {{ command }}
       command_modifier: |
         {% if manufacturer == "ikea" %}
           {{ trigger.event.data.args[0] }}

@@ -5,6 +5,7 @@ initial_state: true
 mode: parallel
 #mode: restart # Force restart to pickup double click
 #max_exceeded: silent
+
 trigger:
   # Inovelli dimmers
   - platform: event
@@ -12,9 +13,18 @@ trigger:
   # GE Dimmers
   # - platform: event
   #   event_type: zwave.node_event
+
+variables:
+  remotes:
+    3: "inovelli_family_room"
+
+  remote: '{{ remotes[trigger.event.data.node_id] }}'
+  command: '{{ trigger.event.data.scene_value_id }}'
+  command_modifier: '{{ trigger.event.data.scene_id|int }}'
+
 action:
-  # - service: persistent_notification.create
-  #   data_template:
+  # - service: script.debug
+  #   data:
   #     title: "ozw_button_clicks"
   #     message: 'data:{{ trigger.event.data }}'
 
@@ -23,21 +33,21 @@ action:
       # Inovelli LZW31-SN Dimmer Red Series
       - conditions:
           - condition: template
-            value_template: '{{ trigger.event.data.node_id|trim == "3" }}'
+            value_template: '{{ remote == "inovelli_family_room" }}'
         # click: 1x, 2x, 3x, 4x, 5x
         sequence:
           - choose:
             # 1x: "Normal" Lighting
               - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_value_id|trim == "1" }}'
+                    value_template: '{{ command == 1 }}'
                 sequence:
                   # Buttons: DOWN, UP, CONFIG
                   choose:
                     # SCENE 2: Up
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
+                          value_template: '{{ command_modifier == 2 }}'
                       sequence:
                         - service: light.turn_on
                           data:
@@ -51,7 +61,7 @@ action:
                     # SCENE 1: Down
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
+                          value_template: '{{ command_modifier == 1 }}'
                       sequence:
                         - service: homeassistant.turn_off
                           entity_id:
@@ -61,14 +71,14 @@ action:
               # 2x: Floor Lamp
               - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_value_id|trim == "4" }}'
+                    value_template: '{{ command == 4 }}'
                 sequence:
                   # Buttons: DOWN, UP
                   choose:
                     # SCENE 2: Up
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
+                          value_template: '{{ command_modifier == 2 }}'
                       sequence:
                         - service: light.turn_on
                           data:
@@ -83,7 +93,7 @@ action:
                     # SCENE 1: Down
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
+                          value_template: '{{ command_modifier == 1 }}'
                       sequence:
                         - service: light.turn_off
                           entity_id: light.family_room_floor_lamp
@@ -91,14 +101,14 @@ action:
               # 3x: Fan
               - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_value_id|trim == "5" }}'
+                    value_template: '{{ command == 5 }}'
                 sequence:
                   # Buttons: DOWN, UP
                   choose:
                     # SCENE 2: Up
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
+                          value_template: '{{ command_modifier == 2 }}'
                       sequence:
                         - service: fan.turn_on
                           entity_id: fan.family_room
@@ -106,7 +116,7 @@ action:
                     # SCENE 1: Down
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
+                          value_template: '{{ command_modifier == 1 }}'
                       sequence:
                         - service: fan.turn_off
                           entity_id: fan.family_room
@@ -114,14 +124,14 @@ action:
               # 4x: Party Areas
               - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_value_id|trim == "6" }}'
+                    value_template: '{{ command == 6 }}'
                 sequence:
                   # Buttons: DOWN, UP
                   choose:
                     # SCENE 2: Up
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
+                          value_template: '{{ command_modifier == 2 }}'
                       sequence:
                         - service: light.turn_on
                           data:
@@ -142,7 +152,7 @@ action:
                     # SCENE 1: Down
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
+                          value_template: '{{ command_modifier == 1 }}'
                       sequence:
                         - service: homeassistant.turn_off
                           entity_id:
@@ -158,14 +168,14 @@ action:
               # 5x: Guest Mode
               - conditions:
                   - condition: template
-                    value_template: '{{ trigger.event.data.scene_value_id|trim == "7" }}'
+                    value_template: '{{ command == 7 }}'
                 sequence:
                   # Buttons: DOWN, UP
                   choose:
                     # SCENE 2: Up
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 2 }}'
+                          value_template: '{{ command_modifier == 2 }}'
                       sequence:
                         - service: input_boolean.turn_on
                           entity_id: input_boolean.guest_mode
@@ -173,7 +183,7 @@ action:
                     # SCENE 1: Down
                     - conditions:
                         - condition: template
-                          value_template: '{{ trigger.event.data.scene_id|int == 1 }}'
+                          value_template: '{{ command_modifier == 1 }}'
                       sequence:
                         - service: input_boolean.turn_off
                           entity_id: input_boolean.guest_mode
