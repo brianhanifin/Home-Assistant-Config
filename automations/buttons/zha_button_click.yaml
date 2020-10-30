@@ -56,14 +56,14 @@ action:
           {{ click_count }}
         {%- endif %}
       command: |
+        {% set command = trigger.event.data.command %}
         {%- if (manufacturer == "xiaomi" and click_count == 0)
             or (manufacturer == "hue" and command == "step")
             or (manufacturer == "ikea" and command == "checkin")
             or remote|trim == "" %}
-          {{ "ignore" }}
-        {% else %}
-          {{ trigger.event.data.command }}
+          {%- set command = "ignore" %}
         {%- endif %}
+        {{- command }}
       command_modifier: |
         {% if manufacturer == "ikea" %}
           {{ trigger.event.data.args[0] }}
