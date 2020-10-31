@@ -1,0 +1,26 @@
+---
+alias: dryer_status_update
+initial_state: true
+mode: single
+trigger:
+  - platform: state
+    entity_id: sensor.sonoff_s31_04_power
+variables:
+  power: '{{ states("sensor.sonoff_s31_04_power")|int }}'
+  previous_status: '{{ states("input_select.dryer_status") }}'
+  status: |
+    {% if power > 150 %}
+      Drying
+    {%- elif previous_status == "Drying" %}
+      Dry
+    {%- elif power > 1 and previous_status == "Off" %}
+      Standby
+    {%- endif %}
+condition:
+  - condition: template
+    value_template: '{{ status != previous_status }}'
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.dryer_status
+      option: '{{ status }}'

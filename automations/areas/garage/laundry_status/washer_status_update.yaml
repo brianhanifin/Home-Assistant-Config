@@ -1,0 +1,71 @@
+---
+alias: washer_status_update
+initial_state: true
+mode: single
+trigger:
+  # Make decisions based on the  the power usage.
+  - platform: state
+    entity_id: sensor.sonoff_s31_02_power
+
+  # LG ThinQ reported the washer just powered on.
+  - platform: state
+    entity_id: binary_sensor.washer
+    from: "off"
+    to: "on"
+
+  # LG ThinQ reported the wash is complete.
+  - platform: state
+    entity_id: binary_sensor.washer_wash_completed
+    from: "off"
+    to: "on"
+
+  # LG ThinQ reported an error occurred.
+  - platform: state
+    entity_id: binary_sensor.washer_error_state
+    from: "off"
+    to: "on"
+variables:
+  power: '{{ states("sensor.sonoff_s31_02_power")|int }}'
+  previous_status: '{{ states("input_select.washer_status") }}'
+
+  trigger_id: '{{ trigger.to_state.entity_id }}'
+
+  status: |
+    {% if trigger_id == "binary_sensor.washer" %}
+      Standby
+    {%- elif trigger_id == "binary_sensor.washer_wash_completed" %}
+      Clean
+    {%- elif trigger_id == "sensor.sonoff_s31_02_power" %}
+      {%- if power > 20 %}
+        Washing
+      {%- elif previous_status in "Washing" %}
+        Clean
+      {%- elif power > 3 and previous_status == "Off" %}
+        Standby
+      {%- endif %}
+    {%- elif trigger_id == "binary_sensor.washer_error_state" %}
+      Error
+    {%- endif %}
+condition:
+  - condition: template
+    value_template: '{{ status != previous_status }}'
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.washer_status
+      option: '{{ status }}'
+
+  - choose:
+      - conditions:
+          - '{{ status == "Error" }}'
+        sequence:
+          - service: script.notify_speech
+            data_template:
+              media_player: media_player.google_downstairs
+              message: "Error. The washing machine has an error. ... {{ state_attr('sensor.washer','error_message') }}"
+        
+          - service: script.notify_mobile
+            data_template:
+              title: "ERROR: Washing Machine"
+              message: "{{ state_attr('sensor.washer','error_message') }}"
+              who: brian

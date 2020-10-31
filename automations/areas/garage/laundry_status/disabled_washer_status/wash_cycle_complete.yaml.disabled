@@ -2,18 +2,20 @@
 alias: wash_cycle_complete
 initial_state: true
 trigger:
-  # - platform: state
-  #   entity_id: binary_sensor.washer_running
-  #   from: "on"
-  #   to: "off"
   - platform: state
     entity_id: binary_sensor.washer_wash_completed
     from: "off"
     to: "on"
+  - platform: numeric_state
+    entity_id: sensor.sonoff_s31_02_power
+    below: 3
+condition:
+  - condition: template
+    value_template: '{{ states("input_select.washer_status") in ["Washing"] }}'
 action:
   - service: input_select.select_option
     data:
-      entity_id: input_select.washing_machine_status
+      entity_id: input_select.washer_status
       option: Clean
 
   - service: script.notify_speech

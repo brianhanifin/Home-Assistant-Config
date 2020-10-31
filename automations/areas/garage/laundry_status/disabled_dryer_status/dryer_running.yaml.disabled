@@ -1,17 +1,12 @@
 ---
-alias: dryer_finished
+alias: dryer_running
 initial_state: true
 trigger:
   - platform: numeric_state
     entity_id: sensor.sonoff_s31_04_power
-    below: 150
-    above: 10
-condition:
-  - condition: state
-    entity_id: input_select.dryer_status
-    state: Running
+    above: 150
 action:
   - service: input_select.select_option
     data:
       entity_id: input_select.dryer_status
-      option: Complete
+      option: Drying

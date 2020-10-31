@@ -11,8 +11,12 @@ trigger:
     entity_id: sensor.sonoff_s31_02_power
     above: 3
     below: 20
+condition:
+  - condition: state
+    entity_id: input_select.washer_status
+    state: "Off"
 action:
   - service: input_select.select_option
     data:
-      entity_id: input_select.washing_machine_status
+      entity_id: input_select.washer_status
       option: Standby

@@ -15,14 +15,11 @@ trigger:
 #   condition: or
 #   conditions:
 #     - condition: state
-#       entity_id: input_select.washing_machine_status
+#       entity_id: input_select.washer_status
 #       state: Standby
 #     - condition: state
-#       entity_id: input_select.washing_machine_status
+#       entity_id: input_select.washer_status
 #       state: Clean
-#     - condition: state
-#       entity_id: input_select.washing_machine_status
-#       state: Finishing
 action:
   - delay:
       minutes: 2
@@ -33,5 +30,5 @@ action:
 
   - service: input_select.select_option
     data:
-      entity_id: input_select.washing_machine_status
-      option: Running
+      entity_id: input_select.washer_status
+      option: Washing
