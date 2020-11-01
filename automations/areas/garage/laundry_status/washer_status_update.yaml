@@ -53,9 +53,7 @@ variables:
     {%- endif %}
   notify_title: '{{ status ~ ": Washing Machine" if status in ["Clean","Error"] }}'
   notify_message: |
-    {% if status == "Clean" %}
-      Your wash cycle is complete.
-    {% elif status == "Error" %}
+    {% if status == "Error" %}
       Error. The washing machine has an error. {{ state_attr('sensor.washer','error_message') }}
     {% endif %}
 condition:
@@ -74,7 +72,7 @@ action:
           - service: timer.start
             data:
               entity_id: timer.washer_clean
-              duration: "03:00:00"
+              duration: "01:00:00"
 
       - conditions:
           - '{{ status == "Off" }}'
@@ -83,16 +81,13 @@ action:
             entity_id: timer.washer_clean
 
       - conditions:
-          - '{{ notify_message != "" }}'
+          - '{{ status == "Error" }}'
         sequence:
           - service: script.notify_speech
             data:
               media_player: media_player.google_downstairs
               message: '{{ notify_message }}'
 
-      - conditions:
-          - '{{ notify_title != "" }}'
-        sequence:
           - service: script.notify_mobile
             data:
               title: '{{ notify_title }}'

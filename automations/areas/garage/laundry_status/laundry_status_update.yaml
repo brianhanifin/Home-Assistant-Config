@@ -27,8 +27,29 @@ variables:
     {%- else %}
       Unknown
     {%- endif %}
+
+  notify_title: '{{ "Laundry: " ~ status }}'
+  notify_message: |
+    {% if washer_status == "Clean" and dryer_status in ["Dry","Off"] %}
+      The laundry is ready to be moved to the dryer.
+    {% endif %}
 action:
-  service: input_select.select_option
-  data:
-    entity_id: input_select.laundry_status
-    option: '{{ status }}'
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.laundry_status
+      option: '{{ status }}'
+
+  - choose:
+      - conditions:
+          - '{{ notify_message|trim != "" }}'
+        sequence:
+          - service: script.notify_speech
+            data:
+              media_player: media_player.google_downstairs
+              message: '{{ notify_message }}'
+
+          - service: script.notify_mobile
+            data:
+              title: '{{ notify_title }}'
+              message: '{{ notify_message }}'
+              who: brian
