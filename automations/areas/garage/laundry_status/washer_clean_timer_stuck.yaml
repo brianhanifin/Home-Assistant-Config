@@ -1,0 +1,14 @@
+---
+alias: washer_clean_timer_stuck
+initial_state: true
+trigger:
+  # Check every 10 minutes.
+  - platform: time_pattern
+    minutes: '/10'
+action:
+  # Restart the timer if it is paused.
+  - condition: template
+    value_template: '{{ states("timer.washer_clean") == "paused" }}'
+
+  - service: timer.start
+    entity_id: timer.washer_clean

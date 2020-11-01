@@ -3,7 +3,7 @@ alias: washer_status_update
 initial_state: true
 mode: single
 trigger:
-  # Make decisions based on the  the power usage.
+  # Make decisions based on the power usage.
   - platform: state
     entity_id: sensor.sonoff_s31_02_power
 
@@ -24,6 +24,11 @@ trigger:
     entity_id: binary_sensor.washer_error_state
     from: "off"
     to: "on"
+
+  # Make decisions based on the  the power usage.
+  - platform: state
+    entity_id: input_select.dryer_status
+    to: Drying
 variables:
   power: '{{ states("sensor.sonoff_s31_02_power")|int }}'
   previous_status: '{{ states("input_select.washer_status") }}'
@@ -41,6 +46,8 @@ variables:
       {%- elif power > 3 and previous_status == "Off" %}
         Standby
       {%- endif %}
+    {%- elif trigger_id == "input_select.dryer_status" %}
+      {{ "Off" if previous_status == "Clean" else previous_status }}
     {%- elif trigger_id == "binary_sensor.washer_error_state" %}
       Error
     {%- endif %}
@@ -62,10 +69,24 @@ action:
 
   - choose:
       - conditions:
+          - '{{ status == "Clean" }}'
+        sequence:
+          - service: timer.start
+            data:
+              entity_id: timer.washer_clean
+              duration: "03:00:00"
+
+      - conditions:
+          - '{{ status == "Off" }}'
+        sequence:
+          - service: timer.cancel
+            entity_id: timer.washer_clean
+
+      - conditions:
           - '{{ notify_message != "" }}'
         sequence:
           - service: script.notify_speech
-            data_template:
+            data:
               media_player: media_player.google_downstairs
               message: '{{ notify_message }}'
 
@@ -73,7 +94,7 @@ action:
           - '{{ notify_title != "" }}'
         sequence:
           - service: script.notify_mobile
-            data_template:
+            data:
               title: '{{ notify_title }}'
               message: '{{ notify_message }}'
               who: brian

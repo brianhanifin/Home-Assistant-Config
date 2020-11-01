@@ -1,0 +1,15 @@
+---
+alias: dryer_status_timeout
+initial_state: true
+mode: parallel
+trigger:
+  - platform: state
+    entity_id: input_select.dryer_status
+    to: Dry
+    for:
+      hours: 6
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.dryer_status
+      option: 'Off'
