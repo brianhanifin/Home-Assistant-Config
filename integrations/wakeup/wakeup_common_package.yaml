@@ -4,15 +4,18 @@ automation:
     id: wakeup_light_timeout
     initial_state: true
     trigger:
-      - platform: state
-        entity_id:
+      # - platform: state
+      #   entity_id:
+      #     from: active
+      #     to: idle
+      - platform: event
+        event_type: timer.finished
+        event_data:
           - timer.wakeup_timeout_bedroom
           - timer.wakeup_timeout_boys_wakeup
           - timer.wakeup_timeout_brian
           - timer.wakeup_timeout_glowforge
           - timer.wakeup_timeout_play_room_lights
-        from: active
-        to: idle
     action:
       - service: homeassistant.turn_off
         entity_id:

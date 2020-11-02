@@ -3,18 +3,24 @@ alias: washer_clean_timer_expired
 initial_state: true
 mode: parallel
 trigger:
-  - platform: state
-    entity_id: timer.washer_clean
-    from: active
-    to: idle
+  # - platform: state
+  #   entity_id: timer.washer_clean
+  #   from: active
+  #   to: idle
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.washer_clean
 variables:
   notify_message: "The wash has been wet for a while! Please move it before it gets stinky."
 action:
-  - service: input_select.select_option
+  # Restart the timer.
+  - service: timer.start
     data:
-      entity_id: input_select.dryer_status
-      option: 'Off'
+      entity_id: timer.washer_clean
+      duration: "01:00:00"
 
+  # Send the notifications.
   - service: script.notify_speech
     data:
       media_player: media_player.google_downstairs
@@ -22,6 +28,6 @@ action:
 
   - service: script.notify_mobile
     data:
-      title: 'Wash Ignored Warning'
+      title: 'Washer Warning'
       message: '{{ notify_message }}'
       who: brian

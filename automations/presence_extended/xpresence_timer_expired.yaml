@@ -4,16 +4,20 @@ alias: xpresence_timer_expired
 initial_state: true
 mode: queued
 trigger:
-  - platform: state
-    entity_id:
-      - timer.xpresence_brian
-      - timer.xpresence_eric
-      - timer.xpresence_heather
-      - timer.xpresence_lucas
-      - timer.xpresence_nerene
-      - timer.xpresence_sandy
-    from: active
-    to: idle
+  # - platform: state
+  #   from: active
+  #   to: idle
+  #   entity_id:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id:
+        - timer.xpresence_brian
+        - timer.xpresence_eric
+        - timer.xpresence_heather
+        - timer.xpresence_lucas
+        - timer.xpresence_nerene
+        - timer.xpresence_sandy
 action:
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
