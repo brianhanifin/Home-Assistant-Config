@@ -2,6 +2,7 @@
 alias: Laundry Status
 id: laundry_status
 initial_state: true
+mode: single
 trigger:
   - platform: state
     entity_id: input_select.washer_status
@@ -34,11 +35,13 @@ variables:
       The laundry is ready to be moved to the dryer.
     {% endif %}
 action:
+  # Update the laundry progress.
   - service: input_select.select_option
     data:
       entity_id: input_select.laundry_status
       option: '{{ status }}'
 
+  # Send the notifications when appropriate.
   - choose:
       - conditions:
           - '{{ notify_message|trim != "" }}'
@@ -53,3 +56,7 @@ action:
               title: '{{ notify_title }}'
               message: '{{ notify_message }}'
               who: brian
+          
+          # Pause for 2 minutes to stop washer Clean -> Off -> Clean flip flop.
+          - delay:
+              minutes: 2
