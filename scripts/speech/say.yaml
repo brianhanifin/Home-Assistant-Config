@@ -1,10 +1,11 @@
 ---
+mode: parallel 
 variables:
   media_player: |
     {% if media_player is defined %}
       {{ media_player }}
-    {%- elif states('sensor.last_alexa') is string -%}
-      {{ states('sensor.last_alexa') }}
+    {#%- elif states('sensor.last_alexa') is string -%}
+      {{ states('sensor.last_alexa') }#}
     {%- else -%}
       media_player.google_kitchen
     {%- endif -%}
