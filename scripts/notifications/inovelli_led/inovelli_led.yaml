@@ -154,7 +154,7 @@ sequence:
         sequence:
           # Clear the previous effect.
           - service: zwave.set_config_parameter
-            data_template:
+            data:
               node_id: '{{ node_id }}'
               parameter: '{{ parameter }}'
               size: 4
@@ -162,7 +162,7 @@ sequence:
 
           # Start the new effect.
           - service: zwave.set_config_parameter
-            data_template:
+            data:
               node_id: '{{ node_id }}'
               parameter: '{{ parameter }}'
               size: 4
@@ -172,14 +172,14 @@ sequence:
     default:
       # Clear the previous effect.
       - service: ozw.set_config_parameter
-        data_template:
+        data:
           node_id: '{{ node_id }}'
           parameter: '{{ parameter }}'
           value: 0
 
         # Start the new effect.
       - service: ozw.set_config_parameter
-        data_template:
+        data:
           node_id: '{{ node_id }}'
           parameter: '{{ parameter }}'
           value: '{{ inovelli_math }}'

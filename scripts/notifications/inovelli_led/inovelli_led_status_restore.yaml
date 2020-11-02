@@ -1,15 +1,20 @@
 ---
+variables:
+  entity_id: '{{ entity_id|default("light.family_room") }}'
+  event_colors:
+    front_door: "cyan"
+    garage_door: "purple"
+  color: |
+    {% if is_state('lock.front_door','unlocked') %}
+      {{ event_colors["front_door"] }}
+    {% elif is_state('cover.garage_door','open ') %}
+      {{ event_colors["garage_door"] }}
+    {% endif %}
 sequence:
-  - service: script.inovelli_led
-    data_template:
-      entity_id: "{{ entity_id|default('light.family_room') }}"
-      color: >
-        {% set events = {
-          "front_door": "cyan",
-          "garage_door": "purple"
-        } %}
-        {% if is_state('lock.front_door','unlocked') %}
-          {{ events["front_door"] }}
-        {% elif is_state('cover.garage_door','open ') %}
-          {{ events["garage_door"] }}
-        {% endif %}
+  - choose:
+      - conditions: '{{ color|trim != "" }}'
+        sequence:
+          - service: script.inovelli_led
+            data:
+              entity_id: "{{ entity_id }}"
+              color: "{{ color }}"

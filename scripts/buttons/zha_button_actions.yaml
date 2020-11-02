@@ -4,24 +4,24 @@ variables:
   debug_id: '{{ remote ~"_"~ as_timestamp(now()) }}'
 sequence:
   - choose:
-    # Unused Remotes
-    #   * Xiaomi Aqara Wireless Mini Switch (square)
-    #   * Ikea On/Off Switch
-    #   * Hue Dimmer Switch
-    - conditions: '{{ remote in ["button_xiaomi_square_unused","remote_ikea_rocker_unused","remote_hue_unused"] }}'
-      sequence:
-        - service: script.toast
-          data:
-            message: 'remote: {{ remote }}'
+      # Unused Remotes
+      #   * Xiaomi Aqara Wireless Mini Switch (square)
+      #   * Ikea On/Off Switch
+      #   * Hue Dimmer Switch
+      - conditions: '{{ remote in ["button_xiaomi_square_unused","remote_ikea_rocker_unused","remote_hue_unused"] }}'
+        sequence:
+          - service: script.toast
+            data:
+              message: 'remote: {{ remote }}'
 
-        # - service: script.debug
-        #   data_template:
-        #     title: '"{{ remote }}" click'
-        #     message: |
-        #       command: {{ command }}
-        #       click_count: {{ click_count }}
-        #       manufacturer: {{ manufacturer }}
-        #     id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+          # - service: script.debug
+          #   data_template:
+          #     title: '"{{ remote }}" click'
+          #     message: |
+          #       command: {{ command }}
+          #       click_count: {{ click_count }}
+          #       manufacturer: {{ manufacturer }}
+          #     id: '{{ remote ~"_"~ as_timestamp(now()) }}'
 
     # Printer Power Button
     #   * Xiaomi Mijia Wireless Switch (round)
@@ -206,15 +206,15 @@ sequence:
                     brightness_step_pct: "20"
 
   - choose:
-    - conditions: '{{ debug_output == True }}'
-      sequence:
-        - service: script.debug
-          data_template:
-            title: '"{{ remote }}" click'
-            message: |
-              command: {{ command }}
-              command_modifier: {{ command_modifier }}
-              click_count: {{ click_count }}
-              manufacturer: {{ manufacturer }}
-              remote: {{ remote }}
-            id: '{{ debug_id|default("debug") }}'
+      - conditions: '{{ debug_output == True }}'
+        sequence:
+          - service: script.debug
+            data_template:
+              title: '"{{ remote }}" click'
+              message: |
+                command: {{ command }}
+                command_modifier: {{ command_modifier }}
+                click_count: {{ click_count }}
+                manufacturer: {{ manufacturer }}
+                remote: {{ remote }}
+              id: '{{ debug_id|default("debug") }}'

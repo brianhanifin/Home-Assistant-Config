@@ -1,14 +1,10 @@
 ---
 variables:
   entity_id: '{{ entity_id|default("light.family_room") }}'
-  model: |
-    {% set models = {
-      light.family_room: "dimmer"
-    } %}
-    {{ models[entity_id] }}
+
 sequence:
   - service: script.inovelli_led
-    data_template:
+    data:
       entity_id: "{{ entity_id }}"
       effect: "Off"
 
