@@ -67,20 +67,6 @@ action:
 
   - choose:
       - conditions:
-          - '{{ status == "Clean" }}'
-        sequence:
-          - service: timer.start
-            data:
-              entity_id: timer.washer_clean
-              duration: "01:00:00"
-
-      - conditions:
-          - '{{ status == "Off" }}'
-        sequence:
-          - service: timer.cancel
-            entity_id: timer.washer_clean
-
-      - conditions:
           - '{{ status == "Error" }}'
         sequence:
           - service: script.notify_speech
