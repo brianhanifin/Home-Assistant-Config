@@ -1,0 +1,124 @@
+---
+alias: Garage Door Status Change
+initial_state: true
+mode: restart
+trigger:
+  - platform: state
+    entity_id: cover.garage_door
+    #from: 'closed'
+    to: 'opening'
+variables:
+  old_state: '{{ trigger.from_state.state|lower }}'
+  new_state: '{{ trigger.to_state.state|lower }}'
+condition:
+  - '{{ (new_state in ["off","on"] and old_state in ["off","on"])
+        and old_state != new_state }}'
+action:
+  - choose:
+    - conditions:
+        - '{{ new_state == "closed" }}'
+      sequence:
+        # Turn off the LED notification.
+        - service: script.inovelli_led_off
+          data:
+            entity_id: light.family_room
+
+        # Restore the previous state of the notification lights.
+        - delay:
+            seconds: 1
+        - service: scene.turn_on
+          data:
+            entity_id: scene.garage_door_closed_lights_snapshot
+            transition: 5
+
+    - conditions:
+        - '{{ new_state == "opened" }}'
+      sequence:
+        # Update Light Switch LED Status Color.
+        - service: script.inovelli_led_status_start
+          data:
+            entity_id: light.family_room
+            color: purple
+            state_entity: cover.garage_door
+            state: "open"
+
+        # Store current light states.
+        - service: scene.create
+          data:
+            scene_id: garage_door_closed_lights_snapshot
+            snapshot_entities:
+              - light.play_room_entry
+              - light.table_lamp
+
+        - delay:
+            seconds: 5
+
+        # Turn on the notification lights
+        - service: light.turn_on
+          entity_id:
+            - light.table_lamp
+            - light.play_room_entry
+        - service: light.turn_on
+          data:
+            entity_id: light.table_lamp
+            brightness_pct: 100
+
+        # Flash the bulbs to draw attention.
+        - delay: "0:00:01"
+        - service: light.turn_on
+          data:
+            entity_id:
+              - light.play_room_entry
+              - light.table_lamp
+            flash: "short"
+
+        - delay: "0:00:01"
+        - service: light.turn_on
+          data:
+            entity_id:
+              - light.play_room_entry
+              - light.table_lamp
+
+        - delay: "0:00:01"
+        - service: light.turn_on
+          data:
+            entity_id:
+              - light.play_room_entry
+              - light.table_lamp
+            flash: "short"
+
+        # Brighten the single notification bulb.
+        - delay: "0:00:01"
+        - service: light.turn_on
+          data:
+            entity_id:
+              - light.play_room_entry
+              - light.table_lamp
+            brightness_pct: 75
+            effect: "colorloop"
+
+        # Change the notification animation.
+        - delay:
+            seconds: 15
+        - condition: state
+          entity_id: cover.garage_door
+          state: 'open'
+        - service: script.inovelli_led_status_start
+          data:
+            entity_id: light.family_room
+            color: purple
+            duration: indefinitely
+            effect: solid
+            level: 4
+
+        # If after 5 minutes the garage is still open, dim the lights.
+        # - delay: "0:05:00"
+        # - condition: state
+        #   entity_id: cover.garage_door
+        #   state:     'open'
+
+        # - service: light.turn_on
+        #   data:
+        #     entity_id: light.play_room_entry
+        #     brightness_pct: 30
+        #     transition: 5
