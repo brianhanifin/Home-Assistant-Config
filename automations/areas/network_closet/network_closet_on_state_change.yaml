@@ -11,7 +11,8 @@ variables:
   old_state: '{{ trigger.event.data.old_state.state }}'
   new_state: '{{ trigger.event.data.new_state.state }}'
 condition:
-  - '{{ old_state != new_state }}'
+  - '{{ new_state|lower != "unavailable"
+      and old_state != new_state }}'
 action:
   - service: 'light.turn_{{ "on" if new_state == "on" else "off" }}'
     entity_id: light.network_closet

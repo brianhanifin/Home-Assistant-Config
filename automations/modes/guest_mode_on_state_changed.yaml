@@ -45,7 +45,8 @@ variables:
         ] | random }}
     {% endif %}
 condition:
-  - '{{ old_state != new_state }}'
+  - '{{ new_state|lower != "unavailable"
+      and old_state != new_state }}'
 action:
   - choose:
       - conditions: '{{ new_state == "on" }}'
