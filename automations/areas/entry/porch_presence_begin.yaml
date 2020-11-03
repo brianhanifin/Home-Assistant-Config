@@ -15,12 +15,10 @@ trigger:
     from: 'off'
     to: 'on'
 action:
+  # Skip turning on the entry lights in the middle of the day.
   - choose:
-      - conditions:
-          # Only activate the lights after sunset.
-          - condition: sun
-            after: sunset
-        sequence:
+    - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+      sequence:
           # Store the current state of the porch light.
           - service: scene.create
             data:

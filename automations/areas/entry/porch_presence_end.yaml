@@ -17,12 +17,10 @@ trigger:
     # for:
     #   minutes: 10
 action:
+  # Skip turning on the entry lights in the middle of the day.
   - choose:
-      - conditions:
-          # Only activate the lights after sunset.
-          - condition: sun
-            after: sunset
-        sequence:
+    - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+      sequence:
           # Restore Adaptive Lighting automated control.
           - service: adaptive_lighting.set_manual_control
             data:
