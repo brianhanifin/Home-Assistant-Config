@@ -2,6 +2,7 @@
 alias: Network Closet Door on State Change
 id: network_closet_door_on_state_change
 initial_state: true
+mode: restart # Restart when the state changes.
 trigger:
   - platform: event
     event_type: state_changed
@@ -15,4 +16,13 @@ condition:
       and old_state != new_state }}'
 action:
   - service: 'light.turn_{{ "on" if new_state == "on" else "off" }}'
+    entity_id: light.network_closet
+
+  # Turn the light off after 5 minutes.
+  - condition: state
+    entity_id: light.network_closet
+    state: "on"
+    for:
+      minutes: 5
+  - service: light.turn_off
     entity_id: light.network_closet
