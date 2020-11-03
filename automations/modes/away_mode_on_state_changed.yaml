@@ -11,7 +11,7 @@ variables:
   old_state: '{{ trigger.event.data.old_state.state }}'
   new_state: '{{ trigger.event.data.new_state.state }}'
 condition:
-  - '{{ new_state|lower != "unavailable"
+  - '{{ "unavailable" in [new_state,old_state]
       and old_state != new_state }}'
 action:
   - choose:

@@ -22,7 +22,7 @@ condition:
   #   * state is the same as before
   #   * sync is disabled
   - '{{
-        new_state|lower != "unavailable"
+        "unavailable" in [new_state,old_state]
         and old_state != new_state
         and light_sync_enabled == "on"
       }}'
