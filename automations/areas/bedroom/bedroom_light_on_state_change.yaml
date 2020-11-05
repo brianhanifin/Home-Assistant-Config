@@ -17,15 +17,16 @@ variables:
   old_state: '{{ trigger.event.data.old_state.state|lower }}'
   new_state: '{{ trigger.event.data.new_state.state|lower }}'
 condition:
+  - '{{ new_state == "Off" }}'
   # Skip if the:
   #   * current state is "unavailable"
   #   * state is the same as before
   #   * sync is disabled
-  - '{{
-        (new_state in ["off","on"] and old_state in ["off","on"])
-        and old_state != new_state
-        and light_sync_enabled == "on"
-      }}'
+  # - '{{
+  #       (new_state in ["off","on"] and old_state in ["off","on"])
+  #       and old_state != new_state
+  #       and light_sync_enabled == "on"
+  #     }}'
 action:
   # - service: script.debug
   #   data:
