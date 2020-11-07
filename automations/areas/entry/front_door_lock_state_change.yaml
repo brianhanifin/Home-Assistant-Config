@@ -1,0 +1,110 @@
+---
+alias: front_door_lock_state_change
+initial_state: true
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: lock.front_door
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: lock.test_door
+
+variables:
+  #old_state: '{{ trigger.event.data.old_state.state|lower }}'
+  new_state: '{{ trigger.event.data.new_state.state|lower }}'
+
+action:
+  - choose:
+      - conditions:
+          - '{{ new_state == "locked" }}'
+        sequence:
+          # Cancel and reset the unlocked timer.
+          - service: timer.cancel
+            entity_id: timer.front_door_unlocked
+
+          # Disable Leave Unlocked mode.
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.leave_unlocked
+
+          ## ================================================================================================= ##
+
+          # Skip turning on the entry lights in the middle of the day.
+          - choose:
+              - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+                sequence:
+                  # Restore Adaptive Lighting automated control.
+                  - service: adaptive_lighting.set_manual_control
+                    data:
+                      entity_id:
+                        - switch.adaptive_lighting_home_entry
+                        - switch.adaptive_lighting_porch
+                      manual_control: false
+
+                  # Restore the previous state of the porch + entry lights.
+                  - service: scene.turn_on
+                    data:
+                      entity_id: scene.front_door_locked_lights_snapshot
+                      transition: 5
+
+          ## ================================================================================================= ##
+
+          # Update Light Switch LED Status Color.
+          - service: script.inovelli_led_off
+            data:
+              entity_id: light.family_room
+
+      # Unlock the front door.
+      - conditions:
+          - '{{ new_state == "unlocked" }}'
+        sequence:
+          # Start a countdown timer to relock the front door.
+          - choose:
+            - conditions: '{{ "off" == states("input_boolean.guest_mode")
+                          and "off" == states("input_boolean.leave_unlocked") }}'
+              sequence:
+                # Start a countdown timer to relock the front door.
+                - service: timer.start
+                  data_template:
+                    entity_id: timer.front_door_unlocked
+
+          ## ================================================================================================= ##
+
+          # Skip turning on the entry lights in the middle of the day.
+          - choose:
+              - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+                sequence:
+                  # Store the current state of the porch + entry lights.
+                  - service: scene.create
+                    data:
+                      scene_id: front_door_locked_lights_snapshot
+                      snapshot_entities:
+                        - light.home_entry
+                        - light.porch
+
+                  # Disable Adaptive Lighting automated control.
+                  - service: adaptive_lighting.set_manual_control
+                    data:
+                      entity_id:
+                        - switch.adaptive_lighting_home_entry
+                        - switch.adaptive_lighting_porch
+                      manual_control: true
+
+                  # Full brightness!
+                  - service: light.turn_on
+                    data:
+                      brightness: 255
+                      entity_id:
+                        - light.home_entry
+                        - light.porch
+
+          ## ================================================================================================= ##
+
+          # Update Light Switch LED Status Color.
+          - service: script.inovelli_led_status_start
+            data:
+              entity_id: light.family_room
+              color: pink
+              state_entity: lock.front_door
+              state: "unlocked"

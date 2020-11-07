@@ -1,0 +1,78 @@
+---
+##############################################
+###  Porch
+##############################################
+# Porch Presence: Start
+alias: Porch Presence Begin
+id: porch_presence_begin
+initial_state: true
+mode: single
+trigger:
+  # - platform: state
+  #   entity_id:
+  #     - binary_sensor.front_door_motion
+  #     #- binary_sensor.doorbell_motion
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: binary_sensor.front_door_motion
+  
+variables:
+  #old_state: '{{ trigger.event.data.old_state.state|lower }}'
+  new_state: '{{ trigger.event.data.new_state.state|lower }}'
+
+action:
+  # Skip turning on the entry lights in the middle of the day.
+  - choose:
+      - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - '{{ new_state == "on" }}'
+                sequence:
+                    # Store the current state of the porch light.
+                    - service: scene.create
+                      data:
+                        scene_id: doorbell_presence_lights_snapshot
+                        snapshot_entities:
+                          - light.home_entry
+                          - light.porch
+
+                    # Disable Adaptive Lighting automated control.
+                    - service: adaptive_lighting.set_manual_control
+                      data:
+                        entity_id: switch.adaptive_lighting_porch
+                        manual_control: true
+
+                    # Full brightness!
+                    - service: light.turn_on
+                      data:
+                        entity_id: light.porch
+                        kelvin: 3500
+                        brightness: 255
+
+                    # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+                    - delay:
+                        minutes: 5 #10
+
+              - conditions:
+                  - '{{ new_state == "off" }}'
+                sequence:
+                    # Restore Adaptive Lighting automated control.
+                    - service: adaptive_lighting.set_manual_control
+                      data:
+                        entity_id: switch.adaptive_lighting_porch
+                        manual_control: false
+
+                    - delay:
+                        seconds: 1
+
+                    # Restore the previous state of the porch light.
+                    - service: scene.turn_on
+                      data:
+                        entity_id: scene.doorbell_presence_lights_snapshot
+                        transition: 5
+
+                    # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+                    - delay:
+                        minutes: 5

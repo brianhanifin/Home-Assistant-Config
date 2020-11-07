@@ -14,7 +14,7 @@ trigger:
 variables:
   light_sync_enabled: '{{ states("input_boolean.bedroom_light_sync") }}'
 
-  old_state: '{{ trigger.event.data.old_state.state|lower }}'
+  #old_state: '{{ trigger.event.data.old_state.state|lower }}'
   new_state: '{{ trigger.event.data.new_state.state|lower }}'
 condition:
   - '{{ new_state == "Off" }}'

@@ -1,0 +1,69 @@
+---
+# Family Room Light Presence Trigger
+alias: "Family Room Presence State Change"
+initial_state: true
+mode: single
+trigger:
+  # Trigger if either motion sensor is on.
+  - platform: state
+    entity_id:
+      - binary_sensor.family_room_1_motion
+      - binary_sensor.family_room_2_motion
+    to: "on"
+  # If both motion sensors returns to off.
+  - platform: state
+    entity_id: binary_sensor.family_room_presence
+    to: "off"
+
+variables:
+  #old_state: '{{ trigger.from_state.state|lower }}'
+  new_state: '{{ trigger.to_state.state|lower }}'
+
+condition:
+  # Skip when the light is already on.
+  - condition: state
+    entity_id: light.family_room
+    state: "off"
+
+  # Skip turning on the lights in the middle of the day.
+  - condition: state
+    entity_id: binary_sensor.dark_outside
+    state: "on"
+
+  # We don't need to turn on the light when the dogs are alone.
+  # - condition: state
+  #   entity_id: input_boolean.away_mode
+  #   state: "off"
+
+action:
+  - choose:
+    - conditions:
+        - '{{ new_state == "on" }}'
+      sequence:
+        # Stop if the presence lights mode is disabled.
+        - condition: state
+          entity_id: input_boolean.presence_lights_family_room
+          state: "on"
+
+        # Family Room Presence Light(s) On
+        - service: light.turn_on
+          data:
+            entity_id:
+              - light.family_room
+              - light.table_lamp
+            brightness: 255
+            kelvin: 5000
+            transition: 0
+
+    - conditions:
+        - '{{ new_state == "off" }}'
+      sequence:
+        - service: lights.turn_off
+          entity_id:
+            - light.family_room
+            - light.table_lamp
+            - light.family_room_floor_lamp
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 10
