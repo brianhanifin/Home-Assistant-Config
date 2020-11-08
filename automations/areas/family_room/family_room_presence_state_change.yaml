@@ -37,32 +37,32 @@ condition:
 
 action:
   - choose:
-    - conditions:
-        - '{{ new_state == "on" }}'
-      sequence:
-        # Stop if the presence lights mode is disabled.
-        - condition: state
-          entity_id: input_boolean.presence_lights_family_room
-          state: "on"
+      - conditions:
+          - '{{ new_state == "on" }}'
+        sequence:
+          # Stop if the presence lights mode is disabled.
+          - condition: state
+            entity_id: input_boolean.presence_lights_family_room
+            state: "on"
 
-        # Family Room Presence Light(s) On
-        - service: light.turn_on
-          data:
+          # Family Room Presence Light(s) On
+          - service: light.turn_on
+            data:
+              entity_id:
+                - light.family_room
+                - light.table_lamp
+              brightness: 255
+              kelvin: 5000
+              transition: 0
+
+      - conditions:
+          - '{{ new_state == "off" }}'
+        sequence:
+          - service: lights.turn_off
             entity_id:
               - light.family_room
               - light.table_lamp
-            brightness: 255
-            kelvin: 5000
-            transition: 0
-
-    - conditions:
-        - '{{ new_state == "off" }}'
-      sequence:
-        - service: lights.turn_off
-          entity_id:
-            - light.family_room
-            - light.table_lamp
-            - light.family_room_floor_lamp
+              - light.family_room_floor_lamp
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:

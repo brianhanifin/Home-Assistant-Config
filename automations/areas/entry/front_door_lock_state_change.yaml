@@ -61,13 +61,13 @@ action:
         sequence:
           # Start a countdown timer to relock the front door.
           - choose:
-            - conditions: '{{ "off" == states("input_boolean.guest_mode")
-                          and "off" == states("input_boolean.leave_unlocked") }}'
-              sequence:
-                # Start a countdown timer to relock the front door.
-                - service: timer.start
-                  data_template:
-                    entity_id: timer.front_door_unlocked
+              - conditions: '{{ "off" == states("input_boolean.guest_mode")
+                            and "off" == states("input_boolean.leave_unlocked") }}'
+                sequence:
+                  # Start a countdown timer to relock the front door.
+                  - service: timer.start
+                    data_template:
+                      entity_id: timer.front_door_unlocked
 
           ## ================================================================================================= ##
 
