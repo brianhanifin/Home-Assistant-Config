@@ -16,6 +16,12 @@
 # Set local variables for reuse in this script.
 variables:
   notification_service: 'notify.{{ who|default("brian") }}'
+  link: | 
+    {% if link != "" %}
+      {{ link }}?hide_header
+    {%- elif url != "" %}
+      {{ url }}?hide_header
+    {%- endif %}
   # Every notification should have a sound. Actionable notifications should grab your attention.
   sound_file: |
     {%- if sound is string %}
@@ -83,7 +89,7 @@ sequence:
             push:
               category: '{{ category }}'
               sound: '{{ sound_file }}'
-              url: '{{ link or url }}'
+              url: '{{ link }}'
 
               apns_headers:
                 apns-collapse-id: '{{ replaceable_id|default(category) }}'
