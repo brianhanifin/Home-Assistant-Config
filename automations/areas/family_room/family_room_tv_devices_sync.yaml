@@ -1,0 +1,61 @@
+---
+alias: Family Room TV Device Sync
+id: family_room_tv_device_sync
+description: Toggle all TV devices when the tv changes state.
+initial_state: true
+mode: single
+trigger:
+  - platform: state
+    entity_id:
+      - remote.family_room_hub
+      - media_player.tv_family_room
+
+variables:
+  old_state: '{{ trigger.from_state.state }}'
+  new_state: '{{ trigger.to_state.state }}'
+
+  entity_id: '{{ trigger.to_state.entity_id }}'
+  activities:
+    PowerOff: -1
+    Apple TV: 18768213
+    Computer: 34587914
+    "Movie Disc": 18768214
+action:
+  - service: script.debug
+    data:
+      message: |
+        old_state: {{ old_state }}
+        new_state: {{ new_state }}
+        entity_id: {{ entity_id }}
+  
+  - choose:
+      # Harmony Hub Controller
+      - conditions:
+          - '{{ entity_id == "remote.family_room_hub" }}'
+        sequence:
+          - service: 'remote.turn_{{ new_state }}'
+            entity_id: remote.apple_tv_family_room
+
+          - choose:
+              - conditions:
+                  - '{{ new_state == "on" }}'
+                sequence:
+                  - delay:
+                      seconds: 2
+
+                  - service: remote.send_command
+                    data:
+                      entity_id: remote.family_room_hub
+                      command: Home
+                      device: Apple TV Gen 4
+
+      # Samsung TV: When the TV powers off after not being used for a while, send the hub PowerOff activity.
+      - conditions:
+          - '{{ entity_id == "media_player.tv_family_room" 
+              and new_state == "off" }}'
+        sequence:
+          - service: remote.turn_on
+            data:
+              entity_id: remote.family_room_hub
+              activity: '{{ activities["PowerOff"] }}'
+
