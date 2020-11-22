@@ -258,13 +258,13 @@
       "partlycoudly": "mostly cloudy skies",
       "sunny": "clear skies and sun"
     } -%}
-    {%- if conditions[states('weather.santee')] is string -%}
-      {%- set condition = conditions[states('weather.santee')] -%}
+    {%- if conditions[states('weather.accuweather')] is string -%}
+      {%- set condition = conditions[states('weather.accuweather')] -%}
     {%- else -%}
-      {%- set condition = states('weather.santee') -%}
+      {%- set condition = states('weather.accuweather') -%}
     {%- endif -%}
 
-    {{ ['Currently', 'Right now']|random }} in Santee, it is {{ state_attr('weather.santee','temperature')|int }} degrees fahrenheit, with {{ condition }}.
+    {{ ['Currently', 'Right now']|random }} outside, it is {{ state_attr('weather.accuweather','temperature')|int }} degrees fahrenheit, with {{ condition }}.
     {{ states("sensor.forecast") }}
     {{ pause() }}
   {%- endmacro -%}

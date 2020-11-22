@@ -13,9 +13,9 @@ sensors:
 
         {#- Retrieve the current condition and normalize the value #}
         {%- set weather_sensors = [
-          "weather.santee",
+          "weather.accuweather",
           "sensor.openweathermap_condition",
-          "sensor.cc_santee_weather_condition"
+          "sensor.cc_weather_condition"
         ] %}
         {%- for sensor in weather_sensors if states(sensor) != "unknown" and factors.current_condition == "" %}
           {%- set factors.current_condition = states(sensor) %}
