@@ -30,12 +30,12 @@ variables:
     {%- endif %}
 
 action:
-  - service: script.debug
-    data:
-      message: |
-        platform: {{ platform }}
-        time: {{ trigger.now }}
-        {{ trigger }}
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       platform: {{ platform }}
+  #       time: {{ trigger.now }}
+  #       {{ trigger }}
 
   - service: 'input_boolean.turn_{{ state }}'
     entity_id: input_boolean.presence_lights_family_room

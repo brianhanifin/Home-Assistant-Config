@@ -29,12 +29,6 @@ fields:
     task.unique(task_id)
     if debug == "true": log.info(f"{task_id}: start")
 
-    # Disable the circadian lighting while this sequence is going.
-    circadian_fixture_switch = "switch.circadian_lighting_" + fixture_name
-    if switch.circadian_lighting == "on":
-      switch.turn_off(entity_id=circadian_fixture_switch)
-      task.sleep(2)
-
     # Retrieve the list of entity ids in the light group.
     bulbs = state.get(light_group+".entity_id")
     
@@ -84,11 +78,6 @@ fields:
       # Make sure each bulb is off.
       for entity_id in bulbs:
         light.turn_off(entity_id=entity_id)
-
-    # Reenable the circadian lighting switch if the mode is globally enabled.
-    task.sleep(transition * 2)
-    if switch.circadian_lighting == "on":
-      switch.turn_on(entity_id=circadian_fixture_switch)
 
     if debug == "true": log.info(f"{task_id}: end")
 
