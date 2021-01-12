@@ -8,13 +8,12 @@ script:
           media_player: >
             {%- set room = media_player|lower|replace(' ','_')|replace('[','')|replace(']','')  %}
             {%-
-              set alexa = {
+              set speaker = {
                 "bedroom": "media_player.google_bedroom",
                 "boys_bedroom": "media_player.google_boys_room",
                 "boys_sleeping": "group.smart_speakers_boys_sleeping",
                 "downstairs": "media_player.google_downstairs",
                 "family_room": "media_player.google_family_room",
-                "garage": "media_player.alexa_garage",
                 "guest_room": "media_player.google_guest_room",
                 "kitchen": "media_player.google_kitchen",
                 "kitchen/garage": "group.smart_speakers_welcome",
@@ -23,7 +22,7 @@ script:
                 "upstairs_bathroom": "media_player.google_upstairs_bathroom"
               }
             -%}
-            {{ alexa[room] }}
+            {{ speaker[room] }}
 
           # This section of variables can be removed. They are special for my setup.
           say_dark_outside: "{{ say_dark_outside }}"
