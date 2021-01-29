@@ -1,0 +1,18 @@
+---
+platform: template
+switches:
+  tv_family_room:
+    friendly_name: "TV: Family Room"
+    value_template: "{{ states('media_player.tv_family_room') }}"
+    icon_template: >-
+      {% if states('media_player.tv_family_room') %}
+        mdi:television
+      {% else %}
+        mdi:television-off
+      {% endif %}
+    turn_on:
+      service: media_player.turn_on
+      entity_id: media_player.tv_family_room
+    turn_off:
+      service: media_player.turn_off
+      entity_id: media_player.tv_family_room

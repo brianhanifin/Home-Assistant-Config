@@ -3,11 +3,13 @@ alias: Family Room TV Device Sync
 id: family_room_tv_device_sync
 description: Show Apple TV home screen when the TV turns on.
 initial_state: true
-mode: restart
+mode: single
 trigger:
   # Samsung TV
   - platform: state
-    entity_id: media_player.tv_family_room
+    entity_id:
+      - media_player.tv_family_room
+      - switch.tv_family_room
 
 variables:
   old_state: '{{ trigger.from_state.state }}'
@@ -42,3 +44,6 @@ action:
               command:
                 - home
 
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+    minutes: 1
