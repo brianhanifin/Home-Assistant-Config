@@ -5,18 +5,18 @@ description: Show Apple TV home screen when the TV turns on.
 initial_state: true
 mode: single
 trigger:
-  # Samsung TV
   - platform: state
-    entity_id:
-      - media_player.tv_family_room
-      - switch.tv_family_room
-
+    entity_id: media_player.tv_family_room  # Samsung TV
+    from: "off"
+    to: "on"
 variables:
-  old_state: '{{ trigger.from_state.state }}'
-  new_state: '{{ trigger.to_state.state }}'
+  # old_state: '{{ trigger.from_state.state }}'
+  # new_state: '{{ trigger.to_state.state }}'
 
   #entity_id: '{{ trigger.to_state.entity_id }}'
-  #source: '{{ trigger.to_state.attributes.source }}'
+
+  #tv_source: '{{ state_attr("media_player.tv_family_room","source") }}'
+  apple_tv_state: '{{ states("media_player.tv_family_room") }}'
 action:
   # - service: script.debug
   #   data:
@@ -24,19 +24,19 @@ action:
   #       old_state: {{ old_state }}
   #       new_state: {{ new_state }}
   #       entity_id: {{ entity_id }}
-  ##       source: {{ source }}
+  ##       tv_source: {{ tv_source }}
+  #       apple_tv_state: {{ apple_tv_state }}
 
   - choose:
-      # Samsung TV
-      #- conditions: '{{ new_state == "on" and source = "HDMI 1" }}'
-      - conditions: '{{ new_state == "on" }}'
+      # When the Apple TV is "idle", wake it up.
+      - conditions: '{{ apple_tv_state in ["idle","off"] }}'
         sequence:
           - service: remote.turn_on
             entity_id: remote.apple_tv_family_room
 
           # Apple TV: let us know the TV is on by putting something on the screen.
           - delay:
-              seconds: 2
+              seconds: 0.5
 
           - service: remote.send_command
             data:
@@ -46,4 +46,4 @@ action:
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
-    minutes: 1
+      minutes: 1
