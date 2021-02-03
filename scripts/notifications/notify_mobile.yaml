@@ -16,11 +16,15 @@
 # Set local variables for reuse in this script.
 variables:
   notification_service: 'notify.{{ who|default("brian") }}'
-  link: | 
-    {% if link != "" %}
+  link: |
+    {% if url != "" %}
+      {{ link }}
+    {% else %}
+      {{ url }}
+    {% endif %}
+  link: |
+    {% if link.startswith("http://") %}
       {{ link }}?hide_header
-    {%- elif url != "" %}
-      {{ url }}?hide_header
     {%- endif %}
   # Every notification should have a sound. Actionable notifications should grab your attention.
   sound_file: |

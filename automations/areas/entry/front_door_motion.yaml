@@ -1,10 +1,6 @@
 ---
-##############################################
-###  Porch
-##############################################
-# Porch Presence: Start
-alias: Porch Presence Begin
-id: porch_presence_begin
+alias: Front Door Motion
+id: front_door_motion
 initial_state: true
 mode: single
 trigger:
@@ -12,19 +8,32 @@ trigger:
   #   entity_id:
   #     - binary_sensor.front_door_motion
   #     #- binary_sensor.doorbell_motion
-  - platform: event
-    event_type: state_changed
-    event_data:
-      entity_id: binary_sensor.front_door_motion
+  # - platform: event
+  #   event_type: state_changed
+  #   event_data:
+  #     entity_id: binary_sensor.front_door_motion
+  - platform: state
+    entity_id: binary_sensor.front_door_motion
   
 variables:
   #old_state: '{{ trigger.event.data.old_state.state|lower }}'
-  new_state: '{{ trigger.event.data.new_state.state|lower }}'
+  #new_state: '{{ trigger.event.data.new_state.state|lower }}'
+  new_state: '{{ trigger.to_state.state|lower }}'
 
+  outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
 action:
+  - service: script.debug
+    data:
+      message: 'new_state: {{ new_state }}'
+
+  # Run image processing to see if a person is at the door.
+  - service: image_processing.scan
+    data:
+      entity_id: camera.front_door
+
   # Skip turning on the entry lights in the middle of the day.
   - choose:
-      - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+      - conditions: "{{ outdoor_illuminance|int < 2000 }}"
         sequence:
           - choose:
               - conditions:
@@ -51,10 +60,6 @@ action:
                       kelvin: 3500
                       brightness: 255
 
-                  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
-                  - delay:
-                      minutes: 5 #10
-
               - conditions:
                   - '{{ new_state == "off" }}'
                 sequence:
@@ -72,7 +77,3 @@ action:
                     data:
                       entity_id: scene.doorbell_presence_lights_snapshot
                       transition: 5
-
-                  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
-                  - delay:
-                      minutes: 5

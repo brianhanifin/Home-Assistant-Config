@@ -1,0 +1,19 @@
+---
+alias: Front Door Person Detected
+id: front_door_person_detected
+initial_state: true
+mode: single
+trigger:
+  # - platform: state
+  #   entity_id:
+  #     - binary_sensor.front_door_motion
+  - platform: event
+    event_type: deepstack.object_detected
+    event_data:
+      name: person
+action:
+  - service: script.notify_mobile
+    data:
+      title: Someone is at the front door
+      camera: camera.front_door
+      who: brian
