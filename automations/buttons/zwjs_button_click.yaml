@@ -1,0 +1,246 @@
+---
+alias: zwjs_button_click
+initial_state: true
+mode: parallel
+#max_exceeded: silent
+trigger:
+  - platform: event
+    event_type: zwave_js_event
+
+variables:
+  remotes:
+    3: "inovelli_family_room"
+    6: "ge_bedroom"
+    19: "ge_laundry"
+
+  remote: '{{ remotes[trigger.event.data.node_id] }}'
+  presses: |
+    {% if remote.startswith("inovelli") %}
+      {% if trigger.event.data.value == "KeyPressed" %}
+        1
+      {% else %}
+        {{ trigger.event.data.value|replace("KeyPressed","")|replace("x","")|int }}
+      {% endif %}
+    {% elif remote.startswith("ge") %}
+      2
+    {% endif %}
+  button: |
+    {% if remote.startswith("inovelli") %}
+      {% if trigger.event.data.property_key_name|int == 2 %}
+        top
+      {% elif trigger.event.data.property_key_name|int == 1 %}
+        bottom
+      {% endif %}
+    {% elif remote.startswith("ge") %}
+      {% if trigger.event.data.value|int == 255 %}
+        top
+      {% elif trigger.event.data.value|int == 0 %}
+        bottom
+      {% endif %}
+    {% endif %}
+
+action:
+  # - service: script.debug
+  #   data:
+  #     title: "zwjs_button_click"
+  #     #message: 'data:{{ trigger.event.data }}'
+  #     message: |
+  #       remote: {{ remote }}
+  #       button: {{ button }}
+  #       presses: {{ presses }}
+
+  #       data: {{ trigger.event.data }}
+
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: '{{ remote == "ge_bedroom" }}'
+        sequence:
+          - choose:
+              # SCENE 2: Up
+              - conditions:
+                  - condition: template
+                    value_template: '{{ button == "top" }}'
+                sequence:
+                  - service: light.turn_on
+                    data:
+                      entity_id:
+                        - light.bedroom
+                        - light.brian
+                        - light.glowforge
+                      brightness: 255
+                      kelvin: 5000
+                      transition: 0
+
+              # SCENE 1: Down
+              - conditions:
+                  - condition: template
+                    value_template: '{{ button == "bottom" }}'
+                sequence:
+                  - service: homeassistant.turn_off
+                    data:
+                      entity_id:
+                        - light.bedroom
+                        - light.brian
+                        - light.glowforge
+                        - fan.bedroom
+                        - switch.sound_machine
+
+      # NODE 3: Family Room Dimmer
+      # Inovelli LZW31-SN Dimmer Red Series
+      - conditions:
+          - condition: template
+            value_template: '{{ remote == "inovelli_family_room" }}'
+        # click: 1x, 2x, 3x, 4x, 5x
+        sequence:
+          - choose:
+              # 1x: "Normal" Lighting
+              - conditions:
+                  - condition: template
+                    value_template: '{{ presses == 1 }}'
+                sequence:
+                  # Buttons: DOWN, UP, CONFIG
+                  - choose:
+                      # SCENE 2: Up
+                      - conditions:
+                          - condition: template
+                            value_template: '{{ button == "top" }}'
+                        sequence:
+                          - service: light.turn_on
+                            data:
+                              entity_id:
+                                - light.family_room
+                                - light.table_lamp
+                              brightness: 255
+                              kelvin: 5000
+                              transition: 0
+
+                      # SCENE 1: Down
+                      - conditions:
+                          - condition: template
+                            value_template: '{{ button == "bottom" }}'
+                        sequence:
+                          - service: homeassistant.turn_off
+                            entity_id:
+                              - light.family_room_floor_lamp
+                              - light.table_lamp
+
+              # 2x: Floor Lamp
+              - conditions:
+                  - condition: template
+                    value_template: '{{ presses == 2 }}'
+                sequence:
+                  # Buttons: DOWN, UP
+                  choose:
+                    # SCENE 2: Up
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "top" }}'
+                      sequence:
+                        - service: light.turn_on
+                          data:
+                            entity_id:
+                              - light.family_room
+                              - light.table_lamp
+                              - light.family_room_floor_lamp
+                            brightness: 255
+                            kelvin: 5000
+                            transition: 0
+
+                    # SCENE 1: Down
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "bottom" }}'
+                      sequence:
+                        - service: light.turn_off
+                          entity_id: light.family_room_floor_lamp
+
+              # 3x: Fan
+              - conditions:
+                  - condition: template
+                    value_template: '{{ presses == 3 }}'
+                sequence:
+                  # Buttons: DOWN, UP
+                  choose:
+                    # SCENE 2: Up
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "top" }}'
+                      sequence:
+                        - service: fan.turn_on
+                          entity_id: fan.family_room
+
+                    # SCENE 1: Down
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "bottom" }}'
+                      sequence:
+                        - service: fan.turn_off
+                          entity_id: fan.family_room
+
+              # 4x: Party Areas
+              - conditions:
+                  - condition: template
+                    value_template: '{{ presses == 4 }}'
+                sequence:
+                  # Buttons: DOWN, UP
+                  choose:
+                    # SCENE 2: Up
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "top" }}'
+                      sequence:
+                        - service: light.turn_on
+                          data:
+                            brightness: 255
+                            kelvin: 5000
+                            transition: 0
+                            entity_id:
+                              - light.dining_room
+                              - light.family_room
+                              - light.table_lamp
+                              - light.family_room_floor_lamp
+
+                        - service: homeassistant.turn_on
+                          entity_id:
+                            - switch.kitchen
+                            - switch.kitchen_prep
+
+                    # SCENE 1: Down
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "bottom" }}'
+                      sequence:
+                        - service: homeassistant.turn_off
+                          entity_id:
+                            - fan.family_room
+                            - media_player.tv_family_room
+                            - light.dining_room
+                            - switch.kitchen
+                            - switch.kitchen_prep
+                            - light.family_room
+                            - light.table_lamp
+                            - light.family_room_floor_lamp
+
+              # 5x: Guest Mode
+              - conditions:
+                  - condition: template
+                    value_template: '{{ presses == 7 }}'
+                sequence:
+                  # Buttons: DOWN, UP
+                  choose:
+                    # SCENE 2: Up
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "top" }}'
+                      sequence:
+                        - service: input_boolean.turn_on
+                          entity_id: input_boolean.guest_mode
+
+                    # SCENE 1: Down
+                    - conditions:
+                        - condition: template
+                          value_template: '{{ button == "bottom" }}'
+                      sequence:
+                        - service: input_boolean.turn_off
+                          entity_id: input_boolean.guest_mode
