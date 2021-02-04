@@ -1,0 +1,38 @@
+---
+alias: front_door_lock_manual_state_change
+initial_state: true
+mode: restart
+trigger:
+  - platform: event
+    event_type: zwave_js_event
+    event_data:
+      node_id: 30
+variables:
+  new_state: '{{ trigger.event.data.label|replace("Manual ","")|replace(" operation","") }}'
+action:
+  # - service: script.debug
+  #   data:
+  #     title: "front_door_lock_manual_state_change"
+  #     message: |
+  #       new_state: {{ new_state }}
+  #       lock: {{ new_state == "lock" }}
+  #       unlock: {{ new_state == "unlock" }}
+
+  # Change lock state to match the manual latch change.
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: '{{ new_state == "lock" }}'
+        sequence:
+          # Force status to "locked".
+          device_id: 63f15e5026661b6f9a1424541db5eccb
+          domain: lock
+          entity_id: lock.front_door
+          type: lock
+
+    default:
+      # Force status to "unlocked".
+      device_id: 63f15e5026661b6f9a1424541db5eccb
+      domain: lock
+      entity_id: lock.front_door
+      type: unlock
