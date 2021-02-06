@@ -4,19 +4,11 @@ sequence:
   choose:
     conditions:
       - condition: template
-        value_template: '{{ not (message is undefined and text is undefined) }}'
+        value_template: '{{ message is not undefined }}'
     sequence:
       - service: script.say
         data_template:
-          media_player: >-
-            {%- if media_player is undefined %}
-              {%- set media_player = smart_speaker %}
-            {%- endif %}
-            {{ media_player|default('media_player.google_kitchen') }}
-          message: >-
-            {%- if message == empty %}
-              {%- set message = text %}
-            {%- endif %}
-            {{ message }}
-          say_greeting: "false"
+          media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+          message: '{{ message }}'
+          say_greeting: 'false'
           voice: '{{ voice }}'

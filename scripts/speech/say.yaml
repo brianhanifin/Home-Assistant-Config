@@ -1,25 +1,8 @@
 ---
 mode: parallel 
 variables:
-  media_player: |
-    {% if media_player is defined %}
-      {{ media_player }}
-    {#%- elif states('sensor.last_alexa') is string -%}
-      {{ states('sensor.last_alexa') }#}
-    {%- else -%}
-      media_player.google_kitchen
-    {%- endif -%}
-  tts_service: |
-    {%- if "alexa" in media_player %}
-      alexa
-    {%- elif "google" in media_player %}
-      cloud
-    {%- else %}
-      speaker_group
-    {% endif %}
+  media_player: '{{ media_player|default("media_player.google_kitchen") }}'
   briefing: !include ../../templates/speech/briefing.yaml
-  title: '{{ title|default("Home Assistant") }}'
-
   mqtt_message_state: "{{ briefing|striptags }}"
   # mqtt_message_attributes:
   #   target: "{{ media_player }}"
@@ -42,10 +25,9 @@ sequence:
           - service: script.turn_on
             entity_id: script.update_lights_on
 
-  - service: 'script.say_{{ tts_service }}'
+  - service: script.say_cloud
     data:
       media_player: '{{ media_player }}'
-      title: '{{ title }}'
       message: '{{ briefing }}'
 
   - service: script.toast
