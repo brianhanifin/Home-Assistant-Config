@@ -101,7 +101,7 @@ script:
     variables:
       title: '{{ title | default("Home Assistant Notification") }}'
       message: '{{ message | default("This is an example of notification using IOT Link") }}'
-      link: '{{ link | default("http://homeassistant.local:8123") }}'
+      url: '{{ link | default("http://homeassistant.local:8123") }}'
     sequence:
       - service: mqtt.publish
         data:
@@ -111,7 +111,7 @@ script:
   blackpc_open_firefox:
     alias: "BlackPC Open Firefox"
     variables:
-      link: '{{ link | default("http://homeassistant.local:8123") }}'
+      url: '{{ link | default("http://homeassistant.local:8123") }}'
     sequence:
       - service: mqtt.publish
         data:
