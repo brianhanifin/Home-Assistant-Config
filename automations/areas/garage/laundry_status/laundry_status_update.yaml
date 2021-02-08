@@ -64,7 +64,7 @@ action:
         sequence:
           - service: script.notify_speech
             data:
-              media_player: media_player.google_downstairs
+              media_player: group.google_downstairs
               message: '{{ notify_message }}'
 
           - service: script.notify_mobile
@@ -72,7 +72,7 @@ action:
               title: '{{ notify_title }}'
               message: '{{ notify_message }}'
               who: brian
-          
+
           # Pause for 2 minutes to stop washer Clean -> Off -> Clean flip flop.
           - delay:
               minutes: 2

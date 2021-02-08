@@ -6,7 +6,7 @@ sensors:
     value_template: |
       {% set list = namespace(dates="",speakers="") %}
 
-      {% set media_player = "group.smart_speakers" %}
+      {% set media_player = "group.google" %}
       {% set speakers = expand(media_player) | map(attribute='entity_id') | list %}
       
       {% for speaker in speakers if states[speaker].object_id.startswith("google") %}
