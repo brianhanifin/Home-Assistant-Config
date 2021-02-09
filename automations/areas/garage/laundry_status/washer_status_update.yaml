@@ -58,7 +58,8 @@ variables:
     {% endif %}
 condition:
   - condition: template
-    value_template: '{{ status != previous_status }}'
+    value_template: '{{ status != previous_status
+                      and status != "Unknown" }}'
 action:
   - service: input_select.select_option
     data:
