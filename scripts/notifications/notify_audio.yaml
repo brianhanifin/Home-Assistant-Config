@@ -1,7 +1,39 @@
 ---
+variables:
+  speakers: |
+    {% set speakers = speakers|default('media_player.google_family_room') %}
+    {{ expand(speakers) | map(attribute="entity_id") | join(" ") }}
+  speaker_count: '{{ speakers.split(" ") | count }}'
+
+  audio_file: "{{ audio_file }}"
+  content_type: "{{ content_type|default('audio') }}"
 sequence:
-  - service: media_extractor.play_media
-    data_template:
-      entity_id: "{{ media_player|default('media_player.google_family_room') }}"
-      media_content_id: "{{ url|default('http://homeassistant.local:8123/local/audio/jetsons-doorbell.mp3') }}"
-      media_content_type: MUSIC
+  - condition: state
+    entity_id: input_boolean.audio_notifications
+    state: 'on'
+
+  # - condition: time
+  #   after: '06:00:00'
+  #   before: '22:00:00'
+
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: group.family
+        state: 'home'
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: 'on'
+
+  # Play the audio on all of the speakers.
+  - repeat:
+      count: "{{ speaker_count|int }}"
+      sequence:
+        - variables:
+            speaker: '{{ speakers.split(" ")[repeat.index-1] }}'
+
+        - service: media_player.play_media
+          data_template:
+            entity_id: "{{ speaker }}"
+            media_content_id: "{{ audio_file }}"
+            media_content_type: "{{ content_type }}"

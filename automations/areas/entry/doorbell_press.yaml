@@ -8,13 +8,24 @@ trigger:
   - platform: state
     entity_id: binary_sensor.doorbell_press
     to: 'on'
+variables:
+  audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
 action:
-  - service: script.notify_mobile
+  # - service: script.notify_mobile
+  #   data:
+  #     who: brian
+  #     title: Doorbell rang
+  #     message: Someone pushed the doorbell.
+  #     camera: camera.front_door
+
+  # Play the doorbell chime.
+  - service: script.notify_audio
     data:
-      who: brian
-      title: Doorbell rang
-      message: Someone pushed the doorbell.
-      camera: camera.front_door
+      speakers:
+        - media_player.google_kitchen
+        - media_player.google_garage
+      audio_file: "{{ audio_file }}"
+
 
   # Stream the camera feed to all open Home Assistant browsers.
   - service: browser_mod.popup
@@ -35,14 +46,13 @@ action:
       large: true
       # Auto close after 2 minutes (120 seconds * 1000 miliseconds).
       auto_close: true
-      time: (120 * 1000)
 
   # Stream the camera feed to Apple TV.
   - service: remote.turn_on
     entity_id: remote.apple_tv_family_room
   - service: camera.play_stream
     data:
-      entity_id: camera.front_door
+      entity_id: camera.doorbell
       media_player: media_player.apple_tv_family_room
 
   # Display the message as a toast notification
@@ -51,28 +61,13 @@ action:
       message: "Someone pressed the doorbell!"
       duration: 0
 
-  # - service: media_player.turn_on
-  #   entity_id: media_player.google_family_room
-
-  # - service: media_player.volume_set
-  #   entity_id: media_player.google_family_room
-  #   data_template:
-  #     volume_level: >
-  #       {% if now().strftime("%H")|int < 12 and now().strftime("%H")|int > 6%}
-  #       0.25
-  #       {% elif now().strftime("%H")|int > 12 and now().strftime("%H")|int < 17%}
-  #       0.40
-  #       {% else %}
-  #       0.20
-  #       {% endif %}
-
-  # - service: media_player.play_media
-  #   data_template:
-  #     entity_id: media_player.google_family_room
-  #     media_content_id: "http://homeassistant.local:8123/local/audio/jetsons-doorbell.mp3"
-  #     media_content_type: music
-
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
-      minutes: 5
+      #minutes: 5
+      seconds: 30
+
+  # Close the camera popup.
+  - service: browser_mod.close_popup
+
+
