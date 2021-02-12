@@ -7,9 +7,15 @@ mode: single
 trigger:
   - platform: state
     entity_id: binary_sensor.doorbell_press
-    to: 'on'
+    from: "off"
+    to: "on"
+  - platform: state
+    entity_id: input_boolean.test
+    from: "off"
+    to: "on"
 variables:
-  audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
+  audio_file: "media-source://media_source/local/audio/jetsons-doorbell.mp3"
+
 action:
   # - service: script.notify_mobile
   #   data:
@@ -18,14 +24,20 @@ action:
   #     message: Someone pushed the doorbell.
   #     camera: camera.front_door
 
+  # Display the message as a toast notification
+  - service: script.toast
+    data:
+      message: "Someone pressed the doorbell!"
+
   # Play the doorbell chime.
   - service: script.notify_audio
     data:
+      audio_file: "{{ audio_file }}"
+      volume: 0.8
       speakers:
+        - media_player.google_family_room
         - media_player.google_kitchen
         - media_player.google_garage
-      audio_file: "{{ audio_file }}"
-
 
   # Stream the camera feed to all open Home Assistant browsers.
   - service: browser_mod.popup
@@ -48,26 +60,25 @@ action:
       auto_close: true
 
   # Stream the camera feed to Apple TV.
-  - service: remote.turn_on
-    entity_id: remote.apple_tv_family_room
-  - service: camera.play_stream
-    data:
-      entity_id: camera.doorbell
-      media_player: media_player.apple_tv_family_room
+  - choose:
+      conditions:
+        - condition: state
+          entity_id: media_player.tv_family_room
+          state: "on"
+      sequence:
+        - service: remote.turn_on
+          entity_id: remote.apple_tv_family_room
+        - service: camera.play_stream
+          data:
+            entity_id: camera.doorbell
+            media_player: media_player.apple_tv_family_room
 
-  # Display the message as a toast notification
-  - service: script.toast
-    data:
-      message: "Someone pressed the doorbell!"
-      duration: 0
+        - delay:
+            seconds: 30
 
+        # Close the camera popup.
+        - service: browser_mod.close_popup
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
-  - delay:
-      #minutes: 5
-      seconds: 30
-
-  # Close the camera popup.
-  - service: browser_mod.close_popup
-
-
+  # - delay:
+  #     minutes: 1

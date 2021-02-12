@@ -3,11 +3,24 @@ variables:
   speakers: |
     {% set speakers = speakers|default('media_player.google_family_room') %}
     {{ expand(speakers) | map(attribute="entity_id") | join(" ") }}
-  speaker_count: '{{ speakers.split(" ") | count }}'
+  speaker_count: '{{ speakers | count }}'
 
   audio_file: "{{ audio_file }}"
   content_type: "{{ content_type|default('audio') }}"
+
+  new_volume: "{{ volume|default(0.8) }}"
 sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       file: {{ audio_file }}
+  #       type: {{ content_type }}
+  #       speakers: {{ speakers }}
+
+  #       {{ states("input_boolean.audio_notifications") }}
+  #       {{ states("group.family") }}
+  #       {{ states("input_boolean.guest_mode") }}
+
   - condition: state
     entity_id: input_boolean.audio_notifications
     state: 'on'
@@ -20,20 +33,37 @@ sequence:
     conditions:
       - condition: state
         entity_id: group.family
-        state: 'home'
+        state: "home"
       - condition: state
         entity_id: input_boolean.guest_mode
-        state: 'on'
+        state: "on"
 
   # Play the audio on all of the speakers.
   - repeat:
       count: "{{ speaker_count|int }}"
       sequence:
         - variables:
-            speaker: '{{ speakers.split(" ")[repeat.index-1] }}'
+            speaker: "{{ speakers[repeat.index-1] }}"
+            current_volume: "{{ state_attr(speaker,'volume_level') }}"
 
+        # Increase volume
+        # - choose:
+        #     conditions: "{{ current_volume|float > new_volume|float }}"
+        #     sequence:
+        - service: media_player.volume_set
+          data:
+            entity_id: "{{ speaker }}"
+            volume_level: "{{ new_volume }}"
+
+        # Play the audio
         - service: media_player.play_media
-          data_template:
+          data:
             entity_id: "{{ speaker }}"
             media_content_id: "{{ audio_file }}"
             media_content_type: "{{ content_type }}"
+
+        # Restore previous volume
+        - service: media_player.volume_set
+          data:
+            entity_id: "{{ speaker }}"
+            volume_level: "{{ current_volume }}"
