@@ -28,7 +28,7 @@ variables:
   title: '{{ alert_state }} Detected!'
   message: '{{ alarm_state }} detected in the {{ room|upper }}.'
 
-conditions:
+condition:
   # Ignore unknown states as these can occur when the Z-wave docker restarts
   - condition: template
     value_template: '{{ alert_state == "Unknown" }}'
