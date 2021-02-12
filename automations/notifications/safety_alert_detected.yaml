@@ -14,9 +14,10 @@ trigger:
       - sensor.safety_alarm_guest_room_type
       - sensor.safety_alarm_stairs_type
     below: 13
+
 variables:
   type: '{{ trigger.to_state.state }}'
-  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety Alarm ","")|replace(" Type","") }}'
+  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety Alarm ","")|replace(" Type","")|replace(" Code","") }}'
 
   alarm_states:
     "1": "Smoke"
@@ -26,6 +27,12 @@ variables:
 
   title: '{{ alert_state }} Detected!'
   message: '{{ alarm_state }} detected in the {{ room|upper }}.'
+
+conditions:
+  # Ignore unknown states as these can occur when the Z-wave docker restarts
+  - condition: template
+    value_template: '{{ alert_state == "Unknown" }}'
+
 action:
   - service: script.notify_mobile
     data_template:
