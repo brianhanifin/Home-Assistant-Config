@@ -74,9 +74,8 @@
     platform: homeassistant
   condition: []
   action:
-  - data:
-      entity_id: input_boolean.home_assistant_loaded
-    service: input_boolean.turn_off
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.home_assistant_loaded
   - data:
       message: Startup automation begins
     service: script.toast
@@ -90,17 +89,14 @@
     entity_id: script.create_actionable_lights_group
     service: script.create_actionable_lights_group
   - delay: 00:00:30
-  - data: {}
-    service: script.populate_ozw_entities_group
   - service: script.inovelli_led_set_defaults
     data:
       entity_id: light.family_room
       color: teal
       level_on: 3
       level_off: 1
-  - data:
-      entity_id: input_boolean.home_assistant_loaded
-    service: input_boolean.turn_on
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.home_assistant_loaded
   - data:
       duration: 30000
       message: Startup automation complete
