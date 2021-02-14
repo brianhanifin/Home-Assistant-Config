@@ -26,9 +26,10 @@ trigger:
 
 condition:
   # Don't allow status change immediately at startup to avoid phantom changes.
-  - condition: numeric_state
-    entity_id: sensor.uptime
-    above: 0.2
+  - condition: template
+    value_template: |
+      {% set uptime_minutes = (as_timestamp(now()) - as_timestamp(states("sensor.last_restart")))|float / 60 %}
+      {{ uptime_minutes > 1 }}
 
 action:
   - service: script.debug
