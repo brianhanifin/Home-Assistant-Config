@@ -5,9 +5,9 @@ initial_state: true
 mode: single
 trigger:
   - platform: state
-    entity_id:
-      - binary_sensor.front_door_motion
-      - binary_sensor.doorbell_motion
+    entity_id: binary_sensor.front_door_motion
+  - platform: state
+    entity_id: binary_sensor.doorbell_motion
 
 variables:
   #old_state: '{{ trigger.from_state.state|lower }}'
@@ -70,3 +70,6 @@ action:
                     data:
                       entity_id: scene.doorbell_presence_lights_snapshot
                       transition: 5
+
+  - delay:
+      seconds: 15

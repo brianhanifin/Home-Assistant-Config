@@ -69,9 +69,10 @@ action:
           {{ trigger.event.data.args[0] }}
         {%- endif %}
 
-  # - service: persistent_notification.create
+  # - service: script.debug
   #   data:
   #     title: '"{{ remote }}" click'
+  #     id: '{{ as_timestamp(now()) }}'
   #     message: |
   #       command: {{ command }}
   #       command_modifier: {{ command_modifier }}
