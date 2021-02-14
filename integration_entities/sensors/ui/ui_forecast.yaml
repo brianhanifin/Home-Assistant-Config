@@ -4,6 +4,6 @@ platform: template
 sensors:
   ui_forecast:
     value_template: |
-      <b><ha-icon icon={{ state_attr("sensor.today_icon", "icon") }}></ha-icon> {{ states("sensor.accuweather_apparent_temperature") }}°</b> currently
-      {{ state_attr("weather.accuweather", "forecast")[0]["temperature"]|round }}° high, {{ state_attr("weather.accuweather", "forecast")[0]["templow"]|round }}° low
+      <b><ha-icon icon={{ state_attr("sensor.today_icon", "icon") }}></ha-icon> {{ states("sensor.accuweather_apparent_temperature") }}°</b> now
+      {{ state_attr("weather.accuweather", "forecast")[0]["temperature"]|round }}°<ha-icon icon="mdi:thermometer-high"></ha-icon> {{ state_attr("weather.accuweather", "forecast")[0]["templow"]|round }}°<ha-icon icon="mdi:thermometer-low"></ha-icon>
 
