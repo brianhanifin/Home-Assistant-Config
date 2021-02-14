@@ -1,0 +1,5 @@
+platform: template
+sensors:
+  uptime:
+    icon_template: mdi:clock
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(states("sensor.last_restart")))|float / 60 }}'

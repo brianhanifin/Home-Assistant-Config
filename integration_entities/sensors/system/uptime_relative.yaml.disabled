@@ -4,8 +4,7 @@ sensors:
   uptime_relative:
     icon_template: mdi:clock
     value_template: >-
-      {% set uptime = states('sensor.uptime')|float*60 %}
-      {% set days = uptime/60/24 %}
+      {% set days = states('sensor.uptime') / 60 / 24 %}
       {% set up_dys = days|int %}
       {% set hours = (days-up_dys)*24 %}
       {% set up_hrs = hours|int %}
