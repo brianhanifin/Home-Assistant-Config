@@ -23,31 +23,34 @@ trigger:
       - person.sandy
     from: "home"
     to: "not_home"
+
 condition:
   # Don't allow status change immediately at startup to avoid phantom changes.
   - condition: numeric_state
     entity_id: sensor.uptime
     above: 0.2
+
 action:
-  # - service: script.debug
-  #   data_template:
-  #     title: "automation.xpresence_location_update"
-  #     message: >
-  #       input_select.{{ trigger.entity_id.split('.')[1] }}
-  #       timer.xpresence_{{ trigger.to_state.object_id }}
+  - service: script.debug
+    data_template:
+      title: "automation.xpresence_location_update"
+      message: >
+        input_select.{{ trigger.entity_id.split('.')[1] }}
+        timer.xpresence_{{ trigger.to_state.object_id }}
 
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
-    data_template:
+    data:
       entity_id: "input_select.{{ trigger.entity_id.split('.')[1] }}"
       option: >
-        {%- if trigger.from_state.state == "not_home" -%}
-          Just Arrived
-        {%- else -%}
+        {%- if trigger.from_state.state == "home" -%}
           Just Left
+        {%- else -%}
+          Just Arrived
         {%- endif -%}
 
+  # Start "Just" status countdown.
   - service: timer.start
-    data_template:
+    data:
       entity_id: "timer.xpresence_{{ trigger.to_state.object_id }}"
       duration: "00:10:00"
