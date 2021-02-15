@@ -32,12 +32,12 @@ condition:
       {{ uptime_minutes > 1 }}
 
 action:
-  - service: script.debug
-    data_template:
-      title: "automation.xpresence_location_update"
-      message: >
-        input_select.{{ trigger.entity_id.split('.')[1] }}
-        timer.xpresence_{{ trigger.to_state.object_id }}
+  # - service: script.debug
+  #   data_template:
+  #     title: "automation.xpresence_location_update"
+  #     message: >
+  #       input_select.{{ trigger.entity_id.split('.')[1] }}
+  #       timer.xpresence_{{ trigger.to_state.object_id }}
 
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
