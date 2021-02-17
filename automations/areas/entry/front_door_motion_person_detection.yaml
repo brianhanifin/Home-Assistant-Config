@@ -1,0 +1,18 @@
+---
+alias: "Front Door Motion: Person Detection"
+id: front_door_motion_person_detection
+initial_state: true
+mode: single
+trigger:
+  - platform: state
+    entity_id: binary_sensor.front_door_motion
+  - platform: state
+    entity_id: binary_sensor.doorbell_motion
+action:
+  # Run image processing to see if a person is at the door.
+  - service: image_processing.scan
+    data:
+      entity_id: image_processing.deepstack_object_front_door
+
+  - delay:
+      seconds: 5
