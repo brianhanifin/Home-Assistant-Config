@@ -9,13 +9,13 @@ trigger:
     event_data:
       name: person
 action:
-  - service: script.notify_web
-    data:
-      title: Person detected at the front door
-      message: 'event_data: {{ trigger.event.data  }}'
+  # - service: script.notify_web
+  #   data:
+  #     title: Person detected at the front door
+  #     message: 'event_data: {{ trigger.event.data  }}'
 
   - service: script.notify_mobile
     data:
       title: Someone is at the front door
-      camera: camera.front_door
+      camera: camera.deepstack_front_door
       who: brian
