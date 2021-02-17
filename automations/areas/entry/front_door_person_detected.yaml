@@ -4,17 +4,15 @@ id: front_door_person_detected
 initial_state: true
 mode: single
 trigger:
-  # - platform: state
-  #   entity_id:
-  #     - binary_sensor.front_door_motion
   - platform: event
     event_type: deepstack.object_detected
     event_data:
       name: person
 action:
-  - service: script.debug
+  - service: script.notify_web
     data:
-      message: A person was detected at the front door
+      title: Person detected at the front door
+      message: 'event_data: {{ trigger.event.data  }}'
 
   - service: script.notify_mobile
     data:
