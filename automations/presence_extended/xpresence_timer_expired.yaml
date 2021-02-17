@@ -38,11 +38,11 @@ action:
 
   # Is the current state "Away"?
   - choose:
-    - conditions:
-        - '{{ next_option == "Away" }}'
-      sequence:
-        # "Away" doesn't become "Extended Away" for 24 hours.
-        - service: timer.start
-          data:
-            entity_id: 'timer.xpresence_{{ person }}'
-            duration: '23:59:59'
+      - conditions:
+          - '{{ next_option == "Away" }}'
+        sequence:
+          # "Away" doesn't become "Extended Away" for 24 hours.
+          - service: timer.start
+            data:
+              entity_id: 'timer.xpresence_{{ person }}'
+              duration: '23:59:59'
