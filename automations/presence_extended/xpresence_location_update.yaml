@@ -24,34 +24,37 @@ trigger:
     from: "home"
     to: "not_home"
 
+variables:
+  uptime_minutes: '{{ (as_timestamp(now()) - as_timestamp(states("sensor.last_restart")))|float / 60 }}'
+  person: '{{ trigger.to_state.object_id }}'
+  option: |
+    {%- if trigger.from_state.state == "home" -%}
+      Just Left
+    {%- else -%}
+      Just Arrived
+    {%- endif -%}
+
 condition:
   # Don't allow status change immediately at startup to avoid phantom changes.
   - condition: template
-    value_template: |
-      {% set uptime_minutes = (as_timestamp(now()) - as_timestamp(states("sensor.last_restart")))|float / 60 %}
-      {{ uptime_minutes > 1 }}
+    value_template: '{{ uptime_minutes > 1 }}'
 
 action:
   # - service: script.debug
   #   data_template:
   #     title: "automation.xpresence_location_update"
-  #     message: >
-  #       input_select.{{ trigger.entity_id.split('.')[1] }}
-  #       timer.xpresence_{{ trigger.to_state.object_id }}
+  #     message: |
+  #       input_select.{{ person }}
+  #       timer.xpresence_{{ person }}
 
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
     data:
-      entity_id: "input_select.{{ trigger.entity_id.split('.')[1] }}"
-      option: >
-        {%- if trigger.from_state.state == "home" -%}
-          Just Left
-        {%- else -%}
-          Just Arrived
-        {%- endif -%}
+      entity_id: "input_select.{{ person }}"
+      option: "{{ option }}"
 
   # Start "Just" status countdown.
   - service: timer.start
     data:
-      entity_id: "timer.xpresence_{{ trigger.to_state.object_id }}"
+      entity_id: "timer.xpresence_{{ person }}"
       duration: "00:10:00"
