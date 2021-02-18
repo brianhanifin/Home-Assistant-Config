@@ -1,43 +1,35 @@
 ---
-automation:
-  alias: Wakeup Nerene Light
-  id: wakeup_nerene_light
-  # Trigger at the prescribed time everyday.
-  trigger:
-    platform: template
-    value_template: >-
-      {% set wakeup_time = states('sensor.wakeup_nerene_start').split(':') %}
-      {% set wakeup_time = "%0.02d:%0.02d" | format(wakeup_time[0]|int, wakeup_time[1]|int) %}
-      {{ wakeup_time == states('sensor.time') }}
-  condition:
-    # Continue if Nerene is home.
-    - condition: state
-      entity_id: person.nerene
-      state: home
+script:
+  wakeup_nerene:
+    variables:
+      light: light.bedroom
+    sequence:
+      # - service: script.debug
+      #   data:
+      #     message: |
+      #       light: {{ light }}
 
-    # Continue today is a wakeup day.
-    - condition: template
-      value_template: >-
-        {% set   day_name = now().strftime("%A")|lower -%}
-        {%- if   day_name == 'monday'    and is_state('input_boolean.wakeup_nerene_mon','on') -%}{{true}}
-        {%- elif day_name == 'tuesday'   and is_state('input_boolean.wakeup_nerene_tue','on') -%}{{true}}
-        {%- elif day_name == 'wednesday' and is_state('input_boolean.wakeup_nerene_wed','on') -%}{{true}}
-        {%- elif day_name == 'thursday'  and is_state('input_boolean.wakeup_nerene_thu','on') -%}{{true}}
-        {%- elif day_name == 'friday'    and is_state('input_boolean.wakeup_nerene_fri','on') -%}{{true}}
-        {%- elif day_name == 'saturday'  and is_state('input_boolean.wakeup_nerene_sat','on') -%}{{true}}
-        {%- elif day_name == 'sunday'    and is_state('input_boolean.wakeup_nerene_sun','on') -%}{{true}}
-        {%- else -%}{{false}}{%- endif %}
-  action:
-    # - service: persistent_notification.create
-    #   data_template:
-    #     title: "DEBUG"
-    #     message: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_nerene_skipnext', 'on') else 'script.wakeup_light_start' }}"
+      - service: scene.apply
+        data:
+          entities:
+            fan.bedroom: off
+            switch.sound_machine: off
+            light.home_entry:
+              state: on
+              brightness_pct: '40'
+            light.garage_entry:
+              state: on
+              brightness_pct: '25'
 
-    - service_template: "{{ 'script.wakeup_skipnext' if is_state('input_boolean.wakeup_nerene_skipnext', 'on') else 'script.wakeup_light_start' }}"
-      data_template:
-        light: "light.bedroom_table_lamp"
-        scene: "scene.wakeup_nerene"
-        who: "lucas"
+      - service: script.wakeup_light_start
+        data:
+          light: '{{ light }}'
+
+  wakeup_nerene_timeout:
+    sequence:
+      - service: homeassistant.turn_off
+        data:
+          entity_id: light.bedroom
 
 input_boolean:
   wakeup_nerene_status:
@@ -74,17 +66,6 @@ input_datetime:
     has_date: false
     has_time: true
 
-scene:
-  - name: Wakeup Nerene
-    entities:
-      switch.bedroom_fan: off
-      light.home_entry:
-        state: on
-        brightness_pct: '40'
-      # light.play_room_entry:
-      #   state: on
-      #   brightness_pct: '25'
-
 sensor:
   - platform: template
     sensors:
@@ -100,7 +81,5 @@ sensor:
           {%- endif -%}
 
 timer:
-  wakeup_timeout_bedroom:
-    duration: "01:00:00"
-  wakeup_timeout_glowforge:
+  wakeup_timeout_nerene:
     duration: "01:00:00"
