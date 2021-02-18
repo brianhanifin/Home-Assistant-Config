@@ -1,5 +1,6 @@
 ---
 automation:
+  # Warn me if the system ever goes offline for more than two hours!
   - alias: irrigation_system_offline
     initial_state: true
     trigger:
@@ -8,31 +9,18 @@ automation:
         to: 'off'
         for: '02:00:00'
     action:
-      - service: script.notify_web
-        data_template:
+      - service: persistent_notification.create
+        data:
           title: "Irrigation System Offline"
           message: "The Irrigation System has been offline for 2 hours!"
-          id: "offline"
+          notification_id: "offline"
 
-      - service: script.notify_mobile
-        data_template:
+      - service: notify.mobile_app_iphone_brian
+        data:
           title: "Irrigation System Offline"
           message: "The Irrigation System has been offline for 2 hours"
-          who: "brian"
 
-binary_sensor:
-  - platform: template
-    sensors:
-      irrigation_zone1:
-        friendly_name: Irrigation Zone 1
-        value_template: "{{ is_state('switch.irrigation_zone1','on') }}"
-
-  - platform: template
-    sensors:
-      irrigation_zone2:
-        friendly_name: Irrigation Zone 2
-        value_template: "{{ is_state('switch.irrigation_zone2','on') }}"
-
+# Lovelace UI to set a list of irrigation cycle times.
 input_text:
   irrigation_zone1_times:
     name: List of Times (eg. 08:00,12:00,15:00)
@@ -41,6 +29,7 @@ input_text:
     name: List of Times (eg. 11:00,15:30)
     icon: mdi:clock-outline
 
+# Lovelace UI to set the duration of each irrigation cycle.
 input_number:
   irrigation_zone1_duration:
     name: Duration in Minutes
