@@ -18,14 +18,6 @@
     {{ ". " }}
   {%- endmacro -%}
 
-  {%- macro random_voice() -%}
-    {{ [
-        "Ivy", "Joanna", "Joey", "Justin", "Kendra", "Kimberly",
-        "Matthew", "Salli", "Nicole", "Russell", "Amy", "Brian",
-        "Emma", "Aditi", "Raveena"
-    ]|random }}
-  {%- endmacro -%}
-
   {%- macro truthify(state) -%}
     {%- set truthy_states = ['on','true','open'] -%}
     {%- if state in truthy_states -%}
@@ -407,15 +399,11 @@
     {%- endif -%}
 
     {%- if say_goodbye == "true" -%}
-      <voice name="{{ random_voice() }}">
       {{ " " ~ goodbye_line() }}
-      </voice>
     {%- endif -%}
 
     {%- if say_goodnight == "true" -%}
-      <voice name="{{ random_voice() }}">
       {{ " " ~ goodnight_line() }}
-      </voice>
     {%- endif -%}
   {%- endmacro -%}
 
