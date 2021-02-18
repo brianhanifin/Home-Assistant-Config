@@ -1,25 +1,4 @@
 ---
-automation:
-  # Warn me if the system ever goes offline for more than two hours!
-  - alias: irrigation_system_offline
-    initial_state: true
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.irrigation_controller_status
-        to: 'off'
-        for: '02:00:00'
-    action:
-      - service: persistent_notification.create
-        data:
-          title: "Irrigation System Offline"
-          message: "The Irrigation System has been offline for 2 hours!"
-          notification_id: "offline"
-
-      - service: notify.mobile_app_iphone_brian
-        data:
-          title: "Irrigation System Offline"
-          message: "The Irrigation System has been offline for 2 hours"
-
 # Lovelace UI to set a list of irrigation cycle times.
 input_text:
   irrigation_zone1_times:
@@ -46,3 +25,25 @@ input_number:
     max: 60
     step: 1
     unit_of_measurement: "minutes"
+
+### Optional offline notifications.
+automation:
+  # Warn me if the system ever goes offline for more than two hours!
+  - alias: irrigation_system_offline
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.irrigation_controller_status
+        to: 'off'
+        for: '02:00:00'
+    action:
+      - service: persistent_notification.create
+        data:
+          title: "Irrigation System Offline"
+          message: "The Irrigation System has been offline for 2 hours!"
+          notification_id: "offline"
+
+      - service: notify.mobile_app_iphone_brian
+        data:
+          title: "Irrigation System Offline"
+          message: "The Irrigation System has been offline for 2 hours"
