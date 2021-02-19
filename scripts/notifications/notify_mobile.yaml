@@ -15,7 +15,44 @@
 ######################################################################################################
 # Set local variables for reuse in this script.
 variables:
-  notification_service: 'notify.{{ who|default("brian") }}'
+  notification_service: |
+    {% if who.startswith("notify.") %}
+      {{ who }}
+    {% else %}
+      notify.{{ who|default("brian") }}
+    {% endif %}
+  # image_type: |
+  #   {% if image is string %}
+  #     {% if image.endswith("png") %}
+  #       png
+  #     {% else %}
+  #       jpeg
+  #     {% endif %}
+  #   {% endif %}
+  replaceable_id: |
+    {% if camera is string %}
+      camera
+    {% elif image is string %}
+      image
+    {% else %}
+      {{ replaceable_id|default(category) }}
+    {% endif %}
+  # Every notification should have a sound. Actionable notifications should grab your attention.
+  sound_file: |
+    {%- if sound is string %}
+      {{ sound }}
+    {%- else %}
+      {%- if category is string %}
+        {% if category == "doorbell" %}
+          media-source://media_source/local/audio/jetsons-doorbell.mp3
+        {% else %}
+          Update.caf
+        {% endif %}
+      {% else %}
+        sms-received1.caf
+      {% endif %}
+    {%- endif %}
+  id: '{{ id|upper|default("HOMEASSISTANT") }}'
   url: |
     {% if url is string %}
       {% if url.startswith("http://") %}
@@ -24,17 +61,6 @@ variables:
         {{ url }}
       {% endif %}
     {% endif %}
-  # Every notification should have a sound. Actionable notifications should grab your attention.
-  sound_file: |
-    {%- if sound is string %}
-      {{ sound }}
-    {%- else %}
-      {%- if category is string %}
-        Update.caf
-      {% else %}
-        sms-received1.caf
-      {% endif %}
-    {%- endif %}
 sequence:
   # Only send if globally enabled.
   - condition: state
@@ -55,10 +81,11 @@ sequence:
                   content-type: jpeg
                 entity_id: '{{ camera }}'
                 push:
+                  category: camera
                   sound: '{{ sound_file }}'
                   apns_headers:
-                    apns-collapse-id: 'camera'
-                  thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
+                    apns-collapse-id: '{{ replaceable_id }}'
+                  thread-id: '{{ id }}'
 
       # Send an image.
       - conditions:
@@ -69,17 +96,15 @@ sequence:
               title: '{{ title }}'
               message: '{{ message }}'
               data:
-                url: '{{ image }}'
-                content-type: |
-                  {%- set filename = image.split(".") %}
-                  {%- set extension = filename[filename|length - 1] %}
-                  {{ extension|replace("jpg","jpeg") }}
-                hide-thumbnail: false
+                attachment:
+                  url: '{{ image }}'
+                  #content-type: '{{ image_type }}'
+                  hide-thumbnail: false
                 push:
                   sound: '{{ sound_file }}'
                   apns_headers:
-                    apns-collapse-id: 'image'
-                  thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
+                    apns-collapse-id: '{{ replaceable_id }}'
+                  thread-id: '{{ id }}'
 
     # Send a basic, link, or actionable notification message.
     default:
@@ -94,5 +119,5 @@ sequence:
               url: '{{ url }}'
 
               apns_headers:
-                apns-collapse-id: '{{ replaceable_id|default(category) }}'
-              thread-id: '{{ id|upper|default("HOMEASSISTANT") }}'
+                apns-collapse-id: '{{ replaceable_id }}'
+              thread-id: '{{ id }}'
