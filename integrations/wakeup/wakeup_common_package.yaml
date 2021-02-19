@@ -4,24 +4,21 @@ automation:
     id: wakeup_light_activate
     # Trigger at the wakeup time everyday.
     trigger:
-      platform: template
-      value_template: |
-        {% set active_times = "" %}
-        {% if is_state("input_boolean.wakeup_brian_status", "on") %}
-          {% set active_times = states("sensor.wakeup_brian_start") + " " %}
-        {% endif %}
-        {% if is_state("input_boolean.wakeup_lucas_status", "on") %}
-          {% set active_times = states("sensor.wakeup_lucas_start") + " " %}
-        {% endif %}
-        {% if is_state("input_boolean.wakeup_nerene_status", "on") %}
-          {% set active_times = states("sensor.wakeup_nerene_start") + " " %}
-        {% endif %}
-        {% if active_times|length > 3 %}
-          {% set active_times = (active_times|trim).split(" ") %}
-        {% endif %}
-        {{ states("sensor.time") in active_times }}
+      - platform: template
+        value_template: '{{ is_state("sensor.wakeup_brian_start", states("sensor.time")) }}'
+      - platform: template
+        value_template: '{{ is_state("sensor.wakeup_lucas_start", states("sensor.time")) }}'
+      - platform: template
+        value_template: '{{ is_state("sensor.wakeup_nerene_start", states("sensor.time")) }}'
     variables:
-      who: '{{ trigger.entity_id|replace("sensor.wakeup_","")|replace("_start","") }}'
+      who: |
+        {% if is_state("sensor.wakeup_brian_start", states("sensor.time")) %}
+          brian
+        {% elif is_state("sensor.wakeup_lucas_start", states("sensor.time")) %}
+          lucas
+        {% elif is_state("sensor.wakeup_nerene_start", states("sensor.time")) %}
+          nerene
+        {% endif %}
 
       skipnext_entity: |
         input_boolean.wakeup_{{ who }}_skipnext
@@ -33,12 +30,24 @@ automation:
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
 
     condition:
+      # Continue if today is enabled.
+      - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}'
+
       # Continue if they are home.
       - '{{ is_state("person." + who, "home") }}'
 
       # Continue today is a wakeup day.
       - '{{ wakeup_today }}'
     action:
+      - service: script.debug
+        data:
+          message: |
+            who: {{ who }}
+
+            enabled: {{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}
+            do_not_skipnext: {{ do_not_skipnext }}
+            wakeup_today: {{ wakeup_today }}
+
       - choose:
           - conditions:
               - '{{ do_not_skipnext }}'
@@ -66,7 +75,7 @@ automation:
             - timer.wakeup_timeout_lucas
             - timer.wakeup_timeout_nerene
     variables:
-      who: '{{ trigger.entity_id[21:] }}'
+      who: '{{ trigger.entity_id|replace("timer.wakeup_timeout_","") }}'
     action:
       - service: homeassistant.turn_off
         entity_id:
@@ -121,19 +130,21 @@ automation:
 script:
   wakeup_light_start:
     sequence:
-      # - service: script.debug
-      #   data:
-      #     message: |
-      #       entity_id: '{{ light }}'
-
       # Transition the light to 100% over 10 minutes.
+      - service: light.turn_on
+        data:
+          entity_id: '{{ light }}'
+          brightness: 26
       - repeat:
           sequence:
             - variables:
                 brightness: |
-                  {% set brightness = state_attr(light, "brightness")|int + 26 %}
-                  {{ brightness if brightness <= 254 else 254 }}
-                #minutes: 1
+                  {% if repeat.index == 1 %}
+                    26
+                  {% else %}
+                    {% set brightness = state_attr(light, "brightness")|int + 26 %}
+                    {{ brightness if brightness < 254 else 254 }}
+                  {% endif %}
 
             - service: light.turn_on
               data:
@@ -141,7 +152,9 @@ script:
                 brightness: '{{ brightness }}'
 
             - delay:
-                seconds: 5
+                minutes: 1
+                #seconds: 5
+
           until:
             - '{{ is_state_attr(light, "brightness", 254)
                 or is_state(light, "off") }}'
