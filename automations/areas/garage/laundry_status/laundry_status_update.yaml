@@ -13,15 +13,15 @@ variables:
   dryer_status: '{{ states("input_select.dryer_status") }}'
 
   status: |
-    {% if washer_status == "Off" and dryer_status == "Off" %}
-      "Off"
+    {% if washer_status == "Off" and dryer_status in ["Off","Standby"] %}
+      Off
     {%- elif washer_status == "Washing" %}
       Washing
     {%- elif dryer_status == "Drying" %}
       Drying
     {%- elif washer_status == "Clean" and dryer_status == "Drying" %}
       Waiting for running dryer
-    {%- elif  washer_status == "Clean" and dryer_status in ["Dry","Off"] %}
+    {%- elif  washer_status == "Clean" and dryer_status in ["Dry","Off","Standby"] %}
       Please transfer to dryer
     {%- elif washer_status == "Off" and dryer_status == "Dry" %}
       Dry
@@ -31,7 +31,7 @@ variables:
 
   notify_title: '{{ "Laundry: " ~ status }}'
   notify_message: |
-    {% if washer_status == "Clean" and dryer_status in ["Dry","Off"] %}
+    {% if washer_status == "Clean" and dryer_status in ["Dry","Off","Standby"] %}
       The laundry is ready to be moved to the dryer.
     {% endif %}
 action:
