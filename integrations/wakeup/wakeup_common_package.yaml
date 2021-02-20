@@ -23,7 +23,6 @@ automation:
       skipnext_entity: |
         input_boolean.wakeup_{{ who }}_skipnext
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
-
       today_name: '{{ now().strftime("%a")|lower }}'
       wakeup_today_entity: |
         input_boolean.wakeup_{{ who }}_{{ today_name }}
@@ -37,22 +36,22 @@ automation:
       - '{{ is_state("person." + who, "home") }}'
 
       # Continue today is a wakeup day.
-      - '{{ wakeup_today }}'
+      - "{{ wakeup_today }}"
     action:
-      - service: script.debug
-        data:
-          message: |
-            who: {{ who }}
+      # - service: script.debug
+      #   data:
+      #     message: |
+      #       who: {{ who }}
 
-            enabled: {{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}
-            do_not_skipnext: {{ do_not_skipnext }}
-            wakeup_today: {{ wakeup_today }}
+      #       enabled: {{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}
+      #       do_not_skipnext: {{ do_not_skipnext }}
+      #       wakeup_today: {{ wakeup_today }}
 
       - choose:
           - conditions:
-              - '{{ do_not_skipnext }}'
+              - "{{ do_not_skipnext }}"
             sequence:
-              - service_template: 'script.wakeup_{{ who }}'
+              - service_template: "script.wakeup_{{ who }}"
 
               - service: script.toast
                 data:
@@ -61,7 +60,7 @@ automation:
         default:
           service: input_boolean.turn_off
           data:
-            entity_id: '{{ skipnext_entity }}'
+            entity_id: "{{ skipnext_entity }}"
 
   - alias: Wakeup Light Timeout
     id: wakeup_light_timeout
@@ -82,7 +81,7 @@ automation:
           - light.home_entry
           - light.garage_entry
 
-      - service_template: 'script.wakeup_{{ who }}_timeout'
+      - service_template: "script.wakeup_{{ who }}_timeout"
 
   - alias: wakeup_warmup_water
     initial_state: true
@@ -126,14 +125,13 @@ automation:
       - service: switch.turn_on
         entity_id: switch.hot_water_pump
 
-
 script:
   wakeup_light_start:
     sequence:
       # Transition the light to 100% over 10 minutes.
       - service: light.turn_on
         data:
-          entity_id: '{{ light }}'
+          entity_id: "{{ light }}"
           brightness: 26
       - repeat:
           sequence:
@@ -148,8 +146,8 @@ script:
 
             - service: light.turn_on
               data:
-                entity_id: '{{ light }}'
-                brightness: '{{ brightness }}'
+                entity_id: "{{ light }}"
+                brightness: "{{ brightness }}"
 
             - delay:
                 minutes: 1
@@ -157,7 +155,7 @@ script:
 
           until:
             - '{{ is_state_attr(light, "brightness", 254)
-                or is_state(light, "off") }}'
+              or is_state(light, "off") }}'
 
       # Start a countdown timer which triggers and automation upon its conclusion.
       # see: automation.wakeup_light_timeout
