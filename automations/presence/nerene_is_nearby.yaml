@@ -9,16 +9,21 @@ trigger:
     value_template: "{{ states('proximity.nerene_home')|float }}"
     below: 1
 condition:
-  # Only make an announcement if the person has been Away.
-  - condition: state
-    entity_id: input_select.nerene
-    state: Away
   # Only make an announcement if the person has been gone for more than 15 minutes.
   - condition: template
     value_template: "{{ 15 < (as_timestamp(now()) - as_timestamp(trigger.from_state.last_updated)) / 60 }}"
+  # Only make an announcement if the person has been Away.
+  # - condition: state
+  #   entity_id: input_select.nerene
+  #   state: Away
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: person.nerene
+        state: home
 action:
   - service: script.say
-    data_template:
+    data:
       media_player: group.google_downstairs
       message: >
         {{ [

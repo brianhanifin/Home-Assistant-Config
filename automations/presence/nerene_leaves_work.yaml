@@ -10,16 +10,17 @@ trigger:
   entity_id: person.nerene
 condition:
   condition: time
-  after: '14:00'
+  after: '14:20'
 action:
   - service: script.say
-    data_template:
+    data:
       media_player: group.google_downstairs
       message: >
         {{ [
-          "Just a head's up, your mom is heading home from work.",
-          "Now would be a good time to straighten up. Your mom has just left work. ",
-          "Your mom is on her way home from work."
+          "Just a head's up, Nerene is heading home from work.",
+          "Nerene has just left work. ",
+          "Nerene is on her way home from work.",
+          "Who just left work? Nerene did!"
         ]|random }}
       say_greeting: "false"
 
