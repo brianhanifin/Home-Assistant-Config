@@ -25,7 +25,7 @@ trigger:
     to: "not_home"
 
 variables:
-  uptime_minutes: '{{ (as_timestamp(now()) - as_timestamp(states("sensor.last_restart")))|float / 60 }}'
+  hour: states("sensor.time").split(":")[0]|int
   person: '{{ trigger.to_state.object_id }}'
   option: |
     {%- if trigger.from_state.state == "home" -%}
@@ -33,11 +33,17 @@ variables:
     {%- else -%}
       Just Arrived
     {%- endif -%}
+  source: '{{ trigger.to_state.attributes.source }}'
+  uptime_minutes: '{{ (as_timestamp(now()) - as_timestamp(states("sensor.last_restart")))|float / 60 }}'
 
 condition:
   # Don't allow status change immediately at startup to avoid phantom changes.
   - condition: template
     value_template: '{{ uptime_minutes > 1 }}'
+
+  # Ignore UniFi sourced changes overnight to help avoid false aways caused by sleepy iPhones.
+  - condition: template
+    value_template: '{{ source.endswith("_unifi") and hour < 6 }}' # from 0-6am (24h format)
 
 action:
   # - service: script.debug
