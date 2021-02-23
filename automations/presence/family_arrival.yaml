@@ -18,10 +18,18 @@ trigger:
     for:
       minutes: 0
       seconds: 5
+variables:
+  person: '{{ trigger.to_state.object_id }}'
+
+  old_state: '{{ trigger.from_state.state }}'
+  xpresence_states:
+    not_home: Away
+    home: Home
+  previous_state: '{{ xpresence_states[old_state] }}'
 condition:
-  # Only make an announcement if the person has been gone for more than 15 minutes.
+  # Only make an announcement if the person has been Away.
   - condition: template
-    value_template: "{{ 15 < (as_timestamp(now()) - as_timestamp(trigger.from_state.last_updated)) / 60 }}"
+    value_template: '{{ previous_state == "Away" }}'
 action:
   - service: input_boolean.turn_off
     entity_id: input_boolean.away_mode
