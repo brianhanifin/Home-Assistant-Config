@@ -34,7 +34,7 @@ automation:
             script.event_reminder_announce
           {% endif %}
         data_template:
-          media_player: "{{ states('input_select.event_reminder_2_echo') }}"
+          media_player: "{{ states('input_select.event_reminder_2_speakers') }}"
           skipnext: >
             {% if is_state('sensor.event_reminder_2_2',states('sensor.time')) %}
               input_boolean.event_reminder_2_skipnext
@@ -54,7 +54,7 @@ script:
     sequence:
       - service: script.event_reminder_announce
         data_template:
-          media_player: "{{ states('input_select.event_reminder_2_echo') }}"
+          media_player: "{{ states('input_select.event_reminder_2_speakers') }}"
           say_dark_outside: "{{ states('input_boolean.event_reminder_2_say_dark_outside') }}"
           say_door_window_check: "{{ states('input_boolean.event_reminder_2_say_door_window_check') }}"
           say_goodbye: "{{ states('input_boolean.event_reminder_2_say_goodbye') }}"
@@ -115,7 +115,7 @@ input_datetime:
     has_time: true
 
 input_select:
-  event_reminder_2_echo:
+  event_reminder_2_speakers:
     name: Announce on which smart speaker(s)?
     options: !include ../../templates/speech/tts_rooms.yaml
     icon: mdi:google-home

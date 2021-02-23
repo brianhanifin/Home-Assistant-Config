@@ -29,7 +29,7 @@ automation:
             script.event_reminder_announce
           {% endif %}
         data_template:
-          media_player: "{{ states('input_select.event_reminder_8_echo') }}"
+          media_player: "{{ states('input_select.event_reminder_8_speakers') }}"
           skipnext: >
             {% if is_state('sensor.event_reminder_8_2',states('sensor.time')) %}
               input_boolean.event_reminder_8_skipnext
@@ -79,7 +79,7 @@ input_datetime:
     has_time: true
 
 input_select:
-  event_reminder_8_echo:
+  event_reminder_8_speakers:
     name: Announce on which smart speaker(s)?
     options: !include ../../templates/speech/tts_rooms.yaml
     icon: mdi:google-home
