@@ -17,11 +17,13 @@ condition:
   # After 2:20pm.
   - condition: time
     after: '14:20:00'
+
   # She is not near home.
   - condition: numeric_state
     entity_id: proximity.nerene_home
     value_template: "{{ states('proximity.nerene_home')|float }}"
-    below: 1
+    above: 1
+
   # She left work in the past 30 minutes.
   - condition: template
     value_template: >
