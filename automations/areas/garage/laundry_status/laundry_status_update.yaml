@@ -15,10 +15,10 @@ variables:
   status: |
     {% if washer_status == "Off" and dryer_status == "Off" %}
       Off
+    {%- elif dryer_status == "Drying" and washer_status == "Off" %}
+      Drying
     {%- elif washer_status == "Washing" %}
       Washing
-    {%- elif dryer_status == "Drying" %}
-      Drying
     {%- elif washer_status == "Clean" and dryer_status == "Drying" %}
       Waiting for running dryer
     {%- elif  washer_status == "Clean" and dryer_status in ["Dry","Off"] %}
