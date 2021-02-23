@@ -11,22 +11,23 @@ trigger:
       - person.lucas
       - person.nerene
       - person.sandy
-    from: "not_home"
-    to: "home"
-  - platform: state
-    entity_id:
-      - person.brian
-      - person.eric
-      - person.heather
-      - person.lucas
-      - person.nerene
-      - person.sandy
-    from: "home"
-    to: "not_home"
+  #   from: "not_home"
+  #   to: "home"
+  # - platform: state
+  #   entity_id:
+  #     - person.brian
+  #     - person.eric
+  #     - person.heather
+  #     - person.lucas
+  #     - person.nerene
+  #     - person.sandy
+  #   from: "home"
+  #   to: "not_home"
 
 variables:
   hour: '{{ states("sensor.time").split(":")[0]|int }}'
   new_state: '{{ trigger.to_state.state }}'
+  old_state: '{{ trigger.from_state.state }}'
   option: |
     {%- if new_state == "home" -%}
       Just Arrived
@@ -42,17 +43,25 @@ condition:
   - condition: template
     value_template: '{{ uptime_minutes > 1 }}'
 
-  # Ignore UniFi sourced changes overnight to help avoid false aways caused by sleepy iPhones.
   - condition: template
-    value_template: '{{ hour < 6 and source.endswith("_unifi")  }}' # from 0-6am (24h format)
+    value_template: '{{ new_state != old_state }}'
+
+  # Ignore UniFi sourced changes overnight to help avoid false aways caused by sleepy iPhones.
+  - condition: not
+    conditions:
+      - condition: template
+        value_template: '{{ hour < 6 and source.endswith("_unifi")  }}' # from 0-6am (24h format)
 
 action:
   # - service: script.debug
   #   data_template:
   #     title: "automation.xpresence_location_update"
   #     message: |
-  #       input_select.{{ person }}
-  #       timer.xpresence_{{ person }}
+  #       {{ person }}
+  #       person: {{ states("person." + person) }}
+  #       xpresence old: {{ states("input_select." + person) }}
+  #       xpresence new: {{ option }}
+  #       {{ trigger.to_state }}
 
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
