@@ -25,14 +25,15 @@ trigger:
     to: "not_home"
 
 variables:
-  hour: states("sensor.time").split(":")[0]|int
-  person: '{{ trigger.to_state.object_id }}'
+  hour: '{{ states("sensor.time").split(":")[0]|int }}'
+  new_state: '{{ trigger.to_state.state }}'
   option: |
-    {%- if trigger.from_state.state == "home" -%}
-      Just Left
-    {%- else -%}
+    {%- if new_state == "home" -%}
       Just Arrived
+    {%- elif new_state == "not_home" -%}
+      Just Left
     {%- endif -%}
+  person: '{{ trigger.to_state.object_id }}'
   source: '{{ trigger.to_state.attributes.source }}'
   uptime_minutes: '{{ (as_timestamp(now()) - as_timestamp(states("sensor.last_restart")))|float / 60 }}'
 
@@ -43,7 +44,7 @@ condition:
 
   # Ignore UniFi sourced changes overnight to help avoid false aways caused by sleepy iPhones.
   - condition: template
-    value_template: '{{ source.endswith("_unifi") and hour < 6 }}' # from 0-6am (24h format)
+    value_template: '{{ hour < 6 and source.endswith("_unifi")  }}' # from 0-6am (24h format)
 
 action:
   # - service: script.debug
