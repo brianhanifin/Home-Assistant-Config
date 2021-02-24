@@ -147,39 +147,43 @@ sequence:
   #       parameter: '{{ parameter }}'
   #       value: '{{ inovelli_math }}'
 
-  - choose:
-      # The Z-wave integration requires this service call.
-      - conditions:
-          - '{{ entity_id.split(".")[0] == "zwave" }}'
-        sequence:
-          # Clear the previous effect.
-          - service: zwave.set_config_parameter
-            data:
-              node_id: '{{ node_id }}'
-              parameter: '{{ parameter }}'
-              size: 4
-              value: 0
+  # - choose:
+  #     # The Z-wave integration requires this service call.
+  #     - conditions:
+  #         - '{{ entity_id.split(".")[0] == "zwave" }}'
+  #       sequence:
+  #         # Clear the previous effect.
+  #         - service: zwave.set_config_parameter
+  #           data:
+  #             node_id: '{{ node_id }}'
+  #             parameter: '{{ parameter }}'
+  #             size: 4
+  #             value: 0
 
-          # Start the new effect.
-          - service: zwave.set_config_parameter
-            data:
-              node_id: '{{ node_id }}'
-              parameter: '{{ parameter }}'
-              size: 4
-              value: '{{ inovelli_math }}'
+  #         # Start the new effect.
+  #         - service: zwave.set_config_parameter
+  #           data:
+  #             node_id: '{{ node_id }}'
+  #             parameter: '{{ parameter }}'
+  #             size: 4
+  #             value: '{{ inovelli_math }}'
 
-    # The OZW integration requires this service call.
-    default:
-      # Clear the previous effect.
-      - service: ozw.set_config_parameter
-        data:
-          node_id: '{{ node_id }}'
-          parameter: '{{ parameter }}'
-          value: 0
+  #   # The OZW integration requires this service call.
+  #   default:
+  #     # Clear the previous effect.
+  #     - service: ozw.set_config_parameter
+  #       data:
+  #         node_id: '{{ node_id }}'
+  #         parameter: '{{ parameter }}'
+  #         value: 0
 
-        # Start the new effect.
-      - service: ozw.set_config_parameter
-        data:
-          node_id: '{{ node_id }}'
-          parameter: '{{ parameter }}'
-          value: '{{ inovelli_math }}'
+  #       # Start the new effect.
+  #     - service: ozw.set_config_parameter
+  #       data:
+  #         node_id: '{{ node_id }}'
+  #         parameter: '{{ parameter }}'
+  #         value: '{{ inovelli_math }}'
+
+  - service: script.toast
+    data:
+      message: "Z-Wave JS does not support `set_config_parameter` yet. [script.inovelli_led]"

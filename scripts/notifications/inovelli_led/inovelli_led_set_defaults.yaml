@@ -72,48 +72,52 @@ sequence:
   #       level_on: '{{ level_on }}'
   #       level_off: '{{ level_off }}'
 
-  - choose:
-      # The Z-wave integration requires this service call.
-      - conditions:
-          - '{{ entity_id.split(".")[0] == "zwave" }}'
-        sequence:
-          - service: zwave.set_config_parameter
-            data:
-              node_id: '{{ node_id }}'
-              parameter: '{{ color_parameter }}'
-              size: 2
-              value: '{{ color }}'
+  # - choose:
+  #     # The Z-wave integration requires this service call.
+  #     - conditions:
+  #         - '{{ entity_id.split(".")[0] == "zwave" }}'
+  #       sequence:
+  #         - service: zwave.set_config_parameter
+  #           data:
+  #             node_id: '{{ node_id }}'
+  #             parameter: '{{ color_parameter }}'
+  #             size: 2
+  #             value: '{{ color }}'
 
-          - service: zwave.set_config_parameter
-            data:
-              node_id: "{{ node_id }}"
-              parameter: '{{ level_on_parameter }}'
-              size: 1
-              value: '{{ level_on }}'
+  #         - service: zwave.set_config_parameter
+  #           data:
+  #             node_id: "{{ node_id }}"
+  #             parameter: '{{ level_on_parameter }}'
+  #             size: 1
+  #             value: '{{ level_on }}'
 
-          - service: zwave.set_config_parameter
-            data:
-              node_id: "{{ node_id }}"
-              parameter: '{{ level_off_parameter }}'
-              size: 1
-              value: '{{ level_off }}'
+  #         - service: zwave.set_config_parameter
+  #           data:
+  #             node_id: "{{ node_id }}"
+  #             parameter: '{{ level_off_parameter }}'
+  #             size: 1
+  #             value: '{{ level_off }}'
 
-    # The OZW integration requires this service call.
-    default:
-      - service: ozw.set_config_parameter
-        data:
-          node_id: '{{ node_id }}'
-          parameter: '{{ color_parameter }}'
-          value: '{{ color }}'
+  #   # The OZW integration requires this service call.
+  #   default:
+  #     - service: ozw.set_config_parameter
+  #       data:
+  #         node_id: '{{ node_id }}'
+  #         parameter: '{{ color_parameter }}'
+  #         value: '{{ color }}'
 
-      - service: ozw.set_config_parameter
-        data:
-          node_id: "{{ node_id }}"
-          parameter: '{{ level_on_parameter }}'
-          value: '{{ level_on }}'
+  #     - service: ozw.set_config_parameter
+  #       data:
+  #         node_id: "{{ node_id }}"
+  #         parameter: '{{ level_on_parameter }}'
+  #         value: '{{ level_on }}'
 
-      - service: ozw.set_config_parameter
-        data:
-          node_id: "{{ node_id }}"
-          parameter: '{{ level_off_parameter }}'
-          value: '{{ level_off }}'
+  #     - service: ozw.set_config_parameter
+  #       data:
+  #         node_id: "{{ node_id }}"
+  #         parameter: '{{ level_off_parameter }}'
+  #         value: '{{ level_off }}'
+
+  - service: script.toast
+    data:
+      message: "Z-Wave JS does not support `set_config_parameter` yet. [script.inovelli_led_set_defaults]"
