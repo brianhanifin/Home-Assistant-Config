@@ -1,0 +1,38 @@
+---
+alias: Startup
+id: startup
+description: Actions to run at startup.
+initial_state: true
+mode: single
+trigger:
+  - event: start
+    platform: homeassistant
+action:
+  - service: script.toast
+    data:
+      message: Startup automation begins
+
+  - delay:
+      seconds: 10
+  - service: frontend.set_theme
+    data:
+      name: Caule Black Purple Glass
+  - service: browser_mod.lovelace_reload
+
+  - delay:
+      seconds: 50
+  - service: script.inovelli_led_set_defaults
+    data:
+      entity_id: light.family_room
+      color: teal
+      level_on: 3
+      level_off: 1
+
+  - service: script.toast
+    data:
+      duration: 3000
+      message: Startup automation complete
+
+  - service: automation.turn_off
+    entity_id: automation.startup
+
