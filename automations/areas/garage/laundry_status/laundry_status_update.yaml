@@ -2,7 +2,7 @@
 alias: Laundry Status
 id: laundry_status
 initial_state: true
-mode: single
+mode: restart
 trigger:
   - platform: state
     entity_id: input_select.washer_status
@@ -73,7 +73,3 @@ action:
               title: '{{ notify_title }}'
               message: '{{ notify_message }}'
               who: brian
-
-          # Pause for 2 minutes to stop washer Clean -> Off -> Clean flip flop.
-          - delay:
-              minutes: 2
