@@ -66,42 +66,7 @@
   - data: {}
     service: recorder.purge
   mode: single
-- id: '1588557125177'
-  alias: Startup
-  description: Actions to run at startup.
-  trigger:
-  - event: start
-    platform: homeassistant
-  condition: []
-  action:
-  - service: input_boolean.turn_off
-    entity_id: input_boolean.home_assistant_loaded
-  - data:
-      message: Startup automation begins
-    service: script.toast
-  - delay: 00:00:30
-  - data:
-      name: Caule Black Purple Glass
-    service: frontend.set_theme
-  - data: {}
-    service: browser_mod.lovelace_reload
-  - data: {}
-    entity_id: script.create_actionable_lights_group
-    service: script.create_actionable_lights_group
-  - delay: 00:00:30
-  - service: script.inovelli_led_set_defaults
-    data:
-      entity_id: light.family_room
-      color: teal
-      level_on: 3
-      level_off: 1
-  - service: input_boolean.turn_on
-    entity_id: input_boolean.home_assistant_loaded
-  - data:
-      duration: 30000
-      message: Startup automation complete
-    service: script.toast
-  mode: single
+
 - id: '1588557204708'
   alias: Midnight - Custom Event
   description: Fire a custom event at midnight.
@@ -135,24 +100,6 @@
   - data: {}
     entity_id: switch.printers
     service: switch.turn_off
-- id: '1597766673630'
-  alias: Shutdown
-  description: Triggered when Home Assistant shuts down.
-  trigger:
-  - event: shutdown
-    platform: homeassistant
-  - event_data: {}
-    event_type: homeassistant_close
-    platform: event
-  - event_data: {}
-    event_type: homeassistant_stop
-    platform: event
-  condition: []
-  action:
-  - data: {}
-    entity_id: input_boolean.home_assistant_loaded
-    service: input_boolean.turn_off
-  mode: single
 - id: '1601178260005'
   alias: Shopping List Add
   description: ''
