@@ -22,7 +22,7 @@ variables:
 condition:
   # Skip when the light is already on.
   - condition: state
-    entity_id: light.family_room
+    entity_id: light.table_lamp
     state: "off"
 
   # Skip turning on the lights in the middle of the day.
@@ -44,8 +44,8 @@ action:
           - service: light.turn_on
             data:
               entity_id:
-                - light.family_room
-              #  - light.table_lamp
+                - light.table_lamp
+              #  - light.family_room
               brightness: 255
               kelvin: 5000
               transition: 0
