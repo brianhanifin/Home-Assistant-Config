@@ -1,0 +1,55 @@
+---
+# CATT References:
+#   https://community.home-assistant.io/t/using-catt/130332/127
+#   https://blog.fuzzymistborn.com/homeassistant-and-catt-cast-all-the-things/
+alias: Cast Site
+mode: single
+icon: 'mdi:cast'
+variables:
+  entity_id: '{{ entity_id|default("media_player.kitchen_display") }}'
+  google_devices:
+    media_player.kitchen_display: "Kitchen Display"
+  device_name: '{{ google_devices[entity_id] }}'
+
+  url: |
+    {%- if path is defined %}
+      http://10.0.0.5:8123/{{ path }}
+    {%- else %}
+      {{ url }}
+    {%- endif %}
+
+  command: '/usr/bin/catt -d "{{ device_name }}" cast_site "{{ url }}"'
+
+  dismiss_after: '{{ dismiss_after|default(60) }}'
+sequence:
+  - service: script.debug
+    data:
+      message: |
+        entity_id: {{ entity_id }}
+        device_name: {{ device_name }}
+        path: {{ path }}
+        url: {{ url }}
+        command: {{ command }}
+
+  # - service: media_player.turn_off
+  #   data:
+  #     entity_id: '{{ entity_id }}'
+
+  # - delay: 
+  #     seconds: 1
+
+  # - service: media_player.turn_on
+  #   data:
+  #     entity_id: '{{ entity_id }}'
+
+  - service: hassio.addon_stdin
+    data:
+      addon: a0d7b954_ssh
+      input: '{{ command }}'
+
+  - delay: 
+      seconds: '{{ dismiss_after }}'
+
+  - service: media_player.turn_off
+    data:
+      entity_id: '{{ entity_id }}'
