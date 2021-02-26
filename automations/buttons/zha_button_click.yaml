@@ -69,19 +69,6 @@ action:
           {{ trigger.event.data.args[0] }}
         {%- endif %}
 
-  # - service: script.debug
-  #   data:
-  #     title: '"{{ remote }}" click'
-  #     id: '{{ as_timestamp(now()) }}'
-  #     message: |
-  #       command: {{ command }}
-  #       command_modifier: {{ command_modifier }}
-  #       click_count: {{ click_count }}
-  #       manufacturer: {{ manufacturer }}
-  #       remote: {{ remote }}
-
-  #       {{ trigger.event.data }}
-
   # Only take action for commands other than "ignore".
   - choose:
       - conditions: '{{ command != "ignore" }}'
@@ -94,3 +81,16 @@ action:
               command_modifier: '{{ command_modifier }}'
               manufacturer: '{{ manufacturer }}'
               remote: '{{ remote }}'
+
+          # - service: script.debug
+          #   data:
+          #     title: '"{{ remote }}" click'
+          #     id: '{{ as_timestamp(now()) }}'
+          #     message: |
+          #       command: {{ command }}
+          #       command_modifier: {{ command_modifier }}
+          #       click_count: {{ click_count }}
+          #       manufacturer: {{ manufacturer }}
+          #       remote: {{ remote }}
+
+          #       {{ trigger.event.data }}
