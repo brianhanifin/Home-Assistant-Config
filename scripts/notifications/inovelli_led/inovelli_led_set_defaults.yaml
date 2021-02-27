@@ -2,6 +2,13 @@
 # Incorporates default LED color + dimmer brightness.
 # Originally in a script by Kevin Schlichter https://github.com/kschlichter/Home-Assistant-Inovelli-Red-Dimmer-Switch
 variables:
+  # REQUIRED to be one of these options: "zwave", "ozw", "zwave_js"
+  zwave_integration: "zwave_js"
+
+  # * Strongly recommended -> Use the passed model type ("dimmer", "switch", "combo_light") when present.
+  # * If not present, then attempt to identify the type using the "product_name" attribute (which is only 
+  #   unfortunately only available in the original zwave integration).
+  # * Finally, assume the model type is "dimmer".
   model: |
     {% if model is string %}
       {{ model }}
@@ -67,72 +74,74 @@ sequence:
   #       level_off: '{{ level_off }}'
 
   - choose:
-      # The Z-wave integration requires this service call.
+      # The Z-Wave JS integration requires this service call.
       - conditions:
-          - '{{ entity_id.split(".")[0] == "zwave" }}'
+          - '{{ zwave_integration == "zwave_js" }}'
         sequence:
-          - service: zwave.set_config_parameter
+          - service: zwave_js.set_config_parameter
+            target:
+              entity_id: '{{ entity_id }}'
             data:
-              node_id: '{{ node_id }}'
               parameter: '{{ color_parameter }}'
-              size: 2
               value: '{{ color }}'
 
-          - service: zwave.set_config_parameter
+          - service: zwave_js.set_config_parameter
+            target:
+              entity_id: '{{ entity_id }}'
             data:
-              node_id: "{{ node_id }}"
               parameter: '{{ level_on_parameter }}'
-              size: 1
               value: '{{ level_on }}'
 
-          - service: zwave.set_config_parameter
+          # - service: ozw.set_config_parameter
+          - service: zwave_js.set_config_parameter
+            target:
+              entity_id: '{{ entity_id }}'
             data:
-              node_id: "{{ node_id }}"
               parameter: '{{ level_off_parameter }}'
-              size: 1
               value: '{{ level_off }}'
 
-    # The Z-Wave JS / OpenZwave integration requires this service call.
-    # default:
-    #   - service: ozw.set_config_parameter
-    #     data:
-    #       node_id: '{{ node_id }}'
-    #       parameter: '{{ color_parameter }}'
-    #       value: '{{ color }}'
+      # The OZW integration requires this service call.
+      - conditions:
+          - '{{ zwave_integration == "ozw" }}'
+        sequence:
+            - service: ozw.set_config_parameter
+              data:
+                node_id: '{{ node_id }}'
+                parameter: '{{ color_parameter }}'
+                value: '{{ color }}'
 
-    #   - service: ozw.set_config_parameter
-    #     data:
-    #       node_id: "{{ node_id }}"
-    #       parameter: '{{ level_on_parameter }}'
-    #       value: '{{ level_on }}'
+            - service: ozw.set_config_parameter
+              data:
+                node_id: "{{ node_id }}"
+                parameter: '{{ level_on_parameter }}'
+                value: '{{ level_on }}'
 
-    #   # - service: ozw.set_config_parameter
-    #   - service: zwave_js.set_config_parameter
-    #     data:
-    #       node_id: "{{ node_id }}"
-    #       parameter: '{{ level_off_parameter }}'
-    #       value: '{{ level_off }}'
+            # - service: ozw.set_config_parameter
+            - service: zwave_js.set_config_parameter
+              data:
+                node_id: "{{ node_id }}"
+                parameter: '{{ level_off_parameter }}'
+                value: '{{ level_off }}'
 
-    # The Z-Wave JS integration requires this service call.
+    # The Z-wave integration requires this service call.
     default:
-      - service: zwave_js.set_config_parameter
-        target:
-          entity_id: '{{ entity_id }}'
+      - service: zwave.set_config_parameter
         data:
+          node_id: '{{ node_id }}'
           parameter: '{{ color_parameter }}'
+          size: 2
           value: '{{ color }}'
 
-      - service: zwave_js.set_config_parameter
-        target:
-          entity_id: '{{ entity_id }}'
+      - service: zwave.set_config_parameter
         data:
+          node_id: "{{ node_id }}"
           parameter: '{{ level_on_parameter }}'
+          size: 1
           value: '{{ level_on }}'
 
-      # - service: ozw.set_config_parameter
-      - service: zwave_js.set_config_parameter
-        target:
-          entity_id: '{{ entity_id }}'
+      - service: zwave.set_config_parameter
         data:
+          node_id: "{{ node_id }}"
           parameter: '{{ level_off_parameter }}'
+          size: 1
           value: '{{ level_off }}'

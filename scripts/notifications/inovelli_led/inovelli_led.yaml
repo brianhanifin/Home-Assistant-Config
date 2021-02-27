@@ -2,7 +2,7 @@
 # Calculation References:
 #   https://nathanfiscus.github.io/inovelli-notification-calc/
 #   https://community.inovelli.com/t/home-assistant-2nd-gen-switch-rgb-working/168/62
-#   https://docs.google.com/spreadsheets/u/1/d/1SGJrJHCUtz8AzznWL_mLCTJjjr2U0IpltcUkRr7N_6M/edit?usp=sharing
+#   https://docs.google.com/spreadsheets/d/1bEpujdvBPZY9Fl61PZLUWuHanD2VAkRORFZ5D9xjLzA/edit?usp=sharing
 #
 # Changes:
 #   July 22, 2020: Incorporating changes from Kevin Schlichter.
@@ -22,7 +22,23 @@
 #   February 24, 2021: Added support for Z-Wave JS in place of OpenZwave (ozw).
 #     The ozw code is remarked out for those that still need it.
 #
+#   February 27, 2021:
+#     1. Added zwave_integration at top of "variables:" section to allow users to define which integration is 
+#        installed ("zwave", "ozw", "zwave_js"). I just don't see a simple way to auto-detect this.
+#     2. Added a comment describing the "model" variable.
+#     3. Replaced personal "script.debug" service call with universal "persistent_notification.create".
+#        Unremarking these lines could help you troubleshoot why something isn't working as expeceted.
+#     4. Updated broken spreadsheet link with public copy stored in my Google Docs account.
+#        Thanks for the heads up Kevin Schlichter!
+#
 variables:
+  # REQUIRED to be one of these options: "zwave", "ozw", "zwave_js"
+  zwave_integration: "zwave_js"
+
+  # * Strongly recommended -> Use the passed model type ("dimmer", "switch", "combo_light") when present.
+  # * If not present, then attempt to identify the type using the "product_name" attribute (which is only 
+  #   unfortunately only available in the original zwave integration).
+  # * Finally, assume the model type is "dimmer".
   model: |
     {% if model is string %}
       {{ model }}
@@ -37,12 +53,12 @@ variables:
     {%- else %}
       dimmer
     {%- endif %}
-  node_id: '{{ state_attr(entity_id,"node_id") }}'
   parameters:
     dimmer: 16
     combo_light: 24
     combo_fan: 25
     switch: 8
+  node_id: '{{ state_attr(entity_id,"node_id") }}'
   color: |
     {%- if color is not number %}
       {{ color|default("Yellow")|title }}
@@ -115,15 +131,6 @@ variables:
     "Pulse": 4
     "Breath": 4
 sequence:
-  # - service: script.debug
-  #   data:
-  #     id: "inovelli_led"
-  #     message: |
-  #       color: '{{ color|title }}'
-  #       level: '{{ level }}'
-  #       duration: '{{ duration|title }}'
-  #       effect: '{{ effect|title }}'
-
   # Preform the Inovelli math.
   - variables:
       parameter: '{{ parameters[model|lower] }}'
@@ -142,65 +149,75 @@ sequence:
           0
         {% endif %}
 
-  # - service: script.debug
+  # Unremark to provide an notification with troubleshooting information.
+  # - service: persistent_notification.create
   #   data:
-  #     id: "inovelli_led"
+  #     title: "DEBUG: script.inovelli_led"
+  #     notification_id: "inovelli_led"
   #     message: |
+  #       zwave_integration: {{ zwave_integration }}
+  #       model: {{ model }}
+  #       color: '{{ color|title }}'
+  #       level: '{{ level }}'
+  #       duration: '{{ duration|title }}'
+  #       effect: '{{ effect|title }}'
   #       node_id: '{{ node_id }}'
   #       parameter: '{{ parameter }}'
   #       value: '{{ inovelli_math }}'
 
   - choose:
-      # The Z-wave integration requires this service call.
+      # The Z-Wave JS integration requires this service call.
       - conditions:
-          - '{{ entity_id.split(".")[0] == "zwave" }}'
+          - '{{ zwave_integration == "zwave_js" }}'
         sequence:
           # Clear the previous effect.
-          - service: zwave.set_config_parameter
+          - service: zwave_js.set_config_parameter
+            target:
+              entity_id: '{{ entity_id }}'
             data:
-              node_id: '{{ node_id }}'
               parameter: '{{ parameter }}'
-              size: 4
               value: 0
 
           # Start the new effect.
-          - service: zwave.set_config_parameter
+          - service: zwave_js.set_config_parameter
+            target:
+              entity_id: '{{ entity_id }}'
+            data:
+              parameter: '{{ parameter }}'
+              value: '{{ inovelli_math }}'
+
+      # The OZW integration requires this service call.
+      - conditions:
+          - '{{ zwave_integration == "ozw" }}'
+        sequence:
+          # Clear the previous effect.
+          - service: ozw.set_config_parameter
             data:
               node_id: '{{ node_id }}'
               parameter: '{{ parameter }}'
-              size: 4
+              value: 0
+        
+          # Start the new effect.
+          - service: ozw.set_config_parameter
+            data:
+              node_id: '{{ node_id }}'
+              parameter: '{{ parameter }}'
               value: '{{ inovelli_math }}'
 
-    # The OZW integration requires this service call.
-    # default:
-    #   # Clear the previous effect.
-    #   - service: ozw.set_config_parameter
-    #     data:
-    #       node_id: '{{ node_id }}'
-    #       parameter: '{{ parameter }}'
-    #       value: 0
-    #
-    #   # Start the new effect.
-    #   - service: ozw.set_config_parameter
-    #     data:
-    #       node_id: '{{ node_id }}'
-    #       parameter: '{{ parameter }}'
-    #       value: '{{ inovelli_math }}'
-
-    # The Z-Wave JS integration requires this service call.
+    # The Z-wave integration requires this service call.
     default:
       # Clear the previous effect.
-      - service: zwave_js.set_config_parameter
-        target:
-          entity_id: '{{ entity_id }}'
+      - service: zwave.set_config_parameter
         data:
+          node_id: '{{ node_id }}'
           parameter: '{{ parameter }}'
+          size: 4
           value: 0
 
       # Start the new effect.
-      - service: zwave_js.set_config_parameter
-        target:
-          entity_id: '{{ entity_id }}'
+      - service: zwave.set_config_parameter
         data:
+          node_id: '{{ node_id }}'
           parameter: '{{ parameter }}'
+          size: 4
           value: '{{ inovelli_math }}'
