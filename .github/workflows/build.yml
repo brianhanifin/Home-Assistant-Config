@@ -42,8 +42,8 @@ jobs:
         run:  rm -rf ./integration_entities/sensors/updates;
               rm -rf ./integration_entities/sensors/datetime;
               rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
-      - name: Activate dummy secrets.yaml
-        run:  mv ./tests/fake_secrets.yaml ./secrets.yaml
+      # - name: Activate dummy secrets.yaml
+      #   run:  mv ./tests/fake_secrets.yaml ./secrets.yaml
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
@@ -53,5 +53,5 @@ jobs:
         uses: frenck/action-home-assistant@v1.0.0
         with:
           path: "./"
-          secrets: ./secrets.yaml
+          secrets: ./tests/fake_secrets.yaml
           version: "${{ matrix.version }}"
