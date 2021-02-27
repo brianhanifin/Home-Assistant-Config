@@ -104,24 +104,24 @@ sequence:
       - conditions:
           - '{{ zwave_integration == "ozw" }}'
         sequence:
-            - service: ozw.set_config_parameter
-              data:
-                node_id: '{{ node_id }}'
-                parameter: '{{ color_parameter }}'
-                value: '{{ color }}'
+          - service: ozw.set_config_parameter
+            data:
+              node_id: '{{ node_id }}'
+              parameter: '{{ color_parameter }}'
+              value: '{{ color }}'
 
-            - service: ozw.set_config_parameter
-              data:
-                node_id: "{{ node_id }}"
-                parameter: '{{ level_on_parameter }}'
-                value: '{{ level_on }}'
+          - service: ozw.set_config_parameter
+            data:
+              node_id: "{{ node_id }}"
+              parameter: '{{ level_on_parameter }}'
+              value: '{{ level_on }}'
 
-            # - service: ozw.set_config_parameter
-            - service: zwave_js.set_config_parameter
-              data:
-                node_id: "{{ node_id }}"
-                parameter: '{{ level_off_parameter }}'
-                value: '{{ level_off }}'
+          # - service: ozw.set_config_parameter
+          - service: zwave_js.set_config_parameter
+            data:
+              node_id: "{{ node_id }}"
+              parameter: '{{ level_off_parameter }}'
+              value: '{{ level_off }}'
 
     # The Z-wave integration requires this service call.
     default:

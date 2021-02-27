@@ -4,11 +4,7 @@ name: build
 
 # yamllint disable-line rule:truthy
 on:
-  push:
-  # pull_request:
-
-  # schedule:
-  #   - cron: 0 12 * * *
+  - push
 
 jobs:
   home_assistant:
@@ -43,7 +39,7 @@ jobs:
               rm -rf ./integration_entities/sensors/datetime;
               rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
       # - name: Activate dummy secrets.yaml
-      #   run:  mv ./tests/fake_secrets.yaml ./secrets.yaml
+      #   run:  mv ./tests/fake_secrets.yaml ./secrets.yaml 
       - name: Home Assistant Version
         uses: "docker://homeassistant/home-assistant:stable"
         with:
