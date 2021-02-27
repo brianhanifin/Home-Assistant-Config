@@ -1,0 +1,30 @@
+---
+alias: zwjs_event_sniffer
+initial_state: true
+mode: parallel
+trigger:
+  - platform: event
+    event_type: zwave_js_event
+
+variables:
+  event_data: '{{ trigger.event.data }}'
+  event_type: '{{ event_data.type }}'
+  event_label: '{{ event_data.label }}'
+  node_id: '{{ event_data.node_id }}'
+
+condition:
+  # Ignore events I've already identified.
+  - condition: template   # Manual deadbolt operation
+    value_template: '{{ event_label.endswith("lock operation") == False }}'
+  - condition: template
+    value_template: '{{ not node_id in ["4","9"] }}'
+
+action:
+  - service: script.debug
+    data:
+      title: "zwjs_event_sniffer"
+      message: |
+        event_type: {{ event_type }}
+        node_id: {{ node_id }}
+        {{ event_data }}
+      id: 'zwjs_event_{{ now() }}'
