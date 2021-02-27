@@ -63,10 +63,16 @@
   - delay: 'minutes: 1'
   - data: {}
     service: script.holiday_sensors_update
-  - data: {}
+  - data:
+      keep_days: 10
+      repack: true
     service: recorder.purge
+  - service: imagedirectory.delete_files
+    data:
+      sourcepath: /media/deepstack
+      endtimestamp: '{{ as_timestamp(now() - timedelta(days=1)) | timestamp_custom("%m/%d/%Y
+        %H:%M:%S") }}'
   mode: single
-
 - id: '1588557204708'
   alias: Midnight - Custom Event
   description: Fire a custom event at midnight.
@@ -77,29 +83,6 @@
   action:
   - event: midnight
     event_data: {}
-- id: '1590292820143'
-  alias: 'Printers: Power Down When Idle'
-  description: 'When one printer has been idle for 15 minutes, turn the printers off
-    if the other printer is also currently idle. '
-  trigger:
-  - entity_id:
-    - sensor.hp_colorlaserjet
-    - sensor.hp_officejet
-    for: 15 minutes
-    platform: state
-    to: idle
-  condition:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id:
-      - sensor.hp_colorlaserjet
-      - sensor.hp_officejet
-      state: idle
-  action:
-  - data: {}
-    entity_id: switch.printers
-    service: switch.turn_off
 - id: '1601178260005'
   alias: Shopping List Add
   description: ''
