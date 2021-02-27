@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ["stable", "beta", "dev"]
+        version: ["stable", "beta"]
+        #version: ["stable", "beta", "dev"]
     steps:
       - name: ⤵️ Check out configuration from GitHub
         uses: actions/checkout@v2
@@ -51,6 +52,6 @@ jobs:
       - name: 🚀 Run Home Assistant Configuration Check
         uses: frenck/action-home-assistant@v1.0.0
         with:
-          path: "./config"
+          path: "./"
           secrets: ./secrets.yaml
           version: "${{ matrix.version }}"
