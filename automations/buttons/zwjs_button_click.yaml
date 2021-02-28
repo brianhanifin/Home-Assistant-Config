@@ -11,15 +11,19 @@ variables:
   remotes:
     2: "inovelli_family_room"
     4: "ge_bedroom"
-    5: "ge_laundry"
-
+    9: "ge_laundry"
   remote: '{{ remotes[trigger.event.data.node_id] }}'
   presses: |
     {% if remote.startswith("inovelli") %}
-      {% if trigger.event.data.value == "KeyPressed" %}
-        1
+      {% set value = trigger.event.data.value %}
+      {% if value is number %}
+        {% if value|int == 0 %}
+          1
+        {% else %}
+          {{ value|int - 1 }}
+        {% endif %}
       {% else %}
-        {{ trigger.event.data.value|replace("KeyPressed","")|replace("x","")|int }}
+        {{ value|replace("KeyPressed","")|replace("x","")|int }}
       {% endif %}
     {% elif remote.startswith("ge") %}
       2
@@ -39,6 +43,11 @@ variables:
       {% endif %}
     {% endif %}
 
+condition:
+  # Only continue if the device was one of the designated remotes.
+  - condition: template
+    value_template: '{{ remotes[trigger.event.data.node_id] is defined }}'
+
 action:
   # - service: script.debug
   #   data:
@@ -57,7 +66,7 @@ action:
             value_template: '{{ remote == "ge_bedroom" }}'
         sequence:
           - choose:
-              # SCENE 2: Up
+              # SCENE 2: 2x Up
               - conditions:
                   - condition: template
                     value_template: '{{ button == "top" }}'
@@ -72,7 +81,7 @@ action:
                       kelvin: 5000
                       transition: 0
 
-              # SCENE 1: Down
+              # SCENE 1: 2x Down
               - conditions:
                   - condition: template
                     value_template: '{{ button == "bottom" }}'
@@ -86,7 +95,7 @@ action:
                         - fan.bedroom
                         - switch.sound_machine
 
-      # NODE 3: Family Room Dimmer
+      # Family Room Dimmer
       # Inovelli LZW31-SN Dimmer Red Series
       - conditions:
           - condition: template
@@ -109,11 +118,10 @@ action:
                           - service: light.turn_on
                             data:
                               entity_id:
-                                - light.family_room
                                 - light.table_lamp
-                              brightness: 255
-                              kelvin: 5000
-                              transition: 0
+                              # brightness: 255
+                              # kelvin: 5000
+                              # transition: 0
 
                       # SCENE 1: Down
                       - conditions:
