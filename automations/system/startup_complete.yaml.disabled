@@ -1,0 +1,19 @@
+---
+alias: Startup Complete
+id: startup_complete
+description: Actions to run after startup finishes.
+mode: single
+trigger:
+  - platform: state
+    entity_id: automation.startup
+    from: "on"
+    to: "off"
+action:
+  - service: script.toast
+    data:
+      message: Reloading template sensors.
+
+  - service: template.reload
+
+  - service: automation.turn_off
+    entity_id: automation.startup_complete
