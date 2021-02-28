@@ -191,13 +191,13 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 {%- for integration in integrations %}
   <dt>{{ integration.name | replace("HACS","Home Assistant Community Store (HACS)") }}</dt>
   <dd>
+    {{ integration.description }}<br>
     {%- if integration.authors|count > 0 %}Authors:
     {%- for author in integration.authors %}
     {{ author }}{{ ", " if not loop.last }}
     {%- endfor %}.
     {%- endif %}
-    {{ integration.description }}<br>
-    [Project]({{ integration.documentation }})
+    Project: {{ integration.documentation }}
   </dd>
 {%- endfor %}
 </dl>
@@ -208,13 +208,13 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 {%- for plugin in plugins %}
   <dt>{{ plugin.name }}</dt>
   <dd>
+    {{ plugin.description }}<br>
     {%- if plugin.authors|count > 0 %}Authors:
     {%- for author in plugin.authors %}
     {{ author }}{{ ", " if not loop.last }}
     {%- endfor %}.
     {%- endif %}
-    {{ plugin.description }}<br>
-    [Project]({{ plugin.documentation }})
+    Project: {{ plugin.documentation }}
   </dd>
 {%- endfor %}
 </dl>
