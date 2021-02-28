@@ -186,18 +186,25 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 Our Home Assistant install has approximately **{{ states|count }} total entities**, 
 including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 
-<details><summary>{{ integrations|count }} Integrations</summary>
+<details><summary>{{ integrations|count }} Custom Integrations</summary>
 <dl>
 {%- for integration in integrations %}
-  <dt>{{ integration.name | replace("HACS","Home Assistant Community Store (HACS)") }}</dt>
+  {% set url = integration.documentation %}
+  {% if url.endswith("damienheiser/home-assistant") or url.endswith("jrhorrisberger/home-assistant") %}
+    {% set name = "Rainforest Energy Monitoring Component" %}
+    {% set description = "Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant." %}
+  {% else %}
+    {% set name = integration.name | replace("HACS","Home Assistant Community Store (HACS)") %}
+    {% set description = integration.description|trim + "<br>" if integration.description|trim not in ["","None"] %}
+  {% endif %}
+  <dt>{{ name }}</dt>
   <dd>
-    {{ integration.description }}<br>
-    {%- if integration.authors|count > 0 %}Authors:
-    {%- for author in integration.authors %}
+    {{ description }}
+    {% if integration.authors|count > 0 %}Authors:
+    {%- for author in integration.authors -%}
     {{ author }}{{ ", " if not loop.last }}
     {%- endfor %}.
-    {%- endif %}
-    Project: {{ integration.documentation }}
+    {% endif %} Project: {{ url }}
   </dd>
 {%- endfor %}
 </dl>
@@ -208,13 +215,12 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 {%- for plugin in plugins %}
   <dt>{{ plugin.name }}</dt>
   <dd>
-    {{ plugin.description }}<br>
-    {%- if plugin.authors|count > 0 %}Authors:
-    {%- for author in plugin.authors %}
+    {{ plugin.description + "<br>" if plugin.description not in ["","None"] }}
+    {% if plugin.authors|count > 0 %}Authors:
+    {%- for author in plugin.authors -%}
     {{ author }}{{ ", " if not loop.last }}
     {%- endfor %}.
-    {%- endif %}
-    Project: {{ plugin.documentation }}
+    {% endif %} Project: {{ plugin.documentation }}
   </dd>
 {%- endfor %}
 </dl>
