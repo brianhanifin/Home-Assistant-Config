@@ -17,15 +17,8 @@ condition:
     after: '06:00:00'
     before: '12:00:00'
 action:
-  # Family Room: Only if the "Auto Lights" are enabled.
-  - choose:
-      - conditions:
-          - condition: state
-            entity_id: automation.family_room_presence_state_change
-            state: "on"
-        sequence:
-          - service: light.turn_off
-            entity_id:
-              - light.table_lamp
-              - light.family_room_floor_lamp
-              - light.family_room
+  - service: light.turn_off
+    entity_id:
+      - light.table_lamp
+      - light.family_room_floor_lamp
+      - light.family_room

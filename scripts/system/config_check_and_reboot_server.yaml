@@ -1,25 +1,16 @@
 ---
 sequence:
-  - delay:
-      seconds: 1
-    
-  - service: script.toast
-    data:
-      message: ✔️ config is running!
-      duration: 5000
-
   # Run the config_check
-  - service: config_check.run
+  - service: script.config_check
 
-  # Wait for the notification to appear
-  - wait_template: "{{ states('persistent_notification.1337') is string }}"
-    timeout: 00:03:00
-
+  # Reboot only if the configuration is OK
   - choose:
       - conditions:
           # Restart only if the configuration is OK
           - condition: template
-            value_template: "{{ is_state_attr('persistent_notification.1337','message','Configuration is OK!') }}"
+            value_template:  |
+              {% set result = state_attr("persistent_notification.1337","message") %}
+              {{ result|trim == "Configuration is OK!" }}
         sequence:
           # Clear any old config check notifications
           - service: persistent_notification.dismiss
@@ -30,14 +21,11 @@ sequence:
             data:
               message: "✔️ = 👍"
 
-          # - delay:
-          #     seconds: 2
-
-          #- service: script.reboot_server
           - service: script.toast
             data:
               message: Rebooting the server!
 
+          #- service: script.reboot_server
           - service: hassio.host_reboot
     
     default:

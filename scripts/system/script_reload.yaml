@@ -1,17 +1,7 @@
 ---
 sequence:
-  # Reloading the script from a script breaks this script so instead I 
-  # call a shell command to reload the scripts using hass-cli.
-  - delay:
-      seconds: 1
-      
-  - service: script.toast
-    data:
-      message: ✔️ config is running!
-      duration: 5000
-  
   # Run the config_check
-  - service: config_check.run
+  - service: script.config_check
 
   # Wait for the notification to appear
   - wait_template: "{{ states('persistent_notification.1337') is string }}"
@@ -21,7 +11,9 @@ sequence:
       - conditions:
           # Restart only if the configuration is OK
           - condition: template
-            value_template: "{{ is_state_attr('persistent_notification.1337','message','Configuration is OK!') }}"
+            value_template: |
+              {% set result = state_attr("persistent_notification.1337","message") %}
+              {{ result|trim == "Configuration is OK!" }}
         sequence:
           # Clear any old config check notifications
           - service: persistent_notification.dismiss
