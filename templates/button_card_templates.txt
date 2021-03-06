@@ -5,36 +5,80 @@ button_card_templates:
       action: more-info
     tap_action:
       action: toggle
-    state:
-      - styles:
-          card:
-            - filter: opacity(50%)
-          icon:
-            - filter: grayscale(100%)
-        value: 'off'
-      - styles:
-          card:
-            - filter: opacity(25%)
-          icon:
-            - filter: grayscale(100%)
-        value: unavailable
     styles:
+      card:
+        - height: 65px
+        - font-weight: bold
+        - margin: auto
+      grid:
+        - grid-template-areas: '"n i"'
+        - grid-template-columns: 1fr 1fr
       img_cell:
         - align-self: start
         - text-align: start
-      label:
+      icon:
+        - color: grey
         - justify-self: start
-        - padding-left: 10px
-        - font-weight: bold
-        - text-transform: lowercase
       name:
         - justify-self: start
         - padding-left: 10px
         - font-weight: bold
         - text-transform: lowercase
+      label:
+        - justify-self: start
+        - padding-left: 10px
+        - font-weight: bold
+        - text-transform: lowercase
+      state:
+        - justify-self: start
+        - padding-left: 10px
+        - font-weight: bold
+        - text-transform: lowercase
+    state:
+      - value: 'off'
+        styles:
+          card:
+            - filter: opacity(50%)
+      - value: unavailable
+        styles:
+          card:
+            - filter: opacity(25%)
+  button_label:
+    template: button
+    show_label: true
+    styles:
+      grid:
+        - grid-template-areas: '"n i" "l i"'
+        - grid-template-columns: 1fr 1fr
+        - grid-template-rows: min-content 1fr
+      name:
+        - margin-top: .25em
+  button_state:
+    template: button
+    name: 'test'
+    show_state: true
+    styles:
+      grid:
+        - grid-template-areas: '"n i" "s i" '
+        - grid-template-columns: 1fr 1fr
+        - grid-template-rows: min-content 1fr
+      name:
+        - margin-top: .25em
+    state:
+      - operature: template
+        value: |
+          [[[
+            if (entity.entity_id.split('.')[0] == "fan")
+              return "on";
+            else
+              return "not_a_fan";
+          ]]]
+        spin: "true"
   button_short:
     template: button
     styles:
+      card:
+        - height: 2.2em
       grid:
         - grid-template-areas: '"i n"'
         - grid-template-columns: 40px 1fr
@@ -42,17 +86,13 @@ button_card_templates:
         - margin: 0
         - padding: 0
         - width: 100%
-        - justify-self: start
       icon:
         - color: green
         - margin: 0
         - padding: 0
         - height: 20px
         - width: 20px
-        - justify-self: start
       name:
-        - font-weight: bold
-        - justify-self: start
         - margin-left: 2.25em
         - position: absolute
   button_rounded:
@@ -62,17 +102,14 @@ button_card_templates:
         - background: lightgray
         - color: black
         - border-radius: 30px
-        - font-weight: bold
-        - margin: auto
         - padding: 5px
+        - height: 2em
         - width: 200px
+      icon:
+        - color: black
       grid:
         - grid-template-areas: '"i n"'
         - grid-template-columns: 60px 1fr
-      icon:
-        - color: grey
-      name:
-        - justify-self: start
   button_rounded_active:
     template: button_rounded
     icon: |
@@ -158,66 +195,31 @@ button_card_templates:
   button_weekday:
     template: button
     styles:
-      card:
-        - height: 65px
       grid:
         - grid-template-areas: '"n"'
         - grid-template-columns: 1fr
   button_home:
     template: button
     styles:
+      card:
+        - height: 4em
       grid:
         - grid-template-areas: '"i n"'
         - grid-template-columns: 1fr 1fr
-        - grid-template-rows: 50px
+        - grid-template-rows: 2em
       img_cell:
         - justify-content: end
         - justify-self: end
   button_icon_only:
     template: button
     color: 'rgba(255, 255, 255, 0.20)'
-    show_state: false
+    size: 40%
     styles:
       card:
         - background: none
         - box-shadow: none
-        - margin: 0.5em auto 0 auto
-  button_toggle_state:
-    template: button
-    show_state: 'true'
-    size: 40px
-    styles:
       grid:
-        - grid-template-areas: '"n i" "s i" '
-        - grid-template-columns: min-content 1fr
-        - grid-template-rows: min-content 1fr
-      state:
-        - justify-self: start
-        - padding-left: 10px
-        - text-transform: lowercase
-  button_1_line:
-    template: button
-    size: 50%
-    styles:
-      card:
-        - height: 65px
-      grid:
-        - grid-template-areas: '"n i"'
-        - grid-template-columns: 1fr 1fr
-  button_2_line:
-    template: button_1_line
-    show_label: true
-    styles:
-      grid:
-        - grid-template-areas: '"n i" "l i"'
-        - grid-template-columns: 1fr 1fr
-      label:
-        - margin-top: '-2em'
-      name:
-        - margin-top: '-1.25em'
-  button_1_line_state:
-    template: button_1_line
-  button_2_line_state:
-    template:
-      - button_1_line_state
-      - button_2_line
+        - grid-template-areas: '"i"'
+        - grid-template-columns: 1fr
+      icon:
+        - color: grey
