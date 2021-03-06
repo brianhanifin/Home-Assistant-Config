@@ -184,7 +184,7 @@
         target:
           entity_id: input_boolean.guest_mode
 - id: '1614889037575'
-  alias: Family Room Click Handler
+  alias: 'Multi-click Handler: Family Room'
   description: Inovelli Red Series LZW31-SN Dimmer (ZWave-JS)
   use_blueprint:
     path: brianhanifin/zwave_js_inovelli_lzw31_sn_red_series_dimmer.yaml
@@ -279,3 +279,80 @@
           - dining_room
           - kitchen
           - family_room
+- id: '1615053055187'
+  alias: 'Multi-click Handler: Bedroom Dimmer'
+  description: ''
+  use_blueprint:
+    path: kpine/ge_double.yaml
+    input:
+      device: 8bef4ccfe78c1356e14212171ff1bfc7
+      double_tap_on:
+      - service: light.turn_on
+        data:
+          transition: 0
+        target:
+          area_id: bedroom
+      double_tap_off:
+      - service: switch.turn_off
+        target:
+          area_id: bedroom
+      - service: light.turn_off
+        target:
+          area_id: bedroom
+        data:
+          transition: 0
+- id: '1615055705706'
+  alias: 'Remote: Bedroom Nerene'
+  description: Nerene's bedside remote
+  use_blueprint:
+    path: NachtaktiverHalbaffe/zha-aqara-wireless-remote-switch-double-rocker.yaml
+    input:
+      aqara_mini_switch: 8591edcc1f054889977d5fe6eef52d7d
+      button_single_press_left:
+      - type: toggle
+        device_id: 8bef4ccfe78c1356e14212171ff1bfc7
+        entity_id: light.bedroom
+        domain: light
+      button_double_press_left:
+      - type: toggle
+        device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
+        entity_id: switch.sound_machine
+        domain: switch
+      button_long_press_left:
+      - type: toggle
+        device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
+        entity_id: switch.sound_machine
+        domain: switch
+      button_single_press_right:
+      - service: light.toggle
+        target:
+          device_id:
+          - d77f02df805043fc8eb0896488c2385a
+          - f23c6c2806a045899047ea62f07f35c3
+          - 789732c26297462f8f7ebc624c9394ee
+        data:
+          transition: 0
+      button_double_press_right:
+      - type: toggle
+        device_id: 79bd98c471854a2689e9ed3b9d57cc8b
+        entity_id: switch.bedroom_fan
+        domain: switch
+      button_long_press_right:
+      - type: turn_off
+        device_id: 79bd98c471854a2689e9ed3b9d57cc8b
+        entity_id: switch.bedroom_fan
+        domain: switch
+      button_single_press_both:
+      - service: light.toggle
+        data: {}
+        target:
+          device_id:
+          - 4f2fbaafac2446c2b58d0bc0969a661f
+      button_double_press_both:
+      - service: switch.toggle
+        target:
+          area_id: bedroom
+      button_long_press_both:
+      - service: switch.toggle
+        target:
+          area_id: bedroom

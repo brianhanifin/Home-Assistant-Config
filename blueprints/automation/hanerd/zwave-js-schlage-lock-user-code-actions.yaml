@@ -1,0 +1,310 @@
+blueprint:
+  name: Schlage User Code Actions (ZWave-JS)
+  description: Perform action based on code slot that unlocked door
+  domain: automation
+  input:
+    schlage_lock:
+      name: Schlage Lock
+      description: List of available Schlage Locks
+      selector:
+        device:
+          integration: zwave_js
+          manufacturer: Allegion
+    manual_lock:
+      name: Manual lock Operation
+      description: Manually locking thumbturn
+      default: []
+      selector:
+        action: {}
+    manual_unlock:
+      name: Manual unlock Operation
+      description: Manually unlocking thumbturn
+      default: []
+      selector:
+        action: {}
+    user_1:
+      name: User Code Slot 1
+      description: First Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_2:
+      name: User Code Slot 2
+      description: Second Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_3:
+      name: User Code Slot 3
+      description: Third Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_4:
+      name: User Code Slot 4
+      description: Fourth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_5:
+      name: User Code Slot 5
+      description: Fifth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_6:
+      name: User Code Slot 6
+      description: Sixth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_7:
+      name: User Code Slot 7
+      description: Seventh Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_8:
+      name: User Code Slot 8
+      description: Eighth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_9:
+      name: User Code Slot 9
+      description: Ninth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_10:
+      name: User Code Slot 10
+      description: Tenth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_11:
+      name: User Code Slot 11
+      description: Eleventh Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_12:
+      name: User Code Slot 12
+      description: Twelfth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_13:
+      name: User Code Slot 13
+      description: First Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_14:
+      name: User Code Slot 14
+      description: First Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_15:
+      name: User Code Slot 15
+      description: First Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_16:
+      name: User Code Slot 16
+      description: Sixteenth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_17:
+      name: User Code Slot 17
+      description: Seventeenth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_18:
+      name: User Code Slot 18
+      description: Eighteenth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_19:
+      name: User Code Slot 19
+      description: Nineteenth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_20:
+      name: User Code Slot 20
+      description: Twentieth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_21:
+      name: User Code Slot 21
+      description: Twenty-first Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_22:
+      name: User Code Slot 22
+      description: Twenty-second Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_23:
+      name: User Code Slot 23
+      description: Twenty-third Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_24:
+      name: User Code Slot 24
+      description: Twenty-fourth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_25:
+      name: User Code Slot 25
+      description: Twenty-fifth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_26:
+      name: User Code Slot 26
+      description: Twenty-sixth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_27:
+      name: User Code Slot 27
+      description: Twenty-seventh Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_28:
+      name: User Code Slot 28
+      description: Twenty-eigth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_29:
+      name: User Code Slot 29
+      description: Twenty-ninth Usercode Slot
+      default: []
+      selector:
+        action: {}
+    user_30:
+      name: User Code Slot 30
+      description: Thirtieth Usercode Slot
+      default: []
+      selector:
+        action: {}
+  source_url: https://community.home-assistant.io/t/zwave-js-schlage-lock-user-code-actions/280538
+mode: single
+max_exceeded: silent
+variables:
+  device_id: !input 'schlage_lock'
+trigger:
+- platform: event
+  event_type: zwave_js_event
+condition: '{{ trigger.event.data.device_id == device_id }}'
+action:
+- variables:
+    user_code: '{{ trigger.event.data.parameters.userId }}'
+    lock_operation: '{{ trigger.event.data.label }}'
+- service: logbook.log
+  data:
+    name: User Code
+    message: '{{ user_code }}'
+- service: logbook.log
+  data:
+    name: Device
+    message: '{{ device_id }}'
+- choose:
+  - conditions: '{{ trigger.event.data.label == "Manual lock operation" }}'
+    sequence: !input 'manual_lock'
+  - conditions: '{{ trigger.event.data.label == "Manual unlock operation" }}'
+    sequence: !input 'manual_unlock'
+  - conditions: '{{ user_code == 1 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_1'
+  - conditions: '{{ user_code == 2 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_2'
+  - conditions: '{{ user_code == 3 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_3'
+  - conditions: '{{ user_code == 4 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_4'
+  - conditions: '{{ user_code == 5 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_5'
+  - conditions: '{{ user_code == 6 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_6'
+  - conditions: '{{ user_code == 7 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_7'
+  - conditions: '{{ user_code == 8 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_8'
+  - conditions: '{{ user_code == 9 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_9'
+  - conditions: '{{ user_code == 10 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_10'
+  - conditions: '{{ user_code == 11 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_11'
+  - conditions: '{{ user_code == 12 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_12'
+  - conditions: '{{ user_code == 13 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_13'
+  - conditions: '{{ user_code == 14 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_14'
+  - conditions: '{{ user_code == 15 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_15'
+  - conditions: '{{ user_code == 16 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_16'
+  - conditions: '{{ user_code == 17 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_17'
+  - conditions: '{{ user_code == 18 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_18'
+  - conditions: '{{ user_code == 19 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_19'
+  - conditions: '{{ user_code == 20 and lock_operation == "Keypad unlock operation"
+      }}'
+    sequence: !input 'user_20'
+  - conditions: '{{ user_code == 21 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_21'
+  - conditions: '{{ user_code == 22 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_22'
+  - conditions: '{{ user_code == 23 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_23'
+  - conditions: '{{ user_code == 24 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_24'
+  - conditions: '{{ user_code == 25 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_25'
+  - conditions: '{{ user_code == 26 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_26'
+  - conditions: '{{ user_code == 27 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_27'
+  - conditions: '{{ user_code == 28 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_28'
+  - conditions: '{{ user_code == 29 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_29'
+  - conditions: '{{ user_code == 30 and lock_operation == "Keypad unlock operation"}}'
+    sequence: !input 'user_30'

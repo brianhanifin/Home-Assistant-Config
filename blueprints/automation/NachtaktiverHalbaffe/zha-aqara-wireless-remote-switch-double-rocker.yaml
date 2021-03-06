@@ -1,0 +1,109 @@
+blueprint:
+  name: ZHA - Aqara Wireless Remote Switch (Double Rocker)
+  description: Automate your Xiaomi Aqara Wireless Remote Switch (Double Rocker) using
+    ZHA events.
+  domain: automation
+  input:
+    aqara_mini_switch:
+      name: Select the Aqara Wireless Remote Switch (Double Rocker)
+      description: Aqara Wireless Remote Switch (Double Rocker)
+      selector:
+        device:
+          integration: zha
+          manufacturer: LUMI
+          entity:
+            domain: sensor
+            device_class: battery
+    button_single_press_left:
+      name: Single Press Left
+      description: Action to run on single press
+      default: []
+      selector:
+        action: {}
+    button_double_press_left:
+      name: Double Press Left
+      description: Action to run on double press
+      default: []
+      selector:
+        action: {}
+    button_long_press_left:
+      name: Long Press Left
+      description: Action to run when button is long pressed (held down)
+      default: []
+      selector:
+        action: {}
+    button_single_press_right:
+      name: Single Press Right
+      description: Action to run on single press
+      default: []
+      selector:
+        action: {}
+    button_double_press_right:
+      name: Double Press Right
+      description: Action to run on double press
+      default: []
+      selector:
+        action: {}
+    button_long_press_right:
+      name: Long Press Right
+      description: Action to run when button is long pressed (held down)
+      default: []
+      selector:
+        action: {}
+    button_single_press_both:
+      name: Single Press Both Buttons
+      description: Action to run on single presses
+      default: []
+      selector:
+        action: {}
+    button_double_press_both:
+      name: Double Press Both Buttons
+      description: Action to run on double presses
+      default: []
+      selector:
+        action: {}
+    button_long_press_both:
+      name: Long Press Both Buttons
+      description: Action to run when buttons are long pressed (held down)
+      default: []
+      selector:
+        action: {}
+  source_url: https://community.home-assistant.io/t/zha-aqara-wireless-remote-switch-double-rocker/256231
+mode: restart
+max_exceeded: silent
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input 'aqara_mini_switch'
+action:
+- variables:
+    command: '{{ trigger.event.data.command }}'
+- choose:
+  - conditions:
+    - '{{ command == ''left_single'' }}'
+    sequence: !input 'button_single_press_left'
+  - conditions:
+    - '{{ command == ''left_double'' }}'
+    sequence: !input 'button_double_press_left'
+  - conditions:
+    - '{{ command == ''left_long press'' }}'
+    sequence: !input 'button_long_press_left'
+  - conditions:
+    - '{{ command == ''right_single'' }}'
+    sequence: !input 'button_single_press_right'
+  - conditions:
+    - '{{ command == ''right_double'' }}'
+    sequence: !input 'button_double_press_right'
+  - conditions:
+    - '{{ command == ''right_long press'' }}'
+    sequence: !input 'button_long_press_right'
+  - conditions:
+    - '{{ command == ''both_single'' }}'
+    sequence: !input 'button_single_press_both'
+  - conditions:
+    - '{{ command == ''both_double'' }}'
+    sequence: !input 'button_double_press_both'
+  - conditions:
+    - '{{ command == ''both_long press'' }}'
+    sequence: !input 'button_long_press_both'

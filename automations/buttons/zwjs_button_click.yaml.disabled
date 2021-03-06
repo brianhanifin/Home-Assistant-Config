@@ -17,16 +17,8 @@ variables:
   presses: |
     {% if remote.startswith("inovelli") %}
       {% set value = trigger.event.data.value %}
-      {% if value is number %}
-        {% if value|int == 1 %}
-          KeyHeldRelease
-        {% elif value|int == 2 %}
-          KeyHeldDown
-        {% elif value|int == 0 %}
-          1
-        {% else %}
-          {{ value|int - 1 }}
-        {% endif %}
+      {% if value == "KeyPressed" %}
+        1
       {% else %}
         {{ value|replace("KeyPressed","")|replace("x","") }}
       {% endif %}
@@ -36,15 +28,15 @@ variables:
   button: |
     {% if remote.startswith("inovelli") %}
       {% if trigger.event.data.property_key_name|int == 2 %}
-        top
+        up
       {% elif trigger.event.data.property_key_name|int == 1 %}
-        bottom
+        down
       {% endif %}
     {% elif remote.startswith("ge") %}
       {% if trigger.event.data.value|int == 255 %}
-        top
+        up
       {% elif trigger.event.data.value|int == 0 %}
-        bottom
+        down
       {% endif %}
     {% endif %}
 
@@ -73,7 +65,7 @@ action:
               # SCENE 2: 2x Up
               - conditions:
                   - condition: template
-                    value_template: '{{ button == "top" }}'
+                    value_template: '{{ button == "up" }}'
                 sequence:
                   - service: light.turn_on
                     data:
@@ -88,7 +80,7 @@ action:
               # SCENE 1: 2x Down
               - conditions:
                   - condition: template
-                    value_template: '{{ button == "bottom" }}'
+                    value_template: '{{ button == "down" }}'
                 sequence:
                   - service: homeassistant.turn_off
                     data:
@@ -117,7 +109,7 @@ action:
       #                 # SCENE 2: Up
       #                 - conditions:
       #                     - condition: template
-      #                       value_template: '{{ button == "top" }}'
+      #                       value_template: '{{ button == "up" }}'
       #                   sequence:
       #                     - service: light.turn_on
       #                       data:
@@ -130,7 +122,7 @@ action:
       #                 # SCENE 1: Down
       #                 - conditions:
       #                     - condition: template
-      #                       value_template: '{{ button == "bottom" }}'
+      #                       value_template: '{{ button == "down" }}'
       #                   sequence:
       #                     - service: homeassistant.turn_off
       #                       entity_id:
@@ -147,7 +139,7 @@ action:
       #               # SCENE 2: Up
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "top" }}'
+      #                     value_template: '{{ button == "up" }}'
       #                 sequence:
       #                   - service: light.turn_on
       #                     data:
@@ -162,7 +154,7 @@ action:
       #               # SCENE 1: Down
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "bottom" }}'
+      #                     value_template: '{{ button == "down" }}'
       #                 sequence:
       #                   - service: light.turn_off
       #                     entity_id: light.family_room_floor_lamp
@@ -177,7 +169,7 @@ action:
       #               # SCENE 2: Up
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "top" }}'
+      #                     value_template: '{{ button == "up" }}'
       #                 sequence:
       #                   - service: fan.turn_on
       #                     entity_id: fan.family_room
@@ -185,7 +177,7 @@ action:
       #               # SCENE 1: Down
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "bottom" }}'
+      #                     value_template: '{{ button == "down" }}'
       #                 sequence:
       #                   - service: fan.turn_off
       #                     entity_id: fan.family_room
@@ -200,7 +192,7 @@ action:
       #               # SCENE 2: Up
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "top" }}'
+      #                     value_template: '{{ button == "up" }}'
       #                 sequence:
       #                   - service: light.turn_on
       #                     data:
@@ -221,7 +213,7 @@ action:
       #               # SCENE 1: Down
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "bottom" }}'
+      #                     value_template: '{{ button == "down" }}'
       #                 sequence:
       #                   - service: homeassistant.turn_off
       #                     entity_id:
@@ -244,7 +236,7 @@ action:
       #               # SCENE 2: Up
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "top" }}'
+      #                     value_template: '{{ button == "up" }}'
       #                 sequence:
       #                   - service: input_boolean.turn_on
       #                     entity_id: input_boolean.guest_mode
@@ -252,7 +244,7 @@ action:
       #               # SCENE 1: Down
       #               - conditions:
       #                   - condition: template
-      #                     value_template: '{{ button == "bottom" }}'
+      #                     value_template: '{{ button == "down" }}'
       #                 sequence:
       #                   - service: input_boolean.turn_off
       #                     entity_id: input_boolean.guest_mode

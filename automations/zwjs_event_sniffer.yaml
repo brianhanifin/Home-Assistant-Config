@@ -16,8 +16,8 @@ condition:
   # Ignore events I've already identified.
   - condition: template   # Manual deadbolt operation
     value_template: '{{ event_label.endswith("lock operation") == False }}'
-  - condition: template
-    value_template: '{{ not node_id in ["4","9"] }}'
+  # - condition: template
+  #   value_template: '{{ node_id in ["2","4","9"] == False }}'
 
 action:
   - service: script.debug
@@ -27,4 +27,3 @@ action:
         event_type: {{ event_type }}
         node_id: {{ node_id }}
         {{ event_data }}
-      id: 'zwjs_event_{{ now() }}'

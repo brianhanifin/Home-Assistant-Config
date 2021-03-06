@@ -4,73 +4,12 @@ variables:
   debug_id: '{{ remote ~"_"~ as_timestamp(now()) }}'
 sequence:
   - choose:
-      # Unused Remotes
-      #   * Xiaomi Aqara Wireless Mini Switch (square)
-      #   * Ikea On/Off Switch
-      #   * Hue Dimmer Switch
-      - conditions: '{{ remote in ["button_xiaomi_square_unused","remote_ikea_rocker_unused","remote_hue_unused"] }}'
-        sequence:
-          - service: script.toast
-            data:
-              message: 'remote: {{ remote }}'
-
-          # - service: script.debug
-          #   data_template:
-          #     title: '"{{ remote }}" click'
-          #     message: |
-          #       command: {{ command }}
-          #       click_count: {{ click_count }}
-          #       manufacturer: {{ manufacturer }}
-          #     id: '{{ remote ~"_"~ as_timestamp(now()) }}'
-
       # Printer Power Button
       #   * Xiaomi Mijia Wireless Switch (round)
       - conditions: '{{ remote == "button_printer_power" }}'
         sequence:
           - service: switch.toggle
             entity_id: switch.printers
-
-      # Bedroom Double Switch
-      #   * Xiaomi Double Rockers, Battery Powered
-      - conditions: '{{ remote == "remote_bedroom_double_rocker" }}'
-        sequence:
-          # Ignore Xiaomi button duplicate event.
-          # - condition: template
-          #   value_template: '{{ trigger.event.data.args.value|int == 1 }}'
-
-          - choose:
-              # Single Click: Left
-              - conditions: '{{ command == "left_single" }}'
-                sequence:
-                  - service: light.toggle
-                    entity_id: light.bedroom
-              # Single Click: Right
-              - conditions: '{{ command == "right_single" }}'
-                sequence:
-                  - service: light.toggle
-                    entity_id: light.brian
-              # Single Click: Both
-              - conditions: '{{ command == "both_single" }}'
-                sequence:
-                  - service: light.toggle
-                    entity_id: light.bedroom_table_lamp
-              # Double Click: Left
-              - conditions: '{{ command == "left_double" }}'
-                sequence:
-                  - service: switch.toggle
-                    entity_id: switch.sound_machine
-              # Double Click: Right
-              - conditions: '{{ command == "right_double" }}'
-                sequence:
-                  - service: switch.toggle
-                    entity_id: switch.bedroom_fan
-              # Double Click: Both
-              - conditions: '{{ command == "both_double" }}'
-                sequence:
-                  - service: switch.toggle
-                    entity_id:
-                      - switch.sound_machine
-                      - switch.bedroom_fan
 
       # Family Room 5 button remote
       #   * IKEA Tradfri Remote Control
@@ -204,6 +143,67 @@ sequence:
                     data:
                       entity_id: light.family_room_floor_lamp
                       brightness_step_pct: "20"
+
+      # Unused Remotes
+      #   * Xiaomi Aqara Wireless Mini Switch (square)
+      #   * Ikea On/Off Switch
+      #   * Hue Dimmer Switch
+      # - conditions: '{{ remote in ["button_xiaomi_square_unused","remote_ikea_rocker_unused","remote_hue_unused"] }}'
+      #   sequence:
+      #     - service: script.toast
+      #       data:
+      #         message: 'remote: {{ remote }}'
+
+          # - service: script.debug
+          #   data_template:
+          #     title: '"{{ remote }}" click'
+          #     message: |
+          #       command: {{ command }}
+          #       click_count: {{ click_count }}
+          #       manufacturer: {{ manufacturer }}
+          #     id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+
+      # Bedroom Double Switch
+      #   * Xiaomi Double Rockers, Battery Powered
+      # - conditions: '{{ remote == "remote_bedroom_double_rocker" }}'
+      #   sequence:
+      #     # Ignore Xiaomi button duplicate event.
+      #     # - condition: template
+      #     #   value_template: '{{ trigger.event.data.args.value|int == 1 }}'
+
+      #     - choose:
+      #         # Single Click: Left
+      #         - conditions: '{{ command == "left_single" }}'
+      #           sequence:
+      #             - service: light.toggle
+      #               entity_id: light.bedroom
+      #         # Single Click: Right
+      #         - conditions: '{{ command == "right_single" }}'
+      #           sequence:
+      #             - service: light.toggle
+      #               entity_id: light.brian
+      #         # Single Click: Both
+      #         - conditions: '{{ command == "both_single" }}'
+      #           sequence:
+      #             - service: light.toggle
+      #               entity_id: light.bedroom_table_lamp
+      #         # Double Click: Left
+      #         - conditions: '{{ command == "left_double" }}'
+      #           sequence:
+      #             - service: switch.toggle
+      #               entity_id: switch.sound_machine
+      #         # Double Click: Right
+      #         - conditions: '{{ command == "right_double" }}'
+      #           sequence:
+      #             - service: switch.toggle
+      #               entity_id: switch.bedroom_fan
+      #         # Double Click: Both
+      #         - conditions: '{{ command == "both_double" }}'
+      #           sequence:
+      #             - service: switch.toggle
+      #               entity_id:
+      #                 - switch.sound_machine
+      #                 - switch.bedroom_fan
 
   - choose:
       - conditions: '{{ debug_output == True }}'

@@ -1,0 +1,41 @@
+blueprint:
+  name: GE Switch Double Taps
+  description: Create automations to react to double taps from supporting GE switches.
+  domain: automation
+  input:
+    device:
+      name: Switch Device
+      description: A GE switch that supports double taps.
+      selector:
+        device:
+          integration: zwave_js
+          manufacturer: GE/Jasco
+    double_tap_on:
+      name: Double Tap On
+      description: Actions to run for a double tap on.
+      default: []
+      selector:
+        action: {}
+    double_tap_off:
+      name: Double Tap Off
+      description: Actions to run for a double tap off.
+      default: []
+      selector:
+        action: {}
+  source_url: https://gist.github.com/kpine/65e6324a0e6a9d48f9f50f77310ecd7f
+mode: single
+max_exceeded: silent
+trigger:
+  platform: event
+  event_type: zwave_js_event
+  event_data:
+    device_id: !input 'device'
+    command_class: 32
+action:
+- variables:
+    value: '{{ trigger.event.data.value }}'
+- choose:
+  - conditions: '{{ value == 0 }}'
+    sequence: !input 'double_tap_off'
+  - conditions: '{{ value == 255 }}'
+    sequence: !input 'double_tap_on'
