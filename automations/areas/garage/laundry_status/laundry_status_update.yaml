@@ -52,7 +52,7 @@ action:
               duration: "01:00:00"
 
       - conditions:
-          - '{{ status == "Drying" or dryer_status == "Drying" }}'
+          - '{{ status in ["Drying","Washing"] or dryer_status == "Drying" }}'
         sequence:
           - service: timer.cancel
             entity_id: timer.washer_clean
