@@ -25,11 +25,20 @@ sequence:
           - service: script.turn_on
             entity_id: script.update_lights_on
 
-  #- service: script.say_cloud
-  - service: script.say_cloud
-    data:
-      media_player: '{{ media_player }}'
-      message: '{{ briefing }}'
+  - choose:
+      - conditions:
+          - '{{ media_player.startswith("group") }}'
+        sequence:
+          - service: script.say_speaker_group
+            data:
+              entity_id: '{{ media_player }}'
+              message: '{{ message|striptags }}'
+
+    default:
+      - service: script.say_cloud
+        data:
+          media_player: '{{ media_player }}'
+          message: '{{ briefing }}'
 
   - service: script.toast
     data:
