@@ -1,6 +1,6 @@
 ---
 alias: front_door_lock_state_change
-initial_state: true
+
 trigger:
   - platform: event
     event_type: state_changed
@@ -34,6 +34,15 @@ action:
           - choose:
               - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
                 sequence:
+                  # Restore the previous state of the porch + entry lights.
+                  - service: scene.turn_on
+                    data:
+                      entity_id: scene.front_door_locked_lights_snapshot
+                      transition: 5
+
+                  - delay:
+                      seconds: 10
+
                   # Restore Adaptive Lighting automated control.
                   # ** Porch
                   - service: adaptive_lighting.set_manual_control
@@ -45,12 +54,6 @@ action:
                     data:
                       entity_id: switch.adaptive_lighting_home_entry
                       manual_control: false
-
-                  # Restore the previous state of the porch + entry lights.
-                  - service: scene.turn_on
-                    data:
-                      entity_id: scene.front_door_locked_lights_snapshot
-                      transition: 5
 
           ## ================================================================================================= ##
 
@@ -89,15 +92,15 @@ action:
 
                           # Disable Adaptive Lighting automated control.
                           # ** Porch
-                          - service: adaptive_lighting.set_manual_control
-                            data:
-                              entity_id: switch.adaptive_lighting_porch
-                              manual_control: true
-                          # ** Entry/Stair Chandelier
-                          - service: adaptive_lighting.set_manual_control
-                            data:
-                              entity_id: switch.adaptive_lighting_home_entry
-                              manual_control: true
+                          # - service: adaptive_lighting.set_manual_control
+                          #   data:
+                          #     entity_id: switch.adaptive_lighting_porch
+                          #     manual_control: true
+                          # # ** Entry/Stair Chandelier
+                          # - service: adaptive_lighting.set_manual_control
+                          #   data:
+                          #     entity_id: switch.adaptive_lighting_home_entry
+                          #     manual_control: true
 
                           # Full brightness!
                           - service: light.turn_on

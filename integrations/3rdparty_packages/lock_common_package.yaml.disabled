@@ -7,7 +7,7 @@
 # https://github.com/ptdalen/home-assistant/tree/master/packages
 automation:
   - alias: Keypad temporary code end
-    initial_state: true
+    
     trigger:
       - platform: state
         to: 'True'
@@ -65,7 +65,7 @@ automation:
           who: brian
 
   - alias: Keypad clear code after one time use code is used for 16 through 18
-    initial_state: true
+    
 # this is configured to run on three locks, if you only have one or two remove the unneeded sensors from the trigger and condtions
 # When the code from slots 16. 17 or 18 are used, this immediately runs the delete script, removing the code from all doors
 # notice that the alarm level is used to determine which slot was used, make sure the names match your config.  Added condition
@@ -98,7 +98,7 @@ automation:
           who: brian
 
   - alias: Keypad clear code after one time use is set to disabled for 16 through 18
-    initial_state: true
+    
 # This will also delete the code from all doors when you change the option from enabled to disabled
     trigger:
       - platform: state
@@ -117,7 +117,7 @@ automation:
                 {{ script_to_run }}
 
   - alias: Keypad set random code for one time use
-    initial_state: true
+    
     trigger:
       - platform: state
         to: 'Enabled'

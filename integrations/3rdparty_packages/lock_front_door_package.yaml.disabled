@@ -12,7 +12,7 @@
 #################################################################
 automation:
   - alias: Keypad switch turned on (Front Door)
-    initial_state: true
+    
     trigger:
       - platform: state
         to: 'on'
@@ -64,7 +64,7 @@ automation:
             {{ states['input_text'][user_code_id].state }}
 
   - alias: Keypad switch turned off (Front Door)
-    initial_state: true
+    
     trigger:
       - platform: state
         to: 'off'
@@ -118,7 +118,7 @@ automation:
             {{ code_slot }}
 
   - alias: Keypad temporary code start (Front Door)
-    initial_state: true
+    
     trigger:
       - platform: state
         to: 'True'
@@ -185,7 +185,7 @@ automation:
           who: brian
 
   - alias: Notify on Unlock (Front Door)
-    initial_state: true
+    
     trigger:
       - platform: template
         value_template: "{{ states.sensor.front_door_report.state.lower().startswith('keypad unlock') }}"
