@@ -1,7 +1,7 @@
 ---
 alias: "Front Door Motion: Person Detection"
 id: front_door_motion_person_detection
-initial_state: true
+
 mode: single
 trigger:
   - platform: state
@@ -12,7 +12,7 @@ action:
   # Run image processing to see if a person is at the door.
   - service: image_processing.scan
     data:
-      entity_id: image_processing.person_front_door
+      entity_id: image_processing.deepstack_object_front_door
 
   - delay:
       seconds: 5
