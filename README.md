@@ -172,10 +172,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
   
 ## Technical Details
 
-Our Home Assistant install has approximately **946 total entities**, 
-including **423 sensors**.
+Our Home Assistant install has approximately **749 total entities**, 
+including **311 sensors**.
 
-<details><summary>17 Custom Integrations</summary>
+<details><summary>18 Custom Integrations</summary>
 <dl>
   
   
@@ -356,6 +356,17 @@ including **423 sensors**.
     
     
   
+  <dt>Wyze Bulb, Switch And Sensor Integration</dt>
+  <dd>
+    Home Assistant Integration for Wyze Bulbs, Switches, Sensors and Lock<br>
+    Authors:@joshuamulliken.
+     Project: https://github.com/JoshuaMulliken/ha-wyzeapi
+  </dd>
+  
+  
+    
+    
+  
   <dt>Youtube</dt>
   <dd>
     A platform which give you info about the newest video on a channel<br>
@@ -412,11 +423,6 @@ including **423 sensors**.
     🔹 A foldable row for entities card, containing other rows<br>
      Project: https://github.com/thomasloven/lovelace-fold-entity-row
   </dd>
-  <dt>Gallery Card</dt>
-  <dd>
-    A custom card for Home Assistant that will display images and/or videos from a folder in the style of a gallery.  <br>
-     Project: https://github.com/TarheelGrad1998/gallery-card
-  </dd>
   <dt>Gap Card</dt>
   <dd>
     🔹 A lovelace card that does nothing and looks like nothing. Incredibly useful! No, really.<br>
@@ -431,6 +437,11 @@ including **423 sensors**.
   <dd>
     🙈 Hides the Home Assistant header and/or sidebar<br>
      Project: https://github.com/maykar/kiosk-mode
+  </dd>
+  <dt>Layout Card</dt>
+  <dd>
+    🔹 Get more control over the placement of lovelace cards.<br>
+     Project: https://github.com/thomasloven/lovelace-layout-card
   </dd>
   <dt>Lovelace Card Templater</dt>
   <dd>
@@ -537,7 +548,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.3.0b3-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.3.4-41BDF5?logo=home%20assistant
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/build/badge.svg

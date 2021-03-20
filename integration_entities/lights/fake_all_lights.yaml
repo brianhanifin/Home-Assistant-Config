@@ -1,0 +1,21 @@
+---
+# Attempt to fake Google into never turning on all of the lights in the house,
+# thus waking Nerene up in the middle of the night.
+#
+platform: template
+lights:
+  fake_all_lights:
+    friendly_name: All lights
+    # level_template: >
+    #   {% if is_state('input_boolean.nothing', 'on') %}
+    #     255
+    #   {% else %}
+    #     0
+    #   {% endif %}
+    turn_on:
+      service: input_boolean.turn_on
+      entity_id: input_boolean.nothing
+    turn_off:
+      service: input_boolean.turn_off
+      entity_id: input_boolean.nothing
+    value_template: "{{ is_state('input_boolean.nothing', 'on') }}"
