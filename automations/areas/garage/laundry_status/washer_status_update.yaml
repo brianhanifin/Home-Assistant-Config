@@ -41,7 +41,7 @@ variables:
         Clean
       {%- elif power > 3 and previous_status == "Off" %}
         Standby
-      {%- elif power < 3 %}
+      {%- elif power < 3 and previous_status != "Clean" %}
         Off
       {%- endif %}
     {%- elif trigger_id == "binary_sensor.washer_error_state" %}

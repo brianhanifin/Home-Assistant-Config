@@ -11,9 +11,10 @@ trigger:
 variables:
   washer_status: '{{ states("input_select.washer_status") }}'
   dryer_status: '{{ states("input_select.dryer_status") }}'
+  timer: '{{ states("timer.washer_clean") }}'
 
   status: |
-    {% if washer_status == "Off" and dryer_status == "Off" %}
+    {% if timer != "active" and washer_status == "Off" and dryer_status == "Off" %}
       Off
     {%- elif dryer_status == "Drying" and washer_status == "Off" %}
       Drying
