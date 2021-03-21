@@ -172,10 +172,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
   
 ## Technical Details
 
-Our Home Assistant install has approximately **749 total entities**, 
-including **311 sensors**.
+Our Home Assistant install has approximately **944 total entities**, 
+including **409 sensors**.
 
-<details><summary>18 Custom Integrations</summary>
+<details><summary>21 Custom Integrations</summary>
 <dl>
   
   
@@ -219,6 +219,17 @@ including **311 sensors**.
     Run the CLI config_check from a service call.<br>
     Authors:@ludeeus.
      Project: https://github.com/custom-components/config_check
+  </dd>
+  
+  
+    
+    
+  
+  <dt>Event Sensor</dt>
+  <dd>
+    HomeAssistant custom sensor to track specific events<br>
+    Authors:@azogue.
+     Project: https://github.com/azogue/eventsensor
   </dd>
   
   
@@ -345,6 +356,28 @@ including **311 sensors**.
     
     
   
+  <dt>Spacex Next Launch And Starman</dt>
+  <dd>
+    Home Assistant integration for SpaceX Next Launch and Starman data.<br>
+    Authors:@djtimca.
+     Project: https://github.com/djtimca/HASpaceX
+  </dd>
+  
+  
+    
+    
+  
+  <dt>Ui Template Sensor Configuration</dt>
+  <dd>
+    Add template sensors from the UI.<br>
+    Authors:@ludeeus.
+     Project: https://github.com/custom-components/templatesensor
+  </dd>
+  
+  
+    
+    
+  
   <dt>Weatheralerts</dt>
   <dd>
     A sensor that gives you weather alerts from alerts.weather.gov.<br>
@@ -376,7 +409,7 @@ including **311 sensors**.
 </dl>
 </details>
 
-<details><summary>27 Lovelace Plugins</summary>
+<details><summary>26 Lovelace Plugins</summary>
 <dl>
   <dt>Atomic Calendar Revive</dt>
   <dd>
@@ -442,11 +475,6 @@ including **311 sensors**.
   <dd>
     🔹 Get more control over the placement of lovelace cards.<br>
      Project: https://github.com/thomasloven/lovelace-layout-card
-  </dd>
-  <dt>Lovelace Card Templater</dt>
-  <dd>
-    Custom Lovelace card which allows Jinja2 templates to be applied to other cards<br>
-     Project: https://github.com/gadgetchnnel/lovelace-card-templater
   </dd>
   <dt>Lovelace Home Feed Card</dt>
   <dd>
