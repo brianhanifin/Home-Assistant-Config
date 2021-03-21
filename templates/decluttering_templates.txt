@@ -11,3 +11,134 @@ decluttering_templates:
           margin: 0 0 -1em 0;
           padding: 0;
         }
+
+  event:
+    card:
+      type: vertical-stack
+      cards:
+        - type: 'custom:decluttering-card'
+          template: heading
+          variables:
+            - content: '*[[name]]*'
+        - type: grid
+          cards:
+            - type: 'custom:button-card'
+              template: button_rounded_active
+              entity: automation.event_reminder_[[id]]
+            - type: 'custom:button-card'
+              template: button_rounded_skipnext
+              entity: input_boolean.event_reminder_[[id]]_skipnext
+          columns: 2
+          square: false
+        - type: vertical-stack
+          cards:
+            - type: horizontal-stack
+              cards:
+                - type: 'custom:button-card'
+                  template: button_weekday
+                  entity: input_boolean.event_reminder_[[id]]_mon
+                  name: Mon
+                - type: 'custom:button-card'
+                  template: button_weekday
+                  entity: input_boolean.event_reminder_[[id]]_tue
+                  name: Tue
+                - type: 'custom:button-card'
+                  template: button_weekday
+                  entity: input_boolean.event_reminder_[[id]]_wed
+                  name: Wed
+                - type: 'custom:button-card'
+                  template: button_weekday
+                  entity: input_boolean.event_reminder_[[id]]_thu
+                  name: Thu
+                - type: 'custom:button-card'
+                  template: button_weekday
+                  entity: input_boolean.event_reminder_[[id]]_fri
+                  name: Fri
+                - type: 'custom:button-card'
+                  template: button_weekday
+                  entity: input_boolean.event_reminder_[[id]]_sat
+                  name: Sat
+                - type: 'custom:button-card'
+                  template: button_weekday
+                  entity: input_boolean.event_reminder_[[id]]_sun
+                  name: Sun
+            - type: entities
+              entities:
+                - entity: input_datetime.event_reminder_[[id]]_1
+                - entity: input_datetime.event_reminder_[[id]]_2
+                - type: divider
+                - entities:
+                    - entity: input_text.event_reminder_[[id]]_1
+                      type: 'custom:text-input-row'
+                    - entity: input_text.event_reminder_[[id]]_2
+                      type: 'custom:text-input-row'
+                  head:
+                    entity: input_select.event_reminder_[[id]]_speakers
+                  type: 'custom:fold-entity-row'
+  wakeup:
+    card:
+      type: vertical-stack
+      cards:
+        - type: 'custom:decluttering-card'
+          template: heading
+          variables:
+            - content: '**Wakeup Lights**<br>*Wakeup [[name]]*'
+        - type: horizontal-stack
+          cards:
+            - type: 'custom:gap-card'
+            - type: 'custom:button-card'
+              template: button_rounded_active
+              entity: input_boolean.wakeup_[[name]]_status
+              styles:
+                card:
+                  - width: 180px
+            - type: 'custom:button-card'
+              template: button_rounded_skipnext
+              entity: input_boolean.wakeup_[[name]]_skipnext
+              styles:
+                card:
+                  - width: 180px
+            - type: 'custom:gap-card'
+        - type: horizontal-stack
+          cards:
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: input_boolean.wakeup_[[name]]_mon
+              name: Mon
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: input_boolean.wakeup_[[name]]_tue
+              name: Tue
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: input_boolean.wakeup_[[name]]_wed
+              name: Wed
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: input_boolean.wakeup_[[name]]_thu
+              name: Thu
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: input_boolean.wakeup_[[name]]_fri
+              name: Fri
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: input_boolean.wakeup_[[name]]_sat
+              name: Sat
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: input_boolean.wakeup_[[name]]_sun
+              name: Sun
+        - type: 'custom:time-picker-card'
+          entity: input_datetime.wakeup_[[name]]_time
+          icon: 'mdi:weather-sunny'
+          hour_mode: 12
+          layout:
+            name: inside
+            hour_mode: single
+          link_values: true
+        - type: entities
+          entities:
+            - entity: sensor.wakeup_[[name]]_start
+              icon: 'mdi:weather-sunset-up'
+            - entity: [[light]]
