@@ -2,13 +2,14 @@
 # PLay a doorbell sound when the button is pressed.
 alias: Doorbell Press
 id: doorbell_press
-
 mode: single
 trigger:
+  # Chime solenoid whacks vibration sensor.
   - platform: state
     entity_id: binary_sensor.doorbell_press
     from: "off"
     to: "on"
+  # Virtual test "button".
   - platform: state
     entity_id: input_boolean.test
     from: "off"
