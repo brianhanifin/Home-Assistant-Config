@@ -3,6 +3,11 @@ alias: washer_status_update
 
 mode: single
 trigger:
+  # Update washer state when dryer starts drying.
+  - platform: state
+    entity_id: input_select.dryer_status
+    to: "Drying"
+
   # Make decisions based on the Washer power usage.
   - platform: state
     entity_id: sensor.sonoff_s31_02_power
@@ -34,10 +39,12 @@ variables:
       Standby
     {%- elif trigger_id == "binary_sensor.washer_wash_completed" %}
       Clean
+    {%- elif trigger_id == "input_select.dryer_status" %}
+      Off
     {%- elif trigger_id == "sensor.sonoff_s31_02_power" %}
       {%- if power > 20 %}
         Washing
-      {%- elif previous_status in "Washing" %}
+      {%- elif previous_status == "Washing" %}
         Clean
       {%- elif power > 3 and previous_status == "Off" %}
         Standby
