@@ -1,16 +1,14 @@
 ---
 variables:
-  #speakers: '{{ expand(media_player) | map(attribute="entity_id") | list }}'
   speakers: '{{ expand(media_player) | map(attribute="entity_id") | join(" ") }}'
-  #speaker_count: '{{ speakers | count }}'
   speaker_count: '{{ speakers.split(" ") | count }}'
 sequence:
-  # - service: script.debug
-  #   data:
-  #     title: 'Smart Speaker "Say" Service'
-  #     message: |
-  #       Speakers: {{ speakers }}
-  #       Count: {{ speaker_count }}
+  - service: script.debug
+    data:
+      title: 'Smart Speaker "Say" Service'
+      message: |
+        Speakers: {{ speakers }}
+        Count: {{ speaker_count }}
 
   - repeat:
       count: "{{ speaker_count|int }}"
@@ -20,7 +18,7 @@ sequence:
             speaker: '{{ speakers.split(" ")[repeat.index-1] }}'
             tts_service: 'google'
 
-        - service: 'script.say_{{ tts_service }}'
+        - service: script.say_cloud
           data:
             media_player: '{{ speaker }}'
             title: '{{ title }}'
