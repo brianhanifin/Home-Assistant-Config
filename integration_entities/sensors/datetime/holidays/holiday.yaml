@@ -7,7 +7,7 @@ sensors:
     value_template: |
       {%- set events = namespace(anniversary='',holiday='') %}
 
-      {%- set event = states.sensor | selectattr('attributes.weeks_remaining') | selectattr('state','eq','0') | map(attribute='entity_id') | first %}
+      {%- set event = states.sensor | selectattr('attributes.attribution','eq','Sensor data calculated by Anniversaries Integration') | selectattr('state','eq','0') | map(attribute='entity_id') | first %}
       {%- set events.anniversary = state_attr(event,"friendly_name") if event|length > 0 else "" %}
 
       {%- set holidays = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
