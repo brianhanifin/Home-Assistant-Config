@@ -3,13 +3,23 @@ alias: zwjs_event_sniffer
 
 mode: parallel
 trigger:
+  # Does this exist after v2021.04?
   - platform: event
     event_type: zwave_js_event
+  
+  # Central Scene Notification
+  - platform: event
+    event_type: zwave_js_value_notification
+  
+  # Entry Control Notification
+  - platform: event
+    event_type: zwave_js_notification
 
 variables:
   event_data: '{{ trigger.event.data }}'
-  event_type: '{{ event_data.type }}'
-  event_label: '{{ event_data.label }}'
+  event_type: '{{ trigger.event.event_type }}'
+  event_label: '{{ event_data.event_label }}'
+  notification_label: '{{ event_data.label }}'
   node_id: '{{ event_data.node_id }}'
 
 condition:
@@ -26,4 +36,7 @@ action:
       message: |
         event_type: {{ event_type }}
         node_id: {{ node_id }}
-        {{ event_data }}
+        label: {{ label }}
+        event_label: {{ event_label }}
+        
+        event_data: {{ event_data }}
