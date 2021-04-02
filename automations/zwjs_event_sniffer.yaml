@@ -26,8 +26,8 @@ condition:
   # Ignore events I've already identified.
   - condition: template   # Manual deadbolt operation
     value_template: '{{ event_label.endswith("lock operation") == False }}'
-  # - condition: template
-  #   value_template: '{{ node_id in ["2","4","9"] == False }}'
+  - condition: template
+    value_template: '{{ node_id in ["2"] == False }}' #,"4","9"
 
 action:
   - service: script.debug
