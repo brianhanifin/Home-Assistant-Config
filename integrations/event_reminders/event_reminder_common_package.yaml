@@ -1,28 +1,25 @@
 ---
 script:
   event_reminder_announce:
+    variables:
+      room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","") }}'
+      speaker:
+        bedroom: "media_player.google_bedroom"
+        boys_sleeping: "group.google_boys_sleeping"
+        downstairs: "group.google_downstairs"
+        family_room: "media_player.google_family_room"
+        kitchen: "media_player.google_kitchen"
+        "kitchen/garage": "group.google_welcome"
+        kyles_bedroom: "media_player.google_kyles_bedroom"
+        lucas_bedroom: "media_player.google_lucas_bedroom"
+        play_room: "media_player.google_play_room"
+        upstairs: "group.google_upstairs"
+        upstairs_bathroom: "media_player.google_upstairs_bathroom"
     sequence:
       - service: script.say
         data_template:
           message: "{{ message }}"
-          media_player: >
-            {%- set room = media_player|lower|replace(' ','_')|replace('[','')|replace(']','')  %}
-            {%-
-              set speaker = {
-                "bedroom": "media_player.google_bedroom",
-                "boys_sleeping": "group.google_boys_sleeping",
-                "downstairs": "group.google_downstairs",
-                "family_room": "media_player.google_family_room",
-                "guest_room": "media_player.google_guest_room",
-                "kitchen": "media_player.google_kitchen",
-                "kitchen/garage": "group.google_welcome",
-                "kyles_bedroom": "media_player.google_kyles_bedroom",
-                "play_room": "media_player.google_play_room",
-                "upstairs": "group.google_upstairs",
-                "upstairs_bathroom": "media_player.google_upstairs_bathroom"
-              }
-            -%}
-            {{ speaker[room] }}
+          media_player: "{{ speaker[room] }}"
 
           # This section of variables can be removed. They are special for my setup.
           say_dark_outside: "{{ say_dark_outside }}"
@@ -68,4 +65,3 @@ script:
 #   - platform: time_date
 #     display_options:
 #       - 'time'
-

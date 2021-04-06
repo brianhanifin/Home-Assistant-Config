@@ -5,18 +5,18 @@ variables:
   smart_speakers:
     bedroom: "media_player.google_bedroom"
     kyles_bedroom: "media_player.google_kyles_bedroom"
+    lucas_bedroom: "media_player.google_lucas_bedroom"
     boys_sleeping: "group.google_boys_sleeping"
     downstairs: "group.google_downstairs"
     kitchen/garage: "group.google_welcome"
     kitchen: "media_player.google_kitchen"
     family_room: "media_player.google_family_room"
     garage: "media_player.google_garage"
-    guest_room: "media_player.google_guest_room"
     play_room: "media_player.google_play_room"
     upstairs: "group.google_upstairs"
     upstairs_bathroom: "media_player.google_upstairs_bathroom"
 
-  smart_speaker: '{{ smart_speakers[room] }}'
+  smart_speaker: "{{ smart_speakers[room] }}"
 
   selected_phrase: |
     {%- if selected_phrase|trim not in ("None","") %}
@@ -49,5 +49,5 @@ sequence:
 
   - service: script.notify_speech
     data_template:
-      media_player: '{{ smart_speaker }}'
-      message: '{{ message }}'
+      media_player: "{{ smart_speaker }}"
+      message: "{{ message }}"
