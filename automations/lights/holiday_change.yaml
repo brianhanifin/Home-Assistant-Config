@@ -1,17 +1,16 @@
 ---
 # This lets me know the sensor is updating
 alias: holiday_change
-
 trigger:
   - platform: state
     entity_id:
       - sensor.holiday
-# condition:
-#   - "{{ trigger.to_state.state is not none
-#         and trigger.to_state.state|trim != 'unknown'
-#         and trigger.to_state.state|trim != '' }}"
+variables:
+  state: '{{ trigger.to_state.state|trim }}'
+condition:
+  - "{{ state not in [none,'unknown',''] }}"
 action:
   - service: script.notify_mobile
     data_template:
-      title: '{{ trigger.to_state.state }}'
-      message: 'Today is {{ trigger.to_state.state }}.'
+      title: '{{ state }}'
+      message: 'Today is {{ state }}.'

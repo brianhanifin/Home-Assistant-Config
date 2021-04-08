@@ -11,6 +11,9 @@ trigger:
     event_data:
       entity_id: lock.test_door
 
+condition:
+  - '{{ trigger.event.data.new_state.state != "none" }}'
+
 variables:
   #old_state: '{{ trigger.event.data.old_state.state|lower }}'
   new_state: '{{ trigger.event.data.new_state.state|lower }}'

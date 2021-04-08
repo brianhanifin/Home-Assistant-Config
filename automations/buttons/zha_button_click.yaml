@@ -25,11 +25,11 @@ action:
       remotes:
         # Hue
         "00:17:88:01:08:07:ab:4b": "remote_hue_unused"
-    
+
         # Ikea
         "ec:1b:bd:ff:fe:23:9c:ee": "remote_family_room"
         "cc:cc:cc:ff:fe:e6:70:82": "remote_ikea_rocker_unused"
-    
+
         # Xiaomi
         "00:15:8d:00:01:2d:d7:c3": "button_printer_power"
         "00:15:8d:00:02:83:e2:b6": "remote_bedroom_double_rocker"
@@ -41,9 +41,14 @@ action:
         "00:15:8d:00": "xiaomi"
 
       device_ieee: '{{ trigger.event.data.device_ieee }}'
-
       manufacturer: '{{ manufacturers[device_ieee[0:11]] }}'
-      remote: '{{ remotes[device_ieee] }}'
+      remote: '{{ remotes[device_ieee]|default }}'
+
+  # Stop if a remote was not identified.
+  - condition: template
+    value_template: '{{ remote not in [none,"unknown",""] }}'
+
+  - variables:
       click_count: |
         {% if manufacturer == "xiaomi" %}
           {%- set count = trigger.event.data.args.value %}
@@ -55,7 +60,6 @@ action:
         {% else %}
           {{ click_count }}
         {%- endif %}
-      # Removed '(manufacturer == "xiaomi" and click_count == 0) to make printer button work.'
       command: |
         {% set command = trigger.event.data.command %}
         {%- if (manufacturer == "hue" and command == "step")
@@ -65,7 +69,7 @@ action:
         {%- endif %}
         {{- command }}
       command_modifier: |
-        {% if manufacturer == "ikea" %}
+        {% if manufacturer == "ikea" and command != "ignore" %}
           {{ trigger.event.data.args[0] }}
         {%- endif %}
 

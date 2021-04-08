@@ -18,19 +18,19 @@ script:
     sequence:
       - service: script.say
         data_template:
-          message: "{{ message }}"
+          message: "{{ message|default }}"
           media_player: "{{ speaker[room] }}"
 
           # This section of variables can be removed. They are special for my setup.
-          say_dark_outside: "{{ say_dark_outside }}"
-          say_door_window_check: "{{ say_door_window_check }}"
-          say_goodbye: "{{ say_goodbye }}"
-          say_goodnight: "{{ say_goodnight }}"
-          say_greeting: "{{ say_greeting }}"
-          say_inside_weather: "{{ say_inside_weather }}"
-          say_light_check: "{{ say_light_check }}"
-          say_outside_weather: "{{ say_outside_weather }}"
-          say_responsibilities: "{{ say_responsibilities }}"
+          say_dark_outside: "{{ say_dark_outside|default }}"
+          say_door_window_check: "{{ say_door_window_check|default }}"
+          say_goodbye: "{{ say_goodbye|default }}"
+          say_goodnight: "{{ say_goodnight|default }}"
+          say_greeting: "{{ say_greeting|default }}"
+          say_inside_weather: "{{ say_inside_weather|default }}"
+          say_light_check: "{{ say_light_check|default }}"
+          say_outside_weather: "{{ say_outside_weather|default }}"
+          say_responsibilities: "{{ say_responsibilities|default }}"
 
   event_reminder_skipnext:
     sequence:

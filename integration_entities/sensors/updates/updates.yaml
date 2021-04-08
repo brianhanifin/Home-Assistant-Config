@@ -8,7 +8,7 @@ sensors:
       {% if is_state("binary_sensor.update_available","on") %}
         {% set updates = updates + 1 %}
       {% endif %}
-      {% if state_attr("sensor.os","version") != state_attr("sensor.os","version_latest") %}
+      {% if is_state("binary_sensor.home_assistant_operating_system_update_available","on") %}
         {% set updates = updates + 1 %}
       {% endif %}
       {% if state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") %}
@@ -24,7 +24,7 @@ sensors:
         {% if is_state("binary_sensor.update_available","on") %}
           {% set updates = updates + 1 %}
         {% endif %}
-        {% if state_attr("sensor.os","version") != state_attr("sensor.os","version_latest") %}
+        {% if is_state("binary_sensor.home_assistant_operating_system_update_available","on") %}
           {% set updates = updates + 1 %}
         {% endif %}
         {% if state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") %}
@@ -32,7 +32,7 @@ sensors:
         {% endif %}
         {{ updates }}
       core_update: '{{ is_state("binary_sensor.update_available","on") }}'
-      os_update: '{{ state_attr("sensor.os","version") != state_attr("sensor.os","version_latest") }}'
+      os_update: '{{ is_state("binary_sensor.home_assistant_operating_system_update_available","on") }}'
       supervisor_update: '{{ state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") }}'
       hacs_update: '{{ states("sensor.hacs")|int|default("0") > 0 }}'
       addon_update: '{{ states("sensor.addon_updates")|int|default("0") > 0 }}'

@@ -11,15 +11,7 @@ automation:
       - platform: template
         value_template: '{{ is_state("sensor.wakeup_nerene_start", states("sensor.time")) }}'
     variables:
-      who: |
-        {% if is_state("sensor.wakeup_brian_start", states("sensor.time")) %}
-          brian
-        {% elif is_state("sensor.wakeup_lucas_start", states("sensor.time")) %}
-          lucas
-        {% elif is_state("sensor.wakeup_nerene_start", states("sensor.time")) %}
-          nerene
-        {% endif %}
-
+      who: '{{ trigger.to_state.entity_id|replace("sensor.wakeup_","")|replace("_start","") }}'
       skipnext_entity: |
         input_boolean.wakeup_{{ who }}_skipnext
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
@@ -27,13 +19,12 @@ automation:
       wakeup_today_entity: |
         input_boolean.wakeup_{{ who }}_{{ today_name }}
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
-
     condition:
-      # Continue if today is enabled.
+      # Continue if it is enabled.
       - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}'
 
-      # Continue if they are home.
-      - '{{ is_state("person." + who, "home") }}'
+      # Continue if they are home (or unknown if we cannot track their presence).
+      - '{{ states("person." + who) in ["home","unknown"] }}'
 
       # Continue today is a wakeup day.
       - "{{ wakeup_today }}"
@@ -64,7 +55,7 @@ automation:
 
   - alias: Wakeup Light Timeout
     id: wakeup_light_timeout
-    
+
     trigger:
       - platform: event
         event_type: timer.finished
@@ -84,32 +75,15 @@ automation:
       - service_template: "script.wakeup_{{ who }}_timeout"
 
   - alias: wakeup_warmup_water
-    
+    id: wakeup_warm_water
     trigger:
       # Trigger at wakeup time.
-      platform: template
-      value_template: >-
-        {% macro add_time(time, add_minutes) %}
-          {% if time|lower != 'unavailable' %}
-            {% set time = time.split(':') %}
-            {% set hour = time[0]|int %}
-            {% set minutes = time[1]|int %}
-            {% if (minutes + add_minutes) < 60 %}
-              {{ "%0.02d:%0.02d"|format(hour, minutes + add_minutes) }}
-            {% else %}
-              {{ "%0.02d:%0.02d"|format(hour + 1, (minutes + add_minutes) - 60) }}
-            {% endif %}
-          {% endif %}
-        {% endmacro %}
-
-        # Trigger the automation 10 minutes after the wakeup time.
-        {% set add_minutes = 10 %}
-        {% set current_time = states('sensor.time') %}
-        {% set brian = add_time(states('sensor.wakeup_brian_start'),add_minutes) %}
-        {% set lucas = add_time(states('sensor.wakeup_lucas_start'),add_minutes) %}
-        {% set nerene = add_time(states('sensor.wakeup_nerene_start'),add_minutes) %}
-
-        {{ current_time in [brian,lucas,nerene] }}
+      - platform: template
+        value_template: '{{ is_state("sensor.wakeup_brian_start", states("sensor.time")) }}'
+      - platform: template
+        value_template: '{{ is_state("sensor.wakeup_lucas_start", states("sensor.time")) }}'
+      - platform: template
+        value_template: '{{ is_state("sensor.wakeup_nerene_start", states("sensor.time")) }}'
     condition:
       # Continue if skipnext is not enabled.
       - condition: template
