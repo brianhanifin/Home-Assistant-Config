@@ -41,14 +41,20 @@ action:
         "00:15:8d:00": "xiaomi"
 
       device_ieee: '{{ trigger.event.data.device_ieee }}'
-      manufacturer: '{{ manufacturers[device_ieee[0:11]] }}'
-      remote: '{{ remotes[device_ieee]|default }}'
+
+  # Stop if a manufacturer was not identified.
+  - condition: template
+    value_template: '{{ manufacturer not in [none,"unknown",""] }}'
+
+  - variables:
+      manufacturer: '{{ manufacturers[device_ieee[0:11]]|default }}'
 
   # Stop if a remote was not identified.
   - condition: template
     value_template: '{{ remote not in [none,"unknown",""] }}'
 
   - variables:
+      remote: '{{ remotes[device_ieee] }}'
       click_count: |
         {% if manufacturer == "xiaomi" %}
           {%- set count = trigger.event.data.args.value %}

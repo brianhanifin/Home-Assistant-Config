@@ -13,10 +13,12 @@ sensors:
         {% set list.dates = list.dates ~ " " ~ as_timestamp(states[speaker].last_updated) %}
         {% set list.speakers = list.speakers ~ " " ~ states[speaker].entity_id %}
       {% endfor %}
-      {% set list.dates = list.dates | trim %}
-      {% set list.speakers = list.speakers | trim %}
-      {% set list.speakers = list.speakers.split(" ") %}
-      
-      {% for date in list.dates.split(" ") if date == list.dates.split(" ")|min %}
-        {{ list.speakers[loop.index] }}
-      {% endfor %}
+      {% set dates = list.dates | trim %}
+      {% set dates = dates.split(" ") %}
+      {% set speakers = list.speakers | trim %}
+      {% set speakers = speakers.split(" ") %}
+
+      {% set last_updated = dates|max|float %}
+      {% for speaker in speakers if last_updated == as_timestamp(states[speaker].last_updated) %}
+        {{ speaker }}
+      {%- endfor %}

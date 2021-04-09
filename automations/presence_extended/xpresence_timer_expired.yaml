@@ -14,14 +14,19 @@ condition:
 
 variables:
   person: '{{ trigger.event.data.entity_id.split("_")[1] }}'
-  current_option: '{{ states("input_select." + person) }}'
-  next_options:
-    "Just Arrived": "Home"
-    "Just Left": "Away"
-    "Away": "Extended Away"
-  next_option: '{{ next_options[current_option] }}'
+  current_option: '{{ states("input_select." + person)|default }}'
 
 action:
+  - condition: template
+    value_template: '{{ current_option not in [none,"unknown",""] }}'
+
+  - variables:
+      next_options:
+        "Just Arrived": "Home"
+        "Just Left": "Away"
+        "Away": "Extended Away"
+      next_option: '{{ next_options[current_option] }}'
+
   # - service: script.debug
   #   data:
   #     title: "xpresence_timer_expired"
@@ -32,7 +37,7 @@ action:
 
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
-    data_template:
+    data:
       entity_id: 'input_select.{{ person }}'
       option: '{{ next_option }}'
 

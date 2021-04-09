@@ -34,8 +34,6 @@ variables:
     {%- else -%}
       {{ "standard" }}
     {%- endif %}
-
-  color: '{{ holiday_colors[holiday_scene] }}'
 sequence:
   # - service: script.debug
   #   data:
@@ -48,6 +46,9 @@ sequence:
       - conditions:
           - '{{ holiday_scene != "standard" }}'
         sequence:
+          - variables:
+              color: '{{ holiday_colors[holiday_scene] }}'
+
           # Both guest_mode and away_mode are inactive
           - condition: state
             entity_id:

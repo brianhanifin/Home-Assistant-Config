@@ -37,12 +37,13 @@ variables:
     {% else %}
       {{ replaceable_id|default(category) }}
     {% endif %}
+  category: '{{ category|default("") }}'
   # Every notification should have a sound. Actionable notifications should grab your attention.
   sound_file: |
     {%- if sound is string %}
       {{ sound }}
     {%- else %}
-      {%- if category is string %}
+      {%- if category != "" %}
         {% if category == "doorbell" %}
           media-source://media_source/local/audio/jetsons-doorbell.mp3
         {% else %}
@@ -52,7 +53,7 @@ variables:
         sms-received1.caf
       {% endif %}
     {%- endif %}
-  id: '{{ id|upper|default("HOMEASSISTANT") }}'
+  id: '{{ id|default("HOMEASSISTANT")|upper }}'
   url: |
     {% if url is string %}
       {% if url.startswith("http://") %}
