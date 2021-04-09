@@ -172,10 +172,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
   
 ## Technical Details
 
-Our Home Assistant install has approximately **944 total entities**, 
-including **409 sensors**.
+Our Home Assistant install has approximately **1051 total entities**, 
+including **466 sensors**.
 
-<details><summary>21 Custom Integrations</summary>
+<details><summary>22 Custom Integrations</summary>
 <dl>
   
   
@@ -240,6 +240,17 @@ including **409 sensors**.
   <dd>
     🔹 Use icons from fontawesome in home-assistant<br>
      Project: https://github.com/thomasloven/hass-fontawesome
+  </dd>
+  
+  
+    
+    
+  
+  <dt>Google Home</dt>
+  <dd>
+    Home Assistant Google Home custom component<br>
+    Authors:@leikoilja, @DurgNomis-drol, @ArnyminerZ, @KapJI.
+     Project: https://github.com/leikoilja/ha-google-home
   </dd>
   
   
@@ -409,7 +420,7 @@ including **409 sensors**.
 </dl>
 </details>
 
-<details><summary>26 Lovelace Plugins</summary>
+<details><summary>28 Lovelace Plugins</summary>
 <dl>
   <dt>Atomic Calendar Revive</dt>
   <dd>
@@ -511,6 +522,11 @@ including **409 sensors**.
     HA Lovelace card for control of scheduler entities<br>
      Project: https://github.com/nielsfaber/scheduler-card
   </dd>
+  <dt>Sidebar Card</dt>
+  <dd>
+    None<br>
+     Project: https://github.com/DBuit/sidebar-card
+  </dd>
   <dt>Simple Thermostat</dt>
   <dd>
     A different take on the thermostat card for Home Assistant ♨️<br>
@@ -535,6 +551,11 @@ including **409 sensors**.
   <dd>
     🔹 Display whatever you want in an entities card row.<br>
      Project: https://github.com/thomasloven/lovelace-template-entity-row
+  </dd>
+  <dt>Time Picker Card</dt>
+  <dd>
+    🕰️ Time Picker Card for Home Assistant's Lovelace UI<br>
+     Project: https://github.com/GeorgeSG/lovelace-time-picker-card
   </dd>
   <dt>Weather Card</dt>
   <dd>
@@ -576,7 +597,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.3.4-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.4.1-41BDF5?logo=home%20assistant
 
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions?workflow=build
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/workflows/build/badge.svg
