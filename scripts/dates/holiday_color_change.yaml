@@ -43,25 +43,25 @@ sequence:
 
   # When a Holiday scene is active (ie. NOT 'standard')
   - choose:
-      - conditions:
-          - '{{ holiday_scene != "standard" }}'
-        sequence:
-          - variables:
-              color: '{{ holiday_colors[holiday_scene] }}'
+    - conditions:
+        - '{{ holiday_scene != "standard" }}'
+      sequence:
+        - variables:
+            color: '{{ holiday_colors[holiday_scene] }}'
 
-          # Both guest_mode and away_mode are inactive
-          - condition: state
+        # Both guest_mode and away_mode are inactive
+        - condition: state
+          entity_id:
+            - input_boolean.away_mode
+            - input_boolean.guest_mode
+          state: "off"
+
+        - service: light.turn_on
+          data:
             entity_id:
-              - input_boolean.away_mode
-              - input_boolean.guest_mode
-            state: "off"
-
-          - service: light.turn_on
-            data:
-              entity_id:
-                - light.porch
-                - light.table_lamp
-              color_name: "{{ color }}"
+              - light.porch
+              - light.table_lamp
+            color_name: "{{ color }}"
 
     default:
       - service: light.turn_on
