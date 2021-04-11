@@ -189,7 +189,7 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 
 #### [{{ name|trim }}]({{ url|trim }})
     {{ description|trim if description not in ["","None"] }}
-    {% if integration.authors|count > 0 %}Authors: {%- for author in integration.authors -%} [{{ author }}](https://github.com/{{ author }}){{ ", " if not loop.last }}{%- endfor %}.{% endif %}
+    {% if integration.authors|count > 0 %}Authors: {%- for author in integration.authors -%} {{ author }}{{ ", " if not loop.last }}{%- endfor %}.{% endif %}
 {%- endfor %}
 </details>
 

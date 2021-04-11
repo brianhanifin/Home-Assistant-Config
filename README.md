@@ -177,12 +177,12 @@ including **462 sensors**.
 
 #### [Anniversaries](https://github.com/pinkywafer/Anniversaries)
     Anniversary Countdown Sensor for Home Assistant
-    Authors:[@pinkywafer](https://github.com/@pinkywafer).
+    Authors:@pinkywafer.
   
 
 #### [Average Sensor](https://github.com/Limych/ha-average)
     Average Sensor for Home Assistant
-    Authors:[@Limych](https://github.com/@Limych).
+    Authors:@Limych.
   
 
 #### [Browser Mod](https://github.com/thomasloven/hass-browser_mod)
@@ -192,12 +192,12 @@ including **462 sensors**.
 
 #### [Config Check](https://github.com/custom-components/config_check)
     Run the CLI config_check from a service call.
-    Authors:[@ludeeus](https://github.com/@ludeeus).
+    Authors:@ludeeus.
   
 
 #### [Event Sensor](https://github.com/azogue/eventsensor)
     HomeAssistant custom sensor to track specific events
-    Authors:[@azogue](https://github.com/@azogue).
+    Authors:@azogue.
   
 
 #### [Fontawesome](https://github.com/thomasloven/hass-fontawesome)
@@ -207,81 +207,81 @@ including **462 sensors**.
 
 #### [Google Home](https://github.com/leikoilja/ha-google-home)
     Home Assistant Google Home custom component
-    Authors:[@leikoilja](https://github.com/@leikoilja), [@DurgNomis-drol](https://github.com/@DurgNomis-drol), [@ArnyminerZ](https://github.com/@ArnyminerZ), [@KapJI](https://github.com/@KapJI).
+    Authors:@leikoilja, @DurgNomis-drol, @ArnyminerZ, @KapJI.
   
 
 #### [Home Assistant Community Store (HACS)](https://github.com/hacs/integration)
     HACS gives you a powerful UI to handle downloads of all your custom needs.
-    Authors:[@ludeeus](https://github.com/@ludeeus).
+    Authors:@ludeeus.
   
 
 #### [Hass Deepstack Object](https://github.com/robmarkcole/HASS-Deepstack-object)
     Home Assistant custom component for using Deepstack object detection
-    Authors:[@robmarkcole](https://github.com/@robmarkcole).
+    Authors:@robmarkcole.
 
 #### [Rainforest Energy Monitoring Component](https://github.com/damienheiser/home-assistant)
     Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant.
-    Authors:[@jrhorrisberger](https://github.com/@jrhorrisberger).
+    Authors:@jrhorrisberger.
   
 
 #### [Imagesdirectory Camera](https://github.com/jodur/imagesdirectory-camera)
     Camera entity for images, to create a slidehow or timelapse from images in a directory. The camra support browsing manually trough the slideshow also. The creation of anmiated Gif or mp4 is also supported by services
-    Authors:[@jodur](https://github.com/@jodur).
+    Authors:@jodur.
   
 
 #### [Iphone Device Tracker](https://github.com/mudape/iphonedetect)
     A custom component for Home Assistant to detect iPhones connected to local LAN, even if the phone is in deep sleep.
-    Authors:[@mudape](https://github.com/@mudape).
+    Authors:@mudape.
   
 
 #### [Readme](https://github.com/custom-components/readme)
     Use Jinja and data from Home Assistant to generate your README.md file
-    Authors:[@ludeeus](https://github.com/@ludeeus).
+    Authors:@ludeeus.
   
 
 #### [Samsungtv Smart](https://github.com/ollo69/ha-samsungtv-smart)
     📺 Home Assistant SamsungTV Smart Component with simplified SmartThings API Support configurable from User Interface.
-    Authors:[@ollo69](https://github.com/@ollo69).
+    Authors:@ollo69.
   
 
 #### [Scheduler Component](https://github.com/nielsfaber/scheduler-component)
     Custom component for HA that enables the creation of scheduler entities
-    Authors:[@nielsfaber](https://github.com/@nielsfaber).
+    Authors:@nielsfaber.
   
 
 #### [Sensor.Unifigateway](https://github.com/custom-components/sensor.unifigateway)
     High level health status of UniFi Security Gateway devices via UniFi Controller
-    Authors:[@jchasey](https://github.com/@jchasey).
+    Authors:@jchasey.
   
 
 #### [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)
     Home Assistant custom integration for SmartThinQ LG devices configurable with Lovelace User Interface.
-    Authors:[@ollo69](https://github.com/@ollo69).
+    Authors:@ollo69.
   
 
 #### [Spacex Next Launch And Starman](https://github.com/djtimca/HASpaceX)
     Home Assistant integration for SpaceX Next Launch and Starman data.
-    Authors:[@djtimca](https://github.com/@djtimca).
+    Authors:@djtimca.
   
 
 #### [Ui Template Sensor Configuration](https://github.com/custom-components/templatesensor)
     Add template sensors from the UI.
-    Authors:[@ludeeus](https://github.com/@ludeeus).
+    Authors:@ludeeus.
   
 
 #### [Weatheralerts](https://github.com/custom-components/weatheralerts)
     A sensor that gives you weather alerts from alerts.weather.gov.
-    Authors:[@ludeeus](https://github.com/@ludeeus), [@jlverhagen](https://github.com/@jlverhagen).
+    Authors:@ludeeus, @jlverhagen.
   
 
 #### [Wyze Bulb, Switch And Sensor Integration](https://github.com/JoshuaMulliken/ha-wyzeapi)
     Home Assistant Integration for Wyze Bulbs, Switches, Sensors and Lock
-    Authors:[@JoshuaMulliken](https://github.com/@JoshuaMulliken).
+    Authors:@JoshuaMulliken.
   
 
 #### [Youtube](https://github.com/custom-components/youtube)
     A platform which give you info about the newest video on a channel
-    Authors:[@ludeeus](https://github.com/@ludeeus), [@pinkywafer](https://github.com/@pinkywafer).
+    Authors:@ludeeus, @pinkywafer.
 </details>
 
 <details><summary>28 Lovelace Plugins</summary>
