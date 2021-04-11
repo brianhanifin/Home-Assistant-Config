@@ -70,7 +70,8 @@
   - service: imagedirectory.delete_files
     data:
       sourcepath: /media/deepstack
-      endtimestamp: '{{ as_timestamp(now() - timedelta(hours=24)) | timestamp_custom("%d/%m/%Y %H:%M:%S") }}'
+      endtimestamp: '{{ as_timestamp(now() - timedelta(hours=24)) | timestamp_custom("%d/%m/%Y
+        %H:%M:%S") }}'
   mode: single
 - id: '1588557204708'
   alias: Midnight - Custom Event
@@ -355,3 +356,45 @@
       - service: switch.toggle
         target:
           area_id: bedroom
+- id: '1618159056314'
+  alias: Startup
+  description: Actions to run at startup.
+  trigger:
+  - platform: homeassistant
+    event: start
+  condition: []
+  action:
+  - service: script.turn_on
+    target:
+      entity_id: script.toast
+    data:
+      variables:
+        message: Startup automation begins
+  - service: frontend.set_theme
+    data:
+      name: Caule Black Purple Glass
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: script.turn_on
+    target:
+      entity_id: script.inovelli_led_set_defaults
+    data:
+      variables:
+        entity_id: light.family_room
+        color: teal
+        level_on: 3
+        level_off: 1
+  - service: script.turn_on
+    target:
+      entity_id: script.toast
+    data:
+      variables:
+        duration: 3000
+        message: Startup automation complete
+  - service: automation.turn_off
+    target:
+      entity_id: automation.startup
+  mode: single

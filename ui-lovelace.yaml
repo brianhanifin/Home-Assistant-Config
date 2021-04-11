@@ -1367,19 +1367,22 @@ views:
             - entity: sensor.opensky_flight_operator
               name: Operator
             type: entities
-          - content: '{% set tail_number = states("sensor.opensky_overhead") %} {%
-              set flightaware_tail_link = "https://flightaware.com/live/flight/" +
-              tail_number %} {% set opensky_tail_link = "https://opensky-network.org/aircraft-database?s="
+          - content: '{% set tail_number = states("sensor.opensky_overhead") %}
+
+              {%- set flightaware_tail_link = "https://flightaware.com/live/flight/"
               + tail_number %}
 
-              &nbsp; | &nbsp;
+              {%- set opensky_tail_link = "https://opensky-network.org/aircraft-database?s="
+              + tail_number %}
 
-              --- | ---
 
-              Tail Lookup | [Flight Aware]({{ flightaware_tail_link }}), [Opensky]({{
-              opensky_tail_link }})
+              | OpenSky | [Open Map](https://opensky-network.org/network/explorer?c=32.8557273,-116.987006&z=13)
+              |
 
-              Opensky  | [Open Map](https://opensky-network.org/network/explorer?c=32.8557273,-116.987006&z=13)'
+              |:-|:-|
+
+              | Tail Lookup | [Flight Aware]({{ flightaware_tail_link }}), [Opensky]({{
+              opensky_tail_link }}) |'
             type: markdown
           - entities:
             - sensor.opensky_overhead
@@ -2273,21 +2276,10 @@ views:
             text: Are you sure you want to Restart Home Assistant?
         template: button_short
         type: custom:button-card
-      - entity: homeassistant.reload_core_config
-        icon: mdi:restart
-        name: Reload Core
-        styles:
-          card:
-          - opacity: 50%
-          icon:
-          - color: orange
-        tap_action:
-          action: call-service
-          confirmation:
-            text: Are you sure you want to run Reload Core?
-          service: homeassistant.reload_core_config
-        template: button_short
-        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - cards:
       - entity: script.ci_prep
         icon: mdi:github
         name: Github Prep
@@ -2298,7 +2290,7 @@ views:
         type: custom:button-card
       - entity: none
         icon: mdi:pencil
-        name: Disable Kiosk
+        name: Edit Mode
         styles:
           card:
           - opacity: 50%
@@ -2306,10 +2298,9 @@ views:
           - color: GoldenRod
         tap_action:
           action: navigate
-          navigation_path: /lovelace/home?disable_km
+          navigation_path: /lovelace/home?disable_km&edit=1
         template: button_short
         type: custom:button-card
-      columns: 3
       square: false
       type: grid
     - entity: automation.startup
