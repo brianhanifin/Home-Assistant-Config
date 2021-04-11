@@ -173,198 +173,247 @@ Our Home Assistant install has approximately **1048 total entities**,
 including **462 sensors**.
 
 <details><summary>22 Custom Integrations</summary>
+  
+  
 
-  
-  
 #### [Anniversaries v4.3.0](https://github.com/pinkywafer/Anniversaries)
     Anniversary Countdown Sensor for Home Assistant
     Authors:@pinkywafer.
   
   
+
 #### [Average Sensor v1.7.3](https://github.com/Limych/ha-average)
     Average Sensor for Home Assistant
     Authors:@Limych.
   
   
+
 #### [Browser Mod v1.3.0](https://github.com/thomasloven/hass-browser_mod)
     🔹 A Home Assistant integration to turn your browser into a controllable entity - and also an audio player
     
   
+
 #### [Config Check](https://github.com/custom-components/config_check)
     Run the CLI config_check from a service call.
     Authors:@ludeeus.
   
   
+
 #### [Event Sensor v2.4.1](https://github.com/azogue/eventsensor)
     HomeAssistant custom sensor to track specific events
     Authors:@azogue.
   
   
+
 #### [Fontawesome v1.3.1](https://github.com/thomasloven/hass-fontawesome)
     🔹 Use icons from fontawesome in home-assistant
     
   
   
+
 #### [Google Home v1.4.0](https://github.com/leikoilja/ha-google-home)
     Home Assistant Google Home custom component
     Authors:@leikoilja, @DurgNomis-drol, @ArnyminerZ, @KapJI.
   
   
+
 #### [Home Assistant Community Store (HACS) v1.11.3](https://github.com/hacs/integration)
     HACS gives you a powerful UI to handle downloads of all your custom needs.
     Authors:@ludeeus.
   
   
+
 #### [Hass Deepstack Object v4.3.0](https://github.com/robmarkcole/HASS-Deepstack-object)
     Home Assistant custom component for using Deepstack object detection
     Authors:@robmarkcole.
+
 #### [Rainforest Energy Monitoring Component](https://github.com/damienheiser/home-assistant)
     Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant.
     Authors:@jrhorrisberger.
   
   
+
 #### [Imagesdirectory Camera v0.6.1](https://github.com/jodur/imagesdirectory-camera)
     Camera entity for images, to create a slidehow or timelapse from images in a directory. The camra support browsing manually trough the slideshow also. The creation of anmiated Gif or mp4 is also supported by services
     Authors:@jodur.
   
   
+
 #### [Iphone Device Tracker v1.4.0](https://github.com/mudape/iphonedetect)
     A custom component for Home Assistant to detect iPhones connected to local LAN, even if the phone is in deep sleep.
     Authors:@mudape.
   
+
 #### [Readme](https://github.com/custom-components/readme)
     Use Jinja and data from Home Assistant to generate your README.md file
     Authors:@ludeeus.
   
   
+
 #### [Samsungtv Smart v0.3.32](https://github.com/ollo69/ha-samsungtv-smart)
     📺 Home Assistant SamsungTV Smart Component with simplified SmartThings API Support configurable from User Interface.
     Authors:@ollo69.
   
   
+
 #### [Scheduler Component v3.0.4](https://github.com/nielsfaber/scheduler-component)
     Custom component for HA that enables the creation of scheduler entities
     Authors:@nielsfaber.
   
   
+
 #### [Sensor.Unifigateway v0.3.2](https://github.com/custom-components/sensor.unifigateway)
     High level health status of UniFi Security Gateway devices via UniFi Controller
     Authors:@jchasey.
   
   
+
 #### [Smartthinq Lge Sensors v0.6.7](https://github.com/ollo69/ha-smartthinq-sensors)
     Home Assistant custom integration for SmartThinQ LG devices configurable with Lovelace User Interface.
     Authors:@ollo69.
   
   
+
 #### [Spacex Next Launch And Starman v027](https://github.com/djtimca/HASpaceX)
     Home Assistant integration for SpaceX Next Launch and Starman data.
     Authors:@djtimca.
   
   
+
 #### [Ui Template Sensor Configuration v0.1.2](https://github.com/custom-components/templatesensor)
     Add template sensors from the UI.
     Authors:@ludeeus.
   
   
+
 #### [Weatheralerts v0.1.4](https://github.com/custom-components/weatheralerts)
     A sensor that gives you weather alerts from alerts.weather.gov.
     Authors:@ludeeus, @jlverhagen.
   
   
+
 #### [Wyze Bulb, Switch And Sensor Integration v2021.4.10](https://github.com/JoshuaMulliken/ha-wyzeapi)
     Home Assistant Integration for Wyze Bulbs, Switches, Sensors and Lock
     Authors:@JoshuaMulliken.
   
   
+
 #### [Youtube v0.6.0](https://github.com/custom-components/youtube)
     A platform which give you info about the newest video on a channel
     Authors:@ludeeus, @pinkywafer.
 </details>
 
 <details><summary>28 Lovelace Plugins</summary>
+
 #### [Atomic Calendar Revive v3.4.1](https://github.com/marksie1988/atomic-calendar-revive)
     Custom calendar card for Home Assistant with Lovelace
+
 
 #### [Auto Entities v1.8.5](https://github.com/thomasloven/lovelace-auto-entities)
     🔹Automatically populate the entities-list of lovelace cards
 
   
+
 #### [Badge Card](https://github.com/thomasloven/lovelace-badge-card)
     🔹 Place badges anywhere in the lovelace layout
+
 
 #### [Button Card v3.4.2](https://github.com/custom-cards/button-card)
     ❇️ Lovelace button-card for home assistant
 
+
 #### [Card Mod v3.0.12](https://github.com/thomasloven/lovelace-card-mod)
     🔹 Add CSS styles to (almost) any lovelace card
+
 
 #### [Card Tools v11](https://github.com/thomasloven/lovelace-card-tools)
     🔹A collection of tools for other lovelace plugins to use
 
+
 #### [Decluttering Card v0.6.3](https://github.com/custom-cards/decluttering-card)
     🧹 Declutter your lovelace configuration with the help of this card
 
+
 #### [Favicon Counter v1.0.0](https://github.com/custom-cards/favicon-counter)
     Show a notification count badge.
+
 
 #### [Fold Entity Row v20.0.4](https://github.com/thomasloven/lovelace-fold-entity-row)
     🔹 A foldable row for entities card, containing other rows
 
   
+
 #### [Gap Card](https://github.com/thomasloven/lovelace-gap-card)
     🔹 A lovelace card that does nothing and looks like nothing. Incredibly useful! No, really.
+
 
 #### [Ha (Lovelace) Card Weather Conditions v1.9.12](https://github.com/r-renato/ha-card-weather-conditions)
     Weather condition card (Lovelace) for Home Assistant.
 
+
 #### [Kiosk Mode v1.6.5](https://github.com/maykar/kiosk-mode)
     🙈 Hides the Home Assistant header and/or sidebar
+
 
 #### [Layout Card v2.2.3](https://github.com/thomasloven/lovelace-layout-card)
     🔹 Get more control over the placement of lovelace cards.
 
+
 #### [Lovelace Home Feed Card v0.5.0](https://github.com/gadgetchnnel/lovelace-home-feed-card)
     A custom Lovelace card for displaying a combination of persistent notifications, calendar events, and entities in the style of a feed.
+
 
 #### [Lovelace Text Input Row v0.0.8](https://github.com/gadgetchnnel/lovelace-text-input-row)
     A custom Lovelace text input row for use in entities cards
 
+
 #### [Mini Graph Card v0.10.0](https://github.com/kalkih/mini-graph-card)
     Minimalistic graph card for Home Assistant Lovelace UI
+
 
 #### [Mini Media Player v1.12.0](https://github.com/kalkih/mini-media-player)
     Minimalistic media card for Home Assistant Lovelace UI
 
+
 #### [Multiple Entity Row v4.2.0](https://github.com/benct/lovelace-multiple-entity-row)
     Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
+
 
 #### [Restriction Card v1.2.6](https://github.com/iantrich/restriction-card)
     🔒 Apply restrictions to Lovelace cards
 
+
 #### [Scheduler Card v2.0.5](https://github.com/nielsfaber/scheduler-card)
     HA Lovelace card for control of scheduler entities
+
 
 #### [Sidebar Card v0.1.7.9](https://github.com/DBuit/sidebar-card)
     
 
+
 #### [Simple Thermostat v2.3.0](https://github.com/nervetattoo/simple-thermostat)
     A different take on the thermostat card for Home Assistant ♨️
+
 
 #### [Slider Entity Row v17.0.1](https://github.com/thomasloven/lovelace-slider-entity-row)
     🔹 Add sliders to entity cards
 
+
 #### [Stack In Card v0.2.0](https://github.com/custom-cards/stack-in-card)
     🛠 group multiple cards into one card without the borders
+
 
 #### [State Switch v8](https://github.com/thomasloven/lovelace-state-switch)
     🔹Dynamically replace lovelace cards depending on occasion
 
+
 #### [Template Entity Row v1.1.1](https://github.com/thomasloven/lovelace-template-entity-row)
     🔹 Display whatever you want in an entities card row.
 
+
 #### [Time Picker Card v1.2.1](https://github.com/GeorgeSG/lovelace-time-picker-card)
     🕰️ Time Picker Card for Home Assistant's Lovelace UI
+
 
 #### [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
     Weather Card with animated icons for Home Assistant Lovelace
@@ -376,11 +425,14 @@ including **462 sensors**.
 #### ESPHome v1.16.2
     ESPHome Hass.io add-on for intelligently managing all your ESP8266/ESP32 devices.
 
+
 #### Home Assistant Google Drive Backup v0.103.1
     Automatically back up Home Assistant snapshots to Google Drive
 
+
 #### InfluxDB v4.0.4
     Scalable datastore for metrics, events, and real-time analytics
+
 
 #### Samba share v9.3.1
     Expose Home Assistant folders with SMB/CIFS
