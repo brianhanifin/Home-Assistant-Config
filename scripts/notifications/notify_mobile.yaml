@@ -37,6 +37,7 @@ variables:
     {% else %}
       {{ replaceable_id|default(category) }}
     {% endif %}
+  critical: '{{ critical|default(false) }}'
   category: '{{ category|default("") }}'
   # Every notification should have a sound. Actionable notifications should grab your attention.
   sound_file: |
@@ -50,7 +51,7 @@ variables:
           Update.caf
         {% endif %}
       {% else %}
-        sms-received1.caf
+        default
       {% endif %}
     {%- endif %}
   id: '{{ id|default("HOMEASSISTANT")|upper }}'
@@ -67,8 +68,23 @@ sequence:
   - condition: state
     entity_id: input_boolean.mobile_notifications
     state: 'on'
-  
+
   - choose:
+      # Critical alert!
+      - conditions:
+          - '{{ critical == true }}'
+        sequence:
+          - service: '{{ notification_service }}'
+            data:
+              title: '{{ title }}'
+              message: '{{ message }}'
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1.0
+
       # Send camera stream.
       - conditions:
           - '{{ camera is string }}'
