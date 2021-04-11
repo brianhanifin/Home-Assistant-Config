@@ -1,8 +1,10 @@
 # Hanifin Smart Home
 
-| GitHub Repository | Home Assistant Community |
+| My Repository | Home Assistant Community |
 | :---| :--- |
-| [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] ![maintained] ![ha-version-shield] | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
+| [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] | [![Community Forum][discourse-shield]][discourse]
+| [![Last Commit][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Discord][discord-shield]][discord] |
+| [![Home Assistant Version][ha-version-shield]][ha-version] |
 
 ## Smart Home Articles
 
@@ -167,185 +169,185 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1046 total entities**, 
-including **460 sensors**.
+Our Home Assistant install has approximately **1048 total entities**, 
+including **462 sensors**.
 
 <details><summary>22 Custom Integrations</summary>
-*Anniversaries*
-  Anniversary Countdown Sensor for Home Assistant<br>
-  Authors:@pinkywafer.
-  https://github.com/pinkywafer/Anniversaries
-*Average Sensor*
-  Average Sensor for Home Assistant<br>
-  Authors:@Limych.
-  https://github.com/Limych/ha-average
-*Browser Mod*
-  🔹 A Home Assistant integration to turn your browser into a controllable entity - and also an audio player<br>
+####Anniversaries
+  * Anniversary Countdown Sensor for Home Assistant<br>
+  * Authors:@pinkywafer.
+  * https://github.com/pinkywafer/Anniversaries
+####Average Sensor
+  * Average Sensor for Home Assistant<br>
+  * Authors:@Limych.
+  * https://github.com/Limych/ha-average
+####Browser Mod
+  * 🔹 A Home Assistant integration to turn your browser into a controllable entity - and also an audio player<br>
   
-  https://github.com/thomasloven/hass-browser_mod
-*Config Check*
-  Run the CLI config_check from a service call.<br>
-  Authors:@ludeeus.
-  https://github.com/custom-components/config_check
-*Event Sensor*
-  HomeAssistant custom sensor to track specific events<br>
-  Authors:@azogue.
-  https://github.com/azogue/eventsensor
-*Fontawesome*
-  🔹 Use icons from fontawesome in home-assistant<br>
+  * https://github.com/thomasloven/hass-browser_mod
+####Config Check
+  * Run the CLI config_check from a service call.<br>
+  * Authors:@ludeeus.
+  * https://github.com/custom-components/config_check
+####Event Sensor
+  * HomeAssistant custom sensor to track specific events<br>
+  * Authors:@azogue.
+  * https://github.com/azogue/eventsensor
+####Fontawesome
+  * 🔹 Use icons from fontawesome in home-assistant<br>
   
-  https://github.com/thomasloven/hass-fontawesome
-*Google Home*
-  Home Assistant Google Home custom component<br>
-  Authors:@leikoilja, @DurgNomis-drol, @ArnyminerZ, @KapJI.
-  https://github.com/leikoilja/ha-google-home
-*Home Assistant Community Store (HACS)*
-  HACS gives you a powerful UI to handle downloads of all your custom needs.<br>
-  Authors:@ludeeus.
-  https://github.com/hacs/integration
-*Hass Deepstack Object*
-  Home Assistant custom component for using Deepstack object detection<br>
-  Authors:@robmarkcole.
-  https://github.com/robmarkcole/HASS-Deepstack-object
-*Rainforest Energy Monitoring Component*
-  Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant.
-  Authors:@jrhorrisberger.
-  https://github.com/damienheiser/home-assistant
-*Imagesdirectory Camera*
-  Camera entity for images, to create a slidehow or timelapse from images in a directory. The camra support browsing manually trough the slideshow also. The creation of anmiated Gif or mp4 is also supported by services<br>
-  Authors:@jodur.
-  https://github.com/jodur/imagesdirectory-camera
-*Iphone Device Tracker*
-  A custom component for Home Assistant to detect iPhones connected to local LAN, even if the phone is in deep sleep.<br>
-  Authors:@mudape.
-  https://github.com/mudape/iphonedetect
-*Readme*
-  Use Jinja and data from Home Assistant to generate your README.md file<br>
-  Authors:@ludeeus.
-  https://github.com/custom-components/readme
-*Samsungtv Smart*
-  📺 Home Assistant SamsungTV Smart Component with simplified SmartThings API Support configurable from User Interface.<br>
-  Authors:@ollo69.
-  https://github.com/ollo69/ha-samsungtv-smart
-*Scheduler Component*
-  Custom component for HA that enables the creation of scheduler entities<br>
-  Authors:@nielsfaber.
-  https://github.com/nielsfaber/scheduler-component
-*Sensor.Unifigateway*
-  High level health status of UniFi Security Gateway devices via UniFi Controller<br>
-  Authors:@jchasey.
-  https://github.com/custom-components/sensor.unifigateway
-*Smartthinq Lge Sensors*
-  Home Assistant custom integration for SmartThinQ LG devices configurable with Lovelace User Interface.<br>
-  Authors:@ollo69.
-  https://github.com/ollo69/ha-smartthinq-sensors
-*Spacex Next Launch And Starman*
-  Home Assistant integration for SpaceX Next Launch and Starman data.<br>
-  Authors:@djtimca.
-  https://github.com/djtimca/HASpaceX
-*Ui Template Sensor Configuration*
-  Add template sensors from the UI.<br>
-  Authors:@ludeeus.
-  https://github.com/custom-components/templatesensor
-*Weatheralerts*
-  A sensor that gives you weather alerts from alerts.weather.gov.<br>
-  Authors:@ludeeus, @jlverhagen.
-  https://github.com/custom-components/weatheralerts
-*Wyze Bulb, Switch And Sensor Integration*
-  Home Assistant Integration for Wyze Bulbs, Switches, Sensors and Lock<br>
-  Authors:@JoshuaMulliken.
-  https://github.com/JoshuaMulliken/ha-wyzeapi
-*Youtube*
-  A platform which give you info about the newest video on a channel<br>
-  Authors:@ludeeus, @pinkywafer.
-  https://github.com/custom-components/youtube
+  * https://github.com/thomasloven/hass-fontawesome
+####Google Home
+  * Home Assistant Google Home custom component<br>
+  * Authors:@leikoilja, @DurgNomis-drol, @ArnyminerZ, @KapJI.
+  * https://github.com/leikoilja/ha-google-home
+####Home Assistant Community Store (HACS)
+  * HACS gives you a powerful UI to handle downloads of all your custom needs.<br>
+  * Authors:@ludeeus.
+  * https://github.com/hacs/integration
+####Hass Deepstack Object
+  * Home Assistant custom component for using Deepstack object detection<br>
+  * Authors:@robmarkcole.
+  * https://github.com/robmarkcole/HASS-Deepstack-object
+####Rainforest Energy Monitoring Component
+  * Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant.
+  * Authors:@jrhorrisberger.
+  * https://github.com/damienheiser/home-assistant
+####Imagesdirectory Camera
+  * Camera entity for images, to create a slidehow or timelapse from images in a directory. The camra support browsing manually trough the slideshow also. The creation of anmiated Gif or mp4 is also supported by services<br>
+  * Authors:@jodur.
+  * https://github.com/jodur/imagesdirectory-camera
+####Iphone Device Tracker
+  * A custom component for Home Assistant to detect iPhones connected to local LAN, even if the phone is in deep sleep.<br>
+  * Authors:@mudape.
+  * https://github.com/mudape/iphonedetect
+####Readme
+  * Use Jinja and data from Home Assistant to generate your README.md file<br>
+  * Authors:@ludeeus.
+  * https://github.com/custom-components/readme
+####Samsungtv Smart
+  * 📺 Home Assistant SamsungTV Smart Component with simplified SmartThings API Support configurable from User Interface.<br>
+  * Authors:@ollo69.
+  * https://github.com/ollo69/ha-samsungtv-smart
+####Scheduler Component
+  * Custom component for HA that enables the creation of scheduler entities<br>
+  * Authors:@nielsfaber.
+  * https://github.com/nielsfaber/scheduler-component
+####Sensor.Unifigateway
+  * High level health status of UniFi Security Gateway devices via UniFi Controller<br>
+  * Authors:@jchasey.
+  * https://github.com/custom-components/sensor.unifigateway
+####Smartthinq Lge Sensors
+  * Home Assistant custom integration for SmartThinQ LG devices configurable with Lovelace User Interface.<br>
+  * Authors:@ollo69.
+  * https://github.com/ollo69/ha-smartthinq-sensors
+####Spacex Next Launch And Starman
+  * Home Assistant integration for SpaceX Next Launch and Starman data.<br>
+  * Authors:@djtimca.
+  * https://github.com/djtimca/HASpaceX
+####Ui Template Sensor Configuration
+  * Add template sensors from the UI.<br>
+  * Authors:@ludeeus.
+  * https://github.com/custom-components/templatesensor
+####Weatheralerts
+  * A sensor that gives you weather alerts from alerts.weather.gov.<br>
+  * Authors:@ludeeus, @jlverhagen.
+  * https://github.com/custom-components/weatheralerts
+####Wyze Bulb, Switch And Sensor Integration
+  * Home Assistant Integration for Wyze Bulbs, Switches, Sensors and Lock<br>
+  * Authors:@JoshuaMulliken.
+  * https://github.com/JoshuaMulliken/ha-wyzeapi
+####Youtube
+  * A platform which give you info about the newest video on a channel<br>
+  * Authors:@ludeeus, @pinkywafer.
+  * https://github.com/custom-components/youtube
 </details>
 
 <details><summary>28 Lovelace Plugins</summary>
-*Atomic Calendar Revive*
-  Custom calendar card for Home Assistant with Lovelace
-  https://github.com/marksie1988/atomic-calendar-revive
-*Auto Entities*
-  🔹Automatically populate the entities-list of lovelace cards
-  https://github.com/thomasloven/lovelace-auto-entities
-*Badge Card*
-  🔹 Place badges anywhere in the lovelace layout
-  https://github.com/thomasloven/lovelace-badge-card
-*Button Card*
-  ❇️ Lovelace button-card for home assistant
-  https://github.com/custom-cards/button-card
-*Card Mod*
-  🔹 Add CSS styles to (almost) any lovelace card
-  https://github.com/thomasloven/lovelace-card-mod
-*Card Tools*
-  🔹A collection of tools for other lovelace plugins to use
-  https://github.com/thomasloven/lovelace-card-tools
-*Decluttering Card*
-  🧹 Declutter your lovelace configuration with the help of this card
-  https://github.com/custom-cards/decluttering-card
-*Favicon Counter*
-  Show a notification count badge.
-  https://github.com/custom-cards/favicon-counter
-*Fold Entity Row*
-  🔹 A foldable row for entities card, containing other rows
-  https://github.com/thomasloven/lovelace-fold-entity-row
-*Gap Card*
-  🔹 A lovelace card that does nothing and looks like nothing. Incredibly useful! No, really.
-  https://github.com/thomasloven/lovelace-gap-card
-*Ha (Lovelace) Card Weather Conditions*
-  Weather condition card (Lovelace) for Home Assistant.
-  https://github.com/r-renato/ha-card-weather-conditions
-*Kiosk Mode*
-  🙈 Hides the Home Assistant header and/or sidebar
-  https://github.com/maykar/kiosk-mode
-*Layout Card*
-  🔹 Get more control over the placement of lovelace cards.
-  https://github.com/thomasloven/lovelace-layout-card
-*Lovelace Home Feed Card*
-  A custom Lovelace card for displaying a combination of persistent notifications, calendar events, and entities in the style of a feed.
-  https://github.com/gadgetchnnel/lovelace-home-feed-card
-*Lovelace Text Input Row*
-  A custom Lovelace text input row for use in entities cards
-  https://github.com/gadgetchnnel/lovelace-text-input-row
-*Mini Graph Card*
-  Minimalistic graph card for Home Assistant Lovelace UI
-  https://github.com/kalkih/mini-graph-card
-*Mini Media Player*
-  Minimalistic media card for Home Assistant Lovelace UI
-  https://github.com/kalkih/mini-media-player
-*Multiple Entity Row*
-  Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
-  https://github.com/benct/lovelace-multiple-entity-row
-*Restriction Card*
-  🔒 Apply restrictions to Lovelace cards
-  https://github.com/iantrich/restriction-card
-*Scheduler Card*
-  HA Lovelace card for control of scheduler entities
-  https://github.com/nielsfaber/scheduler-card
-*Sidebar Card*
-  None
-  https://github.com/DBuit/sidebar-card
-*Simple Thermostat*
-  A different take on the thermostat card for Home Assistant ♨️
-  https://github.com/nervetattoo/simple-thermostat
-*Slider Entity Row*
-  🔹 Add sliders to entity cards
-  https://github.com/thomasloven/lovelace-slider-entity-row
-*Stack In Card*
-  🛠 group multiple cards into one card without the borders
-  https://github.com/custom-cards/stack-in-card
-*State Switch*
-  🔹Dynamically replace lovelace cards depending on occasion
-  https://github.com/thomasloven/lovelace-state-switch
-*Template Entity Row*
-  🔹 Display whatever you want in an entities card row.
-  https://github.com/thomasloven/lovelace-template-entity-row
-*Time Picker Card*
-  🕰️ Time Picker Card for Home Assistant's Lovelace UI
-  https://github.com/GeorgeSG/lovelace-time-picker-card
-*Weather Card*
-  Weather Card with animated icons for Home Assistant Lovelace
-  https://github.com/bramkragten/weather-card
+####Atomic Calendar Revive
+  * Custom calendar card for Home Assistant with Lovelace
+  * https://github.com/marksie1988/atomic-calendar-revive
+####Auto Entities
+  * 🔹Automatically populate the entities-list of lovelace cards
+  * https://github.com/thomasloven/lovelace-auto-entities
+####Badge Card
+  * 🔹 Place badges anywhere in the lovelace layout
+  * https://github.com/thomasloven/lovelace-badge-card
+####Button Card
+  * ❇️ Lovelace button-card for home assistant
+  * https://github.com/custom-cards/button-card
+####Card Mod
+  * 🔹 Add CSS styles to (almost) any lovelace card
+  * https://github.com/thomasloven/lovelace-card-mod
+####Card Tools
+  * 🔹A collection of tools for other lovelace plugins to use
+  * https://github.com/thomasloven/lovelace-card-tools
+####Decluttering Card
+  * 🧹 Declutter your lovelace configuration with the help of this card
+  * https://github.com/custom-cards/decluttering-card
+####Favicon Counter
+  * Show a notification count badge.
+  * https://github.com/custom-cards/favicon-counter
+####Fold Entity Row
+  * 🔹 A foldable row for entities card, containing other rows
+  * https://github.com/thomasloven/lovelace-fold-entity-row
+####Gap Card
+  * 🔹 A lovelace card that does nothing and looks like nothing. Incredibly useful! No, really.
+  * https://github.com/thomasloven/lovelace-gap-card
+####Ha (Lovelace) Card Weather Conditions
+  * Weather condition card (Lovelace) for Home Assistant.
+  * https://github.com/r-renato/ha-card-weather-conditions
+####Kiosk Mode
+  * 🙈 Hides the Home Assistant header and/or sidebar
+  * https://github.com/maykar/kiosk-mode
+####Layout Card
+  * 🔹 Get more control over the placement of lovelace cards.
+  * https://github.com/thomasloven/lovelace-layout-card
+####Lovelace Home Feed Card
+  * A custom Lovelace card for displaying a combination of persistent notifications, calendar events, and entities in the style of a feed.
+  * https://github.com/gadgetchnnel/lovelace-home-feed-card
+####Lovelace Text Input Row
+  * A custom Lovelace text input row for use in entities cards
+  * https://github.com/gadgetchnnel/lovelace-text-input-row
+####Mini Graph Card
+  * Minimalistic graph card for Home Assistant Lovelace UI
+  * https://github.com/kalkih/mini-graph-card
+####Mini Media Player
+  * Minimalistic media card for Home Assistant Lovelace UI
+  * https://github.com/kalkih/mini-media-player
+####Multiple Entity Row
+  * Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
+  * https://github.com/benct/lovelace-multiple-entity-row
+####Restriction Card
+  * 🔒 Apply restrictions to Lovelace cards
+  * https://github.com/iantrich/restriction-card
+####Scheduler Card
+  * HA Lovelace card for control of scheduler entities
+  * https://github.com/nielsfaber/scheduler-card
+####Sidebar Card
+  * None
+  * https://github.com/DBuit/sidebar-card
+####Simple Thermostat
+  * A different take on the thermostat card for Home Assistant ♨️
+  * https://github.com/nervetattoo/simple-thermostat
+####Slider Entity Row
+  * 🔹 Add sliders to entity cards
+  * https://github.com/thomasloven/lovelace-slider-entity-row
+####Stack In Card
+  * 🛠 group multiple cards into one card without the borders
+  * https://github.com/custom-cards/stack-in-card
+####State Switch
+  * 🔹Dynamically replace lovelace cards depending on occasion
+  * https://github.com/thomasloven/lovelace-state-switch
+####Template Entity Row
+  * 🔹 Display whatever you want in an entities card row.
+  * https://github.com/thomasloven/lovelace-template-entity-row
+####Time Picker Card
+  * 🕰️ Time Picker Card for Home Assistant's Lovelace UI
+  * https://github.com/GeorgeSG/lovelace-time-picker-card
+####Weather Card
+  * Weather Card with animated icons for Home Assistant Lovelace
+  * https://github.com/bramkragten/weather-card
 </details>
 
 ---
@@ -379,7 +381,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: <https://img.shields.io/badge/Home_Assistant>-2021.4.3-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.4.3-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml

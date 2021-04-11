@@ -1,8 +1,10 @@
 # Hanifin Smart Home
 
-| GitHub Repository | Home Assistant Community |
+| My Repository | Home Assistant Community |
 | :---| :--- |
-| [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] [![last commit time][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] ![maintained] ![ha-version-shield] | [![Community Forum][discourse-shield]][discourse] [![Discord][discord-shield]][discord] |
+| [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] | [![Community Forum][discourse-shield]][discourse]
+| [![Last Commit][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Discord][discord-shield]][discord] |
+| [![Home Assistant Version][ha-version-shield]][ha-version] |
 
 ## Smart Home Articles
 
@@ -184,19 +186,19 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
     {%- set name = integration.name | replace("HACS","Home Assistant Community Store (HACS)") %}
     {%- set description = integration.description|trim ~ "<br>" if integration.description|trim not in ["","None"] %}
   {%- endif %}
-*{{ name|trim }}*
-  {{ description|trim if description not in ["","None"] }}
-  {% if integration.authors|count > 0 %}Authors: {%- for author in integration.authors -%}{{ author }}{{ ", " if not loop.last }}{%- endfor %}.{% endif %}
-  {{ url|trim }}
+####{{ name|trim }}
+  {{ "* " ~ description|trim if description not in ["","None"] }}
+  {% if integration.authors|count > 0 %}* Authors: {%- for author in integration.authors -%}{{ author }}{{ ", " if not loop.last }}{%- endfor %}.{% endif %}
+  {{ "* " ~ url|trim }}
 
 {%- endfor %}
 </details>
 
 <details><summary>{{ plugins|count }} Lovelace Plugins</summary>
 {%- for plugin in plugins %}
-*{{ plugin.name|trim }}*
-  {{ plugin.description|trim if plugin.description not in ["","None"] }}
-  {{ plugin.documentation|trim }}
+####{{ plugin.name|trim }}
+  {{ "* " ~ plugin.description|trim if plugin.description not in ["","None"] }}
+  {{ "* " ~ plugin.documentation|trim }}
 
 {%- endfor %}
 </details>
@@ -232,7 +234,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: <https://img.shields.io/badge/Home_Assistant>-{{ states('sensor.current_version') }}-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-{{ states('sensor.current_version') }}-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
