@@ -177,27 +177,43 @@ Our Home Assistant install has approximately **{{ states|count }} total entities
 including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 
 <details><summary>{{ integrations|count }} Custom Integrations</summary>
-{%- for integration in integrations %}
+{% for integration in integrations %}
   {%- set url = integration.documentation %}
   {%- if url.endswith("damienheiser/home-assistant") or url.endswith("jrhorrisberger/home-assistant") %}
     {%- set name = "Rainforest Energy Monitoring Component" %}
     {%- set description = "Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant." %}
   {%- else %}
     {%- set name = integration.name | replace("HACS","Home Assistant Community Store (HACS)") %}
-    {%- set description = integration.description|trim if integration.description|trim not in ["","None"] %}
+    {%- set description = integration.description|trim if integration.description|trim not in ["",none] %}
   {% endif %}
-
+  {%- if integration.installed_version not in ["",none]%}
+    {%- set name = name ~ " v" ~ integration.installed_version|replace("v","") %}
+  {% endif %}
 #### [{{ name|trim }}]({{ url|trim }})
-    {{ description|trim if description not in ["","None"] }}
+    {{ description|trim if description not in ["",none] }}
     {% if integration.authors|count > 0 %}Authors: {%- for author in integration.authors -%} {{ author }}{{ ", " if not loop.last }}{%- endfor %}.{% endif %}
 {%- endfor %}
 </details>
 
 <details><summary>{{ plugins|count }} Lovelace Plugins</summary>
 {%- for plugin in plugins %}
-
-#### [{{ plugin.name|trim }}]({{ plugin.documentation|trim }})
+  {%- if plugin.installed_version not in ["",none]%}
+    {%- set name = plugin.name|trim ~ " v" ~ plugin.installed_version|replace("v","") %}
+  {%- else %}
+    {%- set name = plugin.name|trim %}
+  {% endif %}
+#### [{{ name }}]({{ plugin.documentation|trim }})
     {{ plugin.description|trim if plugin.description not in ["","None"] }}
+{% endfor %}
+</details>
+{% endif %}
+
+{%- set addons = states.sensor.addons.attributes.addons | selectattr("state","eq","started") | list | sort(attribute='name') %}
+{%- if addons|count > 0 %}
+<details><summary>{{ addons|count }} Addons</summary>
+{% for addon in addons %}
+#### {{ addon.name ~ " v" ~ addon.version }}
+    {{ addon.description|trim if addon.description not in ["","None"] }}
 {% endfor %}
 </details>
 {% endif %}
