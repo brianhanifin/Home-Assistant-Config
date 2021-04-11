@@ -184,22 +184,20 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
     {%- set description = "Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant." %}
   {%- else %}
     {%- set name = integration.name | replace("HACS","Home Assistant Community Store (HACS)") %}
-    {%- set description = integration.description|trim ~ "<br>" if integration.description|trim not in ["","None"] %}
+    {%- set description = integration.description|trim if integration.description|trim not in ["","None"] %}
   {% endif %}
 
 #### [{{ name|trim }}]({{ url|trim }})
-    {{ "* " ~ description|trim if description not in ["","None"] }}
+    {{ description|trim if description not in ["","None"] }}
     {% if integration.authors|count > 0 %}Authors: {%- for author in integration.authors -%}{{ author }}{{ ", " if not loop.last }}{%- endfor %}.{% endif %}
-
 {%- endfor %}
 </details>
 
 <details><summary>{{ plugins|count }} Lovelace Plugins</summary>
 {%- for plugin in plugins %}
-#### {{ plugin.name|trim }}
-    {{ plugin.description|trim if plugin.description not in ["","None"] }}
-    {{ plugin.documentation|trim }}
 
+#### [{{ plugin.name|trim }}]({{ plugin.documentation|trim }})
+    {{ plugin.description|trim if plugin.description not in ["","None"] }}
 {% endfor %}
 </details>
 {% endif %}
