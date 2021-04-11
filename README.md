@@ -346,7 +346,7 @@ including **462 sensors**.
     HA Lovelace card for control of scheduler entities
 
 #### [Sidebar Card v0.1.7.9](https://github.com/DBuit/sidebar-card)
-    None
+    
 
 #### [Simple Thermostat v2.3.0](https://github.com/nervetattoo/simple-thermostat)
     A different take on the thermostat card for Home Assistant ♨️

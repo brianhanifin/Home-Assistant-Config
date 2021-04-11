@@ -203,7 +203,7 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
     {%- set name = plugin.name|trim %}
   {% endif %}
 #### [{{ name }}]({{ plugin.documentation|trim }})
-    {{ plugin.description|trim if plugin.description not in ["","None"] }}
+    {{ plugin.description|trim if plugin.description not in ["",none] }}
 {% endfor %}
 </details>
 {% endif %}
@@ -213,7 +213,7 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 <details><summary>{{ addons|count }} Addons</summary>
 {% for addon in addons %}
 #### {{ addon.name ~ " v" ~ addon.version }}
-    {{ addon.description|trim if addon.description not in ["","None"] }}
+    {{ addon.description|trim if addon.description not in ["",none] }}
 {% endfor %}
 </details>
 {% endif %}
