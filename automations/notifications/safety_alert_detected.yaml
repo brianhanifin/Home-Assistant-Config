@@ -20,12 +20,12 @@ variables:
   room: '{{ trigger.to_state.name|replace(":","")|replace("Safety Alarm ","")|replace(" Type","")|replace(" Code","") }}'
 
   alarm_states:
-    "1": "Smoke"
-    "2": "Carbon Monoxide"
+    "1": "SMOKE"
+    "2": "CARBON MONOXIDE"
     "12": "Test Button Press"
   alert_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }}'
 
-  title: '{{ alert_state }} Detected!'
+  title: '{{ alert_state }} DETECTED!'
   message: '{{ alarm_state }} detected in the {{ room|upper }}.'
 
 condition:
@@ -35,19 +35,20 @@ condition:
 
 action:
   - service: script.notify_mobile
-    data_template:
+    data:
+      critical: true
       title: '{{ title }}'
       message: '{{ message }}'
       who: "brian"
       id: "safety"
 
   - service: script.notify_speech
-    data_template:
+    data:
       media_player: group.google_downstairs
       message: '{{ message }}'
 
   - service: script.notify_web
-    data_template:
+    data:
       title: '{{ title }}'
       message: '{{ message }}'
       id: "safety"

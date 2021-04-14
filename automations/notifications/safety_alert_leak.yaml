@@ -23,18 +23,20 @@ variables:
   room: '{{ trigger.to_state.name|lower|replace(" leak sensor", "")|replace(" leak", "")|trim }}'
 action:
   - service: script.notify_speech
-    data_template:
+    data:
       media_player: group.google
       message: 'A leak has been detected in the {{ room }}!'
 
   - service: script.notify_mobile
-    data_template:
+    data:
+      critical: true
       title: "WATER LEAK DETECTED!"
       message: '{{ room|upper }}: A leak has been detected!'
-      who: "parents"
+      who: "brian"
+      id: "safety"
 
   - service: script.notify_web
-    data_template:
+    data:
       title: "WATER LEAK DETECTED!"
       message: '{{ room|upper }}: A leak has been detected!'
       id: "safety"

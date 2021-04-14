@@ -3,14 +3,19 @@
 #
 alias: Update Notification
 id: update_notification
-
 trigger:
   - platform: numeric_state
     entity_id: sensor.updates
     above: 0
 action:
+  - service: script.notify_mobile
+    data:
+      title: "Home Assistant Update"
+      message: "{{ states('sensor.update_message')}}"
+      who: "brian"
+
   - service: script.toast
-    data_template:
+    data:
       message: |
         {%- set combined_updates =
               states("sensor.updates")|int|default("0") +
@@ -21,9 +26,3 @@ action:
           There are {{ combined_updates }} updates available.
         {% endif %}
       duration: 10000
-
-  - service: script.notify_mobile
-    data_template:
-      title: "Home Assistant Update"
-      message: "{{ states('sensor.update_message')}}"
-      who: "brian"

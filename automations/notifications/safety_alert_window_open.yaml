@@ -3,7 +3,6 @@
 #
 alias: Safety Alert Window Open for 30 Minutes
 id: safety_alert_window_open
-
 trigger:
   - platform: state
     entity_id: binary_sensor.upstairs_bathroom_window
@@ -12,12 +11,14 @@ trigger:
       minutes: 30
 action:
   - service: script.notify_mobile
-    data_template:
-      who: "parents"
+    data:
+      critical: true
       title: WINDOW OPEN
       message: "The Upstairs Bathroom has been open 30 minutes."
+      who: "brian"
+      id: "safety"
 
   - service: script.notify_speech
-    data_template:
+    data:
       media_player: group.google_welcome
       message: "The Upstairs Bathroom has been open for a half hour."
