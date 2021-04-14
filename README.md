@@ -169,10 +169,10 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1048 total entities**, 
-including **462 sensors**.
+Our Home Assistant install has approximately **1070 total entities**, 
+including **475 sensors**.
 
-<details><summary>22 Custom Integrations</summary>
+<details><summary>23 Custom Integrations</summary>
   
   
 
@@ -211,7 +211,13 @@ including **462 sensors**.
   
   
 
-#### [Google Home v1.4.0](https://github.com/leikoilja/ha-google-home)
+#### [Frigate v1.0.4](https://github.com/blakeblackshear/frigate-hass-integration)
+    Frigate integration for homeassistant
+    Authors:@blakeblackshear.
+  
+  
+
+#### [Google Home v1.4.2](https://github.com/leikoilja/ha-google-home)
     Home Assistant Google Home custom component
     Authors:@leikoilja, @DurgNomis-drol, @ArnyminerZ, @KapJI.
   
@@ -371,7 +377,7 @@ including **462 sensors**.
     Minimalistic graph card for Home Assistant Lovelace UI
 
 
-#### [Mini Media Player v1.12.0](https://github.com/kalkih/mini-media-player)
+#### [Mini Media Player v1.12.1](https://github.com/kalkih/mini-media-player)
     Minimalistic media card for Home Assistant Lovelace UI
 
 
@@ -391,7 +397,7 @@ including **462 sensors**.
     
 
 
-#### [Simple Thermostat v2.3.0](https://github.com/nervetattoo/simple-thermostat)
+#### [Simple Thermostat v2.3.2](https://github.com/nervetattoo/simple-thermostat)
     A different take on the thermostat card for Home Assistant ♨️
 
 
@@ -470,7 +476,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.4.3-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.4.4-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
