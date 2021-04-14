@@ -10,14 +10,12 @@ trigger:
     event_type: state_changed
     event_data:
       entity_id: lock.test_door
-
-condition:
-  - '{{ trigger.event.data.new_state.state != "none" }}'
-
 variables:
   #old_state: '{{ trigger.event.data.old_state.state|lower }}'
   new_state: '{{ trigger.event.data.new_state.state|lower }}'
-
+  outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
+condition:
+  - '{{ new_state != "none" }}'
 action:
   - choose:
       - conditions:
@@ -35,12 +33,12 @@ action:
 
           # Skip turning on the entry lights in the middle of the day.
           - choose:
-              - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+              - conditions: "{{ outdoor_illuminance|int < 2000 }}"
                 sequence:
                   # Restore the previous state of the porch + entry lights.
                   - service: scene.turn_on
                     data:
-                      entity_id: scene.front_door_locked_lights_snapshot
+                      entity_id: scene.front_door_locked_snapshot
                       transition: 5
 
                   - delay:
@@ -83,12 +81,12 @@ action:
 
                   # Skip turning on the entry lights in the middle of the day.
                   - choose:
-                      - conditions: "{{ states('sensor.outdoor_illuminance')|int < 2000 }}"
+                      - conditions: "{{ outdoor_illuminance|int < 2000 }}"
                         sequence:
                           # Store the current state of the porch + entry lights.
                           - service: scene.create
                             data:
-                              scene_id: front_door_locked_lights_snapshot
+                              scene_id: front_door_locked_snapshot
                               snapshot_entities:
                                 - light.home_entry
                                 - light.porch

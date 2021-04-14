@@ -4,9 +4,11 @@ id: front_door_motion
 mode: single
 trigger:
   - platform: state
-    entity_id: binary_sensor.front_door_motion
+    entity_id: binary_sensor.front_door_person_motion
   - platform: state
     entity_id: binary_sensor.doorbell_motion
+  # - platform: state
+  #   entity_id: binary_sensor.front_door_motion
 
 variables:
   #old_state: '{{ trigger.from_state.state|lower }}'
@@ -30,7 +32,7 @@ action:
                   # Store the current state of the porch light.
                   - service: scene.create
                     data:
-                      scene_id: doorbell_presence_lights_snapshot
+                      scene_id: front_door_presence_snapshot
                       snapshot_entities:
                         - light.home_entry
                         - light.porch
@@ -64,7 +66,7 @@ action:
                   # Restore the previous state of the porch light.
                   - service: scene.turn_on
                     data:
-                      entity_id: scene.doorbell_presence_lights_snapshot
+                      entity_id: scene.front_door_presence_snapshot
                       transition: 5
 
                   - delay:

@@ -1,0 +1,59 @@
+---
+alias: Front Door Person Detected
+id: front_door_person_detected
+
+mode: single
+trigger:
+  - platform: event
+    event_type: "deepstack.object_detected"
+    event_data:
+      object_type: "person"
+variables:
+  hoursback: 12
+  begintime: '{{ as_timestamp(now() - timedelta(hours=hoursback)) | timestamp_custom("%d/%m/%Y %H:%M:%S") }}'
+  endtime: '{{ as_timestamp(now()) | timestamp_custom("%d/%m/%Y %H:%M:%S") }}'
+  filename: snapshots_front_door
+  path: /media/deepstack
+  path_output: /config/www
+  filepath: '{{ path_output + "/" + filename }}'
+
+action:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       begintime: {{ begintime }}
+  #       endtime: {{ endtime }}
+  #       filepath: {{ filepath }}
+
+  - service: imagedirectory.create_gif_mp4
+    data:
+      sourcepath: '{{ path }}'
+      destinationpath: '{{ path_output }}'
+      filename: '{{ filename }}'
+      format: mp4
+      begintimestamp: '{{ begintime }}'
+      endtimestamp: '{{ endtime }}'
+      exclude:
+        - front_door_latest.png
+        - front_door_None.png
+
+  # - wait_for_trigger:
+  #     - platform: event
+  #       event_type: imagedirectory
+  #       event_data:
+  #         type: create_gif_mp4
+  #   timeout: "00:01:00"
+  #   continue_on_timeout: false
+
+  - delay:
+      seconds: 5
+
+  - service: script.debug
+    data:
+      message: '{{ path + "/" + trigger.event.data.file }}'
+
+  - service: script.notify_mobile
+    data:
+      title: Someone is at the front door
+      camera: camera.deepstack_front_door
+      who: brian
