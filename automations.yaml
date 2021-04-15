@@ -67,11 +67,6 @@
       keep_days: 10
       repack: true
     service: recorder.purge
-  - service: imagedirectory.delete_files
-    data:
-      sourcepath: /media/deepstack
-      endtimestamp: '{{ as_timestamp(now() - timedelta(hours=24)) | timestamp_custom("%d/%m/%Y
-        %H:%M:%S") }}'
   mode: single
 - id: '1588557204708'
   alias: Midnight - Custom Event
