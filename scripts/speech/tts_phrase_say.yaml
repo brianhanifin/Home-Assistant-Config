@@ -4,8 +4,8 @@ variables:
   room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","") }}'
   smart_speakers:
     bedroom: "media_player.google_bedroom"
-    kyles_bedroom: "media_player.google_kyles_bedroom"
-    lucas_bedroom: "media_player.google_lucas_bedroom"
+    kyles_room: "media_player.google_kyles_bedroom"
+    lucas_room: "media_player.google_lucas_bedroom"
     boys_sleeping: "group.google_boys_sleeping"
     downstairs: "group.google_downstairs"
     kitchen/garage: "group.google_welcome"
@@ -27,25 +27,19 @@ variables:
     {%- if text_phrase|trim != "" %}
       {{ text_phrase|trim }}
     {%- endif %}
-  voice: '{{ states("input_select.tts_voices")|trim }}'
   message: |
     {%- if selected_phrase|trim != "" %}
-      {%- set phrase = selected_phrase %}
+      {{ selected_phrase }}
     {%- elif text_phrase|trim != "" %}
-      {% set phrase = text_phrase %}
+      {{ text_phrase }}
     {%- endif %}
-    {%- if voice not in ("Alexa","") %}
-      <voice name="{{ voice }}">{{ phrase }}</voice>
-    {%- else -%}
-      {{ phrase }}
-    {%- endif -%}
 sequence:
-  # - service: script.debug
-  #   data:
-  #     message: |
-  #       selected_phrase: {{ selected_phrase }}
-  #       text_phrase: {{ text_phrase }}
-  #       message: {{ message }}
+  - service: script.debug
+    data:
+      message: |
+        selected_phrase: {{ selected_phrase }}
+        text_phrase: {{ text_phrase }}
+        message: {{ message }}
 
   - service: script.notify_speech
     data_template:
