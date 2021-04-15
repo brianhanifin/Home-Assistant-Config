@@ -6,7 +6,7 @@ variables:
     bedroom: "media_player.google_bedroom"
     kyles_room: "media_player.google_kyles_bedroom"
     lucas_room: "media_player.google_lucas_bedroom"
-    boys_sleeping: "group.google_boys_sleeping"
+    boys_rooms: "group.google_boys_rooms"
     downstairs: "group.google_downstairs"
     kitchen/garage: "group.google_welcome"
     kitchen: "media_player.google_kitchen"
@@ -17,16 +17,12 @@ variables:
     upstairs_bathroom: "media_player.google_upstairs_bathroom"
 
   smart_speaker: "{{ smart_speakers[room] }}"
-
   selected_phrase: |
-    {%- if selected_phrase|trim not in ("None","") %}
-      {{ selected_phrase|trim }}
-    {%- endif %}
+    {%- set selected_phrase = states("input_select.tts_phrases")|trim %}
+    {{ selected_phrase if selected_phrase not in ["Unknown","None",""] }}
   text_phrase: |
     {%- set text_phrase = states("input_text.tts_phrase")|trim %}
-    {%- if text_phrase|trim != "" %}
-      {{ text_phrase|trim }}
-    {%- endif %}
+    {{ text_phrase if text_phrase not in ["Unknown","None",""] }}
   message: |
     {%- if selected_phrase|trim != "" %}
       {{ selected_phrase }}
@@ -34,12 +30,12 @@ variables:
       {{ text_phrase }}
     {%- endif %}
 sequence:
-  - service: script.debug
-    data:
-      message: |
-        selected_phrase: {{ selected_phrase }}
-        text_phrase: {{ text_phrase }}
-        message: {{ message }}
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       selected_phrase: {{ selected_phrase }}
+  #       text_phrase: {{ text_phrase }}
+  #       message: {{ message }}
 
   - service: script.notify_speech
     data_template:
