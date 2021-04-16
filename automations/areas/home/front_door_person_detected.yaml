@@ -6,9 +6,77 @@ trigger:
   - platform: state
     entity_id: binary_sensor.front_door_person_motion
     to: "on"
+variables:
+  #old_state: '{{ trigger.from_state.state|lower }}'
+  new_state: '{{ trigger.to_state.state|lower }}'
+
+  outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
+  #manual_control: '{{ state_attr("switch.adaptive_lighting_porch","manual_control")|count == 0 }}'
 action:
-  - service: script.notify_mobile
-    data:
-      title: Someone is at the front door
-      camera: camera.front_door_person
-      who: brian
+  # - service: script.debug
+  #   data:
+  #     message: 'new_state: {{ new_state }}'
+
+  # Skip turning on the entry lights in the middle of the day.
+  - choose:
+      - conditions: "{{ outdoor_illuminance|int < 2000 }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - '{{ new_state == "on" }}'
+                sequence:
+                  # Store the current state of the porch light.
+                  - service: scene.create
+                    data:
+                      scene_id: front_door_presence_snapshot
+                      snapshot_entities:
+                        - light.home_entry
+                        - light.porch
+
+                  # Disable Adaptive Lighting automated control.
+                  # ** Porch
+                  # - service: adaptive_lighting.set_manual_control
+                  #   data:
+                  #     entity_id: switch.adaptive_lighting_porch
+                  #     manual_control: true
+                  # # ** Entry/Stair Chandelier
+                  # - service: adaptive_lighting.set_manual_control
+                  #   data:
+                  #     entity_id: switch.adaptive_lighting_home_entry
+                  #     manual_control: true
+
+                  # Full brightness!
+                  - service: light.turn_on
+                    data:
+                      entity_id: light.porch
+                      kelvin: 3500
+                      brightness: 255
+                  - service: light.turn_on
+                    data:
+                      entity_id: light.home_entry
+                      brightness: 255
+
+              - conditions:
+                  - '{{ new_state == "off" }}'
+                sequence:
+                  # Restore the previous state of the porch light.
+                  - service: scene.turn_on
+                    data:
+                      entity_id: scene.front_door_presence_snapshot
+                      transition: 5
+
+                  - delay:
+                      seconds: 10
+        
+                  # Restore Adaptive Lighting automated control.
+                  # ** Porch
+                  - service: adaptive_lighting.set_manual_control
+                    data:
+                      manual_control: false
+                      entity_id: switch.adaptive_lighting_porch
+                  # ** Entry/Stair Chandelier
+                  - service: adaptive_lighting.set_manual_control
+                    data:
+                      manual_control: false
+                      entity_id: switch.adaptive_lighting_home_entry
+
