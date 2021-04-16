@@ -992,7 +992,9 @@ views:
             footer:
               entities:
               - entity: switch.adaptive_lighting_family_room
-                name: Adaptive Lighting
+                name: Adaptive Floor Lamps
+              - entity: switch.adaptive_lighting_family_room_table_lamp
+                name: Adaptive Table Lamp
               type: buttons
             type: entities
           type: vertical-stack
@@ -1094,6 +1096,50 @@ views:
             type: entities
           type: vertical-stack
       type: custom:state-switch
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: '*Climate Sensors*'
+    - cards:
+      - entity: sensor.family_room_temperature
+        graph: line
+        name: Family
+        theme: Caule Black Rose Glass
+        type: sensor
+      - detail: 1
+        entity: sensor.kitchen_temperature
+        graph: line
+        hours_to_show: 24
+        name: Kitchen
+        theme: Caule Black Rose Glass
+        type: sensor
+      - entity: sensor.home_temperature
+        graph: line
+        name: Thermostat
+        theme: Caule Black Rose Glass
+        type: sensor
+      columns: 3
+      square: false
+      type: grid
+    - cards:
+      - entity: sensor.family_room_humidity
+        graph: line
+        name: Family
+        theme: Caule Black Aqua Glass
+        type: sensor
+      - entity: sensor.kitchen_humidity
+        graph: line
+        name: Kitchen
+        theme: Caule Black Aqua Glass
+        type: sensor
+      - entity: sensor.home_humidity
+        graph: line
+        name: Thermostat
+        theme: Caule Black Aqua Glass
+        type: sensor
+      columns: 3
+      square: false
+      type: grid
     type: vertical-stack
   icon: hass:home-floor-1
   layout: {}
@@ -1182,11 +1228,18 @@ views:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: '*Sensors*'
+      - content: '*Climate Sensors*'
     - cards:
       - entity: sensor.bedroom_temperature
         graph: line
-        name: Bed
+        name: Master
+        theme: Caule Black Rose Glass
+        type: sensor
+      - detail: 1
+        entity: sensor.lucas_room_temperature
+        graph: line
+        hours_to_show: 24
+        name: Lucas
         theme: Caule Black Rose Glass
         type: sensor
       - entity: sensor.kyles_bedroom_temperature
@@ -1194,26 +1247,33 @@ views:
         name: Kyle
         theme: Caule Black Rose Glass
         type: sensor
-      - detail: 1
-        entity: sensor.upstairs_bathroom_temperature
-        graph: line
-        hours_to_show: 24
-        name: Bath
-        theme: Caule Black Rose Glass
-        type: sensor
       - entity: sensor.guest_room_temperature
         graph: line
         name: Guest
         theme: Caule Black Rose Glass
         type: sensor
-      - entity: sensor.upstairs_bathroom_humidity
+      - entity: sensor.upstairs_bathroom_temperature
         graph: line
         name: Bath
+        theme: Caule Black Rose Glass
+        type: sensor
+      columns: 3
+      square: false
+      type: grid
+    - cards:
+      - entity: sensor.lucas_room_humidity
+        graph: line
+        name: Lucas
         theme: Caule Black Aqua Glass
         type: sensor
       - entity: sensor.guest_room_humidity
         graph: line
         name: Guest
+        theme: Caule Black Aqua Glass
+        type: sensor
+      - entity: sensor.upstairs_bathroom_humidity
+        graph: line
+        name: Bath
         theme: Caule Black Aqua Glass
         type: sensor
       columns: 3
@@ -1496,28 +1556,15 @@ views:
       square: false
       type: grid
     type: vertical-stack
-  - camera_image: camera.front_door
-    entities:
-    - entity: binary_sensor.front_door_motion
-    - entity: image_processing.deepstack_object_front_door
-    - entity: camera.front_door
-    title: Front Door
-    type: picture-glance
-  - camera_image: camera.driveway
-    entities:
-    - binary_sensor.driveway_motion
-    - camera.driveway
-    image: https://demo.home-assistant.io/stub_config/kitchen.png
-    title: Driveway
-    type: picture-glance
+  - entity: camera.front_door
+    name: Front Door (Frigate RTMP)
+    type: picture-entity
+  - entity: camera.driveway
+    show_state: true
+    type: picture-entity
   - type: custom:layout-break
-  - camera_image: camera.doorbell
-    entities:
-    - entity: binary_sensor.doorbell_motion
-    - entity: binary_sensor.doorbell_cell_motion
-    image: https://demo.home-assistant.io/stub_config/kitchen.png
-    title: Doorbell
-    type: picture-glance
+  - entity: camera.doorbell
+    type: picture-entity
   - content: 'Note: these are snapshots. Tap for a live view.'
     type: markdown
   icon: mdi:cctv
@@ -1538,14 +1585,22 @@ views:
     template: button_home
     type: custom:button-card
   - cards:
-    - control:
-        _headings: false
-      entity: climate.home
-      fallback: --
-      icon: mdi:home-circle
+    - entity: climate.home
+      fallback: 'OFF'
+      header: false
+      layout:
+        step: column
       layout.mode.headings: false
+      sensors:
+      - entity: sensor.upstairs_temperature_average
+        name: Upstairs Avg
+      - entity: sensor.downstairs_temperature_average
+        name: Downstairs Avg
       step_layout: row
+      step_size: '1'
       type: custom:simple-thermostat
+      view_layout:
+        step: row
     - cards:
       - aggregate_func: max
         animate: true
@@ -1602,7 +1657,6 @@ views:
       extrema: true
       graph: line
     type: custom:mini-graph-card
-  - type: custom:layout-break
   - aggregate_func: max
     animate: true
     entities:
