@@ -7,27 +7,30 @@ trigger:
   # Trigger the notification at 8pm.
   - platform: time
     at: "20:00:00"
+variables:
+  identifier: INSECURE_DOOR
+  front_door_unlocked: '{{ is_state("lock.front_door","unlocked") }}'
+  garage_door_open: '{{ is_state("cover.garage_door","open") }}'
+  prompt_title: 'SAFETY ALERT: INSECURE DOOR{% if front_door_unlocked and garage_door_open %}S{% endif %}'
+  prompt_message: |
+    {{ "The Front Door is unlocked!" if front_door_unlocked }}
+    {{ "The Garage Door is open!" if garage_door_open }}
+  action_title: '"Secure Doors" Action Taken'
+  action_message: |
+    Front Door is {{ states("lock.front_door") }}.
+    Garage Door is {{ states("cover.garage_door") }}.
 action:
   # Send the actionable notification.
   - choose:
       - conditions:
-          - condition: state
-            entity_id: lock.front_door
-            state: "unlocked"
-          - condition: state
-            entity_id: cover.garage_door
-            state: "open"
+          - '{{ front_door_unlocked or garage_door_open }}'
         sequence:
           - service: script.notify_mobile
             data:
               who: 'brian'
-              title: 'Insecure Door{% if states("cover.garage_door") == "unlocked" and states("cover.garage_door") == "open" %}s{% endif %}'
-              message: |
-                {% if states("lock.front_door") == "unlocked" %}The Front Door is unlocked!
-                {% endif -%}
-                {% if states("cover.garage_door") == "open" %}The Garage Door is open!
-                {% endif %}
-              category: 'insecure_door'
+              title: '{{ prompt_title }}'
+              message: '{{ prompt_message }}'
+              replaceable_id: '{{ identifier }}'
 
           # Wait for the requested response, or secure the doors after the timeout elapses.
           - wait_for_trigger:
@@ -35,6 +38,11 @@ action:
                 event_type: ios.notification_action_fired
                 event_data:
                   actionName: SECURE_DOOR
+                  action_data:
+                    categoryName: INSECURE_DOOR
+                    sourceDeviceID: iphone_brian
+                    sourceDeviceName: 'iPhone: Brian'
+                    sourceDevicePermanentID: E8EACF88-8615-4F1C-8216-9C8E2DE5A6C2
             timeout:
               minutes: "15"
             continue_on_timeout: true
@@ -65,8 +73,6 @@ action:
           - service: script.notify_mobile
             data:
               who: 'brian'
-              title: 'Secure Doors Action Taken'
-              message: |
-                Front Door is {{ states("lock.front_door") }}.
-                Garage Door is {{ states("cover.garage_door") }}.
-              replaceable_id: 'insecure_door'
+              title: '{{ action_title }}'
+              message: '{{ action_message }}'
+              replaceable_id: '{{ identifier }}'
