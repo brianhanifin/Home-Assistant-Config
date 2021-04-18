@@ -1,0 +1,47 @@
+---
+# lucas_room_ac
+#   power
+#   temp_down
+#   temp_up
+#   fan_speed
+#   timer
+#   mode
+#   cool_64
+#   cool_68
+#   cool_72
+#   cool_76
+variables:
+  remote: remote.lucas_room
+  device: lucas_room_ac
+  commands: |
+    {%- if command != "" %}
+      {{ command|replace(" ","") }}
+    {%- else %}
+      {{ commands|replace(" ","")|default("") }}
+    {%- endif %}
+  command_count: '{{ commands.split(",") | count }}'
+sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       command: {{ command }}
+  #       commands: {{ commands }}
+
+  - repeat:
+      count: "{{ command_count|int }}"
+      sequence:
+        - variables:
+            command: |
+              {%- set command = commands.split(",")[repeat.index-1] %}
+              {%- if command in ["off","on"] %}
+                power
+              {%- else %}
+                {{ command|default("") }}
+              {%- endif %}
+
+        - service: remote.send_command
+          target:
+            entity_id: '{{ remote }}'
+          data:
+            device: '{{ device }}'
+            command: '{{ command }}'
