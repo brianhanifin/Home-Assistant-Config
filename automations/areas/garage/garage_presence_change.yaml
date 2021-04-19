@@ -1,6 +1,6 @@
 ---
 alias: Garage Presence Change
-
+id: garage_presence_change
 mode: restart
 trigger:
   - platform: state
@@ -12,9 +12,6 @@ variables:
   old_state: '{{ trigger.from_state.state|lower }}'
   new_state: '{{ trigger.to_state.state|lower }}'
   entity_id: '{{ trigger.to_state.entity_id }}'
-condition:
-  - '{{ (new_state in ["off","on"] and old_state in ["off","on"])
-        and old_state != new_state }}'
 action:
   # - service: script.debug
   #   data:
