@@ -22,13 +22,18 @@ variables:
     {%- else %}
       {{ commands|replace(" ","")|default("") }}
     {%- endif %}
-  command_count: '{{ commands.split(",") | count }}'
+  command_count: '{{ 0 if commands == "none" else commands.split(",") | count }}'
 sequence:
   # - service: script.debug
   #   data:
   #     message: |
   #       command: {{ command }}
   #       commands: {{ commands }}
+
+  # If command "none" is passed, then someone tried to turn an A/C on that was already on.
+  # So don't do anything, as another "power" instruction would just turn the A/C off.
+  - condition: template
+    value_template: '{{ command_count > 0 }}'
 
   - repeat:
       count: "{{ command_count|int }}"
