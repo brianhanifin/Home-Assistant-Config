@@ -44,17 +44,36 @@ action:
                   - delay:
                       seconds: 10
 
-                  # Restore Adaptive Lighting automated control.
-                  # ** Porch
-                  - service: adaptive_lighting.set_manual_control
+          # Restore Adaptive Lighting automated control.
+          # ** Toggle Home Entry Chandelier Control
+          - variables:
+              adaptive_switch: switch.adaptive_lighting_home_entry
+          - choose:
+              - conditions: '{{ is_state(adaptive_switch,"on") }}'
+                sequence:
+                  - service: switch.turn_off
                     data:
-                      entity_id: switch.adaptive_lighting_porch
-                      manual_control: false
-                  # ** Entry/Stair Chandelier
-                  - service: adaptive_lighting.set_manual_control
+                      entity_id: '{{ adaptive_switch }}'
+                  - delay:
+                      seconds: 1
+                  - service: switch.turn_on
                     data:
-                      entity_id: switch.adaptive_lighting_home_entry
-                      manual_control: false
+                      entity_id: '{{ adaptive_switch }}'
+
+          # ** Toggle Porch Light Control
+          - variables:
+              adaptive_switch: switch.adaptive_lighting_porch
+          - choose:
+              - conditions: '{{ is_state(adaptive_switch,"on") }}'
+                sequence:
+                  - service: switch.turn_off
+                    data:
+                      entity_id: '{{ adaptive_switch }}'
+                  - delay:
+                      seconds: 1
+                  - service: switch.turn_on
+                    data:
+                      entity_id: '{{ adaptive_switch }}'
 
           ## ================================================================================================= ##
 
@@ -90,18 +109,6 @@ action:
                               snapshot_entities:
                                 - light.home_entry
                                 - light.porch
-
-                          # Disable Adaptive Lighting automated control.
-                          # ** Porch
-                          # - service: adaptive_lighting.set_manual_control
-                          #   data:
-                          #     entity_id: switch.adaptive_lighting_porch
-                          #     manual_control: true
-                          # # ** Entry/Stair Chandelier
-                          # - service: adaptive_lighting.set_manual_control
-                          #   data:
-                          #     entity_id: switch.adaptive_lighting_home_entry
-                          #     manual_control: true
 
                           # Full brightness!
                           - service: light.turn_on
