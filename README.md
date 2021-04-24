@@ -169,10 +169,10 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1087 total entities**, 
-including **485 sensors**.
+Our Home Assistant install has approximately **1167 total entities**, 
+including **548 sensors**.
 
-<details><summary>23 Custom Integrations</summary>
+<details><summary>21 Custom Integrations</summary>
   
   
 
@@ -226,22 +226,10 @@ including **485 sensors**.
 #### [Home Assistant Community Store (HACS) v1.11.3](https://github.com/hacs/integration)
     HACS gives you a powerful UI to handle downloads of all your custom needs.
     Authors:@ludeeus.
-  
-  
-
-#### [Hass Deepstack Object v4.3.0](https://github.com/robmarkcole/HASS-Deepstack-object)
-    Home Assistant custom component for using Deepstack object detection
-    Authors:@robmarkcole.
 
 #### [Rainforest Energy Monitoring Component](https://github.com/damienheiser/home-assistant)
     Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant.
     Authors:@jrhorrisberger.
-  
-  
-
-#### [Imagesdirectory Camera v0.6.1](https://github.com/jodur/imagesdirectory-camera)
-    Camera entity for images, to create a slidehow or timelapse from images in a directory. The camra support browsing manually trough the slideshow also. The creation of anmiated Gif or mp4 is also supported by services
-    Authors:@jodur.
   
   
 
@@ -256,7 +244,7 @@ including **485 sensors**.
   
   
 
-#### [Samsungtv Smart v0.3.32](https://github.com/ollo69/ha-samsungtv-smart)
+#### [Samsungtv Smart v0.3.33](https://github.com/ollo69/ha-samsungtv-smart)
     📺 Home Assistant SamsungTV Smart Component with simplified SmartThings API Support configurable from User Interface.
     Authors:@ollo69.
   
@@ -268,19 +256,19 @@ including **485 sensors**.
   
   
 
-#### [Sensor.Unifigateway v0.3.2](https://github.com/custom-components/sensor.unifigateway)
+#### [Sensor.Unifigateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
     High level health status of UniFi Security Gateway devices via UniFi Controller
     Authors:@jchasey.
   
   
 
-#### [Smartthinq Lge Sensors v0.6.7](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [Smartthinq Lge Sensors v0.6.8](https://github.com/ollo69/ha-smartthinq-sensors)
     Home Assistant custom integration for SmartThinQ LG devices configurable with Lovelace User Interface.
     Authors:@ollo69.
   
   
 
-#### [Spacex Next Launch And Starman v027](https://github.com/djtimca/HASpaceX)
+#### [Spacex Next Launch And Starman v028](https://github.com/djtimca/HASpaceX)
     Home Assistant integration for SpaceX Next Launch and Starman data.
     Authors:@djtimca.
   
@@ -426,18 +414,14 @@ including **485 sensors**.
 
 </details>
 
-<details><summary>4 Addons</summary>
+<details><summary>3 Addons</summary>
 
 #### ESPHome v1.16.2
     ESPHome Hass.io add-on for intelligently managing all your ESP8266/ESP32 devices.
 
 
-#### Home Assistant Google Drive Backup v0.103.1
+#### Home Assistant Google Drive Backup v0.104.2
     Automatically back up Home Assistant snapshots to Google Drive
-
-
-#### InfluxDB v4.0.4
-    Scalable datastore for metrics, events, and real-time analytics
 
 
 #### Samba share v9.3.1
@@ -476,7 +460,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.4.5-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.4.6-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml

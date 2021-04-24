@@ -833,7 +833,7 @@ views:
     type: vertical-stack
   icon: mdi:home
   path: home
-  theme: Caule Black Purple Glass
+  theme: Caule Black Blue Glass
   title: Home
 - badges: []
   cards:
@@ -1181,6 +1181,10 @@ views:
           name: Hot Water
           template: button_state
           type: custom:button-card
+        - entity: switch.lucas_ac_cool
+          name: Lucas A/C
+          template: button_state_spin
+          type: custom:button-card
         columns: 3
         square: false
         type: grid
@@ -1221,6 +1225,19 @@ views:
       footer:
         entities:
         - entity: switch.adaptive_lighting_bedroom
+          name: Adaptive Lighting
+        type: buttons
+      show_header_toggle: false
+      type: entities
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Control lights<br>*Lucas' Room*
+    - entities:
+      - entity: light.lucas_room
+      footer:
+        entities:
+        - entity: switch.adaptive_lighting_lucas_room
           name: Adaptive Lighting
         type: buttons
       show_header_toggle: false
@@ -1557,16 +1574,19 @@ views:
       type: grid
     type: vertical-stack
   - entity: camera.front_door
-    name: Front Door (Frigate RTMP)
     type: picture-entity
   - entity: camera.driveway
-    show_state: true
     type: picture-entity
   - type: custom:layout-break
   - entity: camera.doorbell
     type: picture-entity
-  - content: 'Note: these are snapshots. Tap for a live view.'
+  - content: 'Note: Tap above stills for a live view.'
     type: markdown
+  - type: custom:layout-break
+  - entity: camera.front_door_person
+    type: picture-entity
+  - entity: camera.driveway_person
+    type: picture-entity
   icon: mdi:cctv
   layout:
     max_cols: 2
@@ -1585,6 +1605,10 @@ views:
     template: button_home
     type: custom:button-card
   - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Climate Control<br> _Home_
     - entity: climate.home
       fallback: 'OFF'
       header: false
@@ -1600,7 +1624,7 @@ views:
       step_size: '1'
       type: custom:simple-thermostat
       view_layout:
-        step: row
+        step: column
     - cards:
       - aggregate_func: max
         animate: true
@@ -1638,19 +1662,65 @@ views:
       square: false
       type: grid
     type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: _Lucas' Room_
+    - entities:
+      - type: divider
+      - entity: sensor.lucas_ac_current_status
+        name: Status
+        secondary_info: last-updated
+      - entity: sensor.lucas_room_temperature
+        name: Temperature, Door
+        secondary_info: last-updated
+      - entity: sensor.lucas_room_remote_temperature
+        name: Temperature, Window
+        secondary_info: last-updated
+      footer:
+        detail: 1
+        entity: sensor.lucas_room_temperature
+        hours_to_show: 24
+        type: graph
+      header:
+        entities:
+        - entity: switch.lucas_ac_cool
+          name: Air Conditioner
+        type: buttons
+      show_header_toggle: false
+      state_color: true
+      type: entities
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: _Air Conditioner Schedule_
+    - entities:
+      - entity: switch.schedule_lucas_ac_cool_school_day_schedule
+        name: School Days
+        secondary_info: last-updated
+      - entity: switch.schedule_lucas_ac_cool_weekend_schedule
+        name: Weekend
+        secondary_info: last-changed
+      show_header_toggle: false
+      state_color: true
+      type: entities
+    type: vertical-stack
   - type: custom:layout-break
   - aggregate_func: max
     animate: true
     entities:
     - entity: sensor.downstairs_temperature_average
-      name: Downstairs Avg
-    - entity: sensor.home_temperature
-      name: Ecobee
+      name: Average
+    - entity: sensor.family_room_temperature
+      name: Family
     - entity: sensor.kitchen_temperature
       name: Kitchen
+    - entity: sensor.home_temperature
+      name: Thermostat
     icon: mdi:home-thermometer
     line_width: 2
-    lower_bound: 68
+    lower_bound: 60
     name: Downstairs Temperature
     points_per_hour: 4
     show:
@@ -1661,22 +1731,34 @@ views:
     animate: true
     entities:
     - entity: sensor.upstairs_temperature_average
-      name: Upstairs Avg
+      name: Average
     - entity: sensor.bedroom_temperature
       name: Master
     - entity: sensor.kyles_bedroom_temperature
       name: Kyle
+    - entity: sensor.lucas_room_temperature
+      name: Lucas
     - entity: sensor.guest_room_temperature
       name: Guest
+    - entity: sensor.upstairs_bathroom_temperature
+      name: Bath
     icon: mdi:home-thermometer
     line_width: 2
-    lower_bound: 68
+    lower_bound: 60
     name: Upstairs Temperature
     points_per_hour: 4
     show:
       extrema: true
       graph: line
     type: custom:mini-graph-card
+  - entities:
+    - entity: sensor.lucas_ac_current_status
+    - entity: sensor.lucas_ac_power
+    - entity: sensor.lucas_ac_hourly_energy
+    - entity: sensor.lucas_ac_daily_energy
+    - entity: sensor.lucas_ac_monthly_energy
+    - entity: sensor.lucas_ac_yearly_energy
+    type: entities
   icon: mdi:thermostat
   layout:
     max_cols: 3
@@ -1881,9 +1963,10 @@ views:
     - light.wled_holiday_string
     - switch.hot_water_pump
     - switch.landscape_power
+    - switch.lucas_ac_cool
     - switch.printers
     time_step: 10
-    title: Smart Home Scheduler
+    title: Smart Home Schedule
     type: custom:scheduler-card
   icon: mdi:clock
   path: scheduler
@@ -2334,9 +2417,17 @@ views:
       square: false
       type: grid
     - cards:
-      - entity: script.ci_prep
+      - entity: script.ci_generate_readme
         icon: mdi:github
-        name: Github Prep
+        name: Readme gen
+        styles:
+          icon:
+          - color: grey
+        template: button_short
+        type: custom:button-card
+      - entity: shell_command.rebuild_test_secrets
+        icon: mdi:github
+        name: Secrets gen
         styles:
           icon:
           - color: grey
@@ -2503,72 +2594,6 @@ views:
       - name: UniFi Controller
         type: weblink
         url: https://unraid.local:8443
-      theme: Caule Dark Purple
-      type: entities
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: AdGuard
-    - entities:
-      - entities:
-        - entity: sensor.adguard_dns_queries
-          name: Queries
-        - entity: sensor.adguard_average_processing_speed
-          name: Avg Response
-        entity: sensor.adguard_dns_queries_blocked_ratio
-        icon: mdi:shield-check
-        name: Blocked
-        secondary_info:
-          entity: sensor.adguard_dns_queries_blocked_ratio
-          name: ''
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: sensor.adguard_parental_control_blocked
-          name: Parent Control
-        - entity: sensor.adguard_safe_browsing_blocked
-          name: Safe Browsing
-        entity: sensor.adguard_safe_searches_enforced
-        icon: mdi:shield-check
-        name: Safe Searches
-        secondary_info:
-          entity: sensor.adguard_safe_searches_enforced
-          name: ''
-        show_state: false
-        type: custom:multiple-entity-row
-      - type: divider
-      - entities:
-        - entity: switch.adguard_protection
-          name: Enabled
-          toggle: true
-        - entity: switch.adguard_filtering
-          name: Filtering
-          toggle: true
-        - entity: switch.adguard_safe_browsing
-          name: Browsing
-          toggle: true
-        entity: switch.adguard_filtering
-        icon: mdi:shield-check
-        name: Protection
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: switch.adguard_parental_control
-          name: Enabled
-          toggle: true
-        - entity: switch.adguard_safe_search
-          name: Safe Search
-          toggle: true
-        entity: switch.adguard_parental_control
-        icon: mdi:shield-check
-        name: Parental Control
-        show_state: false
-        type: custom:multiple-entity-row
-      - type: divider
-      - name: AdGuard Home
-        type: weblink
-        url: http://10.0.0.3
-      show_header_toggle: false
       theme: Caule Dark Purple
       type: entities
     type: vertical-stack
