@@ -51,7 +51,7 @@ automation:
             {% set code_slot = object_id[7:-19] %}
             {{ code_slot }}
       - service: script.turn_on
-        entity_id: script.notify_mobile
+        entity_id: script.notify_ios
         data_template:
           message: >-
             {% set object_id = trigger.to_state.object_id %}
@@ -91,7 +91,7 @@ automation:
             {% set code_slot = trigger.to_state.state %}
             {{ 'script.door_keypad_' ~ code_slot ~ '_delete' }}
       - service: script.turn_on
-        entity_id: script.notify_mobile
+        entity_id: script.notify_ios
         data:
           message: "Code has been cleared from all Doors"
           title: "One Time Code Used"

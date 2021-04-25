@@ -25,7 +25,7 @@ action:
       - conditions:
           - '{{ front_door_unlocked or garage_door_open }}'
         sequence:
-          - service: script.notify_mobile
+          - service: script.notify_ios
             data:
               who: 'brian'
               title: '{{ prompt_title }}'
@@ -70,7 +70,7 @@ action:
           # Replace the actionable notification.
           - delay:
               seconds: 30
-          - service: script.notify_mobile
+          - service: script.notify_ios
             data:
               who: 'brian'
               title: '{{ action_title }}'
