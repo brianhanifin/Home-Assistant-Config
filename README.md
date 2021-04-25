@@ -169,8 +169,8 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1167 total entities**, 
-including **548 sensors**.
+Our Home Assistant install has approximately **1173 total entities**, 
+including **549 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
   
