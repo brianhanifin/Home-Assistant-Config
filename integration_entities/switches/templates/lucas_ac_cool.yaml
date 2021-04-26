@@ -10,7 +10,7 @@ switches:
       data:
         # Send "none" if the A/C is already on, as another "power" instruction would just turn the A/C off.
         commands: |
-          {%- if is_state("lucas_ac_cool","off") %}
+          {%- if is_state("input_select.lucas_ac_status","Off") %}
             'power, cool_64, temp_down, temp_down, temp_down, temp_down'
           {%- else %}
             none
@@ -19,4 +19,4 @@ switches:
       service: script.lucas_room_room_ac
       data:
         commands: 'power'
-    value_template: '{{ states("sensor.lucas_ac_power")|int > 1 }}'
+    value_template: '{{ is_state("input_select.lucas_ac_status","Off") }}'
