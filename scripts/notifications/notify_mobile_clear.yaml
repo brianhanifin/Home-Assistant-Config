@@ -1,0 +1,24 @@
+---
+variables:
+  notification_service: |
+    {% if who.startswith("notify.") %}
+      {{ who }}
+    {% else %}
+      notify.{{ who|default("brian") }}
+    {% endif %}
+
+  # Group like messages together.
+  group: '{{ group|default("") }}'
+  # Replace previous message when present.
+  tag: '{{ group|default("") }}'
+sequence:
+  # Only continue it mobile notifications are enabled.
+  - condition: state
+    entity_id: input_boolean.mobile_notifications
+    state: 'on'
+
+  - service: '{{ notification_service }}'
+    data:
+      message: 'clear_notification'
+      data:
+        tag: '{{ tag }}'
