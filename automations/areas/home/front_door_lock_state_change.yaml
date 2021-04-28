@@ -6,17 +6,24 @@ trigger:
     event_type: state_changed
     event_data:
       entity_id: lock.front_door
-  - platform: event
-    event_type: state_changed
-    event_data:
-      entity_id: lock.test_door
+  # - platform: event
+  #   event_type: state_changed
+  #   event_data:
+  #     entity_id: lock.test_door
 variables:
   #old_state: '{{ trigger.event.data.old_state.state|lower }}'
   new_state: '{{ trigger.event.data.new_state.state|lower }}'
   outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
 condition:
-  - '{{ new_state != "none" }}'
+  - '{{ new_state|lower in ["locked","unlocked"] }}'
 action:
+  - service: script.debug
+    data:
+      title: 'automations > areas > home > front_door_lock_state_change'
+      message: |
+        new_state: "{{ new_state }}"
+        outdoor_illuminance: "{{ outdoor_illuminance }}"
+
   - choose:
       - conditions:
           - '{{ new_state == "locked" }}'
