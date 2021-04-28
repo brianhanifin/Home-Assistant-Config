@@ -20,14 +20,12 @@ automation:
         input_boolean.wakeup_{{ who }}_{{ today_name }}
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
     condition:
-      # Continue if it is enabled.
-      - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}'
+      # Continue if it is enabled and today is a wakeup day..
+      - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on") 
+        and wakeup_today }}'
 
       # Continue if they are home (or unknown if we cannot track their presence).
-      - '{{ states("person." + who) in ["home","unknown"] }}'
-
-      # Continue today is a wakeup day.
-      - "{{ wakeup_today }}"
+      #- '{{ states("person." + who) in ["home","unknown"] }}'
     action:
       # - service: script.debug
       #   data:
