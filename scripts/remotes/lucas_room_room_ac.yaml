@@ -24,11 +24,9 @@ variables:
     {%- endif %}
   command_count: '{{ 0 if commands == "none" else commands.split(",") | count }}'
 sequence:
-  # - service: script.debug
-  #   data:
-  #     message: |
-  #       command: {{ command }}
-  #       commands: {{ commands }}
+  - service: script.toast
+    data:
+      message: "commands: {{ commands }}"
 
   # If command "none" is passed, then someone tried to turn an A/C on that was already on.
   # So don't do anything, as another "power" instruction would just turn the A/C off.
@@ -39,13 +37,7 @@ sequence:
       count: "{{ command_count|int }}"
       sequence:
         - variables:
-            command: |
-              {%- set command = commands.split(",")[repeat.index-1] %}
-              {%- if command in ["off","on"] %}
-                power
-              {%- else %}
-                {{ command|default("") }}
-              {%- endif %}
+            command: '{{ commands.split(",")[repeat.index-1]|default("") }}'
 
         - service: remote.send_command
           target:

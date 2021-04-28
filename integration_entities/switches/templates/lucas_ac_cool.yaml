@@ -5,13 +5,14 @@ switches:
     unique_id: switch.lucas_ac_cool
     friendly_name: Lucas AC Cool Mode
     icon_template: mdi:air-conditioner
+    value_template: '{{ states("sensor.lucas_ac_power")|int > 0 }}'
     turn_on:
       service: script.lucas_room_room_ac
       data:
         # Send "none" if the A/C is already on, as another "power" instruction would just turn the A/C off.
         commands: |
-          {%- if is_state("input_select.lucas_ac_status","Off") %}
-            'power, cool_64, temp_down, temp_down, temp_down, temp_down'
+          {%- if states("sensor.lucas_ac_power")|int < 2 %}
+            'power, cool_64, temp_down, temp_down, temp_down, temp_down, fan_speed, fan_speed'
           {%- else %}
             none
           {% endif %}
@@ -19,4 +20,3 @@ switches:
       service: script.lucas_room_room_ac
       data:
         commands: 'power'
-    value_template: '{{ is_state("input_select.lucas_ac_status","Off") }}'
