@@ -2,6 +2,7 @@
 script:
   wakeup_brian:
     variables:
+      who: brian
       light: light.table_lamp
     sequence:
       # - service: script.debug
@@ -20,6 +21,7 @@ script:
       - service: script.wakeup_light_start
         data:
           light: '{{ light }}'
+          who: '{{ who }}'
 
   wakeup_brian_timeout:
     sequence:

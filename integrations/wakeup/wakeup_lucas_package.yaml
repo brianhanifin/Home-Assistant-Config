@@ -2,6 +2,7 @@
 script:
   wakeup_lucas:
     variables:
+      who: lucas
       light: light.play_room
     sequence:
       # - service: script.debug
@@ -17,6 +18,7 @@ script:
       - service: script.wakeup_light_start
         data:
           light: '{{ light }}'
+          who: '{{ who }}'
 
   wakeup_lucas_timeout:
     sequence:

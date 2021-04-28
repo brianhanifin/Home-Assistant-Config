@@ -2,6 +2,7 @@
 script:
   wakeup_nerene:
     variables:
+      who: nerene
       light: light.bedroom
     sequence:
       # - service: script.debug
@@ -24,6 +25,7 @@ script:
       - service: script.wakeup_light_start
         data:
           light: '{{ light }}'
+          who: '{{ who }}'
 
   wakeup_nerene_timeout:
     sequence:

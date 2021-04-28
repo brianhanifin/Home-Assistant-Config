@@ -40,6 +40,10 @@ automation:
           - conditions:
               - "{{ do_not_skipnext }}"
             sequence:
+              - service: script.debug
+                data:
+                  message: "{{ who|title }}'s Wakeup Light Triggered"
+
               - service_template: "script.wakeup_{{ who }}"
 
               - service: script.toast
@@ -53,7 +57,6 @@ automation:
 
   - alias: Wakeup Light Timeout
     id: wakeup_light_timeout
-
     trigger:
       - platform: event
         event_type: timer.finished
@@ -77,11 +80,11 @@ automation:
     trigger:
       # Trigger at wakeup time.
       - platform: template
-        value_template: '{{ is_state("sensor.wakeup_brian_start", states("sensor.time")) }}'
+        value_template: '{{ states("input_datetime.wakeup_brian_time")[:5] == states("sensor.time")) }}'
       - platform: template
-        value_template: '{{ is_state("sensor.wakeup_lucas_start", states("sensor.time")) }}'
+        value_template: '{{ states("input_datetime.wakeup_lucas_time")[:5] == states("sensor.time")) }}'
       - platform: template
-        value_template: '{{ is_state("sensor.wakeup_nerene_start", states("sensor.time")) }}'
+        value_template: '{{ states("input_datetime.wakeup_nerene_time")[:5] == states("sensor.time")) }}'
     condition:
       # Continue if skipnext is not enabled.
       - condition: template
