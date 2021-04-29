@@ -1,0 +1,11 @@
+---
+platform: template
+sensors:
+  solar_energy_production_to_house:
+    friendly_name: Solar Energy Production To House
+    unit_of_measurement: kW
+    icon_template: mdi:solar-power
+    value_template: >
+      {%- set excess = states("sensor.solar_energy_production_excess")|float -%}
+      {%- set production = states("sensor.solar_energy_production_current_kw")|float -%}
+      {{ "%0.3f"|format( production - excess ) }}

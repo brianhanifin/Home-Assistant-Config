@@ -1,0 +1,11 @@
+---
+platform: template
+sensors:
+  energy_usage_current:
+    friendly_name: Energy Use Current
+    icon_template: mdi:flash
+    unit_of_measurement: kW
+    value_template: |
+      {%- set produced = states("sensor.solar_energy_production_current_kw")|float %}
+      {%- set grid_transfer_current = states("sensor.grid_energy_transfer_current")|float %}
+      {{ "%0.3f"|format(produced + grid_transfer_current) }}

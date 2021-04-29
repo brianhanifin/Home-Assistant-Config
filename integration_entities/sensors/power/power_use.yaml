@@ -1,9 +1,0 @@
----
-platform: template
-sensors:
-  power_use:
-    friendly_name: Power Use
-    icon_template: mdi:flash
-    unit_of_measurement: kWh
-    value_template: >-
-      {{ states("sensor.rainforest_energy_monitoring_unit")|float + (state_attr("sensor.solar", "power_generation")|int / 1000) }}

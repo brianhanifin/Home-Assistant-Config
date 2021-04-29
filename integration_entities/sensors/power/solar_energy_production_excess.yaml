@@ -1,0 +1,15 @@
+---
+platform: template
+sensors:
+  solar_energy_production_excess:
+    friendly_name: Solar Energy Production Excess
+    unit_of_measurement: kW
+    icon_template: mdi:transmission-tower
+    value_template: >
+      {%- set use = states("sensor.energy_usage_current")|float -%}
+      {%- set production = states("sensor.solar_energy_production_current_kw")|float -%}
+      {%- if production > use -%}
+        {{ "%0.3f"|format( (production - use)|abs ) }}
+      {%- else -%}
+        0.00
+      {%- endif -%}
