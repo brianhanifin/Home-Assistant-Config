@@ -169,8 +169,8 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1173 total entities**, 
-including **549 sensors**.
+Our Home Assistant install has approximately **1182 total entities**, 
+including **550 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
   
@@ -223,7 +223,7 @@ including **549 sensors**.
   
   
 
-#### [Home Assistant Community Store (HACS) v1.11.3](https://github.com/hacs/integration)
+#### [Home Assistant Community Store (HACS) v1.12.3](https://github.com/hacs/integration)
     HACS gives you a powerful UI to handle downloads of all your custom needs.
     Authors:@ludeeus.
 
@@ -244,13 +244,13 @@ including **549 sensors**.
   
   
 
-#### [Samsungtv Smart v0.3.33](https://github.com/ollo69/ha-samsungtv-smart)
+#### [Samsungtv Smart v0.3.34](https://github.com/ollo69/ha-samsungtv-smart)
     📺 Home Assistant SamsungTV Smart Component with simplified SmartThings API Support configurable from User Interface.
     Authors:@ollo69.
   
   
 
-#### [Scheduler Component v3.0.4](https://github.com/nielsfaber/scheduler-component)
+#### [Scheduler Component v3.1.0](https://github.com/nielsfaber/scheduler-component)
     Custom component for HA that enables the creation of scheduler entities
     Authors:@nielsfaber.
   
@@ -420,7 +420,7 @@ including **549 sensors**.
     ESPHome Hass.io add-on for intelligently managing all your ESP8266/ESP32 devices.
 
 
-#### Home Assistant Google Drive Backup v0.104.2
+#### Home Assistant Google Drive Backup v0.104.3
     Automatically back up Home Assistant snapshots to Google Drive
 
 
@@ -460,7 +460,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.4.6-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0b1-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
