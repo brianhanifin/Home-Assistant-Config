@@ -1,15 +1,15 @@
 ---
 platform: template
 sensors:
-  solar_energy_production_deficit:
-    friendly_name: Solar Energy Production Deficit
+  solar_energy_to_grid:
+    friendly_name: Solar Energy To Grid
     unit_of_measurement: kW
-    icon_template: mdi:solar-panel
+    icon_template: mdi:solar-panel-large
     value_template: >
       {%- set use = states("sensor.energy_usage_current")|float -%}
       {%- set production = states("sensor.solar_energy_production_current_kw")|float -%}
-      {%- if use > production -%}
-        {{ "%0.3f"|format( production - use ) }}
+      {%- if production > use -%}
+        {{ "%0.3f"|format( (production - use)|abs ) }}
       {%- else -%}
         0.00
       {%- endif -%}
