@@ -1,15 +1,14 @@
 ---
 platform: template
 sensors:
-  solar_energy_to_grid:
-    friendly_name: Solar Energy To Grid
+  solar_energy_production_to_grid:
+    friendly_name: Solar Energy Production To Grid
     unit_of_measurement: kW
     icon_template: mdi:solar-panel-large
-    value_template: >
-      {%- set use = states("sensor.energy_usage_current")|float -%}
-      {%- set production = states("sensor.solar_energy_production_current_kw")|float -%}
-      {%- if production > use -%}
-        {{ "%0.3f"|format( (production - use)|abs ) }}
-      {%- else -%}
-        0.00
-      {%- endif -%}
+    value_template: |
+      {%- set grid_transfer = states("sensor.energy_grid_transfer_current")|float %}
+      {%- if grid_transfer < 0 %}
+        {{ grid_transfer|abs }}
+      {%- else %}
+        0
+      {% endif %}

@@ -6,7 +6,6 @@ sensors:
     icon_template: mdi:flash
     unit_of_measurement: kW
     value_template: |
-      {%- set solar_production = states("sensor.solar_energy_production_current_kw")|float %}
-      {%- set solar_to_grid = states("sensor.solar_energy_to_grid")|float %}
-      {%- set grid_to_house = states("sensor.solar_energy_to_grid")|float %}
-      {{ "%0.3f"|format(solar_production + solar_to_grid + grid_to_house) }}
+      {%- set solar_to_house = states("sensor.solar_energy_production_to_house")|float %}
+      {%- set grid_to_house = states("sensor.energy_grid_to_house")|float %}
+      {{ "%0.3f"|format(solar_to_house + grid_to_house) }}

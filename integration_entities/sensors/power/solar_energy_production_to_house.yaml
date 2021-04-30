@@ -6,6 +6,10 @@ sensors:
     unit_of_measurement: kW
     icon_template: mdi:home
     value_template: >
-      {%- set excess = states("sensor.solar_energy_to_grid")|float -%}
       {%- set production = states("sensor.solar_energy_production_current_kw")|float -%}
-      {{ "%0.3f"|format( production - excess ) }}
+      {%- set excess = states("sensor.solar_energy_production_to_grid")|float -%}
+      {%- if production > excess %}
+        {{ "%0.3f"|format( production - excess ) }}
+      {%- else %}
+        {{ "%0.3f"|format( excess - production ) }}
+      {% endif %}
