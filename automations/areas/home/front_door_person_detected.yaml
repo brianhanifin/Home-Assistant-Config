@@ -5,17 +5,29 @@ mode: single
 trigger:
   - platform: state
     entity_id: binary_sensor.front_door_person_motion
-    to: "on"
 variables:
-  #old_state: '{{ trigger.from_state.state|lower }}'
+  old_state: '{{ trigger.from_state.state|lower }}'
   new_state: '{{ trigger.to_state.state|lower }}'
 
   outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
-  #manual_control: '{{ state_attr("switch.adaptive_lighting_porch","manual_control")|count == 0 }}'
+condition:
+  - '{{ old_state != new_state }}'
 action:
   # - service: script.debug
   #   data:
   #     message: 'new_state: {{ new_state }}'
+
+  # Send a notification when a person is detected.
+  - choose:
+      - conditions:
+          - '{{ new_state == "on" }}'
+        sequence:
+          - service: script.notify_mobile
+            data:
+              title: Front Door
+              message: Person Detected
+              camera: camera.doorbell
+              who: brian
 
   # Skip turning on the entry lights in the middle of the day.
   - choose:
@@ -80,3 +92,6 @@ action:
                       manual_control: false
                       entity_id: switch.adaptive_lighting_home_entry
 
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  - delay:
+      minutes: 5
