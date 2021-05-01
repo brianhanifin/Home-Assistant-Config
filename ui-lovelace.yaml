@@ -648,12 +648,26 @@ views:
         type: custom:state-switch
       style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n}\n"
       type: custom:mod-card
-    - generation_to_grid_entity: sensor.solar_energy_production_to_grid
-      generation_to_house_entity: sensor.solar_energy_production_to_house
-      grid_to_house_entity: sensor.energy_grid_to_house
-      hide_inactive_lines: 1
-      show_w_not_kw: 1
-      type: custom:tesla-style-solar-power-card
+    - cards:
+      - entities:
+        - entity: sensor.downstairs_temperature_average
+          icon: hass:home-floor-1
+        - entity: sensor.upstairs_temperature_average
+          icon: hass:home-floor-2
+        - entity: sensor.attic_temperature
+          icon: hass:home-floor-a
+        show_icon: true
+        show_name: false
+        show_state: true
+        state_color: false
+        type: glance
+      - generation_to_grid_entity: sensor.solar_energy_production_to_grid
+        generation_to_house_entity: sensor.solar_energy_production_to_house
+        grid_to_house_entity: sensor.energy_grid_to_house
+        hide_inactive_lines: 1
+        show_w_not_kw: 1
+        type: custom:tesla-style-solar-power-card
+      type: vertical-stack
     type: vertical-stack
   - cards:
     - cards:

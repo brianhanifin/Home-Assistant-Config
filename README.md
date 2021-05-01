@@ -169,10 +169,15 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1202 total entities**, 
-including **570 sensors**.
+Our Home Assistant install has approximately **1198 total entities**, 
+including **567 sensors**.
 
-<details><summary>21 Custom Integrations</summary>
+<details><summary>23 Custom Integrations</summary>
+  
+
+#### [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting)
+    Adaptive Lighting custom component for Home Assistant
+    Authors:@basnijholt.
   
   
 
@@ -220,6 +225,12 @@ including **570 sensors**.
 #### [Google Home v1.4.3](https://github.com/leikoilja/ha-google-home)
     Home Assistant Google Home custom component
     Authors:@leikoilja, @DurgNomis-drol, @ArnyminerZ, @KapJI.
+  
+  
+
+#### [Ha Sun2 v1.8.3](https://github.com/pnbruckner/ha-sun2)
+    Home Assistant Sun2 Sensor
+    Authors:@pnbruckner.
   
   
 
@@ -381,7 +392,7 @@ including **570 sensors**.
     🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.1.0](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.1.1](https://github.com/nielsfaber/scheduler-card)
     HA Lovelace card for control of scheduler entities
 
 
@@ -468,7 +479,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0b3-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0b4-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
