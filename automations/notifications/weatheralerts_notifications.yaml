@@ -2,10 +2,11 @@
 alias: Weather Alerts Notification
 id: weatheralerts_notifications
 trigger:
-  - platform: state
+  - platform: numeric_state
     entity_id: sensor.san_diego_county_inland_valleys
+    above: 0
 action:
-  - service: script.notify_ios
+  - service: script.notify_mobile
     data:
       critical: true
       title: "{{ trigger.event.data.event }}: {{ trigger.event.data.area }}"
@@ -13,5 +14,6 @@ action:
         {{ trigger.event.data.title }}
         Certainty: {{ trigger.event.data.certainty }}
         Severity: {{ trigger.event.data.severity }}
-      who: "brian"
-      id: "safety"
+      who: brian
+      group: safety
+      tag: weather-alert

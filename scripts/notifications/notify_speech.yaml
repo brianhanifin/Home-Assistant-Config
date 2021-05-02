@@ -7,7 +7,36 @@ sequence:
         value_template: '{{ message is not undefined }}'
     sequence:
       - service: script.say
-        data_template:
+        data:
           media_player: '{{ media_player }}'
           message: '{{ message }}'
           say_greeting: 'false'
+
+fields:
+  message:
+    description: Message for the voice assistant to say.
+    example: Please close the windows.
+    required: true
+    selector:
+      text:
+        multiline: true
+  media_player:
+    description: Which speakers are we sending this message to?
+    example: group.google_welcome
+    default: media_player.google_kitchen
+    selector:
+      select:
+        options:
+          - media_player.google_bedroom
+          - media_player.google_kyles_bedroom
+          - media_player.google_lucas_bedroom
+          - group.google_lucas_sleep
+          - group.google_boys_rooms
+          - group.google_downstairs
+          - group.google_welcome
+          - media_player.google_kitchen
+          - media_player.google_family_room
+          - media_player.google_garage
+          - media_player.google_play_room
+          - group.google_upstairs
+          - media_player.google_upstairs_bathroom

@@ -28,6 +28,16 @@ action:
               message: Person Detected
               camera: camera.doorbell
               who: brian
+          
+          - choose:
+              - conditions:
+                  - '{{ is_state("media_player.tv_family_room","on") }}'
+                sequence:
+                  - service: camera.play_stream
+                    target:
+                      entity_id: camera.doorbell
+                    data:
+                      media_player: media_player.apple_tv_family_room
 
   # Skip turning on the entry lights in the middle of the day.
   - choose:

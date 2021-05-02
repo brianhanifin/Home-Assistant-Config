@@ -34,13 +34,13 @@ condition:
     value_template: '{{ alert_state == "Unknown" }}'
 
 action:
-  - service: script.notify_ios
+  - service: script.notify_mobile
     data:
       critical: true
       title: '{{ title }}'
       message: '{{ message }}'
-      who: "brian"
-      id: "safety"
+      who: brian
+      group: safety-alert
 
   - service: script.notify_speech
     data:

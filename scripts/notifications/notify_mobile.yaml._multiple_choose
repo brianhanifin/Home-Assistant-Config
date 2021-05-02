@@ -1,0 +1,216 @@
+---
+variables:
+  notification_service: |
+    {%- if who is not string %}
+      {%- set who = "brian" %}
+    {%- endif %}
+    {%- if who.startswith("notify.") %}
+      {{ who }}
+    {%- else %}
+      notify.{{ who|default("brian") }}
+    {% endif %}
+
+  title: '{{ title|default }}'
+  subtitle: '{{ subtitle|default }}'
+  group: |
+    {%- if group is string %}
+      {{ group }}
+    {%- elif camera is string %}
+      camera
+    {%- elif image is string %}
+      image
+    {%- else %}
+      {{ default }}
+    {% endif %}
+  tag: |
+    {%- if tag is string %}
+      {{ tag }}
+    {%- elif camera is string %}
+      camera
+    {%- elif image is string %}
+      image
+    {%- else %}
+      {{ default }}
+    {% endif %}
+  url: |
+    {% if url is string %}
+      {%- if url.startswith("/") %}
+        homeassistant://navigate{{ url }}
+      {%- else %}
+        {{ url }}
+      {% endif %}
+    {%- elif camera is string %}
+      homeassistant://navigate/lovelace/cameras
+    {%- else %}
+      {{ default }}
+    {% endif %}
+  sound_file: |
+    {%- if sound is string %}
+      {{ sound|default }}
+    {%- else %}
+      {%- if category != "" %}
+        {% if category == "doorbell" %}
+          media-source://media_source/local/audio/jetsons-doorbell.mp3
+        {% else %}
+          Update.caf
+        {% endif %}
+      {% else %}
+        default
+      {% endif %}
+    {%- endif %}
+
+  critical: '{{ critical|default(false) }}'
+  attachment:
+    content_type: |
+      {%- if camera is string %}
+        jpeg
+      {%- endif %}
+  push:
+    category: |
+      {%- if camera is string %}
+        camera
+      {%- endif %}
+sequence:
+  # Only continue it mobile notifications are enabled.
+  - condition: state
+    entity_id: input_boolean.mobile_notifications
+    state: 'on'
+
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       critical == true: '{{ critical == true }}'
+  #       camera is string: '{{ camera is string }}'
+
+  - choose:
+      - conditions:
+          - '{{ camera is string }}'
+        sequence:
+          - service: script.debug
+            data:
+              message: 'camera: {{ camera }}'
+
+          - service: '{{ notification_service }}'
+            data:
+              title: '{{ title }}'
+              message: '{{ message }}'
+              data:
+                subtitle: '{{ subtitle }}'
+                url: '{{ url }}'
+                # # Group like messages together.
+                # group: '{{ group }}'
+                # # Replace previous message when present.
+                # tag: '{{ tag }}'
+                # # Control what happens to alert when app is currently being viewed.
+                # presentation_options:
+                #   - alert
+                #   - badge
+                #   - sound
+                # Attach camera entity.
+                attachment:
+                  content-type: jpeg
+                push:
+                  category: camera
+                entity_id: '{{ camera }}'
+
+      # Critical alert!
+      - conditions:
+          - '{{ critical == true }}'
+        sequence:
+          - service: script.debug
+            data:
+              message: 'critical: {{ critical }}'
+
+          - service: '{{ notification_service }}'
+            data:
+              title: '{{ title }}'
+              message: '{{ message }}'
+              data:
+                subtitle: '{{ subtitle }}'
+                url: '{{ url }}'
+                # # Group like messages together.
+                # group: '{{ group }}'
+                # # Replace previous message when present.
+                # tag: '{{ tag }}'
+                # # Control what happens to alert when app is currently being viewed.
+                # presentation_options:
+                #   - alert
+                #   - badge
+                #   - sound
+                # Critical alert!
+                push:
+                  sound:
+                    name: '{{ sound_file }}'
+                    critical: 1
+                    volume: 1.0
+
+    default:
+      # - service: script.debug
+      #   data:
+      #     title: choose > default
+      #     message: |
+      #       {{ title }}
+      #       {{ subtitle }}
+      #       {{ message }}
+      #       {{ notification_service }}
+
+      - service: '{{ notification_service }}'
+        data:
+          title: '{{ title }}'
+          message: '{{ message }}'
+          data:
+            subtitle: '{{ subtitle }}'
+            url: '{{ url }}'
+            # # Group like messages together.
+            # group: '{{ group }}'
+            # # Replace previous message when present.
+            # tag: '{{ tag }}'
+            # # Control what happens to alert when app is currently being viewed.
+            # presentation_options:
+            #   - alert
+            #   - badge
+            #   - sound
+
+fields:
+  who:
+    description: Who are we sending this message to?
+    example: brian
+    default: brian
+    selector:
+      text:
+  title:
+    description: Bolded first line of the message.
+    example: Safety Alert!
+    default: Home Assistant
+    selector:
+      text:
+  subtitle:
+    description: Slightly less bolded second line of the message.
+    example: Notification
+    selector:
+      text:
+  message:
+    description: Include details here...
+    example: ...
+    default: ""
+    required: true
+    selector:
+      text:
+
+  camera:
+    description: Camera entity.
+    example: camera.front_door
+    selector:
+      text:
+
+  critical:
+    description: Sound a critical alert sound!
+    example: false
+    selector:
+      boolean:
+
+  # group:
+  # tag:
+  # url:
+  # sound_file: 
+  # sound_file: 

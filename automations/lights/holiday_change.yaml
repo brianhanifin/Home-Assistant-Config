@@ -10,7 +10,8 @@ variables:
 condition:
   - "{{ state not in [none,'unknown',''] }}"
 action:
-  - service: script.notify_ios
+  - service: script.notify_mobile
     data:
       title: '{{ state }}'
       message: 'Today is {{ state }}.'
+      group: holiday

@@ -8,11 +8,12 @@ trigger:
     entity_id: sensor.updates
     above: 0
 action:
-  - service: script.notify_ios
+  - service: script.notify_mobile
     data:
       title: "Home Assistant Update"
       message: "{{ states('sensor.update_message')}}"
-      who: "brian"
+      who: brian
+      tag: update-notification
 
   - service: script.toast
     data:

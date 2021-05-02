@@ -1,138 +1,145 @@
 ---
 variables:
   notification_service: |
+    {%- set who = who|default("brian") %}
     {%- if who.startswith("notify.") %}
       {{ who }}
     {%- else %}
       notify.{{ who|default("brian") }}
     {% endif %}
+  camera: '{{ camera|default("none") }}'
+  critical: '{{ critical|default(false) }}'
 
   title: '{{ title|default }}'
   subtitle: '{{ subtitle|default }}'
-  group: |
-    {%- if group is string %}
-      {{ group }}
-    {%- elif camera is string %}
-      camera
-    {%- elif image is string %}
-      image
-    {%- else %}
-      {{ default }}
-    {% endif %}
-  tag: |
-    {%- if tag is string %}
-      {{ tag }}
-    {%- elif camera is string %}
-      camera
-    {%- elif image is string %}
-      image
-    {%- else %}
-      {{ default }}
-    {% endif %}
-  critical: '{{ critical|default(false) }}'
-
   url: |
-    {% if url is string %}
+    {%- if camera != "none" %}
+      homeassistant://navigate/lovelace/cameras
+    {%- elif url is string %}
       {%- if url.startswith("/") %}
         homeassistant://navigate{{ url }}
       {%- else %}
         {{ url }}
       {% endif %}
-    {%- elif camera is string %}
-      homeassistant://navigate/lovelace/cameras
     {%- else %}
       {{ default }}
     {% endif %}
-  sound_file: |
-    {%- if sound is string %}
-      {{ sound }}
+  group: |
+    {%- if group is string %}
+      {{ group }}
+    {%- elif camera != "none" %}
+      camera
+    {%- elif image is string %}
+      image
     {%- else %}
-      {%- if category != "" %}
-        {% if category == "doorbell" %}
+      {{ default }}
+    {% endif %}
+  tag: '{{ tag|default }}'
+  push:
+    category: |
+      {%- if camera != "none" %}
+        camera
+      {%- else %}
+        {{ default }}
+      {%- endif %}
+    sound:
+      name: |
+        {%- if sound is string %}
+          {%- if sound.startswith("/") %}
+            media-source://media_source{{ sound }}
+          {%- else %}
+            {{ sound }}
+          {%- endif %}
+        {%- elif critical %}
+          Update.caf
+        {%- elif category == "doorbell" %}
           media-source://media_source/local/audio/jetsons-doorbell.mp3
         {% else %}
-          Update.caf
-        {% endif %}
-      {% else %}
-        default
-      {% endif %}
-    {%- endif %}
+          default
+        {%- endif %}
+      '{{ "critical" if critical else "disabled_critical" }}': 1
+      '{{ "volume" if critical else "disabled_volume" }}': 1.0
 sequence:
   # Only continue it mobile notifications are enabled.
   - condition: state
     entity_id: input_boolean.mobile_notifications
     state: 'on'
 
-  - choose:
-      - conditions:
-          - '{{ camera is string }}'
-        sequence:
-          - service: '{{ notification_service }}'
-            data:
-              title: '{{ title }}'
-              message: '{{ message }}'
-              data:
-                # Attach camera entity.
-                attachment:
-                  content-type: jpeg
-                entity_id: '{{ camera }}'
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       subtitle: '{{ subtitle }}'
+  #       url: '{{ url }}'
+  #       entity_id: '{{ camera }}'
+  #       push: '{{ push }}'
+  #       group: '{{ group }}'
+  #       tag: '{{ tag }}'
 
-                subtitle: '{{ subtitle }}'
-                url: '{{ url }}'
-                # Group like messages together.
-                group: '{{ group }}'
-                # Replace previous message when present.
-                tag: '{{ tag }}'
-                # Control what happens to alert when app is currently being viewed.
-                presentation_options:
-                  - alert
-                  - badge
-                  - sound
+  - service: '{{ notification_service }}'
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      data:
+        subtitle: '{{ subtitle }}'
+        url: '{{ url }}'
+        entity_id: '{{ camera }}'
+        push: '{{ push }}'
+        '{{ "group" if group else "disabled_group" }}': '{{ group }}'
+        '{{ "tag" if tag else "disabled_tag" }}': '{{ tag }}'
 
-      # Critical alert!
-      - conditions:
-          - '{{ critical == true }}'
-        sequence:
-          - service: '{{ notification_service }}'
-            data:
-              title: '{{ title }}'
-              message: '{{ message }}'
-              data:
-                # Critical alert!
-                push:
-                  sound:
-                    name: '{{ sound }}'
-                    critical: 1
-                    volume: 1.0
-
-                subtitle: '{{ subtitle }}'
-                url: '{{ url }}'
-                # Group like messages together.
-                group: '{{ group }}'
-                # Replace previous message when present.
-                tag: '{{ tag }}'
-                # Control what happens to alert when app is currently being viewed.
-                presentation_options:
-                  - alert
-                  - badge
-                  - sound
-
-    default:
-      - service: '{{ notification_service }}'
-        data:
-          title: '{{ title }}'
-          message: '{{ message }}'
-          data:
-            subtitle: '{{ subtitle }}'
-            url: '{{ url }}'
-            push:
-              sound: '{{ sound }}'
-            # Group like messages together.
-            group: '{{ group }}'
-            # Replace previous message when present.
-            tag: '{{ tag }}'
-            # Control what happens to alert when app is currently being viewed.
-            presentation_options:
-              - alert
-              - badge
-              - sound
+fields:
+  who:
+    description: Who are we sending this message to?
+    example: brian
+    default: brian
+    selector:
+      text:
+  title:
+    description: Bolded first line of the message.
+    example: Safety Alert!
+    default: Home Assistant
+    selector:
+      text:
+  subtitle:
+    description: Slightly less bolded second line of the message.
+    example: Notification
+    selector:
+      text:
+  message:
+    description: Include details here.
+    example: Test message
+    default: Test message
+    #required: true
+    selector:
+      text:
+        multiline: true
+  camera:
+    description: Camera entity.
+    example: camera.front_door
+    selector:
+      text:
+  critical:
+    description: Sound a critical alert sound!
+    example: false
+    selector:
+      boolean:
+  group:
+    description: "Combine notifications together visually. (iOS does not support grouping critical notifications.)"
+    example: person-detected
+    selector:
+      text:
+  tag:
+    description: "Replace an existing notification by using a tag for the notification. All subsequent notifications will take the place of a notification with the same tag. (iOS does not support grouping critical notifications.)"
+    example: front-door-person-detected
+    selector:
+      text:
+  url:
+    description: Link to open.
+    example: /lovelace/cameras
+    selector:
+      text:
+  sound: 
+    description: Audio to play with notification.
+    example: /local/audio/jetsons-doorbell.mp3
+    selector:
+      text:

@@ -27,13 +27,13 @@ action:
       media_player: group.google
       message: 'A leak has been detected in the {{ room }}!'
 
-  - service: script.notify_ios
+  - service: script.notify_mobile
     data:
       critical: true
       title: "WATER LEAK DETECTED!"
       message: '{{ room|upper }}: A leak has been detected!'
-      who: "brian"
-      id: "safety"
+      who: brian
+      group: safety
 
   - service: script.notify_web
     data:
