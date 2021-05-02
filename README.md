@@ -169,10 +169,10 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1198 total entities**, 
-including **567 sensors**.
+Our Home Assistant install has approximately **1196 total entities**, 
+including **564 sensors**.
 
-<details><summary>23 Custom Integrations</summary>
+<details><summary>22 Custom Integrations</summary>
   
 
 #### [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting)
@@ -207,12 +207,6 @@ including **567 sensors**.
 #### [Event Sensor v2.4.1](https://github.com/azogue/eventsensor)
     HomeAssistant custom sensor to track specific events
     Authors:@azogue.
-  
-  
-
-#### [Fontawesome v1.3.1](https://github.com/thomasloven/hass-fontawesome)
-    🔹 Use icons from fontawesome in home-assistant
-    
   
   
 
@@ -400,7 +394,7 @@ including **567 sensors**.
     
 
 
-#### [Simple Thermostat v2.3.2](https://github.com/nervetattoo/simple-thermostat)
+#### [Simple Thermostat v2.4.0](https://github.com/nervetattoo/simple-thermostat)
     A different take on the thermostat card for Home Assistant ♨️
 
 
@@ -479,7 +473,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0b4-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0b5-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
