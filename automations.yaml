@@ -3,33 +3,32 @@
   description: Notify me to open up the house when the temperature is getting cooler
     outside and the humidity outside isn't a lot higher.
   trigger:
-  - for:
-      minutes: 15
-    platform: template
-    value_template: '{{ states("sensor.home_temperature")|int >= (states("sensor.accuweather_realfeel_temperature")|int)
+  - platform: template
+    value_template: '{{ states("sensor.home_temperature")|float > states("sensor.outdoor_temperature")|float
       }}'
   condition:
   - condition: state
     entity_id: input_boolean.cooler_outside_notification
-    state: 'false'
+    state: 'off'
   - condition: template
-    value_template: '{{ (states("sensor.openweathermap_humidity")|round - states("sensor.home_humidity")|round)
-      < 20 }}'
+    value_template: '{{ (states("sensor.outdoor_humidity")|round - states("sensor.home_humidity")|round)
+      <= 25 }}'
+  - after: '15:00'
+    before: '21:00'
+    condition: time
   action:
   - data: {}
     entity_id: input_boolean.cooler_outside_notification
     service: input_boolean.turn_on
   - data:
-      message: It is getting cooler outside. Consider opening up the house.
+      message: It is getting cooler outside. Consider using the House Fan.
       title: Cool off!
       who: brian
-    service: script.notify_ios
-  - after: '15:00'
-    before: '21:00'
-    condition: time
+      group: comfort-action
+    service: script.notify_mobile
   - data:
       media_player: group.google_welcome
-      message: It is getting cooler outside. Consider opening up the house.
+      message: It is getting cooler outside. Consider using the House Fan.
     service: script.notify_speech
   mode: single
 - id: '1588556714529'
@@ -393,4 +392,30 @@
   - service: automation.turn_off
     target:
       entity_id: automation.startup
+  mode: single
+- id: '1619989994523'
+  alias: Temperature Warmer Outside
+  description: Notify me to open up the house when the temperature is getting warmer
+    outside.
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.home_temperature")|float <= states("sensor.outdoor_temperature")|float
+      }}'
+  condition:
+  - condition: state
+    entity_id: input_boolean.cooler_outside_notification
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.cooler_outside_notification
+  - service: script.notify_mobile
+    data:
+      group: comfort-action
+      title: Warming up!
+      message: It is getting warmer outside. Please close up the house.
+  - service: script.notify_speech
+    data:
+      media_player: group.google_downstairs
+      message: It is getting warmer outside. Please close up the house.
   mode: single
