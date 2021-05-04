@@ -1,0 +1,85 @@
+---
+# Warn us if any doors or windows are open or unlocked
+#
+alias: "KEEP UNLOCKED: Actionable Notification"
+id: keep_unlocked_actionable_notification
+#mode: single
+trigger:
+  # Trigger the notification when the door unlocks.
+  - platform: state
+    entity_id: lock.front_door
+    from: "locked"
+    to: "unlocked"
+  - platform: state
+    entity_id: lock.test_door
+    from: "locked"
+    to: "unlocked"
+variables:
+  tag: KEEP_UNLOCKED
+  front_door_unlocked: '{{ trigger.to_state.state == "unlocked" }}'
+action:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       front_door_unlocked: {{ front_door_unlocked }}
+
+  # Send the actionable notification.
+  - service: script.notify_mobile
+    data:
+      who: 'brian'
+      title: 'Door Unlocked'
+      message: 'Would you like the door to remain unlocked?'
+      tag: '{{ tag }}'
+      url: /lovelace/downstairs#entry
+      actions:
+        - action: 'KEEP_UNLOCKED'
+          title: Leave unlocked
+          behavior: 'default'
+        - action: 'ALLOW_TO_LOCK'
+          title: Allow to lock
+          destructive: true
+
+  # Wait for the requested response.
+  - alias: Awaiting action selection
+    wait_for_trigger:
+      - platform: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: 'KEEP_UNLOCKED'
+      - platform: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: 'ALLOW_TO_LOCK'
+    timeout:
+      minutes: "10"
+    continue_on_timeout: false
+
+  - variables:
+      trigger_timed_out: '{{ wait.completed == false }}'
+      chosen_action: '{{ wait.trigger.event.data.action }}'
+
+  # Clear the message prompt after the timeout ends.
+  - choose:
+      - conditions:
+          - '{{ trigger_timed_out }}'
+        sequence:
+          - service: script.notify_mobile_clear
+            data:
+              who: 'brian'
+              tag: '{{ tag }}'
+
+  # Take the requested action!
+  - choose:
+      - conditions:
+          - '{{ chosen_action == "KEEP_UNLOCKED" }}'
+        sequence:
+          # Keep the front door unlocked.
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.leave_unlocked
+
+      - conditions:
+          - '{{ chosen_action == "ALLOW_TO_LOCK" or trigger_timed_out }}'
+        sequence:
+          # Allow the door to lock automatically after the timer expires.
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.leave_unlocked

@@ -59,8 +59,8 @@ variables:
         {%- endif %}
       '{{ "critical" if critical else "disabled_critical" }}': 1
       '{{ "volume" if critical else "disabled_volume" }}': 1.0
+  actions: '{{ actions }}'
 sequence:
-  # Only continue it mobile notifications are enabled.
   - condition: state
     entity_id: input_boolean.mobile_notifications
     state: 'on'
@@ -68,12 +68,7 @@ sequence:
   # - service: script.debug
   #   data:
   #     message: |
-  #       subtitle: '{{ subtitle }}'
-  #       url: '{{ url }}'
-  #       entity_id: '{{ camera }}'
-  #       push: '{{ push }}'
-  #       group: '{{ group }}'
-  #       tag: '{{ tag }}'
+  #       '{{ "disabled_" if action1 is not string }}actions': '{{ actions }}'
 
   - service: '{{ notification_service }}'
     data:
@@ -84,8 +79,12 @@ sequence:
         url: '{{ url }}'
         entity_id: '{{ camera }}'
         push: '{{ push }}'
-        '{{ "group" if group else "disabled_group" }}': '{{ group }}'
-        '{{ "tag" if tag else "disabled_tag" }}': '{{ tag }}'
+        actions: '{{ actions }}'
+        '{{ "disabled_" if group == "" }}group': '{{ group }}'
+        '{{ "disabled_" if tag == "" }}tag': '{{ tag }}'
+
+#        '{{ "disabled_" if actions is not string }}actions': |
+#          {{ actions }}
 
 fields:
   who:
@@ -95,13 +94,13 @@ fields:
     selector:
       text:
   title:
-    description: Bolded first line of the message.
+    description: Bold first line of the message.
     example: Safety Alert!
     default: Home Assistant
     selector:
       text:
   subtitle:
-    description: Slightly less bolded second line of the message.
+    description: Bold second line of the message.
     example: Notification
     selector:
       text:
