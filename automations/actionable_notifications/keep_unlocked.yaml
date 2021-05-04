@@ -3,7 +3,7 @@
 #
 alias: "KEEP UNLOCKED: Actionable Notification"
 id: keep_unlocked_actionable_notification
-#mode: single
+mode: restart
 trigger:
   # Trigger the notification when the door unlocks.
   - platform: state
@@ -26,16 +26,16 @@ action:
   # Send the actionable notification.
   - service: script.notify_mobile
     data:
-      who: 'brian'
-      title: 'Door Unlocked'
-      message: 'Would you like the door to remain unlocked?'
-      tag: '{{ tag }}'
+      who: "brian"
+      title: "Door Unlocked"
+      message: "Would you like the door to remain unlocked?"
+      tag: "{{ tag }}"
       url: /lovelace/downstairs#entry
       actions:
-        - action: 'KEEP_UNLOCKED'
+        - action: "KEEP_UNLOCKED"
           title: Leave unlocked
-          behavior: 'default'
-        - action: 'ALLOW_TO_LOCK'
+          behavior: "default"
+        - action: "ALLOW_TO_LOCK"
           title: Allow to lock
           destructive: true
 
@@ -45,28 +45,28 @@ action:
       - platform: event
         event_type: mobile_app_notification_action
         event_data:
-          action: 'KEEP_UNLOCKED'
+          action: "KEEP_UNLOCKED"
       - platform: event
         event_type: mobile_app_notification_action
         event_data:
-          action: 'ALLOW_TO_LOCK'
+          action: "ALLOW_TO_LOCK"
     timeout:
       minutes: "10"
     continue_on_timeout: false
 
   - variables:
-      trigger_timed_out: '{{ wait.completed == false }}'
-      chosen_action: '{{ wait.trigger.event.data.action }}'
+      trigger_timed_out: "{{ wait.completed == false }}"
+      chosen_action: "{{ wait.trigger.event.data.action }}"
 
   # Clear the message prompt after the timeout ends.
   - choose:
       - conditions:
-          - '{{ trigger_timed_out }}'
+          - "{{ trigger_timed_out }}"
         sequence:
           - service: script.notify_mobile_clear
             data:
-              who: 'brian'
-              tag: '{{ tag }}'
+              who: "brian"
+              tag: "{{ tag }}"
 
   # Take the requested action!
   - choose:
