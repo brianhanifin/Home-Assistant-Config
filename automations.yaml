@@ -3,10 +3,12 @@
   description: Notify me to open up the house when the temperature is getting cooler
     outside and the humidity outside isn't a lot higher.
   trigger:
-  - platform: template
+  - platform: time_pattern
+    minutes: /15
+  condition:
+  - condition: template
     value_template: '{{ states("sensor.outdoor_temperature")|float < (states("sensor.home_temperature")|float
       - 2) }}'
-  condition:
   - condition: state
     entity_id: input_boolean.cooler_outside_notification
     state: 'off'
@@ -400,10 +402,15 @@
   description: Notify me to open up the house when the temperature is getting warmer
     outside.
   trigger:
-  - platform: template
+  - platform: time_pattern
+    minutes: /15
+  condition:
+  - condition: template
     value_template: '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_temperature")|float
       }}'
-  condition: []
+  - condition: time
+    after: 06:00
+    before: '15:00'
   action:
   - choose:
     - conditions:
