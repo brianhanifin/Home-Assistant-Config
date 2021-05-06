@@ -222,7 +222,7 @@ including **564 sensors**.
   
   
 
-#### [Ha Sun2 v1.8.3](https://github.com/pnbruckner/ha-sun2)
+#### [Ha Sun2 v2.0.0](https://github.com/pnbruckner/ha-sun2)
     Home Assistant Sun2 Sensor
     Authors:@pnbruckner.
   
@@ -291,13 +291,13 @@ including **564 sensors**.
   
   
 
-#### [Wyze Bulb, Switch And Sensor Integration v2021.4.28](https://github.com/JoshuaMulliken/ha-wyzeapi)
+#### [Wyze Bulb, Switch And Sensor Integration v2021.5.5-deices-update-beta.3](https://github.com/JoshuaMulliken/ha-wyzeapi)
     Home Assistant Integration for Wyze devices.
     Authors:@JoshuaMulliken.
   
   
 
-#### [Youtube v0.6.0](https://github.com/custom-components/youtube)
+#### [Youtube v0.7.0](https://github.com/custom-components/youtube)
     A platform which give you info about the newest video on a channel
     Authors:@ludeeus, @pinkywafer.
 </details>
@@ -429,7 +429,7 @@ including **564 sensors**.
 
 <details><summary>3 Addons</summary>
 
-#### ESPHome v1.17.0
+#### ESPHome v1.17.1
     ESPHome Hass.io add-on for intelligently managing all your ESP8266/ESP32 devices.
 
 
@@ -473,7 +473,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0b7-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
