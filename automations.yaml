@@ -4,8 +4,8 @@
     outside and the humidity outside isn't a lot higher.
   trigger:
   - platform: template
-    value_template: '{{ states("sensor.home_temperature")|float > states("sensor.outdoor_temperature")|float
-      }}'
+    value_template: '{{ states("sensor.outdoor_temperature")|float < (states("sensor.home_temperature")|float
+      - 2) }}'
   condition:
   - condition: state
     entity_id: input_boolean.cooler_outside_notification
@@ -13,7 +13,7 @@
   - condition: template
     value_template: '{{ (states("sensor.outdoor_humidity")|round - states("sensor.home_humidity")|round)
       <= 25 }}'
-  - after: '15:00'
+  - after: '12:00'
     before: '21:00'
     condition: time
   action:
@@ -25,6 +25,7 @@
       title: Cool off!
       who: brian
       group: comfort-action
+      url: /lovelace/climate
     service: script.notify_mobile
   - data:
       media_player: group.google_welcome
@@ -393,27 +394,33 @@
     target:
       entity_id: automation.startup
   mode: single
+  initial_state: true
 - id: '1619989994523'
   alias: Temperature Warmer Outside
   description: Notify me to open up the house when the temperature is getting warmer
     outside.
   trigger:
   - platform: template
-    value_template: '{{ states("sensor.home_temperature")|float <= states("sensor.outdoor_temperature")|float
+    value_template: '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_temperature")|float
       }}'
-  condition:
-  - condition: state
-    entity_id: input_boolean.cooler_outside_notification
-    state: 'on'
+  condition: []
   action:
-  - service: input_boolean.turn_off
-    target:
-      entity_id: input_boolean.cooler_outside_notification
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.cooler_outside_notification
+        state: 'on'
+      sequence:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.cooler_outside_notification
+    default: []
   - service: script.notify_mobile
     data:
       group: comfort-action
       title: Warming up!
       message: It is getting warmer outside. Please close up the house.
+      url: /lovelace/climate
   - service: script.notify_speech
     data:
       media_player: group.google_downstairs
