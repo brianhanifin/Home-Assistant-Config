@@ -7,7 +7,7 @@ switches:
     icon_template: mdi:air-conditioner
     value_template: '{{ states("sensor.lucas_ac_power")|int > 0 }}'
     turn_on:
-      service: script.lucas_room_room_ac
+      service: script.lucas_room_ac
       data:
         # Send "none" if the A/C is already on, as another "power" instruction would just turn the A/C off.
         commands: |
@@ -17,6 +17,6 @@ switches:
             none
           {% endif %}
     turn_off:
-      service: script.lucas_room_room_ac
+      service: script.lucas_room_ac
       data:
-        commands: 'power'
+        commands: "power"
