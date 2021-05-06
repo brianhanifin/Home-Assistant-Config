@@ -1,7 +1,6 @@
 ---
 alias: Safety Alert Leak
 id: safety_alert_leak
-
 mode: single
 trigger:
   platform: state
@@ -15,30 +14,31 @@ trigger:
     - binary_sensor.master_bathroom_1_leak
     - binary_sensor.master_bathroom_2_leak
     - binary_sensor.upstairs_bathroom_leak
+  from: "off"
   to: "on"
 condition:
   - condition: template
     value_template: '{{ trigger.to_state.name|trim != "" }}'
 variables:
-  room: '{{ trigger.to_state.name|lower|replace(" leak sensor", "")|replace(" leak", "")|trim }}'
+  room: '{{ trigger.to_state.name|lower|replace(" leak", "")|replace(" #1", "")|replace(" #2", "")|trim }}'
 action:
   - service: script.notify_speech
     data:
-      media_player: group.google
-      message: 'A leak has been detected in the {{ room }}!'
+      media_player: group.google_speakers
+      message: "A leak has been detected in the {{ room }}!"
 
   - service: script.notify_mobile
     data:
       critical: true
       title: "WATER LEAK DETECTED!"
-      message: '{{ room|upper }}: A leak has been detected!'
+      message: "{{ room|upper }}: A leak has been detected!"
       who: brian
       group: safety
 
   - service: script.notify_web
     data:
       title: "WATER LEAK DETECTED!"
-      message: '{{ room|upper }}: A leak has been detected!'
+      message: "{{ room|upper }}: A leak has been detected!"
       id: "safety"
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
