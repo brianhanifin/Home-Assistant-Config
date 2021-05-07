@@ -3,7 +3,7 @@ script:
   wakeup_lucas:
     variables:
       who: lucas
-      light: light.play_room
+      light: light.lucas_room
     sequence:
       # - service: script.debug
       #   data:
@@ -14,17 +14,18 @@ script:
         data:
           entities:
             fan.play_room: off
+            switch.lucas_ac_cool: off
 
       - service: script.wakeup_light_start
         data:
-          light: '{{ light }}'
-          who: '{{ who }}'
+          light: "{{ light }}"
+          who: "{{ who }}"
 
   wakeup_lucas_timeout:
     sequence:
       - service: homeassistant.turn_off
         data:
-          entity_id: light.play_room
+          entity_id: light.lucas_room
 
 input_boolean:
   wakeup_lucas_status:
