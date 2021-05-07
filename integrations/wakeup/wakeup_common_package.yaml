@@ -5,11 +5,12 @@ automation:
     # Trigger at the wakeup time everyday.
     trigger:
       - platform: template
-        value_template: '{{ is_state("sensor.wakeup_brian_start", states("sensor.time")) }}'
-      - platform: template
-        value_template: '{{ is_state("sensor.wakeup_lucas_start", states("sensor.time")) }}'
-      - platform: template
-        value_template: '{{ is_state("sensor.wakeup_nerene_start", states("sensor.time")) }}'
+        value_template: |
+          {{
+            states("sensor.wakeup_brian_start") == states("sensor.time")
+            or states("sensor.wakeup_lucas_start") == states("sensor.time")
+            or states("sensor.wakeup_nerene_start") == states("sensor.time")
+          }}
     variables:
       who: '{{ trigger.to_state.entity_id|replace("sensor.wakeup_","")|replace("_start","") }}'
       skipnext_entity: |
@@ -21,7 +22,7 @@ automation:
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
     condition:
       # Continue if it is enabled and today is a wakeup day..
-      - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on") 
+      - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on")
         and wakeup_today }}'
 
       # Continue if they are home (or unknown if we cannot track their presence).
