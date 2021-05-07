@@ -4,6 +4,6 @@ sensors:
   unknown_count:
     friendly_name: Unknown
     icon_template: mdi:help-rhombus
-    value_template: '{{ states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list | count }}'
+    value_template: '{{ states | selectattr("state","eq","unknown") | rejectattr("entity_id","eq","sensor.unknown_count") | map(attribute="entity_id") | list | count }}'
     attribute_templates:
-      entities: '{{ states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list }}'
+      entities: '{{ states | selectattr("state","eq","unknown") | rejectattr("entity_id","eq","sensor.unknown_count") | map(attribute="entity_id") | list }}'
