@@ -4,8 +4,8 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {{ is_state('sensor.event_reminder_5_1',states('sensor.time'))
-        or is_state('sensor.event_reminder_5_2',states('sensor.time')) }}
+        {{ states('sensor.event_reminder_5_1') == states('sensor.time')
+        or states('sensor.event_reminder_5_2') == states('sensor.time') }}
     condition:
       condition: and
       conditions:
@@ -66,7 +66,6 @@ input_boolean:
   event_reminder_5_sun:
     name: Sunday
     icon: mdi:checkbox-marked-circle
-
 
 input_datetime:
   event_reminder_5_1:

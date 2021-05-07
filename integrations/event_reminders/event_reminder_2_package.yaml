@@ -4,8 +4,8 @@ automation:
     trigger:
       platform: template
       value_template: >-
-        {{ is_state('sensor.event_reminder_2_1',states('sensor.time'))
-        or is_state('sensor.event_reminder_2_2',states('sensor.time')) }}
+        {{ states('sensor.event_reminder_2_1') == states('sensor.time')
+        or states('sensor.event_reminder_2_2') == states('sensor.time') }}
     condition:
       condition: and
       conditions:
