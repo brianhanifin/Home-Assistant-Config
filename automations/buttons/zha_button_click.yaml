@@ -1,7 +1,6 @@
 ---
 alias: ZHA Button Click
 id: zha_button_click
-
 mode: restart # Force restart to pickup double click
 max_exceeded: silent
 trigger:
@@ -40,21 +39,21 @@ action:
         "cc:cc:cc:ff": "ikea"
         "00:15:8d:00": "xiaomi"
 
-      device_ieee: '{{ trigger.event.data.device_ieee }}'
+      device_ieee: "{{ trigger.event.data.device_ieee }}"
 
   # Stop if a manufacturer was not identified.
   - condition: template
     value_template: '{{ manufacturer not in [none,"unknown",""] }}'
 
   - variables:
-      manufacturer: '{{ manufacturers[device_ieee[0:11]]|default }}'
+      manufacturer: "{{ manufacturers[device_ieee[0:11]]|default }}"
 
   # Stop if a remote was not identified.
   - condition: template
     value_template: '{{ remote not in [none,"unknown",""] }}'
 
   - variables:
-      remote: '{{ remotes[device_ieee] }}'
+      remote: "{{ remotes[device_ieee] }}"
       click_count: |
         {% if manufacturer == "xiaomi" %}
           {%- set count = trigger.event.data.args.value %}
@@ -86,12 +85,11 @@ action:
           # Take the requested action!
           - service: script.zha_button_actions
             data:
-              click_count: '{{ click_count }}'
-              command: '{{ command }}'
-              command_modifier: '{{ command_modifier }}'
-              manufacturer: '{{ manufacturer }}'
-              remote: '{{ remote }}'
-
+              click_count: "{{ click_count }}"
+              command: "{{ command }}"
+              command_modifier: "{{ command_modifier }}"
+              manufacturer: "{{ manufacturer }}"
+              remote: "{{ remote }}"
           # - service: script.debug
           #   data:
           #     title: '"{{ remote }}" click'
@@ -102,5 +100,4 @@ action:
           #       click_count: {{ click_count }}
           #       manufacturer: {{ manufacturer }}
           #       remote: {{ remote }}
-
           #       {{ trigger.event.data }}
