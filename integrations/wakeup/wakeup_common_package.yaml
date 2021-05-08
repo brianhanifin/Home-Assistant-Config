@@ -2,11 +2,12 @@
 automation:
   - alias: Wakeup Light Activate
     id: wakeup_light_activate
+    mode: parallel
     # Trigger at the wakeup time everyday.
     trigger:
       - platform: template
         value_template: |
-          {% set time_now = as_timestamp(now()) | timestamp_custom("%I:%M") %}
+          {% set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
           {{
             states("sensor.wakeup_brian_start") == time_now
             or states("sensor.wakeup_lucas_start") == time_now
@@ -14,17 +15,15 @@ automation:
           }}
     variables:
       who: '{{ trigger.to_state.entity_id|replace("sensor.wakeup_","")|replace("_start","") }}'
-      skipnext_entity: |
-        input_boolean.wakeup_{{ who }}_skipnext
+      skipnext_entity: "input_boolean.wakeup_{{ who }}_skipnext"
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
       today_name: '{{ now().strftime("%a")|lower }}'
-      wakeup_today_entity: |
-        input_boolean.wakeup_{{ who }}_{{ today_name }}
+      wakeup_today_entity: "input_boolean.wakeup_{{ who }}_{{ today_name }}"
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
     condition:
       # Continue if it is enabled and today is a wakeup day..
       - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on")
-        and wakeup_today }}'
+            and wakeup_today }}'
 
       # Continue if they are home (or unknown if we cannot track their presence).
       #- '{{ states("person." + who) in ["home","unknown"] }}'
@@ -53,10 +52,6 @@ automation:
 
               - service_template: "script.wakeup_{{ who }}"
 
-              - service: script.toast
-                data:
-                  message: "{{ who|title }}'s Wakeup Light Complete"
-
         default:
           service: input_boolean.turn_off
           data:
@@ -82,7 +77,7 @@ automation:
 
       - service_template: "script.wakeup_{{ who }}_timeout"
 
-  - alias: wakeup_warmup_water
+  - alias: Wakeup Warmup Water
     id: wakeup_warm_water
     trigger:
       # Trigger at wakeup time.
@@ -109,6 +104,7 @@ automation:
 
 script:
   wakeup_light_start:
+    alias: Wakeup Light Start
     sequence:
       # Transition the light to 100% over 10 minutes.
       - service: light.turn_on
@@ -137,10 +133,14 @@ script:
 
           until:
             - '{{ is_state_attr(light, "brightness", 254)
-              or is_state(light, "off") }}'
+                  or is_state(light, "off") }}'
 
       # Start a countdown timer which triggers and automation upon its conclusion.
       # see: automation.wakeup_light_timeout
       - service: timer.start
         data:
           entity_id: '{{ "timer.wakeup_timeout_" ~ who }}'
+
+      - service: script.toast
+        data:
+          message: "{{ who|title }}'s Wakeup Light Complete"
