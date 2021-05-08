@@ -1,101 +1,98 @@
-- id: "1587853788536"
+- id: '1587853788536'
   alias: Temperature Cooler Outside
-  description:
-    Notify me to open up the house when the temperature is getting cooler
+  description: Notify me to open up the house when the temperature is getting cooler
     outside and the humidity outside isn't a lot higher.
   trigger:
-    - platform: time_pattern
-      minutes: /15
+  - platform: time_pattern
+    minutes: /15
   condition:
-    - condition: template
-      value_template:
-        '{{ states("sensor.outdoor_temperature")|float < (states("sensor.home_temperature")|float
-        - 2) }}'
-    - condition: state
-      entity_id: input_boolean.cooler_outside_notification
-      state: "off"
-    - condition: template
-      value_template:
-        '{{ (states("sensor.outdoor_humidity")|round - states("sensor.home_humidity")|round)
-        <= 25 }}'
-    - after: "15:00"
-      before: "21:00"
-      condition: time
+  - condition: template
+    value_template: '{{ states("sensor.outdoor_temperature")|float < (states("sensor.home_temperature")|float
+      - 2) }}'
+  - condition: state
+    entity_id: input_boolean.cooler_outside_notification
+    state: 'off'
+  - condition: template
+    value_template: '{{ (states("sensor.outdoor_humidity")|round - states("sensor.home_humidity")|round)
+      <= 25 }}'
+  - after: '15:00'
+    before: '21:00'
+    condition: time
   action:
-    - data: {}
-      entity_id: input_boolean.cooler_outside_notification
-      service: input_boolean.turn_on
-    - data:
-        message: It is getting cooler outside. Consider using the House Fan.
-        title: Cool off!
-        who: brian
-        group: comfort-action
-        url: /lovelace/climate
-      service: script.notify_mobile
-    - data:
-        media_player: group.google_welcome
-        message: It is getting cooler outside. Consider using the House Fan.
-      service: script.notify_speech
+  - data: {}
+    entity_id: input_boolean.cooler_outside_notification
+    service: input_boolean.turn_on
+  - data:
+      message: It is getting cooler outside. Consider using the House Fan.
+      title: Cool off!
+      who: brian
+      group: comfort-action
+      url: /lovelace/climate
+    service: script.notify_mobile
+  - data:
+      media_player: group.google_welcome
+      message: It is getting cooler outside. Consider using the House Fan.
+    service: script.notify_speech
   mode: single
-- id: "1588556714529"
+- id: '1588556714529'
   alias: Maintenance Daily
   description: Runs every night at midnight.
   trigger:
-    - event_data: {}
-      event_type: midnight
-      platform: event
+  - event_data: {}
+    event_type: midnight
+    platform: event
   condition: []
   action:
-    - data:
-        duration: indefinitely
-        message: Daily maintenance.
-      service: script.toast
-    - data: {}
-      entity_id: input_boolean.cooler_outside_notification
-      service: input_boolean.turn_off
-    - data: {}
-      entity_id: input_boolean.guest_mode
-      service: input_boolean.turn_off
-    - data: {}
-      entity_id: input_boolean.leave_unlocked
-      service: input_boolean.turn_off
-    - service: switch.turn_off
-      data: {}
-      entity_id: switch.vr_mode
-    - data: {}
-      service: script.create_actionable_lights_group
-    - data: {}
-      service: script.update_responsibility_dishes_week
-    - delay: "minutes: 1"
-    - data: {}
-      service: script.holiday_sensors_update
-    - data:
-        keep_days: 10
-        repack: true
-      service: recorder.purge
+  - data:
+      duration: indefinitely
+      message: Daily maintenance.
+    service: script.toast
+  - data: {}
+    entity_id: input_boolean.cooler_outside_notification
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.guest_mode
+    service: input_boolean.turn_off
+  - data: {}
+    entity_id: input_boolean.leave_unlocked
+    service: input_boolean.turn_off
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.vr_mode
+  - data: {}
+    service: script.create_actionable_lights_group
+  - data: {}
+    service: script.update_responsibility_dishes_week
+  - delay: 'minutes: 1'
+  - data: {}
+    service: script.holiday_sensors_update
+  - data:
+      keep_days: 10
+      repack: true
+    service: recorder.purge
   mode: single
-- id: "1588557204708"
+- id: '1588557204708'
   alias: Midnight - Custom Event
   description: Fire a custom event at midnight.
   trigger:
-    - at: 00:00:01
-      platform: time
+  - at: 00:00:01
+    platform: time
   condition: []
   action:
-    - event: midnight
-      event_data: {}
-- id: "1601178260005"
+  - event: midnight
+    event_data: {}
+- id: '1601178260005'
   alias: Shopping List Add
-  description: ""
+  description: ''
   trigger:
-    - platform: webhook
-      webhook_id: shopping_list_add
+  - platform: webhook
+    webhook_id: shopping_list_add
   condition: []
   action:
-    - service: shopping_list.add_item
-      data: {}
+  - service: shopping_list.add_item
+    data: {}
   mode: single
-- id: "1614888936159"
+- id: '1614888936159'
   alias: Family Room Click Handler
   description: Inovelli Red Series LZW31-SN Dimmer (ZWave-JS)
   use_blueprint:
@@ -104,347 +101,366 @@
       inovelli_switch: 2d8b03f66fda68a6e0f7b2a506a33b02
       config_button: []
       button_a:
-        - type: turn_on
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
+      - type: turn_on
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
       button_b:
-        - type: turn_off
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-          entity_id: light.family_room_floor_lamp
-          domain: light
-        - type: turn_off
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
+      - type: turn_off
+        device_id: 63789fb09fae954b2c90a2aa98f6b102
+        entity_id: light.family_room_floor_lamp
+        domain: light
+      - type: turn_off
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
       button_a_held:
-        - type: brightness_increase
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
+      - type: brightness_increase
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
       button_b_held:
-        - type: brightness_decrease
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
+      - type: brightness_decrease
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
       button_a2:
-        - type: turn_on
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-          entity_id: light.family_room_floor_lamp
-          domain: light
-          brightness_pct: 100
-        - type: turn_on
-          device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
-          entity_id: light.family_room
-          domain: light
-          brightness_pct: 100
-        - type: turn_on
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
-          brightness_pct: 100
-          kelvin: 5000
+      - type: turn_on
+        device_id: 63789fb09fae954b2c90a2aa98f6b102
+        entity_id: light.family_room_floor_lamp
+        domain: light
+        brightness_pct: 100
+      - type: turn_on
+        device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
+        entity_id: light.family_room
+        domain: light
+        brightness_pct: 100
+      - type: turn_on
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
+        brightness_pct: 100
+        kelvin: 5000
       button_b2:
-        - type: turn_off
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-          entity_id: light.family_room_floor_lamp
-          domain: light
+      - type: turn_off
+        device_id: 63789fb09fae954b2c90a2aa98f6b102
+        entity_id: light.family_room_floor_lamp
+        domain: light
       button_a3:
-        - type: turn_off
-          device_id: 55f8f490b80944e5a449e0e373374a9d
-          entity_id: switch.family_room_fan
-          domain: switch
+      - type: turn_off
+        device_id: 55f8f490b80944e5a449e0e373374a9d
+        entity_id: switch.family_room_fan
+        domain: switch
       button_b3:
-        - type: turn_off
-          device_id: 55f8f490b80944e5a449e0e373374a9d
-          entity_id: switch.family_room_fan
-          domain: switch
+      - type: turn_off
+        device_id: 55f8f490b80944e5a449e0e373374a9d
+        entity_id: switch.family_room_fan
+        domain: switch
       button_a4:
-        - service: homeassistant.turn_on
-          target:
-            area_id:
-              - dining_room
-              - kitchen
-            device_id:
-              - cc4e24bcff154e1d90d76c3e03d341b3
-              - 63789fb09fae954b2c90a2aa98f6b102
-              - 2d8b03f66fda68a6e0f7b2a506a33b02
+      - service: homeassistant.turn_on
+        target:
+          area_id:
+          - dining_room
+          - kitchen
+          device_id:
+          - cc4e24bcff154e1d90d76c3e03d341b3
+          - 63789fb09fae954b2c90a2aa98f6b102
+          - 2d8b03f66fda68a6e0f7b2a506a33b02
       button_b4:
-        - service: homeassistant.turn_off
-          target:
-            area_id:
-              - dining_room
-              - kitchen
-              - family_room
+      - service: homeassistant.turn_off
+        target:
+          area_id:
+          - dining_room
+          - kitchen
+          - family_room
       button_a5:
-        - service: input_boolean.turn_on
-          target:
-            entity_id: input_boolean.guest_mode
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.guest_mode
       button_b5:
-        - service: input_boolean.turn_off
-          target:
-            entity_id: input_boolean.guest_mode
-- id: "1614889037575"
-  alias: "Multi-click Handler: Family Room"
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.guest_mode
+- id: '1614889037575'
+  alias: 'Multi-click Handler: Family Room'
   description: Inovelli Red Series LZW31-SN Dimmer (ZWave-JS)
   use_blueprint:
     path: brianhanifin/zwave_js_inovelli_lzw31_sn_red_series_dimmer.yaml
     input:
       inovelli_switch: 2d8b03f66fda68a6e0f7b2a506a33b02
       button_a3:
-        - service: fan.turn_on
-          data: {}
-          target:
-            entity_id: fan.family_room
+      - service: fan.turn_on
+        data: {}
+        target:
+          entity_id: fan.family_room
       button_b3:
-        - service: fan.turn_off
-          target:
-            entity_id: fan.family_room
+      - service: fan.turn_off
+        target:
+          entity_id: fan.family_room
       config_button:
-        - service: homeassistant.turn_off
-          target:
-            entity_id: group.family_room_lights
+      - service: homeassistant.turn_off
+        target:
+          entity_id: group.family_room_lights
       button_a:
-        - type: turn_on
-          device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
-          entity_id: light.family_room
-          domain: light
-        - type: turn_on
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
+      - type: turn_on
+        device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
+        entity_id: light.family_room
+        domain: light
+      - type: turn_on
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
       button_b:
-        - type: turn_off
-          device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
-          entity_id: light.family_room
-          domain: light
-        - type: turn_off
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
+      - type: turn_off
+        device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
+        entity_id: light.family_room
+        domain: light
+      - type: turn_off
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
       button_a_held:
-        - type: brightness_increase
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-          entity_id: light.family_room_floor_lamp
-          domain: light
+      - type: brightness_increase
+        device_id: 63789fb09fae954b2c90a2aa98f6b102
+        entity_id: light.family_room_floor_lamp
+        domain: light
       button_b_held:
-        - type: brightness_decrease
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-          entity_id: light.family_room_floor_lamp
-          domain: light
+      - type: brightness_decrease
+        device_id: 63789fb09fae954b2c90a2aa98f6b102
+        entity_id: light.family_room_floor_lamp
+        domain: light
       button_a2:
-        - type: turn_off
-          device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
-          entity_id: light.family_room
-          domain: light
-        - type: turn_on
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-          entity_id: light.family_room_floor_lamp
-          domain: light
-        - type: turn_on
-          device_id: cc4e24bcff154e1d90d76c3e03d341b3
-          entity_id: light.table_lamp
-          domain: light
+      - type: turn_off
+        device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
+        entity_id: light.family_room
+        domain: light
+      - type: turn_on
+        device_id: 63789fb09fae954b2c90a2aa98f6b102
+        entity_id: light.family_room_floor_lamp
+        domain: light
+      - type: turn_on
+        device_id: cc4e24bcff154e1d90d76c3e03d341b3
+        entity_id: light.table_lamp
+        domain: light
       button_b2:
-        - type: turn_off
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-          entity_id: light.family_room_floor_lamp
-          domain: light
+      - type: turn_off
+        device_id: 63789fb09fae954b2c90a2aa98f6b102
+        entity_id: light.family_room_floor_lamp
+        domain: light
       button_a5:
-        - service: input_boolean.turn_on
-          target:
-            entity_id: input_boolean.guest_mode
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.guest_mode
       button_b5:
-        - service: input_boolean.turn_off
-          target:
-            entity_id: input_boolean.guest_mode
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.guest_mode
       button_a4:
-        - service: homeassistant.turn_on
-          target:
-            area_id:
-              - dining_room
-              - kitchen
-            device_id:
-              - cc4e24bcff154e1d90d76c3e03d341b3
-              - 63789fb09fae954b2c90a2aa98f6b102
-              - 2d8b03f66fda68a6e0f7b2a506a33b02
+      - service: homeassistant.turn_on
+        target:
+          area_id:
+          - dining_room
+          - kitchen
+          device_id:
+          - cc4e24bcff154e1d90d76c3e03d341b3
+          - 63789fb09fae954b2c90a2aa98f6b102
+          - 2d8b03f66fda68a6e0f7b2a506a33b02
       button_b4:
-        - type: turn_on
-          device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
-          entity_id: light.home_entry
-          domain: light
-          brightness_pct: 40
-        - service: homeassistant.turn_off
-          target:
-            area_id:
-              - dining_room
-              - kitchen
-              - family_room
-- id: "1615053055187"
-  alias: "Multi-click Handler: Bedroom Dimmer"
-  description: ""
+      - type: turn_on
+        device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
+        entity_id: light.home_entry
+        domain: light
+        brightness_pct: 40
+      - service: homeassistant.turn_off
+        target:
+          area_id:
+          - dining_room
+          - kitchen
+          - family_room
+- id: '1615053055187'
+  alias: 'Multi-click Handler: Bedroom Dimmer'
+  description: ''
   use_blueprint:
     path: kpine/ge_double.yaml
     input:
       device: 8bef4ccfe78c1356e14212171ff1bfc7
       double_tap_on:
-        - service: light.turn_on
-          data:
-            transition: 0
-          target:
-            area_id: bedroom
+      - service: light.turn_on
+        data:
+          transition: 0
+        target:
+          area_id: bedroom
       double_tap_off:
-        - service: switch.turn_off
-          target:
-            area_id: bedroom
-        - service: light.turn_off
-          target:
-            area_id: bedroom
-          data:
-            transition: 0
-- id: "1615055705706"
-  alias: "Remote: Bedroom Nerene"
+      - service: switch.turn_off
+        target:
+          area_id: bedroom
+      - service: light.turn_off
+        target:
+          area_id: bedroom
+        data:
+          transition: 0
+- id: '1615055705706'
+  alias: 'Remote: Bedroom Nerene'
   description: Nerene's bedside remote
   use_blueprint:
     path: NachtaktiverHalbaffe/zha-aqara-wireless-remote-switch-double-rocker.yaml
     input:
       aqara_mini_switch: 8591edcc1f054889977d5fe6eef52d7d
       button_single_press_left:
-        - type: toggle
-          device_id: 8bef4ccfe78c1356e14212171ff1bfc7
-          entity_id: light.bedroom
-          domain: light
+      - type: toggle
+        device_id: 8bef4ccfe78c1356e14212171ff1bfc7
+        entity_id: light.bedroom
+        domain: light
       button_double_press_left:
-        - type: toggle
-          device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
-          entity_id: switch.sound_machine
-          domain: switch
+      - type: toggle
+        device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
+        entity_id: switch.sound_machine
+        domain: switch
       button_long_press_left:
-        - type: toggle
-          device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
-          entity_id: switch.sound_machine
-          domain: switch
+      - type: toggle
+        device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
+        entity_id: switch.sound_machine
+        domain: switch
       button_single_press_right:
-        - service: light.toggle
-          target:
-            device_id:
-              - d77f02df805043fc8eb0896488c2385a
-              - f23c6c2806a045899047ea62f07f35c3
-              - 789732c26297462f8f7ebc624c9394ee
-          data:
-            transition: 0
+      - service: light.toggle
+        target:
+          device_id:
+          - d77f02df805043fc8eb0896488c2385a
+          - f23c6c2806a045899047ea62f07f35c3
+          - 789732c26297462f8f7ebc624c9394ee
+        data:
+          transition: 0
       button_double_press_right:
-        - type: toggle
-          device_id: 79bd98c471854a2689e9ed3b9d57cc8b
-          entity_id: switch.bedroom_fan
-          domain: switch
+      - type: toggle
+        device_id: 79bd98c471854a2689e9ed3b9d57cc8b
+        entity_id: switch.bedroom_fan
+        domain: switch
       button_long_press_right:
-        - type: turn_off
-          device_id: 79bd98c471854a2689e9ed3b9d57cc8b
-          entity_id: switch.bedroom_fan
-          domain: switch
+      - type: turn_off
+        device_id: 79bd98c471854a2689e9ed3b9d57cc8b
+        entity_id: switch.bedroom_fan
+        domain: switch
       button_single_press_both:
-        - service: light.toggle
-          data: {}
-          target:
-            device_id:
-              - 4f2fbaafac2446c2b58d0bc0969a661f
+      - service: light.toggle
+        data: {}
+        target:
+          device_id:
+          - 4f2fbaafac2446c2b58d0bc0969a661f
       button_double_press_both:
-        - service: switch.toggle
-          target:
-            area_id: bedroom
+      - service: switch.toggle
+        target:
+          area_id: bedroom
       button_long_press_both:
-        - service: switch.toggle
-          target:
-            area_id: bedroom
-- id: "1618159056314"
+      - service: switch.toggle
+        target:
+          area_id: bedroom
+- id: '1618159056314'
   alias: Startup
   description: Actions to run at startup.
   trigger:
-    - platform: homeassistant
-      event: start
+  - platform: homeassistant
+    event: start
   condition: []
   action:
-    - service: script.turn_on
-      target:
-        entity_id: script.toast
-      data:
-        variables:
-          message: Startup automation begins
-    - service: frontend.set_theme
-      data:
-        name: Caule Black Blue Glass
-        mode: dark
-    - delay:
-        hours: 0
-        minutes: 1
-        seconds: 0
-        milliseconds: 0
-    - service: script.turn_on
-      target:
-        entity_id: script.inovelli_led_set_defaults
-      data:
-        variables:
-          entity_id: light.family_room
-          color: teal
-          level_on: 3
-          level_off: 1
-    - service: script.turn_on
-      target:
-        entity_id: script.toast
-      data:
-        variables:
-          message: Startup automation complete
-    - service: automation.turn_off
-      target:
-        entity_id: automation.startup
+  - service: script.turn_on
+    target:
+      entity_id: script.toast
+    data:
+      variables:
+        message: Startup automation begins
+  - service: frontend.set_theme
+    data:
+      name: Caule Black Blue Glass
+      mode: dark
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: script.turn_on
+    target:
+      entity_id: script.inovelli_led_set_defaults
+    data:
+      variables:
+        entity_id: light.family_room
+        color: teal
+        level_on: 3
+        level_off: 1
+  - service: script.turn_on
+    target:
+      entity_id: script.toast
+    data:
+      variables:
+        message: Startup automation complete
+  - service: automation.turn_off
+    target:
+      entity_id: automation.startup
   mode: single
   initial_state: true
-- id: "1619989994523"
+- id: '1619989994523'
   alias: Temperature Warmer Outside
-  description:
-    Notify me to open up the house when the temperature is getting warmer
+  description: Notify me to open up the house when the temperature is getting warmer
     outside.
   trigger:
-    - platform: time_pattern
-      minutes: /15
+  - platform: time_pattern
+    minutes: /15
   condition:
-    - condition: template
-      value_template:
-        '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_temperature")|float
-        }}'
-    - condition: time
-      after: 06:00
-      before: "15:00"
+  - condition: template
+    value_template: '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_temperature")|float
+      }}'
+  - condition: time
+    after: 06:00
+    before: '15:00'
   action:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_boolean.cooler_outside_notification
-              state: "on"
-          sequence:
-            - service: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.cooler_outside_notification
-      default: []
-    - service: script.notify_mobile
-      data:
-        group: comfort-action
-        title: Warming up!
-        message: It is getting warmer outside. Please close up the house.
-        url: /lovelace/climate
-    - service: script.notify_speech
-      data:
-        media_player: group.google_downstairs
-        message: It is getting warmer outside. Please close up the house.
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.cooler_outside_notification
+        state: 'on'
+      sequence:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.cooler_outside_notification
+    default: []
+  - service: script.notify_mobile
+    data:
+      group: comfort-action
+      title: Warming up!
+      message: It is getting warmer outside. Please close up the house.
+      url: /lovelace/climate
+  - service: script.notify_speech
+    data:
+      media_player: group.google_downstairs
+      message: It is getting warmer outside. Please close up the house.
   mode: single
-- id: "1620056955070"
-  alias: "Scheduled Tasks: Hourly"
+- id: '1620056955070'
+  alias: 'Scheduled Tasks: Hourly'
   description: Tasks to run every hour.
   trigger:
-    - platform: time_pattern
-      hours: /1
+  - platform: time_pattern
+    hours: /1
   condition: []
   action:
-    - service: script.refresh_update_sensors
+  - service: script.refresh_update_sensors
+  mode: single
+- id: '1620509712530'
+  alias: 'Scheduled Tasks: 5 minutes'
+  description: Tasks to run every 5 minutes.
+  trigger:
+  - platform: time_pattern
+    minutes: /5
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{%- set uptime_minutes = as_timestamp(now()) - as_timestamp(states("sensor.last_restart"))|float
+          / 60 %}
+
+          {{ uptime_minutes > 5 }}'
+      sequence:
+      - service: automation.turn_off
+        target:
+          entity_id: automation.startup
+    default: []
   mode: single
