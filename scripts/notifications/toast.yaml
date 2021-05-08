@@ -1,6 +1,14 @@
 ---
+variables:
+  message: "{{ message|default }}"
+  duration: |
+    {%- if duration in [0,"indefinitely"] %}
+      0
+    {%- else %}
+      {{ duration|default(120) * 1000 }}
+    {% endif %}
 sequence:
   - service: browser_mod.toast
-    data_template:
-      message: '{{ message|default("") }}'
-      duration: '{{ duration|default(300) }}'
+    data:
+      message: "{{ message }}"
+      duration: "{{ duration }}"

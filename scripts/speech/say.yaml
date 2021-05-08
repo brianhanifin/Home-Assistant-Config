@@ -1,5 +1,5 @@
 ---
-mode: parallel 
+mode: parallel
 variables:
   media_player: '{{ media_player|default("media_player.google_kitchen") }}'
   briefing: !include ../../templates/speech/briefing.yaml
@@ -10,7 +10,7 @@ variables:
 sequence:
   - condition: state
     entity_id: input_boolean.audio_notifications
-    state: 'on'
+    state: "on"
 
   # - condition: time
   #   after: '06:00:00'
@@ -19,7 +19,7 @@ sequence:
   # Only update group.lights_on when say_light_check is requested.
   - choose:
       - conditions:
-          - '{{ say_light_check == True }}'
+          - "{{ say_light_check == True }}"
         sequence:
           # Update the values that may be needed for the briefing.
           - service: script.turn_on
@@ -31,29 +31,28 @@ sequence:
         sequence:
           - service: script.say_speaker_group
             data:
-              media_player: '{{ media_player }}'
-              message: '{{ message|striptags }}'
+              media_player: "{{ media_player }}"
+              message: "{{ message|striptags }}"
 
     default:
       - service: script.say_cloud
         data:
-          media_player: '{{ media_player }}'
-          message: '{{ briefing }}'
+          media_player: "{{ media_player }}"
+          message: "{{ briefing }}"
 
   - service: script.toast
     data:
       message: "{{ mqtt_message_state }}"
-      duration: 30000
 
   # Store Last Message
   - service: script.store_mqtt_sensor
     data:
-      name: 'last_message'
-      state: '{{ mqtt_message_state }}'
+      name: "last_message"
+      state: "{{ mqtt_message_state }}"
       #attributes: '{{ mqtt_message_attributes }}'
 
   # Store Last Speaker
   - service: script.store_mqtt_sensor
     data:
-      name: 'last_speaker'
-      state: '{{ media_player }}'
+      name: "last_speaker"
+      state: "{{ media_player }}"
