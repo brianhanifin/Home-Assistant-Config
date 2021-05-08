@@ -6,10 +6,11 @@ automation:
     trigger:
       - platform: template
         value_template: |
+          {% set time_now = as_timestamp(now()) | timestamp_custom("%I:%M") %}
           {{
-            states("sensor.wakeup_brian_start") == states("sensor.time")
-            or states("sensor.wakeup_lucas_start") == states("sensor.time")
-            or states("sensor.wakeup_nerene_start") == states("sensor.time")
+            states("sensor.wakeup_brian_start") == time_now
+            or states("sensor.wakeup_lucas_start") == time_now
+            or states("sensor.wakeup_nerene_start") == time_now
           }}
     variables:
       who: '{{ trigger.to_state.entity_id|replace("sensor.wakeup_","")|replace("_start","") }}'
@@ -32,10 +33,15 @@ automation:
       #   data:
       #     message: |
       #       who: {{ who }}
+      #       wakeup_today_entity: {{ wakeup_today_entity }}
 
       #       enabled: {{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}
       #       do_not_skipnext: {{ do_not_skipnext }}
       #       wakeup_today: {{ wakeup_today }}
+
+      - service: script.toast
+        data:
+          message: "{{ who|title }}'s Wakeup Light Fade-in Start"
 
       - choose:
           - conditions:
