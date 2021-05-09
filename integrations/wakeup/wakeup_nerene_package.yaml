@@ -19,43 +19,43 @@ script:
           light: light.bedroom
           who: nerene
 
-  wakeup_nerene_timeout:
+  wakeup_timeout_nerene:
     sequence:
       - service: homeassistant.turn_off
         target:
           entity_id: light.bedroom
 
 input_boolean:
-  wakeup_nerene_status:
+  wakeup_status_nerene:
     name: Activate Alarm
     icon: mdi:alarm-check
-  wakeup_nerene_skipnext:
+  wakeup_skipnext_nerene:
     name: Skip Next Alarm
     icon: mdi:alarm-check
-  wakeup_nerene_sun:
+  wakeup_sun_nerene:
     name: Sunday
     icon: mdi:checkbox-marked-circle
-  wakeup_nerene_mon:
+  wakeup_mon_nerene:
     name: Monday
     icon: mdi:checkbox-marked-circle
-  wakeup_nerene_tue:
+  wakeup_tue_nerene:
     name: Tuesday
     icon: mdi:checkbox-marked-circle
-  wakeup_nerene_wed:
+  wakeup_wed_nerene:
     name: Wednesday
     icon: mdi:checkbox-marked-circle
-  wakeup_nerene_thu:
+  wakeup_thu_nerene:
     name: Thursday
     icon: mdi:checkbox-marked-circle
-  wakeup_nerene_fri:
+  wakeup_fri_nerene:
     name: Friday
     icon: mdi:checkbox-marked-circle
-  wakeup_nerene_sat:
+  wakeup_sat_nerene:
     name: Saturday
     icon: mdi:checkbox-marked-circle
 
 input_datetime:
-  wakeup_nerene_time:
+  wakeup_time_nerene:
     name: Light Fade-up Start
     has_date: false
     has_time: true
@@ -63,11 +63,11 @@ input_datetime:
 sensor:
   - platform: template
     sensors:
-      wakeup_nerene_end:
+      wakeup_end_nerene:
         friendly_name: Light Fade-up End
         icon_template: mdi:lightbulb-on
         value_template: |
-          {%- set start = strptime(states("input_datetime.wakeup_nerene_time"), '%H:%M:%S') %}
+          {%- set start = strptime(states("input_datetime.wakeup_time_nerene"), '%H:%M:%S') %}
           {%- set finish = start + timedelta(minutes=10) %}
           {{ finish.strftime('%H:%M') }}
 

@@ -8,38 +8,38 @@ automation:
       - platform: template
         value_template: |
           {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start = strptime(states("input_datetime.wakeup_brian_time"), '%H:%M:%S') %}
+          {%- set start = strptime(states("input_datetime.wakeup_time_brian"), '%H:%M:%S') %}
           {{ start.strftime('%H:%M') == time_now }}
       - platform: template
         value_template: |
           {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start = strptime(states("input_datetime.wakeup_lucas_time"), '%H:%M:%S') %}
+          {%- set start = strptime(states("input_datetime.wakeup_time_lucas"), '%H:%M:%S') %}
           {{ start.strftime('%H:%M') == time_now }}
       - platform: template
         value_template: |
           {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start = strptime(states("input_datetime.wakeup_nerene_time"), '%H:%M:%S') %}
+          {%- set start = strptime(states("input_datetime.wakeup_time_nerene"), '%H:%M:%S') %}
           {{ start.strftime('%H:%M') == time_now }}
     variables:
       time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
       who: |
           {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start_brian = strptime(states("input_datetime.wakeup_brian_time"), '%H:%M:%S') %}
-          {%- set start_lucas = strptime(states("input_datetime.wakeup_lucas_time"), '%H:%M:%S') %}
-          {%- set start_nerene = strptime(states("input_datetime.wakeup_nerene_time"), '%H:%M:%S') %}
+          {%- set start_brian = strptime(states("input_datetime.wakeup_time_brian"), '%H:%M:%S') %}
+          {%- set start_lucas = strptime(states("input_datetime.wakeup_time_lucas"), '%H:%M:%S') %}
+          {%- set start_nerene = strptime(states("input_datetime.wakeup_time_nerene"), '%H:%M:%S') %}
           {{ "brian" if start_brian.strftime('%H:%M') == time_now }}
           {{ "lucas" if start_lucas.strftime('%H:%M') == time_now }}
           {{ "nerene" if start_nerene.strftime('%H:%M') == time_now }}
 
-      skipnext_entity: "input_boolean.wakeup_{{ who }}_skipnext"
+      skipnext_entity: "input_boolean.wakeup_skipnext_{{ who }}"
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
 
       today_name: '{{ now().strftime("%a")|lower }}'
-      wakeup_today_entity: "input_boolean.wakeup_{{ who }}_{{ today_name }}"
+      wakeup_today_entity: "input_boolean.wakeup_{{ today_name }}_{{ who }}"
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
     condition:
       # Continue if it is enabled and today is a wakeup day..
-      - '{{ is_state("input_boolean.wakeup_" + who +"_status", "on")
+      - '{{ is_state("input_boolean.wakeup_status_" + who, "on")
             and wakeup_today }}'
 
       # Continue if they are home (or unknown if we cannot track their presence).
@@ -51,7 +51,7 @@ automation:
       #       who: {{ who }}
       #       wakeup_today_entity: {{ wakeup_today_entity }}
 
-      #       enabled: {{ is_state("input_boolean.wakeup_" + who +"_status", "on") }}
+      #       enabled: {{ is_state("input_boolean.wakeup_status_" + who, "on") }}
       #       do_not_skipnext: {{ do_not_skipnext }}
       #       wakeup_today: {{ wakeup_today }}
 
@@ -85,13 +85,11 @@ automation:
     trigger:
       - platform: event
         event_type: timer.finished
-        event_data:
-          entity_id:
-            - timer.wakeup_timeout_brian
-            - timer.wakeup_timeout_lucas
-            - timer.wakeup_timeout_nerene
     variables:
-      who: '{{ trigger.entity_id|replace("timer.wakeup_timeout_","") }}'
+      timer: '{{ trigger.event.data.entity_id }}'
+      who: '{{ timer|replace("timer.wakeup_timeout_","") }}'
+    condition:
+      - '{{ timer.startswith("timer.wakeup_timeout_") }}'
     action:
       - service: homeassistant.turn_off
         target:
@@ -99,7 +97,7 @@ automation:
             - light.home_entry
             - light.garage_entry
 
-      - service_template: "script.wakeup_{{ who }}_timeout"
+      - service_template: "script.wakeup_timeout_{{ who }}"
 
       - service: script.debug
         data:

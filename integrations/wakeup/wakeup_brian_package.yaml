@@ -19,43 +19,43 @@ script:
           light: light.bedroom_table_lamp
           who: brian
 
-  wakeup_brian_timeout:
+  wakeup_timeout_brian:
     sequence:
       - service: homeassistant.turn_off
         target:
           entity_id: light.bedroom_table_lamp
 
 input_boolean:
-  wakeup_brian_status:
+  wakeup_status_brian:
     name: Activate Alarm
     icon: mdi:alarm-check
-  wakeup_brian_skipnext:
+  wakeup_skipnext_brian:
     name: Skip Next Alarm
     icon: mdi:alarm-check
-  wakeup_brian_sun:
+  wakeup_sun_brian:
     name: Sunday
     icon: mdi:checkbox-marked-circle
-  wakeup_brian_mon:
+  wakeup_mon_brian:
     name: Monday
     icon: mdi:checkbox-marked-circle
-  wakeup_brian_tue:
+  wakeup_tue_brian:
     name: Tuesday
     icon: mdi:checkbox-marked-circle
-  wakeup_brian_wed:
+  wakeup_wed_brian:
     name: Wednesday
     icon: mdi:checkbox-marked-circle
-  wakeup_brian_thu:
+  wakeup_thu_brian:
     name: Thursday
     icon: mdi:checkbox-marked-circle
-  wakeup_brian_fri:
+  wakeup_fri_brian:
     name: Friday
     icon: mdi:checkbox-marked-circle
-  wakeup_brian_sat:
+  wakeup_sat_brian:
     name: Saturday
     icon: mdi:checkbox-marked-circle
 
 input_datetime:
-  wakeup_brian_time:
+  wakeup_time_brian:
     name: Light Fade-up Start
     has_date: false
     has_time: true
@@ -63,11 +63,11 @@ input_datetime:
 sensor:
   - platform: template
     sensors:
-      wakeup_brian_end:
+      wakeup_end_brian:
         friendly_name: Light Fade-up End
         icon_template: mdi:lightbulb-on
         value_template: |
-          {%- set start = strptime(states("input_datetime.wakeup_brian_time"), '%H:%M:%S') %}
+          {%- set start = strptime(states("input_datetime.wakeup_time_brian"), '%H:%M:%S') %}
           {%- set finish = start + timedelta(minutes=10) %}
           {{ finish.strftime('%H:%M') }}
 

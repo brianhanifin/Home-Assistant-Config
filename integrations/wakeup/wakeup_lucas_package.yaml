@@ -16,43 +16,43 @@ script:
           light: light.lucas_room
           who: lucas
 
-  wakeup_lucas_timeout:
+  wakeup_timeout_lucas:
     sequence:
       - service: homeassistant.turn_off
         data:
           entity_id: light.lucas_room
 
 input_boolean:
-  wakeup_lucas_status:
+  wakeup_status_lucas:
     name: Activate Alarm
     icon: mdi:alarm-check
-  wakeup_lucas_skipnext:
+  wakeup_skipnext_lucas:
     name: Skip Next Alarm
     icon: mdi:alarm-check
-  wakeup_lucas_sun:
+  wakeup_sun_lucas:
     name: Sunday
     icon: mdi:checkbox-marked-circle
-  wakeup_lucas_mon:
+  wakeup_mon_lucas:
     name: Monday
     icon: mdi:checkbox-marked-circle
-  wakeup_lucas_tue:
+  wakeup_tue_lucas:
     name: Tuesday
     icon: mdi:checkbox-marked-circle
-  wakeup_lucas_wed:
+  wakeup_wed_lucas:
     name: Wednesday
     icon: mdi:checkbox-marked-circle
-  wakeup_lucas_thu:
+  wakeup_thu_lucas:
     name: Thursday
     icon: mdi:checkbox-marked-circle
-  wakeup_lucas_fri:
+  wakeup_fri_lucas:
     name: Friday
     icon: mdi:checkbox-marked-circle
-  wakeup_lucas_sat:
+  wakeup_sat_lucas:
     name: Saturday
     icon: mdi:checkbox-marked-circle
 
 input_datetime:
-  wakeup_lucas_time:
+  wakeup_time_lucas:
     name: Light Fade-up Start
     has_date: false
     has_time: true
@@ -60,11 +60,11 @@ input_datetime:
 sensor:
   - platform: template
     sensors:
-      wakeup_lucas_end:
+      wakeup_end_lucas:
         friendly_name: Light Fade-up End
         icon_template: mdi:lightbulb-on
         value_template: |
-          {%- set start = strptime(states("input_datetime.wakeup_lucas_time"), '%H:%M:%S') %}
+          {%- set start = strptime(states("input_datetime.wakeup_time_lucas"), '%H:%M:%S') %}
           {%- set finish = start + timedelta(minutes=10) %}
           {{ finish.strftime('%H:%M') }}
 
