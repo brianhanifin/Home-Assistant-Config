@@ -55,9 +55,11 @@ automation:
       #       do_not_skipnext: {{ do_not_skipnext }}
       #       wakeup_today: {{ wakeup_today }}
 
+      #       script: script.wakeup_{{ who }}
+
       - service: script.toast
         data:
-          message: "{{ who|title }}'s Wakeup Light Activate Triggered"
+          message: "Automation: Wakeup Light Activate Triggered"
 
       - choose:
           - conditions:
@@ -65,12 +67,13 @@ automation:
             sequence:
               - service: script.debug
                 data:
-                  message: "{{ who|title }}'s Wakeup Light Activate Triggered"
+                  message: "{{ who|title }}'s Wakeup Light Activate Start"
 
               - service_template: "script.wakeup_{{ who }}"
 
               - service: switch.turn_on
-                entity_id: switch.hot_water_pump
+                target:
+                  entity_id: switch.hot_water_pump
 
         default:
           service: input_boolean.turn_off
@@ -91,9 +94,10 @@ automation:
       who: '{{ trigger.entity_id|replace("timer.wakeup_timeout_","") }}'
     action:
       - service: homeassistant.turn_off
-        entity_id:
-          - light.home_entry
-          - light.garage_entry
+        target:
+          entity_id:
+            - light.home_entry
+            - light.garage_entry
 
       - service_template: "script.wakeup_{{ who }}_timeout"
 
@@ -107,8 +111,9 @@ script:
     sequence:
       # Transition the light to 100% over 10 minutes.
       - service: light.turn_on
+        target:
+          entity_id: '{{ light }}'
         data:
-          entity_id: "{{ light }}"
           brightness: 26
       - repeat:
           sequence:
@@ -122,8 +127,9 @@ script:
                   {% endif %}
 
             - service: light.turn_on
+              target:
+                entity_id: '{{ light }}'
               data:
-                entity_id: "{{ light }}"
                 brightness: "{{ brightness }}"
 
             - delay:
@@ -137,7 +143,7 @@ script:
       # Start a countdown timer which triggers and automation upon its conclusion.
       # see: automation.wakeup_light_timeout
       - service: timer.start
-        data:
+        target:
           entity_id: '{{ "timer.wakeup_timeout_" ~ who }}'
 
       - service: script.toast

@@ -5,11 +5,6 @@ script:
       who: lucas
       light: light.lucas_room
     sequence:
-      # - service: script.debug
-      #   data:
-      #     message: |
-      #       light: {{ light }}
-
       - service: scene.apply
         data:
           entities:
@@ -18,8 +13,8 @@ script:
 
       - service: script.wakeup_light_start
         data:
-          light: "{{ light }}"
-          who: "{{ who }}"
+          light: light.lucas_room
+          who: lucas
 
   wakeup_lucas_timeout:
     sequence:

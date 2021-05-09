@@ -1,15 +1,7 @@
 ---
 script:
   wakeup_nerene:
-    variables:
-      who: nerene
-      light: light.bedroom
     sequence:
-      # - service: script.debug
-      #   data:
-      #     message: |
-      #       light: {{ light }}
-
       - service: scene.apply
         data:
           entities:
@@ -24,13 +16,13 @@ script:
 
       - service: script.wakeup_light_start
         data:
-          light: '{{ light }}'
-          who: '{{ who }}'
+          light: light.bedroom
+          who: nerene
 
   wakeup_nerene_timeout:
     sequence:
       - service: homeassistant.turn_off
-        data:
+        target:
           entity_id: light.bedroom
 
 input_boolean:
