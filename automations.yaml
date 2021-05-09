@@ -443,24 +443,23 @@
   action:
   - service: script.refresh_update_sensors
   mode: single
-- id: '1620509712530'
-  alias: 'Scheduled Tasks: 5 minutes'
-  description: Tasks to run every 5 minutes.
+- id: '1620532169172'
+  alias: Keep Startup Automation Off
+  description: The startup automation will turn back on after an automation reload.
+    So turn it right back off when it changes from "unavailable" to "on".
   trigger:
-  - platform: time_pattern
-    minutes: /5
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{%- set uptime_minutes = as_timestamp(now()) - as_timestamp(states("sensor.last_restart"))|float
-          / 60 %}
+  - platform: state
+    entity_id: automation.startup
+    from: unavailable
+    to: 'on'
+  condition:
+  - condition: template
+    value_template: '{%- set uptime_minutes = as_timestamp(now()) - as_timestamp(states("sensor.last_restart"))|float
+      / 60 %}
 
-          {{ uptime_minutes > 5 }}'
-      sequence:
-      - service: automation.turn_off
-        target:
-          entity_id: automation.startup
-    default: []
+      {{ uptime_minutes > 5 }}'
+  action:
+  - service: automation.turn_off
+    target:
+      entity_id: automation.startup
   mode: single
