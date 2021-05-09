@@ -64,23 +64,20 @@ input_boolean:
 
 input_datetime:
   wakeup_nerene_time:
-    name: Wakeup Time
+    name: Light Fade-up Start
     has_date: false
     has_time: true
 
 sensor:
   - platform: template
     sensors:
-      wakeup_nerene_start:
-        friendly_name: Light Fade-in Start
-        icon_template: mdi:lightbulb-on-outline
-        value_template: >-
-          {% set wakeup_time = states('input_datetime.wakeup_nerene_time').split(':') %}
-          {%- if (wakeup_time[1]|int >= 10) -%}
-            {{ "%0.02d:%0.02d"|format(wakeup_time[0]|int, wakeup_time[1]|int -10) }}
-          {%- else -%}
-            {{ "%0.02d:%0.02d"|format(wakeup_time[0]|int -1, wakeup_time[1]|int +50) }}
-          {%- endif -%}
+      wakeup_nerene_end:
+        friendly_name: Light Fade-up End
+        icon_template: mdi:lightbulb-on
+        value_template: |
+          {%- set start = strptime(states("input_datetime.wakeup_nerene_time"), '%H:%M:%S') %}
+          {%- set finish = start + timedelta(minutes=10) %}
+          {{ finish.strftime('%H:%M') }}
 
 timer:
   wakeup_timeout_nerene:

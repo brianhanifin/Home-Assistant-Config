@@ -7,16 +7,33 @@ automation:
     trigger:
       - platform: template
         value_template: |
-          {% set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {{
-            states("sensor.wakeup_brian_start") == time_now
-            or states("sensor.wakeup_lucas_start") == time_now
-            or states("sensor.wakeup_nerene_start") == time_now
-          }}
+          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
+          {%- set start = strptime(states("input_datetime.wakeup_brian_time"), '%H:%M:%S') %}
+          {{ start.strftime('%H:%M') == time_now }}
+      - platform: template
+        value_template: |
+          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
+          {%- set start = strptime(states("input_datetime.wakeup_lucas_time"), '%H:%M:%S') %}
+          {{ start.strftime('%H:%M') == time_now }}
+      - platform: template
+        value_template: |
+          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
+          {%- set start = strptime(states("input_datetime.wakeup_nerene_time"), '%H:%M:%S') %}
+          {{ start.strftime('%H:%M') == time_now }}
     variables:
-      who: '{{ trigger.to_state.entity_id|replace("sensor.wakeup_","")|replace("_start","") }}'
+      time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
+      who: |
+          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
+          {%- set start_brian = strptime(states("input_datetime.wakeup_brian_time"), '%H:%M:%S') %}
+          {%- set start_lucas = strptime(states("input_datetime.wakeup_lucas_time"), '%H:%M:%S') %}
+          {%- set start_nerene = strptime(states("input_datetime.wakeup_nerene_time"), '%H:%M:%S') %}
+          {{ "brian" if start_brian.strftime('%H:%M') == time_now }}
+          {{ "lucas" if start_lucas.strftime('%H:%M') == time_now }}
+          {{ "nerene" if start_nerene.strftime('%H:%M') == time_now }}
+
       skipnext_entity: "input_boolean.wakeup_{{ who }}_skipnext"
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
+
       today_name: '{{ now().strftime("%a")|lower }}'
       wakeup_today_entity: "input_boolean.wakeup_{{ who }}_{{ today_name }}"
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
@@ -40,7 +57,7 @@ automation:
 
       - service: script.toast
         data:
-          message: "{{ who|title }}'s Wakeup Light Fade-in Start"
+          message: "{{ who|title }}'s Wakeup Light Activate Triggered"
 
       - choose:
           - conditions:
@@ -48,9 +65,12 @@ automation:
             sequence:
               - service: script.debug
                 data:
-                  message: "{{ who|title }}'s Wakeup Light Triggered"
+                  message: "{{ who|title }}'s Wakeup Light Activate Triggered"
 
               - service_template: "script.wakeup_{{ who }}"
+
+              - service: switch.turn_on
+                entity_id: switch.hot_water_pump
 
         default:
           service: input_boolean.turn_off
@@ -77,30 +97,9 @@ automation:
 
       - service_template: "script.wakeup_{{ who }}_timeout"
 
-  - alias: Wakeup Warmup Water
-    id: wakeup_warm_water
-    trigger:
-      # Trigger at wakeup time.
-      - platform: template
-        value_template: '{{ states("input_datetime.wakeup_brian_time")[:5] == states("sensor.time") }}'
-      - platform: template
-        value_template: '{{ states("input_datetime.wakeup_lucas_time")[:5] == states("sensor.time") }}'
-      - platform: template
-        value_template: '{{ states("input_datetime.wakeup_nerene_time")[:5] == states("sensor.time") }}'
-    condition:
-      # Continue if skipnext is not enabled.
-      - condition: template
-        value_template: >-
-          {% if current_time == states('sensor.wakeup_brian_start') %}
-            {{ is_state('input_boolean.wakeup_brian_skipnext','on') }}
-          {% elif current_time == states('sensor.wakeup_lucas_start') %}
-            {{ is_state('input_boolean.wakeup_lucas_skipnext','on') }}
-          {% elif current_time == states('sensor.wakeup_nerene_start') %}
-            {{ is_state('input_boolean.wakeup_nerene_skipnext','on') }}
-          {% endif %}
-    action:
-      - service: switch.turn_on
-        entity_id: switch.hot_water_pump
+      - service: script.debug
+        data:
+          message: "{{ who|title }}'s Wakeup Light Timeout triggered"
 
 script:
   wakeup_light_start:
