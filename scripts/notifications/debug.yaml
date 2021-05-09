@@ -2,6 +2,21 @@
 sequence:
   - service: persistent_notification.create
     data_template:
-      title: "{{ title|default('Debug') }}"
+      title: "{{ title|default('Debug Message') }}"
       message: "{{ message }}"
       notification_id: "{{ id|default('debug_' ~ as_timestamp(now())) }}"
+
+fields:
+  title:
+    description: Bold first line of the message.
+    example: Debug Message
+    selector:
+      text:
+  message:
+    description: Useful information to share.
+    selector:
+      text:
+  notification_id:
+    description: Notification id's get replaced when they match. By default this service generates a unique id.
+    selector:
+      text:
