@@ -277,13 +277,13 @@ decluttering_templates:
         - content: '**Wakeup Lights**<br>*Wakeup [[name]]*'
       - cards:
         - type: custom:gap-card
-        - entity: input_boolean.wakeup_[[name]]_status
+        - entity: input_boolean.wakeup_status_[[name]]
           styles:
             card:
             - width: 180px
           template: button_rounded_active
           type: custom:button-card
-        - entity: input_boolean.wakeup_[[name]]_skipnext
+        - entity: input_boolean.wakeup_skipnext_[[name]]
           styles:
             card:
             - width: 180px
@@ -291,48 +291,51 @@ decluttering_templates:
           type: custom:button-card
         - type: custom:gap-card
         type: horizontal-stack
-      - entity: input_datetime.wakeup_[[name]]_time
+      - cards:
+        - entity: input_boolean.wakeup_mon_[[name]]
+          name: Mon
+          template: button_weekday
+          type: custom:button-card
+        - entity: input_boolean.wakeup_tue_[[name]]
+          name: Tue
+          template: button_weekday
+          type: custom:button-card
+        - entity: input_boolean.wakeup_wed_[[name]]
+          name: Wed
+          template: button_weekday
+          type: custom:button-card
+        - entity: input_boolean.wakeup_thu_[[name]]
+          name: Thu
+          template: button_weekday
+          type: custom:button-card
+        - entity: input_boolean.wakeup_fri_[[name]]
+          name: Fri
+          template: button_weekday
+          type: custom:button-card
+        - entity: input_boolean.wakeup_sat_[[name]]
+          name: Sat
+          template: button_weekday
+          type: custom:button-card
+        - entity: input_boolean.wakeup_sun_[[name]]
+          name: Sun
+          template: button_weekday
+          type: custom:button-card
+        type: horizontal-stack
+      - entity: input_datetime.wakeup_time_[[name]]
         hour_mode: 12
-        icon: mdi:weather-sunny
+        icon: mdi:weather-sunset-up
         layout:
           hour_mode: single
           name: inside
         link_values: true
         type: custom:time-picker-card
-      - cards:
-        - entity: input_boolean.wakeup_[[name]]_mon
-          name: Mon
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_[[name]]_tue
-          name: Tue
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_[[name]]_wed
-          name: Wed
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_[[name]]_thu
-          name: Thu
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_[[name]]_fri
-          name: Fri
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_[[name]]_sat
-          name: Sat
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_[[name]]_sun
-          name: Sun
-          template: button_weekday
-          type: custom:button-card
-        type: horizontal-stack
       - entities:
-        - entity: sensor.wakeup_[[name]]_start
-          icon: mdi:weather-sunset-up
+        - entity: sensor.wakeup_end_[[name]]
+          icon: mdi:weather-sunny
+        - type: divider
         - entity: '[[light]]'
+        - entity: timer.wakeup_timeout_[[name]]
+          name: Wakeup Timeout Countdown
         type: entities
       type: vertical-stack
 kiosk_mode:
@@ -2232,12 +2235,15 @@ views:
     type: custom:decluttering-card
     variables:
     - name: nerene
-    - light: light.table_lamp
+    - light: light.bedroom
+  - entity: sensor.time
+    type: entity
+  - type: custom:layout-break
   - template: wakeup
     type: custom:decluttering-card
     variables:
     - name: lucas
-    - light: light.play_room
+    - light: light.lucas_room
   - template: wakeup
     type: custom:decluttering-card
     variables:
@@ -2245,11 +2251,11 @@ views:
     - light: light.bedroom_table_lamp
   icon: mdi:weather-sunset-up
   layout:
-    max_cols: 2
+    max_cols: 3
   path: wakeup
   theme: Caule Black Yellow Glass
   title: Wakeup
-  type: custom:masonry-layout
+  type: custom:vertical-layout
 - badges: []
   cards:
   - icon: mdi:arrow-left-circle
