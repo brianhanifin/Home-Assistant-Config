@@ -189,15 +189,19 @@ sequence:
               entity_id: "{{ entity_id }}"
             data:
               parameter: "{{ parameter }}"
-              value: 0
+              value: '16714410'
 
-          # Start the new effect.
-          - service: zwave_js.bulk_set_partial_config_parameters
-            target:
-              entity_id: "{{ entity_id }}"
-            data:
-              parameter: "{{ parameter }}"
-              value: "{{ inovelli_math }}"
+          # Start the new effect, unless we were just turning it off.
+          - choose:
+              - conditions:
+                  - '{{ inovelli_math > 0 }}'
+                sequence:
+                  - service: zwave_js.bulk_set_partial_config_parameters
+                    target:
+                      entity_id: "{{ entity_id }}"
+                    data:
+                      parameter: "{{ parameter }}"
+                      value: "{{ inovelli_math }}"
 
       # The OZW integration requires this service call.
       - conditions:
