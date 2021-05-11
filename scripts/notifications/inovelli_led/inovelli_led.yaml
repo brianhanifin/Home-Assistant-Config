@@ -40,6 +40,10 @@
 #     2. Implement ZWave JS's new zwave_js.bulk_set_partial_config_parameters command.
 #   Source: https://gist.github.com/firstof9/b88d072a81c54b314fe7ddb901fc5c29
 #
+#   May 10, 2021
+#   Incorporated @koconut's corrected "Off code".
+#   Source: https://community.home-assistant.io/t/inovelli-z-wave-red-series-notification-led/165483/146
+#
 mode: parallel
 variables:
   # REQUIRED to be one of these options: "zwave", "ozw", "zwave_js"
@@ -189,15 +193,19 @@ sequence:
               entity_id: "{{ entity_id }}"
             data:
               parameter: "{{ parameter }}"
-              value: 0
+              value: '16714410'
 
-          # Start the new effect.
-          - service: zwave_js.bulk_set_partial_config_parameters
-            target:
-              entity_id: "{{ entity_id }}"
-            data:
-              parameter: "{{ parameter }}"
-              value: "{{ inovelli_math }}"
+          # Start the new effect, unless we were just turning it off.
+          - choose:
+              - conditions:
+                  - '{{ inovelli_math > 0 }}'
+                sequence:
+                  - service: zwave_js.bulk_set_partial_config_parameters
+                    target:
+                      entity_id: "{{ entity_id }}"
+                    data:
+                      parameter: "{{ parameter }}"
+                      value: "{{ inovelli_math }}"
 
       # The OZW integration requires this service call.
       - conditions:
