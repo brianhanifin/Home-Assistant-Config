@@ -5,57 +5,37 @@ automation:
     mode: parallel
     # Trigger at the wakeup time everyday.
     trigger:
-      - platform: template
-        value_template: |
-          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start = strptime(states("input_datetime.wakeup_time_brian"), '%H:%M:%S') %}
-          {{ start.strftime('%H:%M') == time_now }}
-      - platform: template
-        value_template: |
-          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start = strptime(states("input_datetime.wakeup_time_lucas"), '%H:%M:%S') %}
-          {{ start.strftime('%H:%M') == time_now }}
-      - platform: template
-        value_template: |
-          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start = strptime(states("input_datetime.wakeup_time_nerene"), '%H:%M:%S') %}
-          {{ start.strftime('%H:%M') == time_now }}
+      - platform: time
+        at:
+          - input_datetime.wakeup_time_brian
+          - input_datetime.wakeup_time_lucas
+          - input_datetime.wakeup_time_nerene
     variables:
       time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
-      who: |
-          {%- set time_now = as_timestamp(now()) | timestamp_custom("%H:%M") %}
-          {%- set start_brian = strptime(states("input_datetime.wakeup_time_brian"), '%H:%M:%S') %}
-          {%- set start_lucas = strptime(states("input_datetime.wakeup_time_lucas"), '%H:%M:%S') %}
-          {%- set start_nerene = strptime(states("input_datetime.wakeup_time_nerene"), '%H:%M:%S') %}
-          {{ "brian" if start_brian.strftime('%H:%M') == time_now }}
-          {{ "lucas" if start_lucas.strftime('%H:%M') == time_now }}
-          {{ "nerene" if start_nerene.strftime('%H:%M') == time_now }}
-
+      who: '{{ trigger.entity_id[27:] }}'
       skipnext_entity: "input_boolean.wakeup_skipnext_{{ who }}"
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
-
       today_name: '{{ now().strftime("%a")|lower }}'
       wakeup_today_entity: "input_boolean.wakeup_{{ today_name }}_{{ who }}"
       wakeup_today: '{{ is_state(wakeup_today_entity, "on") }}'
-    condition:
-      # Continue if it is enabled and today is a wakeup day..
-      - '{{ is_state("input_boolean.wakeup_status_" + who, "on")
-            and wakeup_today }}'
-
-      # Continue if they are home (or unknown if we cannot track their presence).
-      #- '{{ states("person." + who) in ["home","unknown"] }}'
     action:
       # - service: script.debug
       #   data:
       #     message: |
       #       who: {{ who }}
       #       wakeup_today_entity: {{ wakeup_today_entity }}
-
       #       enabled: {{ is_state("input_boolean.wakeup_status_" + who, "on") }}
       #       do_not_skipnext: {{ do_not_skipnext }}
       #       wakeup_today: {{ wakeup_today }}
-
       #       script: script.wakeup_{{ who }}
+
+      - alias: "Continue if today is a wakeup day and the wakeup light is not deactivated."
+        condition: template
+        value_template: '{{ wakeup_today and is_state("input_boolean.wakeup_status_" + who, "on") }}'
+
+      # - alias: "Continue if they are home (or unknown if we cannot track their presence)."
+      #   condition: template
+      #   value_template: '{{ states("person." + who) in ["home","unknown"] }}'
 
       - service: script.toast
         data:
@@ -65,9 +45,9 @@ automation:
           - conditions:
               - "{{ do_not_skipnext }}"
             sequence:
-              - service: script.debug
-                data:
-                  message: "{{ who|title }}'s Wakeup Light Activate Start"
+              # - service: script.debug
+              #   data:
+              #     message: "{{ who|title }}'s Wakeup Light Activate Start"
 
               - service_template: "script.wakeup_{{ who }}"
 
@@ -99,9 +79,9 @@ automation:
 
       - service_template: "script.wakeup_timeout_{{ who }}"
 
-      - service: script.debug
-        data:
-          message: "{{ who|title }}'s Wakeup Light Timeout triggered"
+      # - service: script.debug
+      #   data:
+      #     message: "{{ who|title }}'s Wakeup Light Timeout triggered"
 
 script:
   wakeup_light_start:
