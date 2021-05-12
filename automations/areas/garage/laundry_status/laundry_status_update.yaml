@@ -40,6 +40,15 @@ action:
       entity_id: input_select.laundry_status
       option: '{{ status }}'
 
+  # Cancel the Wet Laundry alert.
+  - choose:
+      - conditions:
+          - '{{ status in ["Drying","Washing"] or dryer_status == "Drying" }}'
+        sequence:
+          - service: alert.turn_off
+            target:
+              entity_id: alert.wet_laundry
+
   # Send the notifications when appropriate.
   - choose:
       - conditions:
