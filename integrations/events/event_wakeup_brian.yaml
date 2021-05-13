@@ -1,0 +1,88 @@
+---
+script:
+  event_wakeup_brian:
+    sequence:
+      - service: homeassistant.turn_off
+        target:
+          entity_id:
+            - fan.bedroom
+            - switch.sound_machine
+
+      - service: script.event_light
+        data:
+          #light: light.table_lamp
+          light: light.bedroom_table_lamp
+          id: wakeup_brian
+
+  event_timeout_wakeup_brian:
+    sequence:
+      - service: homeassistant.turn_off
+        target:
+          #entity_id: light.table_lamp
+          entity_id: light.bedroom_table_lamp
+
+input_boolean:
+  event_enabled_wakeup_brian:
+    name: Active
+    icon: mdi:alarm-check
+  event_skipnext_wakeup_brian:
+    name: Skip Next Event
+    icon: mdi:alarm-check
+  event_announcement_wakeup_brian:
+    name: Announcements?
+    icon: mdi:google-home
+  event_light_wakeup_brian:
+    name: Wakeup Light?
+    icon: mdi:lamp
+
+  event_mon_wakeup_brian:
+    name: Monday
+    icon: mdi:checkbox-marked-circle
+  event_tue_wakeup_brian:
+    name: Tuesday
+    icon: mdi:checkbox-marked-circle
+  event_wed_wakeup_brian:
+    name: Wednesday
+    icon: mdi:checkbox-marked-circle
+  event_thu_wakeup_brian:
+    name: Thursday
+    icon: mdi:checkbox-marked-circle
+  event_fri_wakeup_brian:
+    name: Friday
+    icon: mdi:checkbox-marked-circle
+  event_sat_wakeup_brian:
+    name: Saturday
+    icon: mdi:checkbox-marked-circle
+  event_sun_wakeup_brian:
+    name: Sunday
+    icon: mdi:checkbox-marked-circle
+
+input_datetime:
+  event_1st_wakeup_brian:
+    name: First Announcement
+    has_date: false
+    has_time: true
+  event_2nd_wakeup_brian:
+    name: Second Announcement
+    has_date: false
+    has_time: true
+  event_light_wakeup_brian: 
+    name: Light Fade-up Start
+    has_date: false
+    has_time: true
+
+input_select:
+  event_speakers_wakeup_brian:
+    name: Announce on which smart speaker(s)?
+    options: !include ../../templates/speech/tts_rooms.yaml
+    icon: mdi:google-home
+
+input_text:
+  event_1st_wakeup_brian:
+    name: First Announcement
+  event_2nd_wakeup_brian:
+    name: Second Announcement
+
+timer:
+  event_timeout_wakeup_brian:
+    duration: "01:00:00"

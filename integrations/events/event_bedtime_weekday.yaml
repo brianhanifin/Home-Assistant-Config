@@ -1,0 +1,86 @@
+---
+script:
+  event_bedtime_weekday:
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id: none
+      #   data:
+      #     brightness: 26
+
+      # - service: script.event_light
+      #   data:
+      #     light: none
+      #     id: bedtime_weekday
+
+  event_timeout_bedtime_weekday:
+    sequence:
+      - service: homeassistant.turn_off
+        target:
+          entity_id: none
+
+input_boolean:
+  event_enabled_bedtime_weekday:
+    name: Active
+    icon: mdi:alarm-check
+  event_skipnext_bedtime_weekday:
+    name: Skip Next Event
+    icon: mdi:alarm-check
+  event_announcement_bedtime_weekday:
+    name: Announcements?
+    icon: mdi:google-home
+  event_light_bedtime_weekday:
+    name: Wakeup Light?
+    icon: mdi:lamp
+
+  event_mon_bedtime_weekday:
+    name: Monday
+    icon: mdi:checkbox-marked-circle
+  event_tue_bedtime_weekday:
+    name: Tuesday
+    icon: mdi:checkbox-marked-circle
+  event_wed_bedtime_weekday:
+    name: Wednesday
+    icon: mdi:checkbox-marked-circle
+  event_thu_bedtime_weekday:
+    name: Thursday
+    icon: mdi:checkbox-marked-circle
+  event_fri_bedtime_weekday:
+    name: Friday
+    icon: mdi:checkbox-marked-circle
+  event_sat_bedtime_weekday:
+    name: Saturday
+    icon: mdi:checkbox-marked-circle
+  event_sun_bedtime_weekday:
+    name: Sunday
+    icon: mdi:checkbox-marked-circle
+
+input_datetime:
+  event_1st_bedtime_weekday:
+    name: First Announcement
+    has_date: false
+    has_time: true
+  event_2nd_bedtime_weekday:
+    name: Second Announcement
+    has_date: false
+    has_time: true
+  event_light_bedtime_weekday: 
+    name: Light Fade-up Start
+    has_date: false
+    has_time: true
+
+input_select:
+  event_speakers_bedtime_weekday:
+    name: Announce on which smart speaker(s)?
+    options: !include ../../templates/speech/tts_rooms.yaml
+    icon: mdi:google-home
+
+input_text:
+  event_1st_bedtime_weekday:
+    name: First Announcement
+  event_2nd_bedtime_weekday:
+    name: Second Announcement
+
+timer:
+  event_timeout_bedtime_weekday:
+    duration: "01:00:00"

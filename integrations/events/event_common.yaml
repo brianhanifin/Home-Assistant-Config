@@ -1,0 +1,203 @@
+---
+automation:
+  - alias: Event Announcements
+    id: event_announcements
+    mode: parallel
+    trigger:
+      - platform: time
+        at:
+          - input_datetime.event_1st_bedtime_weekday
+          - input_datetime.event_2nd_bedtime_weekday
+          - input_datetime.event_1st_bedtime_weekend
+          - input_datetime.event_2nd_bedtime_weekend
+          - input_datetime.event_1st_wakeup_brian
+          - input_datetime.event_2nd_wakeup_brian
+          - input_datetime.event_1st_wakeup_lucas
+          - input_datetime.event_2nd_wakeup_lucas
+          - input_datetime.event_1st_wakeup_lucas_remote
+          - input_datetime.event_2nd_wakeup_lucas_remote
+          - input_datetime.event_1st_wakeup_kyle
+          - input_datetime.event_2nd_wakeup_kyle
+          - input_datetime.event_1st_wakeup_nerene
+          - input_datetime.event_2nd_wakeup_nerene
+    variables:
+      time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
+      entity_id: '{{ trigger.entity_id }}'
+      id: '{{ entity_id[25:] }}'
+      enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
+      skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
+      do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
+      announcement_enabled: '{{ is_state("input_boolean.event_announcement_" + id, "on") }}'
+      today_name: '{{ now().strftime("%a")|lower }}'
+      event_today: '{{ is_state("input_boolean.event_" + today_name +"_"+ id, "on") }}'
+      announcement: '{{ states("input_text.event_" + entity_id[21:]) }}'
+    action:
+      # - service: script.debug
+      #   data:
+      #     message: |
+      #       enabled: {{ enabled }}
+      #       event_today: {{ event_today }}
+      #       announcement: {{ announcement }}
+
+      - alias: 'Continue if the announcement is enabled, today is an event day, and the event is not deactivated.'
+        condition: template
+        value_template: '{{ announcement_enabled and event_today and enabled }}'
+
+      - service_template: |
+          {% if do_not_skipnext %}
+            script.event_announce
+          {% else %}
+            script.event_skipnext
+          {% endif %}
+        data:
+          media_player: '{{ states("input_select.event_speakers_" + id) }}'
+          skipnext: '{{ skipnext_entity }}'
+          message: '{{ announcement }}'
+
+  - alias: Event Wakeup
+    id: event_wakeup
+    mode: parallel
+    trigger:
+      - platform: time
+        at:
+          - input_datetime.event_light_wakeup_brian
+          - input_datetime.event_light_wakeup_lucas
+          - input_datetime.event_light_wakeup_lucas_remote
+          - input_datetime.event_light_wakeup_kyle
+          - input_datetime.event_light_wakeup_nerene
+          - input_datetime.event_light_wakeup_bedtime_weekday
+          - input_datetime.event_light_wakeup_bedtime_weekend
+    variables:
+      time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
+      entity_id: '{{ trigger.entity_id }}'
+      id: '{{ entity_id[27:] }}'
+      enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
+      skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
+      do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
+      light_enabled: '{{ is_state("input_boolean.event_light_" + id, "on") }}'
+      today_name: '{{ now().strftime("%a")|lower }}'
+      event_today: '{{ is_state("input_boolean.event_" + today_name +"_"+ id, "on") }}'
+    action:
+      # - service: script.debug
+      #   data:
+      #     message: |
+      #       enabled: {{ enabled }}
+      #       event_today: {{ event_today }}
+      #       light_enabled: {{ light_enabled }}
+
+      - alias: 'Continue if the wakeup light is enabled, today is an event day, and the event is not deactivated.'
+        condition: template
+        value_template: '{{ light_enabled and event_today and enabled }}'
+
+      - choose:
+          - conditions:
+              - '{{ do_not_skipnext }}'
+            sequence:
+              - service_template: 'script.event_{{ id }}'
+
+              # - service: switch.turn_on
+              #   target:
+              #     entity_id: switch.hot_water_pump
+
+        default:
+          service: input_boolean.turn_off
+          data:
+            entity_id: '{{ skipnext_entity }}'
+
+  - alias: Event Light Timeout
+    id: wakeup_light_timeout
+    trigger:
+      - platform: event
+        event_type: timer.finished
+    variables:
+      timer: '{{ trigger.event.data.entity_id }}'
+      id: '{{ timer|replace("timer.event_timeout_","") }}'
+    condition:
+      - '{{ timer.startswith("timer.event_timeout_") }}'
+    action:
+      - service: homeassistant.turn_off
+        target:
+          entity_id:
+            - light.home_entry
+            - light.garage_entry
+
+      - service_template: "script.event_timeout_{{ id }}"
+
+script:
+  event_announce:
+    variables:
+      room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","") }}'
+      speaker:
+        bedroom: "media_player.google_bedroom"
+        kyles_room: "media_player.google_kyles_bedroom"
+        lucas_room: "media_player.google_lucas_bedroom"
+        lucas_sleep: "group.google_lucas_sleep"
+        boys_rooms: "group.google_boys_rooms"
+        downstairs: "group.google_downstairs"
+        kitchen/garage: "group.google_welcome"
+        kitchen: "media_player.google_kitchen"
+        family_room: "media_player.google_family_room"
+        garage: "media_player.google_garage"
+        play_room: "media_player.google_play_room"
+        upstairs: "group.google_upstairs"
+        upstairs_bathroom: "media_player.google_upstairs_bathroom"
+    sequence:
+      - service: script.notify_speech
+        data:
+          message: '{{ message|default("Error! The message was empty.") }}'
+          media_player: '{{ speaker[room] }}'
+
+  event_light:
+    alias: Event Light Fade-up
+    sequence:
+      # Transition the light to 100% over 10 minutes.
+      - service: light.turn_on
+        target:
+          entity_id: '{{ light }}'
+        data:
+          brightness_pct: 10
+      - repeat:
+          sequence:
+            - variables:
+                brightness_pct: '{{ 10 * repeat.index|int }}'
+
+            - service: light.turn_on
+              target:
+                entity_id: '{{ light }}'
+              data:
+                brightness_pct: '{{ brightness_pct }}'
+            - delay:
+                minutes: 1
+          until:
+            - '{{ brightness_pct|int == 100
+                  or is_state(light, "off") }}'
+
+      # Start a countdown timer which triggers and automation upon its conclusion.
+      # see: automation.event_light_timeout
+      - service: timer.start
+        target:
+          entity_id: '{{ "timer.event_timeout_" ~ id }}'
+
+      - service: script.toast
+        data:
+          message: '{{ id|replace("_"," ")|title }} Complete'
+
+  event_skipnext:
+    sequence:
+      - delay:
+          seconds: 15
+      - service: input_boolean.turn_off
+        data:
+          entity_id: '{{ skipnext|default("none") }}'
+
+# trigger_variables:
+#   trigger_entities: |
+#     {%- set entities = namespace(all=[],filtered="") %}
+#     {%- set entities.all = states.input_datetime | map(attribute='entity_id') | list %}
+#     {%- for entity in entities.all if entity.startswith("input_datetime.event_1st") or entity.startswith("input_datetime.event_2nd") -%}
+#       {% set entities.filtered = entities.filtered + entity + " " %}
+#     {%- endfor %}
+#     {{- entities.filtered.split() }}
+# trigger:
+#   - platform: time
+#     at: '{{ trigger_entities }}'

@@ -1,0 +1,90 @@
+---
+script:
+  event_wakeup_lucas_remote:
+    sequence:
+      - service: homeassistant.turn_off
+        target:
+          entity_id: switch.lucas_ac_cool
+
+      - service: light.turn_on
+        target:
+          entity_id: light.lucas_room
+        data:
+          brightness: 26
+
+      - service: script.event_light
+        data:
+          light: light.lucas_room
+          id: wakeup_lucas_remote
+
+  event_timeout_wakeup_lucas_remote:
+    sequence:
+      - service: homeassistant.turn_off
+        target:
+          entity_id: light.lucas_room
+
+input_boolean:
+  event_enabled_wakeup_lucas_remote:
+    name: Active
+    icon: mdi:alarm-check
+  event_skipnext_wakeup_lucas_remote:
+    name: Skip Next Event
+    icon: mdi:alarm-check
+  event_announcement_wakeup_lucas_remote:
+    name: Announcements?
+    icon: mdi:google-home
+  event_light_wakeup_lucas_remote:
+    name: Wakeup Light?
+    icon: mdi:lamp
+
+  event_mon_wakeup_lucas_remote:
+    name: Monday
+    icon: mdi:checkbox-marked-circle
+  event_tue_wakeup_lucas_remote:
+    name: Tuesday
+    icon: mdi:checkbox-marked-circle
+  event_wed_wakeup_lucas_remote:
+    name: Wednesday
+    icon: mdi:checkbox-marked-circle
+  event_thu_wakeup_lucas_remote:
+    name: Thursday
+    icon: mdi:checkbox-marked-circle
+  event_fri_wakeup_lucas_remote:
+    name: Friday
+    icon: mdi:checkbox-marked-circle
+  event_sat_wakeup_lucas_remote:
+    name: Saturday
+    icon: mdi:checkbox-marked-circle
+  event_sun_wakeup_lucas_remote:
+    name: Sunday
+    icon: mdi:checkbox-marked-circle
+
+input_datetime:
+  event_1st_wakeup_lucas_remote:
+    name: First Announcement
+    has_date: false
+    has_time: true
+  event_2nd_wakeup_lucas_remote:
+    name: Second Announcement
+    has_date: false
+    has_time: true
+  event_light_wakeup_lucas_remote: 
+    name: Light Fade-up Start
+    has_date: false
+    has_time: true
+
+input_select:
+  event_speakers_wakeup_lucas_remote:
+    name: Announce on which smart speaker(s)?
+    options: !include ../../templates/speech/tts_rooms.yaml
+    icon: mdi:google-home
+
+input_text:
+  event_1st_wakeup_lucas_remote:
+    name: First Announcement
+  event_2nd_wakeup_lucas_remote:
+    name: Second Announcement
+
+timer:
+  event_timeout_wakeup_lucas_remote:
+    duration: "01:00:00"
