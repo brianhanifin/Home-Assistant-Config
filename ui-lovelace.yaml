@@ -205,6 +205,83 @@ decluttering_templates:
       - template: heading
         type: custom:decluttering-card
         variables:
+        - content: '*[[label]]*'
+      - cards:
+        - entity: input_boolean.event_enabled_[[id]]
+          template: button_rounded_active
+          type: custom:button-card
+        - entity: input_boolean.event_skipnext_[[id]]
+          template: button_rounded_skipnext
+          type: custom:button-card
+        columns: 2
+        square: false
+        type: grid
+      - cards:
+        - cards:
+          - entity: input_boolean.event_mon_[[id]]
+            name: Mon
+            template: button_weekday
+            type: custom:button-card
+          - entity: input_boolean.event_tue_[[id]]
+            name: Tue
+            template: button_weekday
+            type: custom:button-card
+          - entity: input_boolean.event_wed_[[id]]
+            name: Wed
+            template: button_weekday
+            type: custom:button-card
+          - entity: input_boolean.event_thu_[[id]]
+            name: Thu
+            template: button_weekday
+            type: custom:button-card
+          - entity: input_boolean.event_fri_[[id]]
+            name: Fri
+            template: button_weekday
+            type: custom:button-card
+          - entity: input_boolean.event_sat_[[id]]
+            name: Sat
+            template: button_weekday
+            type: custom:button-card
+          - entity: input_boolean.event_sun_[[id]]
+            name: Sun
+            template: button_weekday
+            type: custom:button-card
+          columns: 7
+          type: grid
+        - entities:
+          - entities:
+            - entity: input_select.event_speakers_[[id]]
+            - entities:
+              - entity: input_text.event_1st_[[id]]
+                type: custom:text-input-row
+              head: input_datetime.event_1st_[[id]]
+              type: custom:fold-entity-row
+            - entities:
+              - entity: input_text.event_2nd_[[id]]
+                type: custom:text-input-row
+              head: input_datetime.event_2nd_[[id]]
+              type: custom:fold-entity-row
+            head: input_boolean.event_announcement_[[id]]
+            type: custom:fold-entity-row
+          show_header_toggle: false
+          state_color: true
+          type: entities
+        - entities:
+          - entities:
+            - entity: input_datetime.event_light_[[id]]
+            head: input_boolean.event_light_[[id]]
+            type: custom:fold-entity-row
+          show_header_toggle: false
+          state_color: true
+          type: entities
+        type: vertical-stack
+      type: vertical-stack
+  event_reminder:
+    card:
+      cards:
+      - template: heading
+        type: custom:decluttering-card
+        variables:
         - content: '*[[name]]*'
       - cards:
         - entity: automation.event_reminder_[[id]]
@@ -358,8 +435,6 @@ views:
             - content: '{{ states("sensor.ui_chores_lucas") }}
 
                 '
-              entity_id:
-              - input_select.responsibility_dishes_week
               style: "ha-card {\n  background: none;\n  margin: 0;\n  padding: 0;\n\
                 }\n"
               type: markdown
@@ -377,8 +452,6 @@ views:
             - content: '{{ states("sensor.ui_chores_kyle") }}
 
                 '
-              entity_id:
-              - input_select.responsibility_dishes_week
               style: "ha-card {\n  background: none;\n  padding: 0;\n  margin-top:\
                 \ -1em\n}\n"
               type: markdown
@@ -388,8 +461,6 @@ views:
           - content: '{{ states("sensor.ui_date") }}
 
               '
-            entity_id:
-            - sensor.ui_date
             style: "ha-card {\n  background: none;\n  font-size: 1.2em;\n  letter-spacing:\
               \ 0.03em;\n  margin-top: 0.5em;\n  opacity: 0.65;\n  text-align: center;\n\
               }\n"
@@ -397,8 +468,6 @@ views:
           - content: '{{ states("sensor.ui_forecast") }}
 
               '
-            entity_id:
-            - sensor.ui_forecast
             style: "ha-card {\n  --mdc-icon-size: 15px;\n  background: none;\n  font-size:\
               \ 1.1em;\n  letter-spacing: 0.03em;\n  margin-top: 0.6em;\n  opacity:\
               \ 0.65;\n  text-align: center;\n}\n"
@@ -445,12 +514,6 @@ views:
       - color: yellow
         entity: calendar.nerene
         icon: mdi:alpha-n-circle
-      - color: homeassistant
-        entity: calendar.kyle
-        icon: mdi:alpha-l-circle
-      - color: lightred
-        entity: calendar.lucas
-        icon: mdi:alpha-l-circle
       - color: cyan
         entity: calendar.hanifins
         icon: mdi:account-group
@@ -579,8 +642,8 @@ views:
                   title: ''
                   type: custom:home-feed-card
                 - card:
-                    style: "ha-card {\n  background: none;\n  box-shadow: none;\n\
-                      \  border-radius: 0;\n  margin: -.25em 0;\n  padding: 0;\n}\n"
+                    card_mod:
+                      style: "ha-card {\n  background-color: transparent;\n}\n"
                     type: entities
                   filter:
                     exclude:
@@ -644,7 +707,7 @@ views:
                   show_notification_title: true
                   style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
                     \ 0;\n  margin: 1em 0 -2em 6px;\n}\nha-markdown, hui-timestamp-display\
-                    \ {\n  margin-left: 16px;\n}\n"
+                    \ {\n  margin-left: 6px;\n}\n"
                   title: ''
                   type: custom:home-feed-card
                 type: vertical-stack
@@ -740,6 +803,13 @@ views:
       variables:
       - content: Schedulers
     - cards:
+      - icon: mdi:calendar-clock
+        name: Events
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/events
+        template: button
+        type: custom:button-card
       - icon: mdi:clock
         name: Devices
         tap_action:
@@ -753,21 +823,6 @@ views:
           action: navigate
           navigation_path: /lovelace/irrigation
         template: button
-        type: custom:button-card
-      - icon: mdi:reminder
-        name: Reminders
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/events
-        template: button
-        type: custom:button-card
-      - icon: mdi:weather-sunset-up
-        label: Lights
-        name: Wakeup
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/wakeup
-        template: button_label
         type: custom:button-card
       columns: 3
       square: false
@@ -1331,6 +1386,73 @@ views:
       template: button_home
       type: custom:button-card
     - cards:
+      - icon: mdi:tree
+        name: Outdoors
+        styles:
+          icon:
+          - color: yellow
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/outdoors
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:sprinkler
+        name: Irrigation
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/irrigation
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:weather-partly-cloudy
+        name: Weather
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/weather
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+  - entity: camera.front_door
+    type: picture-entity
+  - entity: camera.driveway
+    type: picture-entity
+  - type: custom:layout-break
+  - entity: camera.doorbell
+    type: picture-entity
+  - content: 'Note: Tap above stills for a live view.'
+    type: markdown
+  - type: custom:layout-break
+  - entity: camera.front_door_person
+    type: picture-entity
+  - entity: camera.driveway_person
+    type: picture-entity
+  icon: mdi:cctv
+  layout:
+    max_cols: 2
+  panel: false
+  path: cameras
+  theme: Caule Black Aqua Glass
+  title: Cameras
+  type: custom:vertical-layout
+- badges: []
+  cards:
+  - cards:
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
+    - cards:
       - icon: mdi:cctv
         name: Cameras
         styles:
@@ -1550,73 +1672,6 @@ views:
   type: custom:vertical-layout
 - badges: []
   cards:
-  - cards:
-    - icon: mdi:arrow-left-circle
-      name: Home
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      template: button_home
-      type: custom:button-card
-    - cards:
-      - icon: mdi:tree
-        name: Outdoors
-        styles:
-          icon:
-          - color: yellow
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/outdoors
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:sprinkler
-        name: Irrigation
-        styles:
-          icon:
-          - color: lightgreen
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/irrigation
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:weather-partly-cloudy
-        name: Weather
-        styles:
-          icon:
-          - color: grey
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/weather
-        template: button_short
-        type: custom:button-card
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-  - entity: camera.front_door
-    type: picture-entity
-  - entity: camera.driveway
-    type: picture-entity
-  - type: custom:layout-break
-  - entity: camera.doorbell
-    type: picture-entity
-  - content: 'Note: Tap above stills for a live view.'
-    type: markdown
-  - type: custom:layout-break
-  - entity: camera.front_door_person
-    type: picture-entity
-  - entity: camera.driveway_person
-    type: picture-entity
-  icon: mdi:cctv
-  layout:
-    max_cols: 2
-  panel: false
-  path: cameras
-  theme: Caule Black Aqua Glass
-  title: Cameras
-  type: custom:vertical-layout
-- badges: []
-  cards:
   - icon: mdi:arrow-left-circle
     name: Home
     tap_action:
@@ -1709,6 +1764,8 @@ views:
         entities:
         - entity: switch.lucas_ac_cool
           name: Air Conditioner
+        - entity: switch.lucas_ac_fan
+          name: Fan
         type: buttons
       show_header_toggle: false
       state_color: true
@@ -1971,6 +2028,121 @@ views:
       navigation_path: /lovelace/home
     template: button_home
     type: custom:button-card
+  - template: heading
+    type: custom:decluttering-card
+    variables:
+    - content: Events<br>_Scheduled Announcements & Wakeup Lights_
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Wakeup Nerene
+    - id: wakeup_nerene
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Wakeup Brian
+    - id: wakeup_brian
+  - entities:
+    - entities:
+      - entity: sensor.time
+      - entity: light.bedroom_table_lamp
+        secondary_info: last-changed
+      - entity: timer.event_timeout_wakeup_brian
+        name: Event Timeout
+      group_config:
+        secondary_info: last-changed
+      head:
+        label: debug
+        type: section
+      type: custom:fold-entity-row
+    type: entities
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Bedtime<br>_School day_
+    - id: bedtime_weekday
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Bedtime<br>_Weekend_
+    - id: bedtime_weekend
+  - type: custom:layout-break
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Wakeup Lucas<br>_Remote Learning_
+    - id: wakeup_lucas_remote
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Wakeup Lucas<br>_In Person Learning_
+    - id: wakeup_lucas
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Wakeup Kyle
+    - id: wakeup_kyle
+  icon: mdi:calendar-clock
+  path: events
+  theme: Caule Black Yellow Glass
+  title: Events
+  type: custom:vertical-layout
+- badges: []
+  cards:
+  - icon: mdi:arrow-left-circle
+    name: Home
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace/home
+    template: button_home
+    type: custom:button-card
+  - template: heading
+    type: custom:decluttering-card
+    variables:
+    - content: Scheduled Reminders
+  - template: event_reminder
+    type: custom:decluttering-card
+    variables:
+    - id: '1'
+    - name: 'School: Kyle'
+  - template: event_reminder
+    type: custom:decluttering-card
+    variables:
+    - id: '2'
+    - name: 'School: Lucas Monday'
+  - template: event_reminder
+    type: custom:decluttering-card
+    variables:
+    - id: '3'
+    - name: 'School: Lucas Tuesday - Friday'
+  - type: custom:layout-break
+  - template: event_reminder
+    type: custom:decluttering-card
+    variables:
+    - id: '4'
+    - name: 'Bedtime: School'
+  - template: event_reminder
+    type: custom:decluttering-card
+    variables:
+    - id: '5'
+    - name: 'Bedtime: Weekend'
+  icon: mdi:reminder
+  layout:
+    max_cols: 2
+  panel: false
+  path: event_reminders
+  theme: Caule Black Yellow Glass
+  title: Event Reminders
+  type: custom:vertical-layout
+- badges: []
+  cards:
+  - icon: mdi:arrow-left-circle
+    name: Home
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace/home
+    template: button_home
+    type: custom:button-card
   - am_pm: true
     discover_existing: false
     include:
@@ -2017,43 +2189,35 @@ views:
       navigation_path: /lovelace/home
     template: button_home
     type: custom:button-card
-  - template: heading
+  - template: wakeup
     type: custom:decluttering-card
     variables:
-    - content: Scheduled Reminders
-  - template: event
+    - name: nerene
+    - light: light.bedroom
+  - entity: sensor.time
+    type: entity
+  - type: custom:layout-break
+  - template: wakeup
     type: custom:decluttering-card
     variables:
-    - id: '1'
-    - name: 'School: Kyle'
-  - template: event
+    - name: lucas
+    - light: light.lucas_room
+  - template: wakeup
     type: custom:decluttering-card
     variables:
-    - id: '2'
-    - name: 'School: Lucas Mon, Wed, Thu'
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - id: '3'
-    - name: 'School: Lucas Tue, Fri'
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - id: '4'
-    - name: 'Bedtime: School'
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - id: '5'
-    - name: 'Bedtime: Weekend'
-  icon: mdi:reminder
+    - name: brian
+    - light: light.bedroom_table_lamp
+  - entities:
+    - light.table_lamp
+    show_header_toggle: false
+    type: entities
+  icon: mdi:weather-sunset-up
   layout:
-    max_cols: 2
-  panel: false
-  path: events
+    max_cols: 3
+  path: wakeup
   theme: Caule Black Yellow Glass
-  title: Events
-  type: custom:masonry-layout
+  title: Wakeup
+  type: custom:vertical-layout
 - badges: []
   cards:
   - cards:
@@ -2204,16 +2368,15 @@ views:
       variables:
       - content: Irrigation Controller<br>*Information*
     - entities:
-      - entities:
-        - entity: binary_sensor.irrigation_controller_status
-          name: Status
-        - entity: sensor.irrigation_controller_uptime
-          name: Uptime
-        entity: sensor.irrigation_controller_wifi_signal
-        name: Irrigation Controller
-        state_header: null
-        type: custom:multiple-entity-row
-      type: entities
+      - entity: binary_sensor.irrigation_controller_status
+        name: Status
+      - entity: sensor.irrigation_controller_uptime
+        name: Uptime
+      - entity: sensor.irrigation_controller_wifi_signal
+        name: Signal
+      show_icon: true
+      show_name: false
+      type: glance
     type: vertical-stack
   icon: hass:sprinkler
   layout:
@@ -2221,40 +2384,6 @@ views:
   path: irrigation
   theme: Caule Black Yellow Glass
   title: Irrigation Control
-  type: custom:vertical-layout
-- badges: []
-  cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
-  - template: wakeup
-    type: custom:decluttering-card
-    variables:
-    - name: nerene
-    - light: light.bedroom
-  - entity: sensor.time
-    type: entity
-  - type: custom:layout-break
-  - template: wakeup
-    type: custom:decluttering-card
-    variables:
-    - name: lucas
-    - light: light.lucas_room
-  - template: wakeup
-    type: custom:decluttering-card
-    variables:
-    - name: brian
-    - light: light.bedroom_table_lamp
-  icon: mdi:weather-sunset-up
-  layout:
-    max_cols: 3
-  path: wakeup
-  theme: Caule Black Yellow Glass
-  title: Wakeup
   type: custom:vertical-layout
 - badges: []
   cards:
@@ -2299,16 +2428,17 @@ views:
   title: Smart Speakers
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
   - cards:
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
     - cards:
-      - icon: mdi:network
+      - entity: none
+        icon: mdi:network
         name: Network
         styles:
           icon:
@@ -2318,7 +2448,8 @@ views:
           navigation_path: /lovelace/system_network
         template: button_short
         type: custom:button-card
-      - icon: mdi:tune-vertical
+      - entity: none
+        icon: mdi:tune-vertical
         name: Unraid
         styles:
           icon:
@@ -2331,6 +2462,8 @@ views:
       columns: 2
       square: false
       type: grid
+    type: vertical-stack
+  - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
@@ -2514,6 +2647,7 @@ views:
         > 0}}'
       type: custom:state-switch
     type: vertical-stack
+  - type: custom:layout-break
   - cards:
     - template: heading
       type: custom:decluttering-card
@@ -2521,13 +2655,13 @@ views:
       - content: Entity Counts
     - columns: 7
       entities:
-      - entity: sensor.none
       - entity: sensor.entity_count
       - entity: sensor.domain_count
       - entity: sensor.automation_count
       - entity: sensor.script_count
-      - entity: sensor.scene_count
-      - entity: sensor.none
+      - entity: sensor.alert_count
+      - entity: sensor.unknown_count
+      - entity: sensor.unavailable_count
       - entity: sensor.media_player_count
       - entity: sensor.camera_count
       - entity: sensor.cover_lock_count
@@ -2547,8 +2681,6 @@ views:
       - entity: sensor.group_count
       - entity: sensor.timer_count
       - entity: sensor.zone_count
-      - entity: sensor.unknown_count
-      - entity: sensor.unavailable_count
       show_name: false
       show_state: true
       theme: Caule Black Purple Glass
@@ -2568,19 +2700,21 @@ views:
       type: entities
     type: vertical-stack
   icon: mdi:server
+  layout: {}
   path: system
   theme: Caule Black Gray Glass
   title: System
+  type: custom:vertical-layout
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
   - cards:
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
     - cards:
       - entity: none
         icon: mdi:server
@@ -2607,6 +2741,47 @@ views:
       columns: 2
       square: false
       type: grid
+    type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Network Access Control
+    - entities:
+      - entity: switch.network_blackpc
+        name: Black PC
+      - entity: switch.network_bluepc
+        name: Blue PC
+      - entity: switch.network_redpc
+        name: Red PC
+      footer:
+        entities:
+        - entity: switch.unraid_docker_unifi_controller
+          name: UniFi Controller
+        type: buttons
+      show_header_toggle: false
+      state_color: true
+      theme: Caule Dark Purple
+      title: ''
+      type: entities
+    type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Network Access Scheduler
+    - am_pm: true
+      discover_existing: false
+      include:
+      - switch.network_blackpc
+      - switch.network_bluepc
+      - switch.network_nintendo_switch
+      - switch.network_redpc
+      title: false
+      type: custom:scheduler-card
+    type: vertical-stack
+  - type: custom:layout-break
+  - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
@@ -2642,58 +2817,23 @@ views:
       theme: Caule Dark Purple
       type: entities
     type: vertical-stack
-  - cards:
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: Network Access Control
-    - entities:
-      - entity: switch.network_blackpc
-        name: Black PC
-      - entity: switch.network_bluepc
-        name: Blue PC
-      - entity: switch.network_redpc
-        name: Red PC
-      footer:
-        entities:
-        - entity: switch.unraid_docker_unifi_controller
-          name: UniFi Controller
-        type: buttons
-      show_header_toggle: false
-      state_color: true
-      theme: Caule Dark Purple
-      title: ''
-      type: entities
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: Network Access Scheduler
-    - am_pm: true
-      discover_existing: false
-      include:
-      - switch.network_blackpc
-      - switch.network_bluepc
-      - switch.network_nintendo_switch
-      - switch.network_redpc
-      title: false
-      type: custom:scheduler-card
-    type: vertical-stack
   icon: mdi:network
   path: system_network
   theme: Caule Black Gray Glass
   title: System > Network Access
+  type: custom:vertical-layout
   visible:
   - user: dd8d7d8c949148fa945f68d1c2a1a0d5
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
   - cards:
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
     - cards:
       - entity: none
         icon: mdi:server
@@ -2720,6 +2860,8 @@ views:
       columns: 2
       square: false
       type: grid
+    type: vertical-stack
+  - cards:
     - cards:
       - template: heading
         type: custom:decluttering-card
@@ -2766,6 +2908,7 @@ views:
         type: custom:hui-entities-card
       type: vertical-stack
     type: vertical-stack
+  - type: custom:layout-break
   - cards:
     - template: heading
       type: custom:decluttering-card
@@ -2794,6 +2937,8 @@ views:
       theme: Caule Dark Purple
       title: ''
       type: entities
+    type: vertical-stack
+  - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
@@ -2823,6 +2968,7 @@ views:
   path: system_unraid
   theme: Caule Black Gray Glass
   title: System > Unraid
+  type: custom:vertical-layout
 - badges: []
   cards:
   - icon: mdi:arrow-left-circle
