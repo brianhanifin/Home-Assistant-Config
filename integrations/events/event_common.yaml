@@ -54,8 +54,8 @@ automation:
           skipnext: '{{ skipnext_entity }}'
           message: '{{ announcement }}'
 
-  - alias: Event Wakeup
-    id: event_wakeup
+  - alias: Event Light
+    id: event_light
     mode: parallel
     trigger:
       - platform: time
@@ -105,7 +105,7 @@ automation:
             entity_id: '{{ skipnext_entity }}'
 
   - alias: Event Light Timeout
-    id: wakeup_light_timeout
+    id: event_light_timeout
     trigger:
       - platform: event
         event_type: timer.finished
@@ -156,20 +156,35 @@ script:
           entity_id: '{{ light }}'
         data:
           brightness_pct: 10
+
       - repeat:
           sequence:
+            # Add 10% to the brightness.
             - variables:
-                brightness_pct: '{{ 10 * repeat.index|int }}'
+                brightness_pct: '{{ 10 * repeat.index }}'
 
             - service: light.turn_on
               target:
                 entity_id: '{{ light }}'
               data:
                 brightness_pct: '{{ brightness_pct }}'
-            - delay:
-                minutes: 1
+
+            # - service: script.toast
+            #   data:
+            #     message: |
+            #       repeat.index: {{ repeat.index }}
+            #       - brightness_pct: {{ brightness_pct }}
+
+            # Delay before next increase.
+            - choose:
+                - conditions:
+                    - '{{ repeat.index < 10 }}'
+                  sequence:
+                    - delay:
+                        minutes: 1
+                        #seconds: 5
           until:
-            - '{{ brightness_pct|int == 100
+            - '{{ repeat.index == 10
                   or is_state(light, "off") }}'
 
       # Start a countdown timer which triggers and automation upon its conclusion.
