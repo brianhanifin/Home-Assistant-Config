@@ -2,7 +2,7 @@
 # Get more codes from (or learn), then add to /config/.storage/broadlink_remote_a043b032d481_codes:
 # https://github.com/smartHomeHub/SmartIR/blob/master/codes/climate/1068.json
 #
-# lucas_room_ac
+# lucas_ac
 #   power
 #   temp_down
 #   temp_up
@@ -18,15 +18,15 @@ variables:
   device: lucas_room_ac
   commands: |
     {%- if command != "" %}
-      {{ command|replace(" ","") }}
+      {{ command|replace(" ","")|default("none") }}
     {%- else %}
-      {{ commands|replace(" ","")|default("") }}
-    {%- endif %}
+      {{ commands|replace(" ","")|default("none") }}
+    {% endif %}
   command_count: '{{ 0 if commands == "none" else commands.split(",") | count }}'
 sequence:
   - service: script.toast
     data:
-      message: "commands: {{ commands }}"
+      message: 'commands: {{ commands.split(",") }}'
 
   # If command "none" is passed, then someone tried to turn an A/C on that was already on.
   # So don't do anything, as another "power" instruction would just turn the A/C off.
@@ -34,14 +34,20 @@ sequence:
     value_template: '{{ command_count > 0 }}'
 
   - repeat:
-      count: "{{ command_count|int }}"
+      count: '{{ command_count|int }}'
       sequence:
         - variables:
             command: '{{ commands.split(",")[repeat.index-1]|default("") }}'
-
+        
         - service: remote.send_command
           target:
-            entity_id: "{{ remote }}"
+            entity_id: '{{ remote }}'
           data:
-            device: "{{ device }}"
-            command: "{{ command }}"
+            device: '{{ device }}'
+            command: '{{ command }}'
+
+        # - service: script.toast
+        #   data:
+        #     message: 'commands[{{ repeat.index-1 }}]: {{ command }}'
+        # - delay:
+        #     seconds: 2
