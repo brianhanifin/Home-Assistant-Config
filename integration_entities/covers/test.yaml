@@ -1,0 +1,15 @@
+---
+platform: template
+covers:
+  test:
+    device_class: garage
+    friendly_name: Test Cover
+    value_template: '{{ "open" if is_state("input_boolean.test","on") else "closed" }}'
+    open_cover:
+      service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.test
+    close_cover:
+      service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.test
