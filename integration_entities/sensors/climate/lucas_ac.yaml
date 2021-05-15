@@ -1,0 +1,46 @@
+---
+platform: template
+sensors:
+  lucas_ac:
+    friendly_name: "Lucas' A/C Status"
+    icon_template: mdi:information
+    value_template:  |
+        {%- set power = states("sensor.lucas_ac_power")|int %}
+        {%- if power < 10 %}
+          Off
+        {%- else %}
+          {{ states("input_select.lucas_ac_status") }}
+        {% endif %}
+    # Extrapolate fan speed and modes using power usage.
+    # Max Power Usage: 520W
+    # Fan Speeds:
+    #   F1        W
+    #   F2      40W
+    #   F3        W
+    # Modes:
+    #   LOW       W
+    #   MEDIUM    W
+    #   HIGH      W
+    attribute_templates:
+      mode: |
+        {%- set power = states("sensor.lucas_ac_power")|int %}
+        {%- if power < 10 %}
+          Off
+        {%- elif power < 100 and power > 10 %}
+          Fan
+        {%- elif power > 100 %}
+          A/C
+        {% endif %}
+      fan_speed: |
+        {%- set power = states("sensor.lucas_ac_power")|int %}
+        {%- if power < 10 %}
+          Off
+        {%- elif power > 10 and power < 38 %}
+          F1
+        {%- elif power > 38 and power < 42 %}
+          F2
+        {%- elif power > 42 and power < 100 %}
+          F3
+        {%- else %}
+          A/C Mode - Fan Speed Unknown
+        {% endif %}
