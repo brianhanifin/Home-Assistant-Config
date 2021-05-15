@@ -1,27 +1,33 @@
 ---
 mode: parallel 
 sequence:
-  - service: tts.cloud_say
-    data:
-      entity_id: '{{ media_player }}'
-      message: '{{ message|striptags }}'
-      language: en-US
-      options:
-        gender: female
+  # Only speak when there is something to say. ;)
+  choose:
+    conditions:
+      - condition: template
+        value_template: '{{ message is not undefined }}'
+    sequence:
+      - service: tts.cloud_say
+        data:
+          entity_id: '{{ media_player }}'
+          message: '{{ message|striptags }}'
+          language: en-US
+          options:
+            gender: female
 
-  # # Remove "speaker" icon from screen by turning the kitchen media player off.
-  # - condition: template
-  #   value_template: '{{ media_player in ["media_player.google_kitchen","group.google_downstairs"] }}'
-  # - delay:
-  #     seconds: 10
-  # - service: media_player.turn_off
-  #   entity_id: media_player.google_kitchen
+      # # Remove "speaker" icon from screen by turning the kitchen media player off.
+      # - condition: template
+      #   value_template: '{{ media_player in ["media_player.google_kitchen","group.google_downstairs"] }}'
+      # - delay:
+      #     seconds: 10
+      # - service: media_player.turn_off
+      #   entity_id: media_player.google_kitchen
 
 
 fields:
   media_player:
-    description: Media Player entity_id or group id.
-    example: media_player.google_kitchen or group.google_welcome
+    description: Media Player entity_id.
+    example: media_player.google_kitchen
     default: media_player.google_family_room
     selector:
       text:

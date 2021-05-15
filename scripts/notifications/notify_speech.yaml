@@ -1,16 +1,9 @@
 ---
 sequence:
-  # Only speak when there is something to say. ;)
-  choose:
-    conditions:
-      - condition: template
-        value_template: '{{ message is not undefined }}'
-    sequence:
-      - service: script.say
-        data:
-          media_player: '{{ media_player }}'
-          message: '{{ message }}'
-          say_greeting: 'false'
+  - service: script.say_cloud
+    data:
+      media_player: '{{ media_player }}'
+      message: '{{ message }}'
 
 fields:
   message:
@@ -22,8 +15,7 @@ fields:
         multiline: true
   media_player:
     description: Which speakers are we sending this message to?
-    example: group.google_welcome
-    default: media_player.google_kitchen
+    example: media_player.google_kitchen
     selector:
       select:
         options:
