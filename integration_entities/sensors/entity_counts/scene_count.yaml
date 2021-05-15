@@ -4,4 +4,6 @@ sensors:
   scene_count:
     friendly_name: Scenes
     icon_template: mdi:drama-masks
-    value_template: '{{ states.scene|count }}'
+    value_template: '{{ states.scene | count }}'
+    attribute_templates:
+      entities: '{{ states.scene | map(attribute="entity_id") | list }}'

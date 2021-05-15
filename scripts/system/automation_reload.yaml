@@ -26,12 +26,26 @@ sequence:
           - service: script.toast
             data:
               message: Reloading automations...
+              duration: 15
 
           - service: automation.reload
+
+          - alias: Change toast message when reload is complete.
+            wait_for_trigger:
+              - platform: event
+                event_type: automation_reloaded
+            timeout:
+              minutes: "2"
+            continue_on_timeout: false
+
+          - service: script.toast
+            data:
+              message: "Automations have been reloaded!"
+              duration: 15
 
     default:
       # Display the message as a toast notification
       - service: script.toast
-        data_template:
+        data:
           message: "{{ state_attr('persistent_notification.1337','message') }}"
           duration: 0

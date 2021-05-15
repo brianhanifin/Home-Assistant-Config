@@ -30,12 +30,13 @@ sequence:
           - service: script.toast
             data:
               message: Reloading scripts...
+              duration: 15
 
           - service: shell_command.script_reload
 
     default:
       # Display the message as a toast notification
       - service: script.toast
-        data_template:
+        data:
           message: "{{ state_attr('persistent_notification.1337','message') }}"
           duration: 0
