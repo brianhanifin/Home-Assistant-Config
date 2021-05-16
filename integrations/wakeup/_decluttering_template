@@ -1,0 +1,70 @@
+  wakeup:
+    card:
+      type: vertical-stack
+      cards:
+        - type: 'custom:decluttering-card'
+          template: heading
+          variables:
+            - content: '**Wakeup Lights**<br>*Wakeup [[name]]*'
+        - type: horizontal-stack
+          cards:
+            - type: 'custom:gap-card'
+            - type: 'custom:button-card'
+              template: button_rounded_active
+              entity: 'input_boolean.wakeup_status_[[name]]'
+              styles:
+                card:
+                  - width: 180px
+            - type: 'custom:button-card'
+              template: button_rounded_skipnext
+              entity: 'input_boolean.wakeup_skipnext_[[name]]'
+              styles:
+                card:
+                  - width: 180px
+            - type: 'custom:gap-card'
+        - type: horizontal-stack
+          cards:
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: 'input_boolean.wakeup_mon_[[name]]'
+              name: Mon
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: 'input_boolean.wakeup_tue_[[name]]'
+              name: Tue
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: 'input_boolean.wakeup_wed_[[name]]'
+              name: Wed
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: 'input_boolean.wakeup_thu_[[name]]'
+              name: Thu
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: 'input_boolean.wakeup_fri_[[name]]'
+              name: Fri
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: 'input_boolean.wakeup_sat_[[name]]'
+              name: Sat
+            - type: 'custom:button-card'
+              template: button_weekday
+              entity: 'input_boolean.wakeup_sun_[[name]]'
+              name: Sun
+        - type: 'custom:time-picker-card'
+          entity: 'input_datetime.wakeup_time_[[name]]'
+          icon: 'mdi:weather-sunset-up'
+          hour_mode: 12
+          layout:
+            name: inside
+            hour_mode: single
+          link_values: true
+        - type: entities
+          entities:
+            - entity: 'sensor.wakeup_end_[[name]]'
+              icon: 'mdi:weather-sunny'
+            - type: divider
+            - entity: '[[light]]'
+            - entity: 'timer.wakeup_timeout_[[name]]'
+              name: Wakeup Timeout Countdown
