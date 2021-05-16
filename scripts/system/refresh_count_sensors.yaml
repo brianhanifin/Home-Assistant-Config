@@ -6,7 +6,7 @@ sequence:
       duration: 60
 
   - service: homeassistant.update_entity
-    data:
+    target:
       entity_id: |
         {%- set storage = namespace(entities="") %}
         {%- set entities = states.sensor | map(attribute="entity_id") | list %}
