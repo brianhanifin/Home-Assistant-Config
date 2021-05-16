@@ -1743,48 +1743,147 @@ views:
       variables:
       - content: _Lucas' Room_
     - entities:
-      - type: divider
-      - entity: sensor.lucas_ac_current_status
-        name: Status
-        secondary_info: last-updated
-      - entity: sensor.lucas_ac_power
-      - type: divider
-      - entity: sensor.lucas_room_temperature
-        name: Temperature, Door
-        secondary_info: last-updated
-      - entity: sensor.lucas_room_remote_temperature
-        name: Temperature, Window
-        secondary_info: last-updated
-      footer:
-        detail: 1
-        entity: sensor.lucas_room_temperature
-        hours_to_show: 24
-        type: graph
+      - entities:
+        - entity: switch.schedule_lucas_ac_cool_school_day_schedule
+          name: School Days
+          toggle: true
+        - entity: switch.schedule_lucas_ac_cool_weekend_schedule
+          name: Weekend
+          toggle: true
+        entity: switch.schedule_lucas_ac_cool_school_day_schedule
+        name: Schedule
+        secondary_info: last-changed
+        show_state: false
+        state_color: true
+        type: custom:multiple-entity-row
       header:
         entities:
+        - entity: automation.lucas_ac_smart
+          name: Fan/Cool
         - entity: switch.lucas_ac_cool
-          name: Air Conditioner
+          name: Cool
         - entity: switch.lucas_ac_fan
           name: Fan
         type: buttons
       show_header_toggle: false
       state_color: true
       type: entities
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: _Air Conditioner Schedule_
     - entities:
-      - entity: switch.schedule_lucas_ac_cool_school_day_schedule
-        name: School Days
-        secondary_info: last-updated
-      - entity: switch.schedule_lucas_ac_cool_weekend_schedule
-        name: Weekend
+      - entities:
+        - entity: sensor.lucas_ac_power
+          name: Power
+        - attribute: fan_speed
+          entity: sensor.lucas_ac
+          name: Fan Speed
+        - entity: sensor.lucas_ac
+          name: Status
+        entity: sensor.lucas_ac
+        name: Air Conditioner
         secondary_info: last-changed
+        show_state: false
+        type: custom:multiple-entity-row
+      - entities:
+        - entity: sensor.outdoor_temperature
+          name: Outdoor
+        - entity: sensor.lucas_room_remote_temperature
+          name: Window
+        - entity: sensor.lucas_room_temperature
+          name: Door
+        entity: sensor.lucas_room_temperature
+        name: Temperature
+        secondary_info: last-changed
+        show_state: false
+        type: custom:multiple-entity-row
+      footer:
+        detail: 1
+        entity: sensor.lucas_room_temperature
+        hours_to_show: 24
+        type: graph
       show_header_toggle: false
       state_color: true
       type: entities
     type: vertical-stack
+  - cards:
+    - entity: script.lucas_ac
+      icon: mdi:power
+      name: Power
+      styles:
+        icon:
+        - color: red
+      tap_action:
+        action: call-service
+        service: script.lucas_ac
+        service_data:
+          commands: power
+      template: button_short
+      type: custom:button-card
+    - entity: script.lucas_ac
+      icon: mdi:dip-switch
+      name: Mode
+      tap_action:
+        action: call-service
+        service: script.lucas_ac
+        service_data:
+          commands: mode
+      template: button_short
+      type: custom:button-card
+    - entity: script.lucas_ac
+      icon: mdi:fan
+      name: Speed
+      styles:
+        icon:
+        - color: Teal
+      tap_action:
+        action: call-service
+        service: script.lucas_ac
+        service_data:
+          commands: fan_speed
+      template: button_short
+      type: custom:button-card
+    - entity: script.lucas_ac
+      icon: mdi:thermometer-minus
+      name: Temp
+      styles:
+        icon:
+        - color: cyan
+      tap_action:
+        action: call-service
+        service: script.lucas_ac
+        service_data:
+          commands: temp_down
+      template: button_short
+      type: custom:button-card
+    - entity: script.lucas_ac
+      icon: mdi:thermometer-plus
+      name: Temp
+      styles:
+        icon:
+        - color: Orange
+      tap_action:
+        action: call-service
+        service: script.lucas_ac
+        service_data:
+          commands: temp_up
+      template: button_short
+      type: custom:button-card
+    columns: 3
+    square: false
+    type: grid
+  - entities:
+    - entities:
+      - entity: sensor.lucas_ac_hourly_energy
+        name: Hour
+      - entity: sensor.lucas_ac_daily_energy
+        name: Day
+      - entity: sensor.lucas_ac_monthly_energy
+        name: Month
+      - entity: sensor.lucas_ac_yearly_energy
+        name: Year
+      entity: sensor.lucas_ac_power
+      name: Power Use
+      show_state: false
+      type: custom:multiple-entity-row
+    type: entities
   - type: custom:layout-break
   - cards:
     - template: heading
@@ -1843,13 +1942,6 @@ views:
       extrema: true
       graph: line
     type: custom:mini-graph-card
-  - entities:
-    - entity: sensor.lucas_ac_current_status
-    - entity: sensor.lucas_ac_hourly_energy
-    - entity: sensor.lucas_ac_daily_energy
-    - entity: sensor.lucas_ac_monthly_energy
-    - entity: sensor.lucas_ac_yearly_energy
-    type: entities
   icon: mdi:thermostat
   layout:
     max_cols: 3
@@ -2170,6 +2262,7 @@ views:
     - switch.hot_water_pump
     - switch.landscape_power
     - switch.lucas_ac_cool
+    - switch.lucas_ac_fan
     - switch.printers
     time_step: 10
     title: Smart Home Schedule
@@ -2539,12 +2632,12 @@ views:
       type: entities
     - cards:
       - entity: script.config_check
-        icon: mdi:check
+        icon: mdi:check-circle
         name: Config
         template: button_short
         type: custom:button-card
       - entity: script.automation_reload
-        icon: mdi:reload
+        icon: mdi:refresh-circle
         name: Automations
         styles:
           icon:
@@ -2552,7 +2645,7 @@ views:
         template: button_short
         type: custom:button-card
       - entity: script.script_reload
-        icon: mdi:reload
+        icon: mdi:file-refresh
         name: Scripts
         styles:
           icon:
@@ -2560,7 +2653,7 @@ views:
         template: button_short
         type: custom:button-card
       - entity: script.config_check_and_reboot_server
-        icon: mdi:power-cycle
+        icon: mdi:power-standby
         name: Reboot VM
         styles:
           icon:
@@ -2572,7 +2665,7 @@ views:
         template: button_short
         type: custom:button-card
       - entity: script.config_check_and_restart
-        icon: mdi:restart
+        icon: mdi:recycle
         name: Restart
         styles:
           icon:
@@ -2609,7 +2702,7 @@ views:
         template: button_short
         type: custom:button-card
       - entity: script.ci_generate_fake_secrets
-        icon: mdi:github
+        icon: mdi:thought-bubble
         name: Secrets gen
         styles:
           icon:
@@ -2617,8 +2710,16 @@ views:
         template: button_short
         type: custom:button-card
       - entity: script.refresh_update_sensors
-        icon: mdi:update
-        name: Update counts
+        icon: mdi:cog-refresh
+        name: update count
+        styles:
+          icon:
+          - color: GoldenRod
+        template: button_short
+        type: custom:button-card
+      - entity: script.refresh_count_sensors
+        icon: mdi:cog-refresh
+        name: sensor count
         styles:
           icon:
           - color: GoldenRod
@@ -3064,16 +3165,20 @@ views:
         show_header_toggle: false
         type: entities
       filter:
-        exclude:
-        - entity_id: /automation.|calendar.|scene.|script./
         include:
-        - entity_id: /anniversary|birthday|wedding/
+        - domain: sensor
+          entity_id: /anniversary|birthday|wedding/
           options:
-            secondary: "{{ state_attr(config.entity,'date') }}\n{% if state_attr(config.entity,'years_at_next_anniversary')\
-              \ %}\n  ({{ state_attr(config.entity,'years_at_next_anniversary') }}\
-              \ years)\n{% endif %}\n"
-            state: '{{ states(config.entity) }} days'
-            type: custom:template-entity-row
+            entities:
+            - attribute: date
+            - attribute: years_at_next_anniversary
+              hide_unavailable: true
+              name: Years
+            - entity: this.entity_id
+              name: Days Till
+              unit: false
+            show_state: false
+            type: custom:multiple-entity-row
       show_empty: true
       sort:
         method: state

@@ -1,46 +1,41 @@
 ---
 platform: template
 sensors:
+  # Extrapolate fan speed and modes using power usage.
+  # Max Power Usage: 520W
+  # Fan Speeds:
+  #   F1      40 - 46W
+  #   F2      47 - 52W
+  #   F3      53 - 60W
+  # Modes:
+  #   Off      <  10W
+  #   Fan      < 100W
+  #   A/C      > 100W
   lucas_ac:
-    friendly_name: "Lucas' A/C Status"
+    friendly_name: "Lucas' A/C"
     icon_template: mdi:information
-    value_template:  |
+    value_template: |
         {%- set power = states("sensor.lucas_ac_power")|int %}
-        {%- if power < 10 %}
-          Off
-        {%- else %}
-          {{ states("input_select.lucas_ac_status") }}
-        {% endif %}
-    # Extrapolate fan speed and modes using power usage.
-    # Max Power Usage: 520W
-    # Fan Speeds:
-    #   F1        W
-    #   F2      40W
-    #   F3        W
-    # Modes:
-    #   LOW       W
-    #   MEDIUM    W
-    #   HIGH      W
-    attribute_templates:
-      mode: |
-        {%- set power = states("sensor.lucas_ac_power")|int %}
-        {%- if power < 10 %}
-          Off
+        {%- if power > 100 %}
+          Cooling
         {%- elif power < 100 and power > 10 %}
           Fan
-        {%- elif power > 100 %}
-          A/C
+        {%- elif power > 2 %}
+          Idle
+        {%- else %}
+          Off
         {% endif %}
+    attribute_templates:
       fan_speed: |
         {%- set power = states("sensor.lucas_ac_power")|int %}
         {%- if power < 10 %}
           Off
-        {%- elif power > 10 and power < 38 %}
-          F1
-        {%- elif power > 38 and power < 42 %}
-          F2
-        {%- elif power > 42 and power < 100 %}
-          F3
+        {%- elif power >= 40 and power <= 46 %}
+          1
+        {%- elif power >= 47 and power <= 52 %}
+          2
+        {%- elif power >= 53 and power <= 100 %}
+          3
         {%- else %}
-          A/C Mode - Fan Speed Unknown
+          {{ default }}
         {% endif %}
