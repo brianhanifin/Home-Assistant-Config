@@ -1,0 +1,12 @@
+---
+alias: Repeat Last Message
+sequence:
+  # Say the previous message on the last Google speaker that was spoken to.
+  # Bypass `script.say_cloud` to avoid storing the last message again.
+  - service: tts.cloud_say
+    data:
+      entity_id: '{{ states("sensor.last_google") }}'
+      message: 'This message is from {{ relative_time(states.sensor.last_message.last_updated) }} ago. {{ states("sensor.last_message") }}'
+      language: en-US
+      options:
+        gender: female

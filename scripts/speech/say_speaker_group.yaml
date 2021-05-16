@@ -14,9 +14,7 @@ sequence:
       count: "{{ speaker_count|int }}"
       sequence:
         - variables:
-            #speaker: '{{ speakers[repeat.index-1] }}'
             speaker: '{{ speakers.split(" ")[repeat.index-1] }}'
-            tts_service: 'google'
 
         - service: script.say_cloud
           data:

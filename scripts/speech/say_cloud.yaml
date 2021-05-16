@@ -1,19 +1,24 @@
 ---
-mode: parallel 
+mode: parallel
+variables:
+  media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+  message: '{{ message|striptags }}'
+  # mqtt_message_attributes:
+  #   target: "{{ media_player }}"
 sequence:
   # Only speak when there is something to say. ;)
-  choose:
-    conditions:
-      - condition: template
-        value_template: '{{ message is not undefined }}'
-    sequence:
-      - service: tts.cloud_say
-        data:
-          entity_id: '{{ media_player }}'
-          message: '{{ message|striptags }}'
-          language: en-US
-          options:
-            gender: female
+  - choose:
+      conditions:
+        - condition: template
+          value_template: '{{ message is not undefined }}'
+      sequence:
+        - service: tts.cloud_say
+          data:
+            entity_id: '{{ media_player }}'
+            message: '{{ message }}'
+            language: en-US
+            options:
+              gender: female
 
       # # Remove "speaker" icon from screen by turning the kitchen media player off.
       # - condition: template
@@ -22,6 +27,23 @@ sequence:
       #     seconds: 10
       # - service: media_player.turn_off
       #   entity_id: media_player.google_kitchen
+
+  - service: script.toast
+    data:
+      message: "{{ message }}"
+
+  # Store Last Message
+  - service: script.store_mqtt_sensor
+    data:
+      name: "last_message"
+      state: "{{ message }}"
+      #attributes: '{{ mqtt_message_attributes }}'
+
+  # Store Last Speaker
+  - service: script.store_mqtt_sensor
+    data:
+      name: "last_speaker"
+      state: "{{ media_player }}"
 
 
 fields:
