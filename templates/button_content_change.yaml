@@ -1,0 +1,157 @@
+type: vertical-stack
+cards:
+  - type: 'custom:decluttering-card'
+    template: heading
+    variables:
+      - content: '**Upstairs rooms**<br>_Select a room_'
+  - type: grid
+    cards:
+      - type: 'custom:button-card'
+        icon: 'mdi:bed'
+        name: Bedroom
+        template: button_short
+        styles:
+          icon:
+            - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: '#bedroom'
+      - type: 'custom:button-card'
+        icon: 'mdi:bed'
+        name: Lucas
+        template: button_short
+        styles:
+          icon:
+            - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: '#lucas'
+      - type: 'custom:button-card'
+        icon: 'mdi:shower'
+        name: Bathroom
+        template: button_short
+        styles:
+          icon:
+            - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: '#bathroom'
+    square: false
+    columns: 3
+  - type: 'custom:state-switch'
+    entity: hash
+    default: bedroom
+    states:
+      bedroom:
+        type: vertical-stack
+        cards:
+          - type: 'custom:decluttering-card'
+            template: heading
+            variables:
+              - content: Bedroom<br>_Devices_
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: 'custom:button-card'
+                template: button_state_spin
+                entity: fan.bedroom
+                name: Floor Fan
+              - type: 'custom:button-card'
+                template: button_state
+                entity: switch.sound_machine
+                name: Sound Machine
+              - type: 'custom:button-card'
+                template: button_state
+                entity: switch.hot_water_pump
+                name: Hot Water
+                icon: 'mdi:hot-tub'
+          - type: 'custom:decluttering-card'
+            template: heading
+            variables:
+              - content: '*Lights*'
+          - type: entities
+            entities:
+              - type: 'custom:slider-entity-row'
+                entity: light.bedroom
+                toggle: true
+              - type: 'custom:slider-entity-row'
+                entity: light.brian
+                name: Brian's light
+                toggle: true
+              - type: 'custom:slider-entity-row'
+                entity: light.bedroom_table_lamp
+                toggle: true
+            footer:
+              type: buttons
+              entities:
+                - entity: switch.adaptive_lighting_bedroom
+                  name: Adaptive Lighting
+      lucas:
+        type: vertical-stack
+        cards:
+          - type: 'custom:decluttering-card'
+            template: heading
+            variables:
+              - content: "Lucas' room<br>_Devices_"
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: 'custom:button-card'
+                template: button_state
+                entity: switch.lucas_ac_auto
+                name: Fan/Cool
+              - type: 'custom:button-card'
+                template: button_state
+                entity: switch.lucas_ac_fan
+                name: Fan
+              - type: 'custom:button-card'
+                template: button_state
+                entity: switch.lucas_ac_cool
+                name: Cool
+          - type: 'custom:decluttering-card'
+            template: heading
+            variables:
+              - content: '*Lights*'
+          - type: entities
+            entities:
+              - entity: light.lucas_room
+                toggle: true
+                type: 'custom:slider-entity-row'
+            footer:
+              type: buttons
+              entities:
+                - entity: switch.adaptive_lighting_lucas_room
+                  name: Adaptive Lighting
+      bathroom:
+        type: vertical-stack
+        cards:
+          - type: 'custom:decluttering-card'
+            template: heading
+            variables:
+              - content: Upstairs bathroom<br>_Devices_
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: 'custom:button-card'
+                template: button_state_spin
+                entity: fan.upstairs_bathroom
+                name: Exhaust fan
+          - type: vertical-stack
+            cards:
+              - type: 'custom:decluttering-card'
+                template: heading
+                variables:
+                  - content: Control humidity<br>_Upstairs bathroom_
+              - type: entities
+                entities:
+                  - type: 'custom:slider-entity-row'
+                    entity: input_number.upstairs_bath_humidity_trigger
+                    grow: true
+                    hide_state: false
+                  - entity: sensor.upstairs_bathroom_humidity_difference
+                    name: Current difference
+                state_color: false
+
