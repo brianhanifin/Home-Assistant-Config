@@ -1,5 +1,119 @@
 kiosk_mode:
   hide_header: true
+  hide_sidebar: false
+sidebar:
+  hideHassSidebar: true
+  digitalClock: true
+  twelveHourVersion: true
+  date: true
+  dateFormat: 'dddd, MMMM D'
+  style: |
+    :host {
+        --sidebar-background: #000;
+        --sidebar-text-color: #999;
+        --face-color: #000;
+        --face-border-color: #000;
+        --clock-hands-color: #999;
+        --clock-seconds-hand-color: #FF4B3E;
+        --clock-middle-background: #000;
+        --clock-middle-border: #999;
+    }
+  sidebarMenu:
+    - action: navigate
+      navigation_path: ./home
+      name: Home
+      active: true
+    - action: navigate
+      navigation_path: ./downstairs
+      name: Areas
+      active: true
+    - action: navigate
+      navigation_path: ./cameras
+      name: Observation
+      active: true
+    - action: navigate
+      navigation_path: ./events
+      name: Schedulers
+      active: true
+  bottomCard:
+    type: vertical-stack
+    cardOptions:
+      cards:
+        - type: horizontal-stack
+          cards:
+            - type: markdown
+              content: |
+                Lucas
+              style: |
+                ha-card {
+                  background: none;
+                  font-size: 2.5em;
+                  letter-spacing: 0.03em;
+                  text-align: left;
+                }
+                ha-card.type-markdown ha-markdown.no-header {
+                  padding: .2em;
+                }
+            - type: markdown
+              content: |
+                {{ states("sensor.ui_chores_lucas") }}
+              style: |
+                ha-card {
+                  background: none;
+                  text-align: right;
+                }
+                ha-card.type-markdown ha-markdown.no-header {
+                  padding: .2em;
+                }
+        - type: horizontal-stack
+          cards:
+            - type: markdown
+              content: |
+                Kyle
+              style: |
+                ha-card {
+                  background: none;
+                  font-size: 2.5em;
+                  letter-spacing: 0.03em;
+                  text-align: left;
+                }
+                ha-card.type-markdown ha-markdown.no-header {
+                  padding: .2em;
+                }
+            - type: markdown
+              entity_id:
+                - input_select.responsibility_dishes_week
+              content: |
+                {{ states("sensor.ui_chores_kyle") }}
+              style: |
+                ha-card {
+                  background: none;
+                  margin-bottom: 1.25em;
+                  text-align: right;
+                }
+                ha-card.type-markdown ha-markdown.no-header {
+                  padding: .2em;
+                }
+        - type: entity-filter
+          card:
+            type: 'custom:badge-card'
+          entities:
+            - entity: input_select.brian
+              name: ' '
+            - entity: input_select.nerene
+              name: ' '
+            - entity: input_select.lucas
+              name: ' '
+            - entity: input_select.eric
+              name: ' '
+            - entity: input_select.sandy
+              name: ' '
+            - entity: input_select.heather
+              name: ' '
+          show_empty: false
+          state_filter:
+            - Home
+            - Just Arrived
 decluttering_templates:
   heading:
     card:
@@ -359,137 +473,6 @@ button_card_templates:
         - grid-template-columns: 1fr
       icon:
         - color: grey
-sidebar:
-  hideHassSidebar: true
-  digitalClock: true
-  twelveHourVersion: true
-  date: true
-  dateFormat: 'dddd, MMMM D'
-  style: |
-    :host {
-        --sidebar-background: #000;
-        --sidebar-text-color: #999;
-        --face-color: #000;
-        --face-border-color: #000;
-        --clock-hands-color: #999;
-        --clock-seconds-hand-color: #FF4B3E;
-        --clock-middle-background: #000;
-        --clock-middle-border: #999;
-    }
-  sidebarMenu:
-    - action: navigate
-      navigation_path: ./home
-      name: Home
-      active: true
-    - action: navigate
-      navigation_path: ./downstairs
-      name: Areas
-      active: true
-    - action: navigate
-      navigation_path: ./cameras
-      name: Observation
-      active: true
-    - action: navigate
-      navigation_path: ./events
-      name: Schedulers
-      active: true
-  bottomCard:
-    type: vertical-stack
-    cardOptions:
-      cards:
-        - type: 'custom:stack-in-card'
-          style: |
-            ha-card {
-              background: none;
-            }
-          cards:
-            - type: vertical-stack
-              cards:
-                - type: horizontal-stack
-                  cards:
-                    - type: markdown
-                      content: |
-                        Lucas
-                      style: |
-                        ha-card {
-                          font-size: 1.6em;
-                          letter-spacing: 0.03em;
-                          text-align: left;
-                        }
-                    - type: markdown
-                      content: |
-                        {{ states("sensor.ui_chores_lucas") }}
-                      style: |
-                        ha-card {
-                          text-align: right;
-                        }
-                - type: horizontal-stack
-                  cards:
-                    - type: markdown
-                      content: |
-                        Kyle
-                      style: |
-                        ha-card {
-                          font-size: 1.6em;
-                          height: 25%;
-                          letter-spacing: 0.03em;
-                          text-align: left;
-                        }
-                    - type: markdown
-                      entity_id:
-                        - input_select.responsibility_dishes_week
-                      content: |
-                        {{ states("sensor.ui_chores_kyle") }}
-                      style: |
-                        ha-card {
-                          text-align: right;
-                        }
-        - type: entity-filter
-          card:
-            type: 'custom:badge-card'
-          entities:
-            - entity: input_select.brian
-              name: ' '
-            - entity: input_select.nerene
-              name: ' '
-            - entity: input_select.lucas
-              name: ' '
-            - entity: input_select.eric
-              name: ' '
-            - entity: input_select.sandy
-              name: ' '
-            - entity: input_select.heather
-              name: ' '
-          show_empty: false
-          state_filter:
-            - Home
-            - Just Arrived
-        - type: horizontal-stack
-          cards:
-            - type: 'custom:button-card'
-              template: button_icon_only
-              entity: none
-              icon: 'mdi:refresh'
-              tap_action:
-                action: fire-dom-event
-                browser_mod:
-                  command: window_reload
-                  service_data:
-                    deviceID: this
-            - type: 'custom:button-card'
-              template: button_icon_only
-              entity: none
-              icon: 'mdi:robot'
-              tap_action:
-                action: navigate
-                navigation_path: ./routines
-            - type: 'custom:button-card'
-              template: button_icon_only
-              entity: none
-              icon: 'mdi:cake-variant'
-              tap_action:
-                action: navigate
-                navigation_path: ./family-days
 title: Dashboard
 views:
   - icon: 'mdi:home'
@@ -623,47 +606,87 @@ views:
                         ha-markdown, hui-timestamp-display {
                           margin-left: 6px;
                         }
-      - type: 'custom:stack-in-card'
+      - type: grid
+        columns: 2
         cards:
-          - type: weather-forecast
-            entity: weather.accuweather
-            show_forecast: false
-          - type: glance
-            entities:
-              - entity: sensor.downstairs_temperature_average
-                icon: 'hass:home-floor-1'
-              - entity: sensor.upstairs_temperature_average
-                icon: 'hass:home-floor-2'
-              - entity: sensor.attic_temperature
-                icon: 'hass:home-floor-a'
-            show_name: false
-            show_state: true
-            show_icon: true
-            state_color: false
-            style: |
-              ha-card {
-                background: none;
-                font-size: 1.25em;
-                margin-top: -2.5em;
-              }
-      - type: 'custom:power-wheel-card'
-        solar_energy_entity: sensor.solar_energy_production_current_total
-        solar_power_entity: sensor.solar_energy_production_current_kw
-        grid_power_entity: sensor.energy_grid_to_house
-        grid_energy_consumption_entity: sensor.energy_grid_to_house
-        grid_energy_production_entity: sensor.solar_energy_production_to_grid
-        initial_view: energy
-        power_decimals: 2
-        energy_decimals: 2
-        color_icons: true
-        consuming_color: '#33ff33'
-        producing_color: '#dd5500'
-        active_arrow_color: '#ffff00'
-        style: |
-          ha-card {
-            background: none;
-            font-size: 1.5em;
-          }
+          - type: 'custom:stack-in-card'
+            cards:
+              - type: weather-forecast
+                entity: weather.accuweather
+                show_forecast: false
+              - type: glance
+                entities:
+                  - entity: sensor.downstairs_temperature_average
+                    icon: 'hass:home-floor-1'
+                  - entity: sensor.upstairs_temperature_average
+                    icon: 'hass:home-floor-2'
+                  - entity: sensor.attic_temperature
+                    icon: 'hass:home-floor-a'
+                show_name: false
+                show_state: true
+                show_icon: true
+                state_color: false
+                style: |
+                  ha-card {
+                    background: none;
+                    font-size: 1.25em;
+                  }
+          - type: 'custom:stack-in-card'
+            cards:
+              - type: 'custom:power-wheel-card'
+                solar_energy_entity: sensor.solar_energy_production_current_total
+                solar_power_entity: sensor.solar_energy_production_current_kw
+                grid_power_entity: sensor.energy_grid_to_house
+                grid_energy_consumption_entity: sensor.energy_grid_to_house
+                grid_energy_production_entity: sensor.solar_energy_production_to_grid
+                initial_view: energy
+                power_decimals: 2
+                energy_decimals: 2
+                color_icons: true
+                consuming_color: '#33ff33'
+                producing_color: '#dd5500'
+                active_arrow_color: '#ffff00'
+                style: |
+                  ha-card, div#unit.toggle {
+                    background: none;
+                    font-size: 1.25em;
+                  }
+                  div#unit.toggle {
+                    margin-top: 2em;
+                  }
+                  div#title.header, ha-icon#toggle-button.inactive {
+                    display: none;
+                  }
+                  div#cell-solar.cell.position.sensor {
+                    position: absolute;
+                  }
+        square: false
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: button_icon_only
+            entity: none
+            icon: 'mdi:refresh'
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                command: window_reload
+                service_data:
+                  deviceID: this
+          - type: 'custom:button-card'
+            template: button_icon_only
+            entity: none
+            icon: 'mdi:robot'
+            tap_action:
+              action: navigate
+              navigation_path: ./routines
+          - type: 'custom:button-card'
+            template: button_icon_only
+            entity: none
+            icon: 'mdi:cake-variant'
+            tap_action:
+              action: navigate
+              navigation_path: ./family-days
   - title: Downstairs
     path: downstairs
     icon: 'hass:home-floor-1'
@@ -716,7 +739,7 @@ views:
           - type: 'custom:decluttering-card'
             template: heading
             variables:
-              - content: '**Downstairs rooms**<br>_Select a room_'
+              - content: Downstairs rooms<br>_Select a room_
           - type: grid
             cards:
               - type: 'custom:button-card'
@@ -764,6 +787,7 @@ views:
           - type: 'custom:state-switch'
             entity: hash
             default: family
+            transition: flip
             states:
               family:
                 type: vertical-stack
@@ -771,7 +795,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: Family room<br>*Devices*
+                      - content: Family room<br>_Devices_
                   - type: grid
                     columns: 3
                     square: false
@@ -784,9 +808,6 @@ views:
                         template: button_state
                         entity: media_player.tv_family_room
                         name: TV
-                        tap_action:
-                          action: toggle
-                          entity_id: media_player.tv_family_room
                       - type: 'custom:button-card'
                         template: button_state
                         entity: switch.printers
@@ -795,7 +816,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: '*Lights*'
+                      - content: _Lights_
                   - type: entities
                     entities:
                       - type: 'custom:slider-entity-row'
@@ -821,7 +842,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: Home Entry<br>*Devices*
+                      - content: Home Entry<br>_Devices_
                   - type: grid
                     columns: 3
                     square: false
@@ -846,7 +867,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: '*Lights*'
+                      - content: _Lights_
                   - type: entities
                     entities:
                       - entity: light.home_entry
@@ -869,7 +890,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: Kitchen<br>*Devices*
+                      - content: Kitchen<br>_Devices_
                   - type: grid
                     columns: 3
                     square: false
@@ -882,7 +903,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: Kitchen & Dining<br>*Lights*
+                      - content: Kitchen & Dining<br>_Lights_
                   - type: entities
                     state_color: true
                     show_header_toggle: false
@@ -936,7 +957,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: Play Room<br>*Devices*
+                      - content: Play Room<br>_Devices_
                   - type: grid
                     columns: 3
                     square: false
@@ -948,7 +969,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: '*Lights*'
+                      - content: _Lights_
                   - type: entities
                     show_header_toggle: false
                     entities:
@@ -1121,7 +1142,7 @@ views:
           - type: 'custom:decluttering-card'
             template: heading
             variables:
-              - content: '**Upstairs rooms**<br>_Select a room_'
+              - content: Upstairs rooms<br>_Select a room_
           - type: grid
             cards:
               - type: 'custom:button-card'
@@ -1159,6 +1180,7 @@ views:
           - type: 'custom:state-switch'
             entity: hash
             default: bedroom
+            transition: flip
             states:
               bedroom:
                 type: vertical-stack
@@ -1178,7 +1200,7 @@ views:
                       - type: 'custom:button-card'
                         template: button_state
                         entity: switch.sound_machine
-                        name: Sound Machine
+                        name: Sound
                       - type: 'custom:button-card'
                         template: button_state
                         entity: switch.hot_water_pump
@@ -1189,7 +1211,7 @@ views:
                       - type: 'custom:decluttering-card'
                         template: heading
                         variables:
-                          - content: '*Lights*'
+                          - content: _Lights_
                       - type: entities
                         entities:
                           - type: 'custom:slider-entity-row'
@@ -1234,7 +1256,7 @@ views:
                   - type: 'custom:decluttering-card'
                     template: heading
                     variables:
-                      - content: '*Lights*'
+                      - content: _Lights_
                   - type: entities
                     entities:
                       - entity: light.lucas_room
@@ -1260,21 +1282,19 @@ views:
                         template: button_state_spin
                         entity: fan.upstairs_bathroom
                         name: Exhaust fan
-                  - type: vertical-stack
-                    cards:
-                      - type: 'custom:decluttering-card'
-                        template: heading
-                        variables:
-                          - content: Control humidity<br>_Upstairs bathroom_
-                      - type: entities
-                        entities:
-                          - type: 'custom:slider-entity-row'
-                            entity: input_number.upstairs_bath_humidity_trigger
-                            grow: true
-                            hide_state: false
-                          - entity: sensor.upstairs_bathroom_humidity_difference
-                            name: Current difference
-                        state_color: false
+                  - type: 'custom:decluttering-card'
+                    template: heading
+                    variables:
+                      - content: Control humidity<br>_Upstairs bathroom_
+                  - type: entities
+                    entities:
+                      - type: 'custom:slider-entity-row'
+                        entity: input_number.upstairs_bath_humidity_trigger
+                        name: Humidity
+                        hide_state: false
+                      - entity: sensor.upstairs_bathroom_humidity_difference
+                        name: Current difference
+                    state_color: false
       - type: vertical-stack
         cards:
           - type: 'custom:decluttering-card'
@@ -1578,12 +1598,10 @@ views:
         entity: camera.front_door
       - type: picture-entity
         entity: camera.driveway
-      - type: 'custom:layout-break'
       - type: picture-entity
         entity: camera.doorbell
       - type: markdown
         content: 'Note: Tap above stills for a live view.'
-      - type: 'custom:layout-break'
       - type: picture-entity
         entity: camera.front_door_person
       - type: picture-entity
@@ -1716,7 +1734,6 @@ views:
               - entity: sensor.attic_temperature
               - entity: sensor.upstairs_temperature_average
               - entity: sensor.downstairs_temperature_average
-      - type: 'custom:layout-break'
       - aggregate_func: max
         animate: true
         entities:

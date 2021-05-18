@@ -276,145 +276,12 @@ decluttering_templates:
           type: entities
         type: vertical-stack
       type: vertical-stack
-  event_reminder:
-    card:
-      cards:
-      - template: heading
-        type: custom:decluttering-card
-        variables:
-        - content: '*[[name]]*'
-      - cards:
-        - entity: automation.event_reminder_[[id]]
-          template: button_rounded_active
-          type: custom:button-card
-        - entity: input_boolean.event_reminder_[[id]]_skipnext
-          template: button_rounded_skipnext
-          type: custom:button-card
-        columns: 2
-        square: false
-        type: grid
-      - cards:
-        - cards:
-          - entity: input_boolean.event_reminder_[[id]]_mon
-            name: Mon
-            template: button_weekday
-            type: custom:button-card
-          - entity: input_boolean.event_reminder_[[id]]_tue
-            name: Tue
-            template: button_weekday
-            type: custom:button-card
-          - entity: input_boolean.event_reminder_[[id]]_wed
-            name: Wed
-            template: button_weekday
-            type: custom:button-card
-          - entity: input_boolean.event_reminder_[[id]]_thu
-            name: Thu
-            template: button_weekday
-            type: custom:button-card
-          - entity: input_boolean.event_reminder_[[id]]_fri
-            name: Fri
-            template: button_weekday
-            type: custom:button-card
-          - entity: input_boolean.event_reminder_[[id]]_sat
-            name: Sat
-            template: button_weekday
-            type: custom:button-card
-          - entity: input_boolean.event_reminder_[[id]]_sun
-            name: Sun
-            template: button_weekday
-            type: custom:button-card
-          type: horizontal-stack
-        - entities:
-          - entity: input_datetime.event_reminder_[[id]]_1
-          - entity: input_datetime.event_reminder_[[id]]_2
-          - type: divider
-          - entities:
-            - entity: input_text.event_reminder_[[id]]_1
-              type: custom:text-input-row
-            - entity: input_text.event_reminder_[[id]]_2
-              type: custom:text-input-row
-            head:
-              entity: input_select.event_reminder_[[id]]_speakers
-            type: custom:fold-entity-row
-          type: entities
-        type: vertical-stack
-      type: vertical-stack
   heading:
     card:
       content: '[[content]]'
       style: "ha-card {\n  background: none;\n  box-shadow: none;\n  letter-spacing:\
         \ 0.06em;\n  margin: 0 0 -1em 0;\n  padding: 0;\n}\n"
       type: markdown
-  wakeup:
-    card:
-      cards:
-      - template: heading
-        type: custom:decluttering-card
-        variables:
-        - content: '**Wakeup Lights**<br>*Wakeup [[name]]*'
-      - cards:
-        - type: custom:gap-card
-        - entity: input_boolean.wakeup_status_[[name]]
-          styles:
-            card:
-            - width: 180px
-          template: button_rounded_active
-          type: custom:button-card
-        - entity: input_boolean.wakeup_skipnext_[[name]]
-          styles:
-            card:
-            - width: 180px
-          template: button_rounded_skipnext
-          type: custom:button-card
-        - type: custom:gap-card
-        type: horizontal-stack
-      - cards:
-        - entity: input_boolean.wakeup_mon_[[name]]
-          name: Mon
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_tue_[[name]]
-          name: Tue
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_wed_[[name]]
-          name: Wed
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_thu_[[name]]
-          name: Thu
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_fri_[[name]]
-          name: Fri
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_sat_[[name]]
-          name: Sat
-          template: button_weekday
-          type: custom:button-card
-        - entity: input_boolean.wakeup_sun_[[name]]
-          name: Sun
-          template: button_weekday
-          type: custom:button-card
-        type: horizontal-stack
-      - entity: input_datetime.wakeup_time_[[name]]
-        hour_mode: 12
-        icon: mdi:weather-sunset-up
-        layout:
-          hour_mode: single
-          name: inside
-        link_values: true
-        type: custom:time-picker-card
-      - entities:
-        - entity: sensor.wakeup_end_[[name]]
-          icon: mdi:weather-sunny
-        - type: divider
-        - entity: '[[light]]'
-        - entity: timer.wakeup_timeout_[[name]]
-          name: Wakeup Timeout Countdown
-        type: entities
-      type: vertical-stack
 kiosk_mode:
   hide_header: true
 title: Dashboard
@@ -774,6 +641,13 @@ views:
       variables:
       - content: Special
     - cards:
+      - icon: mdi:cctv
+        name: Cameras
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/climate
+        template: button
+        type: custom:button-card
       - icon: mdi:thermostat
         name: Climate
         tap_action:
@@ -786,13 +660,6 @@ views:
         tap_action:
           action: navigate
           navigation_path: /lovelace/making
-        template: button
-        type: custom:button-card
-      - icon: mdi:cctv
-        name: Security
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/cameras
         template: button
         type: custom:button-card
       columns: 3
@@ -810,18 +677,18 @@ views:
           navigation_path: /lovelace/events
         template: button
         type: custom:button-card
-      - icon: mdi:clock
-        name: Devices
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/scheduler
-        template: button
-        type: custom:button-card
       - icon: mdi:sprinkler
         name: Irrigation
         tap_action:
           action: navigate
           navigation_path: /lovelace/irrigation
+        template: button
+        type: custom:button-card
+      - icon: mdi:clock
+        name: Other
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/scheduler
         template: button
         type: custom:button-card
       columns: 3
@@ -885,13 +752,6 @@ views:
           navigation_path: /lovelace/family-days
         template: button_icon_only
         type: custom:button-card
-      - entity: none
-        icon: mdi:weather-partly-cloudy
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/weather
-        template: button_icon_only
-        type: custom:button-card
       type: horizontal-stack
     - entity: user
       states:
@@ -912,18 +772,58 @@ views:
   title: Home
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
   - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: '**Downstairs Rooms**'
+      - content: Areas
+    - cards:
+      - icon: mdi:home-floor-1
+        name: Downstairs
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: ./downstairs
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:home-floor-2
+        name: Upstairs
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: ./upstairs
+        template: button_short
+        type: custom:button-card
+      - icon: fas:seedling
+        name: Outdoors
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: ./outdoors
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
+    type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: '**Downstairs rooms**<br>_Select a room_'
     - cards:
       - icon: mdi:television
         name: Family
@@ -965,7 +865,7 @@ views:
           navigation_path: '#entry'
         template: button_short
         type: custom:button-card
-      columns: 3
+      columns: 4
       square: false
       type: grid
     - default: family
@@ -982,18 +882,18 @@ views:
               lock:
                 enabled: 'true'
               name: Deadbolt
-              tap_action:
-                action: toggle
-                entity_id: lock.front_door
               template: button_state
               type: custom:button-card
             - entity: input_boolean.leave_unlocked
               label: Unlocked
               name: Leave
-              tap_action:
-                action: toggle
-                entity_id: switch.front_door
               template: button_label
+              type: custom:button-card
+            - entity: cover.garage_door
+              lock:
+                enabled: 'true'
+              name: Garage
+              template: button_state
               type: custom:button-card
             columns: 3
             square: false
@@ -1024,7 +924,7 @@ views:
           - template: heading
             type: custom:decluttering-card
             variables:
-            - content: Family Room<br>*Devices*
+            - content: Family room<br>*Devices*
           - cards:
             - entity: fan.family_room
               name: Floor Fan
@@ -1135,7 +1035,7 @@ views:
             - content: Play Room<br>*Devices*
           - cards:
             - entity: fan.play_room
-              name: Play Room
+              name: Fan
               template: button_state_spin
               type: custom:button-card
             columns: 3
@@ -1171,321 +1071,548 @@ views:
             type: entities
           type: vertical-stack
       type: custom:state-switch
+    type: vertical-stack
+  - type: custom:layout-break
+  - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: '*Climate Sensors*'
+      - content: _Climate sensors_
     - cards:
-      - entity: sensor.family_room_temperature
-        graph: line
-        name: Family
-        theme: Caule Black Rose Glass
-        type: sensor
-      - detail: 1
-        entity: sensor.kitchen_temperature
+      - entity: sensor.downstairs_temperature_average
         graph: line
         hours_to_show: 24
-        name: Kitchen
-        theme: Caule Black Rose Glass
+        name: Downstairs Average
         type: sensor
-      - entity: sensor.home_temperature
-        graph: line
-        name: Thermostat
-        theme: Caule Black Rose Glass
-        type: sensor
-      columns: 3
-      square: false
-      type: grid
-    - cards:
-      - entity: sensor.family_room_humidity
-        graph: line
-        name: Family
-        theme: Caule Black Aqua Glass
-        type: sensor
-      - entity: sensor.kitchen_humidity
-        graph: line
-        name: Kitchen
-        theme: Caule Black Aqua Glass
-        type: sensor
-      - entity: sensor.home_humidity
-        graph: line
-        name: Thermostat
-        theme: Caule Black Aqua Glass
-        type: sensor
-      columns: 3
-      square: false
-      type: grid
+      - cards:
+        - entities:
+          - entity: sensor.family_room_temperature
+            name: Family
+          - entity: sensor.kitchen_temperature
+            name: Kitchen
+          - entity: sensor.home_temperature
+            name: Ecobee
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.family_room_temperature
+            name: Fam
+          - entity: sensor.kitchen_temperature
+            name: Kitch
+          - entity: sensor.lucas_room_temperature
+            name: Eco
+          height: 75
+          hours_to_show: 24
+          line_width: 4
+          points_per_hour: 2
+          show:
+            icon: false
+            name: false
+            state: false
+          style: "ha-card {\n  background: none;\n}\n"
+          type: custom:mini-graph-card
+        mode: vertical
+        type: custom:stack-in-card
+      type: horizontal-stack
+    - entities:
+      - entities:
+        - entity: sensor.family_room_humidity
+          format: precision0
+          name: Family
+          unit: false
+        - entity: sensor.kitchen_humidity
+          format: precision0
+          name: Kitchen
+          unit: false
+        entity: sensor.home_humidity
+        format: precision0
+        name: Humidity
+        secondary_info: last-changed
+        state_header: Thermostat
+        type: custom:multiple-entity-row
+        unit: false
+      footer:
+        aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.family_room_humidity
+          name: Family
+        - entity: sensor.kitchen_humidity
+          name: Kitchen
+        - entity: sensor.lucas_room_humidity
+          name: Thermostat
+        height: 75
+        hours_to_show: 12
+        line_width: 2
+        points_per_hour: 4
+        show:
+          icon: false
+          name: false
+          state: false
+        style: "ha-card {\n  background: none;\n}\n"
+        type: custom:mini-graph-card
+      show_header_toggle: false
+      state_color: true
+      type: entities
     type: vertical-stack
   icon: hass:home-floor-1
   layout: {}
   path: downstairs
+  theme: Caule Black Yellow Glass
   title: Downstairs
-- badges: []
-  cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
-  - cards:
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: Upstairs<br>*Toggle devices*
-    - cards:
-      - cards:
-        - entity: fan.bedroom
-          icon: mdi:fan
-          name: Bed fan
-          template: button_state_spin
-          type: custom:button-card
-        - entity: switch.sound_machine
-          icon: mdi:weather-windy
-          name: Sound
-          template: button_state_breeze
-          type: custom:button-card
-        - entity: fan.upstairs_bathroom
-          icon: mdi:fan
-          name: Bath Fan
-          template: button_state_spin
-          type: custom:button-card
-        - entity: switch.hot_water_pump
-          icon: mdi:hot-tub
-          name: Hot Water
-          template: button_state
-          type: custom:button-card
-        - entity: switch.lucas_ac_cool
-          name: Lucas A/C
-          template: button_state_spin
-          type: custom:button-card
-        columns: 3
-        square: false
-        type: grid
-      type: horizontal-stack
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: Upstairs Bathroom<br>*Humidity Control*
-    - entities:
-      - entity: input_number.upstairs_bath_humidity_trigger
-        grow: true
-        hide_state: false
-        type: custom:slider-entity-row
-      - entity: sensor.upstairs_bathroom_humidity_difference
-        name: Current Difference
-      state_color: false
-      type: entities
-    type: vertical-stack
-  - cards:
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: Control lights<br>*Bedroom*
-    - entities:
-      - entity: light.bedroom
-        name: Nerene's Lamp
-        toggle: true
-        type: custom:slider-entity-row
-      - entity: light.brian
-        icon: mdi:floor-lamp
-        name: Brian's Lamp
-        toggle: true
-        type: custom:slider-entity-row
-      - entity: light.bedroom_table_lamp
-        name: Table Lamp
-        toggle: true
-        type: custom:slider-entity-row
-      footer:
-        entities:
-        - entity: switch.adaptive_lighting_bedroom
-          name: Adaptive Lighting
-        type: buttons
-      show_header_toggle: false
-      type: entities
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: Control lights<br>*Lucas' Room*
-    - entities:
-      - entity: light.lucas_room
-      footer:
-        entities:
-        - entity: switch.adaptive_lighting_lucas_room
-          name: Adaptive Lighting
-        type: buttons
-      show_header_toggle: false
-      type: entities
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: '*Climate Sensors*'
-    - cards:
-      - entity: sensor.bedroom_temperature
-        graph: line
-        name: Master
-        theme: Caule Black Rose Glass
-        type: sensor
-      - detail: 1
-        entity: sensor.lucas_room_temperature
-        graph: line
-        hours_to_show: 24
-        name: Lucas
-        theme: Caule Black Rose Glass
-        type: sensor
-      - entity: sensor.kyles_bedroom_temperature
-        graph: line
-        name: Kyle
-        theme: Caule Black Rose Glass
-        type: sensor
-      - entity: sensor.guest_room_temperature
-        graph: line
-        name: Guest
-        theme: Caule Black Rose Glass
-        type: sensor
-      - entity: sensor.upstairs_bathroom_temperature
-        graph: line
-        name: Bath
-        theme: Caule Black Rose Glass
-        type: sensor
-      columns: 3
-      square: false
-      type: grid
-    - cards:
-      - entity: sensor.lucas_room_humidity
-        graph: line
-        name: Lucas
-        theme: Caule Black Aqua Glass
-        type: sensor
-      - entity: sensor.guest_room_humidity
-        graph: line
-        name: Guest
-        theme: Caule Black Aqua Glass
-        type: sensor
-      - entity: sensor.upstairs_bathroom_humidity
-        graph: line
-        name: Bath
-        theme: Caule Black Aqua Glass
-        type: sensor
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-  icon: hass:home-floor-2
-  path: upstairs
-  title: Upstairs
-- badges: []
-  cards:
-  - cards:
-    - icon: mdi:arrow-left-circle
-      name: Home
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      template: button_home
-      type: custom:button-card
-    - cards:
-      - icon: mdi:tree
-        name: Outdoors
-        styles:
-          icon:
-          - color: yellow
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/outdoors
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:sprinkler
-        name: Irrigation
-        styles:
-          icon:
-          - color: lightgreen
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/irrigation
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:weather-partly-cloudy
-        name: Weather
-        styles:
-          icon:
-          - color: grey
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/weather
-        template: button_short
-        type: custom:button-card
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-  - entity: camera.front_door
-    type: picture-entity
-  - entity: camera.driveway
-    type: picture-entity
-  - type: custom:layout-break
-  - entity: camera.doorbell
-    type: picture-entity
-  - content: 'Note: Tap above stills for a live view.'
-    type: markdown
-  - type: custom:layout-break
-  - entity: camera.front_door_person
-    type: picture-entity
-  - entity: camera.driveway_person
-    type: picture-entity
-  icon: mdi:cctv
-  layout:
-    max_cols: 2
-  panel: false
-  path: cameras
-  theme: Caule Black Aqua Glass
-  title: Cameras
   type: custom:vertical-layout
 - badges: []
   cards:
   - cards:
-    - icon: mdi:arrow-left-circle
-      name: Home
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      template: button_home
-      type: custom:button-card
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Areas
     - cards:
-      - icon: mdi:cctv
-        name: Cameras
+      - icon: mdi:home-floor-1
+        name: Downstairs
         styles:
           icon:
           - color: cyan
         tap_action:
           action: navigate
-          navigation_path: /lovelace/cameras
+          navigation_path: ./downstairs
         template: button_short
         type: custom:button-card
-      - icon: mdi:sprinkler
-        name: Irrigation
+      - icon: mdi:home-floor-2
+        name: Upstairs
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: ./upstairs
+        template: button_short
+        type: custom:button-card
+      - icon: fas:seedling
+        name: Outdoors
         styles:
           icon:
           - color: lightgreen
         tap_action:
           action: navigate
-          navigation_path: /lovelace/irrigation
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:weather-partly-cloudy
-        name: Weather
-        styles:
-          icon:
-          - color: grey
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/weather
+          navigation_path: ./outdoors
         template: button_short
         type: custom:button-card
       columns: 3
       square: false
       type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
+    type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Upstairs rooms<br>_Select a room_
+    - cards:
+      - icon: mdi:bed
+        name: Bedroom
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#bedroom'
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:bed
+        name: Lucas
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#lucas'
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:shower
+        name: Bathroom
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#bathroom'
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - default: bedroom
+      entity: hash
+      states:
+        bathroom:
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: Upstairs bathroom<br>_Devices_
+          - cards:
+            - entity: fan.upstairs_bathroom
+              name: Exhaust fan
+              template: button_state_spin
+              type: custom:button-card
+            columns: 3
+            square: false
+            type: grid
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: _Humidity control_
+          - entities:
+            - entity: input_number.upstairs_bath_humidity_trigger
+              hide_state: false
+              name: Humidity
+              type: custom:slider-entity-row
+            - entity: sensor.upstairs_bathroom_humidity_difference
+              name: Current difference
+            state_color: false
+            type: entities
+          type: vertical-stack
+        bedroom:
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: Bedroom<br>_Devices_
+          - cards:
+            - entity: fan.bedroom
+              name: Floor Fan
+              template: button_state_spin
+              type: custom:button-card
+            - entity: switch.sound_machine
+              name: Sound
+              template: button_state
+              type: custom:button-card
+            - entity: switch.hot_water_pump
+              icon: mdi:hot-tub
+              name: Hot Water
+              template: button_state
+              type: custom:button-card
+            columns: 3
+            square: false
+            type: grid
+          - cards:
+            - template: heading
+              type: custom:decluttering-card
+              variables:
+              - content: _Lights_
+            - entities:
+              - entity: light.bedroom
+                toggle: true
+                type: custom:slider-entity-row
+              - entity: light.brian
+                name: Brian's light
+                toggle: true
+                type: custom:slider-entity-row
+              - entity: light.bedroom_table_lamp
+                name: Table lamp
+                toggle: true
+                type: custom:slider-entity-row
+              footer:
+                entities:
+                - entity: switch.adaptive_lighting_bedroom
+                  name: Adaptive Lighting
+                type: buttons
+              type: entities
+            type: vertical-stack
+          type: vertical-stack
+        lucas:
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: Lucas' room<br>_Air Conditioner_
+          - cards:
+            - entity: switch.lucas_ac_fan
+              name: Fan
+              template: button_state
+              type: custom:button-card
+            - entity: switch.lucas_ac_cool
+              name: Cool
+              template: button_state
+              type: custom:button-card
+            columns: 3
+            square: false
+            type: grid
+          - cards:
+            - entity: script.lucas_ac
+              icon: mdi:power
+              name: Power
+              styles:
+                icon:
+                - color: red
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: power
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:dip-switch
+              name: Mode
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: mode
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:fan
+              name: Speed
+              styles:
+                icon:
+                - color: Teal
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: fan_speed
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:thermometer-minus
+              name: Temp
+              styles:
+                icon:
+                - color: cyan
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: temp_down
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:thermometer-plus
+              name: Temp
+              styles:
+                icon:
+                - color: Orange
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: temp_up
+              template: button_short
+              type: custom:button-card
+            columns: 3
+            square: false
+            type: grid
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: _Lights_
+          - entities:
+            - entity: light.lucas_room
+              toggle: true
+              type: custom:slider-entity-row
+            footer:
+              entities:
+              - entity: switch.adaptive_lighting_lucas_room
+                name: Adaptive Lighting
+              type: buttons
+            type: entities
+          type: vertical-stack
+      transition: flip
+      type: custom:state-switch
+    type: vertical-stack
+  - type: custom:layout-break
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: '*Climate sensors*'
+    - cards:
+      - entity: sensor.upstairs_temperature_average
+        graph: line
+        hours_to_show: 24
+        name: Upstairs Average
+        type: sensor
+      - cards:
+        - entities:
+          - entity: sensor.upstairs_bathroom_temperature
+            name: Bath
+          - entity: sensor.guest_room_temperature
+            name: Guest
+          - entity: sensor.lucas_room_temperature
+            name: Luke
+          - entity: sensor.bedroom_temperature
+            name: Master
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.upstairs_bathroom_temperature
+            name: B
+          - entity: sensor.guest_room_temperature
+            name: G
+          - entity: sensor.lucas_room_temperature
+            name: L
+          - entity: sensor.bedroom_temperature
+            name: Mast
+          height: 75
+          hours_to_show: 24
+          line_width: 4
+          points_per_hour: 2
+          show:
+            icon: false
+            name: false
+            state: false
+          style: "ha-card {\n  background: none;\n}\n"
+          type: custom:mini-graph-card
+        mode: vertical
+        type: custom:stack-in-card
+      type: horizontal-stack
+    - entities:
+      - entities:
+        - entity: sensor.upstairs_bathroom_humidity
+          name: Bath
+        - entity: sensor.guest_room_humidity
+          name: Guest
+        entity: sensor.lucas_room_humidity
+        format: precision0
+        name: Humidity
+        secondary_info: last-changed
+        state_header: Lucas
+        type: custom:multiple-entity-row
+      footer:
+        aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.upstairs_bathroom_humidity
+          name: Bath
+        - entity: sensor.guest_room_humidity
+          name: Guest
+        - entity: sensor.lucas_room_humidity
+          name: Lucas
+        height: 75
+        hours_to_show: 12
+        line_width: 2
+        points_per_hour: 4
+        show:
+          icon: false
+          name: false
+          state: false
+        style: "ha-card {\n  background: none;\n}\n"
+        type: custom:mini-graph-card
+      show_header_toggle: false
+      state_color: true
+      type: entities
+    type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: '*Bed sensors*'
+    - entities:
+      - entities:
+        - attribute: Heating Active
+          entity: sensor.eight_left_bed_state
+          name: Active
+        - attribute: Heating Time Remaining
+          entity: sensor.eight_left_bed_state
+          name: Target
+        - attribute: Target Heating Level
+          entity: sensor.eight_left_bed_state
+          name: Target
+        - entity: sensor.eight_left_bed_state
+          name: State
+        entity: binary_sensor.eight_left_bed_presence
+        icon: fas:male
+        name: Brian
+        state_header: In bed
+        type: custom:multiple-entity-row
+      - entities:
+        - attribute: Heating Active
+          entity: sensor.eight_right_bed_state
+          name: Active
+        - attribute: Heating Time Remaining
+          entity: sensor.eight_right_bed_state
+          name: Target
+        - attribute: Target Heating Level
+          entity: sensor.eight_right_bed_state
+          name: Target
+        - entity: sensor.eight_right_bed_state
+          name: State
+        entity: binary_sensor.eight_right_bed_presence
+        icon: fas:female
+        name: Nerene
+        state_header: In bed
+        type: custom:multiple-entity-row
+      show_header_toggle: false
+      state_color: true
+      type: entities
+    type: vertical-stack
+  icon: hass:home-floor-2
+  path: upstairs
+  theme: Caule Black Yellow Glass
+  title: Upstairs
+  type: custom:vertical-layout
+- badges: []
+  cards:
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Areas
+    - cards:
+      - icon: mdi:home-floor-1
+        name: Downstairs
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: ./downstairs
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:home-floor-2
+        name: Upstairs
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: ./upstairs
+        template: button_short
+        type: custom:button-card
+      - icon: fas:seedling
+        name: Outdoors
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: ./outdoors
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
     type: vertical-stack
   - cards:
     - template: heading
@@ -1493,26 +1620,22 @@ views:
       variables:
       - content: Front Yard<br> *Control devices*
     - cards:
-      - entity: cover.garage_door
-        name: Garage
-        template: button_state
-        type: custom:button-card
       - entity: lock.front_door
         lock:
           enabled: 'true'
         name: Deadbolt
-        tap_action:
-          action: toggle
-          entity_id: lock.front_door
         template: button_state
         type: custom:button-card
       - entity: input_boolean.leave_unlocked
         label: Unlocked
         name: Leave
-        tap_action:
-          action: toggle
-          entity_id: switch.front_door
         template: button_label
+        type: custom:button-card
+      - entity: cover.garage_door
+        lock:
+          enabled: 'true'
+        name: Garage
+        template: button_state
         type: custom:button-card
       - entity: switch.front_yard1
         name: Yard1
@@ -1664,26 +1787,137 @@ views:
           type: vertical-stack
       type: custom:state-switch
     type: vertical-stack
-  icon: mdi:tree
+  icon: fas:seedling
   layout: {}
   path: outdoors
-  theme: ''
+  theme: Caule Black Yellow Glass
   title: Outdoors
   type: custom:vertical-layout
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
   - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: Climate Control<br> _Home_
+      - content: Specialty controls
+    - cards:
+      - icon: mdi:cctv
+        name: Cameras
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/cameras
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:thermostat
+        name: Climate
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/climate
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:printer-3d
+        name: Making
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/making
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
+    type: vertical-stack
+  - entity: camera.front_door
+    type: picture-entity
+  - entity: camera.driveway
+    type: picture-entity
+  - type: custom:layout-break
+  - entity: camera.doorbell
+    type: picture-entity
+  - content: 'Note: Tap above stills for a live view.'
+    type: markdown
+  - type: custom:layout-break
+  - entity: camera.front_door_person
+    type: picture-entity
+  - entity: camera.driveway_person
+    type: picture-entity
+  icon: mdi:cctv
+  layout:
+    max_cols: 2
+  panel: false
+  path: cameras
+  theme: Caule Black Purple Glass
+  title: Cameras
+  type: custom:vertical-layout
+- badges: []
+  cards:
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Specialty controls
+    - cards:
+      - icon: mdi:cctv
+        name: Cameras
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/cameras
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:thermostat
+        name: Climate
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/climate
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:printer-3d
+        name: Making
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/making
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
+    type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Climate Control<br> _House HVAC_
     - entity: climate.home
       fallback: 'OFF'
       header: false
@@ -1774,6 +2008,7 @@ views:
           name: Power
         - attribute: fan_speed
           entity: sensor.lucas_ac
+          hide_unavailable: true
           name: Fan Speed
         - entity: sensor.lucas_ac
           name: Status
@@ -1786,8 +2021,10 @@ views:
         - entity: sensor.outdoor_temperature
           name: Outdoor
         - entity: sensor.lucas_room_remote_temperature
+          format: precision0
           name: Window
         - entity: sensor.lucas_room_temperature
+          format: precision0
           name: Door
         entity: sensor.lucas_room_temperature
         name: Temperature
@@ -1795,10 +2032,20 @@ views:
         show_state: false
         type: custom:multiple-entity-row
       footer:
-        detail: 1
-        entity: sensor.lucas_room_temperature
+        animate: true
+        entities:
+        - sensor.lucas_room_temperature
+        - sensor.lucas_room_remote_temperature
+        height: 75
         hours_to_show: 24
-        type: graph
+        line_width: 2
+        show:
+          icon: false
+          legend: false
+          name: false
+          state: false
+        style: "ha-card {\n  background: none;\n}\n"
+        type: custom:mini-graph-card
       show_header_toggle: false
       state_color: true
       type: entities
@@ -1889,75 +2136,192 @@ views:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: _House Fan_
+      - content: House temperature<br>_Current summary_
     - entities:
-      - entity: sensor.attic_temperature
-      - type: divider
-      - entity: sensor.bedroom_temperature
       - entity: weather.accuweather
-      - entity: sensor.accuweather_realfeel_temperature
+      - entity: sensor.attic_temperature
+        icon: hass:home-floor-a
+      - entity: sensor.upstairs_temperature_average
+        icon: hass:home-floor-2
+      - entity: sensor.downstairs_temperature_average
+        icon: hass:home-floor-1
       type: entities
     type: vertical-stack
-  - aggregate_func: max
-    animate: true
-    entities:
-    - entity: sensor.downstairs_temperature_average
-      name: Average
-    - entity: sensor.family_room_temperature
-      name: Family
-    - entity: sensor.kitchen_temperature
-      name: Kitchen
-    - entity: sensor.home_temperature
-      name: Thermostat
-    icon: mdi:home-thermometer
-    line_width: 2
-    lower_bound: 60
-    name: Downstairs Temperature
-    points_per_hour: 4
-    show:
-      extrema: true
-      graph: line
-    type: custom:mini-graph-card
-  - aggregate_func: max
-    animate: true
-    entities:
-    - entity: sensor.upstairs_temperature_average
-      name: Average
-    - entity: sensor.bedroom_temperature
-      name: Master
-    - entity: sensor.kyles_bedroom_temperature
-      name: Kyle
-    - entity: sensor.lucas_room_temperature
-      name: Lucas
-    - entity: sensor.guest_room_temperature
-      name: Guest
-    - entity: sensor.upstairs_bathroom_temperature
-      name: Bath
-    icon: mdi:home-thermometer
-    line_width: 2
-    lower_bound: 60
-    name: Upstairs Temperature
-    points_per_hour: 4
-    show:
-      extrema: true
-      graph: line
-    type: custom:mini-graph-card
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: _24 hour details_
+    - aggregate_func: max
+      animate: true
+      entities:
+      - entity: sensor.attic_temperature
+      icon: hass:home-floor-a
+      line_width: 2
+      lower_bound: 60
+      points_per_hour: 4
+      show:
+        extrema: true
+        graph: line
+      type: custom:mini-graph-card
+    - aggregate_func: max
+      animate: true
+      entities:
+      - entity: sensor.upstairs_temperature_average
+        name: Average
+      - entity: sensor.bedroom_temperature
+        name: Master
+      - entity: sensor.kyles_bedroom_temperature
+        name: Kyle
+      - entity: sensor.lucas_room_temperature
+        name: Lucas
+      - entity: sensor.guest_room_temperature
+        name: Guest
+      - entity: sensor.upstairs_bathroom_temperature
+        name: Bath
+      icon: mdi:home-floor-2
+      line_width: 2
+      lower_bound: 60
+      name: Upstairs Temperature
+      points_per_hour: 4
+      show:
+        extrema: true
+        graph: line
+      type: custom:mini-graph-card
+    - aggregate_func: max
+      animate: true
+      entities:
+      - entity: sensor.downstairs_temperature_average
+        name: Average
+      - entity: sensor.family_room_temperature
+        name: Family
+      - entity: sensor.kitchen_temperature
+        name: Kitchen
+      - entity: sensor.home_temperature
+        name: Thermostat
+      icon: mdi:home-floor-1
+      line_width: 2
+      lower_bound: 60
+      name: Downstairs Temperature
+      points_per_hour: 4
+      show:
+        extrema: true
+        graph: line
+      type: custom:mini-graph-card
+    type: vertical-stack
   icon: mdi:thermostat
   layout:
     max_cols: 3
   path: climate
-  theme: Caule Black Aqua Glass
+  theme: Caule Black Purple Glass
   title: Climate
   type: custom:vertical-layout
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Specialty controls
+    - cards:
+      - icon: mdi:cctv
+        name: Cameras
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/cameras
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:thermostat
+        name: Climate
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/climate
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:printer-3d
+        name: Making
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/making
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
+    type: vertical-stack
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Glowforge
+    - default: 'On'
+      entity: input_select.glowforge_status
+      states:
+        'Off':
+          cards:
+          - entity: input_select.glowforge_status
+            icon: mdi:information
+            type: entity
+          type: vertical-stack
+        'On':
+          cards:
+          - camera_image: camera.glowforge
+            camera_view: camera.glowforge
+            entity: camera.glowforge
+            name: Glowforge
+            show_name: false
+            show_state: false
+            state_filter:
+              'on': brightness(75%)
+            title: 3D Printer
+            type: picture-entity
+          - entities:
+            - entity: input_select.glowforge_status
+            - entities:
+              - entity: sensor.sonoff_s31_01_power
+                name: Power
+              - entity: sensor.sonoff_s31_01_current
+                name: Current
+              - entity: sensor.sonoff_s31_01_voltage
+                name: A/C
+              entity: sensor.sonoff_s31_01_power
+              icon: mdi:power-plug
+              name: Electricity
+              show_state: false
+              type: custom:multiple-entity-row
+            - entity: automation.glowforge_announce_complete
+              icon: mdi:cellphone-message
+              name: Notify When Complete
+              show_state: false
+            type: entities
+          type: vertical-stack
+      type: custom:state-switch
+    - entities:
+      - name: Glowforge App
+        type: weblink
+        url: https://app.glowforge.com
+      - name: Camera UI
+        type: weblink
+        url: http://10.0.20.32
+      show_header_toggle: true
+      type: entities
+    type: vertical-stack
   - cards:
     - template: heading
       type: custom:decluttering-card
@@ -2049,77 +2413,61 @@ views:
         url: http://octopi.local
       type: entities
     type: vertical-stack
+  icon: mdi:printer-3d-nozzle
+  panel: false
+  path: making
+  theme: Caule Black Purple Glass
+  title: Making
+  type: custom:vertical-layout
+- badges: []
+  cards:
   - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: Glowforge
-    - default: 'On'
-      entity: input_select.glowforge_status
-      states:
-        'Off':
-          cards:
-          - entity: input_select.glowforge_status
-            icon: mdi:information
-            type: entity
-          type: vertical-stack
-        'On':
-          cards:
-          - camera_image: camera.glowforge
-            camera_view: camera.glowforge
-            entity: camera.glowforge
-            name: Glowforge
-            show_name: false
-            show_state: false
-            state_filter:
-              'on': brightness(75%)
-            title: 3D Printer
-            type: picture-entity
-          - entities:
-            - entity: input_select.glowforge_status
-            - entities:
-              - entity: sensor.sonoff_s31_01_power
-                name: Power
-              - entity: sensor.sonoff_s31_01_current
-                name: Current
-              - entity: sensor.sonoff_s31_01_voltage
-                name: A/C
-              entity: sensor.sonoff_s31_01_power
-              icon: mdi:power-plug
-              name: Electricity
-              show_state: false
-              type: custom:multiple-entity-row
-            - entity: automation.glowforge_announce_complete
-              icon: mdi:cellphone-message
-              name: Notify When Complete
-              show_state: false
-            type: entities
-          type: vertical-stack
-      type: custom:state-switch
-    - entities:
-      - name: Glowforge App
-        type: weblink
-        url: https://app.glowforge.com
-      - name: Camera UI
-        type: weblink
-        url: http://10.0.20.32
-      show_header_toggle: true
-      type: entities
+      - content: Schedulers
+    - cards:
+      - icon: mdi:calendar-clock
+        name: Events
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: ./events
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:sprinkler
+        name: Irrigation
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: ./irrigation
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:clock
+        name: Custom
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: ./scheduler
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
     type: vertical-stack
-  icon: mdi:printer-3d-nozzle
-  panel: false
-  path: making
-  theme: Caule Black Aqua Glass
-  title: Making
-- badges: []
-  cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
   - template: heading
     type: custom:decluttering-card
     variables:
@@ -2176,144 +2524,50 @@ views:
     - id: wakeup_kyle
   icon: mdi:calendar-clock
   path: events
-  theme: Caule Black Yellow Glass
+  theme: Caule Black Rose Glass
   title: Events
   type: custom:vertical-layout
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
-  - template: heading
-    type: custom:decluttering-card
-    variables:
-    - content: Scheduled Reminders
-  - template: event_reminder
-    type: custom:decluttering-card
-    variables:
-    - id: '1'
-    - name: 'School: Kyle'
-  - template: event_reminder
-    type: custom:decluttering-card
-    variables:
-    - id: '2'
-    - name: 'School: Lucas Monday'
-  - template: event_reminder
-    type: custom:decluttering-card
-    variables:
-    - id: '3'
-    - name: 'School: Lucas Tuesday - Friday'
-  - type: custom:layout-break
-  - template: event_reminder
-    type: custom:decluttering-card
-    variables:
-    - id: '4'
-    - name: 'Bedtime: School'
-  - template: event_reminder
-    type: custom:decluttering-card
-    variables:
-    - id: '5'
-    - name: 'Bedtime: Weekend'
-  icon: mdi:reminder
-  layout:
-    max_cols: 2
-  panel: false
-  path: event_reminders
-  theme: Caule Black Yellow Glass
-  title: Event Reminders
-  type: custom:vertical-layout
-- badges: []
-  cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
-  - am_pm: true
-    discover_existing: false
-    include:
-    - climate.home
-    - fan.bedroom
-    - fan.family_room
-    - fan.play_room
-    - fan.upstairs_bathroom
-    - light.bedroom
-    - light.brian
-    - light.dining_room
-    - light.entry
-    - light.family_room
-    - light.family_room_floor_lamp
-    - light.glowforge
-    - light.home_entry
-    - light.kitchen
-    - light.kitchen_prep
-    - light.play_room
-    - light.play_room_entry
-    - light.play_room_floor_lamp
-    - light.porch
-    - light.table_lamp
-    - light.wled_holiday_string
-    - switch.hot_water_pump
-    - switch.landscape_power
-    - switch.lucas_ac_cool
-    - switch.lucas_ac_fan
-    - switch.printers
-    time_step: 10
-    title: Smart Home Schedule
-    type: custom:scheduler-card
-  icon: mdi:clock
-  path: scheduler
-  theme: Caule Black Yellow Glass
-  title: Scheduler
-  visible:
-  - user: dd8d7d8c949148fa945f68d1c2a1a0d5
-- badges: []
-  cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
-  - template: wakeup
-    type: custom:decluttering-card
-    variables:
-    - name: nerene
-    - light: light.bedroom
-  - entity: sensor.time
-    type: entity
-  - type: custom:layout-break
-  - template: wakeup
-    type: custom:decluttering-card
-    variables:
-    - name: lucas
-    - light: light.lucas_room
-  - template: wakeup
-    type: custom:decluttering-card
-    variables:
-    - name: brian
-    - light: light.bedroom_table_lamp
-  - entities:
-    - light.table_lamp
-    show_header_toggle: false
-    type: entities
-  icon: mdi:weather-sunset-up
-  layout:
-    max_cols: 3
-  path: wakeup
-  theme: Caule Black Yellow Glass
-  title: Wakeup
-  type: custom:vertical-layout
-- badges: []
-  cards:
   - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Schedulers
+    - cards:
+      - icon: mdi:calendar-clock
+        name: Events
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: ./events
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:sprinkler
+        name: Irrigation
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: ./irrigation
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:clock
+        name: Custom
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: ./scheduler
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
     - icon: mdi:arrow-left-circle
       name: Home
       tap_action:
@@ -2321,40 +2575,6 @@ views:
         navigation_path: /lovelace/home
       template: button_home
       type: custom:button-card
-    - cards:
-      - icon: mdi:tree
-        name: Outdoors
-        styles:
-          icon:
-          - color: yellow
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/outdoors
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:cctv
-        name: Cameras
-        styles:
-          icon:
-          - color: cyan
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/cameras
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:weather-partly-cloudy
-        name: Weather
-        styles:
-          icon:
-          - color: grey
-        tap_action:
-          action: navigate
-          navigation_path: /lovelace/weather
-        template: button_short
-        type: custom:button-card
-      columns: 3
-      square: false
-      type: grid
     type: vertical-stack
   - cards:
     - template: heading
@@ -2475,50 +2695,97 @@ views:
   layout:
     max_cols: 2
   path: irrigation
-  theme: Caule Black Yellow Glass
+  theme: Caule Black Rose Glass
   title: Irrigation Control
   type: custom:vertical-layout
 - badges: []
   cards:
-  - icon: mdi:arrow-left-circle
-    name: Home
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace/home
-    template: button_home
-    type: custom:button-card
   - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: Speech Notifications
-    - entities:
-      - entity: sensor.last_speaker
-        icon: mdi:google-home
-        name: Last announcement from
-        secondary_info: last-changed
-      - entity: sensor.last_message
-        icon: mdi:comment-text
-        name: ' '
-      - type: section
-      - entity: input_boolean.audio_notifications
-      - input_select.tts_phrase_room
-      - entity: input_select.tts_phrases
-      - entity: input_text.tts_phrase
-        type: custom:text-input-row
-      - entity: script.tts_phrase_say
-        icon: mdi:account-voice
-        name: Announce
-        template: button_rounded
+      - content: Schedulers
+    - cards:
+      - icon: mdi:calendar-clock
+        name: Events
+        styles:
+          icon:
+          - color: cyan
+        tap_action:
+          action: navigate
+          navigation_path: ./events
+        template: button_short
         type: custom:button-card
-      show_header_toggle: false
-      state_color: true
-      type: entities
+      - icon: mdi:sprinkler
+        name: Irrigation
+        styles:
+          icon:
+          - color: goldenrod
+        tap_action:
+          action: navigate
+          navigation_path: ./irrigation
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:clock
+        name: Custom
+        styles:
+          icon:
+          - color: lightgreen
+        tap_action:
+          action: navigate
+          navigation_path: ./scheduler
+        template: button_short
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    - icon: mdi:arrow-left-circle
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      template: button_home
+      type: custom:button-card
     type: vertical-stack
-  icon: mdi:google-home
-  path: smart-speakers
-  theme: Caule Black Gray Glass
-  title: Smart Speakers
+  - am_pm: true
+    discover_existing: false
+    include:
+    - climate.home
+    - fan.bedroom
+    - fan.family_room
+    - fan.play_room
+    - fan.upstairs_bathroom
+    - light.bedroom
+    - light.brian
+    - light.dining_room
+    - light.entry
+    - light.family_room
+    - light.family_room_floor_lamp
+    - light.glowforge
+    - light.home_entry
+    - light.kitchen
+    - light.kitchen_prep
+    - light.play_room
+    - light.play_room_entry
+    - light.play_room_floor_lamp
+    - light.porch
+    - light.table_lamp
+    - light.wled_holiday_string
+    - switch.hot_water_pump
+    - switch.landscape_power
+    - switch.lucas_ac_cool
+    - switch.lucas_ac_fan
+    - switch.printers
+    time_step: 10
+    title: Smart Home Schedule
+    type: custom:scheduler-card
+  icon: mdi:clock
+  path: scheduler
+  theme: Caule Black Rose Glass
+  title: Scheduler
+  type: custom:vertical-layout
+  visible:
+  - user: dd8d7d8c949148fa945f68d1c2a1a0d5
 - badges: []
   cards:
   - cards:
@@ -2607,20 +2874,20 @@ views:
         - entity: sensor.processor_use
           name: CPU
         - entity: sensor.disk_use_percent
-          name: HDD
-        - entity: sensor.memory_free
+          name: Disk
+        - entity: sensor.memory_use_percent
+          format: precision0
           name: RAM
-          precision: 0
         entity: sensor.processor_use
-        name: VM Resources
+        name: VM Resources Used
         show_state: false
         type: custom:multiple-entity-row
       - entities:
         - entity: sensor.last_restart
-          format: relative
+          format: total
           name: Core
         - entity: sensor.last_boot
-          format: relative
+          format: total
           name: VM
         entity: sensor.last_boot
         icon: mdi:power
@@ -2727,8 +2994,6 @@ views:
         type: custom:button-card
       square: false
       type: grid
-    - entity: automation.startup
-      type: entity
     - entity: template
       states:
         'True':
@@ -3070,6 +3335,56 @@ views:
   theme: Caule Black Gray Glass
   title: System > Unraid
   type: custom:vertical-layout
+- badges: []
+  cards:
+  - icon: mdi:arrow-left-circle
+    name: Home
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace/home
+    template: button_home
+    type: custom:button-card
+  - cards:
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: Speech Notifications
+    - entities:
+      - entity: sensor.last_speaker
+        icon: mdi:account-voice
+        name: Last announcement from
+        secondary_info: last-changed
+      - entity: sensor.last_google
+        icon: mdi:google-home
+        name: Last active speaker
+        secondary_info: last-changed
+      - entity: sensor.last_message
+        icon: mdi:comment-text
+        name: ' '
+      - type: section
+      - entity: input_boolean.audio_notifications
+      - input_select.tts_phrase_room
+      - entity: input_select.tts_phrases
+      - entity: input_text.tts_phrase
+        type: custom:text-input-row
+      - entity: script.tts_phrase_say
+        icon: mdi:account-voice
+        name: Announce
+        template: button_rounded
+        type: custom:button-card
+      - entity: script.repeat_last_message
+        icon: mdi:account-voice
+        name: Repeat last
+        template: button_rounded
+        type: custom:button-card
+      show_header_toggle: false
+      state_color: true
+      type: entities
+    type: vertical-stack
+  icon: mdi:google-home
+  path: smart-speakers
+  theme: Caule Black Gray Glass
+  title: Smart Speakers
 - badges: []
   cards:
   - icon: mdi:arrow-left-circle
