@@ -24,9 +24,10 @@ automation:
       time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[25:] }}'
-      enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
+      is_2nd: '{{ entity_id.startswith("input_datetime.event_2nd") }}'
+      event_enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
       skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
-      do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
+      skipnext: '{{ is_state(skipnext_entity, "on") }}'
       announcement_enabled: '{{ is_state("input_boolean.event_announcement_" + id, "on") }}'
       today_name: '{{ now().strftime("%a")|lower }}'
       event_today: '{{ is_state("input_boolean.event_" + today_name +"_"+ id, "on") }}'
@@ -35,24 +36,30 @@ automation:
       # - service: script.debug
       #   data:
       #     message: |
-      #       enabled: {{ enabled }}
+      #       event_enabled: {{ event_enabled }}
       #       event_today: {{ event_today }}
       #       announcement: {{ announcement }}
 
       - alias: 'Continue if the announcement is enabled, today is an event day, and the event is not deactivated.'
         condition: template
-        value_template: '{{ announcement_enabled and event_today and enabled }}'
+        value_template: '{{ announcement_enabled and event_today and event_enabled }}'
 
-      - service_template: |
-          {% if do_not_skipnext %}
-            script.event_announce
-          {% else %}
-            script.event_skipnext
-          {% endif %}
-        data:
-          media_player: '{{ states("input_select.event_speakers_" + id) }}'
-          skipnext: '{{ skipnext_entity }}'
-          message: '{{ announcement }}'
+      # Skip the 1st announcemnt when skipnext is on.
+      - choose:
+          - alias: Make the announcement.
+            conditions: '{{ not skipnext }}'
+            sequence:
+              - service: script.event_announce
+                data:
+                  media_player: '{{ states("input_select.event_speakers_" + id) }}'
+                  message: '{{ announcement }}'
+
+          - alias: Skip the announcement and disable skipnext.
+            conditions: '{{ skipnext and is_2nd }}'
+            sequence:
+              - service: script.event_skipnext
+                data:
+                  entity_id: '{{ skipnext_entity }}'
 
   - alias: Event Light
     id: event_light
@@ -71,7 +78,7 @@ automation:
       time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[27:] }}'
-      enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
+      event_enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
       skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
       light_enabled: '{{ is_state("input_boolean.event_light_" + id, "on") }}'
@@ -87,17 +94,16 @@ automation:
 
       - alias: 'Continue if the wakeup light is enabled, today is an event day, and the event is not deactivated.'
         condition: template
-        value_template: '{{ light_enabled and event_today and enabled }}'
+        value_template: '{{ light_enabled and event_today and event_enabled }}'
 
       - choose:
-          - conditions:
-              - '{{ do_not_skipnext }}'
+          - conditions: '{{ do_not_skipnext }}'
             sequence:
               - service_template: 'script.event_{{ id }}'
 
-              # - service: switch.turn_on
-              #   target:
-              #     entity_id: switch.hot_water_pump
+              - service: switch.turn_on
+                target:
+                  entity_id: switch.hot_water_pump
 
         default:
           service: input_boolean.turn_off
@@ -180,8 +186,7 @@ script:
 
             # Delay before next increase.
             - choose:
-                - conditions:
-                    - '{{ repeat.index < 10 }}'
+                - conditions: '{{ repeat.index < 10 }}'
                   sequence:
                     - delay:
                         minutes: 1
@@ -206,7 +211,7 @@ script:
           seconds: 15
       - service: input_boolean.turn_off
         data:
-          entity_id: '{{ skipnext|default("none") }}'
+          entity_id: '{{ entity_id|default("none") }}'
 
 # trigger_variables:
 #   trigger_entities: |
