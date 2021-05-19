@@ -463,3 +463,17 @@
     target:
       entity_id: automation.startup
   mode: single
+- id: '1621443029471'
+  alias: 'Kitchen Display: Refresh Home Assistant every 10 minutes'
+  description: The display times out after 10 minutes, so reload it. This also resets
+    the display to the home screen.
+  trigger:
+  - platform: time_pattern
+    minutes: /10
+  condition: []
+  action:
+  - service: shell_command.cast_site
+    data:
+      display: Kitchen Display
+      url: http://10.0.0.5:8123/lovelace-sidebar/home
+  mode: single
