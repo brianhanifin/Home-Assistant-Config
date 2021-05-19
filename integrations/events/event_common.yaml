@@ -21,7 +21,6 @@ automation:
           - input_datetime.event_1st_wakeup_nerene
           - input_datetime.event_2nd_wakeup_nerene
     variables:
-      time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[25:] }}'
       is_2nd: '{{ entity_id.startswith("input_datetime.event_2nd") }}'
@@ -75,7 +74,6 @@ automation:
           - input_datetime.event_light_wakeup_bedtime_weekday
           - input_datetime.event_light_wakeup_bedtime_weekend
     variables:
-      time_now: '{{ as_timestamp(now()) | timestamp_custom("%H:%M") }}'
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[27:] }}'
       event_enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
