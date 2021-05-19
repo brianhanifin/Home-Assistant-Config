@@ -414,9 +414,10 @@ views:
         - state: unavailable
         - state: unknown
         include:
+        - entity_id: binary_sensor.lucas_ac
+        - entity_id: sensor.holiday
         - entity_id: sensor.home_assistant_updates
         - entity_id: sensor.plex
-        - entity_id: sensor.holiday
       show_empty: false
       sort:
         method: none
@@ -639,13 +640,13 @@ views:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: Special
+      - content: Observation
     - cards:
       - icon: mdi:cctv
         name: Cameras
         tap_action:
           action: navigate
-          navigation_path: /lovelace/climate
+          navigation_path: /lovelace/cameras
         template: button
         type: custom:button-card
       - icon: mdi:thermostat
@@ -829,7 +830,7 @@ views:
         name: Family
         styles:
           icon:
-          - color: purple
+          - color: grey
         tap_action:
           action: navigate
           navigation_path: '#family'
@@ -839,7 +840,7 @@ views:
         name: Kitchen
         styles:
           icon:
-          - color: teal
+          - color: grey
         tap_action:
           action: navigate
           navigation_path: '#kitchen'
@@ -849,7 +850,7 @@ views:
         name: Play
         styles:
           icon:
-          - color: orange
+          - color: grey
         tap_action:
           action: navigate
           navigation_path: '#play'
@@ -859,7 +860,7 @@ views:
         name: Entry
         styles:
           icon:
-          - color: green
+          - color: grey
         tap_action:
           action: navigate
           navigation_path: '#entry'
@@ -906,17 +907,22 @@ views:
             - entity: light.home_entry
               toggle: true
               type: custom:slider-entity-row
+            - entity: light.porch
+              toggle: true
+              type: custom:slider-entity-row
+            footer:
+              entities:
+              - entity: switch.adaptive_lighting_home_entry
+                name: Adaptive Lighting
+              type: buttons
+            type: entities
+          - entities:
             - entity: light.wled_holiday_string
               toggle: true
               type: custom:slider-entity-row
             - name: 'WLED: Holiday String'
               type: weblink
               url: http://10.0.20.31
-            footer:
-              entities:
-              - entity: switch.adaptive_lighting_home_entry
-                name: Adaptive Lighting
-              type: buttons
             type: entities
           type: vertical-stack
         family:
@@ -967,9 +973,7 @@ views:
             footer:
               entities:
               - entity: switch.adaptive_lighting_family_room
-                name: Adaptive Floor Lamps
-              - entity: switch.adaptive_lighting_family_room_table_lamp
-                name: Adaptive Table Lamp
+                name: Adaptive Lights
               type: buttons
             type: entities
           type: vertical-stack
@@ -978,7 +982,7 @@ views:
           - template: heading
             type: custom:decluttering-card
             variables:
-            - content: Kitchen & Dining<br>*Lights*
+            - content: Dining & Kitchen<br>*Lights*
           - entities:
             - entities:
               - entity: light.dining1
@@ -1009,15 +1013,6 @@ views:
                 toggle: true
                 type: custom:slider-entity-row
               type: custom:fold-entity-row
-            - entities:
-              - entity: light.kitchen
-              - entity: light.kitchen_prep
-              head:
-                entity: light.kitchen_lights
-                icon: mdi:lightbulb-group
-                name: Kitchen Lights
-                toggle: true
-              type: custom:fold-entity-row
             footer:
               entities:
               - entity: switch.adaptive_lighting_dining_room
@@ -1025,6 +1020,10 @@ views:
               type: buttons
             show_header_toggle: false
             state_color: true
+            type: entities
+          - entities:
+            - entity: light.kitchen
+            - entity: light.kitchen_prep
             type: entities
           type: vertical-stack
         play:
@@ -1523,12 +1522,14 @@ views:
       - content: '*Bed sensors*'
     - entities:
       - entities:
+        - entity: binary_sensor.eight_left_bed_presence
+          name: In bed
         - attribute: Heating Active
           entity: sensor.eight_left_bed_state
           name: Active
         - attribute: Heating Time Remaining
           entity: sensor.eight_left_bed_state
-          name: Target
+          name: Remaining
         - attribute: Target Heating Level
           entity: sensor.eight_left_bed_state
           name: Target
@@ -1536,16 +1537,18 @@ views:
           name: State
         entity: binary_sensor.eight_left_bed_presence
         icon: fas:male
-        name: Brian
-        state_header: In bed
+        name: Brian's side
+        show_state: false
         type: custom:multiple-entity-row
       - entities:
+        - entity: binary_sensor.eight_right_bed_presence
+          name: In bed
         - attribute: Heating Active
           entity: sensor.eight_right_bed_state
           name: Active
         - attribute: Heating Time Remaining
           entity: sensor.eight_right_bed_state
-          name: Target
+          name: Remaining
         - attribute: Target Heating Level
           entity: sensor.eight_right_bed_state
           name: Target
@@ -1553,10 +1556,9 @@ views:
           name: State
         entity: binary_sensor.eight_right_bed_presence
         icon: fas:female
-        name: Nerene
-        state_header: In bed
+        name: Nerene's side
+        show_state: false
         type: custom:multiple-entity-row
-      show_header_toggle: false
       state_color: true
       type: entities
     type: vertical-stack
@@ -1618,61 +1620,33 @@ views:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: Front Yard<br> *Control devices*
+      - content: Outdoors
     - cards:
-      - entity: lock.front_door
-        lock:
-          enabled: 'true'
-        name: Deadbolt
-        template: button_state
+      - icon: mdi:coach-lamp
+        name: Control
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#control'
+        template: button_short
         type: custom:button-card
-      - entity: input_boolean.leave_unlocked
-        label: Unlocked
-        name: Leave
-        template: button_label
+      - icon: mdi:weather-partly-cloudy
+        name: Weather
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#weather'
+        template: button_short
         type: custom:button-card
-      - entity: cover.garage_door
-        lock:
-          enabled: 'true'
-        name: Garage
-        template: button_state
-        type: custom:button-card
-      - entity: switch.front_yard1
-        name: Yard1
-        template: button_state
-        type: custom:button-card
-      - entity: switch.front_yard2
-        name: Yard2
-        template: button_state
-        type: custom:button-card
-      columns: 3
-      square: false
-      type: grid
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: '*Control lights*'
-    - entities:
-      - entity: light.porch
-        name: Porch Light
-        toggle: true
-        type: custom:slider-entity-row
-      footer:
-        entities:
-        - entity: switch.adaptive_lighting_porch
-          name: Adaptive Lighting
-        type: buttons
-      show_header_toggle: false
-      type: entities
-    type: vertical-stack
-  - type: custom:layout-break
-  - cards:
-    - cards:
       - icon: mdi:airplane
         name: Flight
         styles:
           icon:
-          - color: yellow
+          - color: grey
         tap_action:
           action: navigate
           navigation_path: '#flight'
@@ -1682,18 +1656,63 @@ views:
         name: Space
         styles:
           icon:
-          - color: lightblue
+          - color: grey
         tap_action:
           action: navigate
           navigation_path: '#space'
         template: button_short
         type: custom:button-card
-      columns: 3
+      columns: 4
       square: false
       type: grid
-    - default: flight
+    - default: control
       entity: hash
       states:
+        control:
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: Control<br>_Devices_
+          - cards:
+            - entity: lock.front_door
+              lock:
+                enabled: 'true'
+              name: Deadbolt
+              template: button_state
+              type: custom:button-card
+            - entity: input_boolean.leave_unlocked
+              label: Unlocked
+              name: Leave
+              template: button_label
+              type: custom:button-card
+            - entity: cover.garage_door
+              lock:
+                enabled: 'true'
+              name: Garage
+              template: button_state
+              type: custom:button-card
+            columns: 3
+            square: false
+            type: grid
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: '*Lights*'
+          - entities:
+            - entity: light.home_entry
+              toggle: true
+              type: custom:slider-entity-row
+            - entity: light.porch
+              toggle: true
+              type: custom:slider-entity-row
+            footer:
+              entities:
+              - entity: switch.adaptive_lighting_home_entry
+                name: Adaptive Lighting
+              type: buttons
+            type: entities
+          type: vertical-stack
         flight:
           cards:
           - template: heading
@@ -1785,6 +1804,33 @@ views:
               }}">Watch Latest Launch</a></center>
             type: markdown
           type: vertical-stack
+        weather:
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: Weather
+          - current: true
+            details: true
+            entity: weather.home
+            forecast: true
+            hourly_forecast: false
+            number_of_forecasts: 5
+            type: custom:weather-card
+          - entity: binary_sensor.rain_today
+            states:
+              'on':
+                cards:
+                - template: heading
+                  type: custom:decluttering-card
+                  variables:
+                  - content: Radar
+                - entity: camera.san_diego
+                  type: picture-entity
+                type: vertical-stack
+            type: custom:state-switch
+          type: vertical-stack
+      transition: flip
       type: custom:state-switch
     type: vertical-stack
   icon: fas:seedling
@@ -1854,6 +1900,7 @@ views:
   - type: custom:layout-break
   - entity: camera.front_door_person
     type: picture-entity
+  - type: custom:layout-break
   - entity: camera.driveway_person
     type: picture-entity
   icon: mdi:cctv
@@ -2138,7 +2185,7 @@ views:
       variables:
       - content: House temperature<br>_Current summary_
     - entities:
-      - entity: weather.accuweather
+      - entity: weather.home
       - entity: sensor.attic_temperature
         icon: hass:home-floor-a
       - entity: sensor.upstairs_temperature_average
@@ -3555,7 +3602,7 @@ views:
     - content: Weather Forecast
   - current: true
     details: true
-    entity: weather.accuweather
+    entity: weather.home
     forecast: true
     hourly_forecast: false
     number_of_forecasts: '5'
@@ -3612,7 +3659,7 @@ views:
         Brian:
           cards:
           - entities:
-            - entity: weather.accuweather
+            - entity: weather.home
               name: AccuWeather
             - entity: sensor.openweathermap_condition
               name: OpenWeatherMap
