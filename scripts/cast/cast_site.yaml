@@ -1,0 +1,42 @@
+---
+# CATT References:
+#   https://community.home-assistant.io/t/using-catt/130332/127
+#   https://blog.fuzzymistborn.com/homeassistant-and-catt-cast-all-the-things/
+alias: Cast Site
+mode: single
+icon: 'mdi:cast'
+variables:
+  entity_id: '{{ entity_id|default("media_player.kitchen_display") }}'
+  google_devices:
+    media_player.kitchen_display: "Kitchen Display"
+  display_name: '{{ google_devices[entity_id] }}'
+  path: |
+    {%- if path is defined %}
+      {{ path if path.startswith("/") else "/" + path }}
+    {%- else %}
+      {{ "" }}
+    {%- endif %}
+  url: |
+    {%- if path != "" %}
+      http://10.0.0.5:8123{{ path }}
+    {%- else %}
+      {{ url }}
+    {%- endif %}
+  dismiss_after: '{{ dismiss_after|default(0) }}'
+sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       entity_id: {{ entity_id }}
+  #       display_name: {{ display_name }}
+  #       path: {{ path }}
+  #       url: {{ url }}
+
+  - service: shell_command.catt_cast_site
+    data:
+      display: '{{ display_name }}'
+      url: '{{ url }}'
+
+  # - delay: 
+  #     seconds: '{{ dismiss_after }}'
+  #- service: shell_command.catt_cast_stop
