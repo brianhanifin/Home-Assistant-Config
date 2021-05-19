@@ -1,0 +1,41 @@
+---
+platform: template
+unique_id: weather.home
+name: Home
+condition_template: |
+  {%- set value1 = states('weather.accuweather')|trim %}
+  {%- set value2 = states('weather.openweathermap')|trim %}
+  {{ value2 if value1 in ["unavailable","None",""] else value1 }}
+temperature_template: |
+  {%- set value1 = state_attr("weather.accuweather","temperature")|trim -%}
+  {%- set value2 = state_attr("weather.openweathermap","temperature")|trim -%}
+  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
+  {{ value|round }}
+humidity_template: |
+  {%- set value1 = state_attr("weather.accuweather","humidity")|trim -%}
+  {%- set value2 = state_attr("weather.openweathermap","humidity")|trim -%}
+  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
+  {{ value|round }}
+forecast_template: |
+  {%- set value1 = state_attr("weather.accuweather","forecast")|trim %}
+  {%- set value2 = state_attr("weather.openweathermap","forecast")|trim %}
+  {{ value2 if value1 in ["unavailable","None",""] else value1 }}
+pressure_template: |
+  {%- set value1 = state_attr("weather.accuweather","pressure")|trim %}
+  {%- set value2 = state_attr("weather.openweathermap","pressure")|trim %}
+  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
+  {{ "%0.1f"|format(value|float) }}
+wind_speed_template: |
+  {%- set value1 = state_attr("weather.accuweather","wind_speed")|trim %}
+  {%- set value2 = state_attr("weather.openweathermap","wind_speed")|trim %}
+  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
+  {{ value|round }}
+wind_bearing_template: |
+  {%- set value1 = state_attr("weather.accuweather","wind_bearing")|trim %}
+  {%- set value2 = state_attr("weather.openweathermap","wind_bearing")|trim %}
+  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
+  {{ value|round }}
+attribution_template: |
+  {%- set value1 = state_attr("weather.accuweather","attribution")|trim %}
+  {%- set value2 = state_attr("weather.openweathermap","attribution")|trim %}
+  {{ value2 if value1 in ["unavailable","None",""] else value1 }}

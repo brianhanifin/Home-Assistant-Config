@@ -250,13 +250,13 @@
       "partlycoudly": "mostly cloudy skies",
       "sunny": "clear skies and sun"
     } -%}
-    {%- if conditions[states('weather.accuweather')] is string -%}
-      {%- set condition = conditions[states('weather.accuweather')] -%}
+    {%- if conditions[states('weather.home')] is string -%}
+      {%- set condition = conditions[states('weather.home')] -%}
     {%- else -%}
-      {%- set condition = states('weather.accuweather') -%}
+      {%- set condition = states('weather.home') -%}
     {%- endif -%}
 
-    {{ ['Currently', 'Right now']|random }} outside, it is {{ state_attr('weather.accuweather','temperature')|int }} degrees fahrenheit, with {{ condition }}.
+    {{ ['Currently', 'Right now']|random }} outside, it is {{ state_attr('weather.home','temperature')|int }} degrees fahrenheit, with {{ condition }}.
     {{ states("sensor.forecast") }}
     {{ pause() }}
   {%- endmacro -%}
