@@ -11,7 +11,7 @@ variables:
   last_opened: '{{ as_timestamp(states.binary_sensor.front_door.last_changed) }}'
   time_now: '{{ as_timestamp(now()) }}'
   seconds_difference: '{{ time_now - last_opened }}'
-  door_just_opened: '{{ seconds_difference|round < 60 }}'
+  door_just_opened: '{{ seconds_difference|round < 120 }}'
   auto_lock_enabled: '{{ is_state("input_boolean.leave_unlocked","off") }}'
   outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
 condition:
