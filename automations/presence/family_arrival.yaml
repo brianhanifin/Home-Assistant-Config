@@ -1,9 +1,8 @@
 ---
-##############################################################################
-###  Family Member Arrival
-##############################################################################
-alias: family_arrival
-
+alias: "Presence: Family Arrival"
+id: family_arrival
+description: The house will welcome the family member home, after the entry the house via the front or garage entry doors.
+mode: single
 trigger:
   - platform: state
     entity_id:
@@ -34,16 +33,26 @@ action:
   - service: input_boolean.turn_off
     entity_id: input_boolean.away_mode
 
-  - wait_template: "{{ is_state('binary_sensor.front_door', 'on')
-                    or is_state('binary_sensor.garage_entry_door', 'on') }}"
-    timeout: 00:02:00
-  # - delay:
-  #     minutes: 1
+  - alias: "Wait for an entry door to open before making the announcement."
+    wait_for_trigger:
+      platform: state
+      entity_id:
+        - binary_sensor.front_door
+        - binary_sensor.garage_entry_door
+      from: "off"
+      to: "on"
+    timeout:
+      minutes: "5"
+    continue_on_timeout: false
 
-  - service: script.say
+  - alias: "House welcomes you home!"
+    service: script.say
     data_template:
       media_player: group.google_welcome
       person_arriving: "{{ trigger.entity_id.split('.')[1]|title|replace('_', ' ') }}"
+      say_greeting: "true"
       say_inside_weather: "true"
+      say_outside_weather: "true"
       #say_door_window_check: "true"
-      say_responsibilities: "true"
+      #say_light_check: "true"
+      #say_plant_problems: "true"
