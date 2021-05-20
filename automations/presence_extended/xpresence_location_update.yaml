@@ -1,6 +1,7 @@
 ---
-alias: xpresence_location_update
-
+alias: "Extended Presence: Location Update"
+id: xpresence_location_update
+description: "When someone's standard presence location updates "
 mode: queued
 trigger:
   - platform: state
@@ -39,6 +40,10 @@ variables:
 
 condition:
   - '{{ old_state != new_state }}'
+
+  # Only update their "Just Arrived / Left" status when the person is actually just leaving or arriving at home.
+  - '{{ old_state in ["home","not_home"]}}'
+  - '{{ new_state in ["home","not_home"]}}'
 
   # Don't allow status change shortly after startup to avoid phantom changes.
   - '{{ is_state("automation.startup","off") }}'
