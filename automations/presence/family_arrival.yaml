@@ -5,21 +5,14 @@ description: The house will welcome the family member home, after the entry the 
 mode: single
 trigger:
   - platform: state
-    entity_id:
-      - person.brian
-      #- person.eric
-      #- person.heather
-      # - person.kyle
-      - person.lucas
-      - person.nerene
-      #- person.sandy
-    to: Just Arrived
+    entity_id: group.family
+    from: not_home
+    to: home
     for:
       minutes: 0
       seconds: 5
 variables:
   person: '{{ trigger.to_state.object_id }}'
-
   old_state: '{{ trigger.from_state.state }}'
   xpresence_states:
     not_home: Away
