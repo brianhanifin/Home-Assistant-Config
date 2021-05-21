@@ -16,4 +16,4 @@ sensors:
             "sensor.unknown_count", "sensor.octoprint_current_state",
             "sensor.octoprint_time_elapsed", "sensor.octoprint_time_remaining"
         ] %}
-        {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | replace("[","") | replace("]","") | replace("'","") }}'
+        {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | replace("[","") | replace("]","") | replace("'","") }}
