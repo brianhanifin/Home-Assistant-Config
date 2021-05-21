@@ -30,13 +30,22 @@ action:
         - media_player.google_kitchen
         - media_player.google_garage
 
-  # Display the message as a toast notification
-  - service: script.toast
+  # 
+  - alias: Display the message as a toast notification.
+    service: script.toast
     data:
-      message: "Someone pressed the doorbell!"
+      message: Someone pressed the doorbell!
 
-  # Stream the camera feed to all open Home Assistant browsers.
-  - service: browser_mod.popup
+  - delay:
+      seconds: 1
+
+  - alias: Open the camera page on the Kitchen Display.
+    service: script.cast_site
+    data:
+      path: /lovelace-sidebar/cameras
+
+  - alias: Stream the camera feed to all open Home Assistant browsers.
+    service: browser_mod.popup
     data:
       title: Front Door Camera
       card:
@@ -55,8 +64,8 @@ action:
       # Auto close after 2 minutes (120 seconds * 1000 miliseconds).
       auto_close: true
 
-  # Stream the camera feed to Apple TV.
-  - choose:
+  - alias: Stream the camera feed to Apple TV.
+    choose:
       conditions:
         - condition: state
           entity_id: media_player.tv_family_room
@@ -65,15 +74,17 @@ action:
         - service: remote.turn_on
           entity_id: remote.apple_tv_family_room
         - service: camera.play_stream
-          data:
+          target:
             entity_id: camera.doorbell
+          data:
             media_player: media_player.apple_tv_family_room
 
-        - delay:
-            seconds: 30
 
-        # Close the camera popup.
-        - service: browser_mod.close_popup
+  - delay:
+      seconds: 30
+
+  # Close the camera popup.
+  - service: browser_mod.close_popup
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   # - delay:
