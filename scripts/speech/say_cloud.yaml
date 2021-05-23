@@ -5,6 +5,13 @@ variables:
   message: '{{ message|striptags }}'
   # mqtt_message_attributes:
   #   target: "{{ media_player }}"
+  volume: |
+    {%- set volume = volume|replace("%","")|default("0.7") %}
+    {%- if volume|float <= 1.0 %}
+      {{ volume }}
+    {%- else %}
+      {{ volume / 100 }}
+    {%- endif %}
 sequence:
   # Only speak when there is something to say. ;)
   - choose:
@@ -12,7 +19,15 @@ sequence:
         - condition: template
           value_template: '{{ message is not undefined }}'
       sequence:
-        - service: tts.cloud_say
+        - alias: Set volume so announcement can be heard.
+          service: media_player.volume_set
+          target:
+            entity_id: media_player.google_kitchen
+          data:
+            volume_level: '{{ volume }}'
+
+        - alias: Say the message out loud.
+          service: tts.cloud_say
           data:
             entity_id: '{{ media_player }}'
             message: '{{ message }}'
@@ -32,27 +47,21 @@ sequence:
     data:
       message: "{{ message }}"
 
-  # Store Last Message
-  - service: script.store_mqtt_sensor
+  - alias: Store Last Message.
+    service: script.store_mqtt_sensor
     data:
       name: "last_message"
       state: "{{ message }}"
       #attributes: '{{ mqtt_message_attributes }}'
 
-  # Store Last Speaker
-  - service: script.store_mqtt_sensor
+  - alias: Store Last Speaker.
+    service: script.store_mqtt_sensor
     data:
       name: "last_speaker"
       state: "{{ media_player }}"
 
 
 fields:
-  media_player:
-    description: Media Player entity_id.
-    example: media_player.google_kitchen
-    default: media_player.google_family_room
-    selector:
-      text:
   message:
     description: Include details here.
     example: The laundry is ready to be moved to the dryer.
@@ -60,3 +69,16 @@ fields:
     selector:
       text:
         multiline: true
+  media_player:
+    description: Media Player entity_id.
+    example: media_player.google_kitchen
+    default: media_player.google_family_room
+    selector:
+      text:
+  volume:
+    description: Volume level as a percentage (or a decimal from 0 - 1.0)
+    example: 60
+    selector:
+      number:
+        min: 0
+        max: 100
