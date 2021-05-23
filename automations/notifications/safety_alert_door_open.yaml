@@ -1,0 +1,31 @@
+---
+alias: Safety Alert Door Open
+id: safety_alert_door_open
+description: Warn us if any doors are open.
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.front_door
+      - binary_sensor.garage_entry_door
+    to: 'on'
+    for:
+      minutes: 2
+variables:
+  old_state: '{{ trigger.from_state.state }}'
+  new_state: '{{ trigger.to_state.state }}'
+  entity_id: '{{ trigger.to_state.entity_id }}'
+  message: |
+    The {{ state_attr(entity_id, "friendly_name") }} has been open for 2 minutes. Check if it was left open by accident.
+action:
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: DOOR OPEN
+      message: '{{ message }}'
+      who: brian
+      group: safety
+
+  - service: script.notify_speech
+    data:
+      media_player: group.google_welcome
+      message: '{{ message }}'

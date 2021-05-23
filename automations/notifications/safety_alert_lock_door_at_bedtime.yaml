@@ -2,11 +2,8 @@
 # Lock the front door and close the garage door when Brian charges his phone at night.
 alias: Safety Alert Lock Door At Bedtime
 id: safety_alert_lock_door_at_bedtime
-
 trigger:
   # When Brian's phone is charging.
-  # - platform: template
-  #   value_template: '{{ state_attr("device_tracker.life360_brian", "battery_charging") }}'
   - platform: state
     entity_id: device_tracker.life360_brian
     attribute: battery_charging
@@ -14,11 +11,11 @@ trigger:
 condition:
   condition: and
   conditions:
-    # Only during night time.
+    # Only during night time
     - condition: time
-      after: '20:00'
-      before: '6:00'
-    # But only if Brian or Nerene are home.
+      after: "20:00"
+      before: "6:00"
+    # and only if Brian or Nerene are home.
     - condition: or
       conditions:
         - condition: state
@@ -27,11 +24,22 @@ condition:
             - person.nerene
           state: 'home'
 action:
-  - service: lock.lock
-    entity_id: lock.front_door
+  - alias: "Lock the front door, if it was left unlocked."
+    choose:
+      - conditions:
+        - condition: state
+          entity_id: lock.front_door
+          state: "unlocked"
+        sequence:
+          - service: lock.lock
+            entity_id: lock.front_door
 
-  - condition: state
-    entity_id: cover.garage_door
-    state:     'open'
-  - service: cover.close_cover
-    entity_id: cover.garage_door
+  - alias: "Close the garage door, if it was left open."
+    choose:
+      - conditions:
+        - condition: state
+          entity_id: cover.garage_door
+          state: "open"
+        sequence:
+          - service: cover.close_cover
+            entity_id: cover.garage_door
