@@ -27,9 +27,9 @@ action:
   - alias: "Lock the front door, if it was left unlocked."
     choose:
       - conditions:
-        - condition: state
-          entity_id: lock.front_door
-          state: "unlocked"
+          - condition: state
+            entity_id: lock.front_door
+            state: "unlocked"
         sequence:
           - service: lock.lock
             entity_id: lock.front_door
@@ -37,9 +37,9 @@ action:
   - alias: "Close the garage door, if it was left open."
     choose:
       - conditions:
-        - condition: state
-          entity_id: cover.garage_door
-          state: "open"
+          - condition: state
+            entity_id: cover.garage_door
+            state: "open"
         sequence:
           - service: cover.close_cover
             entity_id: cover.garage_door
