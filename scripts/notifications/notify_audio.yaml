@@ -8,7 +8,16 @@ variables:
   audio_file: "{{ audio_file }}"
   content_type: "{{ content_type|default('audio') }}"
 
-  new_volume: "{{ volume|default(0.8) }}"
+  new_volume: |
+    {%- if volume is number %}
+      {%- if volume|float > 1.0 %}
+        {%- set volume = volume|float / 100 %}
+      {%- else %}
+        {%- set volume = volume|float %}
+      {%- endif %}
+    {%- else %}
+      {{ states("input_number.default_audio_volume")|int / 100 }}
+    {%- endif %}
 sequence:
   # - service: script.debug
   #   data:

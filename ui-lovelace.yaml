@@ -366,41 +366,37 @@ views:
         - Just Arrived
         type: entity-filter
       type: custom:stack-in-card
-    - calShowDescription: false
+    - dateSize: 175
       dimFinishedEvents: true
       disableEventLink: true
       disableLocationLink: true
-      enableModeChange: false
       entities:
       - color: lightgray
         entity: calendar.birthdays_anniversary
-        icon: mdi:gift-outline
+        eventCalName: Milestones
       - color: lightgreen
         entity: calendar.brian
-        icon: mdi:alpha-b-circle
+        eventCalName: Brian
       - color: yellow
         entity: calendar.nerene
-        icon: mdi:alpha-n-circle
+        eventCalName: Nerene
       - color: cyan
         entity: calendar.hanifins
-        icon: mdi:account-group
-      firstDayOfWeek: 1
-      hideFinishedEvents: false
+        eventCalName: Hanifin's
+      - blacklist: Math Tutor,Period
+        color: lightblue
+        entity: calendar.kyle
+        eventCalName: Kyle
+      - blacklist: Advisory,Period
+        color: goldenrod
+        entity: calendar.lucas
+        eventCalName: Lucas
+      eventTitleSize: 125
       maxDaysToShow: 3
-      name: ''
       refreshInterval: 3600
-      showCurrentEventLine: false
-      showDate: false
-      showDescription: false
-      showEventIcon: true
-      showFullDayProgress: true
-      showHiddenText: false
       showLoader: false
-      showLocation: true
-      showMonth: false
-      showNoEventsForToday: false
+      showLocation: false
       showProgressBar: false
-      showRelativeTime: true
       showWeekDay: true
       sortByStartTime: true
       type: custom:atomic-calendar-revive
@@ -836,6 +832,16 @@ views:
           navigation_path: '#family'
         template: button_short
         type: custom:button-card
+      - icon: fas:door-open
+        name: Entry
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#entry'
+        template: button_short
+        type: custom:button-card
       - icon: mdi:stove
         name: Kitchen
         styles:
@@ -854,16 +860,6 @@ views:
         tap_action:
           action: navigate
           navigation_path: '#play'
-        template: button_short
-        type: custom:button-card
-      - icon: mdi:door
-        name: Entry
-        styles:
-          icon:
-          - color: grey
-        tap_action:
-          action: navigate
-          navigation_path: '#entry'
         template: button_short
         type: custom:button-card
       columns: 4
@@ -1076,85 +1072,93 @@ views:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: _Climate sensors_
+      - content: Climate sensors<br>_Swipe for more_
     - cards:
-      - entity: sensor.downstairs_temperature_average
-        graph: line
-        hours_to_show: 24
-        name: Downstairs Average
-        type: sensor
+      - cards:
+        - animate: true
+          entities:
+          - entity: sensor.downstairs_temperature_average
+          height: 75
+          line_width: 2
+          lower_bound: 60
+          points_per_hour: 4
+          show:
+            extrema: true
+            graph: line
+            icon: false
+            name: false
+          type: custom:mini-graph-card
+        mode: vertical
+        style: "ha-card div {\n  margin-top: -1.5em;\n}\n"
+        title: Temperature Average
+        type: custom:stack-in-card
       - cards:
         - entities:
           - entity: sensor.family_room_temperature
-            name: Family
+            name: Family Room
           - entity: sensor.kitchen_temperature
             name: Kitchen
           - entity: sensor.home_temperature
-            name: Ecobee
+            name: Thermostat
           show_icon: false
           type: glance
         - aggregate_func: max
           animate: true
           entities:
           - entity: sensor.family_room_temperature
-            name: Fam
+            name: Family Room
           - entity: sensor.kitchen_temperature
-            name: Kitch
-          - entity: sensor.lucas_room_temperature
-            name: Eco
+            name: Kitchen
+          - entity: sensor.home_temperature
+            name: Thermostat
           height: 75
           hours_to_show: 24
-          line_width: 4
+          line_width: 2
           points_per_hour: 2
           show:
             icon: false
             name: false
             state: false
-          style: "ha-card {\n  background: none;\n}\n"
           type: custom:mini-graph-card
         mode: vertical
+        title: Room Temperature
         type: custom:stack-in-card
-      type: horizontal-stack
-    - entities:
-      - entities:
-        - entity: sensor.family_room_humidity
-          format: precision0
-          name: Family
-          unit: false
-        - entity: sensor.kitchen_humidity
-          format: precision0
-          name: Kitchen
-          unit: false
-        entity: sensor.home_humidity
-        format: precision0
-        name: Humidity
-        secondary_info: last-changed
-        state_header: Thermostat
-        type: custom:multiple-entity-row
-        unit: false
-      footer:
-        aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.family_room_humidity
-          name: Family
-        - entity: sensor.kitchen_humidity
-          name: Kitchen
-        - entity: sensor.lucas_room_humidity
-          name: Thermostat
-        height: 75
-        hours_to_show: 12
-        line_width: 2
-        points_per_hour: 4
-        show:
-          icon: false
-          name: false
-          state: false
-        style: "ha-card {\n  background: none;\n}\n"
-        type: custom:mini-graph-card
-      show_header_toggle: false
-      state_color: true
-      type: entities
+      - cards:
+        - entities:
+          - entity: sensor.family_room_humidity
+            name: Family Room
+          - entity: sensor.kitchen_humidity
+            name: Kitchen
+          - entity: sensor.home_humidity
+            name: Thermostat
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.family_room_humidity
+            name: Family Room
+          - entity: sensor.kitchen_humidity
+            name: Kitchen
+          - entity: sensor.home_humidity
+            name: Thermostat
+          height: 75
+          hours_to_show: 12
+          line_width: 2
+          points_per_hour: 4
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        mode: vertical
+        title: Room Humidity
+        type: custom:stack-in-card
+      parameters:
+        pagination:
+          type: bullets
+        spaceBetween: 8
+      type: custom:swipe-card
     type: vertical-stack
   icon: hass:home-floor-1
   layout: {}
@@ -1436,13 +1440,26 @@ views:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: '*Climate sensors*'
+      - content: Climate sensors<br>_Swipe for more_
     - cards:
-      - entity: sensor.upstairs_temperature_average
-        graph: line
-        hours_to_show: 24
-        name: Upstairs Average
-        type: sensor
+      - cards:
+        - animate: true
+          entities:
+          - entity: sensor.upstairs_temperature_average
+          height: 75
+          line_width: 2
+          lower_bound: 60
+          points_per_hour: 4
+          show:
+            extrema: true
+            graph: line
+            icon: false
+            name: false
+          type: custom:mini-graph-card
+        mode: vertical
+        style: "ha-card div {\n  margin-top: -1.5em;\n}\n"
+        title: Temperature Average
+        type: custom:stack-in-card
       - cards:
         - entities:
           - entity: sensor.upstairs_bathroom_temperature
@@ -1450,70 +1467,70 @@ views:
           - entity: sensor.guest_room_temperature
             name: Guest
           - entity: sensor.lucas_room_temperature
-            name: Luke
+            name: Lucas
           - entity: sensor.bedroom_temperature
-            name: Master
+            name: Bedroom
           show_icon: false
           type: glance
         - aggregate_func: max
           animate: true
           entities:
           - entity: sensor.upstairs_bathroom_temperature
-            name: B
+            name: Bath
           - entity: sensor.guest_room_temperature
-            name: G
+            name: Guest
           - entity: sensor.lucas_room_temperature
-            name: L
+            name: Lucas
           - entity: sensor.bedroom_temperature
-            name: Mast
+            name: Bedroom
           height: 75
           hours_to_show: 24
-          line_width: 4
+          line_width: 2
           points_per_hour: 2
           show:
             icon: false
             name: false
             state: false
-          style: "ha-card {\n  background: none;\n}\n"
           type: custom:mini-graph-card
         mode: vertical
+        title: Room Temperature
         type: custom:stack-in-card
-      type: horizontal-stack
-    - entities:
-      - entities:
-        - entity: sensor.upstairs_bathroom_humidity
-          name: Bath
-        - entity: sensor.guest_room_humidity
-          name: Guest
-        entity: sensor.lucas_room_humidity
-        format: precision0
-        name: Humidity
-        secondary_info: last-changed
-        state_header: Lucas
-        type: custom:multiple-entity-row
-      footer:
-        aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.upstairs_bathroom_humidity
-          name: Bath
-        - entity: sensor.guest_room_humidity
-          name: Guest
-        - entity: sensor.lucas_room_humidity
-          name: Lucas
-        height: 75
-        hours_to_show: 12
-        line_width: 2
-        points_per_hour: 4
-        show:
-          icon: false
-          name: false
-          state: false
-        style: "ha-card {\n  background: none;\n}\n"
-        type: custom:mini-graph-card
-      show_header_toggle: false
-      state_color: true
-      type: entities
+      - cards:
+        - entities:
+          - entity: sensor.upstairs_bathroom_humidity
+            name: Bath
+          - entity: sensor.guest_room_humidity
+            name: Guest
+          - entity: sensor.lucas_room_humidity
+            name: Lucas
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.upstairs_bathroom_humidity
+            name: Bath
+          - entity: sensor.guest_room_humidity
+            name: Guest
+          - entity: sensor.lucas_room_humidity
+            name: Lucas
+          height: 75
+          hours_to_show: 12
+          line_width: 2
+          points_per_hour: 4
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        mode: vertical
+        title: Room Humidity
+        type: custom:stack-in-card
+      parameters:
+        pagination:
+          type: bullets
+        spaceBetween: 8
+      type: custom:swipe-card
     type: vertical-stack
   - cards:
     - template: heading
@@ -1712,6 +1729,56 @@ views:
                 name: Adaptive Lighting
               type: buttons
             type: entities
+          - cards:
+            - template: heading
+              type: custom:decluttering-card
+              variables:
+              - content: Irrigation Control<br><ha-icon icon=mdi:sprout></ha-icon>
+                  *Drip System*
+            - cards:
+              - type: custom:gap-card
+              - entity: switch.irrigation_zone1
+                tap_action:
+                  action: "[[[\n   return (states[\"input_number.irrigation_zone1_duration\"\
+                    ].state > 0 ? 'toggle' : 'none');\n]]]\n"
+                template: button_rounded_cycle
+                type: custom:button-card
+              - type: custom:gap-card
+              type: horizontal-stack
+            - cards:
+              - entities:
+                - entities:
+                  - entity: sensor.irrigation_zone1_next
+                    name: "Next \U0001F551"
+                  - entity: sensor.irrigation_zone1_remaining
+                    name: "Remaining \u23F3"
+                    unit: min
+                  entity: switch.irrigation_zone1
+                  icon: mdi:sprinkler
+                  name: Status
+                  state_header: State
+                  type: custom:multiple-entity-row
+                - entity: input_text.irrigation_zone1_times
+                  type: custom:text-input-row
+                - entity: sensor.irrigation_zone1_duration
+                  icon: mdi:timer-sand
+                  name: Duration in Minutes
+                - entity: input_number.irrigation_zone1_duration
+                  full_row: true
+                  hide_state: true
+                  type: custom:slider-entity-row
+                show_header_toggle: false
+                style: "ha-card {\n  background: none;\n}\n"
+                type: entities
+              - content: '*Set Duration to 0 to disable.*'
+                style: "ha-card {\n  background: none;\n  margin-top: -2em;\n  text-align:\
+                  \ center;\n}\n"
+                type: markdown
+              keep:
+                background: true;
+              style: "ha-card {\n  padding-top: 1em;\n}\n"
+              type: custom:stack-in-card
+            type: vertical-stack
           type: vertical-stack
         flight:
           cards:
@@ -1829,6 +1896,19 @@ views:
                   type: picture-entity
                 type: vertical-stack
             type: custom:state-switch
+          - aggregate_func: max
+            animate: true
+            entities:
+            - entity: sensor.outdoor_temperature
+            height: 75
+            icon: hass:home-floor-a
+            line_width: 2
+            lower_bound: 40
+            points_per_hour: 4
+            show:
+              extrema: true
+              graph: line
+            type: custom:mini-graph-card
           type: vertical-stack
       transition: flip
       type: custom:state-switch
@@ -1964,297 +2044,339 @@ views:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: Climate Control<br> _House HVAC_
-    - entity: climate.home
-      fallback: 'OFF'
-      header: false
-      layout:
-        step: column
-      layout.mode.headings: false
-      sensors:
-      - entity: sensor.upstairs_temperature_average
-        name: Upstairs Avg
-      - entity: sensor.downstairs_temperature_average
-        name: Downstairs Avg
-      step_layout: row
-      step_size: '1'
-      type: custom:simple-thermostat
-      view_layout:
-        step: column
+      - content: Climate controls<br>_Select a zone_
     - cards:
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.santee_temperature
-          name: Outdoor
-        - entity: sensor.home_temperature_average
-          name: Indoor Avg
-        line_width: 4
-        lower_bound: 68
-        name: Outside/In Temp
-        points_per_hour: 4
-        show:
-          graph: line
-          labels: false
-          legend: false
-        type: custom:mini-graph-card
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.santee_humidity
-          name: Outdoor
-        - entity: sensor.home_humidity
-          name: Indoor
-        line_width: 4
-        lower_bound: 20
-        name: Outside/In Humidity
-        points_per_hour: 2
-        show:
-          graph: line
-          labels: false
-          legend: false
-        type: custom:mini-graph-card
-      columns: 2
+      - icon: mdi:home
+        name: House
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#house'
+        template: button_short
+        type: custom:button-card
+      - icon: mdi:bed
+        name: Lucas
+        styles:
+          icon:
+          - color: grey
+        tap_action:
+          action: navigate
+          navigation_path: '#lucas'
+        template: button_short
+        type: custom:button-card
+      columns: 3
       square: false
       type: grid
+    - default: house
+      entity: hash
+      states:
+        house:
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: Climate Control<br>_House HVAC_
+          - entity: climate.home
+            fallback: 'OFF'
+            header: false
+            layout:
+              step: column
+            layout.mode.headings: false
+            sensors:
+            - entity: sensor.upstairs_temperature_average
+              name: Upstairs Avg
+            - entity: sensor.downstairs_temperature_average
+              name: Downstairs Avg
+            step_layout: row
+            step_size: '1'
+            type: custom:simple-thermostat
+            view_layout:
+              step: column
+          - cards:
+            - aggregate_func: max
+              animate: true
+              entities:
+              - entity: sensor.santee_temperature
+                name: Outdoor
+              - entity: sensor.home_temperature_average
+                name: Indoor Avg
+              line_width: 4
+              lower_bound: 68
+              name: Outside/In Temp
+              points_per_hour: 4
+              show:
+                graph: line
+                labels: false
+                legend: false
+              type: custom:mini-graph-card
+            - aggregate_func: max
+              animate: true
+              entities:
+              - entity: sensor.santee_humidity
+                name: Outdoor
+              - entity: sensor.home_humidity
+                name: Indoor
+              line_width: 4
+              lower_bound: 20
+              name: Outside/In Humidity
+              points_per_hour: 2
+              show:
+                graph: line
+                labels: false
+                legend: false
+              type: custom:mini-graph-card
+            columns: 2
+            square: false
+            type: grid
+          type: vertical-stack
+        lucas:
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: _Lucas' Room_
+          - entities:
+            - entities:
+              - entity: switch.schedule_lucas_ac_cool_school_day_schedule
+                name: School Days
+                toggle: true
+              - entity: switch.schedule_lucas_ac_cool_weekend_schedule
+                name: Weekend
+                toggle: true
+              entity: switch.schedule_lucas_ac_cool_school_day_schedule
+              name: Schedule
+              secondary_info: last-changed
+              show_state: false
+              state_color: true
+              type: custom:multiple-entity-row
+            header:
+              entities:
+              - entity: automation.lucas_ac_smart
+                name: Fan/Cool
+              - entity: switch.lucas_ac_cool
+                name: Cool
+              - entity: switch.lucas_ac_fan
+                name: Fan
+              type: buttons
+            show_header_toggle: false
+            state_color: true
+            type: entities
+          - entities:
+            - entities:
+              - entity: sensor.lucas_ac_power
+                name: Power
+              - attribute: fan_speed
+                entity: sensor.lucas_ac
+                hide_unavailable: true
+                name: Fan Speed
+              - entity: sensor.lucas_ac
+                name: Status
+              entity: sensor.lucas_ac
+              name: Air Conditioner
+              secondary_info: last-changed
+              show_state: false
+              type: custom:multiple-entity-row
+            - entities:
+              - entity: sensor.outdoor_temperature
+                name: Outdoor
+              - entity: sensor.lucas_room_remote_temperature
+                format: precision0
+                name: Window
+              - entity: sensor.lucas_room_temperature
+                format: precision0
+                name: Door
+              entity: sensor.lucas_room_temperature
+              name: Temperature
+              secondary_info: last-changed
+              show_state: false
+              type: custom:multiple-entity-row
+            footer:
+              animate: true
+              entities:
+              - sensor.lucas_room_temperature
+              - sensor.lucas_room_remote_temperature
+              height: 75
+              hours_to_show: 24
+              line_width: 2
+              show:
+                icon: false
+                legend: false
+                name: false
+                state: false
+              style: "ha-card {\n  background: none;\n}\n"
+              type: custom:mini-graph-card
+            show_header_toggle: false
+            state_color: true
+            type: entities
+          - cards:
+            - entity: script.lucas_ac
+              icon: mdi:power
+              name: Power
+              styles:
+                icon:
+                - color: red
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: power
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:dip-switch
+              name: Mode
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: mode
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:fan
+              name: Speed
+              styles:
+                icon:
+                - color: Teal
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: fan_speed
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:thermometer-minus
+              name: Temp
+              styles:
+                icon:
+                - color: cyan
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: temp_down
+              template: button_short
+              type: custom:button-card
+            - entity: script.lucas_ac
+              icon: mdi:thermometer-plus
+              name: Temp
+              styles:
+                icon:
+                - color: Orange
+              tap_action:
+                action: call-service
+                service: script.lucas_ac
+                service_data:
+                  commands: temp_up
+              template: button_short
+              type: custom:button-card
+            columns: 3
+            square: false
+            type: grid
+          - entities:
+            - entities:
+              - entity: sensor.lucas_ac_hourly_energy
+                name: Hour
+              - entity: sensor.lucas_ac_daily_energy
+                name: Day
+              - entity: sensor.lucas_ac_monthly_energy
+                name: Month
+              - entity: sensor.lucas_ac_yearly_energy
+                name: Year
+              entity: sensor.lucas_ac_power
+              name: Power Use
+              show_state: false
+              type: custom:multiple-entity-row
+            type: entities
+          type: vertical-stack
+      transition: flip
+      type: custom:state-switch
     type: vertical-stack
-  - cards:
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: _Lucas' Room_
-    - entities:
-      - entities:
-        - entity: switch.schedule_lucas_ac_cool_school_day_schedule
-          name: School Days
-          toggle: true
-        - entity: switch.schedule_lucas_ac_cool_weekend_schedule
-          name: Weekend
-          toggle: true
-        entity: switch.schedule_lucas_ac_cool_school_day_schedule
-        name: Schedule
-        secondary_info: last-changed
-        show_state: false
-        state_color: true
-        type: custom:multiple-entity-row
-      header:
-        entities:
-        - entity: automation.lucas_ac_smart
-          name: Fan/Cool
-        - entity: switch.lucas_ac_cool
-          name: Cool
-        - entity: switch.lucas_ac_fan
-          name: Fan
-        type: buttons
-      show_header_toggle: false
-      state_color: true
-      type: entities
-    - entities:
-      - entities:
-        - entity: sensor.lucas_ac_power
-          name: Power
-        - attribute: fan_speed
-          entity: sensor.lucas_ac
-          hide_unavailable: true
-          name: Fan Speed
-        - entity: sensor.lucas_ac
-          name: Status
-        entity: sensor.lucas_ac
-        name: Air Conditioner
-        secondary_info: last-changed
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: sensor.outdoor_temperature
-          name: Outdoor
-        - entity: sensor.lucas_room_remote_temperature
-          format: precision0
-          name: Window
-        - entity: sensor.lucas_room_temperature
-          format: precision0
-          name: Door
-        entity: sensor.lucas_room_temperature
-        name: Temperature
-        secondary_info: last-changed
-        show_state: false
-        type: custom:multiple-entity-row
-      footer:
-        animate: true
-        entities:
-        - sensor.lucas_room_temperature
-        - sensor.lucas_room_remote_temperature
-        height: 75
-        hours_to_show: 24
-        line_width: 2
-        show:
-          icon: false
-          legend: false
-          name: false
-          state: false
-        style: "ha-card {\n  background: none;\n}\n"
-        type: custom:mini-graph-card
-      show_header_toggle: false
-      state_color: true
-      type: entities
-    type: vertical-stack
-  - cards:
-    - entity: script.lucas_ac
-      icon: mdi:power
-      name: Power
-      styles:
-        icon:
-        - color: red
-      tap_action:
-        action: call-service
-        service: script.lucas_ac
-        service_data:
-          commands: power
-      template: button_short
-      type: custom:button-card
-    - entity: script.lucas_ac
-      icon: mdi:dip-switch
-      name: Mode
-      tap_action:
-        action: call-service
-        service: script.lucas_ac
-        service_data:
-          commands: mode
-      template: button_short
-      type: custom:button-card
-    - entity: script.lucas_ac
-      icon: mdi:fan
-      name: Speed
-      styles:
-        icon:
-        - color: Teal
-      tap_action:
-        action: call-service
-        service: script.lucas_ac
-        service_data:
-          commands: fan_speed
-      template: button_short
-      type: custom:button-card
-    - entity: script.lucas_ac
-      icon: mdi:thermometer-minus
-      name: Temp
-      styles:
-        icon:
-        - color: cyan
-      tap_action:
-        action: call-service
-        service: script.lucas_ac
-        service_data:
-          commands: temp_down
-      template: button_short
-      type: custom:button-card
-    - entity: script.lucas_ac
-      icon: mdi:thermometer-plus
-      name: Temp
-      styles:
-        icon:
-        - color: Orange
-      tap_action:
-        action: call-service
-        service: script.lucas_ac
-        service_data:
-          commands: temp_up
-      template: button_short
-      type: custom:button-card
-    columns: 3
-    square: false
-    type: grid
-  - entities:
-    - entities:
-      - entity: sensor.lucas_ac_hourly_energy
-        name: Hour
-      - entity: sensor.lucas_ac_daily_energy
-        name: Day
-      - entity: sensor.lucas_ac_monthly_energy
-        name: Month
-      - entity: sensor.lucas_ac_yearly_energy
-        name: Year
-      entity: sensor.lucas_ac_power
-      name: Power Use
-      show_state: false
-      type: custom:multiple-entity-row
-    type: entities
   - type: custom:layout-break
   - cards:
     - template: heading
       type: custom:decluttering-card
       variables:
-      - content: House temperature<br>_Current summary_
-    - entities:
-      - entity: weather.home
-      - entity: sensor.attic_temperature
+      - content: House temperature<br>_Swipe for more_
+    - cards:
+      - cards:
+        - entities:
+          - entity: weather.home
+          - entity: sensor.attic_temperature
+            icon: hass:home-floor-a
+          - entity: sensor.upstairs_temperature_average
+            icon: hass:home-floor-2
+          - entity: sensor.downstairs_temperature_average
+            icon: hass:home-floor-1
+          type: entities
+        mode: vertical
+        style: "ha-card div {\n  margin-top: -.4em;\n}\n"
+        title: Summary
+        type: custom:stack-in-card
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.attic_temperature
         icon: hass:home-floor-a
-      - entity: sensor.upstairs_temperature_average
-        icon: hass:home-floor-2
-      - entity: sensor.downstairs_temperature_average
-        icon: hass:home-floor-1
-      type: entities
-    type: vertical-stack
-  - cards:
-    - template: heading
-      type: custom:decluttering-card
-      variables:
-      - content: _24 hour details_
-    - aggregate_func: max
-      animate: true
-      entities:
-      - entity: sensor.attic_temperature
-      icon: hass:home-floor-a
-      line_width: 2
-      lower_bound: 60
-      points_per_hour: 4
-      show:
-        extrema: true
-        graph: line
-      type: custom:mini-graph-card
-    - aggregate_func: max
-      animate: true
-      entities:
-      - entity: sensor.upstairs_temperature_average
-        name: Average
-      - entity: sensor.bedroom_temperature
-        name: Master
-      - entity: sensor.kyles_bedroom_temperature
-        name: Kyle
-      - entity: sensor.lucas_room_temperature
-        name: Lucas
-      - entity: sensor.guest_room_temperature
-        name: Guest
-      - entity: sensor.upstairs_bathroom_temperature
-        name: Bath
-      icon: mdi:home-floor-2
-      line_width: 2
-      lower_bound: 60
-      name: Upstairs Temperature
-      points_per_hour: 4
-      show:
-        extrema: true
-        graph: line
-      type: custom:mini-graph-card
-    - aggregate_func: max
-      animate: true
-      entities:
-      - entity: sensor.downstairs_temperature_average
-        name: Average
-      - entity: sensor.family_room_temperature
-        name: Family
-      - entity: sensor.kitchen_temperature
-        name: Kitchen
-      - entity: sensor.home_temperature
-        name: Thermostat
-      icon: mdi:home-floor-1
-      line_width: 2
-      lower_bound: 60
-      name: Downstairs Temperature
-      points_per_hour: 4
-      show:
-        extrema: true
-        graph: line
-      type: custom:mini-graph-card
+        line_width: 2
+        lower_bound: 60
+        points_per_hour: 4
+        show:
+          extrema: true
+          graph: line
+        type: custom:mini-graph-card
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.upstairs_temperature_average
+          name: Average
+        - entity: sensor.bedroom_temperature
+          name: Master
+        - entity: sensor.kyles_bedroom_temperature
+          name: Kyle
+        - entity: sensor.lucas_room_temperature
+          name: Lucas
+        - entity: sensor.guest_room_temperature
+          name: Guest
+        - entity: sensor.upstairs_bathroom_temperature
+          name: Bath
+        icon: mdi:home-floor-2
+        line_width: 2
+        lower_bound: 60
+        name: Upstairs Temperature
+        points_per_hour: 4
+        show:
+          extrema: true
+          graph: line
+        type: custom:mini-graph-card
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.downstairs_temperature_average
+          name: Average
+        - entity: sensor.family_room_temperature
+          name: Family
+        - entity: sensor.kitchen_temperature
+          name: Kitchen
+        - entity: sensor.home_temperature
+          name: Thermostat
+        icon: mdi:home-floor-1
+        line_width: 2
+        lower_bound: 60
+        name: Downstairs Temperature
+        points_per_hour: 4
+        show:
+          extrema: true
+          graph: line
+        type: custom:mini-graph-card
+      parameters:
+        pagination:
+          type: bullets
+        spaceBetween: 8
+      type: custom:swipe-card
     type: vertical-stack
   icon: mdi:thermostat
   layout:
@@ -3003,18 +3125,6 @@ views:
           navigation_path: /lovelace/home?disable_km&edit=1
         template: button_short
         type: custom:button-card
-      columns: 3
-      square: false
-      type: grid
-    - cards:
-      - entity: script.ci_generate_readme
-        icon: mdi:github
-        name: Readme gen
-        styles:
-          icon:
-          - color: grey
-        template: button_short
-        type: custom:button-card
       - entity: script.ci_generate_fake_secrets
         icon: mdi:thought-bubble
         name: Secrets gen
@@ -3039,6 +3149,15 @@ views:
           - color: GoldenRod
         template: button_short
         type: custom:button-card
+      - entity: script.ci_generate_readme
+        icon: mdi:github
+        name: Readme gen
+        styles:
+          icon:
+          - color: grey
+        template: button_short
+        type: custom:button-card
+      columns: 3
       square: false
       type: grid
     - entity: template
@@ -3447,12 +3566,6 @@ views:
       variables:
       - content: Mode Overrides<br> *Enable & disable automated features*
     - cards:
-      - entity: input_boolean.guest_mode
-        icon: mdi:account-supervisor-circle
-        label: Mode
-        name: Guest
-        template: button_state
-        type: custom:button-card
       - entity: input_boolean.mobile_notifications
         icon: mdi:cellphone-message
         label: Mobile
@@ -3465,9 +3578,25 @@ views:
         name: Notify
         template: button_state
         type: custom:button-card
+      - entity: input_boolean.guest_mode
+        icon: mdi:account-supervisor-circle
+        label: Mode
+        name: Guest
+        template: button_state
+        type: custom:button-card
       columns: 3
       square: false
       type: grid
+    - template: heading
+      type: custom:decluttering-card
+      variables:
+      - content: _Default volume settings_
+    - entities:
+      - entity: input_number.default_announcement_volume
+        name: Announcements
+      - entity: input_number.default_audio_volume
+        name: Audio (like doorbell)
+      type: entities
     - template: heading
       type: custom:decluttering-card
       variables:

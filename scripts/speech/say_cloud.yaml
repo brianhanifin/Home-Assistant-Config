@@ -6,13 +6,21 @@ variables:
   # mqtt_message_attributes:
   #   target: "{{ media_player }}"
   volume: |
-    {%- set volume = volume|replace("%","")|default("0.7") %}
-    {%- if volume|float <= 1.0 %}
-      {{ volume }}
+    {%- if volume is number %}
+      {%- if volume|float > 1.0 %}
+        {%- set volume = volume|float / 100 %}
+      {%- else %}
+        {%- set volume = volume|float %}
+      {%- endif %}
     {%- else %}
-      {{ volume / 100 }}
+      {{ states("input_number.default_announcement_volume")|int / 100 }}
     {%- endif %}
 sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       volume: {{ volume }}
+
   # Only speak when there is something to say. ;)
   - choose:
       conditions:
