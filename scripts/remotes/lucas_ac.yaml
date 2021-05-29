@@ -16,22 +16,106 @@
 variables:
   remote: remote.lucas_room
   device: lucas_room_ac
-  commands: |
-    {%- if command != "" %}
-      {{ command|replace(" ","")|default("none") }}
+
+  outdoor_temp: '{{ states("sensor.outdoor_temperature")|int }}'
+  room_temp: '{{ states("sensor.lucas_room_remote_temperature")|int }}'
+  ac_mode: |
+    {%- if mode == "auto" %}
+      {%- if outdoor_temp|int < room_temp|int %}
+        fan
+      {%- else %}
+        cool
+      {%- endif %}
     {%- else %}
-      {{ commands|replace(" ","")|default("none") }}
-    {% endif %}
+      {{ mode }}
+    {%- endif %}
+
+  commands: |
+    {%- set commands = "none" %}
+    {%- if ac_mode == "fan" %}
+      {%- if states("sensor.lucas_ac") in ["Off","Idle"] %}
+        {%- set commands = "power, mode, mode" %}
+      {%- elif is_state("switch.lucas_ac_cool","on") %}
+        {%- set commands = "mode, mode" %}
+      {%- else %}
+        {%- set commands = "none" %}
+      {% endif %}
+    {%- elif ac_mode == "cool" %}
+      {%- if states("sensor.lucas_ac") in ["Off","Idle"] %}
+        {%- set commands = "power, cool_64" %}
+      {%- elif is_state("switch.lucas_ac_fan","on") %}
+        {%- set commands = "cool_64" %}
+      {%- else %}
+        {%- set commands = "none" %}
+      {% endif %}
+    {%- elif ac_mode == "off" %}
+      {%- if states("sensor.lucas_ac") in ["Off","Idle"] %}
+        {%- set commands = "none" %}
+      {%- else %}
+        {%- set commands = "power" %}
+      {%- endif %}
+    {%- endif %}
+    {{ commands|replace(" ","") }}
   command_count: '{{ 0 if commands == "none" else commands.split(",") | count }}'
 sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       mode: {{ mode }}
+  #       ac_mode: {{ ac_mode }}
+  #       outdoor_temp: {{ outdoor_temp }}
+  #       room_temp: {{ room_temp }}
+  #       command_count: {{ command_count }}
+  #       commands: {{ commands }}
+
   - service: script.toast
     data:
-      message: 'commands: {{ commands.split(",") }}'
+      message: 'commands: {{ commands }}'
 
   # If command "none" is passed, then someone tried to turn an A/C on that was already on.
   # So don't do anything, as another "power" instruction would just turn the A/C off.
   - condition: template
     value_template: '{{ command_count > 0 }}'
+
+  - choose:
+      - conditions: '{{ auto == true }}'
+        sequence:
+          - alias: Allow only one mode at a time.
+            service: homeassistant.turn_off
+            target:
+              entity_id:
+                - switch.lucas_ac_cool
+                - switch.lucas_ac_fan
+
+    default:
+      - choose:
+          - conditions: '{{ mode == "fan" }}'
+            sequence:
+              - alias: Allow only one mode at a time.
+                service: homeassistant.turn_off
+                target:
+                  entity_id:
+                    - input_boolean.lucas_ac_auto
+                    - switch.lucas_ac_cool
+
+          - conditions: '{{ mode == "cool" }}'
+            sequence:
+              - alias: Allow only one mode at a time.
+                service: homeassistant.turn_off
+                target:
+                  entity_id:
+                    - input_boolean.lucas_ac_auto
+                    - switch.lucas_ac_fan
+
+          - conditions: '{{ mode == "off" }}'
+            sequence:
+              - alias: Turn all toggles off.
+                service: homeassistant.turn_off
+                target:
+                  entity_id:
+                    - input_boolean.lucas_ac_auto
+                    - switch.lucas_ac_cool
+                    - switch.lucas_ac_fan
 
   - repeat:
       count: '{{ command_count|int }}'

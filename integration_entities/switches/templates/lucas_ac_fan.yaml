@@ -5,20 +5,12 @@ switches:
     unique_id: switch.lucas_ac_fan
     friendly_name: Lucas AC Fan Mode
     icon_template: mdi:fan
-    value_template: '{{ is_state("sensor.lucas_ac","Fan") }}'
+    value_template: '{{ is_state("sensor.lucas_ac","Fan") and is_state("input_boolean.lucas_ac_auto","off") }}'
     turn_on:
       - service: script.lucas_ac
         data:
-          # Send "none" if the A/C is already on, as another "power" instruction would just turn the A/C off.
-          commands: |
-            {%- if states("sensor.lucas_ac") in ["Off","Idle"] %}
-              power, mode, mode
-            {%- elif is_state("input_boolean.lucas_ac_cool","on") %}
-              mode, mode
-            {%- else %}
-              none
-            {% endif %}
+          mode: "fan"
     turn_off:
       - service: script.lucas_ac
         data:
-          commands: power
+          mode: "off"
