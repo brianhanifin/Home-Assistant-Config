@@ -407,6 +407,7 @@ views:
         - state: ''
         - state: '0'
         - state: 'off'
+        - state: 'Off'
         - state: unavailable
         - state: unknown
         include:
@@ -1338,7 +1339,7 @@ views:
             variables:
             - content: Lucas' room<br>_Climate control_
           - cards:
-            - entity: input_boolean.lucas_ac_auto
+            - entity: switch.lucas_ac_auto
               name: auto
               template: button_state
               type: custom:button-card
@@ -2030,16 +2031,19 @@ views:
       template: button_home
       type: custom:button-card
     type: vertical-stack
-  - entity: camera.front_door
-    type: picture-entity
-  - entity: camera.driveway
-    type: picture-entity
+  - mse: false
+    type: custom:webrtc-camera
+    url: rtsp://hass:qpgVAHHcTwcnC9Af@10.0.0.2:554/h264Preview_01_sub
+    webrtc: true
+  - mse: false
+    type: custom:webrtc-camera
+    url: rtsp://hass:qpgVAHHcTwcnC9Af@10.0.0.2:554/h264Preview_03_sub
+    webrtc: true
   - type: custom:layout-break
   - entity: camera.doorbell
-    type: picture-entity
-  - content: 'Note: Tap above stills for a live view.'
-    type: markdown
-  - type: custom:layout-break
+    mse: false
+    type: custom:webrtc-camera
+    webrtc: true
   - entity: camera.front_door_person
     type: picture-entity
   - type: custom:layout-break
@@ -2200,7 +2204,7 @@ views:
             variables:
             - content: Lucas' Room<br>_Climate control_
           - cards:
-            - entity: input_boolean.lucas_ac_auto
+            - entity: switch.lucas_ac_auto
               name: auto
               template: button_state
               type: custom:button-card
@@ -2443,6 +2447,11 @@ views:
         spaceBetween: 8
       type: custom:swipe-card
     type: vertical-stack
+  - entities:
+    - entity: sensor.lucas_ac
+    - entity: sensor.lucas_ac_selected_mode
+    - entity: sensor.lucas_ac_recommended_mode
+    type: entities
   icon: mdi:thermostat
   layout:
     max_cols: 3
@@ -3008,6 +3017,7 @@ views:
     - switch.hot_water_pump
     - switch.landscape_power
     - input_boolean.lucas_ac_auto
+    - switch.lucas_ac_auto
     - switch.printers
     time_step: 10
     title: Smart Home Schedule

@@ -12,7 +12,8 @@ sensors:
   #   Fan      < 100W
   #   A/C      > 100W
   lucas_ac:
-    friendly_name: Lucas AC Mode
+    unique_id: sensor.lucas_ac
+    friendly_name: Lucas AC Current State
     icon_template: mdi:air-conditioner
     value_template: |
         {%- set power = states("sensor.lucas_ac_power")|int %}
@@ -27,15 +28,19 @@ sensors:
         {% endif %}
     attribute_templates:
       fan_speed: |
-        {%- set power = states("sensor.lucas_ac_power")|int %}
-        {%- if power < 10 %}
+        {%- if is_state("sensor.lucas_ac","Off") %}
           Off
-        {%- elif power >= 40 and power <= 46 %}
-          1
-        {%- elif power >= 47 and power <= 52 %}
-          2
-        {%- elif power >= 53 and power <= 100 %}
-          3
+        {%- elif not is_state_attr("sensor.lucas_ac","fan_speed","3") %}
+          {%- set power = states("sensor.lucas_ac_power")|int %}
+          {%- if power >= 53 and power <= 100 %}
+            3
+          {%- elif power >= 47 and power <= 52 %}
+            2
+          {%- elif power >= 40 and power <= 46 %}
+            1
+          {%- else %}
+            {{ default }}
+          {%- endif %}
         {%- else %}
           {{ default }}
-        {% endif %}
+        {%- endif %}

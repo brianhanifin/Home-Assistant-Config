@@ -169,10 +169,10 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1139 total entities**, 
-including **525 sensors**.
+Our Home Assistant install has approximately **1144 total entities**, 
+including **528 sensors**.
 
-<details><summary>25 Custom Integrations</summary>
+<details><summary>26 Custom Integrations</summary>
   
 
 #### [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting)
@@ -308,6 +308,12 @@ including **525 sensors**.
 #### [Weatheralerts v0.1.4](https://github.com/custom-components/weatheralerts)
     A sensor that gives you weather alerts from alerts.weather.gov.
     Authors:@ludeeus, @jlverhagen.
+  
+  
+
+#### [Webrtc Camera v2.0.2](https://github.com/AlexxIT/WebRTC)
+    Home Assistant custom component for viewing IP cameras RTSP stream in real time using WebRTC and MSE technology
+    Authors:@AlexxIT.
   
   
 

@@ -1,0 +1,18 @@
+---
+# Recommend Lucas AC Mode based on temperature comparison between inside and outside.
+platform: template
+sensors:
+  lucas_ac_selected_mode:
+    unique_id: sensor.lucas_ac_selected_mode
+    friendly_name: Lucas AC Selected Mode
+    icon_template: mdi:file-tree
+    value_template: |
+      {%- if is_state("sensor.lucas_ac","Off") %}
+        Off
+      {%- elif not is_state("sensor.lucas_ac_selected_mode","Cool") %}
+        {%- if is_state("sensor.lucas_ac","Cooling") %}
+          Cool
+        {%- elif is_state("sensor.lucas_ac","Fan") %}
+          Fan
+        {%- endif %}
+      {%- endif %}

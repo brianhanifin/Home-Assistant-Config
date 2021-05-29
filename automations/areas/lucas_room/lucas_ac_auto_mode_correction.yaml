@@ -1,0 +1,22 @@
+---
+alias: Lucas AC Automatic Mode Correction
+id: lucas_ac_auto_mode_correction
+description: 'Attempt to force AC into requested automatic mode (ie. Fan or Cool).'
+trigger:
+  - platform: state
+    entity_id: binary_sensor.lucas_ac
+    from: 'off'
+    to: 'on'
+variables:
+  selected_mode: '{{ states("sensor.lucas_ac_selected_mode") }}'
+  recommended_mode: '{{ states("sensor.lucas_ac_recommended_mode") }}'
+condition:
+  # If the AC set to automatic mode.
+  - '{{ is_state("switch.lucas_ac_auto","on") }}'
+
+  # Continue if the selected mode does not match the recommended mode.
+  - '{{ recommended_mode != selected_mode }}'
+action:
+  - service: script.lucas_ac
+    data:
+      mode: '{{ recommended_mode }}'

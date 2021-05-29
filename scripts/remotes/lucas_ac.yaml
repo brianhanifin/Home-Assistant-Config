@@ -16,40 +16,28 @@
 variables:
   remote: remote.lucas_room
   device: lucas_room_ac
-
-  outdoor_temp: '{{ states("sensor.outdoor_temperature")|int }}'
-  room_temp: '{{ states("sensor.lucas_room_remote_temperature")|int }}'
-  ac_mode: |
-    {%- if mode == "auto" %}
-      {%- if outdoor_temp|int < room_temp|int %}
-        fan
-      {%- else %}
-        cool
-      {%- endif %}
-    {%- else %}
-      {{ mode }}
-    {%- endif %}
-
+  is_on: '{{ is_state("binary_sensor.lucas_ac","on") }}'
+  recommended_mode: '{{ states("sensor.lucas_ac_recommended_mode") }}'
   commands: |
     {%- set commands = "none" %}
-    {%- if ac_mode == "fan" %}
-      {%- if states("sensor.lucas_ac") in ["Off","Idle"] %}
+    {%- if recommended_mode == "fan" %}
+      {%- if not is_on %}
         {%- set commands = "power, mode, mode" %}
-      {%- elif is_state("switch.lucas_ac_cool","on") %}
+      {%- elif is_on %}
         {%- set commands = "mode, mode" %}
       {%- else %}
         {%- set commands = "none" %}
       {% endif %}
-    {%- elif ac_mode == "cool" %}
-      {%- if states("sensor.lucas_ac") in ["Off","Idle"] %}
+    {%- elif recommended_mode == "cool" %}
+      {%- if not is_on %}
         {%- set commands = "power, cool_64" %}
-      {%- elif is_state("switch.lucas_ac_fan","on") %}
+      {%- elif is_on %}
         {%- set commands = "cool_64" %}
       {%- else %}
         {%- set commands = "none" %}
       {% endif %}
-    {%- elif ac_mode == "off" %}
-      {%- if states("sensor.lucas_ac") in ["Off","Idle"] %}
+    {%- elif recommended_mode == "off" %}
+      {%- if not is_on %}
         {%- set commands = "none" %}
       {%- else %}
         {%- set commands = "power" %}
@@ -62,9 +50,7 @@ sequence:
   #   data:
   #     message: |
   #       mode: {{ mode }}
-  #       ac_mode: {{ ac_mode }}
-  #       outdoor_temp: {{ outdoor_temp }}
-  #       room_temp: {{ room_temp }}
+  #       recommended_mode: {{ recommended_mode }}
   #       command_count: {{ command_count }}
   #       commands: {{ commands }}
 
@@ -95,7 +81,7 @@ sequence:
                 service: homeassistant.turn_off
                 target:
                   entity_id:
-                    - input_boolean.lucas_ac_auto
+                    - switch.lucas_ac_auto
                     - switch.lucas_ac_cool
 
           - conditions: '{{ mode == "cool" }}'
@@ -104,7 +90,7 @@ sequence:
                 service: homeassistant.turn_off
                 target:
                   entity_id:
-                    - input_boolean.lucas_ac_auto
+                    - switch.lucas_ac_auto
                     - switch.lucas_ac_fan
 
           - conditions: '{{ mode == "off" }}'
@@ -113,7 +99,7 @@ sequence:
                 service: homeassistant.turn_off
                 target:
                   entity_id:
-                    - input_boolean.lucas_ac_auto
+                    - switch.lucas_ac_auto
                     - switch.lucas_ac_cool
                     - switch.lucas_ac_fan
 
