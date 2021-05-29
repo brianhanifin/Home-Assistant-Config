@@ -30,7 +30,7 @@ sequence:
         - alias: Set volume so announcement can be heard.
           service: media_player.volume_set
           target:
-            entity_id: media_player.google_kitchen
+            entity_id: '{{ media_player }}'
           data:
             volume_level: '{{ volume }}'
 
@@ -43,30 +43,30 @@ sequence:
             options:
               gender: female
 
-      # # Remove "speaker" icon from screen by turning the kitchen media player off.
-      # - condition: template
-      #   value_template: '{{ media_player in ["media_player.google_kitchen","group.google_downstairs"] }}'
-      # - delay:
-      #     seconds: 10
-      # - service: media_player.turn_off
-      #   entity_id: media_player.google_kitchen
+        # Remove "speaker" icon from screen by turning the kitchen media player off.
+        # - condition: template
+        #   value_template: '{{ media_player in ["media_player.google_kitchen","group.google_downstairs"] }}'
+        # - delay:
+        #     seconds: 10
+        # - service: media_player.turn_off
+        #   entity_id: media_player.google_kitchen
 
-  - service: script.toast
-    data:
-      message: "{{ message }}"
+        - service: script.toast
+          data:
+            message: "{{ message }}"
 
-  - alias: Store Last Message.
-    service: script.store_mqtt_sensor
-    data:
-      name: "last_message"
-      state: "{{ message }}"
-      #attributes: '{{ mqtt_message_attributes }}'
+        - alias: Store Last Message.
+          service: script.store_mqtt_sensor
+          data:
+            name: "last_message"
+            state: "{{ message }}"
+            #attributes: '{{ mqtt_message_attributes }}'
 
-  - alias: Store Last Speaker.
-    service: script.store_mqtt_sensor
-    data:
-      name: "last_speaker"
-      state: "{{ media_player }}"
+        - alias: Store Last Speaker.
+          service: script.store_mqtt_sensor
+          data:
+            name: "last_speaker"
+            state: "{{ media_player }}"
 
 
 fields:

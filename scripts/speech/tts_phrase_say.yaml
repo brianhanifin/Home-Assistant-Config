@@ -19,16 +19,18 @@ variables:
 
   smart_speaker: "{{ smart_speakers[room] }}"
   selected_phrase: |
-    {%- set selected_phrase = states("input_select.tts_phrases")|trim %}
-    {{ selected_phrase if selected_phrase not in ["Unknown","None",""] }}
+    {%- set selection = states("input_select.tts_phrases")|trim %}
+    {%- if selection not in ["Unknown","None",""] %}
+      {{ selection }}
+    {%- endif %}
   text_phrase: |
     {%- set text_phrase = states("input_text.tts_phrase")|trim %}
     {{ text_phrase if text_phrase not in ["Unknown","None",""] }}
   message: |
-    {%- if selected_phrase|trim != "" %}
-      {{ selected_phrase }}
-    {%- elif text_phrase|trim != "" %}
+    {%- if text_phrase|trim != "" %}
       {{ text_phrase }}
+    {%- elif selected_phrase|trim != "" %}
+      {{ selected_phrase }}
     {%- endif %}
 sequence:
   # - service: script.debug
@@ -40,6 +42,9 @@ sequence:
   #       selected_phrase: {{ selected_phrase }}
   #       text_phrase: {{ text_phrase }}
   #       message: {{ message }}
+
+  - condition: template
+    value_template: '{{ message|trim != "" }}'
 
   - service: script.say_cloud
     data:
