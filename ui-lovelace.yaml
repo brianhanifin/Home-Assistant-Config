@@ -410,7 +410,8 @@ views:
         - state: unavailable
         - state: unknown
         include:
-        - entity_id: binary_sensor.lucas_ac
+        - entity_id: climate.home
+        - entity_id: sensor.lucas_ac
         - entity_id: sensor.holiday
         - entity_id: sensor.home_assistant_updates
         - entity_id: sensor.plex
@@ -517,6 +518,7 @@ views:
                     - entity_id: '*life360*'
                     - entity_id: '*macbook*'
                     - entity_id: '*watch*'
+                    - entity_id: sensor.family_room_remote_battery
                     include:
                     - entity_id: sensor.*_battery
                   numeric: true
@@ -1291,7 +1293,6 @@ views:
             type: custom:decluttering-card
             variables:
             - content: Bedroom<br>_Devices_
-          - cards:
             - entity: fan.bedroom
               name: Floor Fan
               template: button_state_spin
@@ -1305,9 +1306,6 @@ views:
               name: Hot Water
               template: button_state
               type: custom:button-card
-            columns: 3
-            square: false
-            type: grid
           - cards:
             - template: heading
               type: custom:decluttering-card
@@ -1338,19 +1336,83 @@ views:
           - template: heading
             type: custom:decluttering-card
             variables:
-            - content: Lucas' room<br>_Air Conditioner_
+            - content: Lucas' room<br>_Climate control_
           - cards:
+            - entity: input_boolean.lucas_ac_auto
+              name: auto
+              template: button_state
+              type: custom:button-card
             - entity: switch.lucas_ac_fan
               name: Fan
               template: button_state
               type: custom:button-card
             - entity: switch.lucas_ac_cool
+              icon: mdi:snowflake
               name: Cool
               template: button_state
               type: custom:button-card
             columns: 3
             square: false
             type: grid
+          - entities:
+            - entities:
+              - entity: switch.schedule_lucas_ac_cool_school_day_schedule
+                name: School Days
+                toggle: true
+              - entity: switch.schedule_lucas_ac_cool_weekend_schedule
+                name: Weekend
+                toggle: true
+              entity: switch.schedule_lucas_ac_cool_school_day_schedule
+              name: Schedule - Auto Mode
+              secondary_info: last-changed
+              show_state: false
+              state_color: true
+              type: custom:multiple-entity-row
+            - entities:
+              - entity: sensor.lucas_ac_power
+                name: Power
+              - attribute: fan_speed
+                entity: sensor.lucas_ac
+                hide_unavailable: true
+                name: Fan Speed
+              - entity: sensor.lucas_ac
+                name: Status
+              entity: sensor.lucas_ac
+              name: Air Conditioner
+              secondary_info: last-changed
+              show_state: false
+              type: custom:multiple-entity-row
+            - entities:
+              - entity: sensor.outdoor_temperature
+                name: Outdoor
+              - entity: sensor.lucas_room_remote_temperature
+                format: precision0
+                name: Window
+              - entity: sensor.lucas_room_temperature
+                format: precision0
+                name: Door
+              entity: sensor.lucas_room_temperature
+              name: Temperature
+              secondary_info: last-changed
+              show_state: false
+              type: custom:multiple-entity-row
+            footer:
+              animate: true
+              entities:
+              - sensor.lucas_room_temperature
+              - sensor.lucas_room_remote_temperature
+              height: 75
+              hours_to_show: 24
+              line_width: 2
+              show:
+                icon: false
+                legend: false
+                name: false
+                state: false
+              style: "ha-card {\n  background: none;\n}\n"
+              type: custom:mini-graph-card
+            state_color: true
+            type: entities
           - cards:
             - entity: script.lucas_ac
               icon: mdi:power
@@ -2136,7 +2198,24 @@ views:
           - template: heading
             type: custom:decluttering-card
             variables:
-            - content: _Lucas' Room_
+            - content: Lucas' Room<br>_Climate control_
+          - cards:
+            - entity: input_boolean.lucas_ac_auto
+              name: auto
+              template: button_state
+              type: custom:button-card
+            - entity: switch.lucas_ac_fan
+              name: Fan
+              template: button_state
+              type: custom:button-card
+            - entity: switch.lucas_ac_cool
+              icon: mdi:snowflake
+              name: Cool
+              template: button_state
+              type: custom:button-card
+            columns: 3
+            square: false
+            type: grid
           - entities:
             - entities:
               - entity: switch.schedule_lucas_ac_cool_school_day_schedule
@@ -2146,24 +2225,11 @@ views:
                 name: Weekend
                 toggle: true
               entity: switch.schedule_lucas_ac_cool_school_day_schedule
-              name: Schedule
+              name: Schedule - Auto Mode
               secondary_info: last-changed
               show_state: false
               state_color: true
               type: custom:multiple-entity-row
-            header:
-              entities:
-              - entity: automation.lucas_ac_smart
-                name: Fan/Cool
-              - entity: switch.lucas_ac_cool
-                name: Cool
-              - entity: switch.lucas_ac_fan
-                name: Fan
-              type: buttons
-            show_header_toggle: false
-            state_color: true
-            type: entities
-          - entities:
             - entities:
               - entity: sensor.lucas_ac_power
                 name: Power
@@ -2207,7 +2273,6 @@ views:
                 state: false
               style: "ha-card {\n  background: none;\n}\n"
               type: custom:mini-graph-card
-            show_header_toggle: false
             state_color: true
             type: entities
           - cards:
@@ -2942,8 +3007,7 @@ views:
     - light.wled_holiday_string
     - switch.hot_water_pump
     - switch.landscape_power
-    - switch.lucas_ac_cool
-    - switch.lucas_ac_fan
+    - input_boolean.lucas_ac_auto
     - switch.printers
     time_step: 10
     title: Smart Home Schedule
@@ -3547,6 +3611,14 @@ views:
       state_color: true
       type: entities
     type: vertical-stack
+  - entity: deviceID
+    states:
+      e8356dd4-e3013c2a:
+        content: '## Tap away from Message box _before_ tapping _announce_.
+
+          '
+        type: markdown
+    type: custom:state-switch
   icon: mdi:google-home
   path: smart-speakers
   theme: Caule Black Gray Glass

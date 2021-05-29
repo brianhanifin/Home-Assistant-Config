@@ -169,10 +169,10 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 ## Technical Details
 
-Our Home Assistant install has approximately **1200 total entities**, 
-including **564 sensors**.
+Our Home Assistant install has approximately **1139 total entities**, 
+including **525 sensors**.
 
-<details><summary>22 Custom Integrations</summary>
+<details><summary>25 Custom Integrations</summary>
   
 
 #### [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting)
@@ -187,13 +187,13 @@ including **564 sensors**.
   
   
 
-#### [Average Sensor v1.7.3](https://github.com/Limych/ha-average)
+#### [Average Sensor v2.0.2](https://github.com/Limych/ha-average)
     Average Sensor for Home Assistant
     Authors:@Limych.
   
   
 
-#### [Browser Mod v1.3.0](https://github.com/thomasloven/hass-browser_mod)
+#### [Browser Mod v1.3.1](https://github.com/thomasloven/hass-browser_mod)
     🔹 A Home Assistant integration to turn your browser into a controllable entity - and also an audio player
     
   
@@ -204,13 +204,19 @@ including **564 sensors**.
   
   
 
-#### [Event Sensor v2.4.1](https://github.com/azogue/eventsensor)
+#### [Event Sensor v2.4.2](https://github.com/azogue/eventsensor)
     HomeAssistant custom sensor to track specific events
     Authors:@azogue.
   
   
 
-#### [Frigate v1.0.4](https://github.com/blakeblackshear/frigate-hass-integration)
+#### [Fontawesome v2.1.2](https://github.com/thomasloven/hass-fontawesome)
+    🔹 Use icons from fontawesome in home-assistant
+    
+  
+  
+
+#### [Frigate v1.0.5](https://github.com/blakeblackshear/frigate-hass-integration)
     Frigate integration for homeassistant
     Authors:@blakeblackshear.
   
@@ -222,19 +228,15 @@ including **564 sensors**.
   
   
 
-#### [Ha Sun2 v2.0.0](https://github.com/pnbruckner/ha-sun2)
+#### [Ha Sun2 v2.0.2](https://github.com/pnbruckner/ha-sun2)
     Home Assistant Sun2 Sensor
     Authors:@pnbruckner.
   
   
 
-#### [Home Assistant Community Store (HACS) v1.12.3](https://github.com/hacs/integration)
+#### [Home Assistant Community Store (HACS) v1.12.4](https://github.com/hacs/integration)
     HACS gives you a powerful UI to handle downloads of all your custom needs.
     Authors:@ludeeus.
-
-#### [Rainforest Energy Monitoring Component](https://github.com/damienheiser/home-assistant)
-    Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant.
-    Authors:@jrhorrisberger.
   
   
 
@@ -242,10 +244,28 @@ including **564 sensors**.
     A custom component for Home Assistant to detect iPhones connected to local LAN, even if the phone is in deep sleep.
     Authors:@mudape.
   
+  
 
-#### [Readme](https://github.com/custom-components/readme)
+#### [Rainforest v0.2.2](https://github.com/brianhanifin/home-assistant)
+    None
+    Authors:@jrhorrisberger, @damienheiser.
+  
+  
+
+#### [Readme v0.2.1](https://github.com/custom-components/readme)
     Use Jinja and data from Home Assistant to generate your README.md file
     Authors:@ludeeus.
+  
+
+#### [Readme](https://github.com/edenhaus/readme)
+    Use Jinja and data from Home Assistant to generate your README.md file
+    Authors:@ludeeus.
+  
+  
+
+#### [Reolink Ip Camera v0.17](https://github.com/fwestenberg/reolink_dev)
+    Home Assistant Reolink addon
+    Authors:@fwestenberg.
   
   
 
@@ -255,7 +275,7 @@ including **564 sensors**.
   
   
 
-#### [Scheduler Component v3.1.0](https://github.com/nielsfaber/scheduler-component)
+#### [Scheduler Component v3.1.3](https://github.com/nielsfaber/scheduler-component)
     Custom component for HA that enables the creation of scheduler entities
     Authors:@nielsfaber.
   
@@ -267,7 +287,7 @@ including **564 sensors**.
   
   
 
-#### [Smartthinq Lge Sensors v0.6.8](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [Smartthinq Lge Sensors v0.8.2](https://github.com/ollo69/ha-smartthinq-sensors)
     Home Assistant custom integration for SmartThinQ LG devices configurable with Lovelace User Interface.
     Authors:@ollo69.
   
@@ -291,7 +311,7 @@ including **564 sensors**.
   
   
 
-#### [Wyze Bulb, Switch And Sensor Integration v2021.5.5-deices-update-beta.3](https://github.com/JoshuaMulliken/ha-wyzeapi)
+#### [Wyze Home Assistant Integration v2021.05.28-beta.1](https://github.com/JoshuaMulliken/ha-wyzeapi)
     Home Assistant Integration for Wyze devices.
     Authors:@JoshuaMulliken.
   
@@ -304,11 +324,11 @@ including **564 sensors**.
 
 <details><summary>30 Lovelace Plugins</summary>
 
-#### [Atomic Calendar Revive v3.4.1](https://github.com/marksie1988/atomic-calendar-revive)
+#### [Atomic Calendar Revive v4.0.0](https://github.com/marksie1988/atomic-calendar-revive)
     Custom calendar card for Home Assistant with Lovelace
 
 
-#### [Auto Entities v1.8.5](https://github.com/thomasloven/lovelace-auto-entities)
+#### [Auto Entities v1.9.1](https://github.com/thomasloven/lovelace-auto-entities)
     🔹Automatically populate the entities-list of lovelace cards
 
   
@@ -344,6 +364,11 @@ including **564 sensors**.
 
 #### [Gap Card](https://github.com/thomasloven/lovelace-gap-card)
     🔹 A lovelace card that does nothing and looks like nothing. Incredibly useful! No, really.
+
+  
+
+#### [Gauge Card](https://github.com/GH2user/gauge-card)
+    
 
 
 #### [Ha (Lovelace) Card Weather Conditions v1.9.12](https://github.com/r-renato/ha-card-weather-conditions)
@@ -386,7 +411,7 @@ including **564 sensors**.
     🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.1.1](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.1.3](https://github.com/nielsfaber/scheduler-card)
     HA Lovelace card for control of scheduler entities
 
 
@@ -394,7 +419,7 @@ including **564 sensors**.
     
 
 
-#### [Simple Thermostat v2.4.0](https://github.com/nervetattoo/simple-thermostat)
+#### [Simple Thermostat v2.4.2](https://github.com/nervetattoo/simple-thermostat)
     A different take on the thermostat card for Home Assistant ♨️
 
 
@@ -410,16 +435,12 @@ including **564 sensors**.
     🔹Dynamically replace lovelace cards depending on occasion
 
 
-#### [Template Entity Row v1.1.1](https://github.com/thomasloven/lovelace-template-entity-row)
-    🔹 Display whatever you want in an entities card row.
+#### [Swipe Card v4.0.0](https://github.com/bramkragten/swipe-card)
+    Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
 
 #### [Tesla Style Solar Power Card v1.2.2](https://github.com/reptilex/tesla-style-solar-power-card)
     Home assistant power card mimicking the one tesla provides for the powerwall app.
-
-
-#### [Time Picker Card v1.2.1](https://github.com/GeorgeSG/lovelace-time-picker-card)
-    🕰️ Time Picker Card for Home Assistant's Lovelace UI
 
 
 #### [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
@@ -427,9 +448,9 @@ including **564 sensors**.
 
 </details>
 
-<details><summary>3 Addons</summary>
+<details><summary>4 Addons</summary>
 
-#### ESPHome v1.17.1
+#### ESPHome v1.18.0
     ESPHome Hass.io add-on for intelligently managing all your ESP8266/ESP32 devices.
 
 
@@ -437,8 +458,12 @@ including **564 sensors**.
     Automatically back up Home Assistant snapshots to Google Drive
 
 
-#### Samba share v9.3.1
+#### Samba share v9.5.0
     Expose Home Assistant folders with SMB/CIFS
+
+
+#### SSH & Web Terminal v8.2.3
+    SSH & Web Terminal access to your Home Assistant instance
 
 </details>
 
@@ -473,7 +498,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.0-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.5.5-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
