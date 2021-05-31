@@ -10,8 +10,8 @@ variables:
   camera: '{{ camera|default("none") }}'
   critical: '{{ critical|default(false) }}'
 
-  title: '{{ title|default }}'
-  subtitle: '{{ subtitle|default }}'
+  title: '{{ title|default("")}}'
+  subtitle: '{{ subtitle|default("")}}'
   url: |
     {%- if camera != "none" %}
       homeassistant://navigate/lovelace/cameras
@@ -34,7 +34,7 @@ variables:
     {%- else %}
       {{ default }}
     {% endif %}
-  tag: '{{ tag|default }}'
+  tag: '{{ tag|default("")}}'
   push:
     category: |
       {%- if camera != "none" %}

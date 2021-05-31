@@ -14,7 +14,7 @@ condition:
 
 variables:
   person: '{{ trigger.event.data.entity_id.split("_")[1] }}'
-  current_option: '{{ states("input_select." + person)|default }}'
+  current_option: '{{ states("input_select." + person)|default("")}}'
 
 action:
   - condition: template

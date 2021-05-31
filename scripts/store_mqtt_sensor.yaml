@@ -8,10 +8,10 @@ sequence:
 
   # Only add attributes if they are presence.
   - choose:
-      - conditions: '{{ attributes|default != "" }}'
+      - conditions: '{{ attributes|default("")!= "" }}'
         sequence:
           - service: mqtt.publish
             data:
               topic: "custom/sensor/{{ name }}/attributes"
-              payload: '{{ attributes|default }}'
+              payload: '{{ attributes|default("")}}'
               retain: true
