@@ -168,9 +168,12 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 
-{%- if hacs_components %}
-  {%- set integrations = hacs_components | selectattr('category', 'equalto', 'integration') | sort(attribute='name') %}
-  {%- set plugins = hacs_components | selectattr('category', 'equalto', 'plugin') | sort(attribute='name') %}
+{% filter replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|trim %}
+{%- if custom_components %}
+  {#%- set integrations = custom_components | selectattr('category', 'equalto', 'integration') | sort(attribute='name') %#}
+  {#%- set plugins = custom_components | selectattr('category', 'equalto', 'plugin') | sort(attribute='name') %#}
+  {%- set integrations = custom_components | sort(attribute='name') %}
+  {%- set plugins = custom_components | selectattr('category', 'equalto', 'plugin') | sort(attribute='name') %}
 ## Technical Details
 
 Our Home Assistant install has approximately **{{ states|count }} total entities**, 
@@ -184,16 +187,14 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
     {%- set description = "Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant." %}
   {%- else %}
     {%- set name = integration.name | replace("HACS","Home Assistant Community Store (HACS)") %}
-    {%- set description = integration.description|trim if integration.description|trim not in ["",none] %}
-  {% endif %}
-  {%- if integration.installed_version not in ["",none]%}
-    {%- set name = name ~ " v" ~ integration.installed_version|replace("v","") %}
-  {% endif %}
-
+    {%- set description = hacs_components | selectattr('name', 'equalto', integration.name) | map(attribute='description') | join %}
+  {%- endif %}
+  {%- set name = name ~ " v" ~ integration.version|replace("v","") %}
 #### [{{ name|trim }}]({{ url|trim }})
-    {{ description|trim if description not in ["",none] }}
-    {% if integration.authors|count > 0 %}Authors: {%- for author in integration.authors -%} {{ author }}{{ ", " if not loop.last }}{%- endfor %}.{% endif %}
-{%- endfor %}
+
+{{ description|trim if description not in ["",none] }}
+{% if integration.codeowners|count > 0 %}Authors: {% for author in integration.codeowners %}[{{ author }}](https://github.com/{{ author|replace("@","") }}){{ ", " if not loop.last }}{%- endfor %}.{% endif %}
+{% endfor %}
 </details>
 
 <details><summary>{{ plugins|count }} Lovelace Plugins</summary>
@@ -203,8 +204,7 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
     {%- set name = plugin.name|trim ~ " v" ~ plugin.installed_version|replace("v","") %}
   {%- else %}
     {%- set name = plugin.name|trim %}
-  {% endif %}
-
+  {%- endif %}
 #### [{{ name }}]({{ plugin.documentation|trim }})
     {{ plugin.description|trim if plugin.description not in ["",none] }}
 {% endfor %}
@@ -221,6 +221,7 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 {% endfor %}
 </details>
 {% endif %}
+{%- endfilter %}
 ---
 
 ## Inspiration
