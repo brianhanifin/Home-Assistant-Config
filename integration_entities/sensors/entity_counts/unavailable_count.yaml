@@ -7,8 +7,8 @@ sensors:
     #value_template: '{{ states | selectattr("state","eq","unavailable") | map(attribute="entity_id") | list | count }}'
     value_template: |
       {% set storage = namespace(entities="") %}
-      {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | map(attribute="entity_id") | list %}
-      {%- for entity in entities if not entity.startswith("sensor.hp_") and not entity.startswith("binary_sensor.unraid_") and not entity.startswith("sensor.unraid_") and not entity.startswith("switch.unraid_") and not entity.startswith("switch.glowforge_") and not entity.startswith("media_player") %}
+      {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | rejectattr("attributes.type","eq","browser_mod") | map(attribute="entity_id") | list %}
+      {%- for entity in entities if not entity.startswith("sensor.google_") and not entity.startswith("sensor.hp_") and not entity.startswith("binary_sensor.unraid_") and not entity.startswith("sensor.unraid_") and not entity.startswith("switch.unraid_") and not entity.startswith("switch.glowforge_") and not entity.startswith("media_player") %}
         {%- set storage.entities = storage.entities ~ entity %}
         {% if not loop.last %}
           {%- set storage.entities = storage.entities ~ ',' %}
@@ -18,8 +18,8 @@ sensors:
     attribute_templates:
       entities: |
         {% set storage = namespace(entities="") %}
-        {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | map(attribute="entity_id") | list %}
-        {%- for entity in entities if not entity.startswith("sensor.hp_") and not entity.startswith("binary_sensor.unraid_") and not entity.startswith("sensor.unraid_") and not entity.startswith("switch.unraid_") and not entity.startswith("switch.glowforge_") and not entity.startswith("media_player") %}
+        {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | rejectattr("attributes.type","eq","browser_mod") | map(attribute="entity_id") | list %}
+        {%- for entity in entities if not entity.startswith("sensor.google_") and not entity.startswith("sensor.hp_") and not entity.startswith("binary_sensor.unraid_") and not entity.startswith("sensor.unraid_") and not entity.startswith("switch.unraid_") and not entity.startswith("switch.glowforge_") and not entity.startswith("media_player") %}
           {%- set storage.entities = storage.entities ~ entity %}
           {% if not loop.last %}
             {%- set storage.entities = storage.entities ~ ',' %}
