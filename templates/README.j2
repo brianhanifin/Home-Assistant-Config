@@ -169,11 +169,10 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of my Z-Wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the Z-Wave Device Management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
 
 {% filter replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|trim %}
+
 {%- if custom_components %}
-  {#%- set integrations = custom_components | selectattr('category', 'equalto', 'integration') | sort(attribute='name') %#}
-  {#%- set plugins = custom_components | selectattr('category', 'equalto', 'plugin') | sort(attribute='name') %#}
   {%- set integrations = custom_components | sort(attribute='name') %}
-  {%- set plugins = custom_components | selectattr('category', 'equalto', 'plugin') | sort(attribute='name') %}
+  {%- set plugins = hacs_components | selectattr('category', 'equalto', 'plugin') | rejectattr("installed","equalto",false) | sort(attribute='name') %}
 ## Technical Details
 
 Our Home Assistant install has approximately **{{ states|count }} total entities**, 
@@ -190,11 +189,12 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
     {%- set description = hacs_components | selectattr('name', 'equalto', integration.name) | map(attribute='description') | join %}
   {%- endif %}
   {%- set name = name ~ " v" ~ integration.version|replace("v","") %}
+
 #### [{{ name|trim }}]({{ url|trim }})
 
 {{ description|trim if description not in ["",none] }}
 {% if integration.codeowners|count > 0 %}Authors: {% for author in integration.codeowners %}[{{ author }}](https://github.com/{{ author|replace("@","") }}){{ ", " if not loop.last }}{%- endfor %}.{% endif %}
-{% endfor %}
+{% endfor -%}
 </details>
 
 <details><summary>{{ plugins|count }} Lovelace Plugins</summary>
@@ -205,8 +205,9 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
   {%- else %}
     {%- set name = plugin.name|trim %}
   {%- endif %}
+
 #### [{{ name }}]({{ plugin.documentation|trim }})
-    {{ plugin.description|trim if plugin.description not in ["",none] }}
+{{ plugin.description|trim if plugin.description not in ["",none] }}
 {% endfor %}
 </details>
 {% endif %}
@@ -217,7 +218,7 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 {%- for addon in addons %}
 
 #### {{ addon.name ~ " v" ~ addon.version }}
-    {{ addon.description|trim if addon.description not in ["",none] }}
+{{ addon.description|trim if addon.description not in ["",none] }}
 {% endfor %}
 </details>
 {% endif %}
