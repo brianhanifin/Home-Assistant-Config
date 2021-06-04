@@ -1,10 +1,9 @@
 # Hanifin Smart Home
 
-| My Repository | Home Assistant Community |
-| :---| :--- |
-| [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] | [![Community Forum][discourse-shield]][discourse]
-| [![GitHub Activity][commits-shield]][commits] [![Last Commit][github-last-commit]][github-master] | [![Discord][discord-shield]][discord] |
-| [![Home Assistant Version][ha-version-shield]][ha-version] |
+| brianhanifin/home-assistant-config | Home Assistant Community |
+| :---: | :---: |
+| [![Home Assistant Version][ha-version-shield]][ha-version] [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] | [![Community Forum][discourse-shield]][discourse]
+| [![Last Commit][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Discord][discord-shield]][discord] |
 
 ## Smart Home Articles
 
@@ -170,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1135 total entities**, 
-including **521 sensors**.
+Our Home Assistant install has approximately **1136 total entities**, 
+including **523 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -181,7 +180,7 @@ Adaptive Lighting custom component for Home Assistant
 Authors: [@basnijholt](https://github.com/basnijholt).
 
 
-#### [Anniversaries v4.3.0](https://github.com/pinkywafer/Anniversaries)
+#### [Anniversaries v4.3.1](https://github.com/pinkywafer/Anniversaries)
 
 Anniversary Countdown Sensor for Home Assistant
 Authors: [@pinkywafer](https://github.com/pinkywafer).
@@ -469,7 +468,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.6.1-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.6.1-666666?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
