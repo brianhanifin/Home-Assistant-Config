@@ -1,0 +1,19 @@
+---
+alias: "Printer: Status update when on"
+id: printer_status_update_when_on
+mode: single
+trigger:
+  - platform: state
+    entity_id: switch.printers
+    to: "on"
+    for:
+      minutes: 2
+action:
+  - service: homeassistant.update_entity
+    target:
+      entity_id:
+        - sensor.hp_colorlaserjet
+        - sensor.hp_colorlaserjet_black_cartridge_hp_cf500a
+        - sensor.hp_colorlaserjet_cyan_cartridge_hp_cf501a
+        - sensor.hp_colorlaserjet_magenta_cartridge_hp_cf503a
+        - sensor.hp_colorlaserjet_yellow_cartridge_hp_cf502a
