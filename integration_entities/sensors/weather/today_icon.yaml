@@ -3,5 +3,9 @@ platform: template
 sensors:
   today_icon:
     friendly_name: "Today's forecast"
-    icon_template: "{{ 'mdi:weather-' ~ states('weather.accuweather')|replace('clear-','')|replace('partly','partly-') }}"
-    value_template: "{{ states('weather.accuweather') }}"
+    icon_template: |
+      {%- set icon = states('weather.accuweather') %}
+      {{ 'mdi:weather-' ~ icon|replace('clear-','')|replace('partly','partly-') if icon is defined }}
+    value_template: |
+      {%- set icon = states('weather.accuweather') %}
+      {{ icon if icon is defined }}

@@ -13,10 +13,10 @@ sensors:
       {% set bathroom_humidity = states('sensor.upstairs_bathroom_humidity') %}
       {%- set comparison_humidity = states('sensor.guest_room_humidity') %}
       {%- if comparison_humidity|lower in ['unknown','unavailable'] -%}
-        {%- set comparison_humidity = states('sensor.lucas_room_humidity')|default('') -%}
+        {%- set comparison_humidity = states('sensor.lucas_room_humidity') -%}
       {%- endif -%}
       {%- if comparison_humidity|lower in ['unknown','unavailable'] -%}
-        {%- set comparison_humidity = states('sensor.home_humidity')|default('') -%}
+        {%- set comparison_humidity = states('sensor.home_humidity') -%}
       {%- endif -%}
       {% set diff = (bathroom_humidity|int) - comparison_humidity|int %}
       {{ ([0, diff, 99]|sort)[1] }}

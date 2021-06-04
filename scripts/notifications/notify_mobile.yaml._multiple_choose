@@ -10,8 +10,8 @@ variables:
       notify.{{ who|default("brian") }}
     {% endif %}
 
-  title: '{{ title|default("")}}'
-  subtitle: '{{ subtitle|default("")}}'
+  title: '{{ title}}'
+  subtitle: '{{ subtitle}}'
   group: |
     {%- if group is string %}
       {{ group }}
@@ -46,7 +46,7 @@ variables:
     {% endif %}
   sound_file: |
     {%- if sound is string %}
-      {{ sound|default("")}}
+      {{ sound}}
     {%- else %}
       {%- if category != "" %}
         {% if category == "doorbell" %}
