@@ -8,10 +8,18 @@ sensors:
     value_template: |
       {% set storage = namespace(entities="") %}
       {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | rejectattr("attributes.type","eq","browser_mod") | map(attribute="entity_id") | list %}
-      {%- for entity in entities if not entity.startswith("sensor.google_") and not entity.startswith("sensor.hp_") and not entity.startswith("binary_sensor.unraid_") and not entity.startswith("sensor.unraid_") and not entity.startswith("switch.unraid_") and not entity.startswith("switch.glowforge_") and not entity.startswith("media_player") %}
-        {%- set storage.entities = storage.entities ~ entity %}
-        {% if not loop.last %}
-          {%- set storage.entities = storage.entities ~ ',' %}
+      {%- for entity in entities %}
+        {%- set object_id = entity.split(".")[1] %}
+        {%- if not object_id.startswith("browser_mod")
+              and not object_id.startswith("glowforge") 
+              and not object_id.startswith("google_") 
+              and not entity.startswith("sensor.hp_")
+              and not entity.startswith("media_player")
+              and not object_id.startswith("unraid_") %}
+          {%- set storage.entities = storage.entities ~ entity %}
+          {% if not loop.last %}
+            {%- set storage.entities = storage.entities ~ ',' %}
+          {% endif %}
         {% endif %}
       {%- endfor %}
       {{ storage.entities.split(",") | count }}
@@ -19,10 +27,18 @@ sensors:
       entities: |
         {% set storage = namespace(entities="") %}
         {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | rejectattr("attributes.type","eq","browser_mod") | map(attribute="entity_id") | list %}
-        {%- for entity in entities if not entity.startswith("sensor.google_") and not entity.startswith("sensor.hp_") and not entity.startswith("binary_sensor.unraid_") and not entity.startswith("sensor.unraid_") and not entity.startswith("switch.unraid_") and not entity.startswith("switch.glowforge_") and not entity.startswith("media_player") %}
-          {%- set storage.entities = storage.entities ~ entity %}
-          {% if not loop.last %}
-            {%- set storage.entities = storage.entities ~ ',' %}
+        {%- for entity in entities %}
+          {%- set object_id = entity.split(".")[1] %}
+          {%- if not object_id.startswith("browser_mod")
+                and not object_id.startswith("glowforge") 
+                and not object_id.startswith("google_") 
+                and not entity.startswith("sensor.hp_")
+                and not entity.startswith("media_player")
+                and not object_id.startswith("unraid_") %}
+            {%- set storage.entities = storage.entities ~ entity %}
+            {% if not loop.last %}
+              {%- set storage.entities = storage.entities ~ ',' %}
+            {% endif %}
           {% endif %}
         {%- endfor %}
         {{ storage.entities.split(",") }}
