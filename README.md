@@ -170,8 +170,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1136 total entities**, 
-including **523 sensors**.
+Our Home Assistant install has approximately **1135 total entities**, 
+including **521 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -359,7 +359,7 @@ Weather condition card (Lovelace) for Home Assistant.
 🔹 Get more control over the placement of lovelace cards.
 
 
-#### [Lovelace Home Feed Card v0.5.0](https://github.com/gadgetchnnel/lovelace-home-feed-card)
+#### [Lovelace Home Feed Card v0.6.0](https://github.com/gadgetchnnel/lovelace-home-feed-card)
 A custom Lovelace card for displaying a combination of persistent notifications, calendar events, and entities in the style of a feed.
 
 
@@ -399,7 +399,7 @@ HA Lovelace card for control of scheduler entities
 A different take on the thermostat card for Home Assistant ♨️
 
 
-#### [Slider Entity Row v17.0.1](https://github.com/thomasloven/lovelace-slider-entity-row)
+#### [Slider Entity Row v17.1.0](https://github.com/thomasloven/lovelace-slider-entity-row)
 🔹 Add sliders to entity cards
 
 
@@ -469,7 +469,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.6.0-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.6.1-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
