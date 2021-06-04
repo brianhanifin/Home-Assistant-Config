@@ -170,8 +170,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1131 total entities**, 
-including **524 sensors**.
+Our Home Assistant install has approximately **1136 total entities**, 
+including **523 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -199,7 +199,7 @@ Authors: [@Limych](https://github.com/Limych).
 
 
 
-#### [Config Check v0.1.0](https://github.com/custom-components/config_check)
+#### [Config Check v0.1.1](https://github.com/custom-components/config_check)
 
 Check your Home Assistant configuration from the frontend, or automatically when the configuration is updated, and optionally restart HASS automatically!Run the CLI config_check from a service call.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -259,7 +259,7 @@ Authors: [@ollo69](https://github.com/ollo69).
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.8.4](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.8.6](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -301,7 +301,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>30 Lovelace Plugins</summary>
+<details><summary>29 Lovelace Plugins</summary>
 
 #### [Atomic Calendar Revive v4.0.0](https://github.com/marksie1988/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -415,10 +415,6 @@ A different take on the thermostat card for Home Assistant ♨️
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
 
-#### [Tesla Style Solar Power Card v1.2.2](https://github.com/reptilex/tesla-style-solar-power-card)
-Home assistant power card mimicking the one tesla provides for the powerwall app.
-
-
 #### [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
 Weather Card with animated icons for Home Assistant Lovelace
 
@@ -473,7 +469,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.6.0b4-41BDF5?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/Home_Assistant-2021.6.0-41BDF5?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
