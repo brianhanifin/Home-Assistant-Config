@@ -4,7 +4,7 @@
 ############################################
 sequence:
   - service: group.set
-    data_template:
+    data:
       object_id: "actionable_lights"
       entities: >
         {%- set ignore_list = [
@@ -13,11 +13,12 @@ sequence:
           'light.family_room_floor_lamp1','light.family_room_floor_lamp2','light.family_room_floor_lamp3',
           'light.play_room_floor_lamp1','light.play_room_floor_lamp2',
           'light.dining_porch',
-          'light.entertainment_area_1',
+          'light.fake_all_lights',
+          'light.family_room_lights',
+          'light.kitchen_lights',
           'light.play_room_entry',
           'light.kitchen_cabinet',
           'light.network_closet',
-          'light.upstairs_bathroom_nightlight',
-          'light.xiaomi_hub_light'
+          'light.wled_holiday_string'
         ] -%}
-        {{ states.light | rejectattr('attributes.type','eq','browser_mod') | rejectattr('entity_id','in',ignore_list) | map(attribute='entity_id') | join(',') }}
+        {{ states.light | rejectattr("state","eq","unavailable") | rejectattr('attributes.type','eq','browser_mod') | rejectattr('entity_id','in',ignore_list) | map(attribute='entity_id') | join(',') }}
