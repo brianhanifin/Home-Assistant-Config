@@ -7,9 +7,16 @@ condition_template: |
   {%- set value2 = states('weather.openweathermap')|trim %}
   {{ value2 if value1 in ["unavailable","None",""] else value1 }}
 temperature_template: |
+  {%- set value0 = states("sensor.backyard_temperature")|float %}
   {%- set value1 = state_attr("weather.accuweather","temperature")|trim -%}
   {%- set value2 = state_attr("weather.openweathermap","temperature")|trim -%}
-  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
+  {%- if value0 is number and value0 > 0 %}
+    {%- set value = value0 %}
+  {%- elif value1 is number and value1 > 0 %}
+    {%- set value = value1 %}
+  {%- elif value2 is number and value2 > 0 %}
+    {%- set value = value2 %}
+  {%- endif %}
   {{ value|round }}
 humidity_template: |
   {%- set value1 = state_attr("weather.accuweather","humidity")|trim -%}
