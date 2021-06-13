@@ -5,7 +5,8 @@ switches:
     unique_id: switch.lucas_ac_cool
     friendly_name: Lucas AC Cool Mode
     icon_template: mdi:snowflake
-    value_template: '{{ is_state("sensor.lucas_ac","Cooling") and is_state("switch.lucas_ac_auto","off") }}'
+    #value_template: '{{ is_state("sensor.lucas_ac","Cooling") and is_state("switch.lucas_ac_auto","off") }}'
+    value_template: '{{ is_state("switch.lucas_ac_auto","off") and is_state("sensor.lucas_ac_selected_mode","Cool") }}'
     turn_on:
       - service: script.lucas_ac
         data:
