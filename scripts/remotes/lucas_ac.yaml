@@ -64,7 +64,7 @@ sequence:
     value_template: '{{ command_count > 0 }}'
 
   - choose:
-      - conditions: '{{ auto == true }}'
+      - conditions: '{{ mode == "auto" or auto == true }}'
         sequence:
           - alias: Allow only one mode at a time.
             service: homeassistant.turn_off
