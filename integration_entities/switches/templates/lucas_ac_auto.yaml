@@ -10,6 +10,10 @@ switches:
         data:
           mode: "auto"
     turn_off:
-      - service: script.lucas_ac
-        data:
-          mode: "off"
+      - alias: "Turn off only if power is on."
+        choose:
+          - conditions: '{{ is_state("binary_sensor.lucas_ac","on") }}'
+            sequence:
+              - service: script.lucas_ac
+                data:
+                  mode: "off"
