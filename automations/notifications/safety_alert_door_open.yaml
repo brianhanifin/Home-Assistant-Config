@@ -9,17 +9,21 @@ trigger:
       - binary_sensor.garage_entry_door
     to: 'on'
     for:
-      minutes: 2
+      minutes: 3
 variables:
   old_state: '{{ trigger.from_state.state }}'
   new_state: '{{ trigger.to_state.state }}'
   entity_id: '{{ trigger.to_state.entity_id }}'
   message: |
     The {{ state_attr(entity_id, "friendly_name") }} has been open for 2 minutes. Check if it was left open by accident.
+  critical: |
+    {%- if entity_id == "binary_sensor.garage_entry_door" %}
+      {{ is_state("binary_sensor.noncritical_alert_quiettime","off") }}
+    {% endif %}
 action:
   - service: script.notify_mobile
     data:
-      critical: true
+      critical: '{{ critical }}'
       title: DOOR OPEN
       message: '{{ message }}'
       who: brian
