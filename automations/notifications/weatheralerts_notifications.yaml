@@ -5,16 +5,49 @@ trigger:
   - platform: numeric_state
     entity_id: sensor.san_diego_county_inland_valleys
     above: 0
+variables:
+  alerts: '{{ state_attr("sensor.san_diego_county_inland_valleys","alerts") }}'
+  alert_count: |
+    {%- set data = namespace(count=0) %}
+    {%- set alerts = state_attr("sensor.san_diego_county_inland_valleys","alerts") %}
+    {%- for alert in alerts if as_timestamp(alert.ends) - as_timestamp(now()) > 0 %}
+      {%- set data.count = data.count|int + 1 %} 
+    {% endfor %}
+    {%- set alert_count = data.count %}
+  title: |
+    {%- if alert_count == 1 %}
+      {% set title = alerts[0].event ~ " [" ~ alerts[0].severity ~ ", " ~ alerts[0].certainty ~ "]" %}
+    {%- else %}
+      {% set title = alert_count ~ " Weather Alerts" %}
+    {%- endif %}
+  message: |
+    {%- filter replace("  ","")|replace("WHAT...","")|replace("WHERE...","")|replace("WHEN...","")|replace("IMPACTS...","") %}
+      {%- for alert in alerts if as_timestamp(alert.ends) - as_timestamp(now()) > 0 %}
+        {{ "---\n" if not loop.first }}
+        {%- if alert_count > 1 %}
+          {{ alert.event }} [{{ alert.severity }}, {{ alert.certainty }}]
+        {%- endif %}
+        {{ alert.description|replace("\n\n","\n") }}
+
+        How to stay safe?
+        {{ alert.instruction }}
+      {% endfor %}
+    {% endfilter %}
+condition:
+  - '{{ alert_count > 0 }}'
 action:
   - service: script.notify_mobile
     data:
       critical: true
-      title: "{{ trigger.event.data.event }}: {{ trigger.event.data.area }}"
-      message: >
-        {{ trigger.event.data.title }}
-        Certainty: {{ trigger.event.data.certainty }}
-        Severity: {{ trigger.event.data.severity }}
+      title: '{{ title }}'
+      message: '{{ message }}'
       who: brian
       group: safety
       tag: weather-alert
       url: /lovelace/outdoors#weather
+
+  - service: script.notify_web
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      id: weather-alert
