@@ -20,7 +20,13 @@ variables:
   recommended_mode: '{{ states("sensor.lucas_ac_recommended_mode") }}'
   commands: |
     {%- set commands = "none" %}
-    {%- if recommended_mode == "fan" %}
+    {%- if mode == "off" %}
+      {%- if not is_on %}
+        {%- set commands = "none" %}
+      {%- else %}
+        {%- set commands = "power" %}
+      {%- endif %}
+    {%- elif mode == "fan" %}
       {%- if not is_on %}
         {%- set commands = "power, mode, mode" %}
       {%- elif is_on %}
@@ -28,7 +34,7 @@ variables:
       {%- else %}
         {%- set commands = "none" %}
       {% endif %}
-    {%- elif recommended_mode == "cool" %}
+    {%- elif mode == "cool" %}
       {%- if not is_on %}
         {%- set commands = "power, cool_64" %}
       {%- elif is_on %}
@@ -36,11 +42,29 @@ variables:
       {%- else %}
         {%- set commands = "none" %}
       {% endif %}
-    {%- elif recommended_mode == "off" %}
-      {%- if not is_on %}
-        {%- set commands = "none" %}
-      {%- else %}
-        {%- set commands = "power" %}
+    {%- elif mode == "auto" %}
+      {%- if recommended_mode == "fan" %}
+        {%- if not is_on %}
+          {%- set commands = "power, mode, mode" %}
+        {%- elif is_on %}
+          {%- set commands = "mode, mode" %}
+        {%- else %}
+          {%- set commands = "none" %}
+        {% endif %}
+      {%- elif recommended_mode == "cool" %}
+        {%- if not is_on %}
+          {%- set commands = "power, cool_64" %}
+        {%- elif is_on %}
+          {%- set commands = "cool_64" %}
+        {%- else %}
+          {%- set commands = "none" %}
+        {% endif %}
+      {%- elif recommended_mode == "off" %}
+        {%- if not is_on %}
+          {%- set commands = "none" %}
+        {%- else %}
+          {%- set commands = "power" %}
+        {%- endif %}
       {%- endif %}
     {%- endif %}
     {{ commands|replace(" ","") }}
