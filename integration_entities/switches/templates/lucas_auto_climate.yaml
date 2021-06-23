@@ -6,26 +6,33 @@ switches:
     friendly_name: Lucas Automatic Climate Mode
     icon_template: mdi:autorenew
     turn_on:
+      - service: climate.turn_on
+        target:
+          entity_id: climate.lucas_room
+
       - choose:
-          - conditions: '{{ is_state("sensor.lucas_recommended_mode","auto") }}'
+          - conditions: '{{ is_state("sensor.lucas_recommended_mode","cool") }}'
             sequence:
               - service: climate.set_temperature
                 target:
                   entity_id: climate.lucas_room
                 data:
-                  mode: auto
+                  hvac_mode: cool
                   temperature: 65
-
         default:
           - service: climate.set_hvac_mode
             target:
               entity_id: climate.lucas_room
             data:
-              mode: '{{ states("sensor.lucas_recommended_mode") }}'
+              hvac_mode: '{{ states("sensor.lucas_recommended_mode") }}'
 
     turn_off:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.lucas_room
+
       - service: climate.set_hvac_mode
         target:
           entity_id: climate.lucas_room
         data:
-          mode: "off"
+          hvac_mode: "off"
