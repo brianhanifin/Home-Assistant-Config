@@ -9,7 +9,7 @@ sensors:
   upstairs_bathroom_humidity_difference:
     friendly_name: "Bathroom Humidity Change"
     # Use alternate humidity sensor should the first humidity sensor be unavailable.
-    value_template: >
+    value_template: |
       {% set bathroom_humidity = states('sensor.upstairs_bathroom_humidity') %}
       {%- set comparison_humidity = states('sensor.guest_room_humidity') %}
       {%- if comparison_humidity|lower in ['unknown','unavailable'] -%}
@@ -22,3 +22,15 @@ sensors:
       {{ ([0, diff, 99]|sort)[1] }}
     device_class: "humidity"
     unit_of_measurement: "%"
+    attribute_templates:
+      bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity") }}'
+      comparison_humidity: |
+        {%- set comparison_humidity = states('sensor.guest_room_humidity') %}
+        {%- if comparison_humidity|lower in ['unknown','unavailable'] -%}
+          {%- set comparison_humidity = states('sensor.lucas_room_humidity') -%}
+        {%- endif -%}
+        {%- if comparison_humidity|lower in ['unknown','unavailable'] -%}
+          {%- set comparison_humidity = states('sensor.home_humidity') -%}
+        {%- endif -%}
+        {{ comparison_humidity }}
+
