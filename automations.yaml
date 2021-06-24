@@ -387,3 +387,45 @@
     data:
       path: /lovelace-sidebar/home
   mode: single
+- id: '1624556633877'
+  alias: Safety Alert Garage Door Obstruction Detected
+  description: Alert when the garage door is unable to close due an obstruction.
+  trigger:
+  - platform: state
+    entity_id: cover.garage_door
+    attribute: obstruction-detected
+    from: 'false'
+    to: 'true'
+    for: 0:01:00
+  condition:
+  - condition: device
+    device_id: 251811656468e59987a59a49a5018a8e
+    domain: cover
+    entity_id: cover.garage_door
+    type: is_open
+  action:
+  - service: script.notify_speech
+    data:
+      media_player: group.google_welcome
+      message: The garage door cannot close due to an obstruction. Please help the
+        garage door close safely.
+  - service: script.notify_mobile
+    data:
+      title: Garage Door Obstructed
+      url: /lovelace/downstairs#entry
+      message: The garage door cannot close due to an obstruction. Please help the
+        garage door close safely.
+      critical: true
+  mode: single
+- id: '1624556923504'
+  alias: '! Debug Garage Door States'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: cover.garage_door
+  condition: []
+  action:
+  - service: script.debug
+    data:
+      message: '{{ states("cover.garage_door") }}'
+  mode: single
