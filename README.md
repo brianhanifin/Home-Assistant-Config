@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1189 total entities**, 
-including **539 sensors**.
+Our Home Assistant install has approximately **1296 total entities**, 
+including **575 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
@@ -180,7 +180,7 @@ Adaptive Lighting custom component for Home Assistant
 Authors: [@basnijholt](https://github.com/basnijholt).
 
 
-#### [Anniversaries v4.3.1](https://github.com/pinkywafer/Anniversaries)
+#### [Anniversaries v4.4.0](https://github.com/pinkywafer/Anniversaries)
 
 Anniversary Countdown Sensor for Home Assistant
 Authors: [@pinkywafer](https://github.com/pinkywafer).
@@ -246,7 +246,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.3.35](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.3.36](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -258,7 +258,7 @@ Authors: [@ollo69](https://github.com/ollo69).
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.8.13](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.8.18](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -288,15 +288,15 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 Authors: [@AlexxIT](https://github.com/AlexxIT).
 
 
-#### [Wyze v2021.06.4](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v2021.7.10](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>30 Lovelace Plugins</summary>
+<details><summary>29 Lovelace Plugins</summary>
 
-#### [Atomic Calendar Revive v4.4.1](https://github.com/marksie1988/atomic-calendar-revive)
+#### [Atomic Calendar Revive v4.5.0](https://github.com/marksie1988/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
 
 
@@ -332,10 +332,6 @@ Show a notification count badge.
 🔹 A foldable row for entities card, containing other rows
 
 
-#### [Gap Card](https://github.com/thomasloven/lovelace-gap-card)
-🔹 A lovelace card that does nothing and looks like nothing. Incredibly useful! No, really.
-
-
 #### [Gauge Card](https://github.com/GH2user/gauge-card)
 
 
@@ -344,15 +340,15 @@ Show a notification count badge.
 Weather condition card (Lovelace) for Home Assistant.
 
 
-#### [Kiosk Mode v1.6.5](https://github.com/maykar/kiosk-mode)
+#### [Kiosk Mode v1.7.1](https://github.com/maykar/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 
-#### [Layout Card v2.2.3](https://github.com/thomasloven/lovelace-layout-card)
+#### [Layout Card v2.3.0](https://github.com/thomasloven/lovelace-layout-card)
 🔹 Get more control over the placement of lovelace cards.
 
 
-#### [Lovelace Home Feed Card v0.6.0](https://github.com/gadgetchnnel/lovelace-home-feed-card)
+#### [Lovelace Home Feed Card v0.6.2](https://github.com/gadgetchnnel/lovelace-home-feed-card)
 A custom Lovelace card for displaying a combination of persistent notifications, calendar events, and entities in the style of a feed.
 
 
@@ -392,7 +388,7 @@ HA Lovelace card for control of scheduler entities
 A different take on the thermostat card for Home Assistant ♨️
 
 
-#### [Slider Button Card v1.5.2](https://github.com/mattieha/slider-button-card)
+#### [Slider Button Card v1.10.3](https://github.com/mattieha/slider-button-card)
 A button card with integrated slider
 
 
@@ -417,9 +413,9 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>5 Addons</summary>
+<details><summary>8 Addons</summary>
 
-#### ESPHome v1.19.2
+#### ESPHome v1.20.1
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -427,16 +423,28 @@ ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 Automatically back up Home Assistant snapshots to Google Drive
 
 
+#### Portainer v1.5.1
+Manage your Docker environment with ease
+
+
 #### Samba share v9.5.1
 Expose Home Assistant folders with SMB/CIFS
 
 
-#### SDR to Home Assistant v0.1.1b
+#### SDR to Home Assistant v0.1.4b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 
-#### SSH & Web Terminal v8.2.4
+#### SSH & Web Terminal v9.0.0
 SSH & Web Terminal access to your Home Assistant instance
+
+
+#### Terminal & SSH v9.1.3
+Allow logging in remotely to Home Assistant using SSH
+
+
+#### Visual Studio Code v3.6.0
+Fully featured VSCode experience, to edit your HA config in the browser, including auto-completion!
 
 </details>
 ---
@@ -470,7 +478,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.6.6-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.7.4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
