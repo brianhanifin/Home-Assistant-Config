@@ -13,24 +13,24 @@ variables:
   audio_file: "media-source://media_source/local/audio/jetsons-doorbell.mp3"
 
 action:
-  # - service: script.notify_mobile
-  #   data:
-  #     who: brian
-  #     title: Doorbell rang
-  #     message: Someone pushed the doorbell.
-  #     camera: camera.front_door
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: Doorbell rang
+      message: Someone pushed the doorbell.
+      camera: camera.front_door
 
   # Play the doorbell chime.
-  - service: script.notify_audio
-    data:
-      audio_file: "{{ audio_file }}"
-      volume: 0.8
-      speakers:
-        - media_player.google_family_room
-        - media_player.google_kitchen
-        - media_player.google_garage
+  # - service: script.notify_audio
+  #   data:
+  #     audio_file: "{{ audio_file }}"
+  #     volume: 0.8
+  #     speakers:
+  #       - media_player.google_family_room
+  #       - media_player.google_kitchen
+  #       - media_player.google_garage
 
-  # 
+  #
   - alias: Display the message as a toast notification.
     service: script.toast
     data:
@@ -58,27 +58,11 @@ action:
           - camera.front_door
         entity: binary_sensor.front_door_motion
         state_filter:
-          'off': grayscale(100%)
-          'on': brightness(110%) saturate(1.2)
+          "off": grayscale(100%)
+          "on": brightness(110%) saturate(1.2)
       large: true
       # Auto close after 2 minutes (120 seconds * 1000 miliseconds).
       auto_close: true
-
-  - alias: Stream the camera feed to Apple TV.
-    choose:
-      conditions:
-        - condition: state
-          entity_id: media_player.tv_family_room
-          state: "on"
-      sequence:
-        - service: remote.turn_on
-          entity_id: remote.apple_tv_family_room
-        - service: camera.play_stream
-          target:
-            entity_id: camera.doorbell
-          data:
-            media_player: media_player.apple_tv_family_room
-
 
   - delay:
       seconds: 30
