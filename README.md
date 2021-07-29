@@ -170,7 +170,7 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 ## Technical Details
 
 Our Home Assistant install has approximately **1296 total entities**, 
-including **575 sensors**.
+including **574 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
@@ -478,7 +478,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.7.4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.8.0b1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
