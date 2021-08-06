@@ -169,12 +169,12 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1296 total entities**, 
-including **574 sensors**.
+Our Home Assistant install has approximately **1309 total entities**, 
+including **581 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
-#### [Adaptive Lighting v1.0.0](https://www.home-assistant.io/integrations/adaptive_lighting)
+#### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
 Adaptive Lighting custom component for Home Assistant
 Authors: [@basnijholt](https://github.com/basnijholt).
@@ -216,7 +216,7 @@ Authors: [@azogue](https://github.com/azogue).
 
 
 
-#### [Frigate v1.0.4](https://github.com/blakeblackshear/frigate)
+#### [Frigate v1.1.1](https://github.com/blakeblackshear/frigate)
 
 Frigate integration for Home Assistant
 Authors: [@blakeblackshear](https://github.com/blakeblackshear).
@@ -258,7 +258,7 @@ Authors: [@ollo69](https://github.com/ollo69).
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.8.18](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.8.20](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -288,7 +288,7 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 Authors: [@AlexxIT](https://github.com/AlexxIT).
 
 
-#### [Wyze v2021.7.10](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v2021.7.12](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
@@ -415,7 +415,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>8 Addons</summary>
 
-#### ESPHome v1.20.1
+#### ESPHome v1.20.4
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -443,7 +443,7 @@ SSH & Web Terminal access to your Home Assistant instance
 Allow logging in remotely to Home Assistant using SSH
 
 
-#### Visual Studio Code v3.6.0
+#### Visual Studio Code v3.6.1
 Fully featured VSCode experience, to edit your HA config in the browser, including auto-completion!
 
 </details>
@@ -478,7 +478,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.8.0b1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.8.2-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
