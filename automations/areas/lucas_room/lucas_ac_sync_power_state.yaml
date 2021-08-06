@@ -5,6 +5,8 @@ description: "Using power monitoring to update the Sensibo device when the A/C s
 trigger:
   - platform: state
     entity_id: sensor.lucas_ac_power
+    for:
+      minutes: 15
 variables:
   power: '{{ states("sensor.lucas_ac_power")|int }}'
 
