@@ -55,7 +55,7 @@ button_card_templates:
         - margin-top: .25em
   button_state:
     template: button
-    name: 'test'
+    name: test
     show_state: true
     styles:
       grid:
@@ -64,16 +64,60 @@ button_card_templates:
         - grid-template-rows: min-content 1fr
       name:
         - margin-top: .25em
+  button_state_breeze:
+    template: button_state
+    extra_styles: |
+      @keyframes animation {
+        0%, 100% {
+          transform:auto;
+        }
+        25% {
+          transform:rotate(-5deg);
+        }
+        75% {
+          transform:rotate(5deg);
+        }
+      }
     state:
-      - operature: template
-        value: |
-          [[[
-            if (entity.entity_id.split('.')[0] == "fan")
-              return "on";
-            else
-              return "not_a_fan";
-          ]]]
-        spin: "true"
+      - value: 'on'
+        styles:
+          icon:
+            - animation: animation 3s cubic-bezier(.8,-0.5,.25,1.5) infinite
+  button_state_flicker:
+    template: button_state
+    extra_styles: |
+      @keyframes animation {
+        0%   { opacity: 1; }
+        25%  { opacity: .5; }
+        50%  { opacity: .75; }
+        75%  { opacity: .25; }
+        100% { opacity: .5; }
+      }
+    state:
+      - value: 'on'
+        styles:
+          icon:
+            - animation: animation 2.5s ease-in-out infinite
+  button_state_spin:
+    template: button_state
+    state:
+      - value: 'on'
+        spin: 'true'
+  button_state_wiggle:
+    template: button_state
+    extra_styles: |
+      @keyframes animation {
+        0% {transform: rotate(10deg);}
+        25% {transform: rotate(-10deg);}
+        50% {transform: rotate(20deg);}
+        75% {transform: rotate(-5deg);}
+        100% {transform: rotate(0deg);}
+      }
+    state:
+      - value: 'on'
+        styles:
+          icon:
+            - animation: animation 3.5s linear infinite
   button_short:
     template: button
     styles:
@@ -82,7 +126,11 @@ button_card_templates:
       grid:
         - grid-template-areas: '"i n"'
         - grid-template-columns: 40px 1fr
+        - height: 2em
       img_cell:
+        - align-self: start
+        - justify-self: start
+        - text-align: start
         - margin: 0
         - padding: 0
         - width: 100%
@@ -93,8 +141,25 @@ button_card_templates:
         - height: 20px
         - width: 20px
       name:
+        - align-self: start
+        - justify-self: start
+        - text-align: start
         - margin-left: 2.25em
+        - margin-top: 0.5em
         - position: absolute
+  button_home:
+    template: button_short
+    styles:
+      grid:
+        - grid-template-columns: 1fr 1fr
+      img_cell:
+        - height: 2em
+        - margin-left: 39%
+      icon:
+        - color: white
+      name:
+        - margin-left: 46%
+        - height: 20px
   button_rounded:
     template: button
     styles:
@@ -195,24 +260,14 @@ button_card_templates:
   button_weekday:
     template: button
     styles:
+      card:
+        - height: 2.2em
       grid:
         - grid-template-areas: '"n"'
         - grid-template-columns: 1fr
-  button_home:
-    template: button
-    styles:
-      card:
-        - height: 4em
-      grid:
-        - grid-template-areas: '"i n"'
-        - grid-template-columns: 1fr 1fr
-        - grid-template-rows: 2em
-      img_cell:
-        - justify-content: end
-        - justify-self: end
   button_icon_only:
     template: button
-    color: 'rgba(255, 255, 255, 0.20)'
+    color: rgba(255, 255, 255, 0.20)
     size: 40%
     styles:
       card:
