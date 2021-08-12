@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1309 total entities**, 
-including **581 sensors**.
+Our Home Assistant install has approximately **1320 total entities**, 
+including **591 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
@@ -228,7 +228,7 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Google Home v1.5.0](https://github.com/leikoilja/ha-google-home)
+#### [Google Home v1.6.1](https://github.com/leikoilja/ha-google-home)
 
 Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
@@ -423,7 +423,7 @@ ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 Automatically back up Home Assistant snapshots to Google Drive
 
 
-#### Portainer v1.5.1
+#### Portainer v1.5.2
 Manage your Docker environment with ease
 
 
@@ -435,7 +435,7 @@ Expose Home Assistant folders with SMB/CIFS
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 
-#### SSH & Web Terminal v9.0.0
+#### SSH & Web Terminal v9.0.1
 SSH & Web Terminal access to your Home Assistant instance
 
 
@@ -443,7 +443,7 @@ SSH & Web Terminal access to your Home Assistant instance
 Allow logging in remotely to Home Assistant using SSH
 
 
-#### Visual Studio Code v3.6.1
+#### Visual Studio Code v3.6.2
 Fully featured VSCode experience, to edit your HA config in the browser, including auto-completion!
 
 </details>
@@ -478,7 +478,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.8.2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.8.6-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
