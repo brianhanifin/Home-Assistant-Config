@@ -18,8 +18,15 @@ variables:
 
   light_sync_enabled: '{{ states("input_boolean.bedroom_light_sync") }}'
   nerene_battery_charging: '{{ is_state_attr("device_tracker.life360_nerene","battery_charging",True) }}'
-  wakeup_hour: states("input_datetime.wakeup_nerene_time").split(":")[0]|int
-  hour: states("sensor.time").split(":")[0]|int
+
+  # Determine if now is within 60 minutes of the wakeup time.
+  now_timestamp: '{{ as_timestamp(now()) }}'
+  timezone_offset: '{{ now_timestamp|timestamp_custom("%z") }}'
+  wakeup_time: '{{ states("input_datetime.event_light_wakeup_nerene") }}'
+  wakeup: '{{ now_timestamp | timestamp_custom("%Y-%m-%d "+wakeup_time+timezone_offset, true) }}'
+  wakeup_timestamp: '{{ as_timestamp(wakeup) }}'
+  wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) | int }}'
+  near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
 
 action:
   # - service: script.debug
@@ -40,7 +47,7 @@ action:
       # Try to only turn the fan and sound machine off if Nerene is on her way out the door for work.
       - conditions:
           - '{{ nerene_battery_charging == False }}'
-          - '{{ wakeup_hour == hour }}'
+          - '{{ near_wakeup == True }}'
         sequence:
           - service: homeassistant.turn_off
             entity_id:

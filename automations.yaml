@@ -197,19 +197,26 @@
       device: 8bef4ccfe78c1356e14212171ff1bfc7
       double_tap_on:
       - service: light.turn_on
+        target:
+          area_id: bedroom
         data:
           transition: 0
-        target:
-          area_id: bedroom
       double_tap_off:
-      - service: switch.turn_off
-        target:
-          area_id: bedroom
       - service: light.turn_off
         target:
           area_id: bedroom
         data:
           transition: 0
+      - service: climate.turn_off
+        target:
+          entity_id: climate.bedroom
+      - service: fan.turn_off
+        target:
+          entity_id: fan.bedroom
+      - service: switch.turn_off
+        target:
+          entity_id:
+          - switch.sound_machine
 - id: '1615055705706'
   alias: 'Remote: Bedroom Nerene'
   description: Nerene's bedside remote
