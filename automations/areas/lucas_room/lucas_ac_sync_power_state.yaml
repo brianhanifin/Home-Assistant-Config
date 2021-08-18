@@ -2,22 +2,30 @@
 alias: Lucas A/C Sync Power State
 id: lucas_ac_sync_power_state
 description: "Using power monitoring to update the Sensibo device when the A/C state is changed at the control panel."
+mode: restart
 trigger:
-  - platform: state
+  - id: "cool"
+    platform: numeric_state
     entity_id: sensor.lucas_ac_power
+    above: 10
+  - id: "off"
+    platform: numeric_state
+    entity_id: sensor.lucas_ac_power
+    below: 10
     for:
       minutes: 15
 variables:
-  power: '{{ states("sensor.lucas_ac_power")|int }}'
-
   # hvac_modes: off, cool, fan_only, dry, heat_cool
   assumed_state: '{{ states("climate.lucas_room") }}'
-  powered_state: |
-    {% if power < 10 %}
-      off
-    {%- else %}
-      cool
-    {%- endif %}
+  powered_state: '{{ trigger.id }}'
+
+  # power: '{{ states("sensor.lucas_ac_power")|int }}'
+  # powered_state: |
+  #   {% if power < 10 %}
+  #     off
+  #   {%- else %}
+  #     cool
+  #   {%- endif %}
 condition:
   - condition: template
     value_template: '{{ powered_state != assumed_state }}'
