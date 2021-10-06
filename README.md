@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1320 total entities**, 
-including **591 sensors**.
+Our Home Assistant install has approximately **1465 total entities**, 
+including **679 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
@@ -186,7 +186,7 @@ Anniversary Countdown Sensor for Home Assistant
 Authors: [@pinkywafer](https://github.com/pinkywafer).
 
 
-#### [Average Sensor v2.1.0](https://github.com/Limych/ha-average)
+#### [Average Sensor v2.2.0](https://github.com/Limych/ha-average)
 
 Average Sensor for Home Assistant
 Authors: [@Limych](https://github.com/Limych).
@@ -216,7 +216,7 @@ Authors: [@azogue](https://github.com/azogue).
 
 
 
-#### [Frigate v1.1.1](https://github.com/blakeblackshear/frigate)
+#### [Frigate v1.1.2](https://github.com/blakeblackshear/frigate)
 
 Frigate integration for Home Assistant
 Authors: [@blakeblackshear](https://github.com/blakeblackshear).
@@ -228,13 +228,13 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Google Home v1.6.1](https://github.com/leikoilja/ha-google-home)
+#### [Google Home v1.8.1](https://github.com/leikoilja/ha-google-home)
 
 Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.13.2](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.15.2](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -246,10 +246,10 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.3.36](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.1](https://github.com/ollo69/ha-samsungtv-smart)
 
 
-Authors: [@ollo69](https://github.com/ollo69).
+Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
 
 #### [Scheduler integration v0.0.0](https://github.com/nielsfaber/scheduler-component)
@@ -258,13 +258,13 @@ Authors: [@ollo69](https://github.com/ollo69).
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.8.20](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.10.1](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
 
 
-#### [SpaceX Launches and Starman v028](https://github.com/djtimca/haspacex)
+#### [SpaceX Launches and Starman v029](https://github.com/djtimca/haspacex)
 
 
 Authors: [@djtimca](https://github.com/djtimca).
@@ -288,15 +288,15 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 Authors: [@AlexxIT](https://github.com/AlexxIT).
 
 
-#### [Wyze v2021.7.12](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v2021.9.8b5](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>29 Lovelace Plugins</summary>
+<details><summary>30 Lovelace Plugins</summary>
 
-#### [Atomic Calendar Revive v4.5.0](https://github.com/marksie1988/atomic-calendar-revive)
+#### [Atomic Calendar Revive v4.11.1](https://github.com/marksie1988/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
 
 
@@ -332,6 +332,10 @@ Show a notification count badge.
 🔹 A foldable row for entities card, containing other rows
 
 
+#### [Frigate Card v1.0.1](https://github.com/dermotduffy/frigate-hass-card)
+A Lovelace card for Frigate in Home Assistant
+
+
 #### [Gauge Card](https://github.com/GH2user/gauge-card)
 
 
@@ -344,7 +348,7 @@ Weather condition card (Lovelace) for Home Assistant.
 🙈 Hides the Home Assistant header and/or sidebar
 
 
-#### [Layout Card v2.3.0](https://github.com/thomasloven/lovelace-layout-card)
+#### [Layout Card v2.3.1](https://github.com/thomasloven/lovelace-layout-card)
 🔹 Get more control over the placement of lovelace cards.
 
 
@@ -360,7 +364,7 @@ A custom Lovelace text input row for use in entities cards
 Minimalistic graph card for Home Assistant Lovelace UI
 
 
-#### [Mini Media Player v1.12.1](https://github.com/kalkih/mini-media-player)
+#### [Mini Media Player v1.13.0](https://github.com/kalkih/mini-media-player)
 Minimalistic media card for Home Assistant Lovelace UI
 
 
@@ -376,11 +380,11 @@ An intuitive way to represent the power and energy that your home is consuming o
 🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.1.4](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.2.0](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 
-#### [Sidebar Card v0.1.7.9](https://github.com/DBuit/sidebar-card)
+#### [Sidebar Card v0.1.8.3](https://github.com/DBuit/sidebar-card)
 
 
 
@@ -415,15 +419,15 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>8 Addons</summary>
 
-#### ESPHome v1.20.4
+#### ESPHome v2021.9.2
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
-#### Home Assistant Google Drive Backup v0.104.3
-Automatically back up Home Assistant snapshots to Google Drive
+#### Home Assistant Google Drive Backup v0.105.2
+Automatically manage backups between Home Assistant and Google Drive
 
 
-#### Portainer v1.5.2
+#### Portainer v2.0.0
 Manage your Docker environment with ease
 
 
@@ -431,7 +435,7 @@ Manage your Docker environment with ease
 Expose Home Assistant folders with SMB/CIFS
 
 
-#### SDR to Home Assistant v0.1.4b
+#### SDR to Home Assistant v0.1.5b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 
@@ -439,7 +443,7 @@ SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 SSH & Web Terminal access to your Home Assistant instance
 
 
-#### Terminal & SSH v9.1.3
+#### Terminal & SSH v9.2.1
 Allow logging in remotely to Home Assistant using SSH
 
 
@@ -478,7 +482,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.8.6-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.10.0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
