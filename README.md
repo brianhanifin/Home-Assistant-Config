@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1465 total entities**, 
-including **679 sensors**.
+Our Home Assistant install has approximately **1486 total entities**, 
+including **684 sensors**.
 
-<details><summary>20 Custom Integrations</summary>
+<details><summary>21 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -190,6 +190,12 @@ Authors: [@pinkywafer](https://github.com/pinkywafer).
 
 Average Sensor for Home Assistant
 Authors: [@Limych](https://github.com/Limych).
+
+
+#### [Battery Simulation v1.0](https://github.com/hif2k1/battery_sim/)
+
+
+Authors: [@hif2k1](https://github.com/hif2k1).
 
 
 #### [Browser mod v1.3.1](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
@@ -216,7 +222,7 @@ Authors: [@azogue](https://github.com/azogue).
 
 
 
-#### [Frigate v1.1.2](https://github.com/blakeblackshear/frigate)
+#### [Frigate v2.1.0](https://github.com/blakeblackshear/frigate)
 
 Frigate integration for Home Assistant
 Authors: [@blakeblackshear](https://github.com/blakeblackshear).
@@ -228,7 +234,7 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Google Home v1.8.1](https://github.com/leikoilja/ha-google-home)
+#### [Google Home v1.9.1](https://github.com/leikoilja/ha-google-home)
 
 Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
@@ -246,7 +252,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.4.1](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.2](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -258,7 +264,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.10.1](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.10.2](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -288,15 +294,15 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 Authors: [@AlexxIT](https://github.com/AlexxIT).
 
 
-#### [Wyze v2021.9.8b5](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v2021.10.2b2](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>30 Lovelace Plugins</summary>
+<details><summary>31 Lovelace Plugins</summary>
 
-#### [Atomic Calendar Revive v4.11.1](https://github.com/marksie1988/atomic-calendar-revive)
+#### [Atomic Calendar Revive v5.1.0](https://github.com/marksie1988/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
 
 
@@ -332,7 +338,7 @@ Show a notification count badge.
 🔹 A foldable row for entities card, containing other rows
 
 
-#### [Frigate Card v1.0.1](https://github.com/dermotduffy/frigate-hass-card)
+#### [Frigate Card v1.2.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
 
@@ -344,7 +350,7 @@ A Lovelace card for Frigate in Home Assistant
 Weather condition card (Lovelace) for Home Assistant.
 
 
-#### [Kiosk Mode v1.7.1](https://github.com/maykar/kiosk-mode)
+#### [Kiosk Mode v1.7.2](https://github.com/maykar/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 
@@ -392,6 +398,10 @@ HA Lovelace card for control of scheduler entities
 A different take on the thermostat card for Home Assistant ♨️
 
 
+#### [Simple Vacuum Card v4.2.0](https://github.com/benct/lovelace-xiaomi-vacuum-card)
+Simple card for various robot vacuums in Home Assistant's Lovelace UI
+
+
 #### [Slider Button Card v1.10.3](https://github.com/mattieha/slider-button-card)
 A button card with integrated slider
 
@@ -419,7 +429,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>8 Addons</summary>
 
-#### ESPHome v2021.9.2
+#### ESPHome v2021.10.2
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -482,7 +492,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.10.0-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.10.6-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
