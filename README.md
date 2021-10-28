@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1486 total entities**, 
-including **684 sensors**.
+Our Home Assistant install has approximately **1235 total entities**, 
+including **605 sensors**.
 
-<details><summary>21 Custom Integrations</summary>
+<details><summary>20 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -252,7 +252,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.4.2](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.3](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -292,19 +292,9 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 
 
 Authors: [@AlexxIT](https://github.com/AlexxIT).
-
-
-#### [Wyze v2021.10.2b2](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
-
-Home Assistant Integration for Wyze devices.
-Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>31 Lovelace Plugins</summary>
-
-#### [Atomic Calendar Revive v5.1.0](https://github.com/marksie1988/atomic-calendar-revive)
-Custom calendar card for Home Assistant with Lovelace
-
+<details><summary>30 Lovelace Plugins</summary>
 
 #### [Auto Entities v1.9.1](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
@@ -386,7 +376,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.2.0](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.2.1](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 
@@ -414,7 +404,7 @@ A button card with integrated slider
 🛠 group multiple cards into one card without the borders
 
 
-#### [State Switch v8](https://github.com/thomasloven/lovelace-state-switch)
+#### [State Switch v1.9.1](https://github.com/thomasloven/lovelace-state-switch)
 🔹Dynamically replace lovelace cards depending on occasion
 
 
@@ -427,15 +417,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>8 Addons</summary>
-
-#### ESPHome v2021.10.2
-ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
-
-
-#### Home Assistant Google Drive Backup v0.105.2
-Automatically manage backups between Home Assistant and Google Drive
-
+<details><summary>5 Addons</summary>
 
 #### Portainer v2.0.0
 Manage your Docker environment with ease
@@ -445,7 +427,7 @@ Manage your Docker environment with ease
 Expose Home Assistant folders with SMB/CIFS
 
 
-#### SDR to Home Assistant v0.1.5b
+#### SDR to Home Assistant v0.1.6b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 
@@ -455,10 +437,6 @@ SSH & Web Terminal access to your Home Assistant instance
 
 #### Terminal & SSH v9.2.1
 Allow logging in remotely to Home Assistant using SSH
-
-
-#### Visual Studio Code v3.6.2
-Fully featured VSCode experience, to edit your HA config in the browser, including auto-completion!
 
 </details>
 ---
@@ -492,7 +470,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.10.6-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.11.0b0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml

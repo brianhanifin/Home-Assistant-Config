@@ -10,11 +10,15 @@ sensors:
       {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | rejectattr("attributes.type","eq","browser_mod") | map(attribute="entity_id") | list %}
       {%- for entity in entities %}
         {%- set object_id = entity.split(".")[1] %}
-        {%- if not object_id.startswith("browser_mod")
+        {%- if not object_id.startswith("blackpc_")
+              and not object_id.startswith("browser_mod")
               and not object_id.startswith("glowforge") 
               and not object_id.startswith("google_") 
-              and not entity.startswith("sensor.hp_")
+              and not object_id.endswith("_alarms")
+              and not object_id.endswith("_timers")
+              and not object_id.startswith("hp_")
               and not entity.startswith("media_player")
+              and not object_id.startswith("octoprint_")
               and not object_id.startswith("unraid_") %}
           {%- set storage.entities = storage.entities ~ entity %}
           {% if not loop.last %}
@@ -29,11 +33,15 @@ sensors:
         {% set entities = states | selectattr("state","eq","unavailable") | rejectattr("entity_id","eq","sensor.unavailable_count") | rejectattr("attributes.type","eq","browser_mod") | map(attribute="entity_id") | list %}
         {%- for entity in entities %}
           {%- set object_id = entity.split(".")[1] %}
-          {%- if not object_id.startswith("browser_mod")
+          {%- if not object_id.startswith("blackpc_")
+                and not object_id.startswith("browser_mod")
                 and not object_id.startswith("glowforge") 
                 and not object_id.startswith("google_") 
-                and not entity.startswith("sensor.hp_")
+                and not object_id.endswith("_alarms")
+                and not object_id.endswith("_timers")
+                and not object_id.startswith("hp_")
                 and not entity.startswith("media_player")
+                and not object_id.startswith("octoprint_")
                 and not object_id.startswith("unraid_") %}
             {%- set storage.entities = storage.entities ~ entity %}
             {% if not loop.last %}

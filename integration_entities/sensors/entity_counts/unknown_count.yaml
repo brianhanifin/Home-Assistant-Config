@@ -7,13 +7,18 @@ sensors:
     value_template: |
       {%- set ignore_list = [
           "sensor.unknown_count", "sensor.octoprint_current_state",
-          "sensor.octoprint_time_elapsed", "sensor.octoprint_time_remaining"
+          "sensor.octoprint_time_elapsed", "sensor.octoprint_time_remaining",
+          "sensor.octoprint_estimated_finish_time", "sensor.octoprint_start_time",
+          "sensor.rainforest_energy_monitoring_unit"
       ] %}
       {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | count }}
     attribute_templates:
       entities: |
         {%- set ignore_list = [
-            "sensor.unknown_count", "sensor.octoprint_current_state",
-            "sensor.octoprint_time_elapsed", "sensor.octoprint_time_remaining"
+          "sensor.unknown_count", "sensor.octoprint_current_state",
+          "sensor.octoprint_time_elapsed", "sensor.octoprint_time_remaining",
+          "sensor.octoprint_estimated_finish_time", "sensor.octoprint_start_time",
+          "sensor.rainforest_energy_monitoring_unit",
+          "sensor.last_message", "sensor.last_speaker"
         ] %}
         {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | replace("[","") | replace("]","") | replace("'","") }}
