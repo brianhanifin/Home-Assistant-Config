@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1235 total entities**, 
-including **605 sensors**.
+Our Home Assistant install has approximately **1245 total entities**, 
+including **609 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
@@ -264,7 +264,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.10.2](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.10.3](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -294,7 +294,11 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 Authors: [@AlexxIT](https://github.com/AlexxIT).
 </details>
 
-<details><summary>30 Lovelace Plugins</summary>
+<details><summary>31 Lovelace Plugins</summary>
+
+#### [Atomic Calendar Revive v5.1.0](https://github.com/marksie1988/atomic-calendar-revive)
+Custom calendar card for Home Assistant with Lovelace
+
 
 #### [Auto Entities v1.9.1](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
@@ -417,7 +421,19 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>5 Addons</summary>
+<details><summary>8 Addons</summary>
+
+#### ESPHome v2021.10.3
+ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
+
+
+#### HA Scheduler v0.17
+Home Assistant scheduler
+
+
+#### Home Assistant Google Drive Backup v0.105.2
+Automatically manage backups between Home Assistant and Google Drive
+
 
 #### Portainer v2.0.0
 Manage your Docker environment with ease
@@ -470,7 +486,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.11.0b0-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.11.0b2-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
