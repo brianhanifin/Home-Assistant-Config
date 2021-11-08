@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1245 total entities**, 
-including **609 sensors**.
+Our Home Assistant install has approximately **1258 total entities**, 
+including **610 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
@@ -216,7 +216,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 Authors: [@azogue](https://github.com/azogue).
 
 
-#### [Fontawesome icons v2.1.2](https://github.com/thomasloven/hass-fontawesome)
+#### [Fontawesome icons v2.1.4](https://github.com/thomasloven/hass-fontawesome)
 
 
 
@@ -240,7 +240,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.15.2](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.16.0](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -252,7 +252,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.4.3](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.7](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -264,7 +264,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.10.3](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.10.4](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -294,7 +294,7 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 Authors: [@AlexxIT](https://github.com/AlexxIT).
 </details>
 
-<details><summary>31 Lovelace Plugins</summary>
+<details><summary>29 Lovelace Plugins</summary>
 
 #### [Atomic Calendar Revive v5.1.0](https://github.com/marksie1988/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -312,7 +312,7 @@ Custom calendar card for Home Assistant with Lovelace
 ❇️ Lovelace button-card for home assistant
 
 
-#### [Card Mod v3.0.12](https://github.com/thomasloven/lovelace-card-mod)
+#### [Card Mod v3.0.13](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 
@@ -328,7 +328,7 @@ Custom calendar card for Home Assistant with Lovelace
 Show a notification count badge.
 
 
-#### [Fold Entity Row v20.0.4](https://github.com/thomasloven/lovelace-fold-entity-row)
+#### [Fold Entity Row v20.0.9](https://github.com/thomasloven/lovelace-fold-entity-row)
 🔹 A foldable row for entities card, containing other rows
 
 
@@ -364,10 +364,6 @@ A custom Lovelace text input row for use in entities cards
 Minimalistic graph card for Home Assistant Lovelace UI
 
 
-#### [Mini Media Player v1.13.0](https://github.com/kalkih/mini-media-player)
-Minimalistic media card for Home Assistant Lovelace UI
-
-
 #### [Multiple Entity Row v4.2.0](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
@@ -392,15 +388,11 @@ HA Lovelace card for control of scheduler entities
 A different take on the thermostat card for Home Assistant ♨️
 
 
-#### [Simple Vacuum Card v4.2.0](https://github.com/benct/lovelace-xiaomi-vacuum-card)
-Simple card for various robot vacuums in Home Assistant's Lovelace UI
-
-
 #### [Slider Button Card v1.10.3](https://github.com/mattieha/slider-button-card)
 A button card with integrated slider
 
 
-#### [Slider Entity Row v17.1.0](https://github.com/thomasloven/lovelace-slider-entity-row)
+#### [Slider Entity Row v17.2.1](https://github.com/thomasloven/lovelace-slider-entity-row)
 🔹 Add sliders to entity cards
 
 
@@ -486,7 +478,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.11.0b2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.11.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
