@@ -8,18 +8,20 @@ trigger:
     to: "Drying"
 
   # Update washer state when the door is opened.
-  - platform: state
-    entity_id: binary_sensor.washer_door
-    from: "off"
-    to: "on"
+  # - platform: state
+  #   entity_id: binary_sensor.washer_door
+  #   from: "off"
+  #   to: "on"
 
   # Make decisions based on the Washer power usage.
   - platform: state
     entity_id: sensor.sonoff_s31_02_power
+    for:
+      minutes: 1
 
   # LG ThinQ reported the washer just powered on.
   - platform: state
-    entity_id: binary_sensor.washer
+    entity_id: sensor.washer
     from: "off"
     to: "on"
 
@@ -36,11 +38,12 @@ trigger:
     to: "on"
 variables:
   power: '{{ states("sensor.sonoff_s31_02_power")|int }}'
+  #wash_complete: '{{ is_state("binary_sensor.washer_wash_completed","on") }}'
   previous_status: '{{ states("input_select.washer_status") }}'
   trigger_id: '{{ trigger.to_state.entity_id }}'
   # Off, Standby, Washing, Clean, Error
   status: |
-    {% if trigger_id == "binary_sensor.washer" %}
+    {% if trigger_id == "sensor.washer" %}
       Standby
     {%- elif trigger_id == "binary_sensor.washer_wash_completed" %}
       Clean
