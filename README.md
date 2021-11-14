@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1258 total entities**, 
-including **610 sensors**.
+Our Home Assistant install has approximately **1286 total entities**, 
+including **635 sensors**.
 
 <details><summary>20 Custom Integrations</summary>
 
@@ -264,7 +264,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.10.4](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.10.5](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -328,11 +328,11 @@ Custom calendar card for Home Assistant with Lovelace
 Show a notification count badge.
 
 
-#### [Fold Entity Row v20.0.9](https://github.com/thomasloven/lovelace-fold-entity-row)
+#### [Fold Entity Row v20.0.11](https://github.com/thomasloven/lovelace-fold-entity-row)
 🔹 A foldable row for entities card, containing other rows
 
 
-#### [Frigate Card v1.2.0](https://github.com/dermotduffy/frigate-hass-card)
+#### [Frigate Card v2.0.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
 
@@ -376,7 +376,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.2.1](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.2.2](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 
@@ -413,7 +413,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>8 Addons</summary>
+<details><summary>7 Addons</summary>
 
 #### ESPHome v2021.10.3
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
@@ -439,12 +439,8 @@ Expose Home Assistant folders with SMB/CIFS
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 
-#### SSH & Web Terminal v9.0.1
+#### SSH & Web Terminal v9.1.0
 SSH & Web Terminal access to your Home Assistant instance
-
-
-#### Terminal & SSH v9.2.1
-Allow logging in remotely to Home Assistant using SSH
 
 </details>
 ---
@@ -478,7 +474,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.11.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.11.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
