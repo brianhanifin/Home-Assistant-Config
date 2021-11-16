@@ -5,7 +5,14 @@ variables:
 sequence:
   - choose:
       # Printer Power Button
-      #   * Xiaomi Mijia Wireless Switch (round)
+      #   * Xiaomi Mijia Wireless Switch (Square)
+      - conditions: '{{ remote == "button_kyle_bedside" }}'
+        sequence:
+          - service: light.toggle
+            entity_id: light.kyle_bedside
+
+      # Printer Power Button
+      #   * Xiaomi Mijia Wireless Switch (Round)
       - conditions: '{{ remote == "button_printer_power" }}'
         sequence:
           - service: switch.toggle

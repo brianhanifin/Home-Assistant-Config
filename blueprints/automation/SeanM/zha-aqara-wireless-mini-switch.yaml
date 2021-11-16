@@ -1,0 +1,61 @@
+blueprint:
+  name: ZHA - Aqara Wireless Mini Switch
+  description: Automate your Xiaomi Aqara Wireless Mini Switch using ZHA events.
+  domain: automation
+  input:
+    aqara_mini_switch:
+      name: Aqara Wireless Mini Switch
+      description: Aqara Wireless Mini Switch to use
+      selector:
+        device:
+          integration: zha
+          manufacturer: LUMI
+          model: lumi.remote.b1acn01
+    button_single_press:
+      name: Single Press
+      description: Action to run on single press
+      default: []
+      selector:
+        action: {}
+    button_double_press:
+      name: Double Press
+      description: Action to run on double press
+      default: []
+      selector:
+        action: {}
+    button_long_press:
+      name: Long Press
+      description: Action to run when button is long pressed (held down)
+      default: []
+      selector:
+        action: {}
+    button_released:
+      name: Released
+      description: Action to run when button is released after a long press
+      default: []
+      selector:
+        action: {}
+  source_url: https://community.home-assistant.io/t/zha-aqara-wireless-mini-switch/255540
+mode: restart
+max_exceeded: silent
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input 'aqara_mini_switch'
+action:
+- variables:
+    command: '{{ trigger.event.data.command }}'
+- choose:
+  - conditions:
+    - '{{ command == ''single'' }}'
+    sequence: !input 'button_single_press'
+  - conditions:
+    - '{{ command == ''double'' }}'
+    sequence: !input 'button_double_press'
+  - conditions:
+    - '{{ command == ''hold'' }}'
+    sequence: !input 'button_long_press'
+  - conditions:
+    - '{{ command == ''release'' }}'
+    sequence: !input 'button_released'
