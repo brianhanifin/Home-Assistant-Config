@@ -81,6 +81,13 @@ action:
 
   - choose:
       - conditions:
+          - '{{ status == "Washing" }}'
+        sequence:
+          # Cancel the wet laundry alert.
+          - service: timer.cancel
+            entity_id: timer.washer_clean
+
+      - conditions:
           - '{{ status == "Error" }}'
         sequence:
           - service: script.notify_speech
@@ -99,4 +106,4 @@ action:
   # - In this case it stops the washer from toggling between Clean and back to Washing within 10 seconds.
   #   This should stop the complete announcement from repeating after 1 minute.
   - delay:
-      seconds: 30
+      seconds: 90
