@@ -1,7 +1,6 @@
 ---
 alias: Glowforge Announce Complete
 id: glowforge_announce_complete
-
 trigger:
   - platform: state
     entity_id: input_select.glowforge_status
@@ -9,7 +8,7 @@ trigger:
 action:
   - service: script.notify_speech
     data:
-      media: group.google_downstairs
+      media_player: group.google_downstairs
       message: "Glowforge is complete!"
 
   - service: script.notify_mobile
@@ -21,7 +20,7 @@ action:
       tag: glowforge-status
       url: /lovelace/making
 
-  #- service: script.notify_web
-  #  data_template:
+  # - service: script.notify_web
+  #   data:
   #     title: "Glowforge"
   #     message: "Glowforge is complete!"
