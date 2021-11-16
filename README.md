@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1286 total entities**, 
-including **635 sensors**.
+Our Home Assistant install has approximately **1296 total entities**, 
+including **643 sensors**.
 
-<details><summary>20 Custom Integrations</summary>
+<details><summary>21 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -240,7 +240,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.16.0](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.17.2](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -252,7 +252,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.4.7](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.8](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -264,7 +264,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.10.5](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.10.6](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -292,13 +292,15 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 
 
 Authors: [@AlexxIT](https://github.com/AlexxIT).
+
+
+#### [Wyze v2021.11.1b1](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+
+Home Assistant Integration for Wyze devices.
+Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>29 Lovelace Plugins</summary>
-
-#### [Atomic Calendar Revive v5.1.0](https://github.com/marksie1988/atomic-calendar-revive)
-Custom calendar card for Home Assistant with Lovelace
-
+<details><summary>28 Lovelace Plugins</summary>
 
 #### [Auto Entities v1.9.1](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
@@ -352,7 +354,7 @@ Weather condition card (Lovelace) for Home Assistant.
 🔹 Get more control over the placement of lovelace cards.
 
 
-#### [Lovelace Home Feed Card v0.6.2](https://github.com/gadgetchnnel/lovelace-home-feed-card)
+#### [Lovelace Home Feed Card v0.6.3](https://github.com/gadgetchnnel/lovelace-home-feed-card)
 A custom Lovelace card for displaying a combination of persistent notifications, calendar events, and entities in the style of a feed.
 
 
@@ -384,7 +386,7 @@ HA Lovelace card for control of scheduler entities
 
 
 
-#### [Simple Thermostat v2.4.2](https://github.com/nervetattoo/simple-thermostat)
+#### [Simple Thermostat v2.4.3](https://github.com/nervetattoo/simple-thermostat)
 A different take on the thermostat card for Home Assistant ♨️
 
 
@@ -474,7 +476,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.11.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.11.4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
