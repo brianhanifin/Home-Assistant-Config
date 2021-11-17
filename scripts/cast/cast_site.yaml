@@ -22,7 +22,7 @@ variables:
     {%- else %}
       {{ url }}
     {%- endif %}
-  dismiss_after: '{{ dismiss_after|default(0) }}'
+  #dismiss_after: '{{ dismiss_after|default(0) }}'
 sequence:
   # - service: script.debug
   #   data:
@@ -40,3 +40,22 @@ sequence:
   # - delay: 
   #     seconds: '{{ dismiss_after }}'
   #- service: shell_command.catt_cast_stop
+fields:
+  entity_id:
+    description: Media Player entity_id.
+    example: media_player.google_kitchen
+    default: media_player.google_kitchen
+    selector:
+      text:
+  path:
+    description: Path to the page on this server.
+    example: /lovelace/cameras
+    required: false
+    selector:
+      text:
+  url:
+    description: Full website address.
+    example: https://google.com, http://homeassistant.local:8123/lovelace-sidebar
+    required: false
+    selector:
+      text:
