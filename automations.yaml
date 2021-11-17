@@ -327,18 +327,18 @@
     value_template: '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_temperature")|float
       }}'
   - condition: time
-    after: 06:00
-    before: '15:00'
+    after: 06:00:00
+    before: '15:00:00'
   action:
   - choose:
     - conditions:
       - condition: state
-        entity_id: input_boolean.cooler_outside_notification
+        entity_id: input_boolean.warmer_outside_notification
         state: 'on'
       sequence:
       - service: input_boolean.turn_off
         target:
-          entity_id: input_boolean.cooler_outside_notification
+          entity_id: input_boolean.warmer_outside_notification
     default: []
   - service: script.notify_mobile
     data:
