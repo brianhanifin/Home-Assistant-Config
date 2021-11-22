@@ -1,7 +1,7 @@
 ---
 alias: "Extended Presence: Location Update"
 id: xpresence_location_update
-description: "When someone's standard presence location updates "
+description: "When someone's standard presence location updates"
 mode: queued
 trigger:
   - platform: state
@@ -12,19 +12,6 @@ trigger:
       - person.lucas
       - person.nerene
       - person.sandy
-  #   from: "not_home"
-  #   to: "home"
-  # - platform: state
-  #   entity_id:
-  #     - person.brian
-  #     - person.eric
-  #     - person.heather
-  #     - person.lucas
-  #     - person.nerene
-  #     - person.sandy
-  #   from: "home"
-  #   to: "not_home"
-
 variables:
   hour: '{{ states("sensor.time").split(":")[0]|int }}'
   new_state: '{{ trigger.to_state.state }}'
