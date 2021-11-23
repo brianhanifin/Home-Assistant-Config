@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1296 total entities**, 
-including **643 sensors**.
+Our Home Assistant install has approximately **1332 total entities**, 
+including **662 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -294,13 +294,17 @@ Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.co
 Authors: [@AlexxIT](https://github.com/AlexxIT).
 
 
-#### [Wyze v2021.11.1b1](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v2021.11.1](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>28 Lovelace Plugins</summary>
+<details><summary>30 Lovelace Plugins</summary>
+
+#### [Atomic Calendar Revive v6.1.1](https://github.com/totaldebug/atomic-calendar-revive)
+Custom calendar card for Home Assistant with Lovelace
+
 
 #### [Auto Entities v1.9.1](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
@@ -410,6 +414,10 @@ A button card with integrated slider
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
 
+#### [Timer Bar Card v1.14](https://github.com/rianadon/timer-bar-card)
+A progress bar display for Home Assistant timers
+
+
 #### [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
 Weather Card with animated icons for Home Assistant Lovelace
 
@@ -417,7 +425,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 Addons</summary>
 
-#### ESPHome v2021.10.3
+#### ESPHome v2021.11.1
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -441,7 +449,7 @@ Expose Home Assistant folders with SMB/CIFS
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 
-#### SSH & Web Terminal v9.1.0
+#### SSH & Web Terminal v9.1.1
 SSH & Web Terminal access to your Home Assistant instance
 
 </details>
@@ -476,7 +484,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.11.4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.11.5-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
