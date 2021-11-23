@@ -1,0 +1,9 @@
+---
+platform: template
+sensors:
+  doorbell_last_person:
+    friendly_name: "Doorbell Last Person"
+    icon_template: "mdi:face-recognition"
+    value_template: |
+      {%- set match = state_attr("sensor.double_take_doorbell","matches")[0] %}
+      {{ match["name"] if match["confidence"] > 96 }}
