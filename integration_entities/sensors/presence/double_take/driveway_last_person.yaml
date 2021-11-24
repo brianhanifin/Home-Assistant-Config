@@ -1,0 +1,9 @@
+---
+platform: template
+sensors:
+  driveway_last_person:
+    friendly_name: "Driveway Last Person"
+    icon_template: "mdi:face-recognition"
+    value_template: |
+      {%- set match = state_attr("sensor.double_take_driveway","matches")[0] %}
+      {{ match["name"] if match["confidence"] > 96 }}
