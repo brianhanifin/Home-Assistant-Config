@@ -23,6 +23,22 @@ action:
                 sequence:
                   - service: cover.close_cover
                     entity_id: cover.garage_door
+          - choose:
+              - conditions: '{{ states("lock.front_door") != "locked" }}'
+                sequence:
+                  - service: lock.lock
+                    entity_id: lock.front_door
+
+          - choose:
+              - conditions: '{{ states("climate.bedroom") != "off" }}'
+                sequence:
+                  - service: climate.turn_off
+                    entity_id: climate.bedroom
+          - choose:
+              - conditions: '{{ states("climate.lucas_room") != "off" }}'
+                sequence:
+                  - service: climate.turn_off
+                    entity_id: climate.lucas_room
 
           # Run the shutdown/goodbye routine (without the verbal confirmation).
           - service: script.turn_on
