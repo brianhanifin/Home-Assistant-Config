@@ -37,7 +37,8 @@ automation:
       #     message: |
       #       event_enabled: {{ event_enabled }}
       #       event_today: {{ event_today }}
-      #       announcement: {{ announcement }}
+      #       skipnext: {{ skipnext }}
+      #       is_2nd: {{ is_2nd }}
 
       - alias: 'Continue if the announcement is enabled, today is an event day, and the event is not deactivated.'
         condition: template
@@ -56,7 +57,9 @@ automation:
           - alias: Skip the announcement and disable skipnext.
             conditions: '{{ skipnext and is_2nd }}'
             sequence:
-              - service: script.event_skipnext
+              - delay:
+                  seconds: 15
+              - service: input_boolean.turn_off
                 data:
                   entity_id: '{{ skipnext_entity }}'
 
@@ -102,11 +105,6 @@ automation:
               - service: switch.turn_on
                 target:
                   entity_id: switch.hot_water_pump
-
-        default:
-          service: input_boolean.turn_off
-          data:
-            entity_id: '{{ skipnext_entity }}'
 
   - alias: Event Light Timeout
     id: event_light_timeout
@@ -202,14 +200,6 @@ script:
       - service: script.toast
         data:
           message: '{{ id|replace("_"," ")|title }} Complete'
-
-  event_skipnext:
-    sequence:
-      - delay:
-          seconds: 15
-      - service: input_boolean.turn_off
-        data:
-          entity_id: '{{ entity_id|default("none") }}'
 
 # trigger_variables:
 #   trigger_entities: |
