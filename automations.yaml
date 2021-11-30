@@ -468,20 +468,27 @@
       button_bottom_left_single_press:
       - choose:
         - conditions:
-          - condition: not
-            conditions:
-            - condition: state
-              entity_id: climate.bedroom
-              state: cool
+          - condition: state
+            entity_id: climate.bedroom
+            state: cool
           sequence:
           - service: climate.set_hvac_mode
             target:
               entity_id: climate.bedroom
             data:
-              hvac_mode: cool
+              hvac_mode: fan_only
         default:
         - service: climate.set_hvac_mode
           target:
             entity_id: climate.bedroom
           data:
-            hvac_mode: fan_only
+            hvac_mode: cool
+- id: '1638285945838'
+  alias: 'Remote: Lucas'' Room Light'
+  description: ''
+  use_blueprint:
+    path: poolcactus/zha-ikea-tradfri-on-off-switch-incl-dimmer.yaml
+    input:
+      remote: 6c600be0fccb4e37be820b3d103e67a6
+      light:
+        device_id: 759c08b03f409722c65c5fddb29837d1
