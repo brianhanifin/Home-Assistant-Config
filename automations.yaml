@@ -218,17 +218,16 @@
           entity_id:
           - switch.sound_machine
 - id: '1615055705706'
-  alias: 'Remote: Bedroom Nerene'
+  alias: 'Remote: Nerene Bedside (2 button)'
   description: Nerene's bedside remote
   use_blueprint:
     path: NachtaktiverHalbaffe/zha-aqara-wireless-remote-switch-double-rocker.yaml
     input:
       aqara_mini_switch: 8591edcc1f054889977d5fe6eef52d7d
       button_single_press_left:
-      - type: toggle
-        device_id: 8bef4ccfe78c1356e14212171ff1bfc7
-        entity_id: light.bedroom
-        domain: light
+      - service: light.toggle
+        target:
+          entity_id: light.bedroom
       button_double_press_left:
       - type: toggle
         device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
@@ -242,10 +241,10 @@
       button_single_press_right:
       - service: light.toggle
         target:
-          device_id:
-          - d77f02df805043fc8eb0896488c2385a
-          - f23c6c2806a045899047ea62f07f35c3
-          - 789732c26297462f8f7ebc624c9394ee
+          entity_id:
+          - light.brian3
+          - light.brian2
+          - light.brian1
         data:
           transition: 0
       button_double_press_right:
@@ -262,8 +261,7 @@
       - service: light.toggle
         data: {}
         target:
-          device_id:
-          - 4f2fbaafac2446c2b58d0bc0969a661f
+          entity_id: light.bedroom_table_lamp
       button_double_press_both:
       - service: switch.toggle
         target:
@@ -425,7 +423,7 @@
       critical: true
   mode: single
 - id: '1638213257584'
-  alias: 'Remote: Brian''s Bedside'
+  alias: 'Remote: Brian Bedside'
   description: ''
   use_blueprint:
     path: Jarne_Roussard/aqara-opple-6-buttons-for-zha.yaml
@@ -445,7 +443,9 @@
       - service: light.toggle
         target:
           entity_id:
-          - light.brian
+          - light.brian1
+          - light.brian2
+          - light.brian3
       button_top_right_hold_release:
       - type: toggle
         device_id: 4f2fbaafac2446c2b58d0bc0969a661f
@@ -483,8 +483,18 @@
             entity_id: climate.bedroom
           data:
             hvac_mode: cool
+      button_top_left_double_press:
+      - type: toggle
+        device_id: 4f2fbaafac2446c2b58d0bc0969a661f
+        entity_id: light.bedroom_table_lamp
+        domain: light
+      button_top_right_double_press:
+      - type: toggle
+        device_id: 4f2fbaafac2446c2b58d0bc0969a661f
+        entity_id: light.bedroom_table_lamp
+        domain: light
 - id: '1638285945838'
-  alias: 'Remote: Lucas'' Room Light'
+  alias: 'Remote: Lucas'' Bedside'
   description: ''
   use_blueprint:
     path: poolcactus/zha-ikea-tradfri-on-off-switch-incl-dimmer.yaml
@@ -492,3 +502,74 @@
       remote: 6c600be0fccb4e37be820b3d103e67a6
       light:
         device_id: 759c08b03f409722c65c5fddb29837d1
+- id: '1638297978242'
+  alias: 'Remote: Nerene Bedside (6 button)'
+  description: ''
+  use_blueprint:
+    path: Jarne_Roussard/aqara-opple-6-buttons-for-zha.yaml
+    input:
+      remote: 3f2189487ca484c26740ec00a0672a83
+      button_top_left_single_press:
+      - type: toggle
+        device_id: 8bef4ccfe78c1356e14212171ff1bfc7
+        entity_id: light.bedroom
+        domain: light
+      button_top_left_hold_release:
+      - type: toggle
+        device_id: 4f2fbaafac2446c2b58d0bc0969a661f
+        entity_id: light.bedroom_table_lamp
+        domain: light
+      button_top_right_single_press:
+      - service: light.toggle
+        target:
+          entity_id:
+          - light.brian1
+          - light.brian2
+          - light.brian3
+      button_top_right_hold_release:
+      - type: toggle
+        device_id: 4f2fbaafac2446c2b58d0bc0969a661f
+        entity_id: light.bedroom_table_lamp
+        domain: light
+      button_middle_left_single_press:
+      - type: toggle
+        device_id: 79bd98c471854a2689e9ed3b9d57cc8b
+        entity_id: switch.bedroom_fan
+        domain: switch
+      button_middle_right_single_press:
+      - type: toggle
+        device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
+        entity_id: switch.sound_machine
+        domain: switch
+      button_bottom_right_single_press:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.bedroom
+      button_bottom_left_single_press:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: climate.bedroom
+            state: cool
+          sequence:
+          - service: climate.set_hvac_mode
+            target:
+              entity_id: climate.bedroom
+            data:
+              hvac_mode: fan_only
+        default:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.bedroom
+          data:
+            hvac_mode: cool
+      button_top_left_double_press:
+      - type: toggle
+        device_id: 4f2fbaafac2446c2b58d0bc0969a661f
+        entity_id: light.bedroom_table_lamp
+        domain: light
+      button_top_right_double_press:
+      - type: toggle
+        device_id: 4f2fbaafac2446c2b58d0bc0969a661f
+        entity_id: light.bedroom_table_lamp
+        domain: light
