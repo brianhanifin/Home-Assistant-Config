@@ -34,7 +34,7 @@ variables:
     {%- else %}
       {{ default }}
     {% endif %}
-  tag: '{{ tag}}'
+  tag: '{{ tag }}'
   push:
     category: |
       {%- if camera != "none" %}
@@ -52,8 +52,10 @@ variables:
           {%- endif %}
         {%- elif critical %}
           Update.caf
-        {%- elif category == "doorbell" %}
+        {%- elif tag == "doorbell" or category == "doorbell" %}
           media-source://media_source/local/audio/jetsons-doorbell.mp3
+        {%- elif tag == "person_detected" %}
+          US-EN-Alexa-Motion-At-Front-Door.wav
         {% else %}
           default
         {%- endif %}
