@@ -7,17 +7,11 @@ trigger:
     entity_id: input_select.dryer_status
     to: "Drying"
 
-  # Update washer state when the door is opened.
-  # - platform: state
-  #   entity_id: binary_sensor.washer_door
-  #   from: "off"
-  #   to: "on"
-
   # Make decisions based on the Washer power usage.
   - platform: state
     entity_id: sensor.sonoff_s31_02_power
-    for:
-      minutes: 1
+    #for:
+    #  minutes: 1
 
   # LG ThinQ reported the washer just powered on.
   - platform: state
@@ -45,8 +39,6 @@ variables:
   status: |
     {% if trigger_id == "sensor.washer" %}
       Standby
-    {%- elif trigger_id == "binary_sensor.washer_wash_completed" %}
-      Clean
     {%- elif trigger_id in ["input_select.dryer_status","binary_sensor.washer_door"] %}
       Off
     {%- elif trigger_id == "sensor.sonoff_s31_02_power" %}
@@ -106,4 +98,4 @@ action:
   # - In this case it stops the washer from toggling between Clean and back to Washing within 10 seconds.
   #   This should stop the complete announcement from repeating after 1 minute.
   - delay:
-      seconds: 90
+      seconds: 300
