@@ -1,0 +1,20 @@
+---
+sequence:
+  # Create both a group and a variable list.
+  - service: group.set
+    data:
+      object_id: lights_on
+      name: Lights On
+      entities: >
+        {%- set group_id = 'group.actionable_lights' -%}
+        {% set entities = expand(group_id) | selectattr("state","eq","on") | map(attribute='entity_id') | join(",") %}
+        {{ entities }}
+
+  # - service: variable.set_variable
+  #   data:
+  #     variable: lights_on
+  #     value_template: >
+  #       {%- set group_id = 'group.actionable_lights' -%}
+  #       {% set entities = expand(group_id) | selectattr("state","eq","on") | map(attribute='entity_id') | join(",") %}
+  #       {{ entities }}
+

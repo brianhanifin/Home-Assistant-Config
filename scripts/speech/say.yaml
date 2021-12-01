@@ -14,13 +14,13 @@ sequence:
   #   before: '22:00:00'
 
   # Only update group.lights_on when say_light_check is requested.
-  - choose:
-      - conditions:
-          - "{{ say_light_check == True }}"
-        sequence:
-          # Update the values that may be needed for the briefing.
-          - service: script.turn_on
-            entity_id: script.update_lights_on
+  # - choose:
+  #     - conditions:
+  #         - "{{ say_light_check == True }}"
+  #       sequence:
+  #         # Update the values that may be needed for the briefing.
+  #         - service: script.turn_on
+  #           entity_id: script.update_lights_on
 
   - choose:
       - conditions:
