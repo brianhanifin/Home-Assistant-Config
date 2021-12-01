@@ -1,0 +1,11 @@
+---
+platform: template
+sensors:
+  family_home:
+    friendly_name: "Family Present"
+    icon_template: "mdi:home-heart"
+    value_template: |
+      {{ states.person | selectattr('state','eq','home') | map(attribute='entity_id') | list | count  }}
+    attribute_templates:
+      who: |
+        {{ states.person | selectattr('state','eq','home') | map(attribute='name') | join(", ")  }}
