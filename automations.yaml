@@ -35,16 +35,14 @@
     service: script.notify_speech
   mode: single
 - id: '1588556714529'
-  alias: Maintenance Daily
+  alias: Maintenance at midnight
   description: Runs every night at midnight.
   trigger:
-  - event_data: {}
-    event_type: midnight
-    platform: event
+  - platform: time
+    at: 00:00:00
   condition: []
   action:
   - data:
-      duration: indefinitely
       message: Daily maintenance.
     service: script.toast
   - data: {}
@@ -71,16 +69,6 @@
       repack: true
     service: recorder.purge
   mode: single
-- id: '1588557204708'
-  alias: Midnight - Custom Event
-  description: Fire a custom event at midnight.
-  trigger:
-  - at: 00:00:01
-    platform: time
-  condition: []
-  action:
-  - event: midnight
-    event_data: {}
 - id: '1601178260005'
   alias: Shopping List Add
   description: ''
@@ -576,3 +564,26 @@
         device_id: 4f2fbaafac2446c2b58d0bc0969a661f
         entity_id: light.bedroom_table_lamp
         domain: light
+- id: '1638465871838'
+  alias: Maintenance before sunrise
+  description: Runs every day 2 hours before sunrise.
+  trigger:
+  - platform: sun
+    event: sunrise
+    offset: '-2:00:00'
+  condition: []
+  action:
+  - repeat:
+      count: '{{ switches|count }}'
+      sequence:
+      - service: switch.turn_on
+        data:
+          entity_id: '{{ switches[repeat.index-1] }}'
+  mode: single
+  variables:
+    switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{% for entity\
+      \ in states.switch if 'switch.adaptive_lighting_' in entity.entity_id and '_adapt_'\
+      \ not in entity.entity_id and '_sleep_' not in entity.entity_id %}\n  {% set\
+      \ adaptive_lighting.switches = adaptive_lighting.switches + [ entity ] %}\n\
+      {% endfor %}\n{{ adaptive_lighting.switches | map(attribute='entity_id') | list\
+      \ }}\n"
