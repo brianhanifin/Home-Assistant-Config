@@ -3,10 +3,20 @@ alias: Front Door Person Detected
 id: front_door_person_detected
 mode: single
 trigger:
+  # Frigate
   - platform: state
-    entity_id: binary_sensor.front_door_person_motion
+    entity_id:
+      - binary_sensor.doorbell_person_motion
+      - binary_sensor.front_door_person_motion
+    from: "off"
+    to: "on"
+
+  #- platform: state
+  #  entity_id:
+  #    - binary_sensor.doorbell_person_motion
+  #    - binary_sensor.front_door_person_motion
 variables:
-  old_state: '{{ trigger.from_state.state|lower }}'
+  #old_state: '{{ trigger.from_state.state|lower }}'
   new_state: '{{ trigger.to_state.state|lower }}'
   last_opened: '{{ as_timestamp(states.binary_sensor.front_door.last_changed) }}'
   time_now: '{{ as_timestamp(now()) }}'
@@ -15,43 +25,13 @@ variables:
   auto_lock_enabled: '{{ is_state("input_boolean.leave_unlocked","off") }}'
   outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
 condition:
-  - '{{ old_state != new_state }}'
+  #- '{{ old_state != new_state }}'
   - '{{ door_just_opened == false }}'
   - '{{ auto_lock_enabled == true }}'
 action:
   # - service: script.debug
   #   data:
   #     message: 'new_state: {{ new_state }}'
-
-  # Send a notification when a person is detected.
-  - choose:
-      - conditions:
-          - '{{ new_state == "on" }}'
-        sequence:
-          - service: script.notify_mobile
-            data:
-              title: Front Door
-              message: Person Detected
-              camera: camera.doorbell
-              who: brian
-              tag: 'person_detected'
-              url: /lovelace/cameras
-
-
-          - alias: Stream the camera feed to Apple TV.
-            choose:
-              conditions:
-                - condition: state
-                  entity_id: media_player.tv_family_room
-                  state: "on"
-              sequence:
-                - service: remote.turn_on
-                  entity_id: remote.apple_tv_family_room
-                - service: camera.play_stream
-                  target:
-                    entity_id: camera.doorbell
-                  data:
-                    media_player: media_player.apple_tv_family_room
 
   # Skip turning on the entry lights in the middle of the day.
   - choose:
@@ -115,6 +95,36 @@ action:
                     data:
                       manual_control: false
                       entity_id: switch.adaptive_lighting_home_entry
+
+  # Send a notification when a person is detected.
+  - choose:
+      - conditions:
+          - '{{ new_state == "on" }}'
+        sequence:
+          - service: script.notify_mobile
+            data:
+              title: Front Door
+              message: Person Detected
+              camera: camera.doorbell
+              who: brian
+              tag: 'person_detected'
+              url: /lovelace/cameras
+
+
+          - alias: Stream the camera feed to Apple TV.
+            choose:
+              conditions:
+                - condition: state
+                  entity_id: media_player.tv_family_room
+                  state: "on"
+              sequence:
+                - service: remote.turn_on
+                  entity_id: remote.apple_tv_family_room
+                - service: camera.play_stream
+                  target:
+                    entity_id: camera.doorbell
+                  data:
+                    media_player: media_player.apple_tv_family_room
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
