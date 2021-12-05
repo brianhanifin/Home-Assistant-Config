@@ -1,0 +1,25 @@
+---
+alias: "Restart Addon: SDR"
+id: restart_addon_sdr
+description: Restart the SDR addon when the backyard temperature is unavailable.
+mode: single
+trigger:
+  # Watch for the temperature sensor to be 'unavailable' for 2 minutes.
+  - platform: state
+    entity_id: sensor.backyard_temperature
+    to: "unavailable"
+    for:
+      minutes: 5
+action:
+  - alias: "Check again, and restart the addon to resolve the MQTT connection failure?"
+    choose:
+      - conditions: "{{ is_state('sensor.backyard_temperature','unavailable') }}"
+        sequence:
+          - service: hassio.addon_restart
+            data:
+              addon: d63406df_sdr2mqtt
+          
+          - service: script.notify_web
+            data:
+              title: "Restart Addon: SDR to Home Assistant [Automation]"
+              message: "The Backyard Temperature sensor has been unavailable for 5 minutes. An attempt has been made to restart the addon."
