@@ -20,6 +20,6 @@ sequence:
           'light.play_room_entry',
           'light.kitchen_cabinet',
           'light.network_closet',
-          'light.wled_holiday_string'
+          'light.entry_railing'
         ] -%}
         {{ states.light | rejectattr("state","eq","unavailable") | rejectattr('attributes.type','eq','browser_mod') | rejectattr('entity_id','in',ignore_list) | map(attribute='entity_id') | join(',') }}
