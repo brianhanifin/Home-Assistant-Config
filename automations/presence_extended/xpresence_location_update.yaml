@@ -12,6 +12,8 @@ trigger:
       - person.lucas
       - person.nerene
       - person.sandy
+    #https://rc.home-assistant.io/blog/2021/12/03/release-202112/#triggering-automations-on-any-but-only-state-changes
+    to: ~ 
 variables:
   hour: '{{ states("sensor.time").split(":")[0]|int }}'
   new_state: '{{ trigger.to_state.state }}'
@@ -19,7 +21,7 @@ variables:
   option: |
     {%- if new_state == "home" -%}
       Just Arrived
-    {%- elif new_state == "not_home" -%}
+    {%- else -%}
       Just Left
     {%- endif -%}
   person: '{{ trigger.to_state.object_id }}'
@@ -27,29 +29,26 @@ variables:
 
 condition:
   - '{{ old_state != new_state }}'
-
-  # Only update their "Just Arrived / Left" status when the person is actually just leaving or arriving at home.
-  - '{{ old_state in ["home","not_home"]}}'
-  - '{{ new_state in ["home","not_home"]}}'
-
+  - '{{ new_state != "unknown"}}'
+  
   # Don't allow status change shortly after startup to avoid phantom changes.
   - '{{ is_state("automation.startup","off") }}'
 
-  # Ignore UniFi sourced changes overnight to help avoid false aways caused by sleepy iPhones.
+  # Ignore UniFi sourced changes overnight to help avoid false "aways" caused by sleepy iPhones.
   - condition: not
     conditions:
       - '{{ hour < 6 and source.endswith("_unifi")  }}' # from 0-6am (24h format)
 
 action:
-  # - service: script.debug
-  #   data_template:
-  #     title: "automation.xpresence_location_update"
-  #     message: |
-  #       {{ person }}
-  #       person: {{ states("person." + person) }}
-  #       xpresence old: {{ states("input_select." + person) }}
-  #       xpresence new: {{ option }}
-  #       {{ trigger.to_state }}
+  - service: script.debug
+    data:
+      title: "automation.xpresence_location_update"
+      message: |
+        {{ person }}
+        person: {{ states("person." + person) }}
+        xpresence old: {{ states("input_select." + person) }}
+        xpresence new: {{ option }}
+        {{ trigger.to_state }}
 
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
