@@ -1,0 +1,23 @@
+---
+alias: Laundry timer stuck
+id: laundry_timer_stuck
+description: Watch to see if the Washer or Dryer timers become stuck so the can be restarted.
+trigger:
+  # Check every 10 minutes.
+  - platform: time_pattern
+    minutes: '/10'
+action:
+  - choose:
+      - alias: 'Is timer.dryer_clean "paused"?'
+        conditions: '{{ states("timer.dryer_clean") == "paused" }}'
+        sequence:
+          - alias: 'Restart timer.dryer_clean.'
+            service: timer.start
+            entity_id: timer.dryer_clean
+
+      - alias: 'Is timer.washer_clean "paused"?'
+        conditions: '{{ states("timer.washer_clean") == "paused" }}'
+        sequence:
+          - alias: 'Restart timer.washer_clean.'
+            service: timer.start
+            entity_id: timer.washer_clean

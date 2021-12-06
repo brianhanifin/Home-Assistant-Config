@@ -1,60 +1,86 @@
 ---
-alias: washer_status_update
+alias: Washer status update
+id: washer_status_update
+description: Update the current washer status when certain criteria are met.
 mode: single
 trigger:
   # Update washer state when dryer starts drying.
-  - platform: state
+  - id: dryer_is_drying
+    platform: state
     entity_id: input_select.dryer_status
     to: "Drying"
 
+  # LG washer running state.
+  - id: washer_run_state_change
+    platform: state
+    entity_id: sensor.washer_run_state
+    to: ~
+
   # Make decisions based on the Washer power usage.
-  - platform: state
+  - id: washer_power_use_high
+    platform: numeric_state
     entity_id: sensor.sonoff_s31_02_power
-    #for:
-    #  minutes: 1
+    above: 20
+    for:
+      minutes: 2
+  # - id: washer_power_use_medium
+  #   platform: numeric_state
+  #   entity_id: sensor.sonoff_s31_02_power
+  #   below: 21
+  #   above: 3
+  #   for:
+  #     minutes: 2
+  - id: washer_power_use_low
+    platform: numeric_state
+    entity_id: sensor.sonoff_s31_02_power
+    below: 4
+    for:
+      minutes: 2
 
   # LG ThinQ reported the washer just powered on.
-  - platform: state
+  - id: washer_from_off_to_on
+    platform: state
     entity_id: sensor.washer
     from: "off"
     to: "on"
 
   # LG ThinQ reported the wash is complete.
-  - platform: state
+  - id: washer_lg_complete
+    platform: state
     entity_id: binary_sensor.washer_wash_completed
     from: "off"
     to: "on"
 
   # LG ThinQ reported an error occurred.
-  - platform: state
+  - id: washer_error_state
+    platform: state
     entity_id: binary_sensor.washer_error_state
     from: "off"
     to: "on"
 variables:
-  power: '{{ states("sensor.sonoff_s31_02_power")|int }}'
-  #wash_complete: '{{ is_state("binary_sensor.washer_wash_completed","on") }}'
+  #trigger_id: '{{ trigger.to_state.entity_id }}'
+  trigger_id: '{{ trigger.id }}'
+
+  run_state: '{{ states("sensor.washer_run_state") }}'
+  washer_running: '{{ not run_state == "-" }}'
   previous_status: '{{ states("input_select.washer_status") }}'
-  trigger_id: '{{ trigger.to_state.entity_id }}'
+
   # Off, Standby, Washing, Clean, Error
   status: |
-    {% if trigger_id == "sensor.washer" %}
+    {% if trigger_id == "washer_from_off_to_on" %}
       Standby
-    {%- elif trigger_id in ["input_select.dryer_status","binary_sensor.washer_door"] %}
+    {%- elif trigger_id == "dryer_is_drying" %}
       Off
-    {%- elif trigger_id == "sensor.sonoff_s31_02_power" %}
-      {%- if power > 20 %}
-        Washing
-      {%- elif previous_status == "Washing" %}
-        Clean
-      {%- elif power > 3 and previous_status == "Off" %}
-        Standby
-      {%- elif power < 3 and previous_status != "Clean" %}
-        Off
-      {%- endif %}
-    {%- elif trigger_id == "binary_sensor.washer_error_state" %}
+    {%- elif trigger_id == "washer_power_use_high" or (trigger_id == "washer_run_state_change" and washer_running) %}
+      Washing
+    {%- elif trigger_id == "washer_power_use_low" and previous_status != "Clean" %}
+      Off
+    {%- elif previous_status == "Washing" %}
+      Clean
+    {%- elif previous_status == "Off" %}
+      Standby
+    {%- elif trigger_id == "washer_error_state" %}
       Error
-    {%- else %}
-      Off
     {%- endif %}
   notify_title: '{{ status ~ ": Washing Machine" if status in ["Clean","Error"] }}'
   notify_message: |

@@ -1,0 +1,36 @@
+---
+alias: Laundry finished timeout
+id: laundry_finished_timeout
+description: Set the washer or dryer to off after the timeout expires.
+mode: parallel
+trigger:
+  - id: dry_timeout
+    platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.dryer_dry
+
+  - id: clean_timeout
+    platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.washer_clean
+action:
+  - choose:
+      - alias: 'Has the dryer been "Dry" for 6 hours?'
+        conditions: '{{ trigger.id == "dry_timeout" }}'
+        sequence:
+          - alias: 'Set the dryer status to "Off".'
+            service: input_select.select_option
+            data:
+              entity_id: input_select.dryer_status
+              option: 'Off'
+
+      - alias: 'Has the washer been "Clean" for 6 hours?'
+        conditions: '{{ trigger.id == "clean_timeout" }}'
+        sequence:
+          - alias: 'Set the washer status to "Off".'
+            service: input_select.select_option
+            data:
+              entity_id: input_select.washer_status
+              option: 'Off'

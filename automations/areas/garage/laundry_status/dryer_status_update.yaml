@@ -1,5 +1,7 @@
 ---
-alias: dryer_status_update
+alias: Dryer status update
+id: dryer_status_update
+description: Update the current dryer status when certain criteria are met.
 mode: single
 trigger:
   - platform: state
@@ -12,8 +14,6 @@ variables:
       Drying
     {%- elif previous_status == "Drying" %}
       Dry
-    {%- else %}
-      Off
     {%- endif %}
 condition:
   - condition: template
