@@ -1,37 +1,41 @@
 ---
 alias: Safety Alert Smoke or Carbon Monoxide
 id: safety_alert_smoke
-
 mode: single
 trigger:
-  - platform: numeric_state
+  - platform: state
     entity_id:
       - sensor.safety_alarm_bedroom_type
       - sensor.safety_alarm_kyles_bedroom_type
       - sensor.safety_alarm_lucas_bedroom_type
       - sensor.safety_alarm_garage_type
-      - sensor.safety_alarm_goez_suite_type
       - sensor.safety_alarm_guest_room_type
       - sensor.safety_alarm_stairs_type
-    below: 13
+
+      #- input_number.safety_alarm_test_type
+    to: ~
 
 variables:
-  type: '{{ trigger.to_state.state }}'
+  type: '{{ trigger.to_state.state|int }}'
   room: '{{ trigger.to_state.name|replace(":","")|replace("Safety Alarm ","")|replace(" Type","")|replace(" Code","") }}'
 
   alarm_states:
-    "1": "SMOKE"
-    "2": "CARBON MONOXIDE"
-    "12": "Test Button Press"
-  alert_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "Unknown" }}'
+    1: "SMOKE"
+    2: "CARBON MONOXIDE"
+    12: "Test Button Press"
+  alarm_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "unknown" }}'
+  # alarm_state: |
+  #   {{- "SMOKE" if type == 1 }}
+  #   {{- "CARBON MONOXIDE" if type == 2 }}
+  #   {{- "Test Button Press" if type == 12 }}
 
-  title: '{{ alert_state }} DETECTED!'
+  title: '{{ alarm_state }} DETECTED!'
   message: '{{ alarm_state }} detected in the {{ room|upper }}.'
 
 condition:
-  # Ignore unknown states as these can occur when the Z-wave docker restarts
+  # Ignore unknown states as these can occur when the Z-wave docker restarts.
   - condition: template
-    value_template: '{{ alert_state == "Unknown" }}'
+    value_template: '{{ type in [1,2,12] }}'
 
 action:
   - service: script.notify_mobile

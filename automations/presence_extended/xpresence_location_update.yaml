@@ -40,15 +40,15 @@ condition:
       - '{{ hour < 6 and source.endswith("_unifi")  }}' # from 0-6am (24h format)
 
 action:
-  - service: script.debug
-    data:
-      title: "automation.xpresence_location_update"
-      message: |
-        {{ person }}
-        person: {{ states("person." + person) }}
-        xpresence old: {{ states("input_select." + person) }}
-        xpresence new: {{ option }}
-        {{ trigger.to_state }}
+  # - service: script.debug
+  #   data:
+  #     title: "automation.xpresence_location_update"
+  #     message: |
+  #       {{ person }}
+  #       person: {{ states("person." + person) }}
+  #       xpresence old: {{ states("input_select." + person) }}
+  #       xpresence new: {{ option }}
+  #       {{ trigger.to_state }}
 
   # Change the status to Just Left or Just Arrived.
   - service: input_select.select_option
