@@ -5,7 +5,9 @@ mode: single
 trigger:
   # Frigate
   - platform: state
-    entity_id: binary_sensor.doorbell_person_motion
+    entity_id:
+      - binary_sensor.doorbell_person_motion
+      - binary_sensor.front_walkway_person_motion
     from: "off"
     to: "on"
 variables:
@@ -102,22 +104,28 @@ action:
               who: brian
               tag: 'person_detected'
               url: /lovelace/cameras
+        
+        - service: script.notify_pc
+          data:
+            title: Front Door
+            message: Person Detected
+            camera: camera.doorbell
+            pc: blackpc
 
-
-          - alias: Stream the camera feed to Apple TV.
-            choose:
-              conditions:
-                - condition: state
-                  entity_id: media_player.tv_family_room
-                  state: "on"
-              sequence:
-                - service: remote.turn_on
-                  entity_id: remote.apple_tv_family_room
-                - service: camera.play_stream
-                  target:
-                    entity_id: camera.doorbell
-                  data:
-                    media_player: media_player.apple_tv_family_room
+          # - alias: Stream the camera feed to Apple TV.
+          #   choose:
+          #     conditions:
+          #       - condition: state
+          #         entity_id: media_player.tv_family_room
+          #         state: "on"
+          #     sequence:
+          #       - service: remote.turn_on
+          #         entity_id: remote.apple_tv_family_room
+          #       - service: camera.play_stream
+          #         target:
+          #           entity_id: camera.doorbell
+          #         data:
+          #           media_player: media_player.apple_tv_family_room
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:

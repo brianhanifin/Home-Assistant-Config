@@ -1,0 +1,67 @@
+---
+variables:
+  notification_service: |
+    {%- set pc = pc|default("blackpc") %}
+    {%- if pc.startswith("notify.") %}
+      {{ pc }}
+    {%- else %}
+      notify.{{ pc|default("blackpc") }}
+    {% endif %}
+  title: '{{ title|default("Home Assistant") }}'
+  message: '{{ message|default(" ") }}'
+  duration: '{{ duration|default(0) }}'
+  image: |
+    {% set camera = camera|default("") %}
+    {%- if camera != "" %}
+      {%- set image = "http://homeassistant.local:8123" + state_attr(camera,"entity_picture") %}
+    {% endif %}
+    {{ image|default("") }}
+
+sequence:
+  - service: "{{ notification_service }}"
+    data:
+      title: "{{ title }}"
+      message: "{{ message }}"
+      data:
+        duration: '{{ duration }}'
+        image: '{{ image }}'
+
+fields:
+  pc:
+    description: What PC are we sending this message to?
+    example: blackpc
+    default: blackpc
+    selector:
+      text:
+  title:
+    description: Bold first line of the message.
+    example: Safety Alert!
+    default: Home Assistant
+    selector:
+      text:
+  message:
+    description: Include details here.
+    example: Test message
+    default: Test message
+    #required: true
+    selector:
+      text:
+        multiline: true
+  camera:
+    description: Camera to pull a still from.
+    example: ''
+    default: 
+    selector:
+      text:
+  image:
+    description: URL to an image.
+    example: ''
+    default: 
+    selector:
+      text:
+  duration:
+    description: How many seconds before this message dissapears?
+    example: 3
+    default: 3
+    selector:
+      number:
