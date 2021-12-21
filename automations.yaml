@@ -592,3 +592,42 @@
       \ adaptive_lighting.switches = adaptive_lighting.switches + [ entity ] %}\n\
       {% endfor %}\n{{ adaptive_lighting.switches | map(attribute='entity_id') | list\
       \ }}\n"
+- id: '1638910619111'
+  alias: 'Maintenace: Lights off after sunrise'
+  description: Turn the entry and porch lights off after sunrise.
+  trigger:
+  - platform: sun
+    event: sunrise
+    offset: +00:45:00
+  action:
+  - type: turn_off
+    device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
+    entity_id: light.home_entry
+    domain: light
+  - type: turn_off
+    device_id: 36961132c35d4aa688b4c994ae1eaddb
+    entity_id: light.porch
+    domain: light
+- id: '1640128623256'
+  alias: 'Maintenance: lights before sunset'
+  description: ''
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: -00:15:00
+  action:
+  - type: turn_on
+    device_id: 36961132c35d4aa688b4c994ae1eaddb
+    entity_id: light.porch
+    domain: light
+  - type: turn_on
+    device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
+    entity_id: light.home_entry
+    domain: light
+  - service: script.turn_on
+    entity_id: script.holiday_color_change
+  - service: script.say
+    data:
+      media_player: media_player.google_kitchen
+      say_dark_outside: 'true'
+  mode: single
