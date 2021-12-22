@@ -1,31 +1,34 @@
 ---
 alias: Guest Mode
 id: guest_mode_on_state_change
-
+mode: restart
 trigger:
-  - platform: event
-    event_type: state_changed
-    event_data:
-      entity_id: input_boolean.guest_mode
+  - id: to_on
+    platform: state
+    entity_id: input_boolean.guest_mode
+    from: "off"
+    to: "on"
+  - id: to_off
+    platform: state
+    entity_id: input_boolean.guest_mode
+    from: "on"
+    to: "off"
 variables:
-  old_state: '{{ trigger.event.data.old_state.state }}'
-  new_state: '{{ trigger.event.data.new_state.state }}'
-
   adaptive_switches: |
-    {% set data = namespace(switches="") %}
-    {% set switches = expand(states.switch) | map(attribute="entity_id") | list %}
-    {% for switch in switches if switch[:24] == "switch.adaptive_lighting" and switch[25:30] not in ["adapt","sleep"] %}
-      {% set data.switches = data.switches|trim ~ " " ~ switch %}
-    {% endfor %}
-    {{ data.switches.split(" ") }}
+    {% set adaptive_lighting = namespace(switches=[]) %}
+    {%- for entity in states.switch if 'switch.adaptive_lighting_' in entity.entity_id
+          and entity.entity_id[25:30] not in ["adapt","sleep"] %}
+      {%- set adaptive_lighting.switches = adaptive_lighting.switches + [ entity ] %}
+    {%- endfor %}
+    {{- adaptive_lighting.switches | map(attribute='entity_id') | list }}
 
   lights_on: |
-    {% set group_id = 'group.guest_mode_lights' -%}
-    {%- set entities = states.light | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | join(', ') -%}
-    {{ "none" if "light." not in entities else entities }}
+    {% set group_id= 'group.guest_mode_lights' %}
+    {%- set lights_on = expand(group_id) | selectattr('entity_id','in',state_attr(group_id,'entity_id')) | selectattr('state','eq','on') | map(attribute='entity_id') | list %}
+    {{- "none" if lights_on|count==0 else lights_on }}
 
   speech: |
-    {% if new_state == "on" %}
+    {%- if trigger.id == "to_on" %}
       {{ [
         "Guest Mode has been enabled for the rest of the day.",
         "Switching to guest mode! ",
@@ -38,19 +41,28 @@ variables:
         "Family, Friends and Fun.  Guest mode has been enabled today.",
         "Guest Mode enabled.  I am still doing stuff behind the scenes but probably will not turn off the lights on you."
       ] | random }}
-    {% else %}
+    {%- else %}
       {{ [
         "Guest Mode has been disabled.",
         "Guest Mode disabled."
         ] | random }}
-    {% endif %}
-condition:
-  - '{{ (new_state in ["off","on"] and old_state in ["off","on"])
-      and old_state != new_state }}'
+    {%- endif %}
 action:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       trigger.id: {{ trigger.id }}
+  #       adaptive_switches: {{ adaptive_switches }}
+  #       lights_on: {{ lights_on }}
+  #       speech: "{{ speech }}"
+
   - choose:
-      - conditions: '{{ new_state == "on" }}'
+      - conditions: '{{ trigger.id == "to_on" }}'
         sequence:
+          # - service: script.debug
+          #   data:
+          #     message: 'to_on'
+
           # Disable the front door lock countdown.
           - service: timer.cancel
             entity_id: timer.front_door_unlocked
@@ -59,29 +71,47 @@ action:
           - service: switch.turn_off
             data:
               entity_id: '{{ adaptive_switches }}'
+          
+          - delay:
+              seconds: 2
 
-          - service: homeassistant.turn_on
+          - service: switch.turn_on
             target:
               area_id:
-                - dining_room
                 - kitchen
-              entity_id: group.family_room_lights
 
           - service: light.turn_on
             data:
               entity_id: '{{ lights_on }}'
               brightness: 255
               kelvin: 4000
+            target:
+              area_id:
+                - dining_room
+                - family_room
 
     default:
-      # Start a countdown timer to relock the front door.
-      - service: script.start_front_door_lock_countdown
+      # - service: script.debug
+      #   data:
+      #     message: 'to_off'
 
-      - service: homeassistant.turn_off
+      # Start a countdown timer to relock the front door.
+      #- service: script.start_front_door_lock_countdown
+
+      - service: switch.turn_off
         target:
           area_id:
-            - dining_room
             - kitchen
+
+      - service: light.turn_off
+        target:
+          entity_id: light.family_room_floor_lamp
+          area_id:
+            - dining_room
+            #- family_room
+
+      - delay:
+          seconds: 2
 
       # Restore Adaptive Lighting automated control.
       - service: switch.turn_on
@@ -89,5 +119,5 @@ action:
           entity_id: '{{ adaptive_switches }}'
 
   - service: script.say
-    data_template:
+    data:
       message: '{{ speech }}'

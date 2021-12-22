@@ -45,18 +45,12 @@
   - data:
       message: Daily maintenance.
     service: script.toast
-  - data: {}
-    entity_id: input_boolean.cooler_outside_notification
-    service: input_boolean.turn_off
-  - data: {}
-    entity_id: input_boolean.guest_mode
-    service: input_boolean.turn_off
-  - data: {}
-    entity_id: input_boolean.leave_unlocked
-    service: input_boolean.turn_off
-  - service: switch.turn_off
-    data: {}
-    entity_id: switch.vr_mode
+  - service: homeassistant.turn_off
+    target:
+      entity_id:
+      - input_boolean.cooler_outside_notification
+      - input_boolean.guest_mode
+      - input_boolean.leave_unlocked
   - data: {}
     service: script.create_actionable_lights_group
   - data: {}
@@ -573,25 +567,21 @@
     offset: '-2:00:00'
   condition: []
   action:
-  - repeat:
-      count: '{{ switches|count }}'
-      sequence:
-      - service: switch.turn_off
-        data:
-          entity_id: '{{ switches[repeat.index-1] }}'
-      - delay:
-          seconds: 1
-      - service: switch.turn_on
-        data:
-          entity_id: '{{ switches[repeat.index-1] }}'
+  - service: switch.turn_off
+    data:
+      entity_id: '{{ switches }}'
+  - delay:
+      seconds: 5
+  - service: switch.turn_on
+    data:
+      entity_id: '{{ switches }}'
   mode: single
   variables:
-    switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{% for entity\
-      \ in states.switch if 'switch.adaptive_lighting_' in entity.entity_id and '_adapt_'\
-      \ not in entity.entity_id and '_sleep_' not in entity.entity_id %}\n  {% set\
-      \ adaptive_lighting.switches = adaptive_lighting.switches + [ entity ] %}\n\
-      {% endfor %}\n{{ adaptive_lighting.switches | map(attribute='entity_id') | list\
-      \ }}\n"
+    switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%- for entity\
+      \ in states.switch if 'switch.adaptive_lighting_' in entity.entity_id\n    \
+      \  and entity.entity_id[25:30] not in [\"adapt\",\"sleep\"] %}\n  {%- set adaptive_lighting.switches\
+      \ = adaptive_lighting.switches + [ entity ] %}\n{%- endfor %} {{- adaptive_lighting.switches\
+      \ | map(attribute='entity_id') | list }}\n"
 - id: '1638910619111'
   alias: 'Maintenace: Lights off after sunrise'
   description: Turn the entry and porch lights off after sunrise.
@@ -616,14 +606,11 @@
     event: sunset
     offset: -00:15:00
   action:
-  - type: turn_on
-    device_id: 36961132c35d4aa688b4c994ae1eaddb
-    entity_id: light.porch
-    domain: light
-  - type: turn_on
-    device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
-    entity_id: light.home_entry
-    domain: light
+  - service: light.turn_on
+    target:
+      device_id:
+      - 1ad4b3bd16edcc7d4961b3e95ed57f70
+      - 36961132c35d4aa688b4c994ae1eaddb
   - service: script.turn_on
     entity_id: script.holiday_color_change
   - service: script.say
