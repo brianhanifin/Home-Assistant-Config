@@ -1,21 +1,21 @@
 ---
 alias: Away Mode
 id: away_mode_on_state_change
-
+mode: restart
 trigger:
-  - platform: event
-    event_type: state_changed
-    event_data:
-      entity_id: input_boolean.away_mode
-variables:
-  old_state: '{{ trigger.event.data.old_state.state }}'
-  new_state: '{{ trigger.event.data.new_state.state }}'
-condition:
-  - '{{ (new_state in ["off","on"] and old_state in ["off","on"])
-      and old_state != new_state }}'
+  - id: to_on
+    platform: state
+    entity_id: input_boolean.away_mode
+    from: "off"
+    to: "on"
+  # - id: to_off
+  #   platform: state
+  #   entity_id: input_boolean.away_mode
+  #   from: "on"
+  #   to: "off"
 action:
   - choose:
-      - conditions: '{{ new_state == "on" }}'
+      - conditions: '{{ trigger.id == "to_on" }}'
         sequence:
           # Close the garage door (if it was inadvertently left open).
           - choose:

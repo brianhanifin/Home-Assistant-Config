@@ -1,0 +1,29 @@
+---
+alias: "Leave Unlocked"
+id: leave_unlocked_on_state_change
+mode: restart
+trigger:
+  - id: to_on
+    platform: state
+    entity_id: input_boolean.leave_unlocked
+    from: "off"
+    to: "on"
+  - id: to_off
+    platform: state
+    entity_id: input_boolean.leave_unlocked
+    from: "on"
+    to: "off"
+action:
+  - alias: 'Cancel the relock countdown timer.'
+    service: timer.cancel
+    target:
+      entity_id: timer.front_door_unlocked
+
+  - alias: 'If the mode is turned on AND the door is currently unlocked'
+    choose:
+      - conditions: '{{ trigger.id == "to_off" and is_state("lock.front_door","unlocked") }}'
+        sequence:
+          - alias: 'Restart the timer.'
+            service: timer.start
+            target:
+              entity_id: timer.front_door_unlocked
