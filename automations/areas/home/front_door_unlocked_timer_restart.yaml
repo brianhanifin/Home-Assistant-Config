@@ -1,6 +1,7 @@
 ---
 alias: front_door_unlocked_timer_restart
 id: front_door_unlocked_timer_restart
+mode: single
 # When the front door is opened, restart the timer.
 trigger:
   - platform: state
@@ -16,10 +17,12 @@ condition:
         - input_boolean.leave_unlocked
       state: "off"
 action:
-  - service: timer.cancel
-    data_template:
+  - alias: "Cancel the existing lock countdown timer."
+    service: timer.cancel
+    target:
       entity_id: timer.front_door_unlocked
 
-  - service: timer.start
-    data_template:
+  - alias: "Restart the lock countdown timer."
+    service: timer.start
+    target:
       entity_id: timer.front_door_unlocked

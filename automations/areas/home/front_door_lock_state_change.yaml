@@ -1,6 +1,7 @@
 ---
 alias: front_door_lock_state_change
 id: front_door_lock_state_change
+mode: restart
 trigger:
   - platform: event
     event_type: state_changed
@@ -27,8 +28,13 @@ action:
         sequence:
           # Start a countdown timer to relock the front door.
           - choose:
-              - conditions: '{{ is_state("input_boolean.guest_mode","off")
-                            and is_state("input_boolean.leave_unlocked","off") }}'
+              - conditions:
+                - condition: state
+                  entity_id:
+                    - binary_sensor.front_door
+                    - input_boolean.guest_mode
+                    - input_boolean.leave_unlocked
+                  state: "off"
                 sequence:
                   # Start a countdown timer to relock the front door.
                   - service: timer.start
@@ -59,11 +65,12 @@ action:
 
                           # Full brightness!
                           - service: light.turn_on
-                            data:
-                              brightness: 255
+                            target:
                               entity_id:
                                 - light.home_entry
                                 - light.porch
+                            data:
+                              brightness: 255
 
                   ## ================================================================================================= ##
 
@@ -105,8 +112,9 @@ action:
                 sequence:
                   # Restore the previous state of the porch + entry lights.
                   - service: scene.turn_on
-                    data:
+                    target:
                       entity_id: scene.front_door_locked_snapshot
+                    data:
                       transition: 5
 
                   - delay:
