@@ -4,9 +4,13 @@
 alias: Update Notification
 id: update_notification
 trigger:
-  - platform: numeric_state
-    entity_id: sensor.updates
-    above: 0
+  - platform: state
+    entity_id: binary_sensor.updater
+    from: "off"
+    to: "on"
+  # - platform: numeric_state
+  #   entity_id: sensor.updates
+  #   above: 0
 action:
   - service: script.notify_mobile
     data:

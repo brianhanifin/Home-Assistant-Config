@@ -12,30 +12,32 @@ sensors:
         There are {{ updates }} updates available.
       {% endif %}
 
-      {%- if is_state_attr("sensor.updates","core_update","True") %}
-        * There is a Core update.
+      {%- if state_attr("sensor.updates","core_update") %}
+        - There is a [Core update](/hassio/update-available/core).
       {%- endif %}
-      {%- if is_state_attr("sensor.updates","os_update","True") %}
-        * There is an OS update.
+
+      {%- if state_attr("sensor.updates","os_update") %}
+        - There is an [OS update](/config/dashboard).
       {%- endif %}
-      {%- if is_state_attr("sensor.updates","supervisor_update","True") %}
-        * There is a Supervisor update.
+
+      {%- if state_attr("sensor.updates","supervisor_update") %}
+        - There is a [Supervisor update](/config/dashboard).
       {%- endif %}
-      
-      {%- if is_state_attr("sensor.updates","hacs_update","True") %}
+
+      {%- if state_attr("sensor.updates","hacs_update") %}
         {%- set hacs_updates = states("sensor.hacs")|int|default("0") %}
         {%- if hacs_updates == 1 %}
-          * There is one HACS update.
+          - There is one [HACS update](/hacs).
         {%- else %}
-          * There are {{ hacs_updates }} HACS updates.
+          - There are {{ hacs_updates }} [HACS updates](/hacs).
         {%- endif %}
       {%- endif %}
 
-      {%- if is_state_attr("sensor.updates","addon_update","True") %}
+      {%- if state_attr("sensor.updates","addon_update") %}
         {%- set addon_updates = states("sensor.addon_updates")|int|default("0") %}
         {%- if addon_updates == 1 %}
-          * There is one Addon update.
+          - There is one [Addon update](/config/dashboard).
         {%- else %}
-          * There are {{ addon_updates }} Addon updates.
+          - There are {{ addon_updates }} [Addon updates](/config/dashboard).
         {%- endif %}
       {%- endif %}
