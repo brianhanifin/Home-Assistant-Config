@@ -24,26 +24,26 @@ condition:
       state: "off"
 action:
   - choose:
-    - alias: "Cancel the unlocked countdown timer when front door is opened."
-      conditions:
-        - '{{ trigger.id == "door_open" }}'
-      sequence:
-        - alias: "First pause the timer."
-          service: timer.pause
-          target:
-            entity_id: timer.front_door_unlocked
+      - alias: "Cancel the unlocked countdown timer when front door is opened."
+        conditions:
+          - '{{ trigger.id == "door_open" }}'
+        sequence:
+          - alias: "First pause the timer."
+            service: timer.pause
+            target:
+              entity_id: timer.front_door_unlocked
 
-        - alias: "Now cancel the timer."
-          service: timer.cancel
-          target:
-            entity_id: timer.front_door_unlocked
+          - alias: "Now cancel the timer."
+            service: timer.cancel
+            target:
+              entity_id: timer.front_door_unlocked
 
 
-    - alias: "Start the unlocked countdown timer when front door is closed."
-      conditions:
-        - '{{ trigger.id == "door_closed" }}'
-      sequence:
-        - alias: "Restart the timer."
-          service: timer.start
-          target:
-            entity_id: timer.front_door_unlocked
+      - alias: "Start the unlocked countdown timer when front door is closed."
+        conditions:
+          - '{{ trigger.id == "door_closed" }}'
+        sequence:
+          - alias: "Restart the timer."
+            service: timer.start
+            target:
+              entity_id: timer.front_door_unlocked

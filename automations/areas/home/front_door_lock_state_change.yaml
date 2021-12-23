@@ -29,11 +29,11 @@ action:
           # Start a countdown timer to relock the front door.
           - choose:
               - conditions:
-                - condition: state
-                  entity_id:
-                    - input_boolean.guest_mode
-                    - input_boolean.leave_unlocked
-                  state: "off"
+                  - condition: state
+                    entity_id:
+                      - input_boolean.guest_mode
+                      - input_boolean.leave_unlocked
+                    state: "off"
                 sequence:
                   # Start a countdown timer to relock the front door.
                   - service: timer.start

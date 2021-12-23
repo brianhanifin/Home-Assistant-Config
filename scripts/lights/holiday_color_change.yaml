@@ -56,41 +56,41 @@ sequence:
 
           - choose:
               - conditions:
-                - '{{ is_state("light.porch","on") }}'
-              sequence:
-                - service: light.turn_on
-                  target:
-                    entity_id: light.porch
-                  data:
-                    color_name: "{{ color }}"
+                  - '{{ is_state("light.porch","on") }}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.porch
+                    data:
+                      color_name: "{{ color }}"
 
           - choose:
               - conditions:
-                - '{{ is_state("light.table_lamp","on") }}'
-              sequence:
-                - service: light.turn_on
-                  target:
-                    entity_id: light.table_lamp
-                  data:
-                    color_name: "{{ color }}"
+                  - '{{ is_state("light.table_lamp","on") }}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.table_lamp
+                    data:
+                      color_name: "{{ color }}"
 
     default:
       - choose:
           - conditions:
-            - '{{ is_state("light.porch","on") }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.porch
-              data:
-                kelvin: 4000
+              - '{{ is_state("light.porch","on") }}'
+            sequence:
+              - service: light.turn_on
+                target:
+                  entity_id: light.porch
+                data:
+                  kelvin: 4000
 
       - choose:
           - conditions:
-            - '{{ is_state("light.table_lamp","on") }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.table_lamp
-              data:
-                kelvin: 4000
+              - '{{ is_state("light.table_lamp","on") }}'
+            sequence:
+              - service: light.turn_on
+                target:
+                  entity_id: light.table_lamp
+                data:
+                  kelvin: 4000
