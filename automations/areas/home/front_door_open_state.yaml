@@ -14,7 +14,7 @@ trigger:
     from: "on"
     to: "off"
 condition:
-  # Only lock the door when certain modes are disabled.
+  alias: "Only start the lock countdown when certain modes are disabled."
   condition: and
   conditions:
     - condition: state
@@ -24,21 +24,26 @@ condition:
       state: "off"
 action:
   - choose:
-    - alias: "Cancel the unlocked countdown when front door is opened."
+    - alias: "Cancel the unlocked countdown timer when front door is opened."
       conditions:
-        - '{{ is_state(trigger.id,"door_open") }}'
+        - '{{ trigger.id == "door_open" }}'
       sequence:
-        - alias: "Cancel the existing lock countdown timer."
+        - alias: "First pause the timer."
+          service: timer.pause
+          target:
+            entity_id: timer.front_door_unlocked
+
+        - alias: "Now cancel the timer."
           service: timer.cancel
           target:
             entity_id: timer.front_door_unlocked
 
 
-    - alias: "Start the unlocked countdown when front door is closed."
+    - alias: "Start the unlocked countdown timer when front door is closed."
       conditions:
-        - '{{ is_state(trigger.id,"door_closed") }}'
+        - '{{ trigger.id == "door_closed" }}'
       sequence:
-        - alias: "Restart the lock countdown timer."
+        - alias: "Restart the timer."
           service: timer.start
           target:
             entity_id: timer.front_door_unlocked
