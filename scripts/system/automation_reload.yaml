@@ -38,6 +38,11 @@ sequence:
               minutes: "2"
             continue_on_timeout: false
 
+          - alias: Disable startup automation.
+            service: automation.turn_off
+            target:
+              entity_id: automation.startup
+
           - service: script.toast
             data:
               message: "Automations have been reloaded!"
