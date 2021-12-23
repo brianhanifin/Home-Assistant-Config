@@ -63,24 +63,27 @@ action:
           #   data:
           #     message: 'to_on'
 
-          # Disable the front door lock countdown.
-          - service: timer.cancel
-            entity_id: timer.front_door_unlocked
+          - alias: "Disable the automatic front door lock."
+            service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.leave_unlocked
 
-          # Disable Adaptive Lighting automated control.
-          - service: switch.turn_off
+          - alias: "Disable Adaptive Lighting automated control."
+            service: switch.turn_off
             data:
               entity_id: '{{ adaptive_switches }}'
           
           - delay:
               seconds: 2
 
-          - service: switch.turn_on
+          - alias: "Kitchen Lights: Turn On"
+            service: switch.turn_on
             target:
               area_id:
                 - kitchen
 
-          - service: light.turn_on
+          - alias: "Dining + Family Room Lights: Turn On"
+            service: light.turn_on
             data:
               entity_id: '{{ lights_on }}'
               brightness: 255
@@ -95,15 +98,19 @@ action:
       #   data:
       #     message: 'to_off'
 
-      # Start a countdown timer to relock the front door.
-      #- service: script.start_front_door_lock_countdown
+      - alias: "Restore the automatic front door lock."
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.leave_unlocked
 
-      - service: switch.turn_off
+      - alias: "Kitchen lights to turn off"
+        service: switch.turn_off
         target:
           area_id:
             - kitchen
 
-      - service: light.turn_off
+      - alias: "Dining + Family Room lights to turn off"
+        service: light.turn_off
         target:
           entity_id: light.family_room_floor_lamp
           area_id:
@@ -113,8 +120,8 @@ action:
       - delay:
           seconds: 2
 
-      # Restore Adaptive Lighting automated control.
-      - service: switch.turn_on
+      - alias: "Restore Adaptive Lighting automated control."
+        service: switch.turn_on
         data:
           entity_id: '{{ adaptive_switches }}'
 
