@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1334 total entities**, 
-including **646 sensors**.
+Our Home Assistant install has approximately **1335 total entities**, 
+including **645 sensors**.
 
-<details><summary>22 Custom Integrations</summary>
+<details><summary>21 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -208,12 +208,6 @@ Authors: [@hif2k1](https://github.com/hif2k1).
 
 Check your Home Assistant configuration from the frontend, or automatically when the configuration is updated, and optionally restart HASS automatically!Run the CLI config_check from a service call.
 Authors: [@ludeeus](https://github.com/ludeeus).
-
-
-#### [Dwains Dashboard v2.0.5](https://dwainscheeren.github.io/dwains-lovelace-dashboard/)
-
-An auto generating Home Assistant Lovelace UI dashboard for desktop, tablet and mobile by Dwains for desktop, tablet, mobile
-Authors: [@dwainscheeren](https://github.com/dwainscheeren).
 
 
 #### [EventSensor v3.0.0](https://github.com/azogue/eventsensor)
@@ -380,7 +374,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Minimalistic media card for Home Assistant Lovelace UI
 
 
-#### [Multiple Entity Row v4.3.1](https://github.com/benct/lovelace-multiple-entity-row)
+#### [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
@@ -502,7 +496,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.12.4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.12.5-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
