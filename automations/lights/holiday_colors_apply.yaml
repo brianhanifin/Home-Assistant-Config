@@ -1,10 +1,13 @@
 ---
-alias: porch_light_apply_holiday_colors
-
+alias: Holiday Colors Apply
+id: holiday_colors_apply
+description: Apply the light colors assigned to the current holiday.
 trigger:
   - platform: state
-    entity_id: light.porch
-    #from: "off"
+    entity_id:
+      - light.porch
+      - light.table_lamp
+    from: "off"
     to: "on"
 condition:
   # Only continue if there is a holiday scene to apply.
