@@ -49,15 +49,13 @@ sequence:
           - variables:
               color: '{{ holiday_colors[holiday_scene] }}'
 
-          # Both guest_mode and away_mode are inactive
-          - condition: state
-            entity_id:
-              - input_boolean.away_mode
-              - input_boolean.guest_mode
-            state: "off"
+          # Both guest_mode are inactive
+          # - condition: state
+          #   entity_id: input_boolean.guest_mode
+          #   state: "off"
 
           - choose:
-            - conditions:
+              - conditions:
                 - '{{ is_state("light.porch","on") }}'
               sequence:
                 - service: light.turn_on
@@ -67,7 +65,7 @@ sequence:
                     color_name: "{{ color }}"
 
           - choose:
-            - conditions:
+              - conditions:
                 - '{{ is_state("light.table_lamp","on") }}'
               sequence:
                 - service: light.turn_on
@@ -78,7 +76,7 @@ sequence:
 
     default:
       - choose:
-        - conditions:
+          - conditions:
             - '{{ is_state("light.porch","on") }}'
           sequence:
             - service: light.turn_on
@@ -88,7 +86,7 @@ sequence:
                 kelvin: 4000
 
       - choose:
-        - conditions:
+          - conditions:
             - '{{ is_state("light.table_lamp","on") }}'
           sequence:
             - service: light.turn_on
