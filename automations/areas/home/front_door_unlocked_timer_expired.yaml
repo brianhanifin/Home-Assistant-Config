@@ -9,7 +9,7 @@ trigger:
     event_data:
       entity_id: timer.front_door_unlocked
 condition:
-  # Only lock the door when the door is closed and certain modes are disabled.
+  alias: "Only lock the door when the door is closed and certain modes are disabled."
   condition: and
   conditions:
     - condition: state
@@ -19,28 +19,6 @@ condition:
         - input_boolean.leave_unlocked
       state: "off"
 action:
-  - choose:
-    - alias: "Only lock the front door when it is closed!"
-      conditions:
-        - '{{ is_state("binary_sensor.front_door","off") }}'
-      sequence:
-        - alias: "Lock the front door."
-          service: lock.lock
-          entity_id: lock.front_door
-
-    default:
-      - alias: "Cancel the existing lock countdown timer."
-        service: timer.cancel
-        target:
-          entity_id: timer.front_door_unlocked
-
-      - alias: "Wait for the door to close."
-        wait_for_trigger:
-          - platform: state
-            entity_id: binary_sensor.front_door
-            to: "off"
-
-      - alias: "Restart the lock countdown timer."
-        service: timer.start
-        target:
-          entity_id: timer.front_door_unlocked
+  - alias: "Lock the front door."
+    service: lock.lock
+    entity_id: lock.front_door
