@@ -28,12 +28,8 @@ action:
         sequence:
           # Start a countdown timer to relock the front door.
           - choose:
-              - conditions:
-                  - condition: state
-                    entity_id:
-                      - input_boolean.guest_mode
-                      - input_boolean.leave_unlocked
-                    state: "off"
+              - conditions: '{{ is_state("input_boolean.guest_mode","off")
+                  and is_state("input_boolean.leave_unlocked","off") }}'
                 sequence:
                   # Start a countdown timer to relock the front door.
                   - service: timer.start
