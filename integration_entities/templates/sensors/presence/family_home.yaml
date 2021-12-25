@@ -1,0 +1,9 @@
+---
+unique_id: family_home
+name: Family Present
+icon: mdi:home-heart
+state: |
+  {{ states.person | selectattr('state','eq','home') | map(attribute='entity_id') | list | count  }}
+attributes:
+  who: |
+    {{ states.person | selectattr('state','eq','home') | map(attribute='name') | join(", ")  }}

@@ -1,0 +1,14 @@
+---
+unique_id: energy_grid_to_house
+name: Energy Grid To House
+icon: mdi:transmission-tower
+device_class: energy
+state_class: measurement
+unit_of_measurement: kW
+state: >
+  {%- set from_grid = states("sensor.rainforest_energy_monitoring_unit")|float -%}
+  {%- if from_grid > 0 %}
+    {{ "%0.3f"|format( from_grid ) }}
+  {%- else %}
+    0
+  {% endif %}

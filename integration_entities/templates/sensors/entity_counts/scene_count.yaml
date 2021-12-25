@@ -1,0 +1,8 @@
+---
+unique_id: scene_count
+name: Scene count
+icon: mdi:drama-masks
+state_class: total
+state: '{{ states.scene | count }}'
+attributes:
+  entities: '{{ states.scene | map(attribute="entity_id") | list }}'

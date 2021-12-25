@@ -1,0 +1,71 @@
+---
+# pnbruckner's sensor component as a template.
+# https://github.com/pnbruckner/ha-illuminance/blob/master/custom_components/illuminance/sensor.py
+unique_id: outdoor_illuminance
+name: Outdoor Illuminance Educated Guessor
+icon: mdi:brightness-auto
+device_class: illuminance
+state_class: measurement
+unit_of_measurement: lx
+attributes:
+  current_condition: |
+    {%- set factors = namespace(current_condition='') %}
+
+    {#- Retrieve the current condition and normalize the value #}
+    {%- set weather_sensors = [
+      "weather.accuweather",
+      "sensor.openweathermap_condition"
+    ] %}
+    {%- for sensor in weather_sensors if states(sensor) != "unknown" and factors.current_condition == "" %}
+      {%- set factors.current_condition = states(sensor) %}
+    {%- endfor %}
+    {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","")|replace(" ", "") %}
+
+    {{ current_condition }}
+  condition_factor: |
+    {% set factors = namespace(condition='') %}
+    {% set current_condition = state_attr("sensor.outdoor_illuminance","current_condition") %}
+
+    {%- set condition_factors = {
+      "10000": ("clear", "clearnight", "sunny", "windy", "exceptional"),
+      "7500": ("partlycloudy", "partlysunny", "mostlysunny", "mostlyclear", "hazy", "hazysunshine", "intermittentclouds"),
+      "2500": ("cloudy", "mostlycloudy"),
+      "1000": ("fog", "rainy", "showers", "pouring", "snowy", "snowyheavy", "snowyrainy", "flurries", "chanceflurries", "chancerain", "chancesleet", "drearyovercast", "sleet"),
+      "200": ("hail", "lightning", "tstorms")
+    } %}
+    {%- for factor in condition_factors if current_condition in condition_factors[factor] %}
+      {%- set factors.condition = factor %}
+    {%- endfor %}
+
+    {{ factors.condition }}
+  sun_factor: |
+    {% set factors = namespace(sun='') %}
+
+    {%- set right_now = now() | as_timestamp %}
+    {%- set sunrise = states("sensor.sunrise") | as_timestamp %}
+    {%- set sunrise_begin = states("sensor.dawn") | as_timestamp %}
+    {%- set sunrise_end = sunrise + (40 * 60) %}
+    {%- set sunset = states("sensor.sunset") | as_timestamp %}
+    {%- set sunset_begin = sunset - (40 * 60) %}
+    {%- set sunset_end = states("sensor.dusk") | as_timestamp %}
+    {%- if sunrise_end < right_now and right_now < sunset_begin %}
+      {%- set factors.sun = 1 %}
+    {%- elif sunset_end < right_now or right_now < sunrise_begin %}
+      {%- set factors.sun = 0 %}
+    {%- elif right_now <= sunrise_end %}
+      {%- set factors.sun = (right_now - sunrise_begin) / (60*60) %}
+    {%- else %}
+      {%- set factors.sun = (sunset_end - right_now) / (60*60) %}
+    {%- endif %}
+
+    {%- set factors.sun = 1 if factors.sun > 1 else factors.sun %}
+
+    {{ factors.sun }}
+state: |
+  {%- set sun_factor = state_attr("sensor.outdoor_illuminance","sun_factor") %}
+  {%- set condition_factor = state_attr("sensor.outdoor_illuminance","condition_factor") %}
+
+  {# Take an educated guess #}
+  {%- set illuminance = (sun_factor|float * condition_factor|float) | round %}
+  {%- set illuminance = 10 if illuminance < 10 else illuminance %}
+  {{ illuminance }}

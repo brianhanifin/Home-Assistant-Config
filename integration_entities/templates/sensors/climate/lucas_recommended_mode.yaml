@@ -1,0 +1,13 @@
+---
+# Recommend Lucas AC Mode based on temperature comparison between inside and outside.
+unique_id: lucas_recommended_mode
+name: Lucas Recommended Climate Mode
+icon: mdi:autorenew
+state: |
+  {%- set outdoor_temp = states("sensor.outdoor_temperature") %}
+  {%- set room_temp = states("sensor.lucas_room_temperature") %}
+  {%- if outdoor_temp|int < room_temp|int %}
+    fan_only
+  {%- else %}
+    cool
+  {%- endif %}

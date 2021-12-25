@@ -1,0 +1,9 @@
+---
+# Pre-render text for the UI to lighten the browser's workload.
+unique_id: ui_forecast
+state: |
+  {%- set forecast = state_attr("weather.home", "forecast") %}
+  {%- if forecast[0] is defined %}
+    <b><ha-icon icon={{ state_attr("sensor.forecast", "icon") }}></ha-icon> {{ state_attr("weather.home", "temperature") }}°</b>
+    {{ forecast[0]["temperature"]|round }}°<ha-icon icon="mdi:thermometer-high"></ha-icon> {{ forecast[0]["templow"]|round }}°<ha-icon icon="mdi:thermometer-low"></ha-icon>
+  {%- endif %}

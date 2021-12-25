@@ -1,0 +1,14 @@
+---
+unique_id: date_labor
+name: Labor Day
+icon: mdi:bed
+attributes:
+  type: Holiday
+state: |
+  {%- set today = states('sensor.date') -%}
+  {%- set this_event = states('sensor.date_labor') -%}
+  {%- if today == this_event -%}
+    {{ states('sensor.date') }}
+  {%- else -%}
+    {{ states('sensor.date_next_labor') }}
+  {%- endif -%}

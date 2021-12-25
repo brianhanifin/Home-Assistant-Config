@@ -1,0 +1,5 @@
+---
+unique_id: last_alexa
+name: Last Alexa
+icon: mdi:amazon-alexa
+state: '{{ expand(states.group.alexa_speakers) | selectattr("attributes.last_called","eq",True) | map(attribute="entity_id") | first }}'

@@ -1,0 +1,30 @@
+---
+unique_id: weather_alerts
+name: Weather Alerts
+icon: mdi:alert-octagram
+state: '{{ state_attr("sensor.san_diego_county_inland_valleys","alerts") | count }}'
+attributes:
+  title: |
+    {%- set alerts = state_attr("sensor.san_diego_county_inland_valleys","alerts") %}
+    {%- set alert_count = alerts|count %}
+    {%- if alert_count > 0 %}
+      {%- if alert_count == 1 %}
+        {{ alert[0].event }} [{{ alert[0].severity }}, {{ alert[0].certainty }}]
+      {%- else %}
+        {{ alert_count ~ " Weather Alerts"  }}
+      {%- endif %}
+    {%- endif %}
+  message: |
+    {%- set alerts = state_attr("sensor.san_diego_county_inland_valleys","alerts") %}
+    {%- set alert_count = alerts|count %}
+    {%- filter replace("  ","")|replace("WHAT...","")|replace("WHERE...","")|replace("WHEN...","")|replace("IMPACTS...","") %}
+      {%- for alert in alerts %}
+        {%- if alert_count > 1 %}
+          {{ alert.event }} [{{ alert.severity }}, {{ alert.certainty }}]
+        {%- endif %}
+        {{ alert.description|replace("\n\n","\n") }}
+
+        How to stay safe?
+        {{ alert.instruction }}
+      {% endfor %}
+    {% endfilter %}

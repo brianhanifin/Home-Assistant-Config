@@ -1,9 +1,0 @@
----
-platform: template
-sensors:
-  addon_updates:
-    friendly_name: Addon Updates
-    icon_template: mdi:counter
-    value_template: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list | count }}'
-    attribute_templates:
-      addons: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list }}'

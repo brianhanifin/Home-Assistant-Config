@@ -1,0 +1,10 @@
+---
+unique_id: responsibilities_lucas
+name: "Lucas' Responsibilities"
+icon: 'mdi:{{ "silverware-fork-knife" if is_state("input_select.responsibility_dishes_week","Lucas") else "trash-can" }}'
+state: |
+  {% if is_state('input_select.responsibility_dishes_week','Lucas') %}
+    It is Lucas' week to do the Dishes.
+  {% else %}
+    It is Lucas' week to take out the Trash and wash the Laundry.
+  {% endif %}

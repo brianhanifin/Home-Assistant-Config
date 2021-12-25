@@ -1,0 +1,7 @@
+---
+unique_id: addon_updates
+name: Addon updates
+icon: mdi:counter
+state: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list | count }}'
+attributes:
+  addons: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list }}'

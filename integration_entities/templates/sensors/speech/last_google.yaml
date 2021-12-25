@@ -1,0 +1,23 @@
+---
+unique_id: last_google
+name: Last Google
+icon: mdi:google-home
+state: |
+  {% set list = namespace(dates="",speakers="") %}
+
+  {% set media_player = "group.google_speakers" %}
+  {% set speakers = expand(media_player) | map(attribute='entity_id') | list %}
+  
+  {% for speaker in speakers %}
+    {% set list.dates = list.dates ~ " " ~ as_timestamp(states[speaker].last_updated) %}
+    {% set list.speakers = list.speakers ~ " " ~ states[speaker].entity_id %}
+  {% endfor %}
+  {% set dates = list.dates | trim %}
+  {% set dates = dates.split(" ") %}
+  {% set speakers = list.speakers | trim %}
+  {% set speakers = speakers.split(" ") %}
+
+  {% set last_updated = dates|max|float %}
+  {% for speaker in speakers if last_updated == as_timestamp(states[speaker].last_updated) %}
+    {{ speaker }}
+  {%- endfor %}

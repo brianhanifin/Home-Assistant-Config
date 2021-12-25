@@ -1,0 +1,9 @@
+---
+unique_id: outdoor_humidity
+name: Outdoor Humidity
+device_class: humidity
+state_class: measurement
+unit_of_measurement: "%"
+state: |
+  {%- set humidity = state_attr("weather.home","humidity") %}
+  {{ humidity|int if humidity is defined }}

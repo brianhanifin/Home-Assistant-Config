@@ -1,0 +1,9 @@
+---
+unique_id: today_low
+name: "Today's Low"
+device_class: temperature
+state_class: measurement
+unit_of_measurement: "°F"
+state: |
+  {%- set forecast = state_attr('weather.home','forecast') %}
+  {{ forecast[0].templow|int if forecast[0] is defined }}

@@ -1,0 +1,11 @@
+---
+unique_id: solar_energy_production_current_total
+name: Solar Energy Production Current Total (to grid + to house)
+icon: mdi:solar-panel
+device_class: energy
+state_class: measurement
+unit_of_measurement: kW
+state: |
+  {%- set to_grid = states("sensor.solar_energy_production_to_grid")|float %}
+  {%- set to_house = states("sensor.solar_energy_production_to_house")|float %}
+  {{ "%0.3f"|format(to_grid + to_house) }}

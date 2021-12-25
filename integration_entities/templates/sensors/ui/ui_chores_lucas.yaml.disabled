@@ -1,0 +1,11 @@
+---
+# Pre-render text for the UI to lighten the browser's workload.
+unique_id: ui_chores_lucas
+name: UI Chores Lucas
+state: |
+  {% set name = "Lucas" %}
+  {% if name == states("input_select.responsibility_dishes_week") -%}
+    <ha-icon icon="mdi:silverware-clean"></ha-icon>
+  {% else -%}
+    <ha-icon icon="mdi:trash-can-outline"></ha-icon><ha-icon icon="mdi:tshirt-crew-outline"></ha-icon>
+  {% endif -%}

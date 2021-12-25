@@ -1,0 +1,21 @@
+---
+# Recommend Lucas AC Mode based on temperature comparison between inside and outside.
+unique_id: lucas_ac_selected_mode
+name: Lucas AC Selected Mode
+icon: mdi:file-tree
+state: |
+  {%- if is_state("switch.lucas_ac_auto","on") %}
+    Auto
+  {%- elif is_state("switch.lucas_ac_cool","on") %}
+    Cool
+  {%- elif is_state("switch.lucas_ac_fan","on") %}
+    Fan
+  {#%- elif not is_state("sensor.lucas_ac_selected_mode","Cool") %}
+    {%- if is_state("sensor.lucas_ac","Cooling") %}
+      Cool
+    {%- elif is_state("sensor.lucas_ac","Fan") %}
+      Fan
+    {%- endif %#}
+  {%- else %}
+    Off
+  {%- endif %}

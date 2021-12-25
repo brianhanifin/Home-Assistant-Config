@@ -1,0 +1,41 @@
+---
+unique_id: update_message
+name: Update message
+icon: 'mdi:update'
+state: |
+  {%- set updates = states("sensor.updates")|int|default("0") %}
+  {%- if updates == 1 %} 
+    There is an update available.
+  {% elif updates > 1 %}
+    There are {{ updates }} updates available.
+  {% endif %}
+
+  {%- if state_attr("sensor.updates","core_update") %}
+    - There is a [Core update](/hassio/update-available/core).
+  {%- endif %}
+
+  {%- if state_attr("sensor.updates","os_update") %}
+    - There is an [OS update](/config/dashboard).
+  {%- endif %}
+
+  {%- if state_attr("sensor.updates","supervisor_update") %}
+    - There is a [Supervisor update](/config/dashboard).
+  {%- endif %}
+
+  {%- if state_attr("sensor.updates","hacs_update") %}
+    {%- set hacs_updates = states("sensor.hacs")|int|default("0") %}
+    {%- if hacs_updates == 1 %}
+      - There is one [HACS update](/hacs).
+    {%- else %}
+      - There are {{ hacs_updates }} [HACS updates](/hacs).
+    {%- endif %}
+  {%- endif %}
+
+  {%- if state_attr("sensor.updates","addon_update") %}
+    {%- set addon_updates = states("sensor.addon_updates")|int|default("0") %}
+    {%- if addon_updates == 1 %}
+      - There is one [Addon update](/config/dashboard).
+    {%- else %}
+      - There are {{ addon_updates }} [Addon updates](/config/dashboard).
+    {%- endif %}
+  {%- endif %}

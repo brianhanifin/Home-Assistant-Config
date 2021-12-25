@@ -1,0 +1,14 @@
+---
+unique_id: solar_energy_production_to_grid
+name: Solar Energy Production To Grid
+icon: mdi:solar-panel-large
+device_class: energy
+state_class: measurement
+unit_of_measurement: kW
+state: |
+  {%- set grid_transfer = states("sensor.energy_grid_transfer_current")|float %}
+  {%- if grid_transfer < 0 %}
+    {{ grid_transfer|abs }}
+  {%- else %}
+    0
+  {% endif %}

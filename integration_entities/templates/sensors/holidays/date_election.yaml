@@ -1,0 +1,14 @@
+---
+unique_id: date_election
+name: Election Day
+icon: fas:flag-usa
+attributes:
+  type: Holiday
+state: |
+  {%- set today = states('sensor.date') -%}
+  {%- set this_event = states('sensor.date_election') -%}
+  {%- if today == this_event -%}
+    {{ states('sensor.date') }}
+  {%- else -%}
+    {{ states('sensor.date_next_election') }}
+  {%- endif -%}

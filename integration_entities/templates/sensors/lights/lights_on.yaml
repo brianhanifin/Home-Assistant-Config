@@ -1,0 +1,5 @@
+---
+unique_id: lights_on
+name: Lights On
+state: |
+  {{ expand("group.actionable_lights") | selectattr("state","eq","on") | map(attribute="name") | join(", ") }}

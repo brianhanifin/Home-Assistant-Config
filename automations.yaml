@@ -7,13 +7,13 @@
     minutes: /15
   condition:
   - condition: template
-    value_template: '{{ states("sensor.outdoor_temperature")|float < (states("sensor.home_temperature")|float
+    value_template: '{{ states("sensor.outdoor_temperature")|float < (states("sensor.home_thermostat_temperature")|float
       - 2) }}'
   - condition: state
     entity_id: input_boolean.cooler_outside_notification
     state: 'off'
   - condition: template
-    value_template: '{{ (states("sensor.outdoor_humidity")|round - states("sensor.home_humidity")|round)
+    value_template: '{{ (states("sensor.outdoor_humidity")|round - states("sensor.home_thermostat_humidity")|round)
       <= 25 }}'
   - after: '15:00'
     before: '21:00'
@@ -307,7 +307,7 @@
     minutes: /15
   condition:
   - condition: template
-    value_template: '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_temperature")|float
+    value_template: '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_thermostat_temperature")|float
       }}'
   - condition: time
     after: 06:00:00
