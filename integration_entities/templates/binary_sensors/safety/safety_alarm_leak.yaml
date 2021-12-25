@@ -1,0 +1,19 @@
+---
+unique_id: safety_alarm_leak
+name: Safety alarm leak
+icon: mdi:water-alert
+device_class: moisture
+    # 1=smoke, 2=co2, 12=test, 13=idle
+state: |
+  {{
+    is_state('binary_sensor.dishwasher_leak', 'on') or
+    is_state('binary_sensor.downstairs_bathroom_leak', 'on') or
+    is_state('binary_sensor.garage_leak', 'on') or
+    is_state('binary_sensor.goez_suite_1_leak', 'on') or
+    is_state('binary_sensor.goez_suite_2_leak', 'on') or
+    is_state('binary_sensor.goez_suite_water_heater_leak', 'on') or
+    is_state('binary_sensor.kitchen_leak', 'on') or
+    is_state('binary_sensor.master_bathroom_1_leak', 'on') or
+    is_state('binary_sensor.master_bathroom_2_leak', 'on') or
+    is_state('binary_sensor.upstairs_bathroom_leak', 'on')
+  }}

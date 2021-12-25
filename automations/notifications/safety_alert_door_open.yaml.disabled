@@ -18,7 +18,7 @@ variables:
     The {{ state_attr(entity_id, "friendly_name") }} has been open for 2 minutes. Check if it was left open by accident.
   critical: |
     {%- if entity_id == "binary_sensor.garage_entry_door" %}
-      {{ is_state("binary_sensor.noncritical_alert_quiettime","off") }}
+      {{ is_state("binary_sensor.noncritical_alert_quiet_time","off") }}
     {% endif %}
 action:
   - service: script.notify_mobile

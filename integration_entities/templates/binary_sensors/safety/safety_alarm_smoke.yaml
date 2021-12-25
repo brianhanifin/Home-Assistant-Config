@@ -1,0 +1,25 @@
+---
+unique_id: safety_alarm_smoke
+name: Safety alarm smoke
+icon: 'mdi:fire'
+device_class: smoke
+# 1=smoke, 2=co2, 12=test, 13=idle
+state: |
+  {{
+    is_state('sensor.safety_alarm_bedroom_type', '1') or
+    is_state('sensor.safety_alarm_kyles_room_type', '1') or
+    is_state('sensor.safety_alarm_lucas_room_type', '1') or
+    is_state('sensor.safety_alarm_garage_type', '1') or
+    is_state('sensor.safety_alarm_guest_room_type', '1') or
+    is_state('sensor.safety_alarm_stairs_type', '1')
+  }}
+  #   or
+
+  #   is_state('sensor.safety_alarm_bedroom_type', '12') or
+  #   is_state('sensor.safety_alarm_kyles_room_type', '12') or
+  #   is_state('sensor.safety_alarm_lucas_room_type', '12') or
+  #   is_state('sensor.safety_alarm_garage_type', '12') or
+  #   is_state('sensor.safety_alarm_guest_room_type', '12') or
+  #   is_state('sensor.safety_alarm_stairs_type', '12')
+  # }}
+

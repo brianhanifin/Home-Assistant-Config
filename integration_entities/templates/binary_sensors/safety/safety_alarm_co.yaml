@@ -1,0 +1,15 @@
+---
+unique_id: safety_alarm_co
+name: Safety alarm CO
+icon: mdi:cloud-outline
+device_class: gas
+    # 1=smoke, 2=co2, 12=test, 13=idle
+state: |
+  {{
+    is_state('sensor.safety_alarm_bedroom_type', '2') or
+    is_state('sensor.safety_alarm_kyles_room_type', '2') or
+    is_state('sensor.safety_alarm_lucas_room_type', '2') or
+    is_state('sensor.safety_alarm_garage_type', '2') or
+    is_state('sensor.safety_alarm_guest_room_type', '2') or
+    is_state('sensor.safety_alarm_stairs_type', '2')
+  }}

@@ -16,7 +16,7 @@ variables:
   time_now: '{{ as_timestamp(now()) }}'
   seconds_difference: '{{ time_now - last_opened }}'
   door_recently_opened: '{{ seconds_difference|round < 120 }}'
-  outdoor_illuminance: '{{ states("sensor.outdoor_illuminance") }}'
+  outdoor_illuminance: '{{ states("sensor.outdoor_illuminance_educated_guessor") }}'
 condition:
   - '{{ door_recently_opened == false }}'
 action:

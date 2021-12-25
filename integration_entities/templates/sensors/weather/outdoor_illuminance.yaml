@@ -24,7 +24,7 @@ attributes:
     {{ current_condition }}
   condition_factor: |
     {% set factors = namespace(condition='') %}
-    {% set current_condition = state_attr("sensor.outdoor_illuminance","current_condition") %}
+    {% set current_condition = state_attr("sensor.outdoor_illuminance_educated_guessor","current_condition") %}
 
     {%- set condition_factors = {
       "10000": ("clear", "clearnight", "sunny", "windy", "exceptional"),
@@ -62,8 +62,8 @@ attributes:
 
     {{ factors.sun }}
 state: |
-  {%- set sun_factor = state_attr("sensor.outdoor_illuminance","sun_factor") %}
-  {%- set condition_factor = state_attr("sensor.outdoor_illuminance","condition_factor") %}
+  {%- set sun_factor = state_attr("sensor.outdoor_illuminance_educated_guessor","sun_factor") %}
+  {%- set condition_factor = state_attr("sensor.outdoor_illuminance_educated_guessor","condition_factor") %}
 
   {# Take an educated guess #}
   {%- set illuminance = (sun_factor|float * condition_factor|float) | round %}

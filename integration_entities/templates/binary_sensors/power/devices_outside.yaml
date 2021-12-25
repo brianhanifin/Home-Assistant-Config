@@ -1,0 +1,8 @@
+---
+unique_id: outside_devices
+name: Outside devices
+device_class: power
+state: '{{
+    is_state("light.porch", "on")
+    or is_state("cover.garage_door", "open")
+  }}'

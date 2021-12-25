@@ -1,0 +1,14 @@
+---
+unique_id: noncritical_alert_quiet_time
+name: Noncritical alert quiet time
+icon: mdi:sleep
+state: |
+  {%- set current_hour = states("sensor.time").split(":")[0]|int %}
+  {%- set hour_start = states("input_number.quiet_hour_start")|int %}
+  {%- set hour_end = states("input_number.quiet_hour_end")|int %}
+  {%- if hour_start <= hour_end %}
+    {{ not hour_start <= current_hour <= hour_end }}
+  {%- else %}
+    {{ current_hour >= hour_start
+    or current_hour < hour_end }}
+  {% endif %}

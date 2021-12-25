@@ -4,7 +4,7 @@ name: Updates
 icon: mdi:counter
 state: |
   {% set updates = 0 %}
-  {% if is_state("binary_sensor.update_available","on") %}
+  {% if is_state("binary_sensor.updater","on") %}
     {% set updates = updates + 1 %}
   {% endif %}
   {% if is_state("binary_sensor.home_assistant_operating_system_update_available","on") %}
@@ -20,7 +20,7 @@ state: |
 attributes:
   home_assistant_updates: |
     {% set updates = 0 %}
-    {% if is_state("binary_sensor.update_available","on") %}
+    {% if is_state("binary_sensor.updater","on") %}
       {% set updates = updates + 1 %}
     {% endif %}
     {% if is_state("binary_sensor.home_assistant_operating_system_update_available","on") %}
@@ -30,7 +30,7 @@ attributes:
       {% set updates = updates + 1 %}
     {% endif %}
     {{ updates }}
-  core_update: '{{ is_state("binary_sensor.update_available","on") }}'
+  core_update: '{{ is_state("binary_sensor.updater","on") }}'
   os_update: '{{ is_state("binary_sensor.home_assistant_operating_system_update_available","on") }}'
   supervisor_update: '{{ state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") }}'
   hacs_update: '{{ states("sensor.hacs")|int|default("0") > 0 }}'
