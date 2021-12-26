@@ -8,11 +8,12 @@ state: |
   {%- set event = states.sensor | selectattr('attributes.attribution','eq','Sensor data calculated by Anniversaries Integration') | selectattr('state','eq','0') | map(attribute='entity_id') | first %}
   {%- set events.anniversary = state_attr(event,"friendly_name") if event|length > 0 else "" %}
 
+  {%- set today = '{:04}-{:02}-{:02}'.format(now().year,now().month,now().day) %}
+  {#%- set today = '{:04}-{:02}-{:02}'.format(2021, 12, 25) %#}
+
   {%- set holidays = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
   {%- for holiday in holidays -%}
     {%- set holiday_date = states(holiday) %}
-    {%- set today = '{:04}-{:02}-{:02}'.format(now().year,now().month,now().day) %}
-
     {%- if holiday_date|length > 10 %}
       {%- set holiday_date = holiday_date[:10] -%}
     {%- elif holiday_date|length < 10 %}
@@ -25,6 +26,6 @@ state: |
     {%- endif %}
   {%- endfor %}
 
-      {{ events.anniversary }}
-      {{- "," if events.anniversary != '' and events.holiday != '' }}
-      {{- events.holiday }}
+  {{ events.anniversary }}
+  {{- "," if events.anniversary != '' and events.holiday != '' }}
+  {{- events.holiday }}

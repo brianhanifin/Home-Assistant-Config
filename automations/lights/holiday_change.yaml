@@ -8,7 +8,7 @@ trigger:
 variables:
   state: '{{ trigger.to_state.state|trim }}'
 condition:
-  - "{{ state not in [none,'unknown',''] }}"
+  - "{{ state|lower not in ['',none,'unknown','unavailable'] }}"
 action:
   - service: script.notify_mobile
     data:

@@ -9,9 +9,11 @@ trigger:
       - light.table_lamp
     from: "off"
     to: "on"
+variables:
+  holiday: '{{ states('sensor.holiday') }}'
 condition:
   # Only continue if there is a holiday scene to apply.
   - condition: template
-    value_template: "{{ not is_state('sensor.holiday','') }}"
+    value_template: "{{ holiday|lower not in ['','unavailable'] }}"
 action:
   - service: script.holiday_color_change

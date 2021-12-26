@@ -2,6 +2,7 @@
 # Color Table - http://www.colorhexa.com/color-names
 variables:
   holiday_colors:
+    test: "Green"
     birthday: "Purple"
     christmas: "Green"
     easter: "Orchid"
@@ -16,19 +17,18 @@ variables:
     usa: "Blue"
     valentine: "Crimson"
   holiday_scene: |
-    {% set holiday_scene = states('sensor.holiday') -%}
-    {%- if holiday_scene is not none and holiday_scene != "" -%}
-      {%- set holiday_scene = holiday_scene|lower|trim|replace("'","")|replace(" ","_")|replace(",_eve","")|replace("_day","") -%}
-      {%- if holiday_scene in ["constitution","flag","independence","memorial","mlk","presidents","veterans"] -%}
+    {% set holiday = states('sensor.holiday') -%}
+    {%- if holiday is not none and holiday != "" -%}
+      {%- set holiday = holiday|lower|trim|replace("'","")|replace(" ","_")|replace(",_eve","")|replace("_day","") -%}
+      {%- if holiday in ["constitution","flag","independence","memorial","mlk","presidents","veterans"] -%}
         {{ "usa" }}
       {%- else -%}
-        {%- set last_word = holiday_scene.split('_')|last -%}
-        {%- if last_word == "birthday" -%}
-          {{ "birthday" }}
-        {%- elif last_word == "christmas" -%}
+        {%- if holiday == "christmas" -%}
           {{ "christmas" }}
+        {%- elif holiday.split('_')|last == "birthday" -%}
+          {{ "birthday" }}
         {%- else -%}
-          {{ holiday_scene|replace("mothers","valentine")|replace("earth","st_patty") }}
+          {{ holiday|replace("mothers","valentine")|replace("earth","st_patty") }}
         {%- endif -%}
       {%- endif %}
     {%- else -%}
