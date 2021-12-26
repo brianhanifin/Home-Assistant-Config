@@ -1,19 +1,24 @@
 ---
 alias: "Restart Addon: SDR"
 id: restart_addon_sdr
-description: Restart the SDR addon when the backyard temperature is unavailable.
+description: Restart the SDR addon when a sensor temperature goes unavailable.
 mode: single
 trigger:
-  # Watch for the temperature sensor to be 'unavailable' for 2 minutes.
+  # Watch for a temperature sensor to be 'unavailable' for 5 minutes.
   - platform: state
-    entity_id: sensor.backyard_temperature
+    entity_id:
+      - sensor.backyard_temperature
+      - sensor.garage_fridge_temperature
+      - sensor.garage_freezer_temperature
     to: "unavailable"
     for:
       minutes: 5
 action:
   - alias: "Check again, and restart the addon to resolve the MQTT connection failure?"
     choose:
-      - conditions: "{{ is_state('sensor.backyard_temperature','unavailable') }}"
+      - conditions: "{{ is_state('sensor.backyard_temperature','unavailable') 
+          or is_state('sensor.garage_fridge_temperature','unavailable')
+          or is_state('sensor.garage_freezer_temperature','unavailable') }}"
         sequence:
           - service: hassio.addon_restart
             data:
