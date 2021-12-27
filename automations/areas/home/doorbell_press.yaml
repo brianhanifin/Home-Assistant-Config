@@ -44,32 +44,6 @@ action:
     data:
       path: /lovelace-sidebar/cameras
 
-  - alias: Stream the camera feed to all open Home Assistant browsers.
-    service: browser_mod.popup
-    data:
-      title: Front Door Camera
-      card:
-        type: picture-glance
-        title: Front Door Camera
-        camera_image: camera.front_door
-        camera_view: camera.front_door
-        entities:
-          - binary_sensor.front_door_person_motion
-          - camera.front_door
-        entity: binary_sensor.front_door_person_motion
-        state_filter:
-          "off": grayscale(100%)
-          "on": brightness(110%) saturate(1.2)
-      large: true
-      # Auto close after 2 minutes (120 seconds * 1000 miliseconds).
-      auto_close: true
-
-  - delay:
-      seconds: 30
-
-  # Close the camera popup.
-  - service: browser_mod.close_popup
-
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
       minutes: 1
