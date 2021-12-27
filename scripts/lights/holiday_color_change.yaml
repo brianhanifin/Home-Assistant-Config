@@ -16,7 +16,7 @@ variables:
     thanksgiving: "Orange"
     usa: "Blue"
     valentine: "Crimson"
-  holiday_scene: |
+  holiday: |
     {% set holiday = states('sensor.holiday') -%}
     {%- if holiday is not none and holiday != "" -%}
       {%- set holiday = holiday|lower|trim|replace("'","")|replace(" ","_")|replace(",_eve","")|replace("_day","") -%}
@@ -38,16 +38,16 @@ sequence:
   # - service: script.debug
   #   data:
   #     message: |
-  #       holiday_scene: "{{ holiday_scene }}"
-  #       {{ holiday_scene != "standard" }}
+  #       holiday: "{{ holiday }}"
+  #       {{ holiday != "standard" }}
 
   # When a Holiday scene is active (ie. NOT 'standard')
   - choose:
       - conditions:
-          - '{{ holiday_scene != "standard" }}'
+          - '{{ holiday != "standard" }}'
         sequence:
           - variables:
-              color: '{{ holiday_colors[holiday_scene] }}'
+              color: '{{ holiday_colors[holiday] }}'
 
           # Both guest_mode are inactive
           # - condition: state
