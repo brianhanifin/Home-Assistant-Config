@@ -3,34 +3,10 @@ sequence:
   # Run the config_check
   - service: script.config_check
 
-  # Reboot only if the configuration is OK
-  - choose:
-      - conditions:
-          # Restart only if the configuration is OK
-          - condition: template
-            value_template:  |
-              {% set result = state_attr("persistent_notification.1337","message") %}
-              {{ result|trim == "Configuration is OK!" }}
-        sequence:
-          # Clear any old config check notifications
-          - service: persistent_notification.dismiss
-            data:
-              notification_id: "1337"
+  - service: script.toast
+    data:
+      type: error
+      message: Rebooting the server!
 
-          - service: script.toast
-            data:
-              message: "✔️ = 👍"
-
-          - service: script.toast
-            data:
-              message: Rebooting the server!
-
-          #- service: script.reboot_server
-          - service: hassio.host_reboot
-    
-    default:
-      # Display the message as a toast notification
-      - service: script.toast
-        data_template:
-          message: "{{ state_attr('persistent_notification.1337','message') }}"
-          duration: 0
+  #- service: script.reboot_server
+  - service: hassio.host_reboot

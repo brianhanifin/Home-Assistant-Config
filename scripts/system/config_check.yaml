@@ -2,8 +2,9 @@
 sequence:
   - service: script.toast
     data:
-      message: ✔️ config is running!
-      duration: 5000
+      type: warning
+      message: "Config ✔️ begins."
+      duration: 30
 
   # Run the config_check
   - service: config_check.run
@@ -12,8 +13,39 @@ sequence:
   - wait_template: "{{ states('persistent_notification.1337') is string }}"
     timeout: 00:03:00
 
-  # Display the message as a toast notification
-  - service: script.toast
-    data_template:
-      message: "{{ state_attr('persistent_notification.1337','message') }}"
-      duration: 0
+  - alias: 'Dismiss the persistent notification if the check went well.'
+    choose:
+      - conditions: '{{ state_attr("persistent_notification.1337", "message")|trim == "Configuration is OK!" }}'
+        sequence:
+          - service: persistent_notification.dismiss
+            data:
+              notification_id: "1337"
+
+          - service: script.toast
+            data:
+              type: success
+              message: "Config ✔️ = 👍"
+              duration: 30
+
+    default:
+      - variables:
+          message: |
+            {% set message = state_attr('persistent_notification.1337','message') | trim %}
+            {% set message = message | replace("config/integrations/homeassistant/../../", "") %}
+            {% set message = message | replace("[1m", "") | replace("[1;37m", "") | replace("[1;31m", "") %}
+            {% set message = message | replace(":", ": ") %}
+            {{ message | trim }}
+
+      - service: script.toast
+        data:
+          type: alert
+          title: Config check error
+          message: "{{ message }}"
+
+      - service: script.turn_off
+        target:
+          entity_id:
+            - script.automation_reload
+            - script.config_check_and_reboot_server
+            - script.check_and_restart
+            - script.script_reload

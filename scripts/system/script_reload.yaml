@@ -3,40 +3,16 @@ sequence:
   # Run the config_check
   - service: script.config_check
 
-  # Wait for the notification to appear
-  - wait_template: "{{ states('persistent_notification.1337') is string }}"
-    timeout: 00:03:00
+  - service: script.toast
+    data:
+      type: warning
+      message: Reloading scripts...
+      duration: 15
 
-  - choose:
-      - conditions:
-          # Restart only if the configuration is OK
-          - condition: template
-            value_template: |
-              {% set result = state_attr("persistent_notification.1337","message") %}
-              {{ result|trim == "Configuration is OK!" }}
-        sequence:
-          # Clear any old config check notifications
-          - service: persistent_notification.dismiss
-            data:
-              notification_id: "1337"
+  - service: shell_command.script_reload
 
-          - service: script.toast
-            data:
-              message: "✔️ = 👍"
-
-          - delay:
-              seconds: 2
-
-          - service: script.toast
-            data:
-              message: Reloading scripts...
-              duration: 15
-
-          - service: shell_command.script_reload
-
-    default:
-      # Display the message as a toast notification
-      - service: script.toast
-        data:
-          message: "{{ state_attr('persistent_notification.1337','message') }}"
-          duration: 0
+  - service: script.toast
+    data:
+      type: success
+      message: Scripts have been reloaded!
+      duration: 15
