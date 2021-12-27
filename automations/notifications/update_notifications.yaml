@@ -22,6 +22,7 @@ action:
 
   - service: script.toast
     data:
+      type: warning
       message: |
         {%- set combined_updates =
               states("sensor.updates")|int|default("0") +
@@ -31,4 +32,4 @@ action:
         {% elif combined_updates > 1 %}
           There are {{ combined_updates }} updates available.
         {% endif %}
-      duration: 600
+      duration: 0

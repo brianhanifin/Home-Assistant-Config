@@ -43,7 +43,9 @@
   condition: []
   action:
   - data:
-      message: Daily maintenance.
+      message: Daily maintenance begins.
+      type: warning
+      duration: 300
     service: script.toast
   - service: homeassistant.turn_off
     target:
@@ -62,6 +64,10 @@
       keep_days: 10
       repack: true
     service: recorder.purge
+  - service: script.toast
+    data:
+      type: success
+      message: Daily maintenance complete.
   mode: single
 - id: '1601178260005'
   alias: Shopping List Add
@@ -260,12 +266,11 @@
     event: start
   condition: []
   action:
-  - service: script.turn_on
-    target:
-      entity_id: script.toast
+  - service: script.toast
     data:
-      variables:
-        message: Startup automation begins
+      message: Startup automation begins.
+      type: warning
+      duration: 300
   - service: frontend.set_theme
     data:
       name: Caule Black Blue Glass
@@ -287,12 +292,10 @@
   - service: script.turn_on
     target:
       entity_id: script.create_actionable_lights_group
-  - service: script.turn_on
-    target:
-      entity_id: script.toast
+  - service: script.toast
     data:
-      variables:
-        message: Startup automation complete
+      message: Startup automation complete.
+      type: success
   - service: automation.turn_off
     target:
       entity_id: automation.startup
@@ -349,9 +352,8 @@
   description: The startup automation will turn back on after an automation reload.
     So turn it right back off when it changes from "unavailable" to "on".
   trigger:
-  - platform: state
-    entity_id: automation.startup
-    to: 'on'
+  - platform: event
+    event_type: automation_reloaded
   condition:
   - condition: template
     value_template: '{%- set uptime_minutes = as_timestamp(now()) - as_timestamp(states("sensor.last_restart"))|float
