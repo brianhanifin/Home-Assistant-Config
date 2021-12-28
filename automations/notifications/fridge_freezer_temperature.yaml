@@ -1,0 +1,41 @@
+---
+alias: Fridge/Freezer Temperature Alert
+id: fridge_freezer_temperature
+description: Notify us if the temperature goes above a threshold.
+mode: single
+trigger:
+  - id: fridge
+    platform: numeric_state
+    entity_id:
+      - sensor.fridge_temperature
+      - sensor.garage_fridge_temperature
+    above: input_number.fridge_temperature_threshold
+  - id: freezer
+    platform: numeric_state
+    entity_id:
+      - sensor.freezer_temperature
+      - sensor.garage_freezer_temperature
+    above: input_number.freezer_temperature_threshold
+variables:
+  entity_id: '{{ trigger.to_state.entity_id }}'
+  entity_name: '{{ state_attr(entity_id, "friendly_name") | replace(" temperature", "") }}'
+  threshold_id: '{{ "input_number." + trigger.id + "_temperature_threshold" }}'
+  title: '{{ entity_name }} is warm'
+  message: |
+    The {{ entity_name }} is {{ states(entity_id)|round(0) }}°F.
+    The threshold is currently set to {{ states(threshold_id)|round(0) }}°F.
+action:
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: '{{ title }}'
+      message: '{{ message }}'
+      who: brian
+      group: safety-alert
+      url: /lovelace/home
+
+  - service: script.toast
+    data:
+      type: alert
+      title: '{{ title }}'
+      message: '{{ message }}'
