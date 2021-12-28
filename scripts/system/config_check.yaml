@@ -1,6 +1,6 @@
 ---
 sequence:
-  - service: script.toast
+  - service: script.notify_web
     data:
       type: warning
       message: "Config ✔️ begins."
@@ -21,7 +21,7 @@ sequence:
             data:
               notification_id: "1337"
 
-          - service: script.toast
+          - service: script.notify_web
             data:
               type: success
               message: "Config ✔️ = 👍"
@@ -36,7 +36,7 @@ sequence:
             {% set message = message | replace(":", ": ") %}
             {{ message | trim }}
 
-      - service: script.toast
+      - service: script.notify_web
         data:
           type: alert
           title: Config check error

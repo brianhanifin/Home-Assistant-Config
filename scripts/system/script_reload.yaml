@@ -3,7 +3,7 @@ sequence:
   # Run the config_check
   - service: script.config_check
 
-  - service: script.toast
+  - service: script.notify_web
     data:
       type: warning
       message: Reloading scripts...
@@ -11,7 +11,7 @@ sequence:
 
   - service: shell_command.script_reload
 
-  - service: script.toast
+  - service: script.notify_web
     data:
       type: success
       message: Scripts have been reloaded!

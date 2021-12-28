@@ -37,7 +37,7 @@ automation:
       #   condition: template
       #   value_template: '{{ states("person." + who) in ["home","unknown"] }}'
 
-      - service: script.toast
+      - service: script.notify_web
         data:
           message: "Automation: Wakeup Light Activate Triggered"
 
@@ -124,6 +124,6 @@ script:
         target:
           entity_id: '{{ "timer.wakeup_timeout_" ~ who }}'
 
-      - service: script.toast
+      - service: script.notify_web
         data:
           message: "{{ who|title }}'s Wakeup Light Complete"

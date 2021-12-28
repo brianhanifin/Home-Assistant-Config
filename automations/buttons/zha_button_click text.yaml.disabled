@@ -67,7 +67,7 @@ action:
           - delay:
               seconds: '{{ delay_seconds|float }}'
 
-          - service: script.toast
+          - service: script.notify_web
             data:
               message: 'remote: {{ remote }}'
 
@@ -162,7 +162,7 @@ action:
                   - variables:
                       click_count: '{{ states("input_text.button_click").split(",")[3]|int }}'
 
-                  # - service: script.toast
+                  # - service: script.notify_web
                   #   data:
                   #     message: 'clicks: {{ click_count }}'
 

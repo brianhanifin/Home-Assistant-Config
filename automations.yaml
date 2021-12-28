@@ -46,7 +46,7 @@
       message: Daily maintenance begins.
       type: warning
       duration: 300
-    service: script.toast
+    service: script.notify_web
   - service: homeassistant.turn_off
     target:
       entity_id:
@@ -64,7 +64,7 @@
       keep_days: 10
       repack: true
     service: recorder.purge
-  - service: script.toast
+  - service: script.notify_web
     data:
       type: success
       message: Daily maintenance complete.
@@ -266,7 +266,7 @@
     event: start
   condition: []
   action:
-  - service: script.toast
+  - service: script.notify_web
     data:
       message: Startup automation begins.
       type: warning
@@ -292,7 +292,7 @@
   - service: script.turn_on
     target:
       entity_id: script.create_actionable_lights_group
-  - service: script.toast
+  - service: script.notify_web
     data:
       message: Startup automation complete.
       type: success

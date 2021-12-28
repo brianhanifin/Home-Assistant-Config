@@ -174,7 +174,7 @@ script:
                 brightness_pct: '{{ brightness_pct }}'
                 transition: 59
 
-            # - service: script.toast
+            # - service: script.notify_web
             #   data:
             #     message: |
             #       repeat.index: {{ repeat.index }}
@@ -197,7 +197,7 @@ script:
         target:
           entity_id: '{{ "timer.event_timeout_" ~ id }}'
 
-      - service: script.toast
+      - service: script.notify_web
         data:
           message: '{{ id|replace("_"," ")|title }} Complete'
 
