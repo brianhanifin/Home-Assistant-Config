@@ -4,18 +4,14 @@ variables:
     {% set type = type|default("success") %}
     {{ type }}
   notification_service: 'll_notify.{{ type }}'
-  duration: '{{ duration|int(default=0) }}'
-sequence:
-  # - service: browser_mod.toast
-  #   data:
-  #     message: "{{ message }}"
-  #     duration: "{{ duration }}"
+  duration: '{{ duration }}'
 
+sequence:
   - service: "{{ notification_service }}"
     data:
       title: "{{ title }}"
       message: "{{ message }}"
-      wait: "{{ duration }}"
+      wait: "{{ duration|int(default=0) }}"
 
 fields:
   type:
@@ -39,6 +35,7 @@ fields:
       text:
   duration:
     description: This notification will disappear after how many seconds? (*Ignored for Alert type messages.*)
+    default: 5
     selector:
       number:
         min: 0
