@@ -25,7 +25,7 @@ variables:
   wakeup_time: '{{ states("input_datetime.event_light_wakeup_nerene") }}'
   wakeup: '{{ now_timestamp | timestamp_custom("%Y-%m-%d "+wakeup_time+timezone_offset, true) }}'
   wakeup_timestamp: '{{ as_timestamp(wakeup) }}'
-  wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) | int }}'
+  wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) | int(default=0) }}'
   near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
 
 action:

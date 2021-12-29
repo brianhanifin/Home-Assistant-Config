@@ -100,7 +100,7 @@ script:
                   {% if repeat.index == 1 %}
                     26
                   {% else %}
-                    {% set brightness = state_attr(light, "brightness")|int + 26 %}
+                    {% set brightness = state_attr(light, "brightness")|int(default=0) + 26 %}
                     {{ brightness if brightness < 254 else 254 }}
                   {% endif %}
 

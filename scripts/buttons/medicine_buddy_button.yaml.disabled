@@ -24,14 +24,14 @@ sequence:
       payload_template: >
         {%- if type in ["single", "long"] -%}
           {
-            "timestamp": {{ as_timestamp(now())|int }},
+            "timestamp": {{ as_timestamp(now())|int(default=0) }},
             "visibility_timeout": "none",
             "visible": true,
             "unit_of_measurement": "timestamp"
           }
         {%- else -%}
           {
-            "timestamp": {{ (as_timestamp(now())-86400)|int }},
+            "timestamp": {{ (as_timestamp(now())-86400)|int(default=0) }},
             "visibility_timeout": "none",
             "visible": true,
             "unit_of_measurement": "timestamp"

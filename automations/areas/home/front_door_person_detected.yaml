@@ -26,7 +26,7 @@ action:
 
   # Skip turning on the entry lights in the middle of the day.
   - choose:
-      - conditions: "{{ outdoor_illuminance|int < 2000 }}"
+      - conditions: "{{ outdoor_illuminance|int(default=0) < 2000 }}"
         sequence:
           - choose:
               - conditions:

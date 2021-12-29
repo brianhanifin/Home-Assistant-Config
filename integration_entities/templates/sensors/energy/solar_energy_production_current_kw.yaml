@@ -5,4 +5,4 @@ icon: mdi:solar-panel
 device_class: energy
 state_class: measurement
 unit_of_measurement: kW
-state: '{{ states("sensor.solar_energy_production_current")|float / 1000 }}'
+state: '{{ states("sensor.solar_energy_production_current")|float(default=0) / 1000 }}'

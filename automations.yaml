@@ -7,7 +7,7 @@
     minutes: /15
   condition:
   - condition: template
-    value_template: '{{ states("sensor.outdoor_temperature")|float < (states("sensor.home_thermostat_temperature")|float
+    value_template: '{{ states("sensor.outdoor_temperature")|float(default=0) < (states("sensor.home_thermostat_temperature")|float(default=0)
       - 2) }}'
   - condition: state
     entity_id: input_boolean.cooler_outside_notification
@@ -299,7 +299,7 @@
     minutes: /15
   condition:
   - condition: template
-    value_template: '{{ states("sensor.outdoor_temperature")|float >= states("sensor.home_thermostat_temperature")|float
+    value_template: '{{ states("sensor.outdoor_temperature")|float(default=0) >= states("sensor.home_thermostat_temperature")|float(default=0)
       }}'
   - condition: time
     after: 06:00:00
@@ -345,7 +345,7 @@
     event_type: automation_reloaded
   condition:
   - condition: template
-    value_template: '{%- set uptime_minutes = as_timestamp(now()) - as_timestamp(states("sensor.last_restart"))|float
+    value_template: '{%- set uptime_minutes = as_timestamp(now()) - as_timestamp(states("sensor.last_restart"))|float(default=0)
       / 60 %}
 
       {{ uptime_minutes > 5 }}'

@@ -2,6 +2,6 @@
 unique_id: rain_today
 name: Rain today
 state: |
-  {{ states('sensor.accuweather_precipitation')|default(0)|float > 0.0
-    or states('sensor.openweathermap_forecast_precipitation')|default(0)|float > 0.0
-    or states('sensor.openweathermap_rain')|default(0)|float > 0.0 }}
+  {{ states('sensor.accuweather_precipitation')|float(default=0) > 0.0
+    or states('sensor.openweathermap_forecast_precipitation')|float(default=0) > 0.0
+    or states('sensor.openweathermap_rain')|float(default=0) > 0.0 }}

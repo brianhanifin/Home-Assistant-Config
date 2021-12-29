@@ -6,8 +6,8 @@ device_class: energy
 state_class: measurement
 unit_of_measurement: kW
 state: |
-  {%- set production = states("sensor.solar_energy_production_current_kw")|float -%}
-  {%- set excess = states("sensor.solar_energy_production_to_grid")|float -%}
+  {%- set production = states("sensor.solar_energy_production_current_kw")|float(default=0) -%}
+  {%- set excess = states("sensor.solar_energy_production_to_grid")|float(default=0) -%}
   {%- if production > excess %}
     {{ "%0.3f"|format( production - excess ) }}
   {%- else %}

@@ -7,7 +7,7 @@ condition_template: |
   {%- set value2 = states('weather.openweathermap')|trim %}
   {{ value2 if value1 in ["unavailable","None",""] else value1 }}
 temperature_template: |
-  {%- set value0 = states("sensor.backyard_temperature")|float %}
+  {%- set value0 = states("sensor.backyard_temperature")|float(default=0) %}
   {%- set value1 = state_attr("weather.accuweather","temperature")|trim -%}
   {%- set value2 = state_attr("weather.openweathermap","temperature")|trim -%}
   {%- if value0 is number and value0 > 0 %}
@@ -33,7 +33,7 @@ pressure_template: |
   {%- set value1 = state_attr("weather.accuweather","pressure")|trim %}
   {%- set value2 = state_attr("weather.openweathermap","pressure")|trim %}
   {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ "%0.1f"|format(value|float) }}
+  {{ "%0.1f"|format(value|float(default=0)) }}
 wind_speed_template: |
   {%- set value1 = state_attr("weather.accuweather","wind_speed")|trim %}
   {%- set value2 = state_attr("weather.openweathermap","wind_speed")|trim %}

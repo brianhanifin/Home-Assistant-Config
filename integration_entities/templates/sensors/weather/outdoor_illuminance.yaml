@@ -66,6 +66,6 @@ state: |
   {%- set condition_factor = state_attr("sensor.outdoor_illuminance_educated_guessor","condition_factor") %}
 
   {# Take an educated guess #}
-  {%- set illuminance = (sun_factor|float * condition_factor|float) | round %}
+  {%- set illuminance = (sun_factor|float(default=0) * condition_factor|float(default=0)) | round %}
   {%- set illuminance = 10 if illuminance < 10 else illuminance %}
   {{ illuminance }}

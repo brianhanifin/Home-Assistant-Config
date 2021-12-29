@@ -13,9 +13,9 @@ state: |
   {%- if state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") %}
     {%- set updates = updates + 1 %}
   {% endif %}
-  {%- set updates = updates + states("sensor.hacs")|int %}
-  {%- set updates = updates + states("sensor.addon_updates")|int %}
-  {%- set updates = updates + states("sensor.unifi_gateway_firmware_upgradable")|int %}
+  {%- set updates = updates + states("sensor.hacs")|int(default=0) %}
+  {%- set updates = updates + states("sensor.addon_updates")|int(default=0) %}
+  {%- set updates = updates + states("sensor.unifi_gateway_firmware_upgradable")|int(default=0) %}
   {{ updates }}
 
 attributes:
@@ -34,6 +34,6 @@ attributes:
   core_update: '{{ is_state("binary_sensor.updater","on") }}'
   os_update: '{{ is_state("binary_sensor.home_assistant_operating_system_update_available","on") }}'
   supervisor_update: '{{ state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") }}'
-  hacs_update: '{{ states("sensor.hacs")|int > 0 }}'
-  addon_update: '{{ states("sensor.addon_updates")|int > 0 }}'
-  unifi_firmware_update: '{{ states("sensor.unifi_gateway_firmware_upgradable")|int > 0 }}'
+  hacs_update: '{{ states("sensor.hacs")|int(default=0) > 0 }}'
+  addon_update: '{{ states("sensor.addon_updates")|int(default=0) > 0 }}'
+  unifi_firmware_update: '{{ states("sensor.unifi_gateway_firmware_upgradable")|int(default=0) > 0 }}'

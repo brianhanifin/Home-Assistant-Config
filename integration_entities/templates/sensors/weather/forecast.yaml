@@ -7,7 +7,7 @@ icon: |
 state: |
   {% set forecast = state_attr("weather.home", "forecast") %}
   {%- if forecast[0] is defined %}
-    {% set hour = now().hour|int %}
+    {% set hour = now().hour|int(default=0) %}
     {% if hour < 17 %}
       Today's forecast is {{ states('weather.home')|replace('clear','clear ')|replace('partly','partly ') }}, with a high of {{ forecast[0]['temperature']|round }}
       {%- if forecast[0]['templow']|round > 0 %}, and a low of {{ forecast[0]['templow']|round }} degrees{%- endif %}.

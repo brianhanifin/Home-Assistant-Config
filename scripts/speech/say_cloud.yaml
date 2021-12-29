@@ -7,13 +7,13 @@ variables:
   #   target: "{{ media_player }}"
   volume: |
     {%- if volume is number %}
-      {%- if volume|float > 1.0 %}
-        {%- set volume = volume|float / 100 %}
+      {%- if volume|float(default=0) > 1.0 %}
+        {%- set volume = volume|float(default=0) / 100 %}
       {%- else %}
-        {%- set volume = volume|float %}
+        {%- set volume = volume|float(default=0) %}
       {%- endif %}
     {%- else %}
-      {{ states("input_number.default_announcement_volume")|int / 100 }}
+      {{ states("input_number.default_announcement_volume")|int(default=0) / 100 }}
     {%- endif %}
 sequence:
   # - service: script.debug
@@ -35,7 +35,7 @@ sequence:
             volume_level: '{{ volume }}'
         
         - delay:
-            seconds: 1
+            seconds: 2
 
         - alias: Say the message out loud.
           service: tts.cloud_say

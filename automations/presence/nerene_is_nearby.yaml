@@ -6,7 +6,7 @@ mode: single
 trigger:
   - platform: numeric_state
     entity_id: proximity.nerene_home
-    value_template: "{{ states('proximity.nerene_home')|float }}"
+    value_template: "{{ states('proximity.nerene_home')|float(default=0) }}"
     below: 1
 condition:
   # Only make an announcement if the person has been Away.

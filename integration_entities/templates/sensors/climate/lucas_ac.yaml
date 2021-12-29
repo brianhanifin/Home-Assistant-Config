@@ -13,7 +13,7 @@ unique_id: lucas_ac
 name: Lucas AC Current State
 icon: mdi:air-conditioner
 state: |
-  {%- set power = states("sensor.lucas_ac_power")|int %}
+  {%- set power = states("sensor.lucas_ac_power")|int(default=0) %}
   {%- if power > 100 %}
     Cooling
   {%- elif power < 100 and power > 10 %}
@@ -27,8 +27,8 @@ state: |
 #   fan_speed: |
 #     {%- if is_state("binary_sensor.lucas_ac","off") %}
 #       Off
-#     {%- elif state_attr("sensor.lucas_ac","fan_speed")|int > 1 %}
-#       {%- set power = states("sensor.lucas_ac_power")|int %}
+#     {%- elif state_attr("sensor.lucas_ac","fan_speed")|int(default=0) > 1 %}
+#       {%- set power = states("sensor.lucas_ac_power")|int(default=0) %}
 #       {%- if power >= 53 and power <= 100 %}
 #         3
 #       {%- elif power >= 47 and power <= 52 %}

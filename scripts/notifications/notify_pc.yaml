@@ -9,7 +9,7 @@ variables:
     {% endif %}
   title: '{{ title|default("Home Assistant") }}'
   message: '{{ message|default(" ") }}'
-  duration: '{{ duration|default(0) }}'
+  duration: '{{ duration|int(default=0) }}'
   image: |
     {% set camera = camera|default("") %}
     {%- if camera != "" %}

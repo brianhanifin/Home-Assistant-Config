@@ -21,7 +21,7 @@ condition:
   # She is not near home.
   - condition: numeric_state
     entity_id: proximity.nerene_home
-    value_template: "{{ states('proximity.nerene_home')|float }}"
+    value_template: "{{ states('proximity.nerene_home')|float(default=0) }}"
     above: 1
 
   # She left work in the past 30 minutes.

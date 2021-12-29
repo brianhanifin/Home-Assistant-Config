@@ -17,7 +17,7 @@ state: |
   {% set speakers = list.speakers | trim %}
   {% set speakers = speakers.split(" ") %}
 
-  {% set last_updated = dates|max|float %}
+  {% set last_updated = dates|max|float(default=0) %}
   {% for speaker in speakers if last_updated == as_timestamp(states[speaker].last_updated) %}
     {{ speaker }}
   {%- endfor %}

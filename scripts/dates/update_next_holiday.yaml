@@ -5,7 +5,7 @@ variables:
   day_after_event: |
     {% if event_date != "unknown" %}
       {%- set split_date = event_date.split("-") %}
-      {{ "{:04}-{:02}-{:02}".format(split_date[0]|int, split_date[1]|int, (split_date[2]|int+1)) }}
+      {{ "{:04}-{:02}-{:02}".format(split_date[0]|int(default=0), split_date[1]|int(default=0), (split_date[2]|int(default=0)+1)) }}
     {% endif %}
 sequence:
   # Only update the day after the event (or the event date is unknown).

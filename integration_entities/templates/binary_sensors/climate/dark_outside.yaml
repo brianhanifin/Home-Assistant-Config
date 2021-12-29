@@ -2,7 +2,7 @@
 unique_id: dark_outside
 name: Dark outside
 state: |
-  {{ state_attr("sun.sun","elevation")|float < 3
-  or (state_attr("sun.sun","elevation")|float < 4.5 and states("sensor.accuweather_cloud_cover")|float > 80)
-  or (state_attr("sun.sun","elevation")|float < 6.5 and states("sensor.accuweather_cloud_cover")|float > 85)
-  or (state_attr("sun.sun","elevation")|float < 30  and states("sensor.accuweather_cloud_cover")|float > 90) }}
+  {{ state_attr("sun.sun","elevation")|float(default=0) < 3
+  or (state_attr("sun.sun","elevation")|float(default=0) < 4.5 and states("sensor.accuweather_cloud_cover")|float(default=0) > 80)
+  or (state_attr("sun.sun","elevation")|float(default=0) < 6.5 and states("sensor.accuweather_cloud_cover")|float(default=0) > 85)
+  or (state_attr("sun.sun","elevation")|float(default=0) < 30  and states("sensor.accuweather_cloud_cover")|float(default=0) > 90) }}

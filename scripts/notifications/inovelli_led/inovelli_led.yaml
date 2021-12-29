@@ -80,10 +80,10 @@ variables:
     {%- if color is not number %}
       {{ color|default("Yellow")|title }}
     {%- else %}
-      {{ color|int }}
+      {{ color|int(default=0) }}
     {% endif %}
   # 1-10
-  level: "{{ level|default(4)|int }}"
+  level: "{{ level|int(default=4) }}"
   duration: '{{ duration|default("Indefinitely")|title }}'
   effect: '{{ effect|default("Blink")|title }}'
   colors:
@@ -151,7 +151,7 @@ sequence:
   # Preform the Inovelli math.
   - variables:
       parameter: "{{ parameters[model|lower] }}"
-      color: "{{ colors[color|title]|int }}"
+      color: "{{ colors[color|title]|int(default=0) }}"
       duration: "{{ durations[duration|title] }}"
       effect: |
         {% if model == "switch" %}
@@ -160,8 +160,8 @@ sequence:
           {{- effects_dimmer[effect|title] }}
         {% endif %}
       inovelli_math: |
-        {%- if effect|int > 0 %}
-          {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
+        {%- if effect|int(default=0) > 0 %}
+          {{ color|int(default=0) + (level|int(default=0) * 256) + (duration|int(default=0) * 65536) + (effect|int(default=0) * 16777216) }}
         {%- else %}
           0
         {% endif %}

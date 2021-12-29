@@ -10,13 +10,13 @@ variables:
 
   new_volume: |
     {%- if volume is number %}
-      {%- if volume|float > 1.0 %}
-        {%- set volume = volume|float / 100 %}
+      {%- if volume|float(default=0) > 1.0 %}
+        {%- set volume = volume|float(default=0) / 100 %}
       {%- else %}
-        {%- set volume = volume|float %}
+        {%- set volume = volume|float(default=0) %}
       {%- endif %}
     {%- else %}
-      {{ states("input_number.default_audio_volume")|int / 100 }}
+      {{ states("input_number.default_audio_volume")|int(default=0) / 100 }}
     {%- endif %}
 sequence:
   # - service: script.debug
@@ -49,7 +49,7 @@ sequence:
 
   # Play the audio on all of the speakers.
   - repeat:
-      count: "{{ speaker_count|int }}"
+      count: "{{ speaker_count|int(default=0) }}"
       sequence:
         - variables:
             speaker: "{{ speakers[repeat.index-1] }}"
@@ -57,7 +57,7 @@ sequence:
 
         # Increase volume
         # - choose:
-        #     conditions: "{{ current_volume|float > new_volume|float }}"
+        #     conditions: "{{ current_volume|float(default=0) > new_volume|float(default=0) }}"
         #     sequence:
         - service: media_player.volume_set
           data:

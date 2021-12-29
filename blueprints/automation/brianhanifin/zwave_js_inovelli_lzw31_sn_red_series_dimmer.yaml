@@ -111,11 +111,11 @@ variables:
       {{ value|replace("KeyPressed","")|replace("x","") }}
     {% endif %}
   button: |
-    {% if trigger.event.data.property_key_name|int == 1 %}
+    {% if trigger.event.data.property_key_name|int(default=0) == 1 %}
       down
-    {% elif trigger.event.data.property_key_name|int == 2 %}
+    {% elif trigger.event.data.property_key_name|int(default=0) == 2 %}
       up
-    {% elif trigger.event.data.property_key_name|int == 3 %}
+    {% elif trigger.event.data.property_key_name|int(default=0) == 3 %}
       config
     {% endif %}
 condition: "{{ trigger.event.data.device_id == device_id }}"
@@ -131,27 +131,27 @@ action:
   - choose:
     - conditions: '{{ button == "config" }}'
       sequence: !input config_button
-    - conditions: '{{ button == "up" and presses|int == 1 }}'
+    - conditions: '{{ button == "up" and presses|int(default=0) == 1 }}'
       sequence: !input button_a
-    - conditions: '{{ button == "down" and presses|int == 1 }}'
+    - conditions: '{{ button == "down" and presses|int(default=0) == 1 }}'
       sequence: !input button_b
     - conditions: '{{ button == "up" and presses == "KeyHeldDown" }}'
       sequence: !input button_a_held
     - conditions: '{{ button == "down" and presses == "KeyHeldDown" }}'
       sequence: !input button_b_held
-    - conditions: '{{ button == "up" and presses|int == 2 }}'
+    - conditions: '{{ button == "up" and presses|int(default=0) == 2 }}'
       sequence: !input button_a2
-    - conditions: '{{ button == "down" and presses|int == 2 }}'
+    - conditions: '{{ button == "down" and presses|int(default=0) == 2 }}'
       sequence: !input button_b2
-    - conditions: '{{ button == "up" and presses|int == 3 }}'
+    - conditions: '{{ button == "up" and presses|int(default=0) == 3 }}'
       sequence: !input button_a3
-    - conditions: '{{ button == "down" and presses|int == 3 }}'
+    - conditions: '{{ button == "down" and presses|int(default=0) == 3 }}'
       sequence: !input button_b3
-    - conditions: '{{ button == "up" and presses|int == 4 }}'
+    - conditions: '{{ button == "up" and presses|int(default=0) == 4 }}'
       sequence: !input button_a4
-    - conditions: '{{ button == "down" and presses|int == 4 }}'
+    - conditions: '{{ button == "down" and presses|int(default=0) == 4 }}'
       sequence: !input button_b4
-    - conditions: '{{ button == "up" and presses|int == 5 }}'
+    - conditions: '{{ button == "up" and presses|int(default=0) == 5 }}'
       sequence: !input button_a5
-    - conditions: '{{ button == "down" and presses|int == 5 }}'
+    - conditions: '{{ button == "down" and presses|int(default=0) == 5 }}'
       sequence: !input button_b5

@@ -6,4 +6,4 @@ state_class: measurement
 unit_of_measurement: "%"
 state: |
   {%- set humidity = state_attr("weather.home","humidity") %}
-  {{ humidity|int if humidity is defined }}
+  {{ humidity|int(default=0) if humidity is defined }}

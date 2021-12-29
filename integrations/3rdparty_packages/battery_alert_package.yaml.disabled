@@ -248,7 +248,7 @@
 ##     homeassistant:
 ##       customize:
 ##         sensor.sensor_with_battery_attibute_template:
-##           battery_template: "{{ value_json.value | int * 2 }}"
+##           battery_template: "{{ value_json.value | int(default=0) * 2 }}"
 ##
 ## 13. If a battery attribute requires a template to convert it into a string, use customize to add
 ##     `battery_template_string` with the necessary template. The template result must be a string.
@@ -438,11 +438,11 @@ automation:
               (
                 (
                   states(entity_id) is number
-                  or states(entity_id) | length == states(entity_id)| int | string | length
+                  or states(entity_id) | length == states(entity_id)| int(default=0) | string | length
                   or states(entity_id) | length == states(entity_id)| float | string | length
                 )
-                and states(entity_id) | int < states.input_number.battery_alert_threshold_max.state | int
-                and states(entity_id) | int > states.input_number.battery_alert_threshold_min.state | int
+                and states(entity_id) | int(default=0) < states.input_number.battery_alert_threshold_max.state | int
+                and states(entity_id) | int(default=0) > states.input_number.battery_alert_threshold_min.state | int
               )
               or states(entity_id) | lower == 'low'
               or states(entity_id) | lower == 'unknown'
@@ -469,11 +469,11 @@ automation:
                 (
                   (
                     states(entity_id) is number
-                    or states(entity_id) | length == states(entity_id)| int | string | length
+                    or states(entity_id) | length == states(entity_id)| int(default=0) | string | length
                     or states(entity_id) | length == states(entity_id)| float | string | length
                   )
-                  and states(entity_id) | int < states.input_number.battery_alert_threshold_max.state | int
-                  and states(entity_id) | int > states.input_number.battery_alert_threshold_min.state | int
+                  and states(entity_id) | int(default=0) < states.input_number.battery_alert_threshold_max.state | int
+                  and states(entity_id) | int(default=0) > states.input_number.battery_alert_threshold_min.state | int
                 )
                 or states(entity_id) | lower == 'low'
                 or states(entity_id) | lower == 'unknown'
@@ -506,11 +506,11 @@ automation:
               (
                 (
                   states(entity_id) is number
-                  or states(entity_id) | length == states(entity_id)| int | string | length
+                  or states(entity_id) | length == states(entity_id)| int(default=0) | string | length
                   or states(entity_id) | length == states(entity_id)| float | string | length
                 )
-                and states(entity_id) | int < states.input_number.battery_alert_threshold_max.state | int
-                and states(entity_id) | int > states.input_number.battery_alert_threshold_min.state | int
+                and states(entity_id) | int(default=0) < states.input_number.battery_alert_threshold_max.state | int
+                and states(entity_id) | int(default=0) > states.input_number.battery_alert_threshold_min.state | int
               )
               or states(entity_id) | lower == 'low'
               or states(entity_id) | lower == 'unknown'
@@ -644,7 +644,7 @@ automation:
                 {%- set attribval = trigger.event.data.new_state.attributes.battery -%}
                 {%- set attribname = 'battery' -%}
               {%- elif trigger.event.data.new_state.attributes['Battery numeric'] is defined -%}
-                {%- set attribval = (trigger.event.data.new_state.attributes['Battery numeric'] | int + 1) * 10 -%}
+                {%- set attribval = (trigger.event.data.new_state.attributes['Battery numeric'] | int(default=0) + 1) * 10 -%}
                 {%- set attribname = 'Battery numeric' -%}
               {% elif trigger.event.data.new_state.attributes.battery_critical is defined -%}
                 {%- set attribval = trigger.event.data.new_state.attributes.battery_critical -%}
@@ -663,8 +663,8 @@ automation:
               "value_template": "{{ "{{" }} 'low' if value_json.value else 'full' {{ "}}" }}",
               "icon": "mdi:battery",
               {% else -%}
-              "value_template": "{{ "{{" }} value_json.value | int {{ "}}" }}",
-              {% if attribval | int == attribval or attribval | float == attribval or attribval | length == attribval | float | string | length or attribval | length == attribval | int | string | length -%}
+              "value_template": "{{ "{{" }} value_json.value | int(default=0) {{ "}}" }}",
+              {% if attribval | int(default=0) == attribval or attribval | float == attribval or attribval | length == attribval | float | string | length or attribval | length == attribval | int(default=0) | string | length -%}
               "unit_of_measurement": "%",
               "device_class": "battery",
               {%- elif attribval == "High" or attribval == "Full" -%}
@@ -691,18 +691,18 @@ automation:
               {%- elif trigger.event.data.new_state.attributes.battery is defined -%}
                 {%- set attribval = trigger.event.data.new_state.attributes.battery -%}
               {%- elif trigger.event.data.new_state.attributes['Battery numeric'] is defined -%}
-                {%- set attribval = (trigger.event.data.new_state.attributes['Battery numeric'] | int + 1) * 10 -%}
+                {%- set attribval = (trigger.event.data.new_state.attributes['Battery numeric'] | int(default=0) + 1) * 10 -%}
               {%- elif trigger.event.data.new_state.attributes.battery_critical is defined -%}
                 {%- set attribval = trigger.event.data.new_state.attributes.battery_critical -%}
               {%- endif -%}
-              "value": {% if attribval | int == attribval -%}
-                {{ attribval | int }}
+              "value": {% if attribval | int(default=0) == attribval -%}
+                {{ attribval | int(default=0) }}
               {%- elif attribval | float == attribval -%}
                 {{ attribval | float }}
               {%- elif attribval | length == attribval | float | string | length -%}
                 {{ attribval | float }}
-              {%- elif attribval | length == attribval | int | string | length -%}
-                {{ attribval | int }}
+              {%- elif attribval | length == attribval | int(default=0) | string | length -%}
+                {{ attribval | int(default=0) }}
               {%- else -%}
                 "{{ attribval }}"
               {%- endif %}
@@ -720,7 +720,7 @@ automation:
                 {%- set attribval = trigger.event.data.new_state.attributes.battery -%}
                 {%- set attribname = 'battery' -%}
               {%- elif trigger.event.data.new_state.attributes['Battery numeric'] is defined -%}
-                {%- set attribval = (trigger.event.data.new_state.attributes['Battery numeric'] | int + 1) * 10 -%}
+                {%- set attribval = (trigger.event.data.new_state.attributes['Battery numeric'] | int(default=0) + 1) * 10 -%}
                 {%- set attribname = 'Battery numeric' -%}
               {%- elif trigger.event.data.new_state.attributes.battery_critical is defined -%}
                 {%- set attribval = trigger.event.data.new_state.attributes.battery_critical -%}

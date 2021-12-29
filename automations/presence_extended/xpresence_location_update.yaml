@@ -15,7 +15,7 @@ trigger:
     #https://rc.home-assistant.io/blog/2021/12/03/release-202112/#triggering-automations-on-any-but-only-state-changes
     to: ~ 
 variables:
-  hour: '{{ states("sensor.time").split(":")[0]|int }}'
+  hour: '{{ states("sensor.time").split(":")[0]|int(default=0) }}'
   new_state: '{{ trigger.to_state.state }}'
   old_state: '{{ trigger.from_state.state }}'
   option: |

@@ -10,8 +10,8 @@ variables:
   bulb_count: '{{ state_attr(entity,"entity_id")|count if entity.startswith("group") else 1 }}'
 
   color: '{{ color|default("cyan") }}'
-  delay: '{{ delay|default(0.5) }}'
-  transition: '{{ transition|default(5) }}'
+  delay: '{{ delay|float(default=0.5) }}'
+  transition: '{{ transition|int(default=5) }}'
 sequence:
   # - service: script.notify_web
   #   data:
@@ -21,7 +21,7 @@ sequence:
 
   - choose:
       - conditions:
-          - '{{ bulb_count|int > 1 }}'
+          - '{{ bulb_count|int(default=0) > 1 }}'
         sequence:
           # Change each bulb in the group.
           - repeat:

@@ -4,7 +4,7 @@ variables:
     {% set type = type|default("success") %}
     {{ type }}
   notification_service: 'll_notify.{{ type }}'
-  duration: '{{ duration|default(0) }}'
+  duration: '{{ duration|int(default=0) }}'
 sequence:
   # - service: browser_mod.toast
   #   data:

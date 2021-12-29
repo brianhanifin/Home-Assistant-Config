@@ -7,7 +7,7 @@ trigger:
   - platform: state
     entity_id: sensor.sonoff_s31_04_power
 variables:
-  power: '{{ states("sensor.sonoff_s31_04_power")|int }}'
+  power: '{{ states("sensor.sonoff_s31_04_power")|int(default=0) }}'
   previous_status: '{{ states("input_select.dryer_status") }}'
   status: |
     {% if power > 150 %}

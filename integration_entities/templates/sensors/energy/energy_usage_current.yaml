@@ -6,6 +6,6 @@ device_class: energy
 state_class: measurement
 unit_of_measurement: kW
 state: |
-  {%- set solar_to_house = states("sensor.solar_energy_production_to_house")|float %}
-  {%- set grid_to_house = states("sensor.energy_grid_to_house")|float %}
+  {%- set solar_to_house = states("sensor.solar_energy_production_to_house")|float(default=0) %}
+  {%- set grid_to_house = states("sensor.energy_grid_to_house")|float(default=0) %}
   {{ "%0.3f"|format(solar_to_house + grid_to_house) }}

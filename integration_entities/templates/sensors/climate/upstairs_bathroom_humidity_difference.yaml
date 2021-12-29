@@ -13,7 +13,7 @@ state: |
   {%- if reference_humidity|lower in ['unknown','unavailable'] -%}
     {%- set reference_humidity = states('sensor.home_thermostat_humidity') -%}
   {%- endif -%}
-  {% set diff = (bathroom_humidity|int) - reference_humidity|int %}
+  {% set diff = (bathroom_humidity|int(default=0)) - reference_humidity|int(default=0) %}
   {{ ([0, diff, 99]|sort)[1] }}
 attributes:
   bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity") }}'

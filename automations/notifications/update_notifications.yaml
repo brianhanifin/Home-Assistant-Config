@@ -13,7 +13,7 @@ trigger:
   #   above: 0
 variables:
   message: |
-    {% set updates = states("sensor.updates")|int|default("0") %}
+    {% set updates = states("sensor.updates")|int(default=0) %}
 
     {%- if updates == 1 %} 
       There is an update available.

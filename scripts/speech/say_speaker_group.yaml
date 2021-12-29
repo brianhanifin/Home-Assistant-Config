@@ -11,7 +11,7 @@ sequence:
   #       Count: {{ speaker_count }}
 
   - repeat:
-      count: "{{ speaker_count|int }}"
+      count: "{{ speaker_count|int(default=0) }}"
       sequence:
         - variables:
             speaker: '{{ speakers.split(" ")[repeat.index-1] }}'
