@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1335 total entities**, 
-including **645 sensors**.
+Our Home Assistant install has approximately **1268 total entities**, 
+including **648 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -196,12 +196,6 @@ Authors: [@Limych](https://github.com/Limych).
 
 
 Authors: [@hif2k1](https://github.com/hif2k1).
-
-
-#### [Browser mod v1.3.1](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
-
-
-
 
 
 #### [Config Check v0.1.1](https://github.com/custom-components/config_check)
@@ -250,6 +244,12 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
+
+
+#### [Lovelace Notify v1.0.0]()
+
+Lovelace notification / alert component for Home Assistant
+Authors: [@rr326](https://github.com/rr326).
 
 
 #### [Rainforest v0.2.2](https://github.com/damienheiser/home-assistant/blob/master/custom_components/rainforest/readme.md)
@@ -441,6 +441,10 @@ Weather Card with animated icons for Home Assistant Lovelace
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
+#### File editor v5.3.3
+Simple browser-based file editor for Home Assistant
+
+
 #### HA Scheduler v0.17
 Home Assistant scheduler
 
@@ -459,10 +463,6 @@ Expose Home Assistant folders with SMB/CIFS
 
 #### SDR to Home Assistant v0.1.6b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
-
-
-#### SSH & Web Terminal v10.0.0
-SSH & Web Terminal access to your Home Assistant instance
 
 </details>
 ---
@@ -496,7 +496,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.12.5-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.12.6-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml

@@ -179,7 +179,11 @@ including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
 
 <details><summary>{{ integrations|count }} Custom Integrations</summary>
 {%- for integration in integrations %}
-  {%- set url = integration.documentation %}
+  {%-  if integration.documentation != none %}
+    {%- set url = integration.documentation %}
+  {%- else %}
+    {%- set url = "" %}
+  {%- endif %}
   {%- if url.endswith("damienheiser/home-assistant") or url.endswith("jrhorrisberger/home-assistant") %}
     {%- set name = "Rainforest Energy Monitoring Component" %}
     {%- set description = "Use your Rainforest Automation EMU-2™ Energy Monitoring Unit in Home Assistant." %}
