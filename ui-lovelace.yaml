@@ -946,6 +946,16 @@ views:
                   action: navigate
                   navigation_path: '#entry'
               - type: custom:button-card
+                icon: mdi:garage
+                name: Garage
+                template: button_short
+                styles:
+                  icon:
+                    - color: grey
+                tap_action:
+                  action: navigate
+                  navigation_path: '#garage'
+              - type: custom:button-card
                 icon: mdi:stove
                 name: Kitchen
                 template: button_short
@@ -1038,12 +1048,6 @@ views:
                         entity: input_boolean.leave_unlocked
                         name: Leave
                         label: Unlocked
-                      - type: custom:button-card
-                        template: button_state
-                        entity: cover.garage_door
-                        name: Garage
-                        lock:
-                          enabled: 'true'
                   - type: custom:decluttering-card
                     template: heading
                     variables:
@@ -1118,6 +1122,34 @@ views:
                     entities:
                       - entity: light.kitchen
                       - entity: light.kitchen_prep
+                  - type: custom:decluttering-card
+                    template: heading
+                    variables:
+                      - content: '*Sensors*'
+                  - type: glance
+                    entities:
+                      - entity: sensor.kitchen_temperature
+                        name: Temperature
+                      - entity: sensor.kitchen_humidity
+                        name: Humidity
+                      - entity: binary_sensor.kitchen_1_motion
+                        name: Motion (stove)
+                      - entity: binary_sensor.kitchen_2_motion
+                        name: Motion (prep)
+                  - type: entities
+                    entities:
+                      - entity: sensor.fridge_temperature
+                        name: Fridge
+                      - entity: sensor.freezer_temperature
+                        name: Freezer
+                      - type: divider
+                      - entity: input_number.fridge_temperature_threshold
+                        name: Fridge threshold
+                      - entity: input_number.freezer_temperature_threshold
+                        name: Freezer threshold
+                      - entity: automation.fridge_freezer_temperature_alert
+                        secondary_info: last-triggered
+                        name: Temperature alert
               play:
                 type: vertical-stack
                 cards:
@@ -1161,6 +1193,54 @@ views:
                           name: Adaptive Lighting
                         - entity: switch.vr_mode
                           name: VR Mode
+              garage:
+                type: vertical-stack
+                cards:
+                  - type: custom:decluttering-card
+                    template: heading
+                    variables:
+                      - content: Garage<br>*Devices & Lights*
+                  - type: grid
+                    columns: 2
+                    square: false
+                    cards:
+                      - type: custom:button-card
+                        template: button_state
+                        entity: cover.garage_door
+                        name: Garage
+                        lock:
+                          enabled: 'true'
+                  - type: entities
+                    entities:
+                      - entity: light.laundry
+                  - type: custom:decluttering-card
+                    template: heading
+                    variables:
+                      - content: '*Sensors*'
+                  - type: glance
+                    entities:
+                      - entity: sensor.garage_temperature
+                        name: Temperature
+                      - entity: sensor.garage_humidity
+                        name: Humidity
+                      - entity: binary_sensor.garage_motion
+                        name: Motion
+                      - entity: binary_sensor.garage_entry_door
+                        name: Entry
+                  - type: entities
+                    entities:
+                      - entity: sensor.garage_fridge_temperature
+                        name: Fridge
+                      - entity: sensor.garage_freezer_temperature
+                        name: Freezer
+                      - type: divider
+                      - entity: input_number.fridge_temperature_threshold
+                        name: Fridge threshold
+                      - entity: input_number.freezer_temperature_threshold
+                        name: Freezer threshold
+                      - entity: automation.fridge_freezer_temperature_alert
+                        secondary_info: last-triggered
+                        name: Temperature alert
       - type: vertical-stack
         cards:
           - type: custom:decluttering-card
@@ -1205,7 +1285,7 @@ views:
                         name: Family Room
                       - entity: sensor.kitchen_temperature
                         name: Kitchen
-                      - entity: sensor.home_temperature
+                      - entity: sensor.home_thermostat_temperature
                         name: Thermostat
                   - type: custom:mini-graph-card
                     aggregate_func: max
@@ -1215,7 +1295,7 @@ views:
                         name: Family Room
                       - entity: sensor.kitchen_temperature
                         name: Kitchen
-                      - entity: sensor.home_temperature
+                      - entity: sensor.home_thermostat_temperature
                         name: Thermostat
                     height: 75
                     hours_to_show: 24
@@ -1236,7 +1316,7 @@ views:
                         name: Family Room
                       - entity: sensor.kitchen_humidity
                         name: Kitchen
-                      - entity: sensor.home_humidity
+                      - entity: sensor.home_thermostat_humidity
                         name: Thermostat
                   - type: custom:mini-graph-card
                     aggregate_func: max
@@ -1246,7 +1326,7 @@ views:
                         name: Family Room
                       - entity: sensor.kitchen_humidity
                         name: Kitchen
-                      - entity: sensor.home_humidity
+                      - entity: sensor.home_thermostat_humidity
                         name: Thermostat
                     height: 75
                     hours_to_show: 12
@@ -1256,38 +1336,6 @@ views:
                       name: false
                       icon: false
                       state: false
-        view_layout:
-          position: sidebar
-      - type: grid
-        cards:
-          - type: custom:slider-button-card
-            entity: light.family_room
-            slider:
-              percentage: true
-              direction: left-right
-              background: gradient
-              use_state_color: true
-              use_percentage_bg_opacity: true
-              show_track: true
-              force_square: false
-            show_name: true
-            show_state: true
-            icon:
-              show: true
-              use_state_color: true
-              rotate: false
-              tap_action:
-                action: toggle
-              icon: ''
-            action_button:
-              mode: custom
-              icon: mdi:power
-              show: true
-              show_spinner: true
-              tap_action:
-                action: toggle
-        square: false
-        columns: 2
         view_layout:
           position: sidebar
   - title: Upstairs
@@ -3040,7 +3088,7 @@ views:
                     name: Family
                   - entity: sensor.kitchen_temperature
                     name: Kitchen
-                  - entity: sensor.home_temperature
+                  - entity: sensor.home_thermostat_temperature
                     name: Thermostat
                 aggregate_func: max
                 animate: true
