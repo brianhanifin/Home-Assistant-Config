@@ -1,10 +1,5 @@
 ---
 sequence:
-  - service: script.notify_web
-    data:
-      message: Refreshing sensor counts.
-      duration: 60
-
   - service: homeassistant.update_entity
     target:
       entity_id: |
@@ -17,3 +12,9 @@ sequence:
           {%- endif %}
         {%- endfor %}
         {{ storage.entities.split(",") }}
+
+  - service: script.notify_web
+    data:
+      type: success
+      message: Sensor counts are refreshed.
+      duration: 10

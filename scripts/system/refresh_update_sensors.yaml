@@ -1,15 +1,26 @@
 ---
 sequence:
-  - service: script.notify_web
-    data:
-      type: warning
-      message: Refreshing update sensors.
-      duration: 30
+  - service: homeassistant.update_entity
+    target:
+      entity_id:
+        - sensor.addon_updates
+        - sensor.hacs
+        - binary_sensor.home_assistant_operating_system_update_available
+        - sensor.supervisor
+        - binary_sensor.updater
+        - sensor.unifi_gateway_firmware_upgradable
+  
+  - delay:
+      seconds: 2
 
   - service: homeassistant.update_entity
     target:
       entity_id:
         - sensor.updates
-        - sensor.hacs
-        - sensor.addon_updates
         - sensor.update_message
+
+  - service: script.notify_web
+    data:
+      type: success
+      message: Update sensors are refreshed.
+      duration: 10

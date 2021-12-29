@@ -11,11 +11,20 @@ trigger:
   # - platform: numeric_state
   #   entity_id: sensor.updates
   #   above: 0
+variables:
+  message: |
+    {% set updates = states("sensor.updates")|int|default("0") %}
+
+    {%- if updates == 1 %} 
+      There is an update available.
+    {% else %}
+      There are {{ updates }} updates available.
+    {% endif %}
 action:
   - service: script.notify_mobile
     data:
       title: "Home Assistant Update"
-      message: "{{ states('sensor.update_message')}}"
+      message: "{{ message }}"
       who: brian
       tag: update-notification
       url: /lovelace/system
@@ -23,13 +32,5 @@ action:
   - service: script.notify_web
     data:
       type: warning
-      message: |
-        {%- set combined_updates =
-              states("sensor.updates")|int|default("0") +
-              states("sensor.unifi_gateway_firmware_upgradable")|int|default("0") %}
-        {%- if combined_updates == 1 %} 
-          There is an update available.
-        {% elif combined_updates > 1 %}
-          There are {{ combined_updates }} updates available.
-        {% endif %}
+      message: '{{ message }}'
       duration: 0
