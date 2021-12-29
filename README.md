@@ -169,7 +169,7 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1268 total entities**, 
+Our Home Assistant install has approximately **1267 total entities**, 
 including **648 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
