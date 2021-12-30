@@ -30,7 +30,7 @@ attributes:
     {% if state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") %}
       {% set updates = updates + 1 %}
     {% endif %}
-    {{ updates }}
+    {{ updates > 0 }}
   core_update: '{{ is_state("binary_sensor.updater","on") }}'
   os_update: '{{ is_state("binary_sensor.home_assistant_operating_system_update_available","on") }}'
   supervisor_update: '{{ state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") }}'

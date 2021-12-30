@@ -10,19 +10,19 @@ state: |
     There are {{ updates }} updates available.
   {% endif %}
 
-  {%- if state_attr("sensor.updates","core_update") %}
+  {%- if state_attr("sensor.updates", "core_update") %}
     - There is a [Core update](/hassio/update-available/core).
   {%- endif %}
 
-  {%- if state_attr("sensor.updates","os_update") %}
+  {%- if state_attr("sensor.updates", "os_update") %}
     - There is an [OS update](/config/dashboard).
   {%- endif %}
 
-  {%- if state_attr("sensor.updates","supervisor_update") %}
+  {%- if state_attr("sensor.updates", "supervisor_update") %}
     - There is a [Supervisor update](/config/dashboard).
   {%- endif %}
 
-  {%- if state_attr("sensor.updates","hacs_update") %}
+  {%- if state_attr("sensor.updates", "hacs_update") %}
     {%- set hacs_updates = states("sensor.hacs")|int(default=0) %}
     {%- if hacs_updates == 1 %}
       - There is one [HACS update](/hacs).
@@ -31,7 +31,7 @@ state: |
     {%- endif %}
   {%- endif %}
 
-  {%- if state_attr("sensor.updates","addon_update") %}
+  {%- if state_attr("sensor.updates", "addon_update") %}
     {%- set addon_updates = states("sensor.addon_updates")|int(default=0) %}
     {%- if addon_updates == 1 %}
       - There is one [Addon update](/config/dashboard).
@@ -39,3 +39,8 @@ state: |
       - There are {{ addon_updates }} [Addon updates](/config/dashboard).
     {%- endif %}
   {%- endif %}
+
+  {%- if state_attr("sensor.updates", "unifi_firmware_update") %}
+    {%- set unifi_updates = states("sensor.unifi_gateway_firmware_upgradable")|int(default=0) %}
+    - There are {{ unifi_updates }} [Unifi firmware updates](https://unraid.local:8443/manage/default/dashboard).
+  {% endif %}

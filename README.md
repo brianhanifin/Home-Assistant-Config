@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1267 total entities**, 
-including **648 sensors**.
+Our Home Assistant install has approximately **1279 total entities**, 
+including **660 sensors**.
 
-<details><summary>21 Custom Integrations</summary>
+<details><summary>22 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -288,6 +288,12 @@ Authors: [@djtimca](https://github.com/djtimca).
 Authors: [@pnbruckner](https://github.com/pnbruckner).
 
 
+#### [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
+
+
+Authors: [@jchasey](https://github.com/jchasey).
+
+
 #### [Weatheralerts v0.1.4](https://github.com/custom-components/weatheralerts)
 
 A sensor that gives you weather alerts from alerts.weather.gov.
@@ -300,7 +306,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>33 Lovelace Plugins</summary>
+<details><summary>31 Lovelace Plugins</summary>
 
 #### [Atomic Calendar Revive v6.1.2](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -370,10 +376,6 @@ A custom Lovelace text input row for use in entities cards
 Minimalistic graph card for Home Assistant Lovelace UI
 
 
-#### [Mini Media Player v1.15.0](https://github.com/kalkih/mini-media-player)
-Minimalistic media card for Home Assistant Lovelace UI
-
-
 #### [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
@@ -400,10 +402,6 @@ HA Lovelace card for control of scheduler entities
 
 #### [Simple Thermostat v2.4.3](https://github.com/nervetattoo/simple-thermostat)
 A different take on the thermostat card for Home Assistant ♨️
-
-
-#### [Slider Button Card v1.10.3](https://github.com/mattieha/slider-button-card)
-A button card with integrated slider
 
 
 #### [Slider Entity Row v17.2.1](https://github.com/thomasloven/lovelace-slider-entity-row)
@@ -496,7 +494,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.12.6-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.12.7-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
