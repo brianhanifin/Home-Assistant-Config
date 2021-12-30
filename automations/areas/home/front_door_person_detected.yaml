@@ -65,38 +65,41 @@ action:
                       entity_id: light.home_entry
                       brightness: 255
 
-              - conditions:
-                  - '{{ new_state == "off" }}'
-                sequence:
-                  # Restore the previous state of the porch light.
-                  - service: scene.turn_on
-                    target:
-                      entity_id: scene.front_door_presence_snapshot
-                    data:
-                      transition: 5
+              # - conditions:
+              #     - '{{ new_state == "off" }}'
+              #   sequence:
+              #     # Restore the previous state of the porch light.
+              #     - service: scene.turn_on
+              #       target:
+              #         entity_id: scene.front_door_presence_snapshot
+              #       data:
+              #         transition: 5
 
-                  - delay:
-                      seconds: 10
+              #     - delay:
+              #         seconds: 10
 
-                  # Restore Adaptive Lighting automated control.
-                  # ** Porch
-                  - service: adaptive_lighting.set_manual_control
-                    target:
-                      entity_id: switch.adaptive_lighting_porch
-                    data:
-                      manual_control: false
-                  # ** Entry/Stair Chandelier
-                  - service: adaptive_lighting.set_manual_control
-                    target:
-                      entity_id: switch.adaptive_lighting_home_entry
-                    data:
-                      manual_control: false
+              #     # Restore Adaptive Lighting automated control.
+              #     # ** Porch
+              #     - service: adaptive_lighting.set_manual_control
+              #       target:
+              #         entity_id: switch.adaptive_lighting_porch
+              #       data:
+              #         manual_control: false
+              #     # ** Entry/Stair Chandelier
+              #     - service: adaptive_lighting.set_manual_control
+              #       target:
+              #         entity_id: switch.adaptive_lighting_home_entry
+              #       data:
+              #         manual_control: false
 
   # Send a notification when a person is detected.
   - choose:
       - conditions:
           - '{{ new_state == "on" }}'
         sequence:
+          - delay:
+              seconds: 2
+
           - service: script.notify_mobile
             data:
               title: Front Door
