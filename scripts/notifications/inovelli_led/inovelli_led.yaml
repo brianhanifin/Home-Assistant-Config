@@ -44,29 +44,58 @@
 #   Incorporated @koconut's corrected "Off code".
 #   Source: https://community.home-assistant.io/t/inovelli-z-wave-red-series-notification-led/165483/146
 #
+#   December 30, 2021
+#     1. Added automatic zwave integration detection!
+#     2. Added automatic model name extraction from the parent device.
+#     3. Now the model type should be automatically discovered for Z-Wave JS and zwave (but not ozw).
 mode: parallel
 variables:
-  # REQUIRED to be one of these options: "zwave", "ozw", "zwave_js"
-  # Advanced: If you'd like to have your device list filtered in the Services Developer Tool,
-  # then unremark out "integration: zwave_js" under the fields section, and change the integration
-  # name to match.
-  zwave_integration: "zwave_js"
+  # Set to true to create a "persistent_notification" with debugging information.
+  debug: false
 
-  # * Strongly recommended -> Use the passed model type ("dimmer", "switch", "combo_light") when present.
-  # * If not present, then attempt to identify the type using the "product_name" attribute (which is only
-  #   unfortunately only available in the original zwave integration).
-  # * Finally, assume the model type is "dimmer".
-  model: |
-    {% if model is string %}
-      {{ model }}
-    {%- elif state_attr(entity_id, 'product_name') is string %}
-      {%- if 'LZW31' in state_attr(entity_id, 'product_name') %}
+  # Automatically determine which Z-Wave Integration is being used (Z-Wave JS, zwave, or ozw).
+  zwave_integration: |
+    {%- if state_attr(entity_id, 'product_name') is string %}
+      zwave
+    {%- elif device_attr(device_id(entity_id), "model") is string %}
+      zwave_js
+    {%- else %}
+      ozw
+    {%- endif %}
+  # If the integration cannot be correctly determined with the above code, delete the above code
+  # and unremark the following line. The enter one of these options: "zwave", "ozw", "zwave_js".
+  #zwave_integration: ""
+
+  # Automatically extract the model name (from zwave_js or zwave).
+  model_name: |
+    {%- set model_name = "" %}
+    {%- if zwave_integration == "zwave_js" %}
+      {% set parent_id = device_id(entity_id) %}
+      {%- set model_name = device_attr(parent_id, "model") %}
+    {%- elif zwave_integration == "zwave" %}
+      {%- set model_name = state_attr(entity_id, 'product_name') %}
+    {%- endif %}
+
+    {%- if "-" in model_name %}
+      {{ model_name.split("-")[0] }}
+    {%- else %}
+      {{ model_name }}
+    {%- endif %}
+
+  # 1st. Use the automatically detected "model_name".
+  # 2nd. Use "model" type passed to the script by the calling script/automation.
+  # 3rd. Assume the model type is "dimmer".
+  model_type: |
+    {%- if model_name is string %}
+      {%- if 'LZW31' in model_name %}
         dimmer
-      {%- elif 'LZW36' in state_attr(entity_id, 'product_name') %}
+      {%- elif 'LZW36' in model_name %}
         combo_light
       {%- else %}
         switch
       {%- endif %}
+    {%- elif model is string %}
+      {{ model }}
     {%- else %}
       dimmer
     {%- endif %}
@@ -80,10 +109,11 @@ variables:
     {%- if color is not number %}
       {{ color|default("Yellow")|title }}
     {%- else %}
-      {{ color|int(default=0) }}
+      {{ color|int }}
     {% endif %}
   # 1-10
-  level: "{{ level|int(default=4) }}"
+  level: "{{ level|default(4) }}"
+  #level: "{{ level|int(default=4) }}"
   duration: '{{ duration|default("Indefinitely")|title }}'
   effect: '{{ effect|default("Blink")|title }}'
   colors:
@@ -150,37 +180,43 @@ variables:
 sequence:
   # Preform the Inovelli math.
   - variables:
-      parameter: "{{ parameters[model|lower] }}"
-      color: "{{ colors[color|title]|int(default=0) }}"
+      parameter: "{{ parameters[model_type|lower] }}"
+      color: "{{ colors[color|title]|int }}"
       duration: "{{ durations[duration|title] }}"
       effect: |
-        {% if model == "switch" %}
+        {% if model_type == "switch" %}
           {{- effects_switch[effect|title] }}
         {%- else %}
           {{- effects_dimmer[effect|title] }}
         {% endif %}
       inovelli_math: |
-        {%- if effect|int(default=0) > 0 %}
-          {{ color|int(default=0) + (level|int(default=0) * 256) + (duration|int(default=0) * 65536) + (effect|int(default=0) * 16777216) }}
+        {%- if effect|int > 0 %}
+          {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
         {%- else %}
           0
         {% endif %}
 
-  # Unremark to provide an notification with troubleshooting information.
-  # - service: persistent_notification.create
-  #   data:
-  #     title: "DEBUG: script.inovelli_led"
-  #     notification_id: "inovelli_led"
-  #     message: |
-  #       zwave_integration: {{ zwave_integration }}
-  #       model: {{ model }}
-  #       color: '{{ color|title }}'
-  #       level: '{{ level }}'
-  #       duration: '{{ duration|title }}'
-  #       effect: '{{ effect|title }}'
-  #       node_id: '{{ node_id }}'
-  #       parameter: '{{ parameter }}'
-  #       value: '{{ inovelli_math }}'
+  # Set debug = true above to provide output troubleshooting information.
+  - choose:
+      # The Z-Wave JS integration requires this service call.
+      - conditions:
+          - '{{ debug == true }}'
+        sequence:
+          - service: persistent_notification.create
+            data:
+              title: "DEBUG: script.inovelli_led"
+              notification_id: "inovelli_led"
+              message: |
+                zwave_integration: {{ zwave_integration }}
+                model_name: {{ model_name }}
+                model_type: {{ model_type }}
+                color: '{{ color|title }}'
+                level: '{{ level }}'
+                duration: '{{ duration|title }}'
+                effect: '{{ effect|title }}'
+                node_id: '{{ node_id }}'
+                parameter: '{{ parameter }}'
+                value: '{{ inovelli_math }}'
 
   - choose:
       # The Z-Wave JS integration requires this service call.
