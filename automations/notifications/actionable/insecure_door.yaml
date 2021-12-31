@@ -9,7 +9,6 @@ trigger:
   - platform: time
     at: "20:00:00"
 variables:
-  tag: INSECURE_DOOR
   front_door_unlocked: '{{ is_state("lock.front_door","unlocked") }}'
   garage_door_open: '{{ is_state("cover.garage_door","open") }}'
 condition:
@@ -23,14 +22,14 @@ action:
       message: |
         {{ "The Front Door is unlocked!" if front_door_unlocked }}
         {{ "The Garage Door is open!" if garage_door_open }}
-      tag: "{{ tag }}"
+      tag: INSECURE_DOOR
       #critical: true
       url: /lovelace/cameras
       actions:
-        - action: "SECURE_DOORS"
+        - action: SECURE_DOORS
           title: Secure Doors
           behavior: "default"
-        - action: "NO_ACTION"
+        - action: NO_ACTION
           title: Leave them be
           destructive: true
 
