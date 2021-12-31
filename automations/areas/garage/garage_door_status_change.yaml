@@ -3,10 +3,20 @@ alias: Garage Door Status Change
 id: garage_door_status_change
 mode: restart
 trigger:
-  - platform: state
-    entity_id: cover.garage_door
-  - platform: state
-    entity_id: cover.test
+  - id: garage_opening
+    platform: state
+    entity_id:
+      - cover.garage_door
+      - cover.test
+    from: ~
+    to: opening
+  - id: garage_closed
+    platform: state
+    entity_id:
+      - cover.garage_door
+      - cover.test
+    from: ~
+    to: closed
 variables:
   old_state: '{{ trigger.from_state.state|lower }}'
   new_state: '{{ trigger.to_state.state|lower }}'
@@ -15,6 +25,12 @@ condition:
   - '{{ old_state != new_state }}'
   - '{{ new_state in ["opening","open","closed"] }}'
 action:
+  # - service: script.notify_web
+  #   data:
+  #     duration: 5
+  #     message: |
+  #       trigger.id: {{ trigger.id }}
+
   - alias: Turn the light for every door state so nobody falls in the dark!
     service: light.turn_on
     entity_id: light.laundry
@@ -22,44 +38,39 @@ action:
   - choose:
       - alias: Garage Door Open
         conditions:
-          - '{{ new_state in ["opening","open"] }}'
+          - '{{ trigger.id == "garage_opening" }}'
         sequence:
-          - choose:
-              - alias: Skip if the previous trigger state was "opening".
-                conditions:
-                  - '{{ old_state != "opening" }}'
-                sequence:
-                  - alias: Update Light Switch LED Status Color.
-                    service: script.turn_on
-                    target:
-                      entity_id: script.inovelli_led_status_start
-                    data:
-                      variables:
-                        color: purple
-                        state_entity: cover.garage_door
-                        state: open
-                        entity_id: light.family_room
+          - alias: Update Light Switch LED Status Color.
+            service: script.turn_on
+            target:
+              entity_id: script.inovelli_led_status_start
+            data:
+              variables:
+                color: purple
+                state_entity: cover.garage_door
+                state: open
+                entity_id: light.family_room
 
-                  - alias: Store current light states.
-                    service: scene.create
-                    data:
-                      scene_id: garage_door_closed_lights_snapshot
-                      snapshot_entities:
-                        - light.play_room_entry
-                        - light.table_lamp
+          - alias: Store current light states.
+            service: scene.create
+            data:
+              scene_id: garage_door_closed_lights_snapshot
+              snapshot_entities:
+                - light.play_room_entry
+                - light.table_lamp
 
-                  - delay:
-                      seconds: 1
+          - delay:
+              seconds: 1
 
-                  - alias: Turn on the notification lights.
-                    service: light.turn_on
-                    target:
-                      entity_id:
-                        - light.play_room_entry
-                        - light.table_lamp
-                    data:
-                      brightness_pct: 100
-                      kelvin: 4500
+          - alias: Turn on the notification lights.
+            service: light.turn_on
+            target:
+              entity_id:
+                - light.play_room_entry
+                - light.table_lamp
+            data:
+              brightness_pct: 100
+              #kelvin: 4500
 
           - alias: Flash the bulbs to draw attention.
             repeat:
@@ -83,42 +94,25 @@ action:
               effect: "colorloop"
 
           - delay:
-              seconds: 15
-
-          - alias: Change the notification animation.
-            choose:
-              - conditions:
-                  - '{{ is_state("cover.garage_door","open") }}'
-                sequence:
-                  - service: script.turn_on
-                    target:
-                      entity_id: script.inovelli_led_status_start
-                    data:
-                      variables:
-                        entity_id: light.family_room
-                        color: purple
-                        duration: indefinitely
-                        effect: solid
-                        level: 4
-
-          - delay:
               minutes: 5
+
           - alias: If after 5 minutes the garage is still open, dim the lights.
             choose:
               - conditions:
                   - '{{ is_state("cover.garage_door","open") }}'
-                  - '{{ is_state("cover.test","open") }}'
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: light.play_room_entry
+                      entity_id:
+                        - light.play_room_entry
+                        - light.table_lamp
                     data:
                       brightness_pct: 30
                       transition: 5
 
       - alias: Garage Door Closed
         conditions:
-          - '{{ new_state == "closed" }}'
+          - '{{ trigger.id == "garage_closed" }}'
         sequence:
           - alias: Turn off the LED notification.
             service: script.turn_on
@@ -135,6 +129,6 @@ action:
             data:
               transition: 5
           
-          - service: light.turn_off
-            target:
-              entity_id: light.play_room_entry
+          # - service: light.turn_off
+          #   target:
+          #     entity_id: light.play_room_entry
