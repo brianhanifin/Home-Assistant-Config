@@ -469,15 +469,6 @@
         device_id: 4f2fbaafac2446c2b58d0bc0969a661f
         entity_id: light.bedroom_table_lamp
         domain: light
-- id: '1638285945838'
-  alias: 'Remote: Lucas'' Bedside'
-  description: ''
-  use_blueprint:
-    path: poolcactus/zha-ikea-tradfri-on-off-switch-incl-dimmer.yaml
-    input:
-      remote: 6c600be0fccb4e37be820b3d103e67a6
-      light:
-        entity_id: light.lucas_room
 - id: '1638297978242'
   alias: 'Remote: Nerene Bedside (6 button)'
   description: ''
@@ -607,3 +598,45 @@
       media_player: media_player.google_kitchen
       say_dark_outside: 'true'
   mode: single
+- id: '1640887750655'
+  alias: Wet Laundry Family Room LED Indicator
+  description: The light will chase blue when the laundry wet alert is active.
+  use_blueprint:
+    path: brianhanifin/inovelli_led_notify.yaml
+    input:
+      trigger_entity_id: alert.wet_laundry
+      on_trigger_state: 'on'
+      off_trigger_state: idle
+      inovelli_entity_id: light.family_room
+      color: Blue
+      effect: Chase
+      duration: Indefinitely
+- id: '1640893354789'
+  alias: 'Remote: Lucas Bedside'
+  description: Toggles Lucas' room light.
+  use_blueprint:
+    path: carlosmesquita/zha-xiaomi-aqara-wireless-mini-switch-wxkg11lm-lumi-sensor-switch-aq2.yaml
+    input:
+      mijia_square_switch: a5bec5336933ba155c6511d6d0f5233d
+      remote_button_short_press:
+      - type: toggle
+        device_id: 759c08b03f409722c65c5fddb29837d1
+        entity_id: light.lucas_room
+        domain: light
+      remote_button_double_press:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: climate.lucas_room
+            state: 'off'
+          sequence:
+          - service: climate.turn_on
+            target:
+              entity_id: climate.lucas_room
+        default:
+        - service: climate.turn_off
+          target:
+            entity_id: climate.lucas_room
+      - service: climate.turn_on
+        target:
+          entity_id: climate.lucas_room
