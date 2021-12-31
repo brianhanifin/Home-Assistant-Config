@@ -3,15 +3,19 @@ alias: Garage Presence Change
 id: garage_presence_change
 mode: restart
 trigger:
-  - platform: state
+  - id: presence_detected
+    platform: state
     entity_id:
       - binary_sensor.garage_entry_door
       - binary_sensor.garage_motion
       - binary_sensor.garage_presence
-variables:
-  old_state: '{{ trigger.from_state.state|lower }}'
-  new_state: '{{ trigger.to_state.state|lower }}'
-  entity_id: '{{ trigger.to_state.entity_id }}'
+    from: "off"
+    to: "on"
+  - id: presence_ends
+    platform: state
+    entity_id: binary_sensor.garage_presence
+    from: "on"
+    to: "off"
 action:
   # - service: script.debug
   #   data:
@@ -21,13 +25,13 @@ action:
 
   - choose:
       - conditions:
-          - '{{ new_state == "on" }}'
+          - '{{ trigger.id == "presence_detected" }}'
         sequence:
           - service: light.turn_on
             entity_id: light.laundry
 
       - conditions:
-          - '{{ entity_id == "binary_sensor.garage_presence" }}'
+          - '{{ trigger.id == "presence_ends" }}'
         sequence:
           - service: light.turn_off
             entity_id: light.laundry
