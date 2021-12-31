@@ -10,8 +10,8 @@ variables:
   camera: '{{ camera|default("none") }}'
   critical: '{{ critical|default(false) }}'
 
-  title: '{{ title }}'
-  subtitle: '{{ subtitle }}'
+  title: '{{ title|default("") }}'
+  subtitle: '{{ subtitle|default("") }}'
   url: |
     {%- if camera != "none" %}
       homeassistant://navigate/lovelace/cameras
@@ -25,19 +25,17 @@ variables:
       {{ default }}
     {% endif %}
   group: |
-    {%- if group is string %}
-      {{ group }}
-    {%- elif camera != "none" %}
-      camera
-    {%- elif image is string %}
-      image
-    {%- else %}
-      {{ default }}
+    {%- set group = group|default("") %}
+    {%- if camera|default("") != "" %}
+      {%- set group = "camera" %}
+    {%- elif image|default("") != "" %}
+      {%- set group = "image" %}
     {% endif %}
+    {{ group }}
   tag: '{{ tag }}'
   push:
     category: |
-      {%- if camera != "none" %}
+      {%- if camera|default("") != "" %}
         camera
       {%- else %}
         {{ default }}
@@ -61,7 +59,7 @@ variables:
         {%- endif %}
       '{{ "critical" if critical else "disabled_critical" }}': 1
       '{{ "volume" if critical else "disabled_volume" }}': 1.0
-  actions: '{{ actions }}'
+  actions: '{{ actions|default([]) }}'
 sequence:
   - condition: state
     entity_id: input_boolean.mobile_notifications
