@@ -1,5 +1,5 @@
 ---
-alias: "Extended Presence: Timer Expired"
+alias: "Extended presence: timer expired"
 id: xpresence_timer_expired
 description: When a timer finishes it is time to update their extended presence status.
 mode: queued
@@ -22,9 +22,9 @@ action:
 
   - variables:
       next_options:
-        "Just Arrived": "Home"
-        "Just Left": "Away"
-        "Away": "Extended Away"
+        "Just arrived": "Home"
+        "Just left": "Away"
+        "Away": "Extended away"
       next_option: '{{ next_options[current_option] }}'
 
   # - service: script.debug
@@ -35,7 +35,7 @@ action:
   #       current_option: {{ current_option }}
   #       next_option: {{ next_option }}
 
-  # Change the status to Just Left or Just Arrived.
+  # Change the status to Just left or Just arrived.
   - service: input_select.select_option
     data:
       entity_id: 'input_select.{{ person }}'
@@ -46,7 +46,7 @@ action:
       - conditions:
           - '{{ next_option == "Away" }}'
         sequence:
-          # "Away" doesn't become "Extended Away" for 24 hours.
+          # "Away" doesn't become "Extended away" for 24 hours.
           - service: timer.start
             data:
               entity_id: 'timer.xpresence_{{ person }}'

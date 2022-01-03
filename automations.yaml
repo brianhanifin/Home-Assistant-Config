@@ -1,5 +1,5 @@
 - id: '1587853788536'
-  alias: Temperature Cooler Outside
+  alias: Temperature coler outside
   description: Notify me to open up the house when the temperature is getting cooler
     outside and the humidity outside isn't a lot higher.
   trigger:
@@ -23,7 +23,7 @@
     entity_id: input_boolean.cooler_outside_notification
     service: input_boolean.turn_on
   - data:
-      message: It is getting cooler outside. Consider using the House Fan.
+      message: It is getting cooler outside. Consider using the house fan.
       title: Cool off!
       who: brian
       group: comfort-action
@@ -31,7 +31,7 @@
     service: script.notify_mobile
   - data:
       media_player: group.google_welcome
-      message: It is getting cooler outside. Consider using the House Fan.
+      message: It is getting cooler outside. Consider using the house fan.
     service: script.notify_speech
   mode: single
 - id: '1588556714529'
@@ -70,8 +70,8 @@
       message: Daily maintenance complete.
   mode: single
 - id: '1614889037575'
-  alias: 'Multi-click Handler: Family Room'
-  description: Inovelli Red Series LZW31-SN Dimmer (ZWave-JS)
+  alias: 'Multi-click handler: family room'
+  description: Inovelli red series LZW31-SN dimmer (ZWave-JS)
   use_blueprint:
     path: brianhanifin/zwave_js_inovelli_lzw31_sn_red_series_dimmer.yaml
     input:
@@ -166,7 +166,7 @@
           - kitchen
           - family_room
 - id: '1615053055187'
-  alias: 'Multi-click Handler: Bedroom Dimmer'
+  alias: 'Multi-click handler: bedroom dimmer'
   description: ''
   use_blueprint:
     path: kpine/ge_double.yaml
@@ -195,7 +195,7 @@
           entity_id:
           - switch.sound_machine
 - id: '1615055705706'
-  alias: 'Remote: Nerene Bedside (2 button)'
+  alias: 'Remote: nerene bedside (2 button)'
   description: Nerene's bedside remote
   use_blueprint:
     path: NachtaktiverHalbaffe/zha-aqara-wireless-remote-switch-double-rocker.yaml
@@ -292,7 +292,7 @@
   mode: single
   initial_state: true
 - id: '1619989994523'
-  alias: Temperature Warmer Outside
+  alias: Temperature warmer outside
   description: Notify me to open up the house when the temperature is getting warmer
     outside.
   trigger:
@@ -328,7 +328,7 @@
       message: It is getting warmer outside. Please close up the house.
   mode: single
 - id: '1620056955070'
-  alias: 'Scheduled Tasks: Hourly'
+  alias: 'Scheduled tasks: hourly'
   description: Tasks to run every hour.
   trigger:
   - platform: time_pattern
@@ -338,7 +338,7 @@
   - service: script.refresh_update_sensors
   mode: single
 - id: '1620532169172'
-  alias: Keep Startup Automation Off
+  alias: Keep startup automation off
   description: The startup automation will turn back on after an automation reload.
     So turn it right back off when it changes from "unavailable" to "on".
   trigger:
@@ -356,7 +356,7 @@
       entity_id: automation.startup
   mode: single
 - id: '1621443029471'
-  alias: 'Kitchen Display: Refresh Home Assistant every 10 minutes'
+  alias: 'Kitchen display: refresh home assistant every 10 minutes'
   description: The display times out after 10 minutes, so reload it. This also resets
     the display to the home screen.
   trigger:
@@ -369,7 +369,7 @@
       path: /lovelace-sidebar/home
   mode: single
 - id: '1624556633877'
-  alias: Safety Alert Garage Door Obstruction Detected
+  alias: Safety alert garage door obstruction detected
   description: Alert when the garage door is unable to close due an obstruction.
   trigger:
   - platform: state
@@ -470,7 +470,7 @@
         entity_id: light.bedroom_table_lamp
         domain: light
 - id: '1638297978242'
-  alias: 'Remote: Nerene Bedside (6 button)'
+  alias: 'Remote: Nerene bedside (6 button)'
   description: ''
   use_blueprint:
     path: Jarne_Roussard/aqara-opple-6-buttons-for-zha.yaml
@@ -565,7 +565,7 @@
       \ = adaptive_lighting.switches + [ entity ] %}\n{%- endfor %} {{- adaptive_lighting.switches\
       \ | map(attribute='entity_id') | list }}\n"
 - id: '1638910619111'
-  alias: 'Maintenace: Lights off after sunrise'
+  alias: 'Maintenace: lights off after sunrise'
   description: Turn the entry and porch lights off after sunrise.
   trigger:
   - platform: sun
@@ -599,7 +599,7 @@
       say_dark_outside: 'true'
   mode: single
 - id: '1640887750655'
-  alias: Wet Laundry Family Room LED Indicator
+  alias: Wet laundry family room LED indicator
   description: The light will chase blue when the laundry wet alert is active.
   use_blueprint:
     path: brianhanifin/inovelli_led_notify.yaml
@@ -641,7 +641,7 @@
         target:
           entity_id: climate.lucas_room
 - id: '1641060240716'
-  alias: Mobile Widget Actions
+  alias: Mobile widget actions
   description: Take actions based on the iPhone widget button pressed.
   trigger:
   - platform: event

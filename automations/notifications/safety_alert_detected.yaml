@@ -1,5 +1,5 @@
 ---
-alias: Safety Alert Smoke or Carbon Monoxide
+alias: Safety alert smoke or carbon monoxide
 id: safety_alert_smoke
 mode: single
 trigger:
@@ -17,12 +17,12 @@ trigger:
 
 variables:
   type: '{{ trigger.to_state.state|int(default=0) }}'
-  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety Alarm ","")|replace(" Type","")|replace(" Code","") }}'
+  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace(" Type","")|replace(" Code","") }}'
 
   alarm_states:
     1: "SMOKE"
     2: "CARBON MONOXIDE"
-    12: "Test Button Press"
+    12: "Test button press"
   alarm_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "unknown" }}'
   # alarm_state: |
   #   {{- "SMOKE" if type == 1 }}

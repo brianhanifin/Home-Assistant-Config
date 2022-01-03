@@ -1,10 +1,7 @@
 ---
-##############################################
-## Play Room Light Automations
-##############################################
-## Turn the floor lamp off when the main switch is turned off.
-alias: play_room_light_off
-
+alias: Play room light off
+id: play_room_light_off
+description: Turn the floor lamp off when the main switch is turned off.
 trigger:
   - platform: state
     entity_id: light.play_room
@@ -15,6 +12,6 @@ action:
     entity_id:
       - light.play_room_floor_lamp
       - light.play_room_entry
-  
+
   - service: switch.turn_off
     entity_id: switch.vr_mode

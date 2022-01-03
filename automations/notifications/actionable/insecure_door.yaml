@@ -1,7 +1,7 @@
 ---
 # Warn us if any doors or windows are open or unlocked
 #
-alias: "INSECURE_DOOR: Actionable Notification"
+alias: "Insecure door: actionable notification"
 id: insecure_door_actionable_notification
 mode: restart
 trigger:
@@ -20,14 +20,14 @@ action:
       who: "brian"
       title: "SAFETY ALERT: INSECURE DOOR{% if front_door_unlocked and garage_door_open %}S{% endif %}"
       message: |
-        {{ "The Front Door is unlocked!" if front_door_unlocked }}
-        {{ "The Garage Door is open!" if garage_door_open }}
+        {{ "The front door is unlocked!" if front_door_unlocked }}
+        {{ "The garage door is open!" if garage_door_open }}
       tag: INSECURE_DOOR
       #critical: true
       url: /lovelace/cameras
       actions:
         - action: SECURE_DOORS
-          title: Secure Doors
+          title: Secure doors
           behavior: "default"
         - action: NO_ACTION
           title: Leave them be

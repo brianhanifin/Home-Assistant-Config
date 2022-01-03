@@ -1,8 +1,8 @@
 ---
-alias: "Extended Presence: Restart Stuck Timers"
+alias: "Extended presence: restart stuck timers"
 id: xpresence_stuck_watchdog
 description: |
-  Every 10 minutes check for presence statues stuck as 'Just Arrived', or 'Just Left'.
+  Every 10 minutes check for presence statues stuck as 'Just arrived', or 'Just left'.
   The timer should be 'active', so if it is 'idle', then the status is considered stuck.
 
 trigger:
@@ -15,7 +15,7 @@ variables:
   active_timers: "{{ states.timer | selectattr('state','in',['active']) | map(attribute='entity_id') | list }}"
   idle_timers: "{{ states.timer | selectattr('state','in',['idle'])   | map(attribute='entity_id') | list }}"
   # Select "Away" + "Just ..." timers.
-  just_state_timers: "{{ states.input_select | selectattr('state','in',['Just Arrived','Just Left']) | map(attribute='entity_id') | join(',') | replace('input_select.','timer.xpresence_') }}"
+  just_state_timers: "{{ states.input_select | selectattr('state','in',['Just arrived','Just left']) | map(attribute='entity_id') | join(',') | replace('input_select.','timer.xpresence_') }}"
   away_state_timers: "{{ states.input_select | selectattr('state','in',['Away']) | map(attribute='entity_id') | join(',') | replace('input_select.','timer.xpresence_') }}"
   # Filter away all but the timers in common.
   active_24hr_just_state_timers: "{{ states.timer | selectattr('attributes.duration','in',['23:59:59']) | map(attribute='entity_id') | select('in',active_timers) | select('in',just_state_timers) | list }}"

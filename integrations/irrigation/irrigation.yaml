@@ -2,10 +2,10 @@
 # Lovelace UI to set a list of irrigation cycle times.
 input_text:
   irrigation_zone1_times:
-    name: List of Times (eg. 08:00,12:00,15:00)
+    name: List of times (eg. 08:00,12:00,15:00)
     icon: mdi:clock-outline
   irrigation_zone2_times:
-    name: List of Times (eg. 11:00,15:30)
+    name: List of times (eg. 11:00,15:30)
     icon: mdi:clock-outline
 
 # Lovelace UI to set the duration of each irrigation cycle.
@@ -29,8 +29,8 @@ input_text:
 ### Optional offline notifications.
 automation:
   # Warn me if the system ever goes offline for more than two hours!
-  - alias: irrigation_system_offline
-    
+  - alias: Irrigation system offline
+    id: irrigation_system_offline    
     trigger:
       - platform: state
         entity_id: binary_sensor.irrigation_controller_status
@@ -39,11 +39,11 @@ automation:
     action:
       - service: persistent_notification.create
         data:
-          title: "Irrigation System Offline"
+          title: "Irrigation system offline"
           message: "The Irrigation System has been offline for 2 hours!"
           notification_id: "offline"
 
       - service: notify.mobile_app_iphone_brian
         data:
-          title: "Irrigation System Offline"
+          title: "Irrigation system offline"
           message: "The Irrigation System has been offline for 2 hours"

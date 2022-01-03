@@ -1,5 +1,5 @@
 ---
-alias: "Extended Presence: Location Update"
+alias: "Extended presence: location update"
 id: xpresence_location_update
 description: "When someone's standard presence location updates"
 mode: queued
@@ -20,9 +20,9 @@ variables:
   old_state: '{{ trigger.from_state.state }}'
   option: |
     {%- if new_state == "home" -%}
-      Just Arrived
+      Just arrived
     {%- else -%}
-      Just Left
+      Just left
     {%- endif -%}
   person: '{{ trigger.to_state.object_id }}'
   source: '{{ trigger.to_state.attributes.source }}'
@@ -50,7 +50,7 @@ action:
   #       xpresence new: {{ option }}
   #       {{ trigger.to_state }}
 
-  # Change the status to Just Left or Just Arrived.
+  # Change the status to Just left or Just arrived.
   - service: input_select.select_option
     data:
       entity_id: "input_select.{{ person }}"

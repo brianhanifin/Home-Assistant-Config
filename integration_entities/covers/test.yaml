@@ -4,6 +4,12 @@ covers:
   test:
     device_class: garage
     friendly_name: Test Cover
+    icon_template: |
+      {%- if is_state("cover.test", "closed") %}
+        mdi:garage
+      {%- else %}
+        mdi:garage-open
+      {%- endif %}
     value_template: |
       {%- if is_state("input_boolean.test","on") %}
         {%- if is_state("cover.test","opening") %}
