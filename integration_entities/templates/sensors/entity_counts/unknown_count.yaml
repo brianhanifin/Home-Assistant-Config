@@ -10,7 +10,8 @@ state: |
       "sensor.octoprint_estimated_finish_time", "sensor.octoprint_start_time",
       "sensor.rainforest_energy_monitoring_unit",
       "sensor.last_message", "sensor.last_speaker",
-      "button.entry_railing_restart"
+      "button.entry_railing_restart",
+      "number.bedroom_dimmer", "sensor.accuweather_ozone_0d", "sensor.lastboot"
   ] %}
   {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | count }}
 attributes:
@@ -21,6 +22,7 @@ attributes:
       "sensor.octoprint_estimated_finish_time", "sensor.octoprint_start_time",
       "sensor.rainforest_energy_monitoring_unit",
       "sensor.last_message", "sensor.last_speaker",
-      "button.entry_railing_restart"
+      "button.entry_railing_restart",
+      "number.bedroom_dimmer", "sensor.accuweather_ozone_0d", "sensor.lastboot"
     ] %}
     {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | replace("[","") | replace("]","") | replace("'","") }}
