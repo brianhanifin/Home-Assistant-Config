@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1279 total entities**, 
-including **660 sensors**.
+Our Home Assistant install has approximately **1278 total entities**, 
+including **667 sensors**.
 
-<details><summary>22 Custom Integrations</summary>
+<details><summary>21 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -186,7 +186,7 @@ Anniversary Countdown Sensor for Home Assistant
 Authors: [@pinkywafer](https://github.com/pinkywafer).
 
 
-#### [Average Sensor v2.2.0](https://github.com/Limych/ha-average)
+#### [Average Sensor v2.2.1](https://github.com/Limych/ha-average)
 
 Average Sensor for Home Assistant
 Authors: [@Limych](https://github.com/Limych).
@@ -202,12 +202,6 @@ Authors: [@hif2k1](https://github.com/hif2k1).
 
 Check your Home Assistant configuration from the frontend, or automatically when the configuration is updated, and optionally restart HASS automatically!Run the CLI config_check from a service call.
 Authors: [@ludeeus](https://github.com/ludeeus).
-
-
-#### [EventSensor v3.0.0](https://github.com/azogue/eventsensor)
-
-
-Authors: [@azogue](https://github.com/azogue).
 
 
 #### [Fontawesome icons v2.1.5](https://github.com/thomasloven/hass-fontawesome)
@@ -228,7 +222,7 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Google Home v1.9.3](https://github.com/leikoilja/ha-google-home)
+#### [Google Home v1.9.4](https://github.com/leikoilja/ha-google-home)
 
 Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
@@ -270,7 +264,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.10.7](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.11.0](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -282,7 +276,7 @@ Authors: [@ollo69](https://github.com/ollo69).
 Authors: [@djtimca](https://github.com/djtimca).
 
 
-#### [Sun2 v2.0.2](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
+#### [Sun2 v2.0.3](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
 
 
 Authors: [@pnbruckner](https://github.com/pnbruckner).
@@ -435,7 +429,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 Addons</summary>
 
-#### ESPHome v2021.12.1
+#### ESPHome v2021.12.3
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -494,7 +488,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.12.7-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.12.8-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -504,7 +498,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[maintained]: https://img.shields.io/maintenance/yes/2021.svg
+[maintained]: https://img.shields.io/maintenance/yes/2022.svg
 
 [github-last-commit]: https://img.shields.io/github/last-commit/BrianHanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [github-master]: https://github.com/BrianHanifin/Home-Assistant-Config/commits/master
