@@ -1,0 +1,57 @@
+---
+alias: Cast Site
+mode: single
+icon: 'mdi:cast'
+variables:
+  entity_id: '{{ display.entity_id|default("media_player.google_kitchen") }}'
+  path: |
+    {%- if path is undefined %}
+      {%- set path = [] %}
+    {%- else %}
+      {%- set path = path[1:] if path.startswith("/") else path  %}
+    {%- endif %}
+    {{ path }}
+  dashboard_path: '{{ path.split("/")[0] }}'
+  view_path: '{{ path.split("/")[1] if path.split("/")|count > 1 else "/0" }}'
+  dismiss_after: '{{ dismiss_after|default(60) }}'
+sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       display: "{{ display }}" -
+  #       path: "{{ path }}" -
+  #       dashboard_path: "{{ dashboard_path }}" -
+  #       view_path: "{{ view_path }}" -
+
+  - service: cast.show_lovelace_view
+    data:
+      entity_id: '{{ display|default("media_player.google_kitchen") }}'
+      dashboard_path: '{{ dashboard_path }}'
+      view_path: '{{ view_path }}'
+
+  - delay: 
+      seconds: '{{ dismiss_after }}'
+
+  - service: script.cast_stop
+    data:
+      entity_id: media_player.google_kitchen
+
+fields:
+  display:
+    description: Select the Google cast display.
+    selector:
+      entity:
+        integration: cast
+  path:
+    description: Path to the page on this server.
+    example: lovelace/cameras
+    required: false
+    selector:
+      text:
+  dismiss_after:
+    description: "Reset the display after # seconds."
+    required: false
+    selector:
+      number:
+        min: 60
+        max: 300
