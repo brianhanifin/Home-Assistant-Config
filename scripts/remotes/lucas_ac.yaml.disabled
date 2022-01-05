@@ -17,7 +17,7 @@ variables:
   remote: remote.lucas_room
   device: lucas_room_ac
   is_on: '{{ not is_state("climate.lucas_ac","off") }}'
-  recommended_mode: '{{ states("sensor.lucas_recommended_mode") }}'
+  recommended_mode: '{{ states("sensor.lucas_recommended_climate_mode") }}'
   commands: |
     {%- set commands = "none" %}
     {%- if mode == "off" %}

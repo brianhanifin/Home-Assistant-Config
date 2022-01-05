@@ -11,7 +11,7 @@ switches:
           entity_id: climate.lucas_room
 
       - choose:
-          - conditions: '{{ is_state("sensor.lucas_recommended_mode","cool") }}'
+          - conditions: '{{ is_state("sensor.lucas_recommended_climate_mode","cool") }}'
             sequence:
               - service: climate.set_temperature
                 target:
@@ -24,7 +24,7 @@ switches:
             target:
               entity_id: climate.lucas_room
             data:
-              hvac_mode: '{{ states("sensor.lucas_recommended_mode") }}'
+              hvac_mode: '{{ states("sensor.lucas_recommended_climate_mode") }}'
 
     turn_off:
       - service: climate.turn_off
