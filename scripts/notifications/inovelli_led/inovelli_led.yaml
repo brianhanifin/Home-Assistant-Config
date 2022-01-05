@@ -48,10 +48,6 @@
 #     1. Added automatic zwave integration detection!
 #     2. Added automatic model name extraction from the parent device.
 #     3. Now the model type should be automatically discovered for Z-Wave JS and zwave (but not ozw).
-#
-#   January 5, 2022
-#     1. Reworked zwave_integration auto detection to use the new integration_entities() template function.
-#     2. The script will not display a permanent notification if the zwave_integration was not detected properly.
 mode: parallel
 variables:
   # Set to true to create a "persistent_notification" with debugging information.
@@ -59,16 +55,13 @@ variables:
 
   # Automatically determine which Z-Wave Integration is being used (Z-Wave JS, zwave, or ozw).
   zwave_integration: |
-    {%- if integration_entities("zwave")|count > 0 %}
+    {%- if state_attr(entity_id, 'product_name') is string %}
       zwave
-    {%- elif integration_entities("zwave_js")|count > 0 %}
+    {%- elif device_attr(device_id(entity_id), "model") is string %}
       zwave_js
-    {%- elif integration_entities("ozw")|count > 0 %}
-      ozw
     {%- else %}
-      unknown
+      ozw
     {%- endif %}
-
   # If the integration cannot be correctly determined with the above code, delete the above code
   # and unremark the following line. The enter one of these options: "zwave", "ozw", "zwave_js".
   #zwave_integration: ""
@@ -214,19 +207,16 @@ sequence:
               title: "DEBUG: script.inovelli_led"
               notification_id: "inovelli_led"
               message: |
-
-  - alias: "Display an error if the Z-Wave integration was unable to be detected."
-    choose:
-      - conditions:
-          - '{{ zwave_integration == "unknown" }}'
-        sequence:
-          - service: persistent_notification.create
-            data:
-              title: "ERROR: zwave_integration"
-              notification_id: "inovelli_led"
-              message: |
-                Your Z-wave integration was not able to be auto-detected!
-                The Inovelli LED script may not work properly.
+                zwave_integration: {{ zwave_integration }}
+                model_name: {{ model_name }}
+                model_type: {{ model_type }}
+                color: '{{ color|title }}'
+                level: '{{ level }}'
+                duration: '{{ duration|title }}'
+                effect: '{{ effect|title }}'
+                node_id: '{{ node_id }}'
+                parameter: '{{ parameter }}'
+                value: '{{ inovelli_math }}'
 
   - choose:
       # The Z-Wave JS integration requires this service call.
