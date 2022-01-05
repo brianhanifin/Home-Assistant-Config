@@ -25,18 +25,18 @@ state: |
   {%- if state_attr("sensor.updates", "hacs_update") %}
     {%- set hacs_updates = states("sensor.hacs")|int(default=0) %}
     {%- if hacs_updates == 1 %}
-      - There is one [HACS update](/hacs).
+    - There is one [HACS update](/hacs).
     {%- else %}
-      - There are {{ hacs_updates }} [HACS updates](/hacs).
+    - There are {{ hacs_updates }} [HACS updates](/hacs).
     {%- endif %}
   {%- endif %}
 
   {%- if state_attr("sensor.updates", "addon_update") %}
     {%- set addon_updates = states("sensor.addon_updates")|int(default=0) %}
     {%- if addon_updates == 1 %}
-      - There is one [Addon update](/config/dashboard).
+    - There is one [Addon update](/config/dashboard).
     {%- else %}
-      - There are {{ addon_updates }} [Addon updates](/config/dashboard).
+    - There are {{ addon_updates }} [Addon updates](/config/dashboard).
     {%- endif %}
   {%- endif %}
 
