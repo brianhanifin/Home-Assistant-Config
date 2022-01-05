@@ -1,0 +1,30 @@
+---
+alias: Z-wave network unavailable alert
+id: zwave_network_unavailable
+description: Notify me if the Z-wave network goes offline.
+mode: single
+trigger:
+  - id: fridge
+    platform: state
+    entity_id: sensor.family_room_dimmer_node_status
+    from: "alive"
+    to: ~
+variables:
+  title: 'Z-Wave JS network unavailable'
+  message: |
+    The family room dimmer is no longer reporting a status of "alive".
+action:
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: '{{ title }}'
+      message: '{{ message }}'
+      who: brian
+      group: server-issue
+      url: /lovelace/home
+
+  - service: script.notify_web
+    data:
+      type: alert
+      title: '{{ title }}'
+      message: '{{ message }}'
