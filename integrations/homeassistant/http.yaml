@@ -7,15 +7,31 @@
 http:
   cors_allowed_origins:
     - https://cast.home-assistant.io
+    - https://home.mybox.run
   
-  # These are for C.A.T.T.
+  # These are for Nginx proxy manager
   use_x_forwarded_for: true
   trusted_proxies:
-    - 10.0.0.175 # Google Kitchen Display
+    - 10.0.0.0/8
+    # Nginx docker network
+    - 172.0.0.0/8
+    # My Cox ip range ..170.0 - ..171.254
+    - 72.197.170.0/23
+    # Cloudflare IPs
+    - 103.21.244.0/22
+    - 103.22.200.0/22
+    - 103.31.4.0/22
+    - 104.16.0.0/12
+    - 108.162.192.0/18
+    - 131.0.72.0/22
+    - 141.101.64.0/18
+    - 162.158.0.0/15
+    - 172.64.0.0/13
+    - 173.245.48.0/20
+    - 188.114.96.0/20
+    - 190.93.240.0/20
+    - 197.234.240.0/22
+    - 198.41.128.0/17
 
-  ip_ban_enabled: false
-  #login_attempts_threshold: 5
-  # trusted_networks:
-  #   - 127.0.0.1
-  #   - 172.0.0.0/8
-  #   - 10.0.0.0/24
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
