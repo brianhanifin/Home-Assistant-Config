@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1237 total entities**, 
-including **636 sensors**.
+Our Home Assistant install has approximately **1254 total entities**, 
+including **653 sensors**.
 
-<details><summary>21 Custom Integrations</summary>
+<details><summary>20 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -192,15 +192,9 @@ Average Sensor for Home Assistant
 Authors: [@Limych](https://github.com/Limych).
 
 
-#### [Battery Simulation v1.0](https://github.com/hif2k1/battery_sim/)
-
-
-Authors: [@hif2k1](https://github.com/hif2k1).
-
-
 #### [Config Check v0.1.1](https://github.com/custom-components/config_check)
 
-Check your Home Assistant configuration from the frontend, or automatically when the configuration is updated, and optionally restart HASS automatically!Run the CLI config_check from a service call.
+Run the CLI config_check from a service call.
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
@@ -216,7 +210,7 @@ Frigate integration for Home Assistant
 Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 
 
-#### [Generate readme v0.3.0](https://github.com/custom-components/readme)
+#### [Generate readme v0.4.0](https://github.com/custom-components/readme)
 
 
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -228,7 +222,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.18.0](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.19.2](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -264,7 +258,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.11.0](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.12.2](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -294,7 +288,7 @@ A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
 
 
-#### [Wyze v2021.11.1](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v0.1.4](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
@@ -302,7 +296,7 @@ Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 
 <details><summary>31 Lovelace Plugins</summary>
 
-#### [Atomic Calendar Revive v6.1.2](https://github.com/totaldebug/atomic-calendar-revive)
+#### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
 
 
@@ -488,7 +482,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.12.8-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.12.9-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
