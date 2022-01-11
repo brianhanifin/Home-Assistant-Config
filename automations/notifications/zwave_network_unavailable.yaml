@@ -14,9 +14,14 @@ variables:
   message: |
     The family room dimmer is no longer reporting a status of "alive".
 action:
+  - alias: Between midnight and 6 am.
+    condition: time
+    after: "00:00:00"
+    before: "06:00:00"
+
   - service: script.notify_mobile
     data:
-      critical: true
+      #critical: true
       title: '{{ title }}'
       message: '{{ message }}'
       who: brian
