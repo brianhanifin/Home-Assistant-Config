@@ -7,16 +7,16 @@ trigger:
   - platform: event
     event_type: state_changed
     event_data:
-      entity_id: binary_sensor.kitchen_1_motion
+      entity_id: binary_sensor.kitchen_1_presence
   - platform: event
     event_type: state_changed
     event_data:
-      entity_id: binary_sensor.kitchen_2_motion
+      entity_id: binary_sensor.kitchen_2_presence
 variables:
   old_state: '{{ trigger.event.data.old_state.state }}'
   new_state: '{{ trigger.event.data.new_state.state }}'
 
-  both_motion_off: '{{ states("binary_sensor.kitchen_1_motion") == "off" and states("binary_sensor.kitchen_2_motion") == "off" }}'
+  both_motion_off: '{{ states("binary_sensor.kitchen_1_presence") == "off" and states("binary_sensor.kitchen_2_presence") == "off" }}'
 condition:
   - '{{ (new_state in ["off","on"] and old_state in ["off","on"])
       and old_state != new_state }}'
