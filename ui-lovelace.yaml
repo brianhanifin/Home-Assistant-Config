@@ -1781,21 +1781,21 @@ views:
                   entity: binary_sensor.safety_alarm_leak
                   exclude_states:
                   - 'off'
-                - content_template: '**{{display_name}}** is Unlocked'
+                - content_template: '**{{display_name}}** is **unlocked**'
                   entity: lock.front_door
                   exclude_states:
                   - locked
                   - unavailable
                   name: Front Door
-                - content_template: '**Lock countdown** is Active'
+                - content_template: '**Lock countdown** is **active**'
                   entity: timer.front_door_unlocked
                   exclude_states:
                   - idle
-                - content_template: '**Leave door unlocked** is Active'
+                - content_template: '**Leave door unlocked** is **active**'
                   entity: input_boolean.leave_unlocked
                   exclude_states:
                   - 'off'
-                - content_template: '**{{display_name}}** is {{state}}'
+                - content_template: '**{{display_name}}** is **{{state}}**'
                   entity: binary_sensor.front_door
                   exclude_states:
                   - 'off'
@@ -1803,35 +1803,35 @@ views:
                   name: Front Door
                   state_map:
                     'on': Open
-                - content_template: '**{{display_name}}** is {{state}}'
+                - content_template: '**{{display_name}}** is **{{state}}**'
                   entity: cover.garage_door
                   exclude_states:
                   - closed
                   - unavailable
-                - content_template: '**{{display_name}}** is Open'
+                - content_template: '**{{display_name}}** is **open**'
                   entity: binary_sensor.network_closet_door
                   exclude_states:
                   - 'off'
                   - unavailable
-                - content_template: '**{{display_name}}** is Open'
+                - content_template: '**{{display_name}}** is **open**'
                   entity: binary_sensor.upstairs_bathroom_window
                   exclude_states:
                   - 'off'
                   - unavailable
-                - content_template: '**{{display_name}}** is Active'
+                - content_template: '**{{display_name}}** is **active**'
                   entity: input_boolean.guest_mode
                   exclude_states:
                   - 'off'
-                - content_template: '**{{display_name}}** is Active'
+                - content_template: '**{{display_name}}** is **active**'
                   entity: input_boolean.away_mode
                   exclude_states:
                   - 'off'
-                - content_template: '**{{display_name}}** is Offline'
+                - content_template: '**{{display_name}}** is **offline**'
                   entity: binary_sensor.irrigation_controller_status
                   exclude_states:
                   - 'on'
                   - unavailable
-                - content_template: '**3D Printer** is {{state}}'
+                - content_template: '**3D Printer** is **{{state}}**'
                   entity: sensor.octoprint_current_state
                   exclude_states:
                   - unavailable
@@ -1885,7 +1885,7 @@ views:
                   entity: binary_sensor.safety_alarm_leak
                   exclude_states:
                   - 'off'
-                - content_template: '**{{display_name}}** is {{state}}'
+                - content_template: '**{{display_name}}** is **{{state}}**'
                   entity: binary_sensor.front_door
                   exclude_states:
                   - 'off'
@@ -1893,17 +1893,17 @@ views:
                   name: Front Door
                   state_map:
                     'on': Open
-                - content_template: '**{{display_name}}** is {{state}}'
+                - content_template: '**{{display_name}}** is **{{state}}**'
                   entity: cover.garage_door
                   exclude_states:
                   - closed
                   - unavailable
-                - content_template: '**{{display_name}}** is Open'
+                - content_template: '**{{display_name}}** is **open**'
                   entity: binary_sensor.upstairs_bathroom_window
                   exclude_states:
                   - 'off'
                   - unavailable
-                - content_template: '**{{display_name}}** is Active'
+                - content_template: '**{{display_name}}** is **active**'
                   entity: input_boolean.guest_mode
                   exclude_states:
                   - 'off'
@@ -2154,41 +2154,6 @@ views:
         type: custom:button-card
       - entity: input_boolean.leave_unlocked
         icon: hass:toggle-switch-off
-        template: custom_chip_brianhanifin_toggle
-        type: custom:button-card
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-  - cards:
-    - label: Control lights & devices.
-      name: Garage
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.garage_temperature
-          icon: 🌡️
-          unit: °F
-      - template: custom_chip_brianhanifin_contact_sensor
-        type: custom:button-card
-        variables:
-          entity: binary_sensor.garage_entry_door
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.garage_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
-    - cards:
-      - entity: light.laundry
-        template: card_light
-        type: custom:button-card
-      - entity: cover.garage_door
-        lock:
-          enabled: 'true'
         template: custom_chip_brianhanifin_toggle
         type: custom:button-card
       columns: 3
@@ -3625,45 +3590,17 @@ views:
 - badges: []
   cards:
   - cards:
-    - icon: mdi:home
-      label: common
-      name: Home
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/home
-    - icon: mdi:home-floor-2
-      label: zone
-      name: Upstairs
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/upstairs
-    - icon: mdi:flower
-      label: zone
-      name: Outdoor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/outdoors
-    - icon: mdi:speedometer-slow
-      label: status
-      name: Monitor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/monitoring
-    columns: 6
-    square: false
-    type: grid
-  - cards:
-    - name: Home Assistant
-      template: card_title
-      type: custom:button-card
+    - cards:
+      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
+        template: chip_back
+        type: custom:button-card
+        variables:
+          ulm_chip_back_path: /lovelace/home
+      - label: Status
+        name: Home Assistant
+        template: card_title
+        type: custom:button-card
+      type: horizontal-stack
     - card:
         entity: template
         states:
@@ -3948,67 +3885,279 @@ views:
   type: sidebar
 - badges: []
   cards:
-  - name: Speech notifications
-    template: card_title
-    type: custom:button-card
-  - card:
-      cards:
-      - entities:
-        - entity: sensor.last_speaker
-          icon: mdi:account-voice
-          name: Last announcement from
-          secondary_info: last-changed
-        - entity: sensor.last_google
-          icon: mdi:google-home
-          name: Last active speaker
-          secondary_info: last-changed
-        - entity: sensor.last_message
-          icon: mdi:comment-text
-          name: ' '
-        - type: section
-        - entity: input_boolean.audio_notifications
-        - input_select.tts_phrase_room
-        - entity: input_select.tts_phrases
-        - entity: input_text.tts_phrase
-          type: custom:text-input-row
-        footer:
-          entities:
-          - entity: script.tts_phrase_say
+  - cards:
+    - cards:
+      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
+        template: chip_back
+        type: custom:button-card
+        variables:
+          ulm_chip_back_path: /lovelace/home
+      - label: Tap away from message box before tapping announce
+        name: Speech notifications
+        template: card_title
+        type: custom:button-card
+      type: horizontal-stack
+    - card:
+        cards:
+        - entities:
+          - entity: sensor.last_speaker
             icon: mdi:account-voice
-            name: Say
-          - entity: script.repeat_last_message
-            icon: mdi:refresh-circle
-            name: Last message
-          type: buttons
-        show_header_toggle: false
-        state_color: false
-        style: "ha-card {\n  box-shadow: none;\n}\n"
-        type: entities
-      - content: '#### Tap away from Message box _before_ tapping _announce_.
-
-          '
-        style: "ha-card {\n  box-shadow: none;\n  color: rgba(128, 0, 0, 0.7);\n}\n"
-        type: markdown
-      type: vertical-stack
-    style: "ha-card {\n  box-shadow: var(--box-shadow);\n}\n"
-    type: custom:mod-card
-    view_layout:
-      position: sidebar
+            name: Last announcement from
+            secondary_info: last-changed
+          - entity: sensor.last_google
+            icon: mdi:google-home
+            name: Last active speaker
+            secondary_info: last-changed
+          - entity: sensor.last_message
+            icon: mdi:comment-text
+            name: ' '
+          - type: section
+          - entity: input_boolean.audio_notifications
+          - input_select.tts_phrase_room
+          - entity: input_select.tts_phrases
+          - entity: input_text.tts_phrase
+            type: custom:text-input-row
+          footer:
+            entities:
+            - entity: script.tts_phrase_say
+              icon: mdi:account-voice
+              name: Say
+            - entity: script.repeat_last_message
+              icon: mdi:refresh-circle
+              name: Last message
+            type: buttons
+          show_header_toggle: false
+          state_color: false
+          style: "ha-card {\n  box-shadow: none;\n}\n"
+          type: entities
+        type: vertical-stack
+      style: "ha-card {\n  box-shadow: var(--box-shadow);\n}\n"
+      type: custom:mod-card
+    type: vertical-stack
   icon: mdi:google-home
   path: smart-speakers
   title: Smart speakers
 - badges: []
-  cards: []
+  cards:
+  - cards:
+    - label: Enable & disable automated features
+      name: Mode overrides
+      template: card_title
+      type: custom:button-card
+    - cards:
+      - entity: input_boolean.guest_mode
+        icon: mdi:account-supervisor-circle
+        label: Mode
+        name: Guest
+        template: card_power_outlet
+        type: custom:button-card
+      - entity: input_boolean.away_mode
+        icon: mdi:rv-truck
+        label: Mode
+        name: Away
+        template: card_power_outlet
+        type: custom:button-card
+      - entity: input_boolean.leave_unlocked
+        label: Unlocked
+        name: Leave
+        template: card_power_outlet
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+    view_layout:
+      position: sidebar
+  - cards:
+    - cards:
+      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
+        template: chip_back
+        type: custom:button-card
+        variables:
+          ulm_chip_back_path: /lovelace/home
+      - label: Default volume
+        name: Notification settings
+        template: card_title
+        type: custom:button-card
+      type: horizontal-stack
+    - cards:
+      - entity: input_boolean.mobile_notifications
+        icon: mdi:cellphone-message
+        name: Notify mobile
+        template: card_power_outlet
+        type: custom:button-card
+      - entity: input_boolean.audio_notifications
+        icon: mdi:speaker-wireless
+        name: Notify speakers
+        template: card_power_outlet
+        type: custom:button-card
+      - entity: automation.temperature_cooler_outside
+        icon: mdi:thermometer
+        name: Cooler outside
+        template: card_power_outlet
+        type: custom:button-card
+      columns: 2
+      square: false
+      type: grid
+    - entities:
+      - card:
+          entity: input_number.default_announcement_volume
+          name: Announcements
+        row: true
+        type: custom:restriction-card
+      - card:
+          entity: input_number.default_audio_volume
+          name: Sound only
+        row: true
+        type: custom:restriction-card
+      type: custom:hui-entities-card
+    - label: Quiet time (critical alerts excluded)
+      template: card_title
+      type: custom:button-card
+    - cards:
+      - entities:
+        - card:
+            entity: input_number.quiet_hour_start
+            name: Hour Start
+          row: true
+          type: custom:restriction-card
+        - card:
+            entity: input_number.quiet_hour_end
+            name: Hour End
+          row: true
+          type: custom:restriction-card
+        style: "ha-card {\n  margin-top: -1.5em;\n}\n"
+        type: entities
+      - entities:
+        - entity: binary_sensor.noncritical_alert_quiet_time
+          name: Quiet time mode
+        type: custom:badge-card
+      mode: horizontal
+      style: "ha-card {\n  padding-top: 1.5em;\n}\n"
+      type: custom:stack-in-card
+    type: vertical-stack
+  - cards:
+    - label: One time actions
+      name: Routines
+      template: card_title
+      type: custom:button-card
+    - cards:
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.goodbye_routine
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:exit-run
+          ulm_card_script_title: Goodbye
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.goodnight_routine
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:weather-night
+          ulm_card_script_title: Goodnight
+      columns: 2
+      square: false
+      type: grid
+    - label: Toggle miscellaneous devices
+      name: Other Devices
+      template: card_title
+      type: custom:button-card
+    - cards:
+      - entity: switch.hot_water_pump
+        icon: mdi:hot-tub
+        name: Hot Water
+        template: card_power_outlet
+        type: custom:button-card
+      - entity: switch.printers
+        icon: mdi:printer
+        name: Printers
+        template: card_power_outlet
+        type: custom:button-card
+      columns: 2
+      square: false
+      type: grid
+    type: vertical-stack
+    view_layout:
+      position: sidebar
+  - entities:
+    - entity: sensor.hp_colorlaserjet
+      secondary_info: last-updated
+    - entity: automation.printer_status_update_when_on
+      secondary_info: last-triggered
+    - entity: automation.printer_turn_off_when_idle
+      secondary_info: last-triggered
+    show_header_toggle: false
+    type: entities
+    view_layout:
+      position: sidebar
+  - cards:
+    - label: Control lights & devices.
+      name: Garage
+      template: card_title
+      type: custom:button-card
+    - cards:
+      - template: custom_chip_brianhanifin_icon_state
+        type: custom:button-card
+        variables:
+          entity: sensor.garage_temperature
+          icon: 🌡️
+          unit: °F
+      - template: custom_chip_brianhanifin_contact_sensor
+        type: custom:button-card
+        variables:
+          entity: binary_sensor.garage_entry_door
+      - template: chip_icon_state
+        type: custom:button-card
+        variables:
+          ulm_chip_icon_state_entity: binary_sensor.garage_presence
+          ulm_chip_icon_state_icon: 🏃‍♂️
+      type: horizontal-stack
+    - cards:
+      - entity: light.laundry
+        template: card_light
+        type: custom:button-card
+      - entity: cover.garage_door
+        lock:
+          enabled: 'true'
+        template: custom_chip_brianhanifin_toggle
+        type: custom:button-card
+      columns: 2
+      square: false
+      type: grid
+    type: vertical-stack
   icon: mdi:robot
   path: routines
   title: Routines
+  type: sidebar
 - badges: []
   cards:
+  - entities:
+    - entity: sensor.holiday
+    - entity: binary_sensor.holiday
+    - entity: binary_sensor.weekday
+    - entity: binary_sensor.school_day
+    - entity: binary_sensor.high_school_day
+    show_header_toggle: true
+    type: entities
   - cards:
-    - label: Birthdays & anniversaries
-      name: Family dates
-      template: card_title
-      type: custom:button-card
+    - cards:
+      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
+        template: chip_back
+        type: custom:button-card
+        variables:
+          ulm_chip_back_path: /lovelace/home
+      - label: Birthdays & anniversaries
+        name: Family dates
+        template: card_title
+        type: custom:button-card
+      type: horizontal-stack
     - card:
         show_header_toggle: false
         type: entities
@@ -4018,13 +4167,15 @@ views:
           entity_id: /anniversary|birthday|wedding/
           options:
             entities:
-            - attribute: date
             - attribute: years_at_next_anniversary
               hide_unavailable: true
               name: Years
             - entity: this.entity_id
               name: Days Till
               unit: false
+            secondary_info:
+              attribute: date
+              format: date
             show_state: false
             type: custom:multiple-entity-row
       show_empty: true
