@@ -2825,50 +2825,44 @@ views:
       template: card_title
       type: custom:button-card
     - card:
-        default: 'off'
-        entity: binary_sensor.glowforge_on
-        states:
-          'off':
-            entities:
-            - entity: binary_sensor.glowforge_on
-            - type: divider
-            - name: Glowforge App
-              type: weblink
-              url: https://app.glowforge.com
-            - name: Camera UI
-              type: weblink
-              url: http://10.0.20.32
-            type: entities
-          'on':
-            entities:
-            - entity: camera.glowforge
-            - entity: input_select.glowforge_status
-            - entities:
-              - entity: sensor.sonoff_s31_01_power
-                name: Power
-              - entity: sensor.sonoff_s31_01_current
-                name: Current
-              - entity: sensor.sonoff_s31_01_voltage
-                name: A/C
-              entity: sensor.sonoff_s31_01_power
-              icon: mdi:power-plug
-              name: Electricity
-              show_state: false
-              type: custom:multiple-entity-row
-            - entity: automation.glowforge_announce_complete
-              icon: mdi:cellphone-message
-              name: Notify When Complete
-              show_state: false
-            - type: divider
-            - name: Glowforge App
-              type: weblink
-              url: https://app.glowforge.com
-            - name: Camera UI
-              type: weblink
-              url: http://10.0.20.32
-            type: entities
-        type: custom:state-switch
-      style: "ha-card {\n  box-shadow: var(--box-shadow);\n}\n"
+        cards:
+        - entities:
+          - entity: binary_sensor.glowforge_on
+          type: entities
+        - default: 'off'
+          entity: binary_sensor.glowforge_on
+          states:
+            'on':
+              entities:
+              - entity: camera.glowforge
+              - entity: input_select.glowforge_status
+              - entities:
+                - entity: sensor.sonoff_s31_01_power
+                  name: Power
+                - entity: sensor.sonoff_s31_01_current
+                  name: Current
+                - entity: sensor.sonoff_s31_01_voltage
+                  name: A/C
+                entity: sensor.sonoff_s31_01_power
+                icon: mdi:power-plug
+                name: Electricity
+                show_state: false
+                type: custom:multiple-entity-row
+              - entity: automation.glowforge_announce_complete
+                icon: mdi:cellphone-message
+                name: Notify When Complete
+                show_state: false
+              - type: divider
+              - name: Glowforge App
+                type: weblink
+                url: https://app.glowforge.com
+              - name: Camera UI
+                type: weblink
+                url: http://10.0.20.32
+              type: entities
+          type: custom:state-switch
+        type: vertical-stack
+      style: "ha-card {\n  background: none;\n  box-shadow: none;\n}\n"
       type: custom:mod-card
     type: vertical-stack
     view_layout:
@@ -2879,93 +2873,86 @@ views:
       template: card_title
       type: custom:button-card
     - card:
-        default: 'off'
-        entity: switch.prusa
-        states:
-          'off':
-            cards:
-            - entities:
-              - entity: switch.prusa
-                name: Power On
-              - name: Octoprint UI
-                type: weblink
-                url: http://octopi.local
-              type: entities
-            type: vertical-stack
-          'on':
-            cards:
-            - camera_image: camera.prusa
-              camera_view: camera.prusa
-              entities:
-              - sensor.octoprint_current_state
-              - camera.prusa
-              entity: sensor.octoprint_current_state
-              state_filter:
-                Operational: grayscale(100%)
-                Printing: brightness(110%) saturate(1.2)
-              tap_action:
-                action: call-service
-                service: browser_mod.more_info
-                service_data:
-                  deviceID:
-                  - this
-                  entity_id: camera.prusa
-              title: Prusa Mk2.5s
-              type: picture-glance
-            - entities:
-              - entities:
-                - entity: sensor.octoprint_current_state
-                  name: Run State
-                - entity: binary_sensor.octoprint_printing_error
-                  name: Error State
+        cards:
+        - entities:
+          - card:
+              entity: switch.prusa
+              name: 3D Printer Kill Switch!!!
+            restrictions:
+              confirm:
+                text: This will unlock the 3D Printer Kill Switch!
+            row: true
+            type: custom:restriction-card
+          - name: Octoprint UI
+            type: weblink
+            url: http://octopi.local
+          type: entities
+        - entity: switch.prusa
+          states:
+            'on':
+              cards:
+              - camera_image: camera.prusa
+                camera_view: camera.prusa
+                entities:
+                - sensor.octoprint_current_state
+                - camera.prusa
                 entity: sensor.octoprint_current_state
-                icon: mdi:printer-3d
-                name: Status
-                show_state: false
-                type: custom:multiple-entity-row
+                state_filter:
+                  Operational: grayscale(100%)
+                  Printing: brightness(110%) saturate(1.2)
+                tap_action:
+                  action: call-service
+                  service: browser_mod.more_info
+                  service_data:
+                    deviceID:
+                    - this
+                    entity_id: camera.prusa
+                title: Prusa Mk2.5s
+                type: picture-glance
               - entities:
-                - entity: sensor.octoprint_job_percentage
-                  name: Complete
-                - entity: sensor.octoprint_time_elapsed_friendly
-                  name: Elapsed
-                - entity: sensor.octoprint_time_remaining_friendly
-                  name: Remaining
-                entity: sensor.octoprint_job_percentage
-                icon: mdi:timer-outline
-                name: Progress
-                show_state: false
-                type: custom:multiple-entity-row
-              - entities:
-                - entity: sensor.sonoff_s31_03_power
-                  name: Power
-                - entity: sensor.sonoff_s31_03_current
-                  name: Current
-                - entity: sensor.sonoff_s31_03_voltage
-                  name: A/C
-                entity: sensor.sonoff_s31_03_power
-                icon: mdi:power-plug
-                name: Electricity
-                show_state: false
-                type: custom:multiple-entity-row
-              - entity: automation.3d_print_status_update
-                icon: mdi:cellphone-message
-                name: Notify On Status Change
-                show_state: false
-              - card:
-                  entity: switch.prusa
-                  name: 3D Printer Kill Switch!!!
-                restrictions:
-                  confirm:
-                    text: This will unlock the 3D Printer Kill Switch!
-                row: true
-                type: custom:restriction-card
-              - name: Octoprint UI
-                type: weblink
-                url: http://octopi.local
-              type: custom:hui-entities-card
-            type: vertical-stack
-        type: custom:state-switch
-      style: "ha-card {\n  box-shadow: var(--box-shadow);\n}\n"
+                - entities:
+                  - entity: sensor.octoprint_current_state
+                    name: Run State
+                  - entity: binary_sensor.octoprint_printing_error
+                    name: Error State
+                  entity: sensor.octoprint_current_state
+                  icon: mdi:printer-3d
+                  name: Status
+                  show_state: false
+                  type: custom:multiple-entity-row
+                - entities:
+                  - entity: sensor.octoprint_job_percentage
+                    name: Complete
+                  - entity: sensor.octoprint_time_elapsed_friendly
+                    name: Elapsed
+                  - entity: sensor.octoprint_time_remaining_friendly
+                    name: Remaining
+                  entity: sensor.octoprint_job_percentage
+                  icon: mdi:timer-outline
+                  name: Progress
+                  show_state: false
+                  type: custom:multiple-entity-row
+                - entities:
+                  - entity: sensor.sonoff_s31_03_power
+                    name: Power
+                  - entity: sensor.sonoff_s31_03_current
+                    name: Current
+                  - entity: sensor.sonoff_s31_03_voltage
+                    name: A/C
+                  entity: sensor.sonoff_s31_03_power
+                  icon: mdi:power-plug
+                  name: Electricity
+                  show_state: false
+                  type: custom:multiple-entity-row
+                - entity: automation.3d_print_status_update
+                  icon: mdi:cellphone-message
+                  name: Notify On Status Change
+                  show_state: false
+                type: custom:hui-entities-card
+              type: vertical-stack
+          type: custom:state-switch
+        type: vertical-stack
+      style: "ha-card {\n  background: none;\n  box-shadow: none;\n}\n"
       type: custom:mod-card
     type: vertical-stack
     view_layout:
@@ -3614,7 +3601,7 @@ views:
                 \ 0;\n}\n"
               type: markdown
             type: vertical-stack
-        template: '{{ states("sensor.updates")|default(0)|int > 0 }}
+        template: '{{ states("sensor.updates")|int(default=0) > 0 }}
 
           '
         type: custom:state-switch

@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1263 total entities**, 
-including **660 sensors**.
+Our Home Assistant install has approximately **1275 total entities**, 
+including **661 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -210,7 +210,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 
-#### [Frigate v2.2.0](https://github.com/blakeblackshear/frigate)
+#### [Frigate v2.2.1](https://github.com/blakeblackshear/frigate)
 
 Frigate integration for Home Assistant
 Authors: [@blakeblackshear](https://github.com/blakeblackshear).
@@ -252,7 +252,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.4.11](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.13](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -484,7 +484,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.12.9-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2021.12.10-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -494,7 +494,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-46712-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48127-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
