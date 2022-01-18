@@ -3614,7 +3614,7 @@ views:
                 \ 0;\n}\n"
               type: markdown
             type: vertical-stack
-        template: '{{ states("sensor.updates")|int(default=0) > 0 }}
+        template: '{{ states("sensor.updates")|default(0)|int > 0 }}
 
           '
         type: custom:state-switch

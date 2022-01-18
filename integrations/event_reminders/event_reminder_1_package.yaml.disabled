@@ -109,7 +109,7 @@ sensor:
           {%  set reminder_time = states("input_datetime.event_reminder_1_1") -%}
           {%- set reminder_hour = reminder_time.split(':')[0] -%}
           {%- set reminder_minutes = reminder_time.split(':')[1] -%}
-          {{ "%0.02d:%0.02d" | format(reminder_hour|int(default=0), reminder_minutes|int(default=0)) }}
+          {{ "%0.02d:%0.02d" | format(reminder_hour|default(0)|int, reminder_minutes|default(0)|int) }}
   - platform: template
     sensors:
       event_reminder_1_2:
@@ -120,4 +120,4 @@ sensor:
           {%  set reminder_time = states("input_datetime.event_reminder_1_2") -%}
           {%- set reminder_hour = reminder_time.split(':')[0] -%}
           {%- set reminder_minutes = reminder_time.split(':')[1] -%}
-          {{ "%0.02d:%0.02d" | format(reminder_hour|int(default=0), reminder_minutes|int(default=0)) }}
+          {{ "%0.02d:%0.02d" | format(reminder_hour|default(0)|int, reminder_minutes|default(0)|int) }}

@@ -3,13 +3,13 @@ unique_id: buddy_given_medicine
 name: Buddy Given Medicine
 icon: mdi:pill
 state: |
-  {%- set last_given = states('sensor.buddy_medicine_taken')|int(default=0)|timestamp_custom('%A') %}
+  {%- set last_given = states('sensor.buddy_medicine_taken')|default(0)|int|timestamp_custom('%A') %}
   {%- set today = as_timestamp(now())|timestamp_custom('%A') %}
   {% if last_given == today -%}
     Today
   {%- else -%}
-    {%- set last_given_day = states('sensor.buddy_medicine_taken')|int(default=0)|timestamp_custom('%d')|int(default=0) %}
-    {%- set yesterday = as_timestamp(now())|timestamp_custom('%d')|int(default=0) - 1 %}
+    {%- set last_given_day = states('sensor.buddy_medicine_taken')|default(0)|int|timestamp_custom('%d')|default(0)|int %}
+    {%- set yesterday = as_timestamp(now())|timestamp_custom('%d')|default(0)|int - 1 %}
     {%- if last_given_day == yesterday -%}
       Yesterday
     {%- else -%}

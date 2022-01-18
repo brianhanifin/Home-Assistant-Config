@@ -18,7 +18,7 @@ state: |
       {%- set holiday_date = holiday_date[:10] -%}
     {%- elif holiday_date|length < 10 %}
       {%- set part = (holiday_date|replace("/","-")).split("-") -%}
-      {%- set holiday_date = '{:04}-{:02}-{:02}'.format(now().year, part[0]|int(default=0), part[1]|int(default=0)) -%}
+      {%- set holiday_date = '{:04}-{:02}-{:02}'.format(now().year, part[0]|default(0)|int, part[1]|default(0)|int) -%}
     {%- endif %}
     {%- if holiday_date == today %}
       {%- set events.holiday = events.holiday ~ ',' if events.holiday != '' %}

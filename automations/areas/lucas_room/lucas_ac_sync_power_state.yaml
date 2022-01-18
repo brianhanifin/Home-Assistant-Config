@@ -19,7 +19,7 @@ variables:
   assumed_state: '{{ states("climate.lucas_room") }}'
   powered_state: '{{ trigger.id }}'
 
-  # power: '{{ states("sensor.lucas_ac_power")|int(default=0) }}'
+  # power: '{{ states("sensor.lucas_ac_power")|default(0)|int }}'
   # powered_state: |
   #   {% if power < 10 %}
   #     off

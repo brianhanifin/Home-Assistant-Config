@@ -1132,9 +1132,9 @@ views:
                         name: Temperature
                       - entity: sensor.kitchen_humidity
                         name: Humidity
-                      - entity: binary_sensor.kitchen_1_motion
+                      - entity: binary_sensor.kitchen_1_presence
                         name: Motion (stove)
-                      - entity: binary_sensor.kitchen_2_motion
+                      - entity: binary_sensor.kitchen_2_presence
                         name: Motion (prep)
                   - type: entities
                     entities:
@@ -1223,7 +1223,7 @@ views:
                         name: Temperature
                       - entity: sensor.garage_humidity
                         name: Humidity
-                      - entity: binary_sensor.garage_motion
+                      - entity: binary_sensor.garage_presence
                         name: Motion
                       - entity: binary_sensor.garage_entry_door
                         name: Entry
@@ -4016,7 +4016,7 @@ views:
           - type: custom:state-switch
             entity: template
             template: |
-              {{ states("sensor.updates")|int(default=0) > 0 }}
+              {{ states("sensor.updates")|default(0)|int > 0 }}
             states:
               'true':
                 type: markdown

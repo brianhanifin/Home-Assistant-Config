@@ -21,7 +21,7 @@ sequence:
 
   - choose:
       - conditions:
-          - '{{ bulb_count|int(default=0) > 1 }}'
+          - '{{ bulb_count|default(0)|int > 1 }}'
         sequence:
           # Change each bulb in the group.
           - repeat:

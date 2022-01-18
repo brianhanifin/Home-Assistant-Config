@@ -206,7 +206,7 @@
   {%- endmacro -%}
 
   {%- macro greeting_line() -%}
-    {%- set hour = now().strftime('%H')|int(default=0) -%}
+    {%- set hour = now().strftime('%H')|default(0)|int -%}
     {%- if hour > 0 and hour < 10  %}
       Good morning.
     {%- elif hour >= 10 and hour < 17 %}
@@ -226,7 +226,7 @@
 
   {%- macro light_check() -%}
     {% set lights_on = state_attr('group.lights_on','entity_id')|list %}
-    {% if lights_on|length|int(default=0)|int(default=0) > 0 and lights_on != [''] %}
+    {% if lights_on|length|default(0)|int|default(0)|int > 0 and lights_on != [''] %}
 
       {%- if lights_on|length == 1 %}
         There is 1 light on right now.
@@ -240,7 +240,7 @@
   {%- endmacro -%}
 
   {%- macro inside_weather() -%}
-    Inside the house, it is {{ states('sensor.home_thermostat_temperature')|int(default=0) }} degrees.
+    Inside the house, it is {{ states('sensor.home_thermostat_temperature')|default(0)|int }} degrees.
     {{ pause() }}
   {%- endmacro -%}
 
@@ -256,7 +256,7 @@
       {%- set condition = states('weather.home') -%}
     {%- endif -%}
 
-    {{ ['Currently', 'Right now']|random }} outside, it is {{ state_attr('weather.home','temperature')|int(default=0) }} degrees fahrenheit, with {{ condition }}.
+    {{ ['Currently', 'Right now']|random }} outside, it is {{ state_attr('weather.home','temperature')|default(0)|int }} degrees fahrenheit, with {{ condition }}.
     {{ states("sensor.forecast") }}
     {{ pause() }}
   {%- endmacro -%}
@@ -308,7 +308,7 @@
 
   {%- macro responsibility_trash_to_curb() -%}
     {%- if now().strftime('%a') == 'Mon' -%}
-      {%- set last_curb = states('sensor.contribution_trash_to_curb')|int(default=0)|timestamp_custom('%m%d') -%}
+      {%- set last_curb = states('sensor.contribution_trash_to_curb')|default(0)|int|timestamp_custom('%m%d') -%}
       {%- set today = as_timestamp(now())|timestamp_custom('%m%d') %}
       {%- if last_curb != today -%}
         It is Monday and tomorrow is garbage day. Please take the cans to the curb.

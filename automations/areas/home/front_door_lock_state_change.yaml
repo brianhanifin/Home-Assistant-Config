@@ -10,7 +10,7 @@ trigger:
 variables:
   #old_state: '{{ trigger.event.data.old_state.state|lower }}'
   new_state: '{{ trigger.event.data.new_state.state|lower }}'
-  outdoor_illuminance: '{{ states("sensor.outdoor_illuminance_educated_guessor")|int(default=0) }}'
+  outdoor_illuminance: '{{ states("sensor.outdoor_illuminance_educated_guessor")|default(0)|int }}'
 condition:
   - '{{ new_state|lower in ["locked","unlocked"] }}'
 action:
@@ -103,7 +103,7 @@ action:
 
           # Skip turning on the entry lights in the middle of the day.
           - choose:
-              - conditions: "{{ outdoor_illuminance|int(default=0) < 2000 }}"
+              - conditions: "{{ outdoor_illuminance|default(0)|int < 2000 }}"
                 sequence:
                   # Restore the previous state of the porch + entry lights.
                   - service: scene.turn_on

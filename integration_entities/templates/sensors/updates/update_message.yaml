@@ -3,7 +3,7 @@ unique_id: update_message
 name: Update message
 icon: 'mdi:update'
 state: |
-  {%- set updates = states("sensor.updates")|int(default=0) %}
+  {%- set updates = states("sensor.updates")|default(0)|int %}
   {%- if updates == 1 %} 
     There is an update available.
   {% elif updates > 1 %}
@@ -23,7 +23,7 @@ state: |
   {%- endif %}
 
   {%- if state_attr("sensor.updates", "hacs_update") %}
-    {%- set hacs_updates = states("sensor.hacs")|int(default=0) %}
+    {%- set hacs_updates = states("sensor.hacs")|default(0)|int %}
     {%- if hacs_updates == 1 %}
     - There is one [HACS update](/hacs).
     {%- else %}
@@ -32,7 +32,7 @@ state: |
   {%- endif %}
 
   {%- if state_attr("sensor.updates", "addon_update") %}
-    {%- set addon_updates = states("sensor.addon_updates")|int(default=0) %}
+    {%- set addon_updates = states("sensor.addon_updates")|default(0)|int %}
     {%- if addon_updates == 1 %}
     - There is one [Addon update](/config/dashboard).
     {%- else %}
@@ -41,6 +41,6 @@ state: |
   {%- endif %}
 
   {%- if state_attr("sensor.updates", "unifi_firmware_update") %}
-    {%- set unifi_updates = states("sensor.unifi_gateway_firmware_upgradable")|int(default=0) %}
+    {%- set unifi_updates = states("sensor.unifi_gateway_firmware_upgradable")|default(0)|int %}
     - There are {{ unifi_updates }} [Unifi firmware updates](https://unraid.local:8443/manage/default/dashboard).
   {% endif %}

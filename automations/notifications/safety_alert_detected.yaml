@@ -17,7 +17,7 @@ trigger:
     to: ~
 
 variables:
-  type: '{{ trigger.to_state.state|int(default=0) }}'
+  type: '{{ trigger.to_state.state|default(0)|int }}'
   room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace(" Type","")|replace(" Code","") }}'
 
   alarm_states:

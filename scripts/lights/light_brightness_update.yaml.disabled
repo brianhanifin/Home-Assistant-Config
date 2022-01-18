@@ -16,8 +16,8 @@ sequence:
   data:
     variable: light_brightness
     value_template: >
-      {%- set hour = now().hour|int(default=0) -%}
-      {%- set minutes = now().minute|int(default=0) -%}
+      {%- set hour = now().hour|default(0)|int -%}
+      {%- set minutes = now().minute|default(0)|int -%}
       {%- if   hour >=  5 and hour <  8                   -%}{%- set brightness_pct = 60 -%}
       {%- elif hour >=  8 and hour < 19                   -%}{%- set brightness_pct = 100 -%}
       {%- elif hour >= 19 and minutes < 30 and hour < 20  -%}{%- set brightness_pct = 70 -%}
@@ -27,4 +27,4 @@ sequence:
       {%- else                                            -%}{%- set brightness_pct = 30 -%}
       {%- endif -%}
       {%- set brightness = brightness_pct / 100 * 255 -%}
-      {{ brightness|int(default=0) }}
+      {{ brightness|default(0)|int }}

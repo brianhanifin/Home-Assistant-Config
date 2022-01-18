@@ -3,9 +3,9 @@ unique_id: noncritical_alert_quiet_time
 name: Noncritical alert quiet time
 icon: "mdi:sleep{{ '-off' if is_state('binary_sensor.noncritical_alert_quiet_time','off') }}"
 state: |
-  {%- set current_hour = states("sensor.time").split(":")[0]|int(default=0) %}
-  {%- set hour_start = states("input_number.quiet_hour_start")|int(default=0) %}
-  {%- set hour_end = states("input_number.quiet_hour_end")|int(default=0) %}
+  {%- set current_hour = states("sensor.time").split(":")[0]|default(0)|int %}
+  {%- set hour_start = states("input_number.quiet_hour_start")|default(0)|int %}
+  {%- set hour_end = states("input_number.quiet_hour_end")|default(0)|int %}
   {%- if hour_start <= hour_end %}
     {{ not hour_start <= current_hour <= hour_end }}
   {%- else %}

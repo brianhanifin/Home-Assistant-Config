@@ -16,7 +16,7 @@ variables:
         {%- set volume = volume|float(default=0) %}
       {%- endif %}
     {%- else %}
-      {{ states("input_number.default_audio_volume")|int(default=0) / 100 }}
+      {{ states("input_number.default_audio_volume")|default(0)|int / 100 }}
     {%- endif %}
 sequence:
   # - service: script.debug
@@ -49,7 +49,7 @@ sequence:
 
   # Play the audio on all of the speakers.
   - repeat:
-      count: "{{ speaker_count|int(default=0) }}"
+      count: "{{ speaker_count|default(0)|int }}"
       sequence:
         - variables:
             speaker: "{{ speakers[repeat.index-1] }}"

@@ -11,14 +11,14 @@ observations:
   - platform: template
     value_template: >-
       {% set minutes_until_stale = 30 %}
-      {% set minutes_since = ((as_timestamp(now()) - as_timestamp(states.binary_sensor.bed_movement.last_changed)) / 60)|int(default=0)  %}
+      {% set minutes_since = ((as_timestamp(now()) - as_timestamp(states.binary_sensor.bed_movement.last_changed)) / 60)|default(0)|int  %}
       {{ minutes_since < minutes_until_stale }}
     prob_given_true: 0.95
     prob_given_false: 0.25
   - platform: template
     value_template: >-
       {% set hours_until_stale = 1 %}
-      {% set minutes_since = ((as_timestamp(now()) - as_timestamp(states.binary_sensor.bedroom_presence.last_changed)) / 60)|int(default=0)  %}
+      {% set minutes_since = ((as_timestamp(now()) - as_timestamp(states.binary_sensor.bedroom_presence.last_changed)) / 60)|default(0)|int  %}
       {{ minutes_since < (hours_until_stale * 60) }}
     prob_given_true: 0.85
     prob_given_false: 0.25

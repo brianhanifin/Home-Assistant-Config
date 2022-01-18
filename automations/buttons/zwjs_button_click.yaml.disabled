@@ -27,15 +27,15 @@ variables:
     {% endif %}
   button: |
     {% if remote.startswith("inovelli") %}
-      {% if trigger.event.data.property_key_name|int(default=0) == 2 %}
+      {% if trigger.event.data.property_key_name|default(0)|int == 2 %}
         up
-      {% elif trigger.event.data.property_key_name|int(default=0) == 1 %}
+      {% elif trigger.event.data.property_key_name|default(0)|int == 1 %}
         down
       {% endif %}
     {% elif remote.startswith("ge") %}
-      {% if trigger.event.data.value|int(default=0) == 255 %}
+      {% if trigger.event.data.value|default(0)|int == 255 %}
         up
-      {% elif trigger.event.data.value|int(default=0) == 0 %}
+      {% elif trigger.event.data.value|default(0)|int == 0 %}
         down
       {% endif %}
     {% endif %}
