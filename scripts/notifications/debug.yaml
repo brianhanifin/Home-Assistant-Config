@@ -2,11 +2,19 @@
 variables:
   title: '{{ title|default("Debug Message") }}'
 sequence:
-  - service: script.notify_web
-    data:
-      type: alert
-      title: "{{ title }}"
+  # - service: script.notify_web
+  #   data:
+  #     type: alert
+  #     title: "{{ title }}"
+  #     message: "{{ message }}"
+
+  - service: persistent_notification.create
+    data_template:
+      title: "{{ title|default('Debug Message') }}"
       message: "{{ message }}"
+      notification_id: "{{ id|default('debug_' ~ as_timestamp(now())) }}"
+
+
 
 fields:
   title:

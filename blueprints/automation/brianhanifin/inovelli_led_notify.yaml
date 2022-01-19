@@ -1,0 +1,284 @@
+blueprint:
+  domain: automation
+  name: Inovelli Notification LED (Switch or Dimmer)
+  description: An automation which displays a colored pattern on the LED strip on
+    your in-wall Inovelli Switch, Dimmer, or Fan/Switch combo.
+  source_url: https://gist.github.com/brianhanifin/303af48d59d3fb227dd25d6333269c9a
+  input:
+    trigger_entity_id:
+      description: 'A sensor which indicates what triggers the LED notification (example:
+        alert.wet_laundry).'
+      selector:
+        entity: {}
+    on_trigger_state:
+      description: 'ON trigger state. The state the trigger entity changes to (example:
+        "on").'
+      selector:
+        text: {}
+    off_trigger_state:
+      description: 'OFF trigger state. The state the trigger entity changes to (example:
+        "idle").'
+      selector:
+        text: {}
+    inovelli_entity_id:
+      description: Light or switch which represents
+      selector:
+        entity: {}
+    color:
+      description: Choose a color.
+      selector:
+        select:
+          options:
+          - 'Off'
+          - Red
+          - Orange
+          - Yellow
+          - Green
+          - Cyan
+          - Teal
+          - Blue
+          - Purple
+          - Light Pink
+          - Pink
+    effect:
+      description: Choose an effect.
+      selector:
+        select:
+          options:
+          - 'Off'
+          - Solid
+          - Chase
+          - Fast Blink
+          - Slow Blink
+          - Blink
+          - Pulse
+          - Breath
+    duration:
+      description: How long should the effect run?
+      selector:
+        select:
+          options:
+          - 'Off'
+          - 1 Second
+          - 2 Seconds
+          - 3 Seconds
+          - 4 Seconds
+          - 5 Seconds
+          - 6 Seconds
+          - 7 Seconds
+          - 8 Seconds
+          - 9 Seconds
+          - 10 Seconds
+          - 15 Seconds
+          - 20 Seconds
+          - 25 Seconds
+          - 30 Seconds
+          - 35 Seconds
+          - 40 Seconds
+          - 45 Seconds
+          - 50 Seconds
+          - 55 Seconds
+          - 60 Seconds
+          - 2 Minutes
+          - 3 Minutes
+          - 4 Minutes
+          - 10 Minutes
+          - 15 Minutes
+          - 30 Minutes
+          - 45 Minutes
+          - 1 Hour
+          - 2 Hours
+          - Indefinitely
+mode: parallel
+trigger:
+- id: on_trigger
+  platform: state
+  entity_id: !input 'trigger_entity_id'
+  from: !input 'off_trigger_state'
+  to: !input 'on_trigger_state'
+- id: off_trigger
+  platform: state
+  entity_id: !input 'trigger_entity_id'
+  from: !input 'on_trigger_state'
+  to: !input 'off_trigger_state'
+variables:
+  debug: false
+  entity_id: !input 'inovelli_entity_id'
+  zwave_integration: "{%- if state_attr(entity_id, 'product_name') is string %}\n\
+    \  zwave\n{%- elif device_attr(device_id(entity_id), \"model\") is string %}\n\
+    \  zwave_js\n{%- else %}\n  ozw\n{%- endif %}\n"
+  model_name: "{%- set model_name = \"\" %}\n{%- if zwave_integration == \"zwave_js\"\
+    \ %}\n  {% set parent_id = device_id(entity_id) %}\n  {%- set model_name = device_attr(parent_id,\
+    \ \"model\") %}\n{%- elif zwave_integration == \"zwave\" %}\n  {%- set model_name\
+    \ = state_attr(entity_id, 'product_name') %}\n{%- endif %}\n\n{%- if \"-\" in\
+    \ model_name %}\n  {{ model_name.split(\"-\")[0] }}\n{%- else %}\n  {{ model_name\
+    \ }}\n{%- endif %}\n"
+  model_type: "{%- if model_name is string %}\n  {%- if 'LZW31' in model_name %}\n\
+    \    dimmer\n  {%- elif 'LZW36' in model_name %}\n    combo_light\n  {%- else\
+    \ %}\n    switch\n  {%- endif %}\n{%- elif model is string %}\n  {{ model }}\n\
+    {%- else %}\n  dimmer\n{%- endif %}\n"
+  parameters:
+    dimmer: 16
+    combo_light: 24
+    combo_fan: 25
+    switch: 8
+  node_id: '{{ state_attr(entity_id,"node_id") }}'
+  color: !input 'color'
+  level: '{{ level|default(4) }}'
+  duration: !input 'duration'
+  effect: !input 'effect'
+  colors:
+    'Off': 0
+    Red: 1
+    Orange: 21
+    Yellow: 42
+    Green: 85
+    Cyan: 127
+    Teal: 145
+    Blue: 170
+    Purple: 195
+    Light Pink: 220
+    Pink: 234
+  durations:
+    'Off': 0
+    1 Second: 1
+    2 Seconds: 2
+    3 Seconds: 3
+    4 Seconds: 4
+    5 Seconds: 5
+    6 Seconds: 6
+    7 Seconds: 7
+    8 Seconds: 8
+    9 Seconds: 9
+    10 Seconds: 10
+    15 Seconds: 15
+    20 Seconds: 20
+    25 Seconds: 25
+    30 Seconds: 30
+    35 Seconds: 35
+    40 Seconds: 40
+    45 Seconds: 45
+    50 Seconds: 50
+    55 Seconds: 55
+    60 Seconds: 60
+    2 Minutes: 62
+    3 Minutes: 63
+    4 Minutes: 64
+    10 Minutes: 70
+    15 Minutes: 75
+    30 Minutes: 90
+    45 Minutes: 105
+    1 Hour: 120
+    2 Hours: 122
+    Indefinitely: 255
+  effects_dimmer:
+    'Off': 0
+    Solid: 1
+    Chase: 2
+    Fast Blink: 3
+    Slow Blink: 4
+    Blink: 4
+    Pulse: 5
+    Breath: 5
+  effects_switch:
+    'Off': 0
+    Solid: 1
+    Fast Blink: 2
+    Slow Blink: 3
+    Blink: 3
+    Pulse: 4
+    Breath: 4
+action:
+- choose:
+  - conditions:
+    - '{{ trigger.id == "off_trigger" }}'
+    sequence:
+    - variables:
+        inovelli_math: 0
+  - conditions:
+    - '{{ trigger.id == "on_trigger" }}'
+    sequence:
+    - variables:
+        parameter: '{{ parameters[model_type|lower] }}'
+        color: '{{ colors[color|title]|int }}'
+        duration: '{{ durations[duration|title] }}'
+        effect: "{% if model_type == \"switch\" %}\n  {{- effects_switch[effect|title]\
+          \ }}\n{%- else %}\n  {{- effects_dimmer[effect|title] }}\n{% endif %}\n"
+        inovelli_math: "{%- if effect|int > 0 %}\n  {{ color|int + (level|int * 256)\
+          \ + (duration|int * 65536) + (effect|int * 16777216) }}\n{%- else %}\n \
+          \ 0\n{% endif %}\n"
+- choose:
+  - conditions:
+    - '{{ debug == true }}'
+    sequence:
+    - service: persistent_notification.create
+      data:
+        title: 'DEBUG: script.inovelli_led'
+        notification_id: inovelli_led
+        message: 'zwave_integration: {{ zwave_integration }}
+
+          model_name: {{ model_name }}
+
+          model_type: {{ model_type }}
+
+          color: ''{{ color|title }}''
+
+          level: ''{{ level }}''
+
+          duration: ''{{ duration|title }}''
+
+          effect: ''{{ effect|title }}''
+
+          node_id: ''{{ node_id }}''
+
+          parameter: ''{{ parameter }}''
+
+          value: ''{{ inovelli_math }}''
+
+          '
+- choose:
+  - conditions:
+    - '{{ zwave_integration == "zwave_js" }}'
+    sequence:
+    - service: zwave_js.bulk_set_partial_config_parameters
+      target:
+        entity_id: '{{ entity_id }}'
+      data:
+        parameter: '{{ parameter }}'
+        value: '16714410'
+    - choose:
+      - conditions:
+        - '{{ inovelli_math > 0 }}'
+        sequence:
+        - service: zwave_js.bulk_set_partial_config_parameters
+          target:
+            entity_id: '{{ entity_id }}'
+          data:
+            parameter: '{{ parameter }}'
+            value: '{{ inovelli_math }}'
+  - conditions:
+    - '{{ zwave_integration == "ozw" }}'
+    sequence:
+    - service: ozw.set_config_parameter
+      data:
+        node_id: '{{ node_id }}'
+        parameter: '{{ parameter }}'
+        value: 0
+    - service: ozw.set_config_parameter
+      data:
+        node_id: '{{ node_id }}'
+        parameter: '{{ parameter }}'
+        value: '{{ inovelli_math }}'
+  default:
+  - service: zwave.set_config_parameter
+    data:
+      node_id: '{{ node_id }}'
+      parameter: '{{ parameter }}'
+      size: 4
+      value: 0
+  - service: zwave.set_config_parameter
+    data:
+      node_id: '{{ node_id }}'
+      parameter: '{{ parameter }}'
+      size: 4
+      value: '{{ inovelli_math }}'

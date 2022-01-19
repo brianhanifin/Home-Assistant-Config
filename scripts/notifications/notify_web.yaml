@@ -5,14 +5,14 @@ variables:
     {{ type }}
   notification_service: 'll_notify.{{ type }}'
   title: '{{ title|default("") }}'
-  duration: '{{ duration }}'
+  duration: '{{ duration|default(0) }}'
 
 sequence:
   - service: "{{ notification_service }}"
     data:
       title: "{{ title }}"
       message: "{{ message }}"
-      wait: "{{ duration|default(0)|int }}"
+      wait: "{{ duration }}"
 
 fields:
   type:
