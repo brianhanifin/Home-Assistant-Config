@@ -20,7 +20,7 @@ variables:
 
   remote: '{{ remotes[trigger.event.data.node_id] }}'
   command: '{{ trigger.event.data.scene_value_id }}'
-  command_modifier: '{{ trigger.event.data.scene_id|int(default=0) }}'
+  command_modifier: '{{ trigger.event.data.scene_id|default(0)|int }}'
 
 action:
   # - service: script.debug

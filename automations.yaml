@@ -56,14 +56,52 @@
   - data: {}
     service: script.create_actionable_lights_group
   - data: {}
-    service: script.update_responsibility_dishes_week
-  - delay: 'minutes: 1'
-  - data: {}
     service: script.holiday_sensors_update
   - data:
       keep_days: 10
       repack: true
     service: recorder.purge
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: template
+          value_template: '{{ is_state("binary_sensor.weekday", "on") }}'
+      - condition: template
+        value_template: '{{ is_state("binary_sensor.high_school_day", "off") }}'
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.event_skipnext_wakeup_lucas
+    default: []
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: template
+          value_template: '{{ is_state("binary_sensor.weekday", "on") }}'
+      - condition: template
+        value_template: '{{ is_state("binary_sensor.school_day", "off") }}'
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.event_skipnext_wakeup_kyle
+    default: []
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: template
+          value_template: '{{ is_state("binary_sensor.weekday", "on") }}'
+        - condition: template
+          value_template: '{{ is_state("binary_sensor.high_school_day", "off") }}'
+        - condition: template
+          value_template: '{{ is_state("binary_sensor.school_day", "off") }}'
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.event_skipnext_wakeup_brian
+    default: []
   - service: script.notify_web
     data:
       type: success
@@ -653,3 +691,222 @@
     default: []
   mode: parallel
   max: 10
+- id: '1642400621482'
+  alias: System Set Default Theme
+  description: ''
+  use_blueprint:
+    path: lovelace_minimalist_ui/set_theme.yaml
+    input:
+      theme: minimalist-mobile
+      mode: light
+- id: '1642400705340'
+  alias: 'Z2M - Remote: Brian bedside'
+  description: ''
+  use_blueprint:
+    path: mozartbanging/zigbee2mqtt-aqara-opple-wxcjkg13lm-3-band-switch-all-custom-buttons.yaml
+    input:
+      switch: sensor.remote_brian_bedside_action
+      button_1_single:
+      - service: light.toggle
+        data:
+          transition: 0
+        target:
+          device_id: 8bef4ccfe78c1356e14212171ff1bfc7
+      button_2_single:
+      - service: light.toggle
+        data:
+          transition: 0
+        target:
+          device_id: 6c39abc26a9e8f73d512c22a193a09a7
+      button_1_double:
+      - service: light.toggle
+        target:
+          device_id: ca15d133b0892224f12740ec003bf25c
+        data:
+          transition: 0
+      button_2_double:
+      - service: light.toggle
+        data:
+          transition: 0
+        target:
+          device_id: ca15d133b0892224f12740ec003bf25c
+      button_3_single:
+      - service: fan.toggle
+        target:
+          entity_id: fan.bedroom
+      button_4_single:
+      - service: switch.toggle
+        target:
+          device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
+      button_6_single:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.bedroom
+      button_5_single:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: climate.bedroom
+            state: cool
+          sequence:
+          - service: climate.set_hvac_mode
+            target:
+              entity_id: climate.bedroom
+            data:
+              hvac_mode: fan_only
+        default:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.bedroom
+          data:
+            hvac_mode: cool
+- id: '1642402019243'
+  alias: 'Z2M - Remote: Nerene bedside'
+  description: ''
+  use_blueprint:
+    path: mozartbanging/zigbee2mqtt-aqara-opple-wxcjkg13lm-3-band-switch-all-custom-buttons.yaml
+    input:
+      switch: sensor.remote_nerene_bedside_action
+      button_1_single:
+      - service: light.toggle
+        data:
+          transition: 0
+        target:
+          device_id: 8bef4ccfe78c1356e14212171ff1bfc7
+      button_2_single:
+      - service: light.toggle
+        data:
+          transition: 0
+        target:
+          device_id: 6c39abc26a9e8f73d512c22a193a09a7
+      button_1_double:
+      - service: light.toggle
+        target:
+          device_id: ca15d133b0892224f12740ec003bf25c
+        data:
+          transition: 0
+      button_2_double:
+      - service: light.toggle
+        data:
+          transition: 0
+        target:
+          device_id: ca15d133b0892224f12740ec003bf25c
+      button_3_single:
+      - service: fan.toggle
+        target:
+          entity_id: fan.bedroom
+      button_4_single:
+      - service: switch.toggle
+        target:
+          device_id: 4fb4fa5e3d2742488c93b02c34bbd7e8
+      button_6_single:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.bedroom
+      button_5_single:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: climate.bedroom
+            state: cool
+          sequence:
+          - service: climate.set_hvac_mode
+            target:
+              entity_id: climate.bedroom
+            data:
+              hvac_mode: fan_only
+        default:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.bedroom
+          data:
+            hvac_mode: cool
+- id: '1642441568665'
+  alias: 'Z2M - Remote: Lucas bedside'
+  description: ''
+  use_blueprint:
+    path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
+    input:
+      switch: sensor.remote_lucas_bedside_action
+      press_single:
+      - service: light.toggle
+        target:
+          device_id: 759c08b03f409722c65c5fddb29837d1
+        data:
+          transition: 0
+      press_double:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: climate.lucas_room
+            state: 'off'
+          sequence:
+          - service: climate.turn_on
+            target:
+              entity_id: climate.lucas_room
+        default:
+        - service: climate.turn_off
+          target:
+            entity_id: climate.lucas_room
+- id: '1642442618846'
+  alias: 'Z2M - Remote: Kyle bedside'
+  description: ''
+  use_blueprint:
+    path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
+    input:
+      switch: sensor.remote_kyle_bedside_action
+      press_single:
+      - service: light.toggle
+        data:
+          transition: 0
+          brightness_pct: 100
+        target:
+          entity_id: light.kyle_bedside
+- id: '1642443845360'
+  alias: 'Z2M - Remote: family room 5 button'
+  description: ''
+  use_blueprint:
+    path: EPMatt/ikea_e1524_e1810.yaml
+    input:
+      integration: Zigbee2MQTT
+      controller_entity: sensor.remote_family_room_action
+      helper_last_controller_event: input_text.z2m_blueprint_helper_last_controller_event
+      action_button_up_short:
+      - service: light.turn_on
+        target:
+          device_id:
+          - 2d8b03f66fda68a6e0f7b2a506a33b02
+          - 42fec827b0c1823c608f8d9a9cdac97e
+        data:
+          transition: 1
+      action_button_down_short:
+      - service: light.turn_off
+        target:
+          device_id:
+          - 2d8b03f66fda68a6e0f7b2a506a33b02
+          - 42fec827b0c1823c608f8d9a9cdac97e
+        data:
+          transition: 1
+      action_button_left_short:
+      - service: light.turn_off
+        data:
+          transition: 1
+        target:
+          device_id: 63789fb09fae954b2c90a2aa98f6b102
+      action_button_right_short:
+      - service: light.turn_on
+        target:
+          device_id: 63789fb09fae954b2c90a2aa98f6b102
+        data:
+          transition: 1
+- id: '1642448378521'
+  alias: 'Z2M - Remote:  printer'
+  description: ''
+  use_blueprint:
+    path: freakshock/zigbee2mqtt-xiaomi-mijia-round-wireless-remote-switch-wxkg01lm-actions.yaml
+    input:
+      button_sensor: sensor.remote_printer_action
+      remote_button_single_press:
+      - service: switch.toggle
+        target:
+          device_id: 86c76054c80c42adafb4bc74576f70ad

@@ -16,7 +16,7 @@ variables:
   old_state: '{{ trigger.event.data.old_state.state }}'
   new_state: '{{ trigger.event.data.new_state.state }}'
 
-  both_motion_off: '{{ states("binary_sensor.kitchen_1_presence") == "off" and states("binary_sensor.kitchen_2_presence") == "off" }}'
+  both_presence_off: '{{ states("binary_sensor.kitchen_1_presence") == "off" and states("binary_sensor.kitchen_2_presence") == "off" }}'
 condition:
   - '{{ (new_state in ["off","on"] and old_state in ["off","on"])
       and old_state != new_state }}'
@@ -34,7 +34,7 @@ action:
             entity_id: light.kitchen_cabinet
 
       # Presence timeout turns lights off.
-      - conditions: '{{ new_state == "off" and both_motion_off|lower == "true" }}'
+      - conditions: '{{ new_state == "off" and both_presence_off|lower == "true" }}'
         sequence:
           - service: light.turn_off
             entity_id: light.kitchen_cabinet
