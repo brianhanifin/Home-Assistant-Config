@@ -1,0 +1,101 @@
+blueprint:
+  name: Zigbee2MQTT - Mijia Wireless Remote Switch (WXKG01LM) actions
+  description: 'Define actions your Xiaomi Mijia Wireless Round Remote Switch using
+    Zigbee2MQTT. For your button entity, choose the right sensor with your button
+    name and the entity id which ends with ''_action'', e.g. ''sensor.kitchen.button_action''
+
+    '
+  domain: automation
+  input:
+    button_sensor:
+      name: Mijia Wireless Round Switch sensor entity
+      description: Sensor for Mijia Wireless Round Switch to use (Use sensor with
+        entity_id ends with _action)
+      selector:
+        entity:
+          domain: sensor
+    remote_button_single_press:
+      name: Single Press
+      description: Action to run on single press
+      default: []
+      selector:
+        action: {}
+    remote_button_double_press:
+      name: Double Press
+      description: Action to run on double press
+      default: []
+      selector:
+        action: {}
+    remote_button_triple_press:
+      name: Triple Press
+      description: Action to run on triple press
+      default: []
+      selector:
+        action: {}
+    remote_button_quadruple_press:
+      name: Quadruple Press
+      description: Action to run on quadruple press
+      default: []
+      selector:
+        action: {}
+    remote_button_multiple_press:
+      name: Multiple Press (5x or more)
+      description: Action to run on multiple press
+      default: []
+      selector:
+        action: {}
+    remote_button_long_press:
+      name: Long Press
+      description: Action to run on long press
+      default: []
+      selector:
+        action: {}
+    remote_button_release:
+      name: Release
+      description: Action to run on release after long press
+      default: []
+      selector:
+        action: {}
+  source_url: https://community.home-assistant.io/t/zigbee2mqtt-xiaomi-mijia-round-wireless-remote-switch-wxkg01lm-actions/258832
+mode: restart
+max_exceeded: silent
+trigger:
+- platform: state
+  entity_id: !input 'button_sensor'
+  to: single
+- platform: state
+  entity_id: !input 'button_sensor'
+  to: double
+- platform: state
+  entity_id: !input 'button_sensor'
+  to: triple
+- platform: state
+  entity_id: !input 'button_sensor'
+  to: quadruple
+- platform: state
+  entity_id: !input 'button_sensor'
+  to: many
+- platform: state
+  entity_id: !input 'button_sensor'
+  to: hold
+- platform: state
+  entity_id: !input 'button_sensor'
+  to: release
+action:
+- variables:
+    action: '{{ trigger.to_state.state }}'
+- choose:
+  - conditions: '{{ action == ''single'' }}'
+    sequence: !input 'remote_button_single_press'
+  - conditions: '{{ action == ''double'' }}'
+    sequence: !input 'remote_button_double_press'
+  - conditions: '{{ action == ''triple'' }}'
+    sequence: !input 'remote_button_triple_press'
+  - conditions: '{{ action == ''quadruple'' }}'
+    sequence: !input 'remote_button_quadruple_press'
+  - conditions: '{{ action == ''many'' }}'
+    sequence: !input 'remote_button_multiple_press'
+  - conditions: '{{ action == ''hold'' }}'
+    sequence: !input 'remote_button_long_press'
+  - conditions: '{{ action == ''release'' }}'
+    sequence: !input 'remote_button_release'

@@ -1,0 +1,56 @@
+blueprint:
+  name: Aqara Wireless Switch (single, double, hold)
+  description: 'Control anything using Aqara Wireless Switch.
+
+    Customizable actions for each press.
+
+
+    This version of the blueprint is for buttons supporting single, double and hold
+    actions. '
+  domain: automation
+  input:
+    switch:
+      name: Switch
+      description: Action sensor of Aqara Wireless Switch to use
+      selector:
+        entity:
+          domain: sensor
+          integration: mqtt
+    press_single:
+      name: Single button press
+      description: Action to run on single button press
+      default: []
+      selector:
+        action: {}
+    press_double:
+      name: Double button press
+      description: Action to run on double button press
+      default: []
+      selector:
+        action: {}
+    press_hold:
+      name: Button hold
+      description: Action to run on hold
+      default: []
+      selector:
+        action: {}
+  source_url: https://gist.github.com/rhl2401/871cdc129c2d61f894407bef4b44f07d
+mode: restart
+max_exceeded: silent
+trigger:
+- platform: state
+  entity_id: !input 'switch'
+  attribute: action
+action:
+- variables:
+    command: '{{ trigger.to_state.state }}'
+- choose:
+  - conditions:
+    - '{{ command == ''single'' }}'
+    sequence: !input 'press_single'
+  - conditions:
+    - '{{ command == ''double'' }}'
+    sequence: !input 'press_double'
+  - conditions:
+    - '{{ command == ''hold'' }}'
+    sequence: !input 'press_hold'
