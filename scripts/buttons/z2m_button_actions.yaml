@@ -1,26 +1,11 @@
 ---
 variables:
-  debug_output: False
-  debug_id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+  debug_output: True
 sequence:
   - choose:
-      # Printer Power Button
-      #   * Xiaomi Mijia Wireless Switch (Square)
-      - conditions: '{{ remote == "button_kyle_bedside" }}'
-        sequence:
-          - service: light.toggle
-            entity_id: light.kyle_bedside
-
-      # Printer Power Button
-      #   * Xiaomi Mijia Wireless Switch (Round)
-      - conditions: '{{ remote == "button_printer_power" }}'
-        sequence:
-          - service: switch.toggle
-            entity_id: switch.printers
-
       # Family room 5 button remote
       #   * IKEA Tradfri Remote Control
-      - conditions: '{{ remote == "remote_family_room" }}'
+      - conditions: '{{ remote == "sensor.remote_family_room_action" }}'
         sequence:
           - choose:
               # Button: Power (middle)
@@ -45,7 +30,7 @@ sequence:
                         sequence:                        
                           - choose:
                               # The door is locked
-                              - conditions: '{{ states("lock.front_door")|lower|trim == "locked" }}'
+                              - conditions: '{{ is_state("lock.front_door","locked") }}'
                                 sequence:
                                   - service: lock.unlock
                                     entity_id: lock.front_door
@@ -65,8 +50,8 @@ sequence:
                           - service: input_boolean.toggle
                             entity_id: input_boolean.guest_mode
 
-              # Brightness Up (top)
-              - conditions: '{{ command == "step_with_on_off" }}'
+              # Brightness Up
+              - conditions: '{{ command == "brightness_up_click" }}'
                 sequence:
                   - choose:
                       # Single Click
@@ -84,8 +69,8 @@ sequence:
                               entity_id: light.table_lamp
                               brightness_pct: 100
 
-              # Brightness down (bottom)
-              - conditions: '{{ command == "step" }}'
+              # Brightness down
+              - conditions: '{{ command == "brightness_down_click" }}'
                 sequence:
                   - choose:
                       # Single Click
@@ -96,30 +81,30 @@ sequence:
                               - light.family_room
                               - light.table_lamp
                       # Double click
-                      - conditions: '{{ click_count == 2}}'
+                      - conditions: '{{ click_count == 2 }}'
                         sequence:
                           - service: light.turn_off
                             entity_id: light.table_lamp
 
-              #############################################################################################
-              # SINGLE CLICK / HOLD BUTTONS
-              #############################################################################################
-
-              # Single Click: Arrow left (right)
-              - conditions: '{{ command == "press" and command_modifier == 256 }}'
+              # Single Click: Arrow right
+              - conditions: '{{ command == "arrow_right_click" }}'
                 sequence:
                   - service: light.turn_on
                     data:
                       entity_id: light.family_room_floor_lamp
                       brightness_pct: 100
-              # Single Click: Arrow right (left)
-              - conditions: '{{ command == "press" and command_modifier == 257 }}'
+              # Single Click: Arrow left
+              - conditions: '{{ command == "arrow_right_click" }}'
                 sequence:
                   - service: light.turn_off
                     entity_id: light.family_room_floor_lamp
 
-              # Hold: Brightness Up (top)
-              - conditions: '{{ command == "move" }}'
+              #############################################################################################
+              # HOLD BUTTONS
+              #############################################################################################
+
+              # Hold: Brightness Up
+              - conditions: '{{ command == "brightness_up_hold" }}'
                 sequence:
                   - service: light.turn_on
                     data:
@@ -127,8 +112,8 @@ sequence:
                         - light.family_room
                         - light.table_lamp
                       brightness_step_pct: "-20"
-              # Hold: Brightness down (bottom)
-              - conditions: '{{ command == "move_with_on_off" }}'
+              # Hold: Brightness down
+              - conditions: '{{ command == "brightness_down_hold" }}'
                 sequence:
                   - service: light.turn_on
                     data:
@@ -136,15 +121,15 @@ sequence:
                         - light.family_room
                         - light.table_lamp
                       brightness_step_pct: "20"
-              # Hold: Arrow left (left)
-              - conditions: '{{ command == "hold" and command_modifier == 3329 }}'
+              # Hold: Arrow left
+              - conditions: '{{ command == "arrow_left_hold" }}'
                 sequence:
                   - service: light.turn_on
                     data:
                       entity_id: light.family_room_floor_lamp
                       brightness_step_pct: "-20"
-              # Hold: Arrow right (right)
-              - conditions: '{{ command == "hold" and command_modifier == 3328 }}'
+              # Hold: Arrow right
+              - conditions: '{{ command == "arrow_right_hold" }}'
                 sequence:
                   - service: light.turn_on
                     data:
@@ -161,22 +146,13 @@ sequence:
       #       data:
       #         message: 'remote: {{ remote }}'
 
-          # - service: script.debug
-          #   data_template:
-          #     title: '"{{ remote }}" click'
-          #     message: |
-          #       command: {{ command }}
-          #       click_count: {{ click_count }}
-          #       manufacturer: {{ manufacturer }}
-          #     id: '{{ remote ~"_"~ as_timestamp(now()) }}'
-
       # Bedroom Double Switch
       #   * Xiaomi Double Rockers, Battery Powered
       # - conditions: '{{ remote == "remote_bedroom_double_rocker" }}'
       #   sequence:
       #     # Ignore Xiaomi button duplicate event.
       #     # - condition: template
-      #     #   value_template: '{{ trigger.event.data.args.value|int(default=0) == 1 }}'
+      #     #   value_template: '{{ trigger.event.data.args.value|default(0)|int == 1 }}'
 
       #     - choose:
       #         # Single Click: Left
@@ -220,8 +196,6 @@ sequence:
               title: '"{{ remote }}" click'
               message: |
                 command: {{ command }}
-                command_modifier: {{ command_modifier }}
                 click_count: {{ click_count }}
                 manufacturer: {{ manufacturer }}
                 remote: {{ remote }}
-              id: '{{ debug_id|default("debug") }}'

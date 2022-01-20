@@ -1,0 +1,52 @@
+---
+alias: Zigbee2MQTT Button Click
+id: z2m_button_click
+mode:  restart # Force restart to pickup multiclick
+max_exceeded: silent
+trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: sensor.remote_family_room_action
+action:
+  # Debounce the first click.
+  - delay:
+      seconds: 0.01
+
+  - alias: "Increment the counter."
+    service: counter.increment
+    entity_id: counter.z2m_button_click
+  
+  # Delay 0.5 second to allow for another click to cancel the action.
+  - delay:
+      seconds: 0.49
+
+  - variables:
+      remote: '{{ trigger.event.data.entity_id }}'
+      command: '{{ trigger.event.data.old_state.state }}'
+      click_count: >
+        {{ states("counter.z2m_button_click") }}
+
+  - alias: "Reset the counter."
+    service: counter.reset
+    entity_id: counter.z2m_button_click
+  
+  - choose:
+      - conditions: '{{ command|trim|lower not in ["", "unknown", "unavailable"] }}'
+        sequence:
+          - alias: "Call the script to interpret the requested command."
+            service: script.z2m_button_actions
+            data:
+              remote: '{{ remote }}'
+              command: '{{ command }}'
+              click_count: '{{ click_count }}'
+
+  # - service: persistent_notification.create
+  #   data:
+  #     title: "z2m_button_click"
+  #     message: |
+  #       entity_id: {{ entity_id }}
+  #       button_action: {{ button_action }}
+  #       click_count: {{ click_count }}
+
+  #       {{ trigger.event.data }}
