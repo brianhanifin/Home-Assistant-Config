@@ -1,9 +1,12 @@
 ---
+condition:
+  - condition: template
+    value_template: '{{ holiday is not undefined }}'
 variables:
   today: '{{ states("sensor.date") }}'
   event_date: '{{ states("sensor.date_" ~ holiday) }}'
   day_after_event: |
-    {% if event_date != "unknown" %}
+    {%- if event_date != "unknown" %}
       {%- set split_date = event_date.split("-") %}
       {{ "{:04}-{:02}-{:02}".format(split_date[0]|default(0)|int, split_date[1]|default(0)|int, (split_date[2]|default(0)|int+1)) }}
     {% endif %}
@@ -19,4 +22,4 @@ sequence:
       message: "Updating sensor.date_next_{{ holiday }}."
 
   - service: homeassistant.update_entity
-    entity_id: sensor.date_next_easter
+    entity_id: 'sensor.date_next_{{ holiday }}'
