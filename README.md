@@ -2,7 +2,7 @@
 
 | brianhanifin/home-assistant-config | Home Assistant Community |
 | :---: | :---: |
-| [![Home Assistant Version][ha-version-shield]][ha-version] [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] [!Lines of code count][code-lines-shield][code-link] | [![Community Forum][discourse-shield]][discourse]
+| [![Home Assistant Version][ha-version-shield]][ha-version] [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] [![Lines of code count][code-lines-shield][code-link]] | [![Community Forum][discourse-shield]][discourse]
 | [![Last Commit][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Discord][discord-shield]][discord] |
 
 ## Smart Home Articles
@@ -169,7 +169,7 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1275 total entities**, 
+Our Home Assistant install has approximately **1273 total entities**, 
 including **661 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
@@ -425,7 +425,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 Addons</summary>
 
-#### ESPHome v2021.12.3
+#### ESPHome v2022.1.0
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -494,7 +494,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48127-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48087-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
