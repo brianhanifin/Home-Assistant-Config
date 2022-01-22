@@ -2,8 +2,8 @@
 
 | brianhanifin/home-assistant-config | Home Assistant Community |
 | :---: | :---: |
-| [![Home Assistant Version][ha-version-shield]][ha-version] [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] [![Lines of code count][code-lines-shield]][code-link] | [![Community Forum][discourse-shield]][discourse]
-| [![Last Commit][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] | [![Discord][discord-shield]][discord] |
+| [![Home Assistant Version][ha-version-shield]][ha-version] [![Github Action Status][github-build-status-shield]][github-build-status] [![Github Linter Status][github-linter-status-shield]][github-linter-status] | [![Community Forum][discourse-shield]][discourse]
+| [![Last Commit][github-last-commit]][github-master] [![GitHub Activity][commits-shield]][commits] [![Lines of code count][code-lines-shield]][code-link] | [![Discord][discord-shield]][discord] |
 
 ## Smart Home Articles
 
@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1273 total entities**, 
-including **661 sensors**.
+Our Home Assistant install has approximately **1280 total entities**, 
+including **671 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -252,7 +252,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.4.13](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.14](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -264,7 +264,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.12.2](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.12.5](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -425,7 +425,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 Addons</summary>
 
-#### ESPHome v2022.1.0
+#### ESPHome v2022.1.1
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -494,7 +494,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48087-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48277-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

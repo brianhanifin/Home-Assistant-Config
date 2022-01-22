@@ -1732,7 +1732,7 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 6
+    columns: 4
     square: false
     type: grid
   - cards:
@@ -2150,13 +2150,48 @@ views:
       - entity: lock.front_door
         lock:
           enabled: 'true'
-        template: custom_chip_brianhanifin_toggle
+        template: card_power_outlet
         type: custom:button-card
       - entity: input_boolean.leave_unlocked
         icon: hass:toggle-switch-off
         template: custom_chip_brianhanifin_toggle
         type: custom:button-card
       columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+  - cards:
+    - label: Control lights & devices.
+      name: Garage
+      template: card_title
+      type: custom:button-card
+    - cards:
+      - template: custom_chip_brianhanifin_icon_state
+        type: custom:button-card
+        variables:
+          entity: sensor.garage_temperature
+          icon: 🌡️
+          unit: °F
+      - template: custom_chip_brianhanifin_contact_sensor
+        type: custom:button-card
+        variables:
+          entity: binary_sensor.garage_entry_door
+      - template: chip_icon_state
+        type: custom:button-card
+        variables:
+          ulm_chip_icon_state_entity: binary_sensor.garage_presence
+          ulm_chip_icon_state_icon: 🏃‍♂️
+      type: horizontal-stack
+    - cards:
+      - entity: light.laundry
+        template: card_light
+        type: custom:button-card
+      - entity: cover.garage_door
+        lock:
+          enabled: 'true'
+        template: custom_chip_brianhanifin_toggle
+        type: custom:button-card
+      columns: 2
       square: false
       type: grid
     type: vertical-stack
@@ -2243,7 +2278,7 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 6
+    columns: 4
     square: false
     type: grid
   - cards:
@@ -2565,7 +2600,7 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 6
+    columns: 4
     square: false
     type: grid
   - cards:
@@ -2745,7 +2780,7 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 6
+    columns: 4
     square: false
     type: grid
   - cards:
@@ -4005,12 +4040,12 @@ views:
       - entities:
         - card:
             entity: input_number.quiet_hour_start
-            name: Hour Start
+            name: Start
           row: true
           type: custom:restriction-card
         - card:
             entity: input_number.quiet_hour_end
-            name: Hour End
+            name: End
           row: true
           type: custom:restriction-card
         style: "ha-card {\n  margin-top: -1.5em;\n}\n"
@@ -4064,7 +4099,7 @@ views:
         type: custom:button-card
       - entity: switch.printer
         icon: mdi:printer
-        name: Printers
+        name: Printer
         template: card_power_outlet
         type: custom:button-card
       columns: 2
@@ -4084,41 +4119,6 @@ views:
     type: entities
     view_layout:
       position: sidebar
-  - cards:
-    - label: Control lights & devices.
-      name: Garage
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.garage_temperature
-          icon: 🌡️
-          unit: °F
-      - template: custom_chip_brianhanifin_contact_sensor
-        type: custom:button-card
-        variables:
-          entity: binary_sensor.garage_entry_door
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.garage_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
-    - cards:
-      - entity: light.laundry
-        template: card_light
-        type: custom:button-card
-      - entity: cover.garage_door
-        lock:
-          enabled: 'true'
-        template: custom_chip_brianhanifin_toggle
-        type: custom:button-card
-      columns: 2
-      square: false
-      type: grid
-    type: vertical-stack
   icon: mdi:robot
   path: routines
   title: Routines
