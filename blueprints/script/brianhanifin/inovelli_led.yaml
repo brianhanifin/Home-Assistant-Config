@@ -1,0 +1,334 @@
+blueprint:
+  name: Inovelli LED notification script
+  description: >-
+    A script that displays a notification on 
+  domain: script
+  source_url: https://github.com/brianhanifin/home-assistant-config/blob/master/blueprints/script/inovelli_led_notify.yaml
+  #source_url: https://gist.github.com/brianhanifin/ee630ef203c1757d23ee1b93e3b330ea
+  input:
+    input_entity:
+      name: Entity
+      description: Inovelli device to notify.
+      default: light.family_room
+      selector:
+        entity:
+    input_color:
+      name: Color
+      description: Choose a color to display on your Inovelli device.
+      default: Red
+      selector:
+        select:
+          options:
+            - "Off"
+            - Red
+            - Orange
+            - Yellow
+            - Green
+            - Cyan
+            - Teal
+            - Blue
+            - Purple
+            - Light Pink
+            - Pink
+    input_level:
+      name: Brightness level
+      description: Value from 0 (off) to 10 (100% brightness).
+      default: 4
+      selector:
+        number:
+          min: 0
+          max: 10
+    input_effect:
+      name: Effect
+      description: Choose an effect.
+      default: Chase
+      selector:
+        select:
+          options:
+            - "Off"
+            - Solid
+            - Chase
+            - Fast Blink
+            - Slow Blink
+            - Blink
+            - Pulse
+            - Breath
+    input_duration:
+      name: Duration
+      description: How long should the effect run?
+      default: "10 Seconds"
+      selector:
+        select:
+          options:
+            - "Off"
+            - 1 Second
+            - 2 Seconds
+            - 3 Seconds
+            - 4 Seconds
+            - 5 Seconds
+            - 6 Seconds
+            - 7 Seconds
+            - 8 Seconds
+            - 9 Seconds
+            - 10 Seconds
+            - 15 Seconds
+            - 20 Seconds
+            - 25 Seconds
+            - 30 Seconds
+            - 35 Seconds
+            - 40 Seconds
+            - 45 Seconds
+            - 50 Seconds
+            - 55 Seconds
+            - 60 Seconds
+            - 2 Minutes
+            - 3 Minutes
+            - 4 Minutes
+            - 10 Minutes
+            - 15 Minutes
+            - 30 Minutes
+            - 45 Minutes
+            - 1 Hour
+            - 2 Hours
+            - Indefinitely
+variables:
+  # Set to true to create a "persistent_notification" with variable data.
+  debug: false
+
+  # Store the input values as local variables.
+  entity_id: !input input_entity
+  color: !input input_color
+  level: !input input_level
+  effect: !input input_effect
+  duration: !input input_duration
+
+  # Automatically determine which Z-Wave Integration is being used (Z-Wave JS, Z-Wave, or OpenZWave).
+  zwave_integration: |
+    {%- if state_attr(entity_id, "product_name") is string %}
+      zwave
+    {%- elif device_attr(entity_id, "model") is string %}
+      zwave_js
+    {%- else %}
+      ozw
+    {%- endif %}
+
+  # Automatically extract the model name (from zwave_js or zwave).
+  model_name: |
+    {%- set model_name = "" %}
+    {%- if zwave_integration == "zwave_js" %}
+      {%- set model_name = device_attr(entity_id, "model") %}
+    {%- elif zwave_integration == "zwave" %}
+      {%- set model_name = state_attr(entity_id, 'product_name') %}
+    {%- endif %}
+
+    {%- if "-" in model_name %}
+      {{ model_name.split("-")[0] }}
+    {%- else %}
+      {{ model_name }}
+    {%- endif %}
+
+  # 1st. Use the automatically detected "model_name".
+  # 2nd. Use "model" type passed to the script by the calling script/automation.
+  # 3rd. Assume the model type is "dimmer".
+  model_type: |
+    {%- if model_name is string %}
+      {%- if "LZW31" in model_name %}
+        dimmer
+      {%- elif "LZW36" in model_name %}
+        combo_light
+      {%- else %}
+        switch
+      {%- endif %}
+    {%- elif model is string %}
+      {{ model }}
+    {%- else %}
+      dimmer
+    {%- endif %}
+  parameters:
+    "dimmer": 16
+    "combo_light": 24
+    "combo_fan": 25
+    "switch": 8
+  node_id: '{{ state_attr(entity_id,"node_id") }}'
+  colors:
+    "Off": 0
+    "Red": 1
+    "Orange": 21
+    "Yellow": 42
+    "Green": 85
+    "Cyan": 127
+    "Teal": 145
+    "Blue": 170
+    "Purple": 195
+    "Light Pink": 220
+    "Pink": 234
+  durations:
+    "Off": 0
+    "1 Second": 1
+    "2 Seconds": 2
+    "3 Seconds": 3
+    "4 Seconds": 4
+    "5 Seconds": 5
+    "6 Seconds": 6
+    "7 Seconds": 7
+    "8 Seconds": 8
+    "9 Seconds": 9
+    "10 Seconds": 10
+    "15 Seconds": 15
+    "20 Seconds": 20
+    "25 Seconds": 25
+    "30 Seconds": 30
+    "35 Seconds": 35
+    "40 Seconds": 40
+    "45 Seconds": 45
+    "50 Seconds": 50
+    "55 Seconds": 55
+    "60 Seconds": 60
+    "2 Minutes": 62
+    "3 Minutes": 63
+    "4 Minutes": 64
+    "10 Minutes": 70
+    "15 Minutes": 75
+    "30 Minutes": 90
+    "45 Minutes": 105
+    "1 Hour": 120
+    "2 Hours": 122
+    "Indefinitely": 255
+  effects_dimmer:
+    "Off": 0
+    "Solid": 1
+    "Chase": 2
+    "Fast Blink": 3
+    "Slow Blink": 4
+    "Blink": 4
+    "Pulse": 5
+    "Breath": 5
+  effects_switch:
+    "Off": 0
+    "Solid": 1
+    "Fast Blink": 2
+    "Slow Blink": 3
+    "Blink": 3
+    "Pulse": 4
+    "Breath": 4
+mode: parallel
+sequence:
+  # Preform the Inovelli math.
+  - variables:
+      parameter: "{{ parameters[model_type|lower]|int }}"
+      level: "{{ level|default(4)|int }}"
+      duration: '{{ durations[duration|default("Indefinitely")|title] }}'
+      color: |
+        {%- if color is not number %}
+          {%- set color = color|default("Yellow")|title %}
+        {%- else %}
+          {%- set color = color|int %}
+        {% endif %}
+        {{ colors[color|title]|int }}
+      effect: |
+        {% if model_type == "switch" %}
+          {{- effects_switch[effect|default("Blink")|title] }}
+        {%- else %}
+          {{- effects_dimmer[effect|default("Blink")|title] }}
+        {% endif %}
+      inovelli_math: |
+        {%- if effect|int > 0 %}
+          {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
+        {%- else %}
+          0
+        {% endif %}
+
+  # Set debug = true above to provide output troubleshooting information.
+  - choose:
+      # The Z-Wave JS integration requires this service call.
+      - conditions:
+          - '{{ debug == true }}'
+        sequence:
+          - variables:
+              input_entity: !input input_entity
+              input_color: !input input_color
+              input_level: !input input_level
+              input_effect: !input input_effect
+              input_duration: !input input_duration
+          - service: persistent_notification.create
+            data:
+              title: "DEBUG: script.inovelli_led"
+              notification_id: "inovelli_led"
+              message: |
+                input_entity: {{ input_entity }}
+                input_color: {{ input_color }}
+                input_level: {{ input_level }}
+                input_effect: {{ input_effect }}
+                input_duration: {{ input_duration }}
+
+                zwave_integration: {{ zwave_integration }}
+                model_name: {{ model_name }}
+                model_type: {{ model_type }}
+                color: '{{ color|title }}'
+                level: '{{ level }}'
+                duration: '{{ duration|title }}'
+                effect: '{{ effect|title }}'
+                node_id: '{{ node_id }}'
+                parameter: '{{ parameter }}'
+                value: '{{ inovelli_math }}'
+
+  - choose:
+      # The Z-Wave JS integration requires this service call.
+      - conditions:
+          - '{{ zwave_integration == "zwave_js" }}'
+        sequence:
+          # Clear the previous effect.
+          - service: zwave_js.bulk_set_partial_config_parameters
+            target:
+              entity_id: "{{ entity_id }}"
+            data:
+              parameter: "{{ parameter }}"
+              value: '16714410'
+
+          # Start the new effect, unless we were just turning it off.
+          - choose:
+              - conditions:
+                  - '{{ inovelli_math > 0 }}'
+                sequence:
+                  - service: zwave_js.bulk_set_partial_config_parameters
+                    target:
+                      entity_id: "{{ entity_id }}"
+                    data:
+                      parameter: "{{ parameter }}"
+                      value: "{{ inovelli_math }}"
+
+      # The OZW integration requires this service call.
+      - conditions:
+          - '{{ zwave_integration == "ozw" }}'
+        sequence:
+          # Clear the previous effect.
+          - service: ozw.set_config_parameter
+            data:
+              node_id: "{{ node_id }}"
+              parameter: "{{ parameter }}"
+              value: 0
+
+          # Start the new effect.
+          - service: ozw.set_config_parameter
+            data:
+              node_id: "{{ node_id }}"
+              parameter: "{{ parameter }}"
+              value: "{{ inovelli_math }}"
+
+    # The Z-wave integration requires this service call.
+    default:
+      # Clear the previous effect.
+      - service: zwave.set_config_parameter
+        data:
+          node_id: "{{ node_id }}"
+          parameter: "{{ parameter }}"
+          size: 4
+          value: 0
+
+      # Start the new effect.
+      - service: zwave.set_config_parameter
+        data:
+          node_id: "{{ node_id }}"
+          parameter: "{{ parameter }}"
+          size: 4
+          value: "{{ inovelli_math }}"

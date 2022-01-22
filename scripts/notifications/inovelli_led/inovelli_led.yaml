@@ -48,6 +48,12 @@
 #     1. Added automatic zwave integration detection!
 #     2. Added automatic model name extraction from the parent device.
 #     3. Now the model type should be automatically discovered for Z-Wave JS and zwave (but not ozw).
+#
+#   January 22, 2022
+#     1. Released this script as a Blueprint script!
+#     2. Added Brightness "level" parameter to fields.
+#     3. Little bit of code cleanup.
+#   Blueprint script -> https://github.com/brianhanifin/Home-Assistant-Config/blob/master/blueprints/script/brianhanifin/inovelli_led.yaml
 mode: parallel
 variables:
   # Set to true to create a "persistent_notification" with debugging information.
@@ -55,9 +61,9 @@ variables:
 
   # Automatically determine which Z-Wave Integration is being used (Z-Wave JS, zwave, or ozw).
   zwave_integration: |
-    {%- if state_attr(entity_id, 'product_name') is string %}
+    {%- if state_attr(entity_id, "product_name") is string %}
       zwave
-    {%- elif device_attr(device_id(entity_id), "model") is string %}
+    {%- elif device_attr(entity_id, "model") is string %}
       zwave_js
     {%- else %}
       ozw
@@ -70,8 +76,7 @@ variables:
   model_name: |
     {%- set model_name = "" %}
     {%- if zwave_integration == "zwave_js" %}
-      {% set parent_id = device_id(entity_id) %}
-      {%- set model_name = device_attr(parent_id, "model") %}
+      {%- set model_name = device_attr(entity_id, "model") %}
     {%- elif zwave_integration == "zwave" %}
       {%- set model_name = state_attr(entity_id, 'product_name') %}
     {%- endif %}
@@ -87,9 +92,9 @@ variables:
   # 3rd. Assume the model type is "dimmer".
   model_type: |
     {%- if model_name is string %}
-      {%- if 'LZW31' in model_name %}
+      {%- if "LZW31" in model_name %}
         dimmer
-      {%- elif 'LZW36' in model_name %}
+      {%- elif "LZW36" in model_name %}
         combo_light
       {%- else %}
         switch
@@ -112,8 +117,7 @@ variables:
       {{ color|int }}
     {% endif %}
   # 1-10
-  level: "{{ level|default(4) }}"
-  #level: "{{ level|int(default=4) }}"
+  level: "{{ level|default(4)|int }}"
   duration: '{{ duration|default("Indefinitely")|title }}'
   effect: '{{ effect|default("Blink")|title }}'
   colors:
@@ -281,23 +285,16 @@ sequence:
 
 fields:
   entity_id:
-    description: Light or switch which represents 
+    name: Entity
+    description: Inovelli device to notify.
     example: light.family_room
     selector:
       entity:
         #integration: zwave_js
-  # model:
-  #   description: 'Device type: dimmer (default), switch, combo_light'
-  #   example: dimmer
-  #   selector:
-  #     select:
-  #       options:
-  #         - dimmer
-  #         - switch
-  #         - combo_light
   color:
-    description: 'Choose a color.'
-    example: purple
+    name: Color
+    description: Choose a color.
+    default: Purple
     selector:
       select:
         options:
@@ -312,9 +309,18 @@ fields:
           - Purple
           - Light Pink
           - Pink
+  level:
+    name: Brightness level
+    description: Value from 0 (off) to 10 (100% brightness).
+    default: 4
+    selector:
+      number:
+        min: 0
+        max: 10
   effect:
-    description: 'Choose an effect.'
-    example: blink
+    name: Effect
+    description: Choose an effect.
+    default: Blink
     selector:
       select:
         options:
@@ -327,8 +333,9 @@ fields:
           - Pulse
           - Breath
   duration:
-    description: 'How long should the effect run?'
-    example: 10 seconds
+    name: Duration
+    description: How long should the effect run?
+    default: 10 Seconds
     selector:
       select:
         options:
