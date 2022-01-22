@@ -32,7 +32,7 @@ action:
     entity_id: counter.z2m_button_click
   
   - choose:
-      - conditions: '{{ command|trim|lower not in ["", "unknown", "unavailable"] }}'
+      - conditions: '{{ command|trim|lower not in ["", "none", "unknown", "unavailable"] }}'
         sequence:
           - alias: "Call the script to interpret the requested command."
             service: script.z2m_button_actions
