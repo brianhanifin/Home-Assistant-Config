@@ -9,22 +9,21 @@ sequence:
     entity_id: input_boolean.audio_notifications
     state: "on"
 
-  # - condition: time
-  #   after: '06:00:00'
-  #   before: '22:00:00'
+  - condition: state
+    entity_id: binary_sensor.noncritical_alert_quiet_time
+    state: "off"
 
-  # Only update group.lights_on when say_light_check is requested.
-  # - choose:
-  #     - conditions:
-  #         - "{{ say_light_check == True }}"
-  #       sequence:
-  #         # Update the values that may be needed for the briefing.
-  #         - service: script.turn_on
-  #           entity_id: script.update_lights_on
+  # - condition: or
+  #   conditions:
+  #     - condition: state
+  #       entity_id: group.family
+  #       state: "home"
+  #     - condition: state
+  #       entity_id: input_boolean.guest_mode
+  #       state: "on"
 
   - choose:
-      - conditions:
-          - '{{ media_player.startswith("group") }}'
+      - conditions: '{{ media_player.startswith("group") }}'
         sequence:
           - service: script.say_speaker_group
             data:
