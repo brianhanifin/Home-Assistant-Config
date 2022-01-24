@@ -1,23 +1,27 @@
 ---
 variables:
-  speakers: |
-    {% set speakers = speakers|default('media_player.google_family_room') %}
-    {{ expand(speakers) | map(attribute="entity_id") | join(" ") }}
-  speaker_count: '{{ speakers | count }}'
+  speaker_entities: |
+    {%- set speaker_entities = speakers|default('media_player.google_family_room') %}
+    {%- if speakers.startswith("group.") %}
+      {%- set speaker_entities = expand(speakers) | map(attribute="entity_id") | join(" ") %}
+    {%- endif %}
+    {{ speaker_entities }}
+  speaker_count: '{{ speaker_entities.split(" ") | count if speakers.startswith("group.") else "1" }}'
 
   audio_file: "{{ audio_file }}"
   content_type: "{{ content_type|default('audio') }}"
 
   new_volume: |
     {%- if volume is number %}
-      {%- if volume|float(default=0) > 1.0 %}
-        {%- set volume = volume|float(default=0) / 100 %}
+      {%- if volume > 1.0 %}
+        {%- set volume = volume / 100 %}
       {%- else %}
-        {%- set volume = volume|float(default=0) %}
+        {%- set volume = volume %}
       {%- endif %}
     {%- else %}
-      {{ states("input_number.default_audio_volume")|default(0)|int / 100 }}
+      {%- set volume = states("input_number.default_audio_volume")|float(default=0) / 100 %}
     {%- endif %}
+    {{ volume }}
 sequence:
   # - service: script.debug
   #   data:
@@ -25,6 +29,7 @@ sequence:
   #       file: {{ audio_file }}
   #       type: {{ content_type }}
   #       speakers: {{ speakers }}
+  #       volume: {{ new_volume }}
 
   #       {{ states("input_boolean.audio_notifications") }}
   #       {{ states("group.family") }}
@@ -32,47 +37,95 @@ sequence:
 
   - condition: state
     entity_id: input_boolean.audio_notifications
-    state: 'on'
+    state: "on"
 
-  # - condition: time
-  #   after: '06:00:00'
-  #   before: '22:00:00'
+  - condition: state
+    entity_id: binary_sensor.noncritical_alert_quiet_time
+    state: "off"
 
-  - condition: or
-    conditions:
-      - condition: state
-        entity_id: group.family
-        state: "home"
-      - condition: state
-        entity_id: input_boolean.guest_mode
-        state: "on"
+  # - condition: or
+  #   conditions:
+  #     - condition: state
+  #       entity_id: group.family
+  #       state: "home"
+  #     - condition: state
+  #       entity_id: input_boolean.guest_mode
+  #       state: "on"
 
-  # Play the audio on all of the speakers.
-  - repeat:
-      count: "{{ speaker_count|default(0)|int }}"
-      sequence:
-        - variables:
-            speaker: "{{ speakers[repeat.index-1] }}"
-            current_volume: "{{ state_attr(speaker,'volume_level') }}"
+  - alias: "Play audio on single speaker"
+    choose:
+      - conditions: "{{ speaker_count == 1 }}"
+        sequence:
+          - variables:
+              speaker: "{{ speakers }}"
+              speaker_volume_entity: '{{ "number." ~ speaker|replace("media_player.","") ~ "_alarm_volume" }}'
+              current_volume: "{{ states(speaker_volume_entity)|float / 100 }}"
 
-        # Increase volume
-        # - choose:
-        #     conditions: "{{ current_volume|float(default=0) > new_volume|float(default=0) }}"
-        #     sequence:
-        - service: media_player.volume_set
-          data:
-            entity_id: "{{ speaker }}"
-            volume_level: "{{ new_volume }}"
+          # Increase volume
+          - service: media_player.volume_set
+            data:
+              entity_id: "{{ speaker }}"
+              volume_level: "{{ new_volume }}"
 
-        # Play the audio
-        - service: media_player.play_media
-          data:
-            entity_id: "{{ speaker }}"
-            media_content_id: "{{ audio_file }}"
-            media_content_type: "{{ content_type }}"
+          # Play the audio
+          - service: media_player.play_media
+            data:
+              entity_id: "{{ speaker }}"
+              media_content_id: "{{ audio_file }}"
+              media_content_type: "{{ content_type }}"
 
-        # Restore previous volume
-        - service: media_player.volume_set
-          data:
-            entity_id: "{{ speaker }}"
-            volume_level: "{{ current_volume }}"
+          # Restore previous volume
+          - service: media_player.volume_set
+            data:
+              entity_id: "{{ speaker }}"
+              volume_level: "{{ current_volume }}"
+      
+    default:
+      - alias: "Play the audio on all of the in a group."
+        repeat:
+          count: "{{ speaker_count|default(0)|int }}"
+          sequence:
+            - variables:
+                speaker: "{{ speaker_entities[repeat.index-1] }}"
+                speaker_volume_entity: '{{ "number." ~ speaker|replace("media_player.","") ~ "_alarm_volume" }}'
+                current_volume: "{{ states(speaker_volume_entity)|float / 100 }}"
+
+            # Increase volume
+            - service: media_player.volume_set
+              data:
+                entity_id: "{{ speaker }}"
+                volume_level: "{{ new_volume }}"
+
+            # Play the audio
+            - service: media_player.play_media
+              data:
+                entity_id: "{{ speaker }}"
+                media_content_id: "{{ audio_file }}"
+                media_content_type: "{{ content_type }}"
+
+            # Restore previous volume
+            - service: media_player.volume_set
+              data:
+                entity_id: "{{ speaker }}"
+                volume_level: "{{ current_volume }}"
+
+fields:
+  speakers:
+    description: Media Player entity_id or group id.
+    example: media_player.google_kitchen or group.google_welcome
+    default: media_player.google_family_room
+    selector:
+      text:
+  volume:
+    default: 10
+    selector:
+      number:
+        min: 5
+        max: 100
+        step: 5
+  audio_file:
+    description: Audio file to play.
+    default: media-source://media_source/local/audio/jetsons-doorbell.mp3
+    required: true
+    selector:
+      text:

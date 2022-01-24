@@ -757,3 +757,39 @@
       - service: switch.toggle
         target:
           device_id: 86c76054c80c42adafb4bc74576f70ad
+- id: '1642908642407'
+  alias: Doorbell pushed
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 1c60b1f0eccac14e50602aeadaa589ef
+    type: action
+    subtype: bell1
+    discovery_id: 0x0008890001d9f410 action_bell1
+    id: doorbell_pushed
+  condition: []
+  action:
+  - service: script.notify_audio
+    data:
+      audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
+      speakers: media_player.google_family_room
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: Doorbell
+      message: Someone pushed the doorbell.
+      camera: camera.front_door
+  - service: script.notify_web
+    data:
+      message: Someone pressed the doorbell!
+      duration: 60
+  - service: script.cast_site
+    data:
+      path: /lovelace-sidebar/cameras
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  mode: single
