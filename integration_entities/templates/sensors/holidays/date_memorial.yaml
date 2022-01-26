@@ -40,24 +40,6 @@ state: |
     {{ event_date|replace("00:00:00","")|trim }}
   {%- endmacro -%}
 
-  {%- macro dayofweek_number(dayofweek) -%}
-    {%- if dayofweek == "Sunday" or dayofweek == "Sun" -%}
-      0
-    {%- elif dayofweek == "Monday" or dayofweek == "Mon" -%}
-      1
-    {%- elif dayofweek == "Tuesday" or dayofweek == "Tue" -%}
-      2
-    {%- elif dayofweek == "Wednesday" or dayofweek == "Wed" -%}
-      3
-    {%- elif dayofweek == "Thursday" or dayofweek == "Thu" -%}
-      4
-    {%- elif dayofweek == "Friday" or dayofweek == "Fri" -%}
-      5
-    {%- elif dayofweek == "Saturday" or dayofweek == "Sat" -%}
-      6
-    {%- endif -%}
-  {%- endmacro -%}
-
   {%- macro last_dayofmonth(month, year) -%}
     {%- set daysinmonths = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
     {%- set month = month|default(0)|int -%}
@@ -83,15 +65,24 @@ state: |
   Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
   #}
   {%- macro nth_dayofmonth(nth, dayofweek, month, year=now().strftime("%Y")) -%}
-    {%- set dayofweek = dayofweek_number(dayofweek)|default(0)|int -%}
+    {%- set dayofweek_number = {
+      "Sunday":    0, "Sun": 0,
+      "Monday":    1, "Mon": 1,
+      "Tuesday":   2, "Tue": 2,
+      "Wednesday": 3, "Wed": 3,
+      "Thursday":  4, "Thu": 4,
+      "Friday":    5, "Fri": 5,
+      "Saturday":  6, "Sat": 6
+    } %}
+    {%- set dayofweek = dayofweek_number[dayofweek]|default(0)|int -%}
     {%- set firstdateofmonth = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") -%}
-    {%- set firstdayofmonth = dayofweek_number(firstdateofmonth.strftime("%A"))|default(0)|int -%}
+    {%- set firstdayofmonth = dayofweek_number[firstdateofmonth.strftime("%A")]|default(0)|int -%}
 
     {# Determine the first occurrence of the day. #}
-    {%- if firstdayofmonth == 1 -%}
-      {%- set firstoccurrence = dayofweek -%}
+    {%- if firstdayofmonth == dayofweek -%}
+      {%- set firstoccurrence = 1 -%}
     {%- elif firstdayofmonth < dayofweek -%}
-      {%- set firstoccurrence = (dayofweek - dayofweek_number(firstdayofmonth)|default(0)|int) -%}
+      {%- set firstoccurrence = (dayofweek - dayofweek_number[firstdayofmonth]|default(0)|int) -%}
     {%- else -%}
       {%- set firstoccurrence = (7 - firstdayofmonth + dayofweek) + 1 -%}
     {%- endif -%}
@@ -107,7 +98,7 @@ state: |
           #}
       {%- set lastdayofmonth = last_dayofmonth(month, year)|default(0)|int -%}
       {%- set lastdayname = strptime(year ~"-"~ month ~"-"~ lastdayofmonth, "%Y-%m-%d").strftime("%A") -%}
-      {%- set lastdaynumber = dayofweek_number(lastdayname)|default(0)|int -%}
+      {%- set lastdaynumber = dayofweek_number[lastdayname]|default(0)|int -%}
       {%- set daydifference = lastdaynumber - dayofweek -%}
 
           {# Add a week if the result is negative. #}
