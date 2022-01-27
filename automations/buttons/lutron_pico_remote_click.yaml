@@ -3,11 +3,11 @@ alias: "Remote: pico remote click"
 id: lutron_pico_remote_click
 mode: parallel
 trigger:
-  platform: event
-  event_type: lutron_caseta_button_event
+  - platform: event
+    event_type: lutron_caseta_button_event
+    event_data:
+      action: press
 variables:
-  debug_output: False
-
   remote: '{{ trigger.event.data.device_name|lower|replace(" ","_") }}'
   button: '{{ trigger.event.data.button_number }}'
   action: '{{ trigger.event.data.action }}'
@@ -21,54 +21,47 @@ variables:
   command: '{{ commands[button] }}'
 
   devices:
-    dining_room:
+    dining_room_dining_room:
       "on": "light.dining_room"
       "off": "light.dining_room"
       middle: "group.kitchen_lights"
       step_up: "light.dining_room"
       step_down: "light.dining_room"
-    entry:
+    entry_entry:
       "on": "light.home_entry"
       "off": "light.home_entry"
       middle: ""
       step_up: "light.home_entry"
       step_down: "light.home_entry"
 
-    play_room_1:
-      "on": "light.play_room"
+    playroom_play_room_1:
+      "on": "group.play_room_lights"
       "off": "group.play_room_lights"
       middle: "light.play_room_floor_lamp"
       step_up: "group.play_room_lights"
       step_down: "group.play_room_lights"
 
-    play_room_2:
-      "on": "light.play_room"
-      "off": "group.garage_entry_lights"
+    playroom_play_room_2:
+      "on": "group.play_room_lights"
+      "off": "group.play_room_lights"
       middle: "light.play_room_entry"
       step_up: "group.play_room_lights"
       step_down: "group.play_room_lights"
 
   device: '{{ devices[remote][command] }}'
 
-condition:
-  - condition: template
-    value_template: '{{ action != "release" }}'
-
 action:
-  - choose:
-      - conditions: '{{ debug_output == True }}'
-        sequence:
-          - service: script.debug
-            data:
-              title: '"{{ remote }}" click'
-              message: |
-                remote: {{ remote }}
-                button: {{ button }}
-                action: {{ action }}
+  # - service: script.debug
+  #   data:
+  #     title: '"{{ remote }}" click'
+  #     message: |
+  #       remote: {{ remote }}
+  #       button: {{ button }}
+  #       action: {{ action }}
 
-                device: {{ device }}
-                command: {{ command }}
-              id: '{{ remote ~"_"~ as_timestamp(now()) }}'
+  #       device: {{ device }}
+  #       command: {{ command }}
+  #     id: '{{ remote ~"_"~ as_timestamp(now()) }}'
 
   - choose:
       - conditions: '{{ command in ["on","off"] and device != "" }}'
