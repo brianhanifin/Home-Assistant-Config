@@ -1,9 +1,9 @@
 ---
-unique_id: date_new_years_eve
-name: New years eve
-icon: fas:glass-cheers
+unique_id: date_flag
+name: Flag day
+icon: fas:flag-usa
 state: |
-  {%- set this_event = "12-31" %}
+  {%- set this_event = "6-14" %}
   {%- set event_date = this_event.split("-") %}
   {%- set event_month = event_date[0]|int %}
   {%- set event_day = event_date[1]|int %}
@@ -21,6 +21,6 @@ state: |
 attributes:
   type: Holiday
   friendly_date: |
-    {%- set event_date = states("sensor.date_new_years_eve") %}
+    {%- set event_date = states("sensor.date_flag_day") %}
     {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
     {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int, event_date.split("-")[0]|int) }}

@@ -1,0 +1,117 @@
+---
+# platform: rest
+# name: date_mlk
+# resource: !secret wolframalpha_date_mlk
+# scan_interval: 2592000 # 86400 seconds * 30 days
+# value_template: "{{ value|replace(' (Unix time)','')|default(0)|int|timestamp_custom('%Y-%m-%d') }}"
+unique_id: date_mlk
+name: Martin Luther King Jr day
+icon: mdi:peace
+state: |
+  {%- macro main() -%}
+    {%- set event_nthday    = 3 -%}
+    {%- set event_dayofweek = "Monday" -%}
+    {%- set event_month     = 1 -%}
+
+    {%- set today = as_datetime(states("sensor.date")) -%}        
+
+    {# Calculate the event for the current year. #}
+    {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, today.year) | replace("00:00:00","") -%}
+
+    {# If the event has passed for this year, get next year's event. #}
+    {%- set event_day = event_date.split('-')[2]|default(0)|int -%}
+    {%- if event_month < today.month -%}
+      {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, today.year+1) | replace("00:00:00","")  -%}
+    {%- elif event_month == today.month and event_day < today.day %}
+      {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, today.year+1) | replace("00:00:00","")  -%}
+    {%- endif -%}
+
+    {{ event_date|trim }}
+  {%- endmacro -%}
+
+  {%- macro last_dayofmonth(month, year) -%}
+    {%- set daysinmonths = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
+    {%- set month = month|default(0)|int -%}
+    {%- set year = year|default(0)|int -%}
+
+    {# Simplified leap year calculation. See https://www.mathsisfun.com/leap-years.html #}
+    {%- set isleapyear = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) -%}
+
+    {%- set monthindex = month-1 -%}
+    {%- if month == 2 and isleapyear -%}
+      {{ daysinmonths[monthindex]+1 }}
+    {%- else -%}
+      {{ daysinmonths[monthindex] }}
+    {%- endif -%}
+  {%- endmacro -%}
+
+  {#
+  ex. Get the nth Monday of May.
+  1st: {{ nth_dayofmonth(1, "Monday", 5) }}
+  2nd: {{ nth_dayofmonth(2, "Monday", 5, 2019) }}
+  Last: {{ nth_dayofmonth("last", "Monday", 5) }}
+
+  Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
+  #}
+  {%- macro nth_dayofmonth(nth, dayofweek, month, year=now().year) %}
+    {%- set dayofweek_number = {
+      "Sunday":    0, "Sun": 0,
+      "Monday":    1, "Mon": 1,
+      "Tuesday":   2, "Tue": 2,
+      "Wednesday": 3, "Wed": 3,
+      "Thursday":  4, "Thu": 4,
+      "Friday":    5, "Fri": 5,
+      "Saturday":  6, "Sat": 6
+    } %}
+    {%- set dayofweek = dayofweek_number[dayofweek]|default(0)|int %}
+
+    {%- set firstdateofmonth = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") %}
+    {%- set firstdayofmonth = firstdateofmonth.isoweekday()|default(0)|int %}
+
+    {# Determine the first occurrence of the day. #}
+    {%- if firstdayofmonth == dayofweek %}
+      {%- set firstoccurrence = 1 %}
+    {%- elif firstdayofmonth < dayofweek %}
+      {%- set firstoccurrence = (dayofweek - firstdateofmonth.isoweekday()|default(0)|int) %}
+    {%- else %}
+      {%- set firstoccurrence = (7 - firstdayofmonth + dayofweek) + 1 %}
+    {%- endif %}
+
+    {%- if nth is number %}
+      {# Determine the nth occurrence of the dayofweek. #}
+      {%- set nthoccurrence = firstoccurrence + 7 * (nth-1) %}
+    {%- else %}
+      {#
+      Determine the LAST occurrence of the dayofweek.
+
+      Reference: https://cflib.org/udf/GetLastOccOfDayInMonth
+      #}
+      {%- set lastdayofmonth = last_dayofmonth(month, year)|default(0)|int %}
+      {%- set lastdateofmonth = strptime(year ~"-"~ month ~"-"~ lastdayofmonth, "%Y-%m-%d") %}
+      {%- set lastdayname = lastdateofmonth.strftime("%A") %}
+
+      {%- set lastdaynumber = lastdateofmonth.isoweekday() %}
+      {%- set daydifference = lastdaynumber - dayofweek %}
+
+      {# Add a week if the result is negative. #}
+      {%- if daydifference < 0 %}
+        {%- set daydifference = daydifference + 7 %}
+      {%- endif %}
+
+      {%- set nthoccurrence = lastdayofmonth - daydifference -%}
+    {%- endif %}
+
+    {# Return the day with the month and year so it can be useful. #}
+    {{ strptime(year ~"-"~ month ~"-"~ nthoccurrence, "%Y-%m-%d") }}
+  {%- endmacro %}
+
+  {# This trick allows me to move the primary code logic to the top. #}
+  {{ main() }}
+
+attributes:
+  type: Holiday
+  #friendly_date: '{{ as_timestamp(states("sensor.date_martin_luther_king_jr_day")) | timestamp_custom("%B %d, %Y") }}'
+  friendly_date: |
+    {%- set event_date = states("sensor.date_martin_luther_king_jr_day") %}
+    {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
+    {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int, event_date.split("-")[0]|int) }}

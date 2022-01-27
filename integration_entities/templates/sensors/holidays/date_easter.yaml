@@ -2,8 +2,6 @@
 unique_id: date_easter
 name: Easter
 icon: fas:egg
-attributes:
-  type: Holiday
 state: |
   {%- set today = states('sensor.date') -%}
   {%- set this_event = states('sensor.date_easter') -%}
@@ -12,3 +10,9 @@ state: |
   {%- else -%}
     {{ states('sensor.date_next_easter') }}
   {%- endif -%}
+attributes:
+  type: Holiday
+  friendly_date: |
+    {%- set event_date = states("sensor.date_easter") %}
+    {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
+    {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int, event_date.split("-")[0]|int) }}

@@ -1,78 +1,24 @@
 ---
-#unique_id: date_test
-name: Date Test
-state: |  
-  {%- macro last_dayofmonth(month, year) -%}
-    {%- set daysinmonths = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
-    {%- set month = month -%}
-    {%- set year = year -%}
+name: Date test
+state: |
+  {%- set this_event = "01-28" %}
+  {%- set event_date = this_event.split("-") %}
+  {%- set event_month = event_date[0]|int %}
+  {%- set event_day = event_date[1]|int %}
 
-    {# Simplified leap year calculation. See https://www.mathsisfun.com/leap-years.html #}
-    {%- set isleapyear = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) -%}
-
-    {%- set monthindex = month-1 -%}
-    {%- if month == 2 and isleapyear -%}
-      {{ daysinmonths[monthindex]+1 }}
-    {%- else -%}
-      {{ daysinmonths[monthindex] }}
-    {%- endif -%}
-  {%- endmacro -%}
-
-  {#
-  ex. Get the nth Monday of May.
-  1st: {{ nth_dayofmonth(1, "Monday", 5) }}
-  2nd: {{ nth_dayofmonth(2, "Monday", 5, 2019) }}
-  Last: {{ nth_dayofmonth("last", "Monday", 5) }}
-
-  Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
-  #}
-  {%- macro nth_dayofmonth(nth, dayofweek, month, year=now().strftime("%Y")) -%}
-    {%- set dayofweek_number = {
-      "Sunday":    0, "Sun": 0,
-      "Monday":    1, "Mon": 1,
-      "Tuesday":   2, "Tue": 2,
-      "Wednesday": 3, "Wed": 3,
-      "Thursday":  4, "Thu": 4,
-      "Friday":    5, "Fri": 5,
-      "Saturday":  6, "Sat": 6
-    } %}
-    {%- set dayofweek = dayofweek_number[dayofweek]|int -%}
-    {%- set firstdateofmonth = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") -%}
-    {%- set firstdayofmonth = dayofweek_number[firstdateofmonth.strftime("%A")]|int -%}
-
-    {# Determine the first occurrence of the day. #}
-    {%- if firstdayofmonth == dayofweek -%}
-      {%- set firstoccurrence = 1 -%}
-    {%- elif firstdayofmonth < dayofweek -%}
-      {%- set firstoccurrence = dayofweek - firstdayofmonth -%}
-    {%- else -%}
-      {%- set firstoccurrence = (7 - firstdayofmonth + dayofweek) + 1 -%}
-    {%- endif -%}
-
-    {%- if nth is number -%}
-      {# Determine the nth occurrence of the dayofweek. #}
-      {%- set nthoccurrence = firstoccurrence + 7 * (nth-1) -%}
-    {%- else -%}
-      {#
-      Determine the LAST occurrence of the dayofweek.
-
-      Reference: https://cflib.org/udf/GetLastOccOfDayInMonth
-      #}
-      {%- set lastdayofmonth = last_dayofmonth(month, year)|int -%}
-      {%- set lastdayname = strptime(year ~"-"~ month ~"-"~ lastdayofmonth, "%Y-%m-%d").strftime("%A") -%}
-      {%- set lastdaynumber = dayofweek_number[lastdayname] -%}
-      {%- set daydifference = lastdaynumber - dayofweek -%}
-
-      {# Add a week if the result is negative. #}
-      {%- if daydifference < 0 -%}
-        {%- set daydifference = daydifference + 7 -%}
-      {%- endif -%}
-
-      {%- set nthoccurrence = lastdayofmonth - daydifference -%}
-    {%- endif -%}
-
-    {# Return the day with the month and year so it can be useful. #}
-    {{ strptime(month ~"/"~ nthoccurrence ~"/"~ year, "%m/%d/%Y") }}
-  {%- endmacro -%}
-
-  date_test: {{ nth_dayofmonth(2, "Monday", 5) }}
+  {# If the event has passed for this year, get next year's event. #} 
+  {%- set today = as_datetime(states('sensor.date')) -%}
+  {%- if event_month < today.month -%}
+    {%- set event_year = today.year + 1 -%}
+  {%- elif event_month == today.month and event_day < today.day %}
+    {%- set event_year = today.year + 1 -%}
+  {%- else -%}
+    {%- set event_year = today.year -%}
+  {%- endif -%}
+  {{ strptime(event_year ~"-"~ this_event, "%Y-%m-%d")|replace(" 00:00:00","") }}
+attributes:
+  type: Holiday
+  friendly_date: |
+    {%- set event_date = states("sensor.date_test") %}
+    {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
+    {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int, event_date.split("-")[0]|int) }}
