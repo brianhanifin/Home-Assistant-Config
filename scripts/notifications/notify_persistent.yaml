@@ -1,0 +1,22 @@
+---
+sequence:
+  - service: persistent_notification.create
+    data:
+      title: '{{ title|default("") }}'
+      message: '{{ message }}'
+      notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
+
+fields:
+  title:
+    description: Bold first line of the message.
+    example: SAFETY ALERT
+    selector:
+      text:
+  message:
+    description: Useful information to share.
+    selector:
+      text:
+  id:
+    description: Unique identifier.
+    selector:
+      text:

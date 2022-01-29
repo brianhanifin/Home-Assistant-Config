@@ -1,5 +1,13 @@
 ---
 sequence:
+  - condition: state
+    entity_id: input_boolean.audio_notifications
+    state: "on"
+
+  - condition: state
+    entity_id: binary_sensor.noncritical_alert_quiet_time
+    state: "off"
+
   - service: script.say_cloud
     data:
       media_player: '{{ media_player }}'
