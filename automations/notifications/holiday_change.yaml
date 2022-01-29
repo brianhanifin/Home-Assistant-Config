@@ -1,15 +1,18 @@
 ---
-# This lets me know the sensor is updating
 alias: Holiday change
 id: holiday_change
+description: This lets me know the sensor is updating.
 trigger:
   - platform: state
     entity_id:
       - sensor.holiday
 variables:
   state: '{{ trigger.to_state.state|trim }}'
+  midnight: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) | as_timestamp }}'
+  time_from_midnight: '{{ now()|as_timestamp - midnight }}'
 condition:
   - "{{ state|lower not in ['',none,'unknown','unavailable'] }}"
+  - "{{ time_from_midnight < 900 }}" # Stops notification repeating for every template sensor refresh.
 action:
   - service: script.notify_mobile
     data:
