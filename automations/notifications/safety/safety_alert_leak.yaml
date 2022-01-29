@@ -22,6 +22,8 @@ condition:
     value_template: '{{ trigger.to_state.name|trim != "" }}'
 variables:
   room: '{{ trigger.to_state.name|lower|replace(" leak", "")|replace(" #1", "")|replace(" #2", "")|trim }}'
+  title: 'WATER LEAK DETECTED!'
+  message: 'WATER LEAK detected in the {{ room|upper }}.'
 action:
   - service: script.notify_speech
     data:
@@ -31,8 +33,8 @@ action:
   - service: script.notify_mobile
     data:
       critical: true
-      title: "WATER LEAK DETECTED!"
-      message: "{{ room|upper }}: A leak has been detected!"
+      title: "{{ title }}"
+      message: "{{ message }}"
       who: brian
       group: safety
       url: /lovelace/home
@@ -40,8 +42,14 @@ action:
   - service: script.notify_web
     data:
       type: alert
-      title: "WATER LEAK DETECTED!"
-      message: "{{ room|upper }}: A leak has been detected!"
+      title: "{{ title }}"
+      message: "{{ message }}"
+
+  - service: script.notify_persistent
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      id: '{{ "safety_alert_" ~ as_timestamp(now()) }}'
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
