@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1280 total entities**, 
-including **671 sensors**.
+Our Home Assistant install has approximately **1214 total entities**, 
+including **641 sensors**.
 
 <details><summary>21 Custom Integrations</summary>
 
@@ -228,7 +228,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.19.3](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.20.0](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -294,13 +294,13 @@ A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
 
 
-#### [Wyze v0.1.4](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v0.1.5-alpha.0](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>30 Lovelace Plugins</summary>
+<details><summary>28 Lovelace Plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -342,10 +342,6 @@ Show a notification count badge.
 A Lovelace card for Frigate in Home Assistant
 
 
-#### [Gauge Card](https://github.com/GH2user/gauge-card)
-
-
-
 #### [Ha (Lovelace) Card Weather Conditions v1.9.12](https://github.com/r-renato/ha-card-weather-conditions)
 Weather condition card (Lovelace) for Home Assistant.
 
@@ -366,7 +362,7 @@ A custom Lovelace card for displaying a combination of persistent notifications,
 A custom Lovelace text input row for use in entities cards
 
 
-#### [Mini Graph Card v0.10.0](https://github.com/kalkih/mini-graph-card)
+#### [Mini Graph Card v0.11.0](https://github.com/kalkih/mini-graph-card)
 Minimalistic graph card for Home Assistant Lovelace UI
 
 
@@ -386,7 +382,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.3.0](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.3.2](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 
@@ -400,10 +396,6 @@ A different take on the thermostat card for Home Assistant ♨️
 
 #### [Stack In Card v0.2.0](https://github.com/custom-cards/stack-in-card)
 🛠 group multiple cards into one card without the borders
-
-
-#### [State Switch v1.9.1](https://github.com/thomasloven/lovelace-state-switch)
-🔹Dynamically replace lovelace cards depending on occasion
 
 
 #### [Surveillance Card v0.0.5](https://github.com/custom-cards/surveillance-card)
@@ -425,7 +417,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 Addons</summary>
 
-#### ESPHome v2022.1.1
+#### ESPHome v2022.1.2
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -484,7 +476,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2021.12.10-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.2.0b2-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -494,7 +486,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48277-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48448-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
