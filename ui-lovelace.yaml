@@ -1761,45 +1761,6 @@ views:
   - cards:
     - compact_mode: false
       entities:
-      - content_template: '**SMOKE DETECTED*'
-        entity: binary_sensor.safety_alarm_smoke
-        exclude_states:
-        - 'off'
-      - content_template: '**CARBON MONOXIDE DETECTED**'
-        entity: binary_sensor.safety_alarm_co
-        exclude_states:
-        - 'off'
-      - content_template: '**WATER LEAK DETECTED**'
-        entity: binary_sensor.safety_alarm_leak
-        exclude_states:
-        - 'off'
-      id_filter: safety_alert
-      max_item_count: 5
-      more_info_on_tap: true
-      show_empty: false
-      show_notification_title: true
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ iif(user.is_admin,\
-        \ \"block\", \"none\") }}\n}\n"
-      title: ''
-      type: custom:home-feed-card
-    - card:
-        card_mod:
-          style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius:\
-            \ var(--border-radius);\n  box-shadow: var(--box-shadow);\n}\n"
-        type: entities
-      filter:
-        exclude:
-        - state: 'off'
-        - state: unknown
-        include:
-        - entity_id: binary_sensor.safety_alarm_*
-      show_empty: false
-      sort:
-        method: name
-      type: custom:auto-entities
-    - compact_mode: false
-      entities:
       - content_template: '**{{display_name}}** is **{{state}}**'
         entity: binary_sensor.front_door
         exclude_states:
@@ -1822,34 +1783,44 @@ views:
         entity: input_boolean.guest_mode
         exclude_states:
         - 'off'
-      id_filter: ^(?!.*safety_alert)
+      id_filter: safety_alert
       max_item_count: 5
       more_info_on_tap: true
       show_empty: false
-      show_notification_title: true
-      style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ iif(user.is_admin,\
-        \ \"none\", \"block\") }}\n}\n"
-      title: ''
+      show_notification_title: false
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.1);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n  padding-top: 16px !important;\n}\nha-markdown\
+        \ {\n  font-size: 1.2em;\n  font-weight: bold;\n}\n#header {\n  display: none;\n\
+        }\n"
+      title: Safety notifications
       type: custom:home-feed-card
-    type: vertical-stack
-    view_layout:
-      position: sidebar
-  - cards:
     - compact_mode: false
       entities:
-      - content_template: '**SMOKE DETECTED*'
-        entity: binary_sensor.safety_alarm_smoke
+      - content_template: Today is **{{state}}**
+        entity: sensor.holiday
+        exclude_states:
+        - ''
+        - none
+        - unavailable
+        name: Holiday
+      - content_template: '{{state}}'
+        entity: sensor.update_message
+        exclude_states:
+        - ''
+        - none
+        - unavailable
+      - content_template: '**Glowforge** is **{{state}}**'
+        entity: input_select.glowforge_status
         exclude_states:
         - 'off'
-      - content_template: '**CARBON MONOXIDE DETECTED**'
-        entity: binary_sensor.safety_alarm_co
+        - 'Off'
+        - unavailable
+      - content_template: '**3D Printer** is **{{state}}**'
+        entity: sensor.octoprint_current_state
         exclude_states:
-        - 'off'
-      - content_template: '**WATER LEAK DETECTED**'
-        entity: binary_sensor.safety_alarm_leak
-        exclude_states:
-        - 'off'
+        - unavailable
+        include_states:
+        - Printing
       - content_template: '**{{display_name}}** is **unlocked**'
         entity: lock.front_door
         exclude_states:
@@ -1900,25 +1871,21 @@ views:
         exclude_states:
         - 'on'
         - unavailable
-      - content_template: '**3D Printer** is **{{state}}**'
-        entity: sensor.octoprint_current_state
-        exclude_states:
-        - unavailable
-        include_states:
-        - Printing
+      id_filter: ^(?!.*safety_alert).*
       max_item_count: 5
       more_info_on_tap: true
       show_empty: false
-      show_notification_title: true
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\nha-markdown, hui-timestamp-display {\n\
-        \  margin-left: 16px;\n}\n:host {\n  display: {{ iif(user.is_admin, \"block\"\
-        , \"none\") }}\n}\n"
-      title: ''
+      show_notification_title: false
+      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n  padding-top: 16px !important;\n}\n#header\
+        \ { display: none; }\n"
+      title: Informational notifications
       type: custom:home-feed-card
     - card:
         card_mod:
-          style: "ha-card {\n  background-color: transparent;\n}\n"
+          style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n  border-radius:\
+            \ var(--border-radius);\n  box-shadow: var(--box-shadow);\n}\n:host {\n\
+            \  display: {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
         type: entities
       filter:
         exclude:
@@ -1938,6 +1905,31 @@ views:
         count: 3
         method: state
       type: custom:auto-entities
+    - card:
+        card_mod:
+          style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n  border-radius:\
+            \ var(--border-radius);\n  box-shadow: var(--box-shadow);\n}\n"
+        type: entities
+      filter:
+        exclude:
+        - state: ''
+        - state: '0'
+        - state: 'off'
+        - state: 'Off'
+        - state: idle
+        - state: unavailable
+        - state: unknown
+        include:
+        - domain: climate
+        - domain: alert
+        - entity_id: sensor.plex
+      show_empty: false
+      sort:
+        method: none
+      style: "ha-card {\n  background: none;\n}\n"
+      type: custom:auto-entities
+      view_layout:
+        position: sidebar
     type: vertical-stack
     view_layout:
       position: sidebar
@@ -1989,32 +1981,6 @@ views:
     sortByStartTime: true
     type: custom:atomic-calendar-revive
     view_layout: null
-  - card:
-      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-        }\n"
-      type: entities
-    filter:
-      exclude:
-      - state: ''
-      - state: '0'
-      - state: 'off'
-      - state: 'Off'
-      - state: idle
-      - state: unavailable
-      - state: unknown
-      include:
-      - entity_id: sensor.holiday
-      - domain: alert
-      - entity_id: sensor.updates
-      - domain: climate
-      - entity_id: sensor.plex
-    show_empty: false
-    sort:
-      method: none
-    style: "ha-card {\n  background: none;\n}\n"
-    type: custom:auto-entities
-    view_layout:
-      position: sidebar
   - cards:
     - label: Control lights and devices.
       name: Family room
@@ -2246,8 +2212,9 @@ views:
     type: grid
     view_layout:
       position: sidebar
-  - style: "ha-card {\n  border-radius: var(--border-radius);\n  box-shadow: var(--box-shadow);\n\
-      }\n:host {\n  display: {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
+  - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n  border-radius: var(--border-radius);\n\
+      \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ \"none\" if user.is_admin\
+      \ else \"block\" }}\n}\n"
     type: shopping-list
     view_layout:
       position: sidebar
