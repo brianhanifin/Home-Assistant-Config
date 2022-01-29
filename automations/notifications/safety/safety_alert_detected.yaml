@@ -3,7 +3,7 @@ alias: Safety alert smoke or carbon monoxide
 id: safety_alert_smoke
 mode: single
 trigger:
-  - platform: state
+  - platform: numeric_state
     entity_id:
       - sensor.safety_alarm_bedroom_type
       - sensor.safety_alarm_kyles_bedroom_type
@@ -13,22 +13,19 @@ trigger:
       - sensor.safety_alarm_guest_room_type
       - sensor.safety_alarm_stairs_type
 
-      #- input_number.safety_alarm_test_type
-    to: ~
+      #- sensor.safety_alarm_test_type
+    above: 0
+    below: 13
 
 variables:
   type: '{{ trigger.to_state.state|default(0)|int }}'
-  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace(" Type","")|replace(" Code","") }}'
+  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace(" type","") }}'
 
   alarm_states:
     1: "SMOKE"
     2: "CARBON MONOXIDE"
     12: "Test button press"
   alarm_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "unknown" }}'
-  # alarm_state: |
-  #   {{- "SMOKE" if type == 1 }}
-  #   {{- "CARBON MONOXIDE" if type == 2 }}
-  #   {{- "Test Button Press" if type == 12 }}
 
   title: '{{ alarm_state }} DETECTED!'
   message: '{{ alarm_state }} detected in the {{ room|upper }}.'
@@ -58,7 +55,13 @@ action:
       type: alert
       title: '{{ title }}'
       message: '{{ message }}'
+  
+  - service: script.notify_persistent
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      id: '{{ "safety_alert_" ~ as_timestamp(now()) }}'
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
-  - delay:
-      minutes: 5
+  #- delay:
+  #    minutes: 5
