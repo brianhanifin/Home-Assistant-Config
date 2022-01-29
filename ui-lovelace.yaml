@@ -1758,171 +1758,187 @@ views:
     type: horizontal-stack
     view_layout:
       position: sidebar
-  - card:
-      entity: automation.startup
-      states:
-        'off':
-          default: default
-          entity: user
-          states:
-            Brian:
-              cards:
-              - compact_mode: false
-                entities:
-                - content_template: '**SMOKE DETECTED*'
-                  entity: binary_sensor.safety_alarm_smoke
-                  exclude_states:
-                  - 'off'
-                - content_template: '**CARBON MONOXIDE DETECTED**'
-                  entity: binary_sensor.safety_alarm_co
-                  exclude_states:
-                  - 'off'
-                - content_template: '**WATER LEAK DETECTED**'
-                  entity: binary_sensor.safety_alarm_leak
-                  exclude_states:
-                  - 'off'
-                - content_template: '**{{display_name}}** is **unlocked**'
-                  entity: lock.front_door
-                  exclude_states:
-                  - locked
-                  - unavailable
-                  name: Front Door
-                - content_template: '**Lock countdown** is **active**'
-                  entity: timer.front_door_unlocked
-                  exclude_states:
-                  - idle
-                - content_template: '**Leave door unlocked** is **active**'
-                  entity: input_boolean.leave_unlocked
-                  exclude_states:
-                  - 'off'
-                - content_template: '**{{display_name}}** is **{{state}}**'
-                  entity: binary_sensor.front_door
-                  exclude_states:
-                  - 'off'
-                  - unavailable
-                  name: Front Door
-                  state_map:
-                    'on': Open
-                - content_template: '**{{display_name}}** is **{{state}}**'
-                  entity: cover.garage_door
-                  exclude_states:
-                  - closed
-                  - unavailable
-                - content_template: '**{{display_name}}** is **open**'
-                  entity: binary_sensor.network_closet_door
-                  exclude_states:
-                  - 'off'
-                  - unavailable
-                - content_template: '**{{display_name}}** is **open**'
-                  entity: binary_sensor.upstairs_bathroom_window
-                  exclude_states:
-                  - 'off'
-                  - unavailable
-                - content_template: '**{{display_name}}** is **active**'
-                  entity: input_boolean.guest_mode
-                  exclude_states:
-                  - 'off'
-                - content_template: '**{{display_name}}** is **active**'
-                  entity: input_boolean.away_mode
-                  exclude_states:
-                  - 'off'
-                - content_template: '**{{display_name}}** is **offline**'
-                  entity: binary_sensor.irrigation_controller_status
-                  exclude_states:
-                  - 'on'
-                  - unavailable
-                - content_template: '**3D Printer** is **{{state}}**'
-                  entity: sensor.octoprint_current_state
-                  exclude_states:
-                  - unavailable
-                  include_states:
-                  - Printing
-                max_item_count: 5
-                more_info_on_tap: true
-                show_empty: false
-                show_notification_title: true
-                style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
-                  \ 0;\n  margin: 1em 0 -1em 6px;\n}\nha-markdown, hui-timestamp-display\
-                  \ {\n  margin-left: 16px;\n}\n"
-                title: ''
-                type: custom:home-feed-card
-              - card:
-                  card_mod:
-                    style: "ha-card {\n  background-color: transparent;\n}\n"
-                  type: entities
-                filter:
-                  exclude:
-                  - state: '>30'
-                  - entity_id: '*ipad*'
-                  - entity_id: '*iphone*'
-                  - entity_id: '*life360*'
-                  - entity_id: '*macbook*'
-                  - entity_id: '*watch*'
-                  - entity_id: sensor.family_room_remote_battery
-                  - entity_id: sensor.*simulated*_battery
-                  include:
-                  - entity_id: sensor.*_battery
-                numeric: true
-                show_empty: false
-                sort:
-                  count: 3
-                  method: state
-                type: custom:auto-entities
-              type: vertical-stack
-            default:
-              cards:
-              - compact_mode: false
-                entities:
-                - content_template: '**SMOKE DETECTED*'
-                  entity: binary_sensor.safety_alarm_smoke
-                  exclude_states:
-                  - 'off'
-                - content_template: '**CARBON MONOXIDE DETECTED**'
-                  entity: binary_sensor.safety_alarm_co
-                  exclude_states:
-                  - 'off'
-                - content_template: '**WATER LEAK DETECTED**'
-                  entity: binary_sensor.safety_alarm_leak
-                  exclude_states:
-                  - 'off'
-                - content_template: '**{{display_name}}** is **{{state}}**'
-                  entity: binary_sensor.front_door
-                  exclude_states:
-                  - 'off'
-                  - unavailable
-                  name: Front Door
-                  state_map:
-                    'on': Open
-                - content_template: '**{{display_name}}** is **{{state}}**'
-                  entity: cover.garage_door
-                  exclude_states:
-                  - closed
-                  - unavailable
-                - content_template: '**{{display_name}}** is **open**'
-                  entity: binary_sensor.upstairs_bathroom_window
-                  exclude_states:
-                  - 'off'
-                  - unavailable
-                - content_template: '**{{display_name}}** is **active**'
-                  entity: input_boolean.guest_mode
-                  exclude_states:
-                  - 'off'
-                id_filter: false
-                max_item_count: 5
-                more_info_on_tap: true
-                show_empty: false
-                show_notification_title: true
-                style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
-                  \ 0;\n  margin: 1em 0 -1em 6px;\n}\nha-markdown, hui-timestamp-display\
-                  \ {\n  margin-left: 6px;\n}\n"
-                title: ''
-                type: custom:home-feed-card
-              type: vertical-stack
-          type: custom:state-switch
-      type: custom:state-switch
-    style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  box-shadow: var(--box-shadow);\n\
-      }\n"
-    type: custom:mod-card
+  - cards:
+    - compact_mode: false
+      entities:
+      - content_template: '**SMOKE DETECTED*'
+        entity: binary_sensor.safety_alarm_smoke
+        exclude_states:
+        - 'off'
+      - content_template: '**CARBON MONOXIDE DETECTED**'
+        entity: binary_sensor.safety_alarm_co
+        exclude_states:
+        - 'off'
+      - content_template: '**WATER LEAK DETECTED**'
+        entity: binary_sensor.safety_alarm_leak
+        exclude_states:
+        - 'off'
+      id_filter: safety_alert
+      max_item_count: 5
+      more_info_on_tap: true
+      show_empty: false
+      show_notification_title: true
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ iif(user.is_admin,\
+        \ \"block\", \"none\") }}\n}\n"
+      title: ''
+      type: custom:home-feed-card
+    - card:
+        card_mod:
+          style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius:\
+            \ var(--border-radius);\n  box-shadow: var(--box-shadow);\n}\n"
+        type: entities
+      filter:
+        exclude:
+        - state: 'off'
+        - state: unknown
+        include:
+        - entity_id: binary_sensor.safety_alarm_*
+      show_empty: false
+      sort:
+        method: name
+      type: custom:auto-entities
+    - compact_mode: false
+      entities:
+      - content_template: '**{{display_name}}** is **{{state}}**'
+        entity: binary_sensor.front_door
+        exclude_states:
+        - 'off'
+        - unavailable
+        name: Front Door
+        state_map:
+          'on': Open
+      - content_template: '**{{display_name}}** is **{{state}}**'
+        entity: cover.garage_door
+        exclude_states:
+        - closed
+        - unavailable
+      - content_template: '**{{display_name}}** is **open**'
+        entity: binary_sensor.upstairs_bathroom_window
+        exclude_states:
+        - 'off'
+        - unavailable
+      - content_template: '**{{display_name}}** is **active**'
+        entity: input_boolean.guest_mode
+        exclude_states:
+        - 'off'
+      id_filter: ^(?!.*safety_alert)
+      max_item_count: 5
+      more_info_on_tap: true
+      show_empty: false
+      show_notification_title: true
+      style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ iif(user.is_admin,\
+        \ \"none\", \"block\") }}\n}\n"
+      title: ''
+      type: custom:home-feed-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
+  - cards:
+    - compact_mode: false
+      entities:
+      - content_template: '**SMOKE DETECTED*'
+        entity: binary_sensor.safety_alarm_smoke
+        exclude_states:
+        - 'off'
+      - content_template: '**CARBON MONOXIDE DETECTED**'
+        entity: binary_sensor.safety_alarm_co
+        exclude_states:
+        - 'off'
+      - content_template: '**WATER LEAK DETECTED**'
+        entity: binary_sensor.safety_alarm_leak
+        exclude_states:
+        - 'off'
+      - content_template: '**{{display_name}}** is **unlocked**'
+        entity: lock.front_door
+        exclude_states:
+        - locked
+        - unavailable
+        name: Front Door
+      - content_template: '**Lock countdown** is **active**'
+        entity: timer.front_door_unlocked
+        exclude_states:
+        - idle
+      - content_template: '**Leave door unlocked** is **active**'
+        entity: input_boolean.leave_unlocked
+        exclude_states:
+        - 'off'
+      - content_template: '**{{display_name}}** is **{{state}}**'
+        entity: binary_sensor.front_door
+        exclude_states:
+        - 'off'
+        - unavailable
+        name: Front Door
+        state_map:
+          'on': Open
+      - content_template: '**{{display_name}}** is **{{state}}**'
+        entity: cover.garage_door
+        exclude_states:
+        - closed
+        - unavailable
+      - content_template: '**{{display_name}}** is **open**'
+        entity: binary_sensor.network_closet_door
+        exclude_states:
+        - 'off'
+        - unavailable
+      - content_template: '**{{display_name}}** is **open**'
+        entity: binary_sensor.upstairs_bathroom_window
+        exclude_states:
+        - 'off'
+        - unavailable
+      - content_template: '**{{display_name}}** is **active**'
+        entity: input_boolean.guest_mode
+        exclude_states:
+        - 'off'
+      - content_template: '**{{display_name}}** is **active**'
+        entity: input_boolean.away_mode
+        exclude_states:
+        - 'off'
+      - content_template: '**{{display_name}}** is **offline**'
+        entity: binary_sensor.irrigation_controller_status
+        exclude_states:
+        - 'on'
+        - unavailable
+      - content_template: '**3D Printer** is **{{state}}**'
+        entity: sensor.octoprint_current_state
+        exclude_states:
+        - unavailable
+        include_states:
+        - Printing
+      max_item_count: 5
+      more_info_on_tap: true
+      show_empty: false
+      show_notification_title: true
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\nha-markdown, hui-timestamp-display {\n\
+        \  margin-left: 16px;\n}\n:host {\n  display: {{ iif(user.is_admin, \"block\"\
+        , \"none\") }}\n}\n"
+      title: ''
+      type: custom:home-feed-card
+    - card:
+        card_mod:
+          style: "ha-card {\n  background-color: transparent;\n}\n"
+        type: entities
+      filter:
+        exclude:
+        - state: '>30'
+        - entity_id: '*ipad*'
+        - entity_id: '*iphone*'
+        - entity_id: '*life360*'
+        - entity_id: '*macbook*'
+        - entity_id: '*watch*'
+        - entity_id: sensor.family_room_remote_battery
+        - entity_id: sensor.*simulated*_battery
+        include:
+        - entity_id: sensor.*_battery
+      numeric: true
+      show_empty: false
+      sort:
+        count: 3
+        method: state
+      type: custom:auto-entities
+    type: vertical-stack
     view_layout:
       position: sidebar
   - dateSize: 175
@@ -1955,6 +1971,7 @@ views:
     hideDuplicates: false
     hideFinishedEvents: false
     maxDaysToShow: 2
+    position: sidebar
     refreshInterval: 3600
     showDate: false
     showDeclined: false
@@ -1971,9 +1988,10 @@ views:
     showWeekDay: true
     sortByStartTime: true
     type: custom:atomic-calendar-revive
-    view_layout:
-      position: sidebar
+    view_layout: null
   - card:
+      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+        }\n"
       type: entities
     filter:
       exclude:
@@ -1985,11 +2003,11 @@ views:
       - state: unavailable
       - state: unknown
       include:
-      - domain: climate
       - entity_id: sensor.holiday
-      - entity_id: sensor.home_assistant_updates
-      - entity_id: sensor.plex
       - domain: alert
+      - entity_id: sensor.updates
+      - domain: climate
+      - entity_id: sensor.plex
     show_empty: false
     sort:
       method: none
@@ -2195,16 +2213,6 @@ views:
       square: false
       type: grid
     type: vertical-stack
-  - card:
-      entity: user
-      states:
-        Brian:
-          type: shopping-list
-      type: custom:state-switch
-    style: "ha-card {\n  box-shadow: var(--box-shadow);\n}\n"
-    type: custom:mod-card
-    view_layout:
-      position: sidebar
   - cards:
     - type: custom:gap-card
     - template: chip_navigate
@@ -2236,6 +2244,11 @@ views:
     columns: 7
     square: false
     type: grid
+    view_layout:
+      position: sidebar
+  - style: "ha-card {\n  border-radius: var(--border-radius);\n  box-shadow: var(--box-shadow);\n\
+      }\n:host {\n  display: {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
+    type: shopping-list
     view_layout:
       position: sidebar
   icon: mdi:home
@@ -2682,10 +2695,14 @@ views:
     - entity: camera.front_door_person
       show_name: false
       show_state: false
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n"
       type: picture-entity
     - entity: camera.driveway_person
       show_name: false
       show_state: false
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n"
       type: picture-entity
     type: horizontal-stack
     view_layout:
@@ -2859,46 +2876,46 @@ views:
       name: Glowforge
       template: card_title
       type: custom:button-card
-    - card:
-        cards:
-        - entities:
-          - entity: binary_sensor.glowforge_on
-          type: entities
-        - default: 'off'
-          entity: binary_sensor.glowforge_on
-          states:
-            'on':
-              entities:
-              - entity: camera.glowforge
-              - entity: input_select.glowforge_status
-              - entities:
-                - entity: sensor.sonoff_s31_01_power
-                  name: Power
-                - entity: sensor.sonoff_s31_01_current
-                  name: Current
-                - entity: sensor.sonoff_s31_01_voltage
-                  name: A/C
-                entity: sensor.sonoff_s31_01_power
-                icon: mdi:power-plug
-                name: Electricity
-                show_state: false
-                type: custom:multiple-entity-row
-              - entity: automation.glowforge_announce_complete
-                icon: mdi:cellphone-message
-                name: Notify When Complete
-                show_state: false
-              - type: divider
-              - name: Glowforge App
-                type: weblink
-                url: https://app.glowforge.com
-              - name: Camera UI
-                type: weblink
-                url: http://10.0.20.32
-              type: entities
-          type: custom:state-switch
-        type: vertical-stack
-      style: "ha-card {\n  background: none;\n  box-shadow: none;\n}\n"
-      type: custom:mod-card
+    - cards:
+      - entities:
+        - entity: binary_sensor.glowforge_on
+        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+          }\n"
+        type: entities
+      - entity: binary_sensor.glowforge_on
+        states:
+          'on':
+            entities:
+            - entity: camera.glowforge
+            - entity: input_select.glowforge_status
+            - entities:
+              - entity: sensor.sonoff_s31_01_power
+                name: Power
+              - entity: sensor.sonoff_s31_01_current
+                name: Current
+              - entity: sensor.sonoff_s31_01_voltage
+                name: A/C
+              entity: sensor.sonoff_s31_01_power
+              icon: mdi:power-plug
+              name: Electricity
+              show_state: false
+              type: custom:multiple-entity-row
+            - entity: automation.glowforge_announce_complete
+              icon: mdi:cellphone-message
+              name: Notify When Complete
+              show_state: false
+            - type: divider
+            - name: Glowforge App
+              type: weblink
+              url: https://app.glowforge.com
+            - name: Camera UI
+              type: weblink
+              url: http://10.0.20.32
+            style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius:\
+              \ var(--border-radius);\n}\n"
+            type: entities
+        type: custom:state-switch
+      type: vertical-stack
     type: vertical-stack
     view_layout:
       position: main
@@ -2907,88 +2924,91 @@ views:
       name: Prusa
       template: card_title
       type: custom:button-card
-    - card:
-        cards:
-        - entities:
-          - card:
-              entity: switch.prusa
-              name: 3D Printer Kill Switch!!!
-            restrictions:
-              confirm:
-                text: This will unlock the 3D Printer Kill Switch!
-            row: true
-            type: custom:restriction-card
-          - name: Octoprint UI
-            type: weblink
-            url: http://octopi.local
-          type: entities
-        - entity: switch.prusa
-          states:
-            'on':
-              cards:
-              - camera_image: camera.prusa
-                camera_view: camera.prusa
-                entities:
-                - sensor.octoprint_current_state
-                - camera.prusa
-                entity: sensor.octoprint_current_state
-                state_filter:
-                  Operational: grayscale(100%)
-                  Printing: brightness(110%) saturate(1.2)
-                tap_action:
-                  action: call-service
-                  service: browser_mod.more_info
-                  service_data:
-                    deviceID:
-                    - this
-                    entity_id: camera.prusa
-                title: Prusa Mk2.5s
-                type: picture-glance
+    - cards:
+      - entities:
+        - card:
+            entity: switch.prusa
+            name: 3D Printer Kill Switch!!!
+          restrictions:
+            confirm:
+              text: This will unlock the 3D Printer Kill Switch!
+          row: true
+          type: custom:restriction-card
+        - name: Octoprint UI
+          type: weblink
+          url: http://octopi.local
+        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+          }\n"
+        type: entities
+      - entity: switch.prusa
+        states:
+          'on':
+            cards:
+            - camera_image: camera.prusa
+              camera_view: camera.prusa
+              entities:
+              - sensor.octoprint_current_state
+              - camera.prusa
+              entity: sensor.octoprint_current_state
+              state_filter:
+                Operational: grayscale(100%)
+                Printing: brightness(110%) saturate(1.2)
+              style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius:\
+                \ var(--border-radius);\n}\n"
+              tap_action:
+                action: call-service
+                service: browser_mod.more_info
+                service_data:
+                  deviceID:
+                  - this
+                  entity_id: camera.prusa
+              title: Prusa Mk2.5s
+              type: picture-glance
+            - entities:
               - entities:
-                - entities:
-                  - entity: sensor.octoprint_current_state
-                    name: Run State
-                  - entity: binary_sensor.octoprint_printing_error
-                    name: Error State
-                  entity: sensor.octoprint_current_state
-                  icon: mdi:printer-3d
-                  name: Status
-                  show_state: false
-                  type: custom:multiple-entity-row
-                - entities:
-                  - entity: sensor.octoprint_job_percentage
-                    name: Complete
-                  - entity: sensor.octoprint_time_elapsed_friendly
-                    name: Elapsed
-                  - entity: sensor.octoprint_time_remaining_friendly
-                    name: Remaining
-                  entity: sensor.octoprint_job_percentage
-                  icon: mdi:timer-outline
-                  name: Progress
-                  show_state: false
-                  type: custom:multiple-entity-row
-                - entities:
-                  - entity: sensor.sonoff_s31_03_power
-                    name: Power
-                  - entity: sensor.sonoff_s31_03_current
-                    name: Current
-                  - entity: sensor.sonoff_s31_03_voltage
-                    name: A/C
-                  entity: sensor.sonoff_s31_03_power
-                  icon: mdi:power-plug
-                  name: Electricity
-                  show_state: false
-                  type: custom:multiple-entity-row
-                - entity: automation.3d_print_status_update
-                  icon: mdi:cellphone-message
-                  name: Notify On Status Change
-                  show_state: false
-                type: custom:hui-entities-card
-              type: vertical-stack
-          type: custom:state-switch
-        type: vertical-stack
-      style: "ha-card {\n  background: none;\n  box-shadow: none;\n}\n"
-      type: custom:mod-card
+                - entity: sensor.octoprint_current_state
+                  name: Run State
+                - entity: binary_sensor.octoprint_printing_error
+                  name: Error State
+                entity: sensor.octoprint_current_state
+                icon: mdi:printer-3d
+                name: Status
+                show_state: false
+                type: custom:multiple-entity-row
+              - entities:
+                - entity: sensor.octoprint_job_percentage
+                  name: Complete
+                - entity: sensor.octoprint_time_elapsed_friendly
+                  name: Elapsed
+                - entity: sensor.octoprint_time_remaining_friendly
+                  name: Remaining
+                entity: sensor.octoprint_job_percentage
+                icon: mdi:timer-outline
+                name: Progress
+                show_state: false
+                type: custom:multiple-entity-row
+              - entities:
+                - entity: sensor.sonoff_s31_03_power
+                  name: Power
+                - entity: sensor.sonoff_s31_03_current
+                  name: Current
+                - entity: sensor.sonoff_s31_03_voltage
+                  name: A/C
+                entity: sensor.sonoff_s31_03_power
+                icon: mdi:power-plug
+                name: Electricity
+                show_state: false
+                type: custom:multiple-entity-row
+              - entity: automation.3d_print_status_update
+                icon: mdi:cellphone-message
+                name: Notify On Status Change
+                show_state: false
+              style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius:\
+                \ var(--border-radius);\n}\n"
+              type: custom:hui-entities-card
+            type: vertical-stack
+        type: custom:state-switch
+      type: vertical-stack
     type: vertical-stack
     view_layout:
       position: main
@@ -3624,24 +3644,18 @@ views:
         type: custom:button-card
       type: horizontal-stack
     - card:
-        entity: template
-        states:
-          'true':
-            cards:
-            - content: '{{ states("sensor.update_message") }}
+        cards:
+        - content: '{{ states("sensor.update_message") }}
 
-                '
-              entity_id: sensor.updates
-              style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
-                \ 0;\n}\n"
-              type: markdown
-            type: vertical-stack
-        template: '{{ states("sensor.updates")|int(default=0) > 0 }}
-
-          '
-        type: custom:state-switch
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  box-shadow: var(--box-shadow);\n\
-        }\n"
+            '
+          entity_id: sensor.updates
+          style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
+            \ 0;\n}\n"
+          type: markdown
+        type: vertical-stack
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ \"none\" if states(\"\
+        sensor.updates\")|default(0)|int == 0 else \"block\" }}\n}\n"
       type: custom:mod-card
     - cards:
       - entities:
@@ -3740,6 +3754,7 @@ views:
           show_state: false
           type: custom:multiple-entity-row
         type: entities
+      style: "ha-card {\n  border-radius: var(--border-radius);\n}\n"
       type: custom:stack-in-card
     type: vertical-stack
   - cards:
@@ -3773,9 +3788,11 @@ views:
       - entity: sensor.calendar_count
       - entity: sensor.group_count
       - entity: sensor.timer_count
+      - entity: sensor.counter_count
       - entity: sensor.zone_count
       show_name: false
       show_state: true
+      style: "ha-card {\n  border-radius: var(--border-radius);\n}\n"
       type: glance
     type: vertical-stack
     view_layout:
@@ -3919,42 +3936,41 @@ views:
         template: card_title
         type: custom:button-card
       type: horizontal-stack
-    - card:
-        cards:
-        - entities:
-          - entity: sensor.last_speaker
+    - cards:
+      - entities:
+        - entity: sensor.last_speaker
+          icon: mdi:account-voice
+          name: Last announcement from
+          secondary_info: last-changed
+        - entity: sensor.last_google
+          icon: mdi:google-home
+          name: Last active speaker
+          secondary_info: last-changed
+        - entity: sensor.last_message
+          icon: mdi:comment-text
+          name: ' '
+        - type: section
+        - entity: input_boolean.audio_notifications
+        - input_select.tts_phrase_room
+        - entity: input_select.tts_phrases
+        - entity: input_text.tts_phrase
+          type: custom:text-input-row
+        footer:
+          entities:
+          - entity: script.tts_phrase_say
             icon: mdi:account-voice
-            name: Last announcement from
-            secondary_info: last-changed
-          - entity: sensor.last_google
-            icon: mdi:google-home
-            name: Last active speaker
-            secondary_info: last-changed
-          - entity: sensor.last_message
-            icon: mdi:comment-text
-            name: ' '
-          - type: section
-          - entity: input_boolean.audio_notifications
-          - input_select.tts_phrase_room
-          - entity: input_select.tts_phrases
-          - entity: input_text.tts_phrase
-            type: custom:text-input-row
-          footer:
-            entities:
-            - entity: script.tts_phrase_say
-              icon: mdi:account-voice
-              name: Say
-            - entity: script.repeat_last_message
-              icon: mdi:refresh-circle
-              name: Last message
-            type: buttons
-          show_header_toggle: false
-          state_color: false
-          style: "ha-card {\n  box-shadow: none;\n}\n"
-          type: entities
-        type: vertical-stack
-      style: "ha-card {\n  box-shadow: var(--box-shadow);\n}\n"
-      type: custom:mod-card
+            name: Say
+          - entity: script.repeat_last_message
+            icon: mdi:refresh-circle
+            name: Last message
+          type: buttons
+        show_header_toggle: false
+        state_color: false
+        style: "ha-card {\n  box-shadow: none;\n}\n"
+        type: entities
+      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+        }\n"
+      type: custom:stack-in-card
     type: vertical-stack
   icon: mdi:google-home
   path: smart-speakers
@@ -4032,6 +4048,8 @@ views:
           name: Sound only
         row: true
         type: custom:restriction-card
+      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+        }\n"
       type: custom:hui-entities-card
     - label: Quiet time (critical alerts excluded)
       template: card_title
@@ -4055,7 +4073,8 @@ views:
           name: Quiet time mode
         type: custom:badge-card
       mode: horizontal
-      style: "ha-card {\n  padding-top: 1.5em;\n}\n"
+      style: "ha-card {\n  padding-top: 1.5em;\n  box-shadow: var(--box-shadow);\n\
+        \  border-radius: var(--border-radius);\n}\n"
       type: custom:stack-in-card
     type: vertical-stack
   - cards:
@@ -4088,7 +4107,7 @@ views:
       square: false
       type: grid
     - label: Toggle miscellaneous devices
-      name: Other Devices
+      name: Other devices
       template: card_title
       type: custom:button-card
     - cards:
@@ -4116,6 +4135,8 @@ views:
     - entity: automation.printer_turn_off_when_idle
       secondary_info: last-triggered
     show_header_toggle: false
+    style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+      }\n"
     type: entities
     view_layout:
       position: sidebar
@@ -4125,13 +4146,6 @@ views:
   type: sidebar
 - badges: []
   cards:
-  - entities:
-    - entity: binary_sensor.school_day
-    - entity: binary_sensor.high_school_day
-    - entity: binary_sensor.weekday
-    - entity: binary_sensor.holiday
-    - entity: sensor.holiday
-    type: entities
   - cards:
     - cards:
       - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
@@ -4146,6 +4160,8 @@ views:
       type: horizontal-stack
     - card:
         show_header_toggle: false
+        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+          }\n"
         type: entities
       filter:
         include:
@@ -4153,12 +4169,13 @@ views:
           entity_id: /anniversary|birthday|wedding/
           options:
             entities:
-            - attribute: years_at_next_anniversary
+            - attribute: current_years
               hide_unavailable: true
-              name: Years
+              name: Age
+              unit: years
             - entity: this.entity_id
-              name: Days Till
-              unit: false
+              name: When
+              unit: days
             secondary_info:
               attribute: date
               format: date
@@ -4172,37 +4189,92 @@ views:
     type: vertical-stack
   - type: custom:layout-break
   - cards:
-    - label: Manually set
-      name: Summer dates
-      template: card_title
-      type: custom:button-card
-    - card:
-        type: entities
-      filter:
-        exclude:
-        - entity_id: /\.event_/
-        include:
-        - domain: input_datetime
-      sort:
-        method: friendly_name
-      type: custom:auto-entities
-    type: vertical-stack
-  - cards:
     - label: Upcoming dates
       name: Holidays
       template: card_title
       type: custom:button-card
     - card:
+        show_header_toggle: false
+        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+          }\n"
         type: entities
       filter:
         exclude:
         - entity_id: /\.date_next_/
         include:
-        - domain: sensor
-          entity_id: /\.date_/
+        - attributes:
+            type: Holiday
+          domain: sensor
+          options:
+            format: relative
+            secondary_info:
+              attribute: friendly_date
+              name: false
+            show_state: true
+            state_header: When
+            type: custom:multiple-entity-row
+      show_empty: true
       sort:
         method: state
+        numeric: false
+        reverse: false
       type: custom:auto-entities
+    type: vertical-stack
+  - cards:
+    - cards:
+      - label: Edit files in /integration_entities/binary_sensors/datetime
+        name: School dates
+        template: card_title
+        type: custom:button-card
+      type: horizontal-stack
+    - cards:
+      - cards:
+        - entities:
+          - entity: binary_sensor.middle_school_day
+            name: Middle school
+          - entity: binary_sensor.high_school_day
+            name: High school
+          - entity: binary_sensor.holiday
+            name: Public holiday
+          show_state: false
+          style: "ha-card {\n  box-shadow: none;\n  border-radius: none;\n}\n"
+          type: glance
+        - entities:
+          - entity: sensor.holiday
+          style: "ha-card {\n  box-shadow: none;\n  border-radius: none;\n}\n:host\
+            \ {\n  display: {{ \"none\" if states(\"sensor.holiday\") == \"\" else\
+            \ \"block\" }};\n}\n"
+          type: entities
+        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+          }\n"
+        type: custom:stack-in-card
+      type: vertical-stack
+    - label: Manually set
+      name: ''
+      template: card_title
+      type: custom:button-card
+    - cards:
+      - entities:
+        - entity: input_datetime.high_school_summer_begin
+          name: High school last day
+        - entity: input_datetime.high_school_summer_ends
+          name: High school first day
+        show_icon: false
+        style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
+          \ none;\n}\n"
+        type: glance
+      - entities:
+        - entity: input_datetime.school_summer_begin
+          name: Middle school last day
+        - entity: input_datetime.school_summer_ends
+          name: Middle school first day
+        show_icon: false
+        style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
+          \ none;\n}\n"
+        type: glance
+      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
+        }\n"
+      type: custom:stack-in-card
     type: vertical-stack
   icon: mdi:cake-variant
   path: family-days

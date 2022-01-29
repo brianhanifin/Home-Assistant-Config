@@ -476,7 +476,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.2.0b2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.2.0b3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -486,7 +486,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48448-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48520-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
