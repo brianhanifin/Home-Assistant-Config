@@ -81,7 +81,7 @@
         - condition: template
           value_template: '{{ is_state("binary_sensor.weekday", "on") }}'
       - condition: template
-        value_template: '{{ is_state("binary_sensor.school_day", "off") }}'
+        value_template: '{{ is_state("binary_sensor.middle_school_day", "off") }}'
       sequence:
       - service: input_boolean.turn_on
         target:
@@ -96,7 +96,7 @@
         - condition: template
           value_template: '{{ is_state("binary_sensor.high_school_day", "off") }}'
         - condition: template
-          value_template: '{{ is_state("binary_sensor.school_day", "off") }}'
+          value_template: '{{ is_state("binary_sensor.middle_school_day", "off") }}'
       sequence:
       - service: input_boolean.turn_on
         target:
@@ -123,50 +123,20 @@
       - service: fan.turn_off
         target:
           entity_id: fan.family_room
+        data: {}
       config_button:
       - service: homeassistant.turn_off
         target:
           entity_id: group.family_room_lights
-      button_a:
-      - type: turn_on
-        device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
-        entity_id: light.family_room
-        domain: light
-      - type: turn_on
-        device_id: cc4e24bcff154e1d90d76c3e03d341b3
-        entity_id: light.table_lamp
-        domain: light
-      button_b:
-      - type: turn_off
-        device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
-        entity_id: light.family_room
-        domain: light
-      - type: turn_off
-        device_id: cc4e24bcff154e1d90d76c3e03d341b3
-        entity_id: light.table_lamp
-        domain: light
-      button_a_held:
-      - type: brightness_increase
-        device_id: 63789fb09fae954b2c90a2aa98f6b102
-        entity_id: light.family_room_floor_lamp
-        domain: light
-      button_b_held:
-      - type: brightness_decrease
-        device_id: 63789fb09fae954b2c90a2aa98f6b102
-        entity_id: light.family_room_floor_lamp
-        domain: light
+        data: {}
+      button_a: []
+      button_b: []
+      button_a_held: []
+      button_b_held: []
       button_a2:
-      - type: turn_off
-        device_id: 2d8b03f66fda68a6e0f7b2a506a33b02
-        entity_id: light.family_room
-        domain: light
       - type: turn_on
         device_id: 63789fb09fae954b2c90a2aa98f6b102
         entity_id: light.family_room_floor_lamp
-        domain: light
-      - type: turn_on
-        device_id: cc4e24bcff154e1d90d76c3e03d341b3
-        entity_id: light.table_lamp
         domain: light
       button_b2:
       - type: turn_off
@@ -177,10 +147,12 @@
       - service: input_boolean.turn_on
         target:
           entity_id: input_boolean.guest_mode
+        data: {}
       button_b5:
       - service: input_boolean.turn_off
         target:
           entity_id: input_boolean.guest_mode
+        data: {}
       button_a4:
       - service: homeassistant.turn_on
         target:
@@ -188,9 +160,11 @@
           - dining_room
           - kitchen
           device_id:
-          - cc4e24bcff154e1d90d76c3e03d341b3
           - 63789fb09fae954b2c90a2aa98f6b102
           - 2d8b03f66fda68a6e0f7b2a506a33b02
+          - 1ad4b3bd16edcc7d4961b3e95ed57f70
+          - 385bbbe37417eec30709aadfd0f37152
+        data: {}
       button_b4:
       - type: turn_on
         device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
@@ -203,6 +177,7 @@
           - dining_room
           - kitchen
           - family_room
+        data: {}
 - id: '1615053055187'
   alias: 'Multi-click handler: bedroom dimmer'
   description: ''
