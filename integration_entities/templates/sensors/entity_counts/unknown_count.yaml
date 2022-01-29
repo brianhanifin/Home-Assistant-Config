@@ -5,24 +5,34 @@ icon: mdi:help-rhombus
 state_class: total
 state: |
   {%- set ignore_list = [
-      "sensor.unknown_count", "sensor.octoprint_current_state",
-      "sensor.octoprint_time_elapsed", "sensor.octoprint_time_remaining",
-      "sensor.octoprint_estimated_finish_time", "sensor.octoprint_start_time",
-      "sensor.rainforest_energy_monitoring_unit",
-      "sensor.last_message", "sensor.last_speaker",
-      "button.entry_railing_restart",
-      "number.bedroom_dimmer", "sensor.accuweather_ozone_0d", "sensor.lastboot"
+    "sensor.last_message", "sensor.last_speaker", "number.bedroom_dimmer",
+    "sensor.accuweather_ozone_0d"
   ] %}
-  {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | count }}
+  {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
+  {%- set selected = namespace (entities="") %}
+  {%- for entity in entities %}
+    {%- if not is_device_attr(entity, "name", "BLACKPC")
+        and not entity.split(".")[0] in ["button", "group", "person", "scene"]
+        and not "octoprint" in entity %}
+      {%- set selected.entities = selected.entities ~", " if not loop.first %}
+      {%- set selected.entities = selected.entities ~ entity %}
+    {%- endif %}
+  {%- endfor %}
+  {{ selected.entities.split(", ") | count }}
 attributes:
   entities: |
     {%- set ignore_list = [
-      "sensor.unknown_count", "sensor.octoprint_current_state",
-      "sensor.octoprint_time_elapsed", "sensor.octoprint_time_remaining",
-      "sensor.octoprint_estimated_finish_time", "sensor.octoprint_start_time",
-      "sensor.rainforest_energy_monitoring_unit",
-      "sensor.last_message", "sensor.last_speaker",
-      "button.entry_railing_restart",
-      "number.bedroom_dimmer", "sensor.accuweather_ozone_0d", "sensor.lastboot"
+      "sensor.last_message", "sensor.last_speaker", "number.bedroom_dimmer",
+      "sensor.accuweather_ozone_0d"
     ] %}
-    {{ states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list | replace("[","") | replace("]","") | replace("'","") }}
+    {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
+    {%- set selected = namespace (entities="") %}
+    {%- for entity in entities %}
+      {%- if not is_device_attr(entity, "name", "BLACKPC")
+          and not entity.split(".")[0] in ["button", "group", "person", "scene"]
+          and not "octoprint" in entity %}
+        {%- set selected.entities = selected.entities ~", " if not loop.first %}
+        {%- set selected.entities = selected.entities ~ entity %}
+      {%- endif %}
+    {%- endfor %}
+    {{ selected.entities }}
