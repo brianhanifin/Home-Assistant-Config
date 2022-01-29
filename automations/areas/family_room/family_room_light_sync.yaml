@@ -1,0 +1,35 @@
+---
+alias: Family room light sync
+id: family_room_light_sync
+description: Sync the state & brightness of the lights in the family room.
+mode: single
+trigger:
+  - platform: state
+    entity_id: light.family_room
+variables:
+  state: '{{ trigger.to_state.state }}'
+  brightness: '{{ trigger.to_state.attributes.brightness }}'
+action:
+  - choose:
+      - conditions: '{{ state == "on" }}'
+        sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.table_lamp
+            data:
+              brightness: '{{ brightness }}'
+    default:
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.table_lamp
+            - light.family_room_floor_lamp
+
+  - choose:
+      - conditions: '{{ is_state("light.family_room_floor_lamp", "on") }}'
+        sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.family_room_floor_lamp
+            data:
+              brightness: '{{ brightness }}'
