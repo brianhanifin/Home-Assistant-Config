@@ -10,6 +10,12 @@ state: |
     There are {{ updates }} updates available.
   {% endif %}
 
+  {%- set breaking_change_count = states("sensor.potential_breaking_changes")|default(0)|int %}
+  {%- if breaking_change_count > 0 %}
+    There are {{ breaking_change_count }} potential breaking changes to review.
+    [stable](https://www.home-assistant.io/latest-release-notes/) [beta](https://rc.home-assistant.io/latest-release-notes/#breaking-changes)
+  {%- endif %}
+
   {%- if state_attr("sensor.updates", "core_update") %}
     - There is a [Core update](/hassio/update-available/core).
   {%- endif %}
