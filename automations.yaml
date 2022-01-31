@@ -53,6 +53,7 @@
       - input_boolean.cooler_outside_notification
       - input_boolean.guest_mode
       - input_boolean.leave_unlocked
+    data: {}
   - data: {}
     service: script.create_actionable_lights_group
   - data: {}
@@ -61,47 +62,6 @@
       keep_days: 10
       repack: true
     service: recorder.purge
-  - choose:
-    - conditions:
-      - condition: and
-        conditions:
-        - condition: template
-          value_template: '{{ is_state("binary_sensor.weekday", "on") }}'
-      - condition: template
-        value_template: '{{ is_state("binary_sensor.high_school_day", "off") }}'
-      sequence:
-      - service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.event_skipnext_wakeup_lucas
-    default: []
-  - choose:
-    - conditions:
-      - condition: and
-        conditions:
-        - condition: template
-          value_template: '{{ is_state("binary_sensor.weekday", "on") }}'
-      - condition: template
-        value_template: '{{ is_state("binary_sensor.middle_school_day", "off") }}'
-      sequence:
-      - service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.event_skipnext_wakeup_kyle
-    default: []
-  - choose:
-    - conditions:
-      - condition: and
-        conditions:
-        - condition: template
-          value_template: '{{ is_state("binary_sensor.weekday", "on") }}'
-        - condition: template
-          value_template: '{{ is_state("binary_sensor.high_school_day", "off") }}'
-        - condition: template
-          value_template: '{{ is_state("binary_sensor.middle_school_day", "off") }}'
-      sequence:
-      - service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.event_skipnext_wakeup_brian
-    default: []
   - service: script.notify_web
     data:
       type: success

@@ -14,8 +14,8 @@ automation:
           - input_datetime.event_2nd_wakeup_brian
           - input_datetime.event_1st_wakeup_lucas
           - input_datetime.event_2nd_wakeup_lucas
-          - input_datetime.event_1st_wakeup_lucas_late_start
-          - input_datetime.event_2nd_wakeup_lucas_late_start
+          - input_datetime.event_1st_wakeup_lucas_remote
+          - input_datetime.event_2nd_wakeup_lucas_remote
           - input_datetime.event_1st_wakeup_kyle
           - input_datetime.event_2nd_wakeup_kyle
           - input_datetime.event_1st_wakeup_nerene
@@ -28,45 +28,17 @@ automation:
       skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
       skipnext: '{{ is_state(skipnext_entity, "on") }}'
       announcement_enabled: '{{ is_state("input_boolean.event_announcement_" + id, "on") }}'
+      today_name: '{{ now().strftime("%a")|lower }}'
+      event_today: '{{ is_state("input_boolean.event_" + today_name +"_"+ id, "on") }}'
       announcement: '{{ states("input_text.event_" + entity_id[21:]) }}'
-      
-      event_time: '{{ states(entity_id) }}'
-      event_hour: '{{ event_time.split(":")[0]|default(0)|int }}'
-      bedtime: '{{ "bedtime" in entity_id }}'
-      workday: '{{ is_state("binary_sensor.work_day","on") }}'
-      middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
-      middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
-      high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
-      high_school_day_tomorrow: '{{ is_state("binary_sensor.high_school_day_tomorrow","on") }}'
-
-      event_today: |
-        {%- if id == "wakeup_kyle" %}
-          {{ middle_school_day }}
-        {%- elif id in ["wakeup_lucas", "wakeup_lucas_late_start"] %}
-          {{ high_school_day }}
-        {%- elif id == "wakeup_brian" %}
-          {{ middle_school_day or high_school_day }}
-        {%- elif id == "wakeup_nerene" %}
-          {{ workday }}
-        {%- elif bedtime %}
-          {%- if event_hour < 6 %}
-            {{ middle_school_day or high_school_day }}
-          {%- else %}
-            {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
-          {%- endif %}
-        {%- else %}
-          False
-        {%- endif %}
     action:
-      # - service: persistent_notification.create
+      # - service: script.debug
       #   data:
-      #     title: '{{ title|default("") }}'
       #     message: |
       #       event_enabled: {{ event_enabled }}
       #       event_today: {{ event_today }}
       #       skipnext: {{ skipnext }}
       #       is_2nd: {{ is_2nd }}
-      #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
       - alias: 'Continue if the announcement is enabled, today is an event day, and the event is not deactivated.'
         condition: template
@@ -99,7 +71,7 @@ automation:
         at:
           - input_datetime.event_light_wakeup_brian
           - input_datetime.event_light_wakeup_lucas
-          - input_datetime.event_light_wakeup_lucas_late_start
+          - input_datetime.event_light_wakeup_lucas_remote
           - input_datetime.event_light_wakeup_kyle
           - input_datetime.event_light_wakeup_nerene
           - input_datetime.event_light_wakeup_bedtime_weekday
@@ -111,43 +83,15 @@ automation:
       skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
       light_enabled: '{{ is_state("input_boolean.event_light_" + id, "on") }}'
-      
-      event_time: '{{ states(entity_id) }}'
-      event_hour: '{{ event_time.split(":")[0]|default(0)|int }}'
-      bedtime: '{{ "bedtime" in entity_id }}'
-      workday: '{{ is_state("binary_sensor.work_day","on") }}'
-      middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
-      middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
-      high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
-      high_school_day_tomorrow: '{{ is_state("binary_sensor.high_school_day_tomorrow","on") }}'
-
-      event_today: |
-        {%- if id == "wakeup_kyle" %}
-          {{ middle_school_day }}
-        {%- elif id in ["wakeup_lucas", "wakeup_lucas_late_start"] %}
-          {{ high_school_day }}
-        {%- elif id == "wakeup_brian" %}
-          {{ middle_school_day or high_school_day }}
-        {%- elif id == "wakeup_nerene" %}
-          {{ workday }}
-        {%- elif bedtime %}
-          {%- if event_hour < 6 %}
-            {{ middle_school_day or high_school_day }}
-          {%- else %}
-            {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
-          {%- endif %}
-        {%- else %}
-          False
-        {%- endif %}
+      today_name: '{{ now().strftime("%a")|lower }}'
+      event_today: '{{ is_state("input_boolean.event_" + today_name +"_"+ id, "on") }}'
     action:
-      # - service: persistent_notification.create
+      # - service: script.debug
       #   data:
-      #     title: '{{ title|default("") }}'
       #     message: |
       #       id: {{ id }}
       #       light_enabled: {{ light_enabled }}
       #       event_today: {{ event_today }}
-      #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
       - alias: 'Continue if the wakeup light is enabled, today is an event day, and the event is not deactivated.'
         condition: template
@@ -214,29 +158,27 @@ script:
         target:
           entity_id: '{{ light }}'
         data:
-          brightness: 26
+          brightness_pct: 10
           transition: 59
 
       - repeat:
           sequence:
             # Add 10% to the brightness.
             - variables:
-                brightness: |
-                  {%- set brightness = 26 * repeat.index %}
-                  {{ brightness if brightness < 255 else 255 }}
+                brightness_pct: '{{ 10 * repeat.index }}'
 
             - service: light.turn_on
               target:
                 entity_id: '{{ light }}'
               data:
-                brightness: '{{ brightness }}'
+                brightness_pct: '{{ brightness_pct }}'
                 transition: 59
 
             # - service: script.notify_web
             #   data:
             #     message: |
             #       repeat.index: {{ repeat.index }}
-            #       - brightness: {{ brightness }}
+            #       - brightness_pct: {{ brightness_pct }}
 
             # Delay before next increase.
             - choose:

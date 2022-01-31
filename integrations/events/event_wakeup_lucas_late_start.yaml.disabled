@@ -1,64 +1,68 @@
 ---
 script:
-  event_wakeup_nerene:
+  event_wakeup_lucas_late_start:
     sequence:
       - service: homeassistant.turn_off
         target:
-          entity_id:
-            - fan.bedroom
-            - switch.sound_machine
+          entity_id: climate.lucas_ac
+
+      - service: light.turn_on
+        target:
+          entity_id: light.lucas_room
+        data:
+          brightness: 26
 
       - service: script.event_light
         data:
-          light: light.bedroom
-          id: wakeup_nerene
+          light: light.lucas_room
+          id: wakeup_lucas_late_start
 
-  event_timeout_wakeup_nerene:
+  event_timeout_wakeup_lucas_late_start:
     sequence:
       - service: homeassistant.turn_off
         target:
-          entity_id: light.bedroom
+          entity_id: light.lucas_room
 
 input_boolean:
-  event_enabled_wakeup_nerene:
+  event_enabled_wakeup_lucas_late_start:
     name: Active
     icon: mdi:alarm-check
-  event_skipnext_wakeup_nerene:
+  event_skipnext_wakeup_lucas_late_start:
     name: Skip next event
     icon: mdi:alarm-check
-  event_announcement_wakeup_nerene:
+  event_announcement_wakeup_lucas_late_start:
     name: Announcements?
     icon: mdi:google-home
-  event_light_wakeup_nerene:
+  event_light_wakeup_lucas_late_start:
     name: Wakeup light?
     icon: mdi:lamp
 
 input_datetime:
-  event_1st_wakeup_nerene:
+  event_1st_wakeup_lucas_late_start:
     name: First announcement
     has_date: false
     has_time: true
-  event_2nd_wakeup_nerene:
+  event_2nd_wakeup_lucas_late_start:
     name: Second announcement
     has_date: false
     has_time: true
-  event_light_wakeup_nerene: 
+  event_light_wakeup_lucas_late_start: 
     name: Light fade-up start
     has_date: false
     has_time: true
 
 input_select:
-  event_speakers_wakeup_nerene:
+  event_speakers_wakeup_lucas_late_start:
     name: Announce on which smart speaker(s)?
     options: !include ../../templates/speech/tts_rooms.yaml
     icon: mdi:google-home
 
 input_text:
-  event_1st_wakeup_nerene:
+  event_1st_wakeup_lucas_late_start:
     name: First announcement
-  event_2nd_wakeup_nerene:
+  event_2nd_wakeup_lucas_late_start:
     name: Second announcement
 
 timer:
-  event_timeout_wakeup_nerene:
+  event_timeout_wakeup_lucas_late_start:
     duration: "01:00:00"

@@ -6,9 +6,15 @@ script:
         target:
           entity_id: climate.lucas_ac
 
+      - service: light.turn_on
+        target:
+          entity_id: light.lucas_room
+        data:
+          brightness: 26
+
       - service: script.event_light
         data:
-          entity_id: light.lucas_room
+          light: light.lucas_room
           id: wakeup_lucas
 
   event_timeout_wakeup_lucas:
@@ -30,6 +36,28 @@ input_boolean:
   event_light_wakeup_lucas:
     name: Wakeup light?
     icon: mdi:lamp
+
+  event_mon_wakeup_lucas:
+    name: Monday
+    icon: mdi:checkbox-marked-circle
+  event_tue_wakeup_lucas:
+    name: Tuesday
+    icon: mdi:checkbox-marked-circle
+  event_wed_wakeup_lucas:
+    name: Wednesday
+    icon: mdi:checkbox-marked-circle
+  event_thu_wakeup_lucas:
+    name: Thursday
+    icon: mdi:checkbox-marked-circle
+  event_fri_wakeup_lucas:
+    name: Friday
+    icon: mdi:checkbox-marked-circle
+  event_sat_wakeup_lucas:
+    name: Saturday
+    icon: mdi:checkbox-marked-circle
+  event_sun_wakeup_lucas:
+    name: Sunday
+    icon: mdi:checkbox-marked-circle
 
 input_datetime:
   event_1st_wakeup_lucas:
