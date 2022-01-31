@@ -32,7 +32,6 @@ automation:
       
       event_time: '{{ states(entity_id) }}'
       event_hour: '{{ event_time.split(":")[0]|default(0)|int }}'
-      bedtime: '{{ "bedtime" in entity_id }}'
       workday: '{{ is_state("binary_sensor.work_day","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
@@ -48,25 +47,33 @@ automation:
           {{ middle_school_day or high_school_day }}
         {%- elif id == "wakeup_nerene" %}
           {{ workday }}
-        {%- elif bedtime %}
+        {%- elif id == "bedtime_weekday" %}
           {%- if event_hour < 6 %}
             {{ middle_school_day or high_school_day }}
           {%- else %}
             {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
           {%- endif %}
+        {%- elif id == "bedtime_weekend" %}
+          {%- if event_hour < 6 %}
+            {{ not (middle_school_day or high_school_day) }}
+          {%- else %}
+            {{ not (middle_school_day_tomorrow or high_school_day_tomorrow) }}
+          {%- endif %}
         {%- else %}
           False
         {%- endif %}
     action:
-      # - service: persistent_notification.create
-      #   data:
-      #     title: '{{ title|default("") }}'
-      #     message: |
-      #       event_enabled: {{ event_enabled }}
-      #       event_today: {{ event_today }}
-      #       skipnext: {{ skipnext }}
-      #       is_2nd: {{ is_2nd }}
-      #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
+      - service: persistent_notification.create
+        data:
+          title: '{{ title|default("") }}'
+          message: |
+            entity_id: {{ entity_id }}
+            id: {{ id }}
+            event_enabled: {{ event_enabled }}
+            event_today: {{ event_today }}
+            skipnext: {{ skipnext }}
+            is_2nd: {{ is_2nd }}
+          notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
       - alias: 'Continue if the announcement is enabled, today is an event day, and the event is not deactivated.'
         condition: template
@@ -114,7 +121,6 @@ automation:
       
       event_time: '{{ states(entity_id) }}'
       event_hour: '{{ event_time.split(":")[0]|default(0)|int }}'
-      bedtime: '{{ "bedtime" in entity_id }}'
       workday: '{{ is_state("binary_sensor.work_day","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
@@ -130,11 +136,17 @@ automation:
           {{ middle_school_day or high_school_day }}
         {%- elif id == "wakeup_nerene" %}
           {{ workday }}
-        {%- elif bedtime %}
+        {%- elif id == "bedtime_weekday" %}
           {%- if event_hour < 6 %}
             {{ middle_school_day or high_school_day }}
           {%- else %}
             {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
+          {%- endif %}
+        {%- elif id == "bedtime_weekend" %}
+          {%- if event_hour < 6 %}
+            {{ not (middle_school_day or high_school_day) }}
+          {%- else %}
+            {{ not (middle_school_day_tomorrow or high_school_day_tomorrow) }}
           {%- endif %}
         {%- else %}
           False
