@@ -1,0 +1,69 @@
+---
+alias: Z-WaveJS2MQTT Button Click
+id: zwjs2m_button_click
+mode: single
+max_exceeded: silent
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.family_room_dimmer_button_up
+      - sensor.family_room_dimmer_button_down
+      - sensor.family_room_dimmer_button_config
+      - sensor.laundry_sceneid
+    from: ""
+    to: ~
+  # - platform: event
+  #   id: family_room_button_up
+  #   event_type: state_changed
+  #   event_data:
+  #     entity_id: sensor.family_room_dimmer_button_up
+  # - platform: event
+  #   id: family_room_button_down
+  #   event_type: state_changed
+  #   event_data:
+  #     entity_id: sensor.family_room_dimmer_button_down
+  # - platform: event
+  #   id: family_room_button_config
+  #   event_type: state_changed
+  #   event_data:
+  #     entity_id: sensor.family_room_dimmer_button_config
+variables:
+  #button: '{{ trigger.id }}'
+  #button_value: '{{ trigger.event.data.new_state.state|default(0)|int }}'
+
+  button: '{{ trigger.entity_id | replace("sensor.","") | replace("_dimmer","") }}'
+  button_value: '{{ trigger.to_state.state|default(0)|int }}'
+  value_map:
+    0: 1
+    3: 2
+    4: 3
+    5: 4
+    6: 5
+  click_count: '{{ value_map[button_value] }}'
+condition:
+  #- condition: template
+  #  value_template: '{{ button_value > 0 }}'
+action:
+  - service: persistent_notification.create
+    data:
+      title: "Z-WaveJS2MQTT Button Click"
+      message: |
+        button: {{ button }}
+        button_value: {{ button_value }}
+        click_count: {{ click_count }}
+
+        {{ trigger.event.data }}
+  
+  # Ignore duplicate events.
+  # - delay:
+  #     seconds: 1
+
+  # - choose:
+  #     - conditions: '{{ command|trim|lower not in ["", "none", "unknown", "unavailable"] }}'
+  #       sequence:
+  #         - alias: "Call the script to interpret the requested command."
+  #           service: script.zwjs2m_button_actions
+  #           data:
+  #             remote: '{{ remote }}'
+  #             command: '{{ command }}'
+  #             click_count: '{{ click_count }}'

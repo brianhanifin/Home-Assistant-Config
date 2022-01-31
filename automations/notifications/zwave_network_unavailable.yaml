@@ -4,15 +4,14 @@ id: zwave_network_unavailable
 description: Notify me if the Z-wave network goes offline.
 mode: single
 trigger:
-  - id: fridge
-    platform: state
-    entity_id: sensor.family_room_dimmer_node_status
-    from: "alive"
-    to: ~
+  - platform: state
+    entity_id: binary_sensor.zwavejs_available
+    from: "on"
+    to: "off"
 variables:
   title: 'Z-Wave JS network unavailable'
   message: |
-    The family room dimmer is no longer reporting a status of "alive".
+    The USB controller is no longer reporting a status of "alive".
 condition:
   # Don't allow status change shortly after startup to avoid phantom changes.
   - '{{ is_state("automation.startup","off") }}'
