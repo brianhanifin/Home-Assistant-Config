@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1215 total entities**, 
-including **641 sensors**.
+Our Home Assistant install has approximately **1228 total entities**, 
+including **654 sensors**.
 
-<details><summary>21 Custom Integrations</summary>
+<details><summary>22 Custom Integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -196,6 +196,12 @@ Authors: [@Limych](https://github.com/Limych).
 
 
 Authors: [@hif2k1](https://github.com/hif2k1).
+
+
+#### [Breaking Changes v21.12.0](https://github.com/custom-components/breaking_changes)
+
+Component to show potential breaking_changes in the current published version based on your loaded components
+Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 #### [Config Check v0.1.1](https://github.com/custom-components/config_check)
@@ -228,7 +234,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.20.0](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.21.0](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -264,7 +270,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.12.5](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.12.6](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -300,7 +306,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>28 Lovelace Plugins</summary>
+<details><summary>27 Lovelace Plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -398,16 +404,12 @@ A different take on the thermostat card for Home Assistant ♨️
 🛠 group multiple cards into one card without the borders
 
 
-#### [Surveillance Card v0.0.5](https://github.com/custom-cards/surveillance-card)
-A custom component for displaying camera feeds in the style of a surveillance system.
+#### [State Switch v1.9.1](https://github.com/thomasloven/lovelace-state-switch)
+🔹Dynamically replace lovelace cards depending on occasion
 
 
 #### [Swipe Card v4.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
-
-
-#### [Timer Bar Card v1.15](https://github.com/rianadon/timer-bar-card)
-A progress bar display for Home Assistant timers
 
 
 #### [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
@@ -476,7 +478,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.2.0b3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.2.0b4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -486,7 +488,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48489-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-52380-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

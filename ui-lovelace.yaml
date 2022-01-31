@@ -1835,19 +1835,6 @@ views:
         entity: input_boolean.leave_unlocked
         exclude_states:
         - 'off'
-      - content_template: '**{{display_name}}** is **{{state}}**'
-        entity: binary_sensor.front_door
-        exclude_states:
-        - 'off'
-        - unavailable
-        name: Front Door
-        state_map:
-          'on': Open
-      - content_template: '**{{display_name}}** is **{{state}}**'
-        entity: cover.garage_door
-        exclude_states:
-        - closed
-        - unavailable
       - content_template: '**{{display_name}}** is **open**'
         entity: binary_sensor.network_closet_door
         exclude_states:
@@ -1866,6 +1853,11 @@ views:
         entity: input_boolean.away_mode
         exclude_states:
         - 'off'
+      - content_template: '**{{display_name}}** is **offline**'
+        entity: binary_sensor.zwavejs_available
+        exclude_states:
+        - 'on'
+        - unavailable
       - content_template: '**{{display_name}}** is **offline**'
         entity: binary_sensor.irrigation_controller_status
         exclude_states:
@@ -4138,10 +4130,10 @@ views:
             entities:
             - attribute: current_years
               hide_unavailable: true
-              name: Age
+              name: Currently
               unit: years
             - entity: this.entity_id
-              name: When
+              name: Next
               unit: days
             secondary_info:
               attribute: date
@@ -4178,7 +4170,7 @@ views:
               attribute: friendly_date
               name: false
             show_state: true
-            state_header: When
+            state_header: Next
             type: custom:multiple-entity-row
       show_empty: true
       sort:
