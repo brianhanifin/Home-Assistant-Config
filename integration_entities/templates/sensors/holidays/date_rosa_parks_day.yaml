@@ -1,0 +1,26 @@
+---
+unique_id: date_rosa_parks_day
+name: Rosa Parks day
+icon: mdi:handcuffs
+state: |
+  {%- set this_event = "1-5" %}
+  {%- set event_date = this_event.split("-") %}
+  {%- set event_month = event_date[0]|int %}
+  {%- set event_day = event_date[1]|int %}
+
+  {# If the event has passed for this year, get next year's event. #} 
+  {%- set today = as_datetime(states('sensor.date')) -%}
+  {%- if event_month < today.month -%}
+    {%- set event_year = today.year + 1 -%}
+  {%- elif event_month == today.month and event_day < today.day %}
+    {%- set event_year = today.year + 1 -%}
+  {%- else -%}
+    {%- set event_year = today.year -%}
+  {%- endif -%}
+  {{ strptime(event_year ~"-"~ this_event, "%Y-%m-%d")|replace(" 00:00:00","") }}
+attributes:
+  type: Holiday
+  friendly_date: |
+    {%- set event_date = states("sensor.date_rosa_parks_day") %}
+    {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
+    {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int, event_date.split("-")[0]|int) }}
