@@ -1,0 +1,32 @@
+---
+unique_id: high_school_modified_day
+name: High school day modified schedule
+state: |
+  {%- set today = now().strftime("%F") %}
+  {%- set minimum_days =  [
+      "2022-02-02"
+  ] %}
+  {%- set final_exam_days = [
+      "2021-12-14",
+      "2022-12-15",
+      "2022-12-16"
+      "2022-05-31",
+      "2022-06-01",
+      "2022-06-02"
+  ] %}
+  {{ iif(today in minimum_days, "Minimum", "") }}
+  {{ iif(today in final_exam_days, "Final exam", "") }}
+attributes:
+  minimum_days: |
+    {{ [
+      "2022-02-02"
+    ] }}
+  final_exam_days: |
+    {{ [
+      "2021-12-14",
+      "2022-12-15",
+      "2022-12-16"
+      "2022-05-31",
+      "2022-06-01",
+      "2022-06-02"
+    ] }}

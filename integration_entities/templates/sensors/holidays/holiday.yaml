@@ -7,7 +7,7 @@ state: |
   {%- set today = now().strftime("%F") %}
   {#%- set today = "{:04}-{:02}-{:02}".format(2022, 6, 19) %#}
 
-  {# HOLIDAYS1: Does any occur today? #}
+  {# HOLIDAYS1 - holidays integration: Do any occur today? #}
   {%- set holidays1 =
     (
       state_attr("calendar.us_holidays", "holidays")
@@ -24,7 +24,7 @@ state: |
     {%- endif %}
   {%- endfor %}
 
-  {# HOLIDAYS2: Do any occur today? #}
+  {# HOLIDAYS2 - custom date sesnors: Do any occur today? #}
   {%- set holidays2 = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
   {%- for holiday in holidays2 -%}
     {%- set holiday_date = states(holiday) %}
@@ -37,7 +37,7 @@ state: |
     {%- endif %}
   {%- endfor %}
 
-  {# BIRTHDAYS/ANNIVERSARIES: Does one occur today? #}
+  {# BIRTHDAYS/ANNIVERSARIES: Do any occur today? #}
   {%- set anniversary_entity = states.sensor | selectattr("attributes.attribution","eq","Sensor data calculated by Anniversaries Integration") | selectattr("state","eq","0") | map(attribute="entity_id") | first %}
   {%- set calendar.anniversary = state_attr(anniversary_entity,"friendly_name") if anniversary_entity|length > 0 else "" %}
   {{- calendar.anniversary ~ ", " if calendar.anniversary != "" and calendar.holiday != "" }}
