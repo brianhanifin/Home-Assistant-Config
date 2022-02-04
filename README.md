@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS Integration directly runs all of 
 
 ## Technical Details
 
-Our Home Assistant install has approximately **1228 total entities**, 
-including **654 sensors**.
+Our Home Assistant install has approximately **1293 total entities**, 
+including **673 sensors**.
 
 <details><summary>22 Custom Integrations</summary>
 
@@ -228,12 +228,6 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Google Home v1.9.4](https://github.com/leikoilja/ha-google-home)
-
-Home Assistant Google Home custom component
-Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
-
-
 #### [Home Assistant Community Store (HACS) v1.21.0](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
@@ -244,6 +238,12 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
+
+
+#### [Holidays v1.5](https://github.com/bruxy70/Holidays/)
+
+📅 Custom Home Assistant integration for public holidays - also used for garbage_collection integration to automatically move scheduled events that fall on a public holiday (by an automation blueprint)
+Authors: [@bruxy70](https://github.com/bruxy70).
 
 
 #### [Lovelace Notify v1.0.0]()
@@ -270,7 +270,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.12.6](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.12.9](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -294,7 +294,7 @@ Authors: [@pnbruckner](https://github.com/pnbruckner).
 Authors: [@jchasey](https://github.com/jchasey).
 
 
-#### [Weatheralerts v0.1.4](https://github.com/custom-components/weatheralerts)
+#### [Weatheralerts v0.1.5](https://github.com/custom-components/weatheralerts)
 
 A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
@@ -306,7 +306,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>27 Lovelace Plugins</summary>
+<details><summary>29 Lovelace Plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -322,6 +322,10 @@ Custom calendar card for Home Assistant with Lovelace
 
 #### [Button Card v3.4.2](https://github.com/custom-cards/button-card)
 ❇️ Lovelace button-card for home assistant
+
+
+#### [Canary v0.3.4](https://github.com/jcwillox/lovelace-canary)
+🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
 
 #### [Card Mod v3.1.1](https://github.com/thomasloven/lovelace-card-mod)
@@ -412,14 +416,18 @@ A different take on the thermostat card for Home Assistant ♨️
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
 
+#### [Timer Bar Card v1.15](https://github.com/rianadon/timer-bar-card)
+A progress bar display for Home Assistant timers
+
+
 #### [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
 Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>7 Addons</summary>
+<details><summary>8 Addons</summary>
 
-#### ESPHome v2022.1.2
+#### ESPHome v2022.1.3
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -445,6 +453,10 @@ Expose Home Assistant folders with SMB/CIFS
 
 #### SDR to Home Assistant v0.1.6b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
+
+
+#### Terminal & SSH v9.3.0
+Allow logging in remotely to Home Assistant using SSH
 
 </details>
 ---
@@ -478,7 +490,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.2.0b4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.2.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -488,7 +500,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-52380-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-55764-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

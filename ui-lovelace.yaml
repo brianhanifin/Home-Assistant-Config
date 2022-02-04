@@ -1694,6 +1694,67 @@ button_card_templates:
         name:
         - color: rgba(var(--color-yellow-text),1)
       value: 'on'
+decluttering_templates:
+  event:
+    card:
+      cards:
+      - label: '[[label]]'
+        name: '[[name]]'
+        template: card_title
+        type: custom:button-card
+      - cards:
+        - entity: input_boolean.event_enabled_[[id]]
+          template: card_input_boolean
+          type: custom:button-card
+        - entity: input_boolean.event_skipnext_[[id]]
+          template: card_input_boolean
+          type: custom:button-card
+        columns: 2
+        square: false
+        type: grid
+      - canary_style:
+          border-radius: var(--border-radius)
+          box-shadow: var(--box-shadow)
+        cards:
+        - entities: '[[sensors]]'
+          type: entities
+        - entities:
+          - type: divider
+          - entities:
+            - entity: input_select.event_speakers_[[id]]
+            - entities:
+              - entity: input_text.event_1st_[[id]]
+                type: custom:text-input-row
+              head: input_datetime.event_1st_[[id]]
+              type: custom:fold-entity-row
+            - entities:
+              - entity: input_text.event_2nd_[[id]]
+                type: custom:text-input-row
+              head: input_datetime.event_2nd_[[id]]
+              type: custom:fold-entity-row
+            head: input_boolean.event_announcement_[[id]]
+            type: custom:fold-entity-row
+          show_header_toggle: false
+          state_color: true
+          type: entities
+        - entities:
+          - entities:
+            - entity: input_datetime.event_light_[[id]]
+            head: input_boolean.event_light_[[id]]
+            type: custom:fold-entity-row
+          show_header_toggle: false
+          state_color: true
+          style: "ha-card {\n  padding-top: 16px !important;\n}\n:host {\n  display:\
+            \ {{ \"block\" if \"wakeup\" in \"[[id]]\" else \"none\" }};\n}\n"
+          type: entities
+        in_card: true
+        style: "ha-card {\n  border-radius: var(--border-radius);\n  box-shadow: var(--box-shadow);\n\
+          }\n"
+        type: vertical-stack
+      type: vertical-stack
+    default:
+      label: ''
+      name: ''
 kiosk_mode:
   hide_header: true
 views:
@@ -1732,7 +1793,15 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 4
+    - icon: mdi:calendar-clock
+      label: wakeup
+      name: Events
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/events
+    columns: 5
     square: false
     type: grid
   - cards:
@@ -1774,15 +1843,6 @@ views:
         exclude_states:
         - closed
         - unavailable
-      - content_template: '**{{display_name}}** is **open**'
-        entity: binary_sensor.upstairs_bathroom_window
-        exclude_states:
-        - 'off'
-        - unavailable
-      - content_template: '**{{display_name}}** is **active**'
-        entity: input_boolean.guest_mode
-        exclude_states:
-        - 'off'
       id_filter: safety_alert
       max_item_count: 5
       more_info_on_tap: true
@@ -1873,30 +1933,51 @@ views:
         \ { display: none; }\n"
       title: Informational notifications
       type: custom:home-feed-card
-    - card:
-        card_mod:
-          style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n  border-radius:\
-            \ var(--border-radius);\n  box-shadow: var(--box-shadow);\n}\n:host {\n\
-            \  display: {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
-        type: entities
-      filter:
-        exclude:
-        - state: '>30'
-        - entity_id: '*ipad*'
-        - entity_id: '*iphone*'
-        - entity_id: '*life360*'
-        - entity_id: '*macbook*'
-        - entity_id: '*watch*'
-        - entity_id: sensor.family_room_remote_battery
-        - entity_id: sensor.*simulated*_battery
-        include:
-        - entity_id: sensor.*_battery
-      numeric: true
-      show_empty: false
-      sort:
-        count: 3
-        method: state
-      type: custom:auto-entities
+    - cards:
+      - card:
+          card_mod:
+            style: ":host {\n  display: block;\n  margin-bottom: -24px !important;\n\
+              }\n"
+          type: entities
+        filter:
+          exclude:
+          - state: ''
+          - state: none
+          - state: unknown
+          - state: idle
+          - state: 'off'
+          include:
+          - entity_id: sensor.high_school_day_modified_schedule
+          - entity_id: timer.front_door_unlocked
+          - entity_id: input_boolean.leave_unlocked
+        show_empty: false
+        type: custom:auto-entities
+      - card:
+          card_mod:
+            style: ":host {\n  display: {{ \"none\" if user.is_admin else \"block\"\
+              \ }}\n}\n"
+          type: entities
+        filter:
+          exclude:
+          - state: '>30'
+          - entity_id: '*ipad*'
+          - entity_id: '*iphone*'
+          - entity_id: '*life360*'
+          - entity_id: '*macbook*'
+          - entity_id: '*watch*'
+          - entity_id: sensor.family_room_remote_battery
+          - entity_id: sensor.*simulated*_battery
+          include:
+          - entity_id: sensor.*_battery
+        numeric: true
+        show_empty: false
+        sort:
+          count: 3
+          method: state
+        type: custom:auto-entities
+      style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n"
+      type: custom:stack-in-card
     - card:
         card_mod:
           style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n  border-radius:\
@@ -1920,8 +2001,6 @@ views:
         method: none
       style: "ha-card {\n  background: none;\n}\n"
       type: custom:auto-entities
-      view_layout:
-        position: sidebar
     type: vertical-stack
     view_layout:
       position: sidebar
@@ -1930,6 +2009,8 @@ views:
     disableEventLink: true
     disableLocationLink: true
     entities:
+    - color: teal
+      entity: calendar.us_holidays
     - color: black
       entity: calendar.birthdays_anniversary
       eventCalName: Milestones
@@ -2250,7 +2331,15 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 4
+    - icon: mdi:calendar-clock
+      label: wakeup
+      name: Events
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/events
+    columns: 5
     square: false
     type: grid
   - cards:
@@ -2572,7 +2661,15 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 4
+    - icon: mdi:calendar-clock
+      label: wakeup
+      name: Events
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/events
+    columns: 5
     square: false
     type: grid
   - cards:
@@ -2650,22 +2747,6 @@ views:
       square: false
       type: grid
     type: vertical-stack
-  - cards:
-    - entity: camera.front_door_person
-      show_name: false
-      show_state: false
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n"
-      type: picture-entity
-    - entity: camera.driveway_person
-      show_name: false
-      show_state: false
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n"
-      type: picture-entity
-    type: horizontal-stack
-    view_layout:
-      position: sidebar
   - camera_entity: camera.driveway
     dimensions:
       aspect_ratio_mode: dynamic
@@ -2698,23 +2779,28 @@ views:
     type: custom:frigate-card
     view:
       default: live
-  - camera_entity: camera.doorbell
-    dimensions:
-      aspect_ratio_mode: dynamic
-    event_viewer:
-      autoplay_clip: true
-    frigate:
-      url: http://10.0.0.4:5000/
-    live:
-      controls:
-        thumbnails:
-          media: clips
-          mode: below
-      preload: false
-      provider: frigate
-    type: custom:frigate-card
-    view:
-      default: live
+  - entity: camera.doorbell_person
+    show_name: false
+    show_state: false
+    style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+      \  box-shadow: var(--box-shadow);\n}\n"
+    type: picture-entity
+    view_layout:
+      position: sidebar
+  - cards:
+    - entity: camera.front_door_person
+      show_name: false
+      show_state: false
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n"
+      type: picture-entity
+    - entity: camera.driveway_person
+      show_name: false
+      show_state: false
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
+        \  box-shadow: var(--box-shadow);\n}\n"
+      type: picture-entity
+    type: horizontal-stack
     view_layout:
       position: sidebar
   icon: mdi:flower
@@ -2756,7 +2842,15 @@ views:
       variables:
         color: green
         path: /lovelace/monitoring
-    columns: 4
+    - icon: mdi:calendar-clock
+      label: wakeup
+      name: Events
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/events
+    columns: 5
     square: false
     type: grid
   - cards:
@@ -2784,7 +2878,6 @@ views:
       position: sidebar
   - cards:
     - label: Monitor devices.
-      name: Monitor
       template: card_title
       type: custom:button-card
     type: vertical-stack
@@ -2974,6 +3067,133 @@ views:
   icon: mdi:speedometer-slow
   path: monitoring
   title: Monitoring
+  type: sidebar
+- badges: []
+  cards:
+  - cards:
+    - icon: mdi:home
+      label: common
+      name: Home
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/home
+    - icon: mdi:home-floor-2
+      label: zone
+      name: Upstairs
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/upstairs
+    - icon: mdi:flower
+      label: zone
+      name: Outdoor
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/outdoors
+    - icon: mdi:speedometer-slow
+      label: status
+      name: Monitor
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/monitoring
+    - icon: mdi:calendar-clock
+      label: wakeup
+      name: Events
+      template: custom_card_brianhanifin_vertical_button_navigate
+      type: custom:button-card
+      variables:
+        color: green
+        path: /lovelace/events
+    columns: 5
+    square: false
+    type: grid
+  - cards:
+    - template: chip_icon_state
+      type: custom:button-card
+      variables:
+        ulm_chip_icon_state_entity: sensor.ui_date
+        ulm_chip_icon_state_icon: 📅
+    - template: custom_chip_brianhanifin_weather
+      type: custom:button-card
+      variables:
+        entity: weather.home
+        temperature: sensor.outdoor_temperature
+    - template: presence
+      type: custom:button-card
+      variables:
+        presence_counter: sensor.family_present
+    - template: chip_icon_state
+      type: custom:button-card
+      variables:
+        ulm_chip_icon_state_entity: sensor.lights_on_count
+        ulm_chip_icon_state_icon: 💡
+    type: horizontal-stack
+    view_layout:
+      position: sidebar
+  - label: Scheduled announcements & wakeup lights
+    template: card_title
+    type: custom:button-card
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - name: Wakeup Nerene
+    - label: Work day
+    - id: wakeup_nerene
+    - sensors:
+      - binary_sensor.work_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - name: Wakeup Brian
+    - label: School day
+    - id: wakeup_brian
+    - sensors:
+      - binary_sensor.middle_school_day
+      - binary_sensor.high_school_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - name: Wakeup Kyle
+    - label: School day
+    - id: wakeup_kyle
+    - sensors:
+      - binary_sensor.middle_school_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - name: Wakeup Lucas
+    - label: School day
+    - id: wakeup_lucas
+    - sensors:
+      - binary_sensor.high_school_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - name: Bed time
+    - label: School day
+    - id: bedtime_weekday
+    - sensors:
+      - binary_sensor.middle_school_day_tomorrow
+      - binary_sensor.high_school_day_tomorrow
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - name: Bed time
+    - label: Weekend or vacation
+    - id: bedtime_weekend
+    - sensors:
+      - binary_sensor.middle_school_day
+      - binary_sensor.high_school_day
+  icon: mdi:calendar-clock
+  path: events
+  title: Events
   type: sidebar
 - badges: []
   cards:
@@ -3643,7 +3863,7 @@ views:
           type: custom:multiple-entity-row
         footer:
           entities:
-          - entity: sensor.current_version
+          - entity: sensor.latest_release
             icon: mdi:link
             name: Release notes
             tap_action:
@@ -3655,6 +3875,12 @@ views:
             tap_action:
               action: url
               url_path: https://rc.home-assistant.io/latest-release-notes/
+          - entity: sensor.current_version
+            icon: mdi:link
+            name: RC blogposts
+            tap_action:
+              action: url
+              url_path: https://github.com/home-assistant/home-assistant.io/blob/rc/source/_posts/
           type: buttons
         type: entities
       - entities:
@@ -4148,36 +4374,23 @@ views:
     type: vertical-stack
   - type: custom:layout-break
   - cards:
-    - label: Upcoming dates
+    - label: null
       name: Holidays
       template: card_title
       type: custom:button-card
-    - card:
-        show_header_toggle: false
-        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-          }\n"
-        type: entities
-      filter:
-        exclude:
-        - entity_id: /\.date_next_/
-        include:
-        - attributes:
-            type: Holiday
-          domain: sensor
-          options:
-            format: relative
-            secondary_info:
-              attribute: friendly_date
-              name: false
-            show_state: true
-            state_header: Next
-            type: custom:multiple-entity-row
-      show_empty: true
-      sort:
-        method: state
-        numeric: false
-        reverse: false
-      type: custom:auto-entities
+    - cards:
+      - content: "{% set current_holiday = states(\"sensor.holiday\") %}\n{#% set\
+          \ current_holiday = \"Holiday1, Holiday2\" %#}\n{%- if current_holiday !=\
+          \ \"\" %}\n**Today's holiday{{ \"s\" if \",\" in current_holiday }}**\n\
+          {{ current_holiday }}\n---\n{% endif %}\n{%- set holidays = state_attr(\"\
+          sensor.holiday\",\"upcoming_holidays\") %}\n{%- for holiday in holidays\
+          \ %}\n  {%- set holiday = holiday.split(\": \") %}\n  {%- set holiday_date\
+          \ = as_datetime(holiday[0]) %}\n**{{ holiday[1] }}**\n{{ holiday_date.strftime(\"\
+          %B %d, %Y\") }}\n{% endfor %}\n"
+        type: markdown
+      in_card: true
+      style: "ha-card {\n  box-shadow: none;\n  border-radius: none;\n}\n"
+      type: vertical-stack
     type: vertical-stack
   - cards:
     - cards:
