@@ -66,12 +66,12 @@ Inovelli z-wave devices are high quality and they really care about our niche co
 2. **House status indicator** Use the LED strip to indicate when the garage is open, or the alarm is disarmed.<br>
 *See my article: "[Inovelli red series status LED update](https://brianhanifin.com/posts/inovelli-red-series-status-led-update/)"*
 
-### Philips Hue Bulbs
+### Philips hue bulbs
 Device recommendations: [starter Kit](https://amzn.to/37AqeTq) (3 color bulbs, battery dimmer, & hub)
 
 The Hue ecosystem is easy to get setup with Home Assistant. We primarily use their tunable white bulbs for plug in floor and table lamps, but we do have 9 colored bulbs in our dining room chandelier for holiday fun.
 
-#### Project Ideas
+#### Project ideas
 1. Use these bulbs to make your plug in lamps controllable by Home Assistant.
 2. Create a realistic sunrise to wakeup in the morning using the tunable white light.
 
@@ -84,9 +84,9 @@ Thanks to Carlo's article "[PSA: CHECK OUT YOUR SMOKE DETECTORS (ONCE EVERY 10 Y
 #### Project ideas:
 1. **Safety alert!** Have Home Assistant alert you which detector sensed the smoke so you can decide whether to try to put it out, or get to safety!
 
-### Xiaomi Aqara Zigbee Smart Home Devices
-Device recommendations: [wireless buttons](https://amzn.to/3q4jd3w), [Motion & luminance sensors](https://amzn.to/3q0OOTK), [Temperature & humidity sensors](https://amzn.to/2ZYWV8I), [Door & window sensors](https://amzn.to/2ZWptjl), [Leak sensors](https://amzn.to/3r1bYef), [Vibration Sensors](https://amzn.to/2ZUvrBl)
-Hub recomendations: [Phoscon conbee II USB gateway](https://amzn.to/2Mz3jk8), [Aqara homekit Hub](https://amzn.to/37TN6xv), [Aqara starter kit: hub, plug, button, motion, door/window](https://amzn.to/2O6STIO)
+### Xiaomi aqara zigbee smart home devices
+Device recommendations: [wireless buttons](https://amzn.to/3q4jd3w), [motion & luminance sensors](https://amzn.to/3q0OOTK), [temperature & humidity sensors](https://amzn.to/2ZYWV8I), [door & window sensors](https://amzn.to/2ZWptjl), [leak sensors](https://amzn.to/3r1bYef), [vibration sensors](https://amzn.to/2ZUvrBl)
+Hub recomendations: [Phoscon conbee II USB gateway](https://amzn.to/2Mz3jk8), [Aqara homekit hub](https://amzn.to/37TN6xv), [Aqara starter kit: hub, plug, button, motion, door/window](https://amzn.to/2O6STIO)
 
 This chinese company makes a lot of very useful and inexpensive wireless smart home products. At first I used their Zigbee smart hub to get these devices to talk to Home Assistant. However I now use a USB stick connected to my server to communicate with all of my Zigbee devices.
 
@@ -116,7 +116,7 @@ These devices are great for shoving in a box behind a light switch to add smarts
 *2b.* turns the fan on then back off when the humidity is up due to a shower (*note: a battery powered humidity sensor in the bathroom is compared to one in a neighboring room*).
 3. **Garage door controller**: I plan to replace the cloud based chamberlain MyQ controller soon using [the hook up's video for reference ](https://www.youtube.com/watch?v=WEZUxXNiERQ).
 
-### SonOff S31 Plugs
+### SonOff S31 plugs
 Device recommendations: [S31](https://amzn.to/2OOEilB), [S31 lite](https://amzn.to/2NMhi6i)
 
 The SonOff S31 is a reliable wi-fi controlled smart switch which can be flashed with Tasmota or ESPHome if you wish. The original S31 has power monitoring built in, while the new S31 lite omits that for a discount.
@@ -133,7 +133,7 @@ The SonOff S31 is a reliable wi-fi controlled smart switch which can be flashed 
 
 ### Presence detection
 
-#### Life360 Integration
+#### Life360 integration
 I use [Life360](https://www.life360.com/) for presence tracking on my son's, wife's, and my phone. This has made me comfortable enough to do things like having Home Assistant close the garage door if one of us leaves the home zone. This covers us for those few times we may forget to close the door before driving away! :)
 
 #### Ubiquiti UniFi integration
@@ -142,7 +142,7 @@ For extended family visitors I use the [Home Assistant Ubiquiti UniFi integratio
 #### Guest mode helper
 Finally, I have a "Guest Mode" input_boolean setup as both a trigger and a condition on many of my lighting and front door locking automations.
 
-## Wireless Communications
+## Wireless communications
 
 ### Wi-fi: Ubiquiti Unifi
 Device recommendations: [Unifi 6 lite access point](https://amzn.to/3q1OUut) (wi-fi 6), [Unifi AC-PRO access point](https://amzn.to/2NMc1vW) (802.11ac, I have 3 of these), [Unifi security gateway](https://amzn.to/2NEbooj)
