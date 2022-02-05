@@ -16,7 +16,7 @@ attributes:
       "weather.accuweather",
       "sensor.openweathermap_condition"
     ] %}
-    {%- for sensor in weather_sensors if states(sensor) != "unknown" and factors.current_condition == "" %}
+    {%- for sensor in weather_sensors if states(sensor) not in ["unknown","unavailable"] and factors.current_condition == "" %}
       {%- set factors.current_condition = states(sensor) %}
     {%- endfor %}
     {%- set current_condition = factors.current_condition|lower|replace("partly cloudy w/ ","")|replace("mostly cloudy w/ ","")|replace("freezing","")|replace("and","")|replace("-", " ")|replace("_", " ")|replace("(","")|replace(")","")|replace(" ", "") %}
