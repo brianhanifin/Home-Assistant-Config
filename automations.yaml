@@ -13,7 +13,7 @@
     entity_id: input_boolean.cooler_outside_notification
     state: 'off'
   - condition: template
-    value_template: '{{ (states("sensor.outdoor_humidity")|round - states("sensor.home_thermostat_humidity")|round)
+    value_template: '{{ (states("sensor.outdoor_humidity")|round(default=0) - states("sensor.home_thermostat_humidity")|round(default=0))
       <= 25 }}'
   - after: '15:00'
     before: '21:00'
@@ -716,4 +716,103 @@
       minutes: 1
       seconds: 0
       milliseconds: 0
+  mode: single
+- id: '1643829963937'
+  alias: HACS install event - update sensors
+  description: ''
+  trigger:
+  - platform: event
+    event_type: hacs/repository
+    event_data:
+      action: install
+  condition: []
+  action:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+  - service: homeassistant.update_entity
+    data: {}
+    target:
+      entity_id: sensor.updates
+  mode: single
+- id: '1643862026593'
+  alias: External IP changed
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.external_ip
+  condition: []
+  action:
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: IP changed
+      message: 'From: {{trigger.from_state.state}}
+
+        To: {{trigger.to_state.state}}'
+  mode: single
+- id: '1643923679941'
+  alias: Google next timer actions
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.google_next_timer
+    attribute: end_time
+    id: update_end_time
+  - platform: time
+    at: input_datetime.google_next_timer_ends
+    id: timer_ends
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: update_end_time
+      sequence:
+      - service: input_datetime.set_datetime
+        data:
+          datetime: '{{ as_datetime(state_attr("sensor.google_next_timer","end_time"))
+            }}'
+        target:
+          entity_id: input_datetime.google_next_timer_ends
+    - conditions:
+      - condition: trigger
+        id: timer_ends
+      sequence:
+      - service: script.notify_speech
+        data:
+          media_player: media_player.google_kitchen
+          message: "{%- macro friendly_time(duration) %}\n  {%- set time_part = duration.split(\"\
+            :\") %}\n  {%- set output = \"{:1}\".format(time_part[0]) ~ \" hour \"\
+            \ if time_part[0]|default(0)|int > 0 else \"\" %}\n  {%- set output =\
+            \ output ~ iif(time_part[1]|default(0)|int > 0, \"{:1}\".format(time_part[1])\
+            \ ~ \" minute \", \"\") %}\n  {%- set output = output ~ iif(time_part[2]|default(0)|int\
+            \ > 0, \"{:1}\".format(time_part[2]) ~ \" second\", \"\") %}\n  {{- output|trim\
+            \ }}\n{%- endmacro %}\n\n{% set sensors = state_attr(\"sensor.google_active_timers\"\
+            ,\"sensors\") %}\n{%- if sensors != \"\" %}\n  {%- set sensors = sensors.split(\"\
+            , \") %}\n  {%- set timer = state_attr(sensors|first,\"timers\") %}\n\
+            {%- else %}\n  {%- set timer = state_attr(sensors,\"timers\") %}\n{%-\
+            \ endif %}\n\nYour timer {{ timer.label|title if timer.label != None else\n\
+            friendly_time(timer.duration)|replace(\" timer\",\"\") }} timer ended.\n"
+      - service: script.notify_web
+        data:
+          type: alert
+          title: Timer has ended
+          message: "{%- macro friendly_time(duration) %}\n  {%- set time_part = duration.split(\"\
+            :\") %}\n  {%- set output = time_part[0] ~ \" hour \" if time_part[0]|default(0)|int\
+            \ > 0 else \"\" %}\n  {%- set output = output ~ iif(time_part[1]|default(0)|int\
+            \ > 0, time_part[1] ~ \" minute \", \"\") %}\n  {%- set output = output\
+            \ ~ iif(time_part[2]|default(0)|int > 0, time_part[2] ~ \" second\", \"\
+            \") %}\n  {{- output|trim }}\n{%- endmacro %}\n\n{% set sensors = state_attr(\"\
+            sensor.google_active_timers\",\"sensors\") %}\n{%- if sensors != \"\"\
+            \ %}\n  {%- set sensors = sensors.split(\", \") %}\n  {%- set timer =\
+            \ state_attr(sensors|first,\"timers\") %}\n{%- else %}\n  {%- set timer\
+            \ = state_attr(sensors,\"timers\") %}\n{%- endif %}\n\n* **{{ timer.label|title\
+            \ if timer.label != None else\nfriendly_time(timer.duration) }} timer**\
+            \ {{ \" ended at \" ~\n\"{:1}:{:02}:{:02}\".format(as_datetime(timer.local_time).hour,\n\
+            as_datetime(timer.local_time).minute,\nas_datetime(timer.local_time).second)\
+            \ }}\n"
+    default: []
   mode: single

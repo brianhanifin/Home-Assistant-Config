@@ -15,7 +15,7 @@ variables:
   last_opened: '{{ states.binary_sensor.front_door.last_changed | timestamp_local | as_timestamp }}'
   time_now: '{{ now() | as_timestamp }}'
   seconds_difference: '{{ time_now - last_opened }}'
-  door_recently_opened: '{{ seconds_difference|round < 120 }}'
+  door_recently_opened: '{{ seconds_difference|round(default=0) < 120 }}'
   outdoor_illuminance: '{{ states("sensor.outdoor_illuminance_educated_guessor") }}'
 condition:
   - '{{ door_recently_opened == false }}'

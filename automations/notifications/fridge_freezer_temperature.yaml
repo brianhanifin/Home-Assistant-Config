@@ -22,8 +22,8 @@ variables:
   threshold_id: '{{ "input_number." + trigger.id + "_temperature_threshold" }}'
   title: '{{ entity_name }} is warm'
   message: |
-    The {{ entity_name }} is {{ states(entity_id)|round(0) }}°F.
-    The threshold is currently set to {{ states(threshold_id)|round(0) }}°F.
+    The {{ entity_name }} is {{ states(entity_id)|round(default=0) }}°F.
+    The threshold is currently set to {{ states(threshold_id)|round(default=0) }}°F.
 action:
   - service: script.notify_mobile
     data:

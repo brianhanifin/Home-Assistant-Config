@@ -19,12 +19,12 @@ temperature_template: |
   {%- else %}
     {%- set value = 199 %}
   {%- endif %}
-  {{ value|round }}
+  {{ value|round(default=0) }}
 humidity_template: |
   {%- set value1 = state_attr("weather.accuweather","humidity")|trim -%}
   {%- set value2 = state_attr("weather.openweathermap","humidity")|trim -%}
   {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ value|round }}
+  {{ value|round(default=0) }}
 forecast_template: |
   {%- set value1 = state_attr("weather.accuweather","forecast")|trim %}
   {%- set value2 = state_attr("weather.openweathermap","forecast")|trim %}
@@ -38,12 +38,12 @@ wind_speed_template: |
   {%- set value1 = state_attr("weather.accuweather","wind_speed")|trim %}
   {%- set value2 = state_attr("weather.openweathermap","wind_speed")|trim %}
   {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ value|round }}
+  {{ value|round(default=0) }}
 wind_bearing_template: |
   {%- set value1 = state_attr("weather.accuweather","wind_bearing")|trim %}
   {%- set value2 = state_attr("weather.openweathermap","wind_bearing")|trim %}
   {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ value|round }}
+  {{ value|round(default=0) }}
 attribution_template: |
   {%- set value1 = state_attr("weather.accuweather","attribution")|trim %}
   {%- set value2 = state_attr("weather.openweathermap","attribution")|trim %}

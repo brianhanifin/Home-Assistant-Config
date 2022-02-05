@@ -29,7 +29,7 @@ condition:
     value_template: >
       {% set left_work = state_attr("automation.nerene_leaves_work","last_triggered") %}  
       {% set seconds_difference = (as_timestamp(now()) - as_timestamp(left_work)) %}
-      {% set minutes_difference = ((seconds_difference) / 60)|round %}
+      {% set minutes_difference = ((seconds_difference) / 60)|round(default=0) %}
       {{ minutes_difference < 30 }}
 action:
   - service: script.say
