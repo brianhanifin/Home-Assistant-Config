@@ -18,14 +18,6 @@ variables:
   # hvac_modes: off, cool, fan_only, dry, heat_cool
   assumed_state: '{{ states("climate.lucas_room") }}'
   powered_state: '{{ trigger.id }}'
-
-  # power: '{{ states("sensor.lucas_ac_power")|default(0)|int }}'
-  # powered_state: |
-  #   {% if power < 10 %}
-  #     off
-  #   {%- else %}
-  #     cool
-  #   {%- endif %}
 condition:
   - condition: template
     value_template: '{{ powered_state != assumed_state }}'
