@@ -1,0 +1,58 @@
+---
+unique_id: google_active_timers
+name: Google active timers
+icon: mdi:timer-settings-outline
+state: |
+  {% set timers = namespace(sensors="") %}
+  {%- set sensors = states.sensor | selectattr('attributes.device_class','eq','timestamp') | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
+  {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") %}
+    {%- set timers.sensors = timers.sensors ~" "~ sensor|replace("google_","")|replace("_timers","") %}
+  {%- endfor %}
+  {%- set timers.sensors = timers.sensors|trim|replace(" ",", ") %}
+  {{ timers.sensors }}
+attributes:
+  sensors: |
+    {% set timers = namespace(sensors="") %}
+    {%- set sensors = states.sensor | selectattr('attributes.device_class','eq','timestamp') | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
+    {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") %}
+      {%- set timers.sensors = timers.sensors ~" sensor."~ sensor %}
+    {%- endfor %}
+    {%- set timers.sensors = timers.sensors|trim|replace(" ",", ") %}
+    {{ timers.sensors if timers.sensors != "" else "" }}
+  timers: |
+    {%- set unsorted_timers = state_attr("sensor.google_active_timers","unsorted_timers") %}
+    {%- if unsorted_timers[0] == null %}
+      {{ unsorted_timers }}
+    {%- else %}
+      {{ unsorted_timers | sort(attribute="end_time") }}
+    {%- endif %}
+  unsorted_timers: |
+    {%- macro friendly_label(label, duration) %}
+      {%- set label = label|trim|title %}
+      {%- if label in ["","None"] %}
+        {%- set time_part = duration.split(":") %}
+        {%- set label = time_part[0]|int ~ " hour " if time_part[0]|default(0)|int > 0 else "" %}
+        {%- set label = label ~ iif(time_part[1]|default(0)|int > 0, time_part[1]|int ~ " minute ", "") %}
+        {%- set label = label ~ iif(time_part[2]|default(0)|int > 0, time_part[2]|int ~ " second", "") %}
+        {%- set label = label|trim %}
+      {%- endif %}
+      {{- label ~ " timer" }}
+    {%- endmacro %}
+
+    {%- set storage = namespace(timers="") %}
+    {%- set active_sensors = state_attr("sensor.google_active_timers","sensors").split(", ") %}
+    {%- for sensor in active_sensors %}
+      {%- set active_timers = states.sensor | selectattr('entity_id','eq',sensor) | map(attribute="attributes.timers") | list %}
+      {%- for timer in active_timers[0] %}
+        {%- set storage.timers = storage.timers ~ "{" %}
+        {%- set storage.timers = storage.timers ~ "'end_time':'" ~ timer.local_time_iso ~"'," %}
+        {%- set storage.timers = storage.timers ~ "'duration':'" ~ timer.duration ~"'," %}
+        {%- set storage.timers = storage.timers ~ "'label':'" ~ friendly_label(timer.label, timer.duration) ~"'," %}
+        {%- set storage.timers = storage.timers ~ "'status':'" ~ timer.status ~"'," %}
+        {%- set storage.timers = storage.timers ~ "'sensor':'" ~ sensor ~ "'" %}
+        {%- set storage.timers = storage.timers ~ "}" %}
+        {%- set storage.timers = storage.timers ~ iif(not loop.last, ",", "")  %}
+      {%- endfor %}
+      {%- set storage.timers = storage.timers ~ iif(not loop.last, ",", "") %}
+    {%- endfor %}
+    {{ storage.timers }}

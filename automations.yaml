@@ -147,15 +147,26 @@
       device: 8bef4ccfe78c1356e14212171ff1bfc7
       double_tap_on:
       - service: light.turn_on
-        target:
-          area_id: bedroom
         data:
           transition: 0
           brightness_pct: 100
+        target:
+          entity_id:
+          - light.bedroom
+          - light.brian
+          - light.bedroom_table_lamp
       double_tap_off:
       - service: homeassistant.turn_off
+        data: {}
         target:
-          area_id: bedroom
+          entity_id:
+          - switch.sound_machine
+          - climate.bedroom
+          - fan.bedroom
+          - switch.sound_machine
+          - light.bedroom
+          - light.bedroom_table_lamp
+          - light.brian
 - id: '1618159056314'
   alias: Startup
   description: Actions to run at startup.
@@ -780,39 +791,28 @@
     - conditions:
       - condition: trigger
         id: timer_ends
+      - condition: template
+        value_template: '{{ state_attr("sensor.google_next_timer","end_time") != none
+          }}'
       sequence:
       - service: script.notify_speech
         data:
           media_player: media_player.google_kitchen
-          message: "{%- macro friendly_time(duration) %}\n  {%- set time_part = duration.split(\"\
-            :\") %}\n  {%- set output = \"{:1}\".format(time_part[0]) ~ \" hour \"\
-            \ if time_part[0]|default(0)|int > 0 else \"\" %}\n  {%- set output =\
-            \ output ~ iif(time_part[1]|default(0)|int > 0, \"{:1}\".format(time_part[1])\
-            \ ~ \" minute \", \"\") %}\n  {%- set output = output ~ iif(time_part[2]|default(0)|int\
-            \ > 0, \"{:1}\".format(time_part[2]) ~ \" second\", \"\") %}\n  {{- output|trim\
-            \ }}\n{%- endmacro %}\n\n{% set sensors = state_attr(\"sensor.google_active_timers\"\
-            ,\"sensors\") %}\n{%- if sensors != \"\" %}\n  {%- set sensors = sensors.split(\"\
-            , \") %}\n  {%- set timer = state_attr(sensors|first,\"timers\") %}\n\
-            {%- else %}\n  {%- set timer = state_attr(sensors,\"timers\") %}\n{%-\
-            \ endif %}\n\nYour timer {{ timer.label|title if timer.label != None else\n\
-            friendly_time(timer.duration)|replace(\" timer\",\"\") }} timer ended.\n"
+          message: Your {{ state_attr("sensor.google_next_timer", "label") }} just
+            ended.
       - service: script.notify_web
         data:
           type: alert
-          title: Timer has ended
-          message: "{%- macro friendly_time(duration) %}\n  {%- set time_part = duration.split(\"\
-            :\") %}\n  {%- set output = time_part[0] ~ \" hour \" if time_part[0]|default(0)|int\
-            \ > 0 else \"\" %}\n  {%- set output = output ~ iif(time_part[1]|default(0)|int\
-            \ > 0, time_part[1] ~ \" minute \", \"\") %}\n  {%- set output = output\
-            \ ~ iif(time_part[2]|default(0)|int > 0, time_part[2] ~ \" second\", \"\
-            \") %}\n  {{- output|trim }}\n{%- endmacro %}\n\n{% set sensors = state_attr(\"\
-            sensor.google_active_timers\",\"sensors\") %}\n{%- if sensors != \"\"\
-            \ %}\n  {%- set sensors = sensors.split(\", \") %}\n  {%- set timer =\
-            \ state_attr(sensors|first,\"timers\") %}\n{%- else %}\n  {%- set timer\
-            \ = state_attr(sensors,\"timers\") %}\n{%- endif %}\n\n* **{{ timer.label|title\
-            \ if timer.label != None else\nfriendly_time(timer.duration) }} timer**\
-            \ {{ \" ended at \" ~\n\"{:1}:{:02}:{:02}\".format(as_datetime(timer.local_time).hour,\n\
-            as_datetime(timer.local_time).minute,\nas_datetime(timer.local_time).second)\
-            \ }}\n"
+          title: '{{ state_attr("sensor.google_next_timer", "label") }} has ended'
+          message: '{%- set end_time = state_attr("sensor.google_next_timer","end_time")|default(now())|as_datetime
+            %}
+
+            **{{ state_attr("sensor.google_next_timer", "label") }}** {{ " ended at
+            " ~
+
+            "{:1}:{:02}:{:02}".format(end_time.hour, end_time.minute, end_time.second)
+            }}
+
+            '
     default: []
   mode: single

@@ -1938,17 +1938,35 @@ views:
           card_mod:
             style: ":host {\n  display: block;\n  margin-bottom: -24px !important;\n\
               }\n"
+          type: custom:timer-bar-card
+        filter:
+          exclude:
+          - state: idle
+          - state: ''
+          - state: none
+          - state: unknown
+          - state: unavailable
+          include:
+          - entity_id: sensor.google_next_timer
+          - entity_id: timer.front_door_unlocked
+        show_empty: false
+        sort:
+          ignore_case: true
+          method: name
+        type: custom:auto-entities
+      - card:
+          card_mod:
+            style: ":host {\n  display: block;\n  margin-bottom: -24px !important;\n\
+              }\n"
           type: entities
         filter:
           exclude:
           - state: ''
           - state: none
           - state: unknown
-          - state: idle
           - state: 'off'
           include:
           - entity_id: sensor.high_school_day_modified_schedule
-          - entity_id: timer.front_door_unlocked
           - entity_id: input_boolean.leave_unlocked
         show_empty: false
         type: custom:auto-entities
@@ -2382,6 +2400,12 @@ views:
         variables:
           ulm_chip_icon_state_entity: binary_sensor.bedroom_presence
           ulm_chip_icon_state_icon: 🏃‍♂️
+      - template: custom_chip_brianhanifin_icon_state
+        type: custom:button-card
+        variables:
+          entity: sensor.bedroom_ac_power
+          icon: 🧊
+          unit: w
       type: horizontal-stack
     - cards:
       - entity: light.bedroom
@@ -2509,6 +2533,12 @@ views:
           entity: sensor.lucas_room_humidity
           icon: 💧
           unit: '%'
+      - template: custom_chip_brianhanifin_icon_state
+        type: custom:button-card
+        variables:
+          entity: sensor.lucas_ac_power
+          icon: 🧊
+          unit: w
       type: horizontal-stack
     - cards:
       - entity: light.lucas_room
