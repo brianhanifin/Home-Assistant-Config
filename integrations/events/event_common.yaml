@@ -63,17 +63,17 @@ automation:
           False
         {%- endif %}
     action:
-      - service: persistent_notification.create
-        data:
-          title: '{{ title|default("") }}'
-          message: |
-            entity_id: {{ entity_id }}
-            id: {{ id }}
-            event_enabled: {{ event_enabled }}
-            event_today: {{ event_today }}
-            skipnext: {{ skipnext }}
-            is_2nd: {{ is_2nd }}
-          notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
+      # - service: persistent_notification.create
+      #   data:
+      #     title: '{{ title|default("") }}'
+      #     message: |
+      #       entity_id: {{ entity_id }}
+      #       id: {{ id }}
+      #       event_enabled: {{ event_enabled }}
+      #       event_today: {{ event_today }}
+      #       skipnext: {{ skipnext }}
+      #       is_2nd: {{ is_2nd }}
+      #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
       - alias: 'Continue if the announcement is enabled, today is an event day, and the event is not deactivated.'
         condition: template
