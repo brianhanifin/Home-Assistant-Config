@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1294 total entities**, 
-including **673 sensors**.
+Our Home Assistant install has approximately **1293 total entities**, 
+including **670 sensors**.
 
-<details><summary>22 Custom integrations</summary>
+<details><summary>23 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -216,7 +216,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 
-#### [Frigate v2.2.1](https://github.com/blakeblackshear/frigate)
+#### [Frigate v2.2.2](https://github.com/blakeblackshear/frigate)
 
 Frigate integration for Home Assistant
 Authors: [@blakeblackshear](https://github.com/blakeblackshear).
@@ -228,7 +228,13 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Home Assistant Community Store (HACS) v1.21.0](https://hacs.xyz/docs/configuration/start)
+#### [Google Home v1.9.7](https://github.com/leikoilja/ha-google-home)
+
+Home Assistant Google Home custom component
+Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
+
+
+#### [Home Assistant Community Store (HACS) v1.22.0](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -240,7 +246,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
 
 
-#### [Holidays v1.5](https://github.com/bruxy70/Holidays/)
+#### [Holidays v1.6](https://github.com/bruxy70/Holidays/)
 
 📅 Custom Home Assistant integration for public holidays - also used for garbage_collection integration to automatically move scheduled events that fall on a public holiday (by an automation blueprint)
 Authors: [@bruxy70](https://github.com/bruxy70).
@@ -258,7 +264,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.4.14](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.4.15](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -270,7 +276,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.12.9](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.12.10](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -300,7 +306,7 @@ A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
 
 
-#### [Wyze v0.1.5-alpha.0](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v0.1.5-alpha.1](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
@@ -490,7 +496,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.2.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.2.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -500,7 +506,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-55977-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-55991-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
