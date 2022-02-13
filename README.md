@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1293 total entities**, 
-including **670 sensors**.
+Our Home Assistant install has approximately **1319 total entities**, 
+including **696 sensors**.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -334,7 +334,7 @@ Custom calendar card for Home Assistant with Lovelace
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
 
-#### [Card Mod v3.1.1](https://github.com/thomasloven/lovelace-card-mod)
+#### [Card Mod v3.1.2](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 
@@ -398,7 +398,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.3.2](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.3.3](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 
@@ -431,9 +431,9 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>8 addons</summary>
+<details><summary>7 addons</summary>
 
-#### ESPHome v2022.1.3
+#### ESPHome v2022.1.4
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -459,10 +459,6 @@ Expose Home Assistant folders with SMB/CIFS
 
 #### SDR to Home Assistant v0.1.6b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
-
-
-#### Terminal & SSH v9.3.0
-Allow logging in remotely to Home Assistant using SSH
 
 </details>
 ---
@@ -496,7 +492,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.2.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.2.6-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -506,7 +502,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-55991-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-56021-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
