@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1319 total entities**, 
-including **696 sensors**.
+Our Home Assistant install has approximately **1355 total entities**, 
+including **729 sensors**.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -306,7 +306,7 @@ A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
 
 
-#### [Wyze v0.1.5-alpha.1](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v0.1.6](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
@@ -433,7 +433,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 addons</summary>
 
-#### ESPHome v2022.1.4
+#### ESPHome v2022.2.1
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -492,7 +492,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.2.6-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.2.8-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -502,7 +502,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-56021-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-47637-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
