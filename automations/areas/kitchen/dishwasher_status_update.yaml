@@ -1,0 +1,79 @@
+---
+alias: Dishwasher status update
+id: dishwasher_status_update
+description: Update the current dishwasher status when certain criteria are met.
+mode: single
+trigger:
+  # Washing when motor vibration is detected.
+  - id: Washing
+    platform: state
+    entity_id: binary_sensor.dishwasher_moving
+    from: "off"
+    to: "on"
+    for:
+      seconds: 30
+
+  # Drying when temp is greater than 10 degrees above kitchen temperature. 
+  - id: Drying
+    platform: numeric_state
+    entity_id: sensor.dishwasher_temperature
+    value_template: '{{ state - 10 }}'
+    above: sensor.kitchen_temperature
+
+  # Clean when status has been "Drying" for a bit.
+  - id: Clean
+    platform: state
+    entity_id: input_select.dishwasher_status
+    to: Drying
+    for:
+      minutes: 30
+
+  # Dirty when door is open for longer than 1 minute.
+  - id: Dirty
+    platform: state
+    entity_id: binary_sensor.dishwasher_door
+    from: "off"
+    to: "on"
+    for:
+      minutes: 1
+variables:
+  trigger_id: '{{ trigger.id }}'
+  previous_status: '{{ states("input_select.dishwasher_status") }}'
+  status: '{{ trigger_id }}'
+
+  notify_title: '{{ "Dishwasher: " ~ status|lower if status in ["Clean","Dirty"] }}'
+  notify_message: '{{ "The dishes are " ~ status|lower ~ "." if status in ["Clean","Dirty"] }}'
+condition:
+  - condition: template
+    value_template: '{{ status != previous_status
+                      and status != "Unknown" }}'
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.dishwasher_status
+      option: '{{ status }}'
+
+  - service: script.notify_web
+    data:
+      message: '{{ "Dishwasher: " ~ status|lower }}'
+
+  # - service: script.notify_speech
+  #   data:
+  #     media_player: group.google_downstairs
+  #     message: '{{ notify_message }}'
+
+  - choose:
+      - conditions: '{{ status in ["Clean","Dirty"] }}'
+        sequence:
+          - service: script.notify_mobile
+            data:
+              title: '{{ notify_title }}'
+              message: '{{ notify_message }}'
+              who: brian
+              url: /lovelace-special/dishwasher
+
+  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  # - In this case it stops the washer from toggling between Clean and back to Washing within 10 seconds.
+  #   This should stop the complete announcement from repeating after 1 minute.
+  - delay:
+      seconds: 300
