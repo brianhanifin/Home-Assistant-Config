@@ -1,0 +1,23 @@
+---
+watchman:
+  ignored_files:
+    #- "automations.yaml"
+    - ui-lovelace*.yaml
+    - /appdaemon/*
+    - /blueprints/*
+    - /custom_components/*
+    - /esphome/*
+    - /lovelace*/*
+    - /www/*
+  # service: telegram_bot.send_message
+  # data: # any additional parametes for the notification service
+  #   parse_mode: html
+  report_path: /config/watchman.txt
+  chunk_size: 2000
+  ignored_items:
+    #- "*.*_ble"  # ignore any entity/service which name ends with "_ble"
+    #- person.dummylabs
+    - sensor.* # ignore everything in sensor domain
+    - scene.*
+  ignored_states:
+    - unknown

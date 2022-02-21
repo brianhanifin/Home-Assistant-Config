@@ -8,12 +8,12 @@ trigger:
     minutes: '/10'
 action:
   - choose:
-      - alias: 'Is timer.dryer_clean "paused"?'
-        conditions: '{{ states("timer.dryer_clean") == "paused" }}'
+      - alias: 'Is timer.dryer_dry "paused"?'
+        conditions: '{{ states("timer.dryer_dry") == "paused" }}'
         sequence:
-          - alias: 'Restart timer.dryer_clean.'
+          - alias: 'Restart timer.dryer_dry.'
             service: timer.start
-            entity_id: timer.dryer_clean
+            entity_id: timer.dryer_dry
 
       - alias: 'Is timer.washer_clean "paused"?'
         conditions: '{{ states("timer.washer_clean") == "paused" }}'

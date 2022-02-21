@@ -39,13 +39,6 @@
     {{ pause() }}
   {%- endmacro -%}
 
-  {%- macro dog_water_bowl() -%}
-    {%- if states('binary_sensor.dog_water_bowl') == "off" -%}
-      Pepper's water bowl is empty please refill it for her.
-    {%- endif -%}
-    {{ pause() }}
-  {%- endmacro -%}
-
   {%- macro door_window_check() -%}
     {%- set entities = [
       'binary_sensor.front_door',
@@ -225,15 +218,15 @@
   {%- endmacro -%}
 
   {%- macro light_check() -%}
-    {% set lights_on = state_attr('group.lights_on','entity_id')|list %}
-    {% if lights_on|length|default(0)|int|default(0)|int > 0 and lights_on != [''] %}
-
-      {%- if lights_on|length == 1 %}
+    {% set lights_on = states('sensor.lights_on_count')|default(0)|int %}
+    {% set lights_on_list = get_friendly_names(states('sensor.lights_on').split(", ")) %}
+    {% if lights_on > 0 %}
+      {%- if lights_on == 1 %}
         There is 1 light on right now.
-        The {{ get_friendly_names(lights_on) }} light is on.
+        The {{ lights_on_list }} light is on.
       {%- else %}
-        There are {{ lights_on|length }} lights on right now.
-        The {{ get_friendly_names(lights_on) }} lights are on.
+        There are {{ lights_on }} lights on right now.
+        The {{ lights_on_list }} lights are on.
       {%- endif %}
       {{ pause() }}
     {%- endif -%}
