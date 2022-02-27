@@ -197,6 +197,9 @@
   - service: script.turn_on
     target:
       entity_id: script.create_actionable_lights_group
+    data: {}
+  - service: watchman.report
+    data: {}
   - service: script.notify_web
     data:
       message: Startup automation complete.
@@ -205,6 +208,7 @@
   - service: automation.turn_off
     target:
       entity_id: automation.startup
+    data: {}
   mode: single
   initial_state: true
 - id: '1619989994523'
@@ -382,7 +386,11 @@
         domain: light
 - id: '1638465871838'
   alias: Maintenance before sunrise
-  description: Runs every day 2 hours before sunrise.
+  description: 'Runs every day 2 hours before sunrise.
+
+    1. Reset Adaptive lighting switches.
+
+    2. Update watchman report.'
   trigger:
   - platform: sun
     event: sunrise
@@ -397,6 +405,8 @@
   - service: switch.turn_on
     data:
       entity_id: '{{ switches }}'
+  - service: watchman.report
+    data: {}
   mode: single
   variables:
     switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%- for entity\
