@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1198 total entities**, 
-including **653 sensors**.
+Our Home Assistant install has approximately **1243 total entities**, 
+including **671 sensors**.
 
-<details><summary>23 Custom integrations</summary>
+<details><summary>24 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -228,7 +228,7 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Google Home v1.9.7](https://github.com/leikoilja/ha-google-home)
+#### [Google Home v1.9.8](https://github.com/leikoilja/ha-google-home)
 
 Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
@@ -246,7 +246,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
 
 
-#### [Holidays v1.6](https://github.com/bruxy70/Holidays/)
+#### [Holidays v1.7](https://github.com/bruxy70/Holidays/)
 
 📅 Custom Home Assistant integration for public holidays - also used for garbage_collection integration to automatically move scheduled events that fall on a public holiday (by an automation blueprint)
 Authors: [@bruxy70](https://github.com/bruxy70).
@@ -300,6 +300,12 @@ Authors: [@pnbruckner](https://github.com/pnbruckner).
 Authors: [@jchasey](https://github.com/jchasey).
 
 
+#### [Watchman v0.5.0](https://github.com/dummylabs/thewatchman)
+
+Home Assistant custom integration to keep track of missing entities and services in your config files
+Authors: [@dummylabs](https://github.com/dummylabs).
+
+
 #### [Weatheralerts v0.1.5](https://github.com/custom-components/weatheralerts)
 
 A sensor that gives you weather alerts from alerts.weather.gov.
@@ -312,7 +318,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>29 lovelace plugins</summary>
+<details><summary>30 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -348,6 +354,10 @@ Custom calendar card for Home Assistant with Lovelace
 
 #### [Favicon Counter v1.0.0](https://github.com/custom-cards/favicon-counter)
 Show a notification count badge.
+
+
+#### [Flex Table Highly Customizable, Data Visualization](https://github.com/custom-cards/flex-table-card)
+Highly Flexible Lovelace Card - arbitrary contents/columns/rows, regex matched, perfect to show appdaemon created content and anything breaking out of the entity_id + attributes concept
 
 
 #### [Fold Entity Row v20.0.12](https://github.com/thomasloven/lovelace-fold-entity-row)
@@ -422,7 +432,7 @@ A different take on the thermostat card for Home Assistant ♨️
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
 
-#### [Timer Bar Card v1.15](https://github.com/rianadon/timer-bar-card)
+#### [Timer Bar Card v1.16](https://github.com/rianadon/timer-bar-card)
 A progress bar display for Home Assistant timers
 
 
@@ -433,7 +443,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 addons</summary>
 
-#### ESPHome v2022.2.4
+#### ESPHome v2022.2.5
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -457,7 +467,7 @@ Manage your Docker environment with ease
 Expose Home Assistant folders with SMB/CIFS
 
 
-#### SDR to Home Assistant v0.1.6b
+#### SDR to Home Assistant v0.1.11b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 </details>
@@ -492,7 +502,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.2.9-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.3.0b4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -502,7 +512,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-47663-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48090-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
