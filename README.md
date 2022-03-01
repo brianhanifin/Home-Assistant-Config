@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1243 total entities**, 
-including **671 sensors**.
+Our Home Assistant install has approximately **1244 total entities**, 
+including **676 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -318,7 +318,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>30 lovelace plugins</summary>
+<details><summary>29 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -354,10 +354,6 @@ Custom calendar card for Home Assistant with Lovelace
 
 #### [Favicon Counter v1.0.0](https://github.com/custom-cards/favicon-counter)
 Show a notification count badge.
-
-
-#### [Flex Table Highly Customizable, Data Visualization](https://github.com/custom-cards/flex-table-card)
-Highly Flexible Lovelace Card - arbitrary contents/columns/rows, regex matched, perfect to show appdaemon created content and anything breaking out of the entity_id + attributes concept
 
 
 #### [Fold Entity Row v20.0.12](https://github.com/thomasloven/lovelace-fold-entity-row)
@@ -424,7 +420,7 @@ A different take on the thermostat card for Home Assistant ♨️
 🛠 group multiple cards into one card without the borders
 
 
-#### [State Switch v1.9.1](https://github.com/thomasloven/lovelace-state-switch)
+#### [State Switch v1.9.3](https://github.com/thomasloven/lovelace-state-switch)
 🔹Dynamically replace lovelace cards depending on occasion
 
 
@@ -502,7 +498,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.3.0b4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.3.0b5-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -512,7 +508,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48090-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48619-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
