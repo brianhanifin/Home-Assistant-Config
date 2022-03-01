@@ -2117,6 +2117,7 @@ views:
         variables:
           ulm_card_power_outlet_consumption_sensor: sensor.family_room_fan_power
       - entity: media_player.tv_family_room
+        icon: mdi:television
         name: TV
         template: card_media_player_with_control
         type: custom:button-card
@@ -2413,17 +2414,17 @@ views:
         template: card_light_slider_collapse
         type: custom:button-card
         variables:
-          ulm_card_light_slider_collapse_name: Nerene's lamp
+          ulm_card_light_slider_collapse_name: West lamp
+      - entity: light.bedroom_east
+        template: card_light_slider_collapse
+        type: custom:button-card
+        variables:
+          ulm_card_light_slider_collapse_name: East lamp
       - entity: light.bedroom_table_lamp
         template: card_light_slider_collapse
         type: custom:button-card
         variables:
           ulm_card_light_slider_collapse_name: Table lamp
-      - entity: light.brian
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Brian's lamp
       - entity: fan.bedroom
         name: Fan
         template: card_power_outlet
@@ -3848,11 +3849,132 @@ views:
         type: custom:button-card
         variables:
           ulm_chip_back_path: /lovelace/home
-      - label: Status
-        name: Home Assistant
+      - name: Actions
         template: card_title
         type: custom:button-card
       type: horizontal-stack
+    - cards:
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.config_check
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:check-bold
+          ulm_card_script_title: Config
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.automation_reload
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:refresh-circle
+          ulm_card_script_title: Automation
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.script_reload
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:refresh-circle
+          ulm_card_script_title: Script
+      - tap_action:
+          action: call-service
+          confirmation:
+            text: Are you sure you want to Reboot the Virtual Machine?
+          service: script.turn_on
+          service_data:
+            entity_id: script.config_check_and_reboot_server
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:power-standby
+          ulm_card_script_title: Reboot VM
+      - tap_action:
+          action: call-service
+          confirmation:
+            text: Are you sure you want to Restart Home Assistant?
+          service: script.turn_on
+          service_data:
+            entity_id: script.config_check_and_restart
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:recycle
+          ulm_card_script_title: Restart
+      - tap_action:
+          action: navigate
+          navigation_path: ./home?disable_km&edit=1
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:pencil
+          ulm_card_script_title: Edit
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.refresh_count_sensors
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:cog-refresh
+          ulm_card_script_title: Sensor count
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.refresh_update_sensors
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:cog-refresh
+          ulm_card_script_title: Update sensors
+      - tap_action:
+          action: call-service
+          service: watchman.report
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:shield-half-full
+          ulm_card_script_title: Update watchman
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.ci_generate_fake_secrets
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:thought-bubble
+          ulm_card_script_title: Secrets generate
+      - tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.ci_generate_readme
+        template: card_script
+        type: custom:button-card
+        variables:
+          ulm_card_script_icon: mdi:github
+          ulm_card_script_title: Readme generate
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+    view_layout:
+      position: main
+  - cards:
+    - label: Status
+      name: Home Assistant
+      template: card_title
+      type: custom:button-card
     - card:
         cards:
         - content: '{{ states("sensor.update_message") }}
@@ -3973,6 +4095,8 @@ views:
       style: "ha-card {\n  border-radius: var(--border-radius);\n}\n"
       type: custom:stack-in-card
     type: vertical-stack
+    view_layout:
+      position: sidebar
   - cards:
     - name: Entity Counts
       template: card_title
@@ -4014,141 +4138,26 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - name: Actions
+    - icon: mdi-shield-half-full
+      name: <ha-icon icon="mdi:shield-half-full" style="height:1em"></ha-icon> Watchman
+        report
       template: card_title
       type: custom:button-card
-    - cards:
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.config_check
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:check-bold
-          ulm_card_script_title: Config
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.automation_reload
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:refresh-circle
-          ulm_card_script_title: Automation
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.script_reload
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:refresh-circle
-          ulm_card_script_title: Script
-      - tap_action:
-          action: call-service
-          confirmation:
-            text: Are you sure you want to Reboot the Virtual Machine?
-          service: script.turn_on
-          service_data:
-            entity_id: script.config_check_and_reboot_server
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:power-standby
-          ulm_card_script_title: Reboot VM
-      - tap_action:
-          action: call-service
-          confirmation:
-            text: Are you sure you want to Restart Home Assistant?
-          service: script.turn_on
-          service_data:
-            entity_id: script.config_check_and_restart
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:recycle
-          ulm_card_script_title: Restart
-      - tap_action:
-          action: navigate
-          navigation_path: ./home?disable_km&edit=1
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:pencil
-          ulm_card_script_title: Edit
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.ci_generate_fake_secrets
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:thought-bubble
-          ulm_card_script_title: Secrets gen
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.refresh_update_sensors
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:cog-refresh
-          ulm_card_script_title: Update sensors
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.refresh_count_sensors
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:cog-refresh
-          ulm_card_script_title: Sensor count
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.ci_generate_readme
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:github
-          ulm_card_script_title: Readme gen
-      - tap_action:
-          action: call-service
-          service: script.reload
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:refresh-circle
-          ulm_card_script_title: '!Script!'
-      columns: 3
-      square: false
-      type: grid
+    - content: '<h3>Missing Entities: {{ states.sensor.watchman_missing_entities.state
+        }}</h3>'
+      type: markdown
+    - content: "<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n      \
+        \    <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n  {%-\
+        \ for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
+        ) %}\n  <tr>\n    <td>{{ item.id }}</td>\n    <td><ha-icon icon=\"mdi:cloud-{%-\
+        \ if item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
+        \ else-%}question{%- endif -%}\"></ha-icon></td>\n    <td><a title=\"{{item.occurrences}}\"\
+        > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n  </tr>\n{%-\
+        \ endfor %}\n</table>"
+      type: markdown
     type: vertical-stack
     view_layout:
       position: main
-  - card_mod:
-      style:
-        ha-markdown:
-          $: "ha-markdown-element:first-of-type hr{\n  border-color: #303030;\n}\n"
-    content: '<h2> <ha-icon icon=''mdi:shield-half-full''></ha-icon> Watchman report<h2>
-      <h3>Missing Entities: {{ states.sensor.watchman_missing_entities.state }} </h3>
-      {%- for item in state_attr("sensor.watchman_missing_entities", "entities") %}
-      <hr> <table><tr> <td> <ha-icon icon=''mdi: {%- if item.state=="missing"-%}cloud-alert''
-      {%- elif item.state=="unavail" -%}cloud-off-outline'' {%- else-%}cloud-question''
-      {%- endif -%} ></ha-icon> {{ item.id }} [{{item.state}}] <a title="{{item.occurrences}}">
-      {{item.occurrences.split(''/'')[-1].split('':'')[0]}}</a> </td></tr></table>
-      {%- endfor %}'
-    type: markdown
-    view_layout:
-      position: sidebar
   icon: mdi:server
   path: system
   title: System
