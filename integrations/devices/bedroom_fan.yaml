@@ -130,12 +130,12 @@ script:
               and current_speed > 0
             }}'
             sequence:
-                - service: remote.send_command
-                  data:
-                    device: bedroom_fan
-                    command: power
-                  target:
-                    entity_id: remote.broadlink_bedroom
+              - service: remote.send_command
+                data:
+                  device: bedroom_fan
+                  command: power
+                target:
+                  entity_id: remote.broadlink_bedroom
         default:
           - alias: Turn leds on briefly.
             service: input_button.press
