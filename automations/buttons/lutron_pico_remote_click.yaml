@@ -9,24 +9,40 @@ trigger:
       action: press
 variables:
   remote: '{{ trigger.event.data.device_name|lower|replace(" ","_") }}'
-  button: '{{ trigger.event.data.button_number }}'
+  button_id: '{{ trigger.event.data.button_number }}'
   action: '{{ trigger.event.data.action }}'
 
-  commands:
+  buttons:
     2: "on"
     3: "middle"
     4: "off"
     5: "step_up"
     6: "step_down"
-  command: '{{ commands[button] }}'
+  button: '{{ buttons[button_id] }}'
 
   devices:
+    bedroom:
+      "on":
+        - light.bedroom_east
+        - light.bedroom_table_lamp
+      "off":
+        - light.bedroom
+        - light.bedroom_east
+        - light.bedroom_table_lamp
+        - fan.bedroom
+        - climate.bedroom
+        - switch.sound_machine
+
     dining_room:
       "on": "light.dining_room"
       "off": "light.dining_room"
-      middle: "group.kitchen_lights"
+      #middle: "group.kitchen_lights"
+      middle:
+        - light.kitchen
+        - light.kitchen_prep
       step_up: "light.dining_room"
       step_down: "light.dining_room"
+
     entry:
       "on": "light.home_entry"
       "off": "light.home_entry"
@@ -35,20 +51,41 @@ variables:
       step_down: "light.home_entry"
 
     play_room_1:
-      "on": "group.play_room_lights"
-      "off": "group.play_room_lights"
+      "on":
+        - light.play_room
+        - light.play_room_floor_lamp
+      "off":
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
       middle: "light.play_room_floor_lamp"
-      step_up: "group.play_room_lights"
-      step_down: "group.play_room_lights"
+      step_up:
+        - light.play_room
+        - light.play_room_floor_lamp
+      step_down:
+        - light.play_room
+        - light.play_room_floor_lamp
 
     play_room_2:
-      "on": "group.play_room_lights"
-      "off": "group.play_room_lights"
+      "on":
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+      "off":
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
       middle: "light.play_room_entry"
-      step_up: "group.play_room_lights"
-      step_down: "group.play_room_lights"
+      step_up:
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+      step_down:
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
 
-  device: '{{ devices[remote][command] }}'
+  device: '{{ devices[remote][button] }}'
 
 action:
   # - service: script.debug
@@ -56,32 +93,32 @@ action:
   #     title: '"{{ remote }}" click'
   #     message: |
   #       remote: {{ remote }}
-  #       button: {{ button }}
+  #       button_id: {{ button_id }}
   #       action: {{ action }}
 
   #       device: {{ device }}
-  #       command: {{ command }}
+  #       button: {{ button }}
   #     id: '{{ remote ~"_"~ as_timestamp(now()) }}'
 
   - choose:
-      - conditions: '{{ command in ["on","off"] and device != "" }}'
+      - conditions: '{{ button in ["on","off"] and device != "" }}'
         sequence:
-          - service: 'homeassistant.turn_{{ command }}'
+          - service: 'homeassistant.turn_{{ button }}'
             data:
               entity_id: '{{ device }}'
 
-      - conditions: '{{ command == "middle" and device != "" }}'
+      - conditions: '{{ button == "middle" and device != "" }}'
         sequence:
           - variables:
-              command: '{{ "off" if is_state(device,"on") else "on" }}'
+              button: '{{ "off" if is_state(device,"on") else "on" }}'
 
-          - service: 'homeassistant.turn_{{ command }}'
+          - service: 'homeassistant.turn_{{ button }}'
             data:
               entity_id: '{{ device }}'
 
-      - conditions: '{{ command in ["step_up","step_down"] and device != "" }}'
+      - conditions: '{{ button in ["step_up","step_down"] and device != "" }}'
         sequence:
           - service: homeassistant.turn_on
             data:
               entity_id: '{{ device }}'
-              brightness_step_pct: '{{ "-" if command == "step_down" }}20'
+              brightness_step_pct: '{{ "-" if button == "step_down" }}20'
