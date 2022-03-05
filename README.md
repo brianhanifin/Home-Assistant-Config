@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1244 total entities**, 
-including **676 sensors**.
+Our Home Assistant install has approximately **1299 total entities**, 
+including **725 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -246,7 +246,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
 
 
-#### [Holidays v1.7](https://github.com/bruxy70/Holidays/)
+#### [Holidays v1.7.1](https://github.com/bruxy70/Holidays/)
 
 📅 Custom Home Assistant integration for public holidays - also used for garbage_collection integration to automatically move scheduled events that fall on a public holiday (by an automation blueprint)
 Authors: [@bruxy70](https://github.com/bruxy70).
@@ -318,13 +318,13 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>29 lovelace plugins</summary>
+<details><summary>30 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
 
 
-#### [Auto Entities v1.9.1](https://github.com/thomasloven/lovelace-auto-entities)
+#### [Auto Entities v1.10.1](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
 
 
@@ -372,7 +372,7 @@ Weather condition card (Lovelace) for Home Assistant.
 🙈 Hides the Home Assistant header and/or sidebar
 
 
-#### [Layout Card v2.3.1](https://github.com/thomasloven/lovelace-layout-card)
+#### [Layout Card v2.4.1](https://github.com/thomasloven/lovelace-layout-card)
 🔹 Get more control over the placement of lovelace cards.
 
 
@@ -386,6 +386,10 @@ A custom Lovelace text input row for use in entities cards
 
 #### [Mini Graph Card v0.11.0](https://github.com/kalkih/mini-graph-card)
 Minimalistic graph card for Home Assistant Lovelace UI
+
+
+#### [More Info Card](https://github.com/thomasloven/lovelace-more-info-card)
+🔹 Display the more-info dialog of any entity as a lovelace card
 
 
 #### [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
@@ -439,7 +443,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 addons</summary>
 
-#### ESPHome v2022.2.5
+#### ESPHome v2022.2.6
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -463,7 +467,7 @@ Manage your Docker environment with ease
 Expose Home Assistant folders with SMB/CIFS
 
 
-#### SDR to Home Assistant v0.1.11b
+#### SDR to Home Assistant v0.1.13b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 
 </details>
@@ -498,7 +502,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.3.0b5-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.3.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -508,7 +512,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48619-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48197-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
