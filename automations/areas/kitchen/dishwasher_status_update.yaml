@@ -13,12 +13,21 @@ trigger:
     for:
       seconds: 30
 
-  # Drying when temp is greater than 10 degrees above kitchen temperature. 
+  # Drying when temp is greater than 15 degrees above kitchen temperature. 
+  # - id: Drying
+  #   platform: numeric_state
+  #   entity_id: sensor.dishwasher_temperature
+  #   value_template: '{{ state.attributes.value - 15 }}'
+  #   above: sensor.kitchen_temperature
   - id: Drying
-    platform: numeric_state
-    entity_id: sensor.dishwasher_temperature
-    value_template: '{{ state - 10 }}'
-    above: sensor.kitchen_temperature
+    platform: template
+    value_template: '{{
+        is_state("binary_sensor.dishwasher_moving","off") and
+        states("sensor.kitchen_temperature")|int <
+          (states("sensor.dishwasher_temperature")|int - 15)
+      }}'
+    for:
+      minutes: 10
 
   # Clean when status has been "Drying" for a bit.
   - id: Clean
@@ -26,7 +35,7 @@ trigger:
     entity_id: input_select.dishwasher_status
     to: Drying
     for:
-      minutes: 30
+      minutes: 60
 
   # Dirty when door is open for longer than 1 minute.
   - id: Dirty
@@ -37,9 +46,8 @@ trigger:
     for:
       minutes: 1
 variables:
-  trigger_id: '{{ trigger.id }}'
+  status: '{{ trigger.id }}'
   previous_status: '{{ states("input_select.dishwasher_status") }}'
-  status: '{{ trigger_id }}'
 
   notify_title: '{{ "Dishwasher: " ~ status|lower if status in ["Clean","Dirty"] }}'
   notify_message: '{{ "The dishes are " ~ status|lower ~ "." if status in ["Clean","Dirty"] }}'
