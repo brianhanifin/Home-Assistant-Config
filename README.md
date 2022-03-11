@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1299 total entities**, 
-including **725 sensors**.
+Our Home Assistant install has approximately **1300 total entities**, 
+including **730 sensors**.
 
-<details><summary>24 Custom integrations</summary>
+<details><summary>25 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -294,6 +294,12 @@ Authors: [@djtimca](https://github.com/djtimca).
 Authors: [@pnbruckner](https://github.com/pnbruckner).
 
 
+#### [UI Lovelace Minimalist v0.0.6-hotfix2](https://ui-lovelace-minimalist.github.io/UI/)
+
+
+Authors: [@stokkie90](https://github.com/stokkie90).
+
+
 #### [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
 
 
@@ -372,7 +378,7 @@ Weather condition card (Lovelace) for Home Assistant.
 🙈 Hides the Home Assistant header and/or sidebar
 
 
-#### [Layout Card v2.4.1](https://github.com/thomasloven/lovelace-layout-card)
+#### [Layout Card v2.4.2](https://github.com/thomasloven/lovelace-layout-card)
 🔹 Get more control over the placement of lovelace cards.
 
 
@@ -408,7 +414,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 🔒 Apply restrictions to Lovelace cards
 
 
-#### [Scheduler Card v2.3.3](https://github.com/nielsfaber/scheduler-card)
+#### [Scheduler Card v2.3.4](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 
@@ -502,7 +508,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.3.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.3.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -512,7 +518,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-48197-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-55999-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
