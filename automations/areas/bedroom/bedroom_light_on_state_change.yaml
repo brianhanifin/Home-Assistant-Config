@@ -3,10 +3,25 @@ alias: Bedroom light on state change
 id: bedroom_light_on_state_change
 mode: single
 trigger:
-  - platform: state
+  - id: light_off
+    platform: state
     entity_id: light.bedroom
     from: "on"
     to: "off"
+
+  - id: light_on
+    platform: state
+    entity_id: light.bedroom
+    from: "off"
+    to: "on"
+
+  - id: secondary_light_on
+    platform: state
+    entity_id:
+      - light.bedroom_east
+      - light.bedroom_table_lamp
+    from: "off"
+    to: "on"
 
 variables:
   # old_state: '{{ trigger.from_state.state|lower }}'
@@ -20,7 +35,6 @@ variables:
   timezone_offset: '{{ now_timestamp|timestamp_custom("%z") }}'
   wakeup_time: '{{ states("input_datetime.event_light_wakeup_nerene") }}'
   wakeup: '{{ now_timestamp | timestamp_custom("%Y-%m-%d "+wakeup_time+timezone_offset, true) }}'
-  wakeup_timestamp: '{{ as_timestamp(wakeup) }}'
   wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) | default(0)|int }}'
   near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
 
@@ -32,16 +46,20 @@ action:
   #       new_state: {{ new_state }}
 
   - choose:
-      - conditions: '{{ light_sync_enabled == "on" }}'
+      - conditions:
+          - '{{ trigger.id == "light_off" }}'
+          - '{{ light_sync_enabled == "on" }}'
         sequence:
           - service: light.turn_off
-            entity_id:
-              - light.bedroom_east
-              - light.bedroom_table_lamp
+            target:
+              entity_id:
+                - light.bedroom_east
+                - light.bedroom_table_lamp
 
   - choose:
       # Try to only turn the fan and sound machine off if Nerene is on her way out the door for work.
       - conditions:
+          - '{{ trigger.id == "light_off" }}'
           - '{{ nerene_battery_charging == False }}'
           - '{{ near_wakeup == True }}'
         sequence:
@@ -49,3 +67,23 @@ action:
             entity_id:
               - fan.bedroom
               - switch.sound_machine
+
+  - choose:
+      - conditions: '{{ trigger.id == "light_on" }}'
+        sequence:
+          - service: light.turn_on
+            target:
+              entity_id:
+                - light.bedroom
+                - light.bedroom_east
+                - light.bedroom_table_lamp
+            data:
+              brightness: 255
+
+      - conditions: '{{ trigger.id == "secondary_light_on" }}'
+        sequence:
+          - service: light.turn_on
+            target:
+              entity_id: '{{ trigger.to_state.entity_id }}'
+            data:
+              brightness: 255
