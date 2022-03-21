@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1300 total entities**, 
-including **730 sensors**.
+Our Home Assistant install has approximately **1235 total entities**, 
+including **667 sensors**.
 
 <details><summary>25 Custom integrations</summary>
 
@@ -228,7 +228,7 @@ Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Google Home v1.9.8](https://github.com/leikoilja/ha-google-home)
+#### [Google Home v1.9.9](https://github.com/leikoilja/ha-google-home)
 
 Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
@@ -240,7 +240,7 @@ HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [HASS.Agent Notifier v2021.12.21](https://github.com/LAB02-Research/HASS.Agent-Notifier)
+#### [HASS.Agent Notifier v2022.3.15](https://github.com/LAB02-Research/HASS.Agent-Notifier)
 
 
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
@@ -264,7 +264,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.5.0](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.6.0](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -276,7 +276,7 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 Authors: [@nielsfaber](https://github.com/nielsfaber).
 
 
-#### [SmartThinQ LGE Sensors v0.12.10](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.12.12](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -294,7 +294,7 @@ Authors: [@djtimca](https://github.com/djtimca).
 Authors: [@pnbruckner](https://github.com/pnbruckner).
 
 
-#### [UI Lovelace Minimalist v0.0.6-hotfix2](https://ui-lovelace-minimalist.github.io/UI/)
+#### [UI Lovelace Minimalist v0.0.7](https://ui-lovelace-minimalist.github.io/UI/)
 
 
 Authors: [@stokkie90](https://github.com/stokkie90).
@@ -330,7 +330,7 @@ Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 Custom calendar card for Home Assistant with Lovelace
 
 
-#### [Auto Entities v1.10.1](https://github.com/thomasloven/lovelace-auto-entities)
+#### [Auto Entities v1.11.0](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
 
 
@@ -346,7 +346,7 @@ Custom calendar card for Home Assistant with Lovelace
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
 
-#### [Card Mod v3.1.2](https://github.com/thomasloven/lovelace-card-mod)
+#### [Card Mod v3.1.3](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 
@@ -366,7 +366,7 @@ Show a notification count badge.
 🔹 A foldable row for entities card, containing other rows
 
 
-#### [Frigate Card v2.1.0](https://github.com/dermotduffy/frigate-hass-card)
+#### [Frigate Card v3.0.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
 
@@ -438,7 +438,7 @@ A different take on the thermostat card for Home Assistant ♨️
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
 
-#### [Timer Bar Card v1.16](https://github.com/rianadon/timer-bar-card)
+#### [Timer Bar Card v1.17](https://github.com/rianadon/timer-bar-card)
 A progress bar display for Home Assistant timers
 
 
@@ -449,7 +449,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 addons</summary>
 
-#### ESPHome v2022.2.6
+#### ESPHome v2022.3.0
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -508,7 +508,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.3.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.3.5-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -518,7 +518,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-55999-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-56702-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
