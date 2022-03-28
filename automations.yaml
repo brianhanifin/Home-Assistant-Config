@@ -440,7 +440,7 @@
         data:
           transition: 0
         target:
-          device_id: 8bef4ccfe78c1356e14212171ff1bfc7
+          entity_id: light.bedroom
       button_2_single:
       - service: light.toggle
         data:
@@ -460,10 +460,21 @@
         target:
           device_id: ca15d133b0892224f12740ec003bf25c
       button_3_single:
-      - service: fan.toggle
-        target:
-          entity_id: fan.bedroom
-        data: {}
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.bedroom_fan_power
+            state: 'on'
+          sequence:
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.bedroom
+        default:
+        - service: fan.turn_on
+          data: {}
+          target:
+            entity_id: fan.bedroom
       button_4_single:
       - service: switch.toggle
         target:
@@ -504,7 +515,7 @@
         data:
           transition: 0
         target:
-          device_id: 8bef4ccfe78c1356e14212171ff1bfc7
+          entity_id: light.bedroom
       button_2_single:
       - service: light.toggle
         data:
@@ -524,10 +535,21 @@
         target:
           device_id: ca15d133b0892224f12740ec003bf25c
       button_3_single:
-      - service: fan.toggle
-        target:
-          entity_id: fan.bedroom
-        data: {}
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.bedroom_fan_power
+            state: 'on'
+          sequence:
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.bedroom
+        default:
+        - service: fan.turn_on
+          data: {}
+          target:
+            entity_id: fan.bedroom
       button_4_single:
       - service: switch.toggle
         target:

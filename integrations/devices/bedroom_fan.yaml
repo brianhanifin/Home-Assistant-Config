@@ -65,19 +65,6 @@ automation:
         data:
           value: '{{ percentage }}'
 
-  - alias: Bedroom fan led off
-    id: bedroom_fan_led_off
-    trigger:
-      - platform: state
-        entity_id: fan.bedroom
-        to: 'on'
-    action:
-      - delay:
-          seconds: 10
-      - service: input_button.press
-        target:
-          entity_id: input_button.bedroom_fan_led_toggle
-
   - alias: Bedroom fan led toggle
     id: bedroom_fan_led_toggle
     trigger:
@@ -122,6 +109,11 @@ script:
       #       chosen_speed: {{ chosen_speed }}
       #       current_speed: {{ current_speed }}
       #       step_difference: {{ step_difference }}
+
+      - alias: Turn leds back on.
+        service: input_button.press
+        target:
+          entity_id: input_button.bedroom_fan_led_toggle
       - choose:
           - alias: "Turn power off."
             conditions: '{{
@@ -130,17 +122,14 @@ script:
               and current_speed > 0
             }}'
             sequence:
-              - service: remote.send_command
+              - alias: Turn power off.
+                service: remote.send_command
                 data:
                   device: bedroom_fan
                   command: power
                 target:
                   entity_id: remote.broadlink_bedroom
         default:
-          - alias: Turn leds on briefly.
-            service: input_button.press
-            target:
-              entity_id: input_button.bedroom_fan_led_toggle
           - alias: "Send fan speed change signals."
             repeat:
               count: '{{ step_difference|abs }}'
@@ -155,7 +144,8 @@ script:
                     milliseconds: 500
           - delay:
               seconds: 5
-          - alias: Turn leds off after 10 second delay.
+
+          - alias: Turn leds off after a delay.
             service: input_button.press
             target:
               entity_id: input_button.bedroom_fan_led_toggle
@@ -190,15 +180,27 @@ fan:
       friendly_name: Bedroom fan
       unique_id: bedroom_fan
       value_template: '{{ states("binary_sensor.bedroom_fan_power") }}'
-      turn_on:
-        - service: remote.send_command
+      turn_on:        
+        - alias: Turn power on.
+          service: remote.send_command
           data:
             device: bedroom_fan
             command: power
           target:
             entity_id: remote.broadlink_bedroom
+        - delay:
+            seconds: 5
+        - alias: Turn leds off.
+          service: input_button.press
+          target:
+            entity_id: input_button.bedroom_fan_led_toggle
       turn_off:
-        - service: remote.send_command
+        - alias: Turn leds back on.
+          service: input_button.press
+          target:
+            entity_id: input_button.bedroom_fan_led_toggle
+        - alias: Turn power off.
+          service: remote.send_command
           data:
             device: bedroom_fan
             command: power
