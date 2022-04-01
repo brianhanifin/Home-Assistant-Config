@@ -22,24 +22,27 @@ sequence:
   #       entity_id: input_boolean.guest_mode
   #       state: "on"
 
-  - choose:
-      - conditions: '{{ media_player.startswith("group") }}'
-        sequence:
-          - service: script.say_speaker_group
-            data:
-              media_player: "{{ media_player }}"
-              message: "{{ briefing }}"
-
-    default:
-      - service: script.say_cloud
-        data:
-          media_player: "{{ media_player }}"
-          message: "{{ briefing }}"
+  # - choose:
+  #     - conditions: '{{ media_player.startswith("group") }}'
+  #       sequence:
+  #         - service: script.say_speaker_group
+  #           data:
+  #             media_player: "{{ media_player }}"
+  #             message: "{{ briefing }}"
+  #   default:
+  #     - service: script.say_cloud
+  #       data:
+  #         media_player: "{{ media_player }}"
+  #         message: "{{ briefing }}"
+  - service: script.say_cloud
+    data:
+      media_player: "{{ media_player }}"
+      message: "{{ briefing }}"
 
 fields:
   media_player:
     description: Media Player entity_id or group id.
-    example: media_player.google_kitchen or group.google_welcome
+    example: media_player.google_kitchen or media_player.google_welcome
     default: media_player.google_family_room
     selector:
       text:
