@@ -1,1721 +1,23 @@
-button_card_templates:
-  battery:
-    template: card_battery
-    variables:
-      ulm_card_battery_attribute: battery
-  binary_sensor:
-    template: card_binary_sensor
-  blue:
-    state:
-    - styles:
-        card:
-        - background-color: rgba(var(--color-background-blue), var(--opacity-bg))
-        icon:
-        - color: rgba(var(--color-blue),1)
-        img_cell:
-        - background-color: rgba(var(--color-blue), 0.2)
-        label:
-        - color: rgba(var(--color-blue-text),1)
-        name:
-        - color: rgba(var(--color-blue-text),1)
-      value: 'on'
-  blue_no_state:
-    styles:
-      card:
-      - background-color: rgba(var(--color-background-blue), var(--opacity-bg))
-      icon:
-      - color: rgba(var(--color-blue),1)
-      img_cell:
-      - background-color: rgba(var(--color-blue), 0.2)
-      label:
-      - color: rgba(var(--color-blue-text),1)
-      name:
-      - color: rgba(var(--color-blue-text),1)
-  card_battery:
-    icon: "[[[\n  var icon = \"mdi:help-circle-outline\";\n  var battery = variables.ulm_card_battery_attribute\
-      \ !== null\n    ? states[entity.entity_id].attributes[variables.ulm_card_battery_attribute]\n\
-      \    : states[entity.entity_id].state;\n\n  if (battery == 100) {\n    icon\
-      \ = \"mdi:battery\";\n  } else if (battery >= 90) {\n    icon = \"mdi:battery-90\"\
-      ;\n  } else if (battery >= 80) {\n    icon = \"mdi:battery-80\";\n  } else if\
-      \ (battery >= 70) {\n    icon = \"mdi:battery-70\";\n  } else if (battery >=\
-      \ 60) {\n    icon = \"mdi:battery-60\";\n  } else if (battery >= 50) {\n   \
-      \ icon = \"mdi:battery-50\";\n  } else if (battery >= 40) {\n    icon = \"mdi:battery-40\"\
-      ;\n  } else if (battery >= 30) {\n    icon = \"mdi:battery-30\";\n  } else if\
-      \ (battery >= 20) {\n    icon = \"mdi:battery-20\";\n  } else if (battery >=\
-      \ 10) {\n    icon = \"mdi:battery-10\";\n  } else {\n    icon = \"mdi:battery-outline\"\
-      ;\n  }\n\n  return icon;\n]]]\n"
-    label: "[[[\n  var battery = variables.ulm_card_battery_attribute !== null\n \
-      \   ? states[entity.entity_id].attributes[variables.ulm_card_battery_attribute]\n\
-      \    : states[entity.entity_id].state;\n  return battery + \"%\";\n]]]\n"
-    name: "[[[\n  return states[entity.entity_id].attributes.friendly_name;\n]]]\n"
-    styles:
-      grid:
-      - grid-template-areas: '"i l" "i n"'
-      - grid-template-columns: min-content auto
-      - grid-template-rows: min-content min-content
-      icon:
-      - color: rgba(var(--color-theme),0.9)
-      label:
-      - align-self: end
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      - filter: opacity(100%)
-      name:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bolder
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-    tap_action:
-      action: more-info
-    template:
-    - icon_info_bg
-    variables:
-      ulm_card_battery_attribute: null
-  card_binary_sensor:
-    name: '[[[ return entity.attributes.friendly_name != '''' ? entity.attributes.friendly_name
-      : entity.entity_id ]]]'
-    show_last_changed: true
-    template:
-    - icon_info_bg
-    - blue
-  card_binary_sensor_alert:
-    name: '[[[ return entity.attributes.friendly_name != '''' ? entity.attributes.friendly_name
-      : entity.entity_id ]]]'
-    show_last_changed: true
-    template:
-    - icon_info_alert
-  card_cover_with_buttons:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return variables.ulm_card_cover_with_buttons_entity ]]]'
-          name: '[[[ return variables.ulm_card_cover_with_buttons_name ]]]'
-          tap_action:
-            action: more-info
-          template:
-          - icon_info
-          - ulm_language_variables
-          - cover
-          type: custom:button-card
-      item2:
-        card:
-          custom_fields:
-            item1:
-              card:
-                icon: mdi:arrow-down
-                tap_action:
-                  action: call-service
-                  service: cover.close_cover
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_cover_with_buttons_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-            item2:
-              card:
-                icon: mdi:pause
-                tap_action:
-                  action: call-service
-                  service: cover.stop_cover
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_cover_with_buttons_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-            item3:
-              card:
-                icon: mdi:arrow-up
-                tap_action:
-                  action: call-service
-                  service: cover.open_cover
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_cover_with_buttons_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-          template: list_items
-          type: custom:button-card
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"item1" "item2"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content  min-content
-      - row-gap: 12px
-    triggers_update:
-    - '[[[ variables.ulm_card_cover_with_buttons_entity ]]]'
-    variables:
-      ulm_card_cover_with_buttons_name: n/a
-  card_generic:
-    label: "[[[\n  var unit = entity.attributes.unit_of_measurement != null ? ' '\
-      \ + entity.attributes.unit_of_measurement : ''\n  if (entity.state == 'on')\
-      \ {\n    return variables.ulm_on;\n  } else if (entity.state == 'off') {\n \
-      \   return variables.ulm_off;\n  } else if (entity.state == 'unavailable') {\n\
-      \    return variables.ulm_unavailable;\n  } else if (entity.state == 'idle')\
-      \ {\n    return variables.ulm_idle;\n  } else if (entity.state == 'open') {\n\
-      \    return variables.ulm_open;\n  } else if (entity.state == 'closed') {\n\
-      \    return variables.ulm_closed;\n  } else {\n    return entity.state + unit;\n\
-      \  }\n]]]\n"
-    styles:
-      grid:
-      - grid-template-areas: '"i l" "i n"'
-      - grid-template-columns: min-content auto
-      - grid-template-rows: min-content min-content
-      icon:
-      - color: rgba(var(--color-theme),0.9)
-      label:
-      - align-self: end
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      - filter: opacity(100%)
-      name:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bolder
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-    template:
-    - icon_info_bg
-    - ulm_language_variables
-  card_generic_swap:
-    label: "[[[\n  var unit = entity.attributes.unit_of_measurement != null ? ' '\
-      \ + entity.attributes.unit_of_measurement : ''\n  if (entity.state == 'on')\
-      \ {\n    return variables.ulm_on;\n  } else if (entity.state == 'off') {\n \
-      \   return variables.ulm_off;\n  } else if (entity.state == 'unavailable') {\n\
-      \    return variables.ulm_unavailable;\n  } else if (entity.state == 'idle')\
-      \ {\n    return variables.ulm_idle;\n  } else if (entity.state == 'open') {\n\
-      \    return variables.ulm_open;\n  } else if (entity.state == 'closed') {\n\
-      \    return variables.ulm_closed;\n  } else {\n    return entity.state + unit;\n\
-      \  }\n]]]\n"
-    styles:
-      grid:
-      - grid-template-areas: '"i n" "i l"'
-      - grid-template-columns: min-content auto
-      - grid-template-rows: min-content min-content
-      icon:
-      - color: rgba(var(--color-theme),0.9)
-      label:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bolder
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-      name:
-      - align-self: end
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      - filter: opacity(100%)
-    template:
-    - icon_info_bg
-    - ulm_language_variables
-  card_graph:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return variables.ulm_card_graph_entity ]]]'
-          name: '[[[ return variables.ulm_card_graph_name ]]]'
-          styles:
-            card:
-            - box-shadow: none
-            - border-radius: var(--border-radius) var(--border-radius) 0px 0px
-            - padding: 12px
-          template:
-          - icon_info
-          - card_generic
-          type: custom:button-card
-      item2:
-        card:
-          entities:
-          - entity: '[[[ return variables.ulm_card_graph_entity ]]]'
-          line_color: '[[[ return variables.ulm_card_graph_color ]]]'
-          show:
-            icon: false
-            legend: false
-            name: false
-            state: false
-          style: "ha-card {\n  box-shadow: none;\n  border-radius: var(--border-radius);\n\
-            }\n"
-          type: custom:mini-graph-card
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 0px
-      grid:
-      - grid-template-areas: '"item1" "item2"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content  min-content
-    triggers_update:
-    - '[[[ variables.ulm_card_graph_entity ]]]'
-    variables:
-      ulm_card_graph_color: var(--info-color)
-      ulm_card_graph_name: n/a
-  card_input_boolean:
-    label: "[[[\n  if (entity.state != 'unavailable'){\n    if (entity.state == 'on'){\n\
-      \      return variables.ulm_on;\n    } else {\n      return variables.ulm_off;\n\
-      \    }\n  } else {\n    return variables.ulm_unavailable;\n  }\n]]]\n"
-    name: '[[[ return entity.attributes.friendly_name != '''' ? entity.attributes.friendly_name
-      : entity.entity_id ]]]'
-    template:
-    - icon_info_bg
-    - ulm_language_variables
-    - blue
-  card_input_number:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return variables.ulm_card_input_number_entity ]]]'
-          name: '[[[ return variables.ulm_card_input_number_name ]]]'
-          tap_action:
-            action: more-info
-          template:
-          - icon_info
-          - ulm_language_variables
-          - input_number
-          type: custom:button-card
-      item2:
-        card:
-          custom_fields:
-            item1:
-              card:
-                icon: mdi:arrow-down
-                tap_action:
-                  action: call-service
-                  service: input_number.decrement
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_input_number_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-            item2:
-              card:
-                entity: '[[[ return variables.ulm_card_input_number_entity ]]]'
-                tap_action:
-                  action: call-service
-                  service: cover.stop_cover
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_input_number_entity
-                      ]]]'
-                template: widget_text
-                type: custom:button-card
-            item3:
-              card:
-                icon: mdi:arrow-up
-                tap_action:
-                  action: call-service
-                  service: input_number.increment
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_input_number_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-          template: list_items
-          type: custom:button-card
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '''item1'' ''item2'''
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content  min-content
-      - row-gap: 12px
-    triggers_update: all
-    variables:
-      ulm_card_input_number_name: n/a
-  card_light:
-    hold_action:
-      action: more-info
-    label: "[[[ \n  if (entity.state !='unavailable'){\n    if (entity.state =='off'){\n\
-      \      return variables.ulm_off;  \n    } else if (entity.state == 'on'){\n\
-      \      if (entity.attributes.brightness != null){\n        var bri = Math.round(entity.attributes.brightness\
-      \ / 2.55);\n        return (bri ? bri : '0') + '%';\n      } else {\n      \
-      \  return variables.ulm_on\n      } \n    }\n  } else {\n    return variables.ulm_unavailable;\n\
-      \  }\n]]]"
-    tap_action:
-      action: toggle
-    template:
-    - icon_info_bg
-    - yellow
-    - ulm_language_variables
-  card_light_slider:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return entity.entity_id ]]]'
-          label: "[[[  \n  if (entity.state !='unavailable'){\n    if (entity.state\
-            \ =='off'){\n      return variables.ulm_off;  \n    } else if (entity.state\
-            \ == 'on'){\n      if (entity.attributes.brightness != null){\n      \
-            \  var bri = Math.round(entity.attributes.brightness / 2.55);\n      \
-            \  return (bri ? bri : '0') + '%';\n      } else {\n        return variables.ulm_on\n\
-            \      } \n    }\n  } else {\n    return variables.ulm_unavailable;\n\
-            \  }\n]]]"
-          name: '[[[ return variables.ulm_card_light_slider_name ]]]'
-          styles:
-            card:
-            - box-shadow: none
-            - border-radius: var(--border-radius) var(--border-radius) var(--border-radius)
-                var(--border-radius)
-            - padding: 0px
-          template:
-          - icon_info
-          - yellow_slider
-          type: custom:button-card
-      item2:
-        card:
-          card_mod: null
-          entity: '[[[ return entity.entity_id ]]]'
-          height: 42px
-          mainSliderColor: rgba(var(--color-yellow),1)
-          mainSliderColorOff: rgba(var(--color-theme),0.05)
-          radius: 14px
-          secondarySliderColor: rgba(var(--color-yellow),0.2)
-          secondarySliderColorOff: rgba(var(--color-theme),0.05)
-          style: "ha-card {\n  border-radius: 14px;\n  box-shadow: none;\n}\n"
-          thumbHorizontalPadding: 0px
-          thumbVerticalPadding: 0px
-          thumbWidth: 0px
-          type: custom:my-slider
-    show_icon: false
-    show_label: false
-    show_name: false
-    state:
-    - operator: template
-      styles:
-        card:
-        - background-color: rgba(var(--color-background-yellow),var(--opacity-bg))
-      value: '[[[ return entity.state == ''on'' ]]]'
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"item1" "item2"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content min-content
-      - row-gap: 12px
-    template:
-    - ulm_language_variables
-    variables:
-      ulm_card_light_slider_name: '[[[ return entity.attributes.friendly_name ]]]'
-  card_light_slider_collapse:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return entity.entity_id ]]]'
-          label: "[[[  \n  if (entity.state !='unavailable'){\n    if (entity.state\
-            \ =='off'){\n      return variables.ulm_off;  \n    } else if (entity.state\
-            \ == 'on'){\n      if (entity.attributes.brightness != null){\n      \
-            \  var bri = Math.round(entity.attributes.brightness / 2.55);\n      \
-            \  return (bri ? bri : '0') + '%';\n      } else {\n        return variables.ulm_on\n\
-            \      } \n    }\n  } else {\n    return variables.ulm_unavailable;\n\
-            \  }\n]]]"
-          name: '[[[ return variables.ulm_card_light_slider_collapse_name ]]]'
-          styles:
-            card:
-            - box-shadow: none
-            - border-radius: var(--border-radius) var(--border-radius) var(--border-radius)
-                var(--border-radius)
-            - padding: 0px
-          template:
-          - icon_info
-          - yellow_slider
-          type: custom:button-card
-      item2:
-        card:
-          card:
-            card_mod: null
-            entity: '[[[ return entity.entity_id ]]]'
-            height: 42px
-            mainSliderColor: rgba(var(--color-yellow),1)
-            mainSliderColorOff: rgba(var(--color-theme),0.05)
-            radius: 14px
-            secondarySliderColor: rgba(var(--color-yellow),0.2)
-            secondarySliderColorOff: rgba(var(--color-theme),0.05)
-            style: "ha-card {\n  border-radius: 14px;\n  box-shadow: none;\n}\n"
-            thumbHorizontalPadding: 0px
-            thumbVerticalPadding: 0px
-            thumbWidth: 0px
-            type: custom:my-slider
-          conditions:
-          - entity: '[[[ return entity.entity_id ]]]'
-            state: 'on'
-          type: conditional
-    show_icon: false
-    show_label: false
-    show_name: false
-    state:
-    - operator: template
-      styles:
-        card:
-        - background-color: rgba(var(--color-background-yellow),var(--opacity-bg))
-        grid:
-        - row-gap: 12px
-      value: '[[[ return entity.state == ''on'' ]]]'
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"item1" "item2"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content min-content
-    template:
-    - ulm_language_variables
-    variables:
-      ulm_card_light_slider_collapse_name: '[[[ return entity.attributes.friendly_name
-        ]]]'
-  card_light_slider_horizontal:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return entity.entity_id ]]]'
-          label: "[[[  \n  if (entity.state !='unavailable'){\n    if (entity.state\
-            \ =='off'){\n      return variables.ulm_off;  \n    } else if (entity.state\
-            \ == 'on'){\n      if (entity.attributes.brightness != null){\n      \
-            \  var bri = Math.round(entity.attributes.brightness / 2.55);\n      \
-            \  return (bri ? bri : '0') + '%';\n      } else {\n        return variables.ulm_on\n\
-            \      } \n    }\n  } else {\n    return variables.ulm_unavailable;\n\
-            \  }\n]]]"
-          name: '[[[ return variables.ulm_card_light_slider_horizontal_name ]]]'
-          styles:
-            card:
-            - box-shadow: none
-            - border-radius: var(--border-radius) var(--border-radius) var(--border-radius)
-                var(--border-radius)
-            - padding: 0px
-          template:
-          - icon_info
-          - yellow_slider
-          type: custom:button-card
-      item2:
-        card:
-          card_mod: null
-          entity: '[[[ return entity.entity_id ]]]'
-          height: 42px
-          mainSliderColor: rgba(var(--color-yellow),1)
-          mainSliderColorOff: rgba(var(--color-theme),0.05)
-          radius: 14px
-          secondarySliderColor: rgba(var(--color-yellow),0.2)
-          secondarySliderColorOff: rgba(var(--color-theme),0.05)
-          style: "ha-card {\n  border-radius: 14px;\n  box-shadow: none;\n}\n"
-          thumbHorizontalPadding: 0px
-          thumbVerticalPadding: 0px
-          thumbWidth: 0px
-          type: custom:my-slider
-    show_icon: false
-    show_label: false
-    show_name: false
-    state:
-    - operator: template
-      styles:
-        card:
-        - background-color: rgba(var(--color-background-yellow),var(--opacity-bg))
-      value: '[[[ return entity.state == ''on'' ]]]'
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"item1 item2"'
-      - grid-template-columns: 1fr 1fr
-      - grid-template-rows: 1fr
-    template:
-    - ulm_language_variables
-    variables:
-      ulm_card_light_slider_horizontal_name: '[[[ return entity.attributes.friendly_name
-        ]]]'
-  card_media_player:
-    icon: "[[[\n  var icon = 'mdi:speaker';\n  if(entity.attributes.app_name){\n \
-      \   var app = entity.attributes.app_name.toLowerCase();\n    if(app == 'spotify'){\n\
-      \      var icon = 'mdi:spotify';\n    } else if(app == 'google podcasts'){\n\
-      \      var icon = 'mdi:google-podcast';\n    } else if(app == 'plex'){\n   \
-      \   var icon = 'mdi:plex';\n    } else if(app == 'soundcloud'){\n      var icon\
-      \ = 'mdi:soundcloud';\n    } else if(app == 'youtube music'){\n      var icon\
-      \ = 'mdi:youtube';\n    } else if (app == 'oto music'){\n      var icon = 'mdi:music-circle';\n\
-      \    }\n  }\n  return icon;\n]]]\n"
-    label: "[[[ \n    if (entity.state == 'off'){\n      return variables.ulm_off;\n\
-      \    } else {\n      return variables.ulm_on;\n    }\n]]]\n"
-    state:
-    - label: "[[[ \n  var label = variables.ulm_on;\n  if(states[entity.entity_id].attributes.media_album_name){\n\
-        \    var label = states[entity.entity_id].attributes.media_album_name;\n \
-        \ }\n  return label;\n]]]\n"
-      name: '[[[ return states[entity.entity_id].attributes.media_title; ]]]'
-      operator: template
-      value: '[[[ return entity.state != ''off'' ]]]'
-    template:
-    - icon_info_bg
-    - ulm_language_variables
-  card_media_player_with_control:
-    icon: "[[[\n    var icon = 'mdi:speaker';\n    if(entity.attributes.app_name){\n\
-      \      var app = entity.attributes.app_name.toLowerCase();\n      if(app ==\
-      \ 'spotify'){\n        var icon = 'mdi:spotify';\n      } else if(app == 'google\
-      \ podcasts'){\n        var icon = 'mdi:google-podcast';\n      } else if(app\
-      \ == 'plex'){\n        var icon = 'mdi:plex';\n      } else if(app == 'soundcloud'){\n\
-      \        var icon = 'mdi:soundcloud';\n      } else if(app == 'youtube music'){\n\
-      \        var icon = 'mdi:youtube';\n      } else if (app == 'oto music'){\n\
-      \        var icon = 'mdi:music-circle';\n      }\n    }\n    return icon;\n\
-      ]]]\n"
-    label: "[[[ \n    if (entity.state == 'off'){\n      return variables.ulm_off;\n\
-      \    } else {\n      return variables.ulm_on;\n    }\n]]]\n"
-    state:
-    - label: "[[[ \n    var label = variables.ulm_on;\n    if(states[entity.entity_id].attributes.media_album_name){\n\
-        \      var label = states[entity.entity_id].attributes.media_album_name;\n\
-        \    }\n    return label;\n]]]\n"
-      name: '[[[ return states[entity.entity_id].attributes.media_title; ]]]'
-      operator: template
-      styles:
-        icon:
-        - color: white
-        img_cell:
-        - background-color: rgba(var(--color-theme),0.0)
-        label:
-        - color: white
-        - filter: opacity(100%)
-        name:
-        - color: white
-      value: '[[[ return entity.state != ''off'' ]]]'
-    styles:
-      card:
-      - background-blend-mode: multiply
-      - background: '[[[ return states[entity.entity_id].attributes.entity_picture
-          != null ? ''center / cover url('' + states[entity.entity_id].attributes.entity_picture
-          + '') rgba(0, 0, 0, 0.15)'' : '''' ]]]'
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      label:
-      - opacity: '0.6'
-    template:
-    - icon_info_bg
-    - ulm_language_variables
-  card_media_player_with_controls:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return variables.ulm_card_media_player_with_controls_entity
-            ]]]'
-          name: '[[[ return variables.ulm_card_media_player_with_controls_name ]]]'
-          styles:
-            card:
-            - box-shadow: none
-            - padding: 0px
-          tap_action:
-            action: more-info
-          template:
-          - ulm_language_variables
-          - card_media_player
-          type: custom:button-card
-      item2:
-        card:
-          custom_fields:
-            item1:
-              card:
-                icon: mdi:skip-previous
-                tap_action:
-                  action: call-service
-                  service: media_player.media_previous_track
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_media_player_with_controls_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-            item2:
-              card:
-                entity: '[[[ return variables.ulm_card_media_player_with_controls_entity
-                  ]]]'
-                icon: mdi:pause
-                state:
-                - icon: mdi:play
-                  value: paused
-                - icon: mdi:play
-                  value: 'off'
-                tap_action:
-                  action: call-service
-                  service: media_player.media_play_pause
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_media_player_with_controls_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-            item3:
-              card:
-                icon: mdi:skip-next
-                tap_action:
-                  action: call-service
-                  service: media_player.media_next_track
-                  service_data:
-                    entity_id: '[[[ return variables.ulm_card_media_player_with_controls_entity
-                      ]]]'
-                template: widget_icon
-                type: custom:button-card
-          template: list_items
-          type: custom:button-card
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"item1" "item2"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content  min-content
-      - row-gap: 12px
-    triggers_update:
-    - '[[[ ulm_card_media_player_with_controls_entity ]]]'
-    variables:
-      ulm_card_media_player_with_controls_name: No name set
-  card_navigate:
-    icon: '[[[ return variables.ulm_card_navigate_icon; ]]]'
-    label: '[[[ return variables.ulm_card_navigate_title; ]]]'
-    styles:
-      grid:
-      - grid-template-areas: '"i l"'
-      - grid-template-columns: min-content min-content
-      - grid-template-rows: min-content
-      icon:
-      - color: rgba(var(--color-blue),0.7)
-      img_cell:
-      - background-color: rgba(var(--color-blue), 0.2)
-      label:
-      - align-self: center
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      - filter: opacity(100%)
-    tap_action:
-      action: navigate
-      navigation_path: '[[[ return variables.ulm_card_navigate_path; ]]]'
-    template:
-    - icon_only
-    - blue_no_state
-  card_person:
-    custom_fields:
-      notification: "[[[\n  if (states[variables.ulm_card_person_entity].state !=\
-        \ 'home'){\n    if (states[variables.ulm_card_person_entity].state == variables.ulm_card_person_zone1){\n\
-        \      var icon = states[variables.ulm_card_person_zone1].attributes.icon\
-        \ != null ? states[variables.ulm_card_person_zone1].attributes.icon : 'mdi:help-circle'\n\
-        \      return '<ha-icon icon=\"' + icon + '\" style=\"width: 10px; height:\
-        \ 10px; color: var(--primary-background-color);\"></ha-icon>';\n    } else\
-        \ if (states[variables.ulm_card_person_entity].state == variables.ulm_card_person_zone2){\n\
-        \      var icon = states[variables.ulm_card_person_zone2].attributes.icon\
-        \ != null ? states[variables.ulm_card_person_zone2].attributes.icon : 'mdi:help-circle'\n\
-        \      return '<ha-icon icon=\"' + icon + '\" style=\"width: 10px; height:\
-        \ 10px; color: var(--primary-background-color);\"></ha-icon>';\n    } else\
-        \ {\n      return '<ha-icon icon=\"mdi:home-minus\" style=\"width: 10px; height:\
-        \ 10px; color: var(--primary-background-color);\"></ha-icon>';\n    }\n  }\
-        \ else {\n    return '<ha-icon icon=\"mdi:home-variant\" style=\"width: 10px;\
-        \ height: 10px; color: var(--primary-background-color);\"></ha-icon>';\n \
-        \ }\n]]]\n"
-    entity: '[[[ return variables.ulm_card_person_entity; ]]]'
-    entity_picture: '[[[ return variables.ulm_card_person_use_entity_picture != false
-      ? states[variables.ulm_card_person_entity].attributes.entity_picture : null
-      ]]]'
-    icon: mdi:face-man
-    label: '[[[ return states[variables.ulm_card_person_entity].state ]]]'
-    name: '[[[ return states[variables.ulm_card_person_entity].attributes.friendly_name
-      ]]]'
-    show_entity_picture: '[[[ return variables.ulm_card_person_use_entity_picture
-      ]]]'
-    show_label: true
-    show_name: true
-    styles:
-      custom_fields:
-        notification:
-        - border-radius: 50%
-        - position: absolute
-        - left: 38px
-        - top: 8px
-        - height: 16px
-        - width: 16px
-        - border: 2px solid var(--card-background-color)
-        - font-size: 12px
-        - line-height: 14px
-        - background-color: "[[[\n  if (states[variables.ulm_card_person_entity].state\
-            \ != 'home'){\n    return \"rgba(var(--color-green),1)\";\n  } else {\n\
-            \    return \"rgba(var(--color-blue),1)\";\n  }\n]]]\n"
-      icon:
-      - color: rgba(var(--color-theme),0.9)
-      - width: "[[[ \n  if (variables.ulm_card_person_use_entity_picture != true){\n\
-          \    return '20px';\n  } else {\n    return '42px';\n  }\n]]]\n"
-      - place-self: "[[[ \n  if (variables.ulm_card_person_use_entity_picture != true){\n\
-          \    return 'center';\n  } else {\n    return 'stretch stretch';\n  }\n\
-          ]]]\n"
-    tap_action:
-      action: more-info
-    template: icon_info_bg
-    variables:
-      ulm_card_person_use_entity_picture: false
-      ulm_card_person_zone1: ''
-      ulm_card_person_zone2: ''
-  card_power_outlet:
-    label: "[[[\n  if (entity.state === \"on\" && variables.ulm_card_power_outlet_consumption_sensor\
-      \ !== null) {\n    return variables.ulm_on + \" • \" + states[variables.ulm_card_power_outlet_consumption_sensor].state\
-      \ + \"W\";\n  } else if (entity.state === \"on\") {\n    return variables.ulm_on;\n\
-      \  } else if (entity.state === \"off\") {\n    return variables.ulm_off;\n \
-      \ } else if (entity.state === \"unavailable\") {\n    return variables.ulm_unavailable;\n\
-      \  } else {\n    return entity.state;\n  }\n]]]"
-    template:
-    - icon_info_bg
-    - yellow
-    - ulm_language_variables
-    variables:
-      ulm_card_power_outlet_consumption_sensor: null
-  card_script:
-    icon: '[[[ return variables.ulm_card_script_icon; ]]]'
-    label: '[[[ return variables.ulm_card_script_title; ]]]'
-    styles:
-      grid:
-      - grid-template-areas: '"i l"'
-      - grid-template-columns: min-content min-content
-      - grid-template-rows: min-content
-      icon:
-      - color: rgba(var(--color-blue),0.7)
-      img_cell:
-      - background-color: rgba(var(--color-blue), 0.2)
-      label:
-      - align-self: center
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      - filter: opacity(100%)
-    template:
-    - icon_only
-  card_title:
-    show_icon: false
-    show_label: true
-    show_name: true
-    styles:
-      card:
-      - background-color: rgba(0,0,0,0)
-      - box-shadow: none
-      - height: auto
-      - width: auto
-      - margin-top: 12px
-      - margin-left: 24px
-      - margin-bottom: 0px
-      grid:
-      - grid-template-areas: '"n" "l"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content min-content
-      label:
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 1rem
-      - opacity: '0.4'
-      name:
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 1.5rem
-    tap_action:
-      action: none
-  chip_back:
-    icon: mdi:arrow-left
-    show_icon: true
-    styles:
-      grid:
-      - grid-template-areas: '"i"'
-    tap_action:
-      action: navigate
-      navigation_path: '[[[ return variables.ulm_chip_back_path; ]]]'
-    template: chips
-  chip_icon_double_state:
-    label: "[[[\n  var icon = '❔';\n  if (variables.ulm_chip_icon_double_state_icon){\n\
-      \    var icon = variables.ulm_chip_icon_double_state_icon;\n  } \n  var state1\
-      \ = '';\n  if (states[variables.ulm_chip_icon_double_state_entity_1].state){\n\
-      \    var state1 = states[variables.ulm_chip_icon_double_state_entity_1].state;\n\
-      \  } \n  var state2 = '';\n  if (states[variables.ulm_chip_icon_double_state_entity_2].state){\n\
-      \    var state2 = states[variables.ulm_chip_icon_double_state_entity_2].state;\n\
-      \  } \n  return icon + ' ' + state1 + ' • ' + state2;\n]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.ulm_chip_icon_double_state_entity_1 ]]]'
-    - '[[[ variables.ulm_chip_icon_double_state_entity_2 ]]]'
-  chip_icon_only:
-    label: "[[[\n  var icon = '❔';\n  if (variables.ulm_chip_icon_only){\n    var\
-      \ icon = variables.ulm_chip_icon_only;\n  } \n  return icon;\n]]]\n"
-    template: chips
-  chip_icon_state:
-    label: "[[[\n  var icon = '❔';\n  if (variables.ulm_chip_icon_state_icon){\n \
-      \   var icon = variables.ulm_chip_icon_state_icon;\n  } \n  var state = '';\n\
-      \  if (states[variables.ulm_chip_icon_state_entity].state){\n    var state =\
-      \ states[variables.ulm_chip_icon_state_entity].state;\n  } \n  return icon +\
-      \ ' ' + state;\n]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.ulm_chip_icon_state_entity ]]]'
-  chip_navigate:
-    icon: '[[[ return variables.ulm_chip_navigate_icon; ]]]'
-    show_icon: true
-    styles:
-      grid:
-      - grid-template-areas: '"i"'
-    tap_action:
-      action: navigate
-      navigation_path: '[[[ return variables.ulm_chip_navigate_path; ]]]'
-    template: chips
-  chip_power_consumption:
-    label: "[[[\n  var amount = variables.ulm_chip_electric_price != '' ? true : false\n\
-      \n  if (amount){\n    return '⚡ ' +  states[variables.ulm_chip_electric_price].state\
-      \ + variables.ulm_currency;\n  } else {\n    return '⚡ ' +  states[variables.ulm_chip_electric_consumption].state;\n\
-      \  }\n]]]\n"
-    template:
-    - chips
-    - ulm_language_variables
-    triggers_update:
-    - '[[[ variables.ulm_chip_electric_consumption ]]]'
-  chip_presence_detection:
-    label: "[[[\n  var guests = states[variables.ulm_chip_presence_counter_guests].state\
-      \ ? ' / ' + states[variables.ulm_chip_presence_counter_guests].state : '';\n\
-      \  return '\U0001F3E0 ' +  states[variables.ulm_chip_presence_counter_residents].state\
-      \ + guests;\n]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.ulm_chip_presence_counter_residents ]]]'
-    - '[[[ variables.ulm_chip_presence_counter_guests ]]]'
-  chip_temperature:
-    label: "[[[\n  var icon = '\U0001F321️';\n  if (states[variables.ulm_chip_temperature_weather].state\
-      \ == 'clear-night'){\n    var icon = '\U0001F319';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'cloudy'){\n    var icon = '☁️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'exceptional'){\n    var icon = '\U0001F31E';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'fog'){\n    var icon = '\U0001F32B️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'hail'){\n    var icon = '⛈️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'lightning'){\n    var icon = '⚡';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'lightning-rainy'){\n    var icon = '⛈️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'partlycloudy'){\n    var icon = '⛅';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'pouring'){\n    var icon = '\U0001F327️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'rainy'){\n    var icon = '\U0001F4A7';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'snowy'){\n    var icon = '❄️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'snowy-rainy'){\n    var icon = '\U0001F328️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'sunny'){\n    var icon = '☀️';\n  } else if(states[variables.ulm_chip_temperature_weather].state\
-      \ == 'windy'){\n    var icon = '\U0001F32A️';\n  }\n  return icon + ' ' + states[variables.ulm_chip_temperature_outside].state\
-      \ + '° / ' + states[variables.ulm_chip_temperature_inside].state + '°' ;\n]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.ulm_chip_temperature_weather ]]]'
-    - '[[[ variables.ulm_chip_temperature_outside ]]]'
-    - '[[[ variables.ulm_chip_temperature_inside ]]]'
-  chips:
-    show_icon: false
-    show_label: true
-    show_name: false
-    show_state: false
-    size: 80%
-    styles:
-      card:
-      - border-radius: 18px
-      - box-shadow: var(--box-shadow)
-      - height: 36px
-      - width: auto
-      - padding-left: 6px
-      - padding-right: 6px
-      grid:
-      - grid-template-areas: '"l"'
-      img_cell:
-      - width: 24px
-      label:
-      - justify-self: center
-      - padding: 0px 6px
-      - font-weight: bold
-      - font-size: 14px
-    tap_action:
-      action: more-info
-  chips_icon:
-    template: chip_icon_state
-    variables:
-      ulm_chip_icon_state_entity: '[[[ return entity.entity_id ]]]'
-      ulm_chip_icon_state_icon: '[[[ return variables.icon ]]]'
-  chips_localisation_present:
-    template: chip_presence_detection
-  chips_return:
-    template: chip_back
-    variables:
-      ulm_chip_back_path: /lovelace/home
-  cover:
-    icon: "[[[\n    var icon = 'mdi:help-circle';\n    if (typeof states[entity.entity_id].attributes.current_position\
-      \ === 'undefined'){\n      if (states[entity.entity_id].state == 'closed'){\n\
-      \        var icon = 'mdi:window-shutter';\n      } else\n        var icon =\
-      \ 'mdi:window-shutter-open';\n    } else {\n      if (states[entity.entity_id].attributes.current_position\
-      \ == 0){\n        var icon = 'mdi:window-shutter';\n      } else\n        var\
-      \ icon = 'mdi:window-shutter-open';\n    }\n    return icon ;\n]]]\n"
-    label: "[[[\n    var icon = 'mdi:help-circle';\n    if (typeof states[entity.entity_id].attributes.current_position\
-      \ === 'undefined'){\n      if (states[entity.entity_id].state == 'closed'){\n\
-      \        return variables.ulm_closed;\n      } else\n        return variables.ulm_open;\n\
-      \    } else {\n      if (states[entity.entity_id].attributes.current_position\
-      \ == 0){\n        return variables.ulm_closed;\n      } else {\n        return\
-      \ variables.ulm_open + ' • ' + (states[entity.entity_id].attributes.current_position)\
-      \ + '%' ;\n      }\n    }\n    return icon ;\n]]]"
-    state:
-    - operator: template
-      styles:
-        icon:
-        - color: rgba(var(--color-blue),1)
-        img_cell:
-        - background-color: rgba(var(--color-blue),0.2)
-      value: '[[[ return states[entity.entity_id].attributes.current_position != 0;
-        ]]]'
-    tap_action:
-      action: more-info
-  cover_buttons:
-    template: card_cover_with_buttons
-    variables:
-      ulm_card_cover_with_buttons_entity: null
-      ulm_card_cover_with_buttons_name: null
-  custom_card_brianhanifin_vertical_button:
-    name: '[[[ return (entity.attributes.name)]]]'
-    show_label: true
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 10px 0px 8px 0px
-      grid:
-      - grid-template-areas: '"i" "n" "l"'
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 50%
-      - place-self: center
-      - width: 42px
-      - height: 42px
-      label:
-      - justify-self: center
-      - align-self: start
-      - font-weight: bolder
-      - font-size: 12px
-      - filter: opacity(40%)
-      name:
-      - margin-top: 10px
-      - justify-self: center
-      - font-weight: bold
-      - font-size: 14px
-  custom_card_brianhanifin_vertical_button_navigate:
-    styles:
-      card:
-      - background-color: '[[[ return `rgba(var(--color-background-${variables.color}),
-          var(--opacity-bg))`; ]]]'
-      icon:
-      - color: '[[[ return `rgba(var(--color-${variables.color}), 1)`; ]]]'
-      img_cell:
-      - background-color: '[[[ return `rgba(var(--color-${variables.color}), 0.2)`;
-          ]]]'
-      label:
-      - color: '[[[ return `rgba(var(--color-${variables.color}-text), 1)`; ]]]'
-      name:
-      - color: '[[[ return `rgba(var(--color-${variables.color}-text), 1)`; ]]]'
-    tap_action:
-      action: navigate
-      navigation_path: '[[[ return variables.path; ]]]'
-    template: custom_card_brianhanifin_vertical_button
-  custom_card_mpse_dual_graph:
-    custom_fields:
-      item1:
-        card:
-          entity: '[[[ return variables.ulm_card_graph_entity ]]]'
-          label: "[[[\n  var unit = states[variables.ulm_card_graph_entity].attributes.unit_of_measurement\
-            \ != null ? ' ' +states[variables.ulm_card_graph_entity].attributes.unit_of_measurement\
-            \ : ''\n  var unit2 = states[variables.ulm_card_graph_entity_2].attributes.unit_of_measurement\
-            \ != null ? ' ' +states[variables.ulm_card_graph_entity_2].attributes.unit_of_measurement\
-            \ : ''\n  return states[variables.ulm_card_graph_entity].state + unit\
-            \ + ' / ' + states[variables.ulm_card_graph_entity_2].state + unit2;\n\
-            ]]]\n"
-          name: '[[[ return variables.ulm_card_graph_name ]]]'
-          styles:
-            card:
-            - box-shadow: none
-            - border-radius: var(--border-radius) var(--border-radius) 0px 0px
-            - padding: 12px
-          template:
-          - icon_info
-          - card_generic
-          type: custom:button-card
-      item2:
-        card:
-          entities:
-          - entity: '[[[ return variables.ulm_card_graph_entity ]]]'
-          - entity: '[[[ return variables.ulm_card_graph_entity_2 ]]]'
-          line_color:
-          - '[[[ return variables.ulm_card_graph_color ]]]'
-          - '[[[ return variables.ulm_card_graph_color_2 ]]]'
-          show:
-            icon: false
-            legend: false
-            name: false
-            state: false
-          style: "ha-card {\n  box-shadow: none;\n  border-radius: var(--border-radius);\n\
-            }\n"
-          type: custom:mini-graph-card
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 0px
-      grid:
-      - grid-template-areas: '''item1'' ''item2'''
-      - grid-template-columns: 1fr
-      - grid-template-rows: min-content  min-content
-    triggers_update: all
-    variables:
-      ulm_card_graph_color: var(--google-blue)
-      ulm_card_graph_color_2: var(--google-green)
-      ulm_card_graph_name: ''
-  custom_chip_brianhanifin_contact_sensor:
-    label: "[[[\n  var icon = '\U0001F6AA'\n  if (variables.icon){\n    var icon =\
-      \ variables.icon;\n  }\n  var state = '';\n  var state = states[variables.entity].state\
-      \ == 'on' ? 'open' : 'closed';\n  return icon + ' ' + state;\n]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.ulm_entity ]]]'
-  custom_chip_brianhanifin_icon_state:
-    label: "[[[\n  var icon = '❔';\n  if (variables.icon){\n    var icon = variables.icon;\n\
-      \  }\n  var state = '';\n  if (states[variables.entity].state){\n    var state\
-      \ = states[variables.entity].state;\n  }\n  var unit = '';\n  if (variables.unit){\n\
-      \    var unit = variables.unit;\n  }\n  return icon + ' ' + state + unit;\n\
-      ]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.entity ]]]'
-  custom_chip_brianhanifin_label:
-    label: "[[[\n  var icon = '❔';\n  if (variables.icon){\n    var icon = variables.icon;\n\
-      \  }\n  var label = '';\n  if (variables.label){\n    var label = variables.label;\n\
-      \  }else{\n    var label = tap_action.service_data.state;\n  }\n  return icon\
-      \ + ' ' + label;\n]]]\n"
-    template: chips
-  custom_chip_brianhanifin_toggle:
-    hold_action:
-      action: more-info
-    icon: "[[[\n  var icon = 'mdi:help-circle';\n  if (entity.attributes.icon != ''){\n\
-      \    var icon = entity.attributes.icon;\n  }\n  return icon;\n]]]"
-    label: "[[[ \n  if (entity.state !='unavailable'){\n    if (entity.state == 'off'){\n\
-      \      return variables.ulm_off;  \n    } else if (entity.state == 'on'){\n\
-      \      return variables.ulm_on;\n    } else if (entity.state == 'open' || entity.state\
-      \ == 'opening'){\n      return variables.ulm_open;\n    } else if (entity.state\
-      \ == 'closed'){\n      return variables.ulm_closed;\n    }\n  } else {\n   \
-      \ return variables.ulm_unavailable;\n  }\n]]]"
-    name: "[[[\n  if (entity.attributes.friendly_name != ''){\n    return entity.attributes.friendly_name;\n\
-      \  } else {\n    return entity.entity_id;\n  }\n]]]"
-    tap_action:
-      action: toggle
-    template:
-    - icon_info_bg
-    - ulm_language_variables
-    - blue
-  custom_chip_brianhanifin_weather:
-    label: "[[[\n  var icon = '\U0001F321️';\n  if (states[variables.entity].state\
-      \ == 'clear-night'){\n    var icon = '\U0001F319';\n  } else if(states[variables.entity].state\
-      \ == 'cloudy'){\n    var icon = '☁️';\n  } else if(states[variables.entity].state\
-      \ == 'exceptional'){\n    var icon = '\U0001F31E';\n  } else if(states[variables.entity].state\
-      \ == 'fog'){\n    var icon = '\U0001F32B️';\n  } else if(states[variables.entity].state\
-      \ == 'hail'){\n    var icon = '⛈️';\n  } else if(states[variables.entity].state\
-      \ == 'lightning'){\n    var icon = '⚡';\n  } else if(states[variables.entity].state\
-      \ == 'lightning-rainy'){\n    var icon = '⛈️';\n  } else if(states[variables.entity].state\
-      \ == 'partlycloudy'){\n    var icon = '⛅';\n  } else if(states[variables.entity].state\
-      \ == 'pouring'){\n    var icon = '\U0001F327️';\n  } else if(states[variables.entity].state\
-      \ == 'rainy'){\n    var icon = '\U0001F4A7';\n  } else if(states[variables.entity].state\
-      \ == 'snowy'){\n    var icon = '❄️';\n  } else if(states[variables.entity].state\
-      \ == 'snowy-rainy'){\n    var icon = '\U0001F328️';\n  } else if(states[variables.entity].state\
-      \ == 'sunny'){\n    var icon = '☀️';\n  } else if(states[variables.entity].state\
-      \ == 'windy'){\n    var icon = '\U0001F32A️';\n  }\n  return icon + ' ' + states[variables.temperature].state\
-      \ + '°';\n]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.entity ]]]'
-    - '[[[ variables.temperature ]]]'
-  edge:
-    styles:
-      card:
-      - width: 0px
-  generic:
-    template: card_generic
-  graph:
-    template: card_graph
-    variables:
-      ulm_card_graph_color: var(--google-blue)
-      ulm_card_graph_entity: '[[[ return entity.entity_id ]]]'
-      ulm_card_graph_name: Default name
-  icon:
-    color: var(--google-grey)
-    custom_fields:
-      notification: "[[[\n  if (entity.state =='unavailable'){\n    return `<ha-icon\
-        \ icon=\"mdi:exclamation\" style=\"width: 12px; height: 12px; color: var(--primary-background-color);\"\
-        ></ha-icon>`\n  }\n]]]\n"
-    show_icon: true
-    show_label: false
-    show_name: false
-    size: 20px
-    state:
-    - styles:
-        custom_fields:
-          notification:
-          - border-radius: 50%
-          - position: absolute
-          - left: 24px
-          - top: -2px
-          - height: 16px
-          - width: 16px
-          - border: 2px solid var(--card-background-color)
-          - font-size: 12px
-          - line-height: 14px
-          - background-color: "[[[\n  return \"rgba(var(--color-red),1)\";\n]]]\n"
-      value: unavailable
-    styles:
-      card:
-      - border-radius: 21px
-      - box-shadow: none
-      - padding: 0px
-      grid:
-      - grid-template-areas: '"i"'
-      - grid-template-columns: min-content
-      - grid-template-rows: min-content
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 50%
-      - place-self: center
-      - width: 42px
-      - height: 42px
-  icon_info:
-    color: var(--google-grey)
-    custom_fields:
-      notification: "[[[\n  if (entity.state =='unavailable'){\n    return `<ha-icon\
-        \ icon=\"mdi:exclamation\" style=\"width: 12px; height: 12px; color: var(--primary-background-color);\"\
-        ></ha-icon>`\n  }\n]]]\n"
-    show_icon: true
-    show_label: true
-    show_name: true
-    size: 20px
-    state:
-    - styles:
-        custom_fields:
-          notification:
-          - border-radius: 50%
-          - position: absolute
-          - left: 24px
-          - top: -2px
-          - height: 16px
-          - width: 16px
-          - border: 2px solid var(--card-background-color)
-          - font-size: 12px
-          - line-height: 14px
-          - background-color: "[[[\n  return \"rgba(var(--color-red),1)\";\n]]]\n"
-      value: unavailable
-    styles:
-      card:
-      - border-radius: 21px 8px 8px 21px
-      - box-shadow: none
-      - padding: 0px
-      grid:
-      - grid-template-areas: '"i n" "i l"'
-      - grid-template-columns: min-content auto
-      - grid-template-rows: min-content min-content
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 50%
-      - place-self: center
-      - width: 42px
-      - height: 42px
-      label:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bolder
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-      name:
-      - align-self: end
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      state:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bolder
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-  icon_info_alert:
-    color: var(--google-grey)
-    custom_fields:
-      notification: "[[[\n  if (entity.state =='unavailable' || entity.state == 'on'){\n\
-        \    return `<ha-icon icon=\"mdi:exclamation\" style=\"width: 12px; height:\
-        \ 12px; color: var(--primary-background-color);\"></ha-icon>`\n  }\n]]]\n"
-    show_icon: true
-    show_label: true
-    show_name: true
-    size: 20px
-    state:
-    - operator: template
-      styles:
-        card:
-        - background-color: rgba(var(--color-background-blue), var(--opacity-bg))
-        custom_fields:
-          notification:
-          - border-radius: 50%
-          - position: absolute
-          - left: 38px
-          - top: 8px
-          - height: 16px
-          - width: 16px
-          - border: 2px solid var(--card-background-color)
-          - font-size: 12px
-          - line-height: 14px
-          - background-color: "[[[\n  return \"rgba(var(--color-red),1)\";\n]]]\n"
-        icon:
-        - color: rgba(var(--color-blue),1)
-        img_cell:
-        - background-color: rgba(var(--color-blue), 0.2)
-        label:
-        - color: rgba(var(--color-blue-text),1)
-        name:
-        - color: rgba(var(--color-blue-text),1)
-      value: '[[[ if (entity.state == ''unavailable'' || entity.state == ''on''){
-        return true; } ]]]'
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"i n" "i l"'
-      - grid-template-columns: min-content auto
-      - grid-template-rows: min-content min-content
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 50%
-      - place-self: center
-      - width: 42px
-      - height: 42px
-      label:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bold
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-      name:
-      - align-self: end
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      state:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bold
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-  icon_info_bg:
-    color: var(--google-grey)
-    custom_fields:
-      notification: "[[[\n  if (entity.state =='unavailable'){\n    return `<ha-icon\
-        \ icon=\"mdi:exclamation\" style=\"width: 12px; height: 12px; color: var(--primary-background-color);\"\
-        ></ha-icon>`\n  }\n]]]\n"
-    show_icon: true
-    show_label: true
-    show_name: true
-    size: 20px
-    state:
-    - styles:
-        custom_fields:
-          notification:
-          - border-radius: 50%
-          - position: absolute
-          - left: 38px
-          - top: 8px
-          - height: 16px
-          - width: 16px
-          - border: 2px solid var(--card-background-color)
-          - font-size: 12px
-          - line-height: 14px
-          - background-color: "[[[\n  return \"rgba(var(--color-red),1)\";\n]]]\n"
-      value: unavailable
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"i n" "i l"'
-      - grid-template-columns: min-content auto
-      - grid-template-rows: min-content min-content
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 50%
-      - place-self: center
-      - width: 42px
-      - height: 42px
-      label:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bold
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-      name:
-      - align-self: end
-      - justify-self: start
-      - font-weight: bold
-      - font-size: 14px
-      - margin-left: 12px
-      state:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bold
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-  icon_info_line:
-    show_icon: true
-    show_label: true
-    show_name: false
-    size: 100%
-    styles:
-      card:
-      - box-shadow: none
-      - padding: 0px
-      grid:
-      - grid-template-areas: '"i l"'
-      - grid-template-columns: max_content auto
-      - grid-template-rows: min-content
-      icon:
-      - filter: opacity(40%)
-      img_cell:
-      - place-self: center
-      - width: 14px
-      - height: 24px
-      label:
-      - padding: 2px
-      - justify-self: start
-      - align-self: center
-      - font-weight: bolder
-      - font-size: 12px
-      - margin-left: 0px
-      - filter: opacity(40%)
-  icon_only:
-    color: var(--google-grey)
-    show_icon: true
-    show_label: true
-    show_name: false
-    size: 20px
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 12px
-      grid:
-      - grid-template-areas: '"i l"'
-      - grid-template-columns: min-content auto
-      - grid-template-rows: min-content
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 50%
-      - place-self: center
-      - width: 42px
-      - height: 42px
-      label:
-      - justify-self: start
-      - align-self: start
-      - font-weight: bold
-      - font-size: 12px
-      - filter: opacity(40%)
-      - margin-left: 12px
-  input_number:
-    show_last_changed: true
-    tap_action:
-      action: more-info
-  light:
-    template: card_light
-  light_slider:
-    template: card_light_slider
-    variables:
-      ulm_card_light_slider_name: '[[[ return variables.name ]]]'
-  list_items:
-    styles:
-      card:
-      - box-shadow: none
-      - padding: 0px
-      grid:
-      - grid-template-areas: '"item1 item2 item3"'
-      - grid-template-columns: 1fr 1fr 1fr
-      - grid-template-rows: min-content
-      - column-gap: 7px
-  list_items_favorite:
-    styles:
-      card:
-      - box-shadow: none
-      - padding: 0px
-      grid:
-      - grid-template-areas: '"item1 item1 item2"'
-      - grid-template-columns: 1fr 1fr 1fr
-      - grid-template-rows: min-content
-      - column-gap: 7px
-  list_items_line:
-    styles:
-      card:
-      - box-shadow: none
-      - padding: 0px
-      grid:
-      - grid-template-areas: '"item1 item2 item3"'
-      - grid-template-columns: max-content max-content max-content
-      - grid-template-rows: min-content
-      - column-gap: 8px
-  media:
-    template: card_media_player
-  media_buttons:
-    template: card_media_player_with_controls
-    variables:
-      ulm_card_media_player_with_controls_entity: '[[[ return variables.entity ]]]'
-      ulm_card_media_player_with_controls_name: '[[[ return variables.name ]]]'
-  media_mini_album:
-    template: card_media_player_with_cover
-  outlet:
-    template: card_power_outlet
-  presence:
-    label: "[[[\n  return '\U0001F4F1 ' + states[variables.presence_counter].state;\n\
-      ]]]\n"
-    template: chips
-    triggers_update:
-    - '[[[ variables.presence_counter ]]]'
-  scene:
-    template: vertical_buttons
-  scene_blue:
-    template: vertical_buttons_blue
-  scene_green:
-    template: vertical_buttons_green
-  title:
-    template: card_title
-  ulm_language_variables:
-    variables:
-      ulm_closed: closed
-      ulm_currency: $
-      ulm_idle: idle
-      ulm_off: 'off'
-      ulm_on: 'on'
-      ulm_open: open
-      ulm_standby: standby
-      ulm_unavailable: unavailable
-  vertical_buttons:
-    label: '[[[ return (entity.attributes.value )]]]'
-    show_label: true
-    size: 20px
-    styles:
-      card:
-      - border-radius: var(--border-radius)
-      - box-shadow: var(--box-shadow)
-      - padding: 10px 0px 8px 0px
-      grid:
-      - grid-template-areas: '"i" "n" "l"'
-      icon:
-      - color: rgba(var(--color-theme),0.2)
-      img_cell:
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 50%
-      - place-self: center
-      - width: 42px
-      - height: 42px
-      label:
-      - justify-self: center
-      - align-self: start
-      - font-weight: bolder
-      - font-size: 12px
-      - filter: opacity(40%)
-      name:
-      - margin-top: 10px
-      - justify-self: center
-      - font-weight: bold
-      - font-size: 14px
-  vertical_buttons_blue:
-    state:
-    - operator: template
-      styles:
-        card:
-        - background-color: rgba(var(--color-background-blue), var(--opacity-bg))
-        icon:
-        - color: rgba(var(--color-blue),1)
-        img_cell:
-        - background-color: rgba(var(--color-blue), 0.2)
-        label:
-        - color: rgba(var(--color-blue-text),1)
-        name:
-        - color: rgba(var(--color-blue-text),1)
-      value: '[[[ return states[''input_select.localisation_thomas''].state == variables.state
-        ]]]'
-    template: vertical_buttons
-    variables:
-      state: default
-  vertical_buttons_green:
-    state:
-    - operator: template
-      styles:
-        card:
-        - background-color: rgba(var(--color-background-green), var(--opacity-bg))
-        icon:
-        - color: rgba(var(--color-green),1)
-        img_cell:
-        - background-color: rgba(var(--color-green), 0.2)
-        label:
-        - color: rgba(var(--color-green-text),1)
-        name:
-        - color: rgba(var(--color-green-text),1)
-      value: '[[[ return states[''input_select.localisation_thomas''].state == variables.state
-        ]]]'
-    template:
-    - vertical_buttons
-    variables:
-      state: default
-  widget_icon:
-    color: var(--google-grey)
-    show_icon: true
-    show_name: false
-    size: 20px
-    styles:
-      card:
-      - box-shadow: none
-      - padding: 0px
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 14px
-      - place-self: center
-      - height: 42px
-      grid:
-      - grid-template-areas: '"i"'
-      icon:
-      - color: rgba(var(--color-theme),0.9)
-    tap_action:
-      action: toggle
-  widget_temperature:
-    color: var(--google-grey-500)
-    label: "[[[\n    var temperature = entity.attributes.temperature;\n    if (temperature\
-      \ == null) {\n      var temperature = '-';\n    }\n    return temperature +\
-      \ '°C'\n]]]"
-    show_icon: false
-    show_label: true
-    show_name: false
-    size: 20px
-    styles:
-      card:
-      - box-shadow: none
-      - padding: 0px
-      - background-color: rgba(var(--couleur-theme),0)
-      - border-radius: 14px
-      - place-self: center
-      - height: 42px
-      grid:
-      - grid-template-areas: '"l"'
-      label:
-      - color: rgb(var(--color-theme),0.9)
-    tap_action:
-      action: toggle
-  widget_text:
-    color: var(--google-grey)
-    label: "[[[\n  var unit = entity.attributes.unit_of_measurement != null ? ' '\
-      \ + entity.attributes.unit_of_measurement : ''\n  if (entity.state == 'on')\
-      \ {\n    return variables.ulm_on;\n  } else if (entity.state == 'off') {\n \
-      \   return variables.ulm_off;\n  } else if (entity.state == 'unavailable') {\n\
-      \    return variables.ulm_unavailable;\n  } else if (entity.state == 'idle')\
-      \ {\n    return variables.ulm_idle;\n  } else if (entity.state == 'open') {\n\
-      \    return variables.ulm_open;\n  } else if (entity.state == 'closed') {\n\
-      \    return variables.ulm_closed;\n  } else {\n    return entity.state + unit;\n\
-      \  }\n]]]"
-    show_icon: false
-    show_label: true
-    show_name: false
-    size: 20px
-    styles:
-      card:
-      - box-shadow: none
-      - padding: 0px
-      - background-color: rgba(var(--color-theme),0.05)
-      - border-radius: 14px
-      - place-self: center
-      - height: 42px
-      grid:
-      - grid-template-areas: '''l'''
-      state:
-      - color: rgba(var(--color-theme),0.9)
-    tap_action:
-      action: toggle
-  yellow:
-    state:
-    - styles:
-        card:
-        - background-color: rgba(var(--color-background-yellow),var(--opacity-bg))
-        icon:
-        - color: rgba(var(--color-yellow),1)
-        img_cell:
-        - background-color: rgba(var(--color-yellow), 0.2)
-        label:
-        - color: rgba(var(--color-yellow-text),1)
-        name:
-        - color: rgba(var(--color-yellow-text),1)
-      value: 'on'
-  yellow_slider:
-    state:
-    - styles:
-        card:
-        - background-color: rgba(0,0,0,0)
-        icon:
-        - color: rgba(var(--color-yellow),1)
-        img_cell:
-        - background-color: rgba(var(--color-yellow), 0.2)
-        label:
-        - color: rgba(var(--color-yellow-text),1)
-        name:
-        - color: rgba(var(--color-yellow-text),1)
-      value: 'on'
 decluttering_templates:
   event:
     card:
       cards:
-      - label: '[[label]]'
-        name: '[[name]]'
-        template: card_title
-        type: custom:button-card
+      - subtitle: '[[label]]'
+        title: '[[name]]'
+        type: custom:mushroom-title-card
       - cards:
         - entity: input_boolean.event_enabled_[[id]]
-          template: card_input_boolean
-          type: custom:button-card
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
         - entity: input_boolean.event_skipnext_[[id]]
-          template: card_input_boolean
-          type: custom:button-card
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
         columns: 2
         square: false
         type: grid
-      - canary_style:
-          border-radius: var(--border-radius)
-          box-shadow: var(--box-shadow)
-        cards:
+      - cards:
         - entities: '[[sensors]]'
           state_color: true
           type: entities
@@ -1749,83 +51,151 @@ decluttering_templates:
             \ {{ \"block\" if \"wakeup\" in \"[[id]]\" else \"none\" }};\n}\n"
           type: entities
         in_card: true
-        style: "ha-card {\n  border-radius: var(--border-radius);\n  box-shadow: var(--box-shadow);\n\
-          }\n"
         type: vertical-stack
       type: vertical-stack
     default:
       label: ''
       name: ''
-kiosk_mode:
-  hide_header: true
 views:
 - badges: []
   cards:
   - cards:
-    - icon: mdi:home
-      label: common
-      name: Home
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/home
-    - icon: mdi:home-floor-2
-      label: zone
-      name: Upstairs
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/upstairs
-    - icon: mdi:flower
-      label: zone
-      name: Outdoor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/outdoors
-    - icon: mdi:speedometer-slow
-      label: status
-      name: Monitor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/monitoring
-    - icon: mdi:calendar-clock
-      label: wakeup
-      name: Events
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/events
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-1
+      icon_color: green
+      layout: vertical
+      primary: Downstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-2
+      icon_color: green
+      layout: vertical
+      primary: Upstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/upstairs
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:flower
+      icon_color: green
+      layout: vertical
+      primary: Outdoor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/outdoor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:speedometer-slow
+      icon_color: green
+      layout: vertical
+      primary: Monitor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/monitor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:calendar-clock
+      icon_color: green
+      layout: vertical
+      primary: Events
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/events
+      type: custom:mushroom-template-card
     columns: 5
     square: false
     type: grid
-  - cards:
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.ui_date
-        ulm_chip_icon_state_icon: 📅
-    - template: custom_chip_brianhanifin_weather
-      type: custom:button-card
-      variables:
-        entity: weather.home
-        temperature: sensor.outdoor_temperature
-    - template: presence
-      type: custom:button-card
-      variables:
-        presence_counter: sensor.family_present
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.lights_on_count
-        ulm_chip_icon_state_icon: 💡
-    type: horizontal-stack
+  - alignment: center
+    chips:
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      type: weather
+    - entity: sensor.family_present
+      type: entity
+    - chip:
+        entity: sensor.lights_on_count
+        icon: mdi:home-lightbulb
+        icon_color: amber
+        name: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on_count
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
+    view_layout:
+      position: sidebar
+  - dateSize: 175
+    dimFinishedEvents: true
+    disableEventLink: true
+    disableLocationLink: true
+    entities:
+    - color: teal
+      entity: calendar.us_holidays
+    - color: black
+      entity: calendar.birthdays_anniversary
+      eventCalName: Milestones
+    - color: green
+      entity: calendar.brian
+      eventCalName: Brian
+    - color: purple
+      entity: calendar.nerene
+      eventCalName: Nerene
+    - color: maroon
+      entity: calendar.hanifins
+      eventCalName: Hanifin's
+    - blacklist: Math Tutor,Period
+      color: blue
+      entity: calendar.kyle
+      eventCalName: Kyle
+    - blacklist: Advisory,Period
+      color: maroon
+      entity: calendar.lucas
+      eventCalName: Lucas
+    eventTitleSize: 125
+    firstDayOfWeek: 1
+    hideDuplicates: false
+    hideFinishedEvents: false
+    maxDaysToShow: 2
+    position: sidebar
+    refreshInterval: 3600
+    showDate: false
+    showDeclined: false
+    showDescription: true
+    showEventIcon: false
+    showFullDayProgress: false
+    showHiddenText: false
+    showLoader: false
+    showLocation: false
+    showMonth: false
+    showNoEventsForToday: false
+    showProgressBar: false
+    showRelativeTime: true
+    showWeekDay: true
+    sortByStartTime: true
+    type: custom:atomic-calendar-revive
     view_layout:
       position: sidebar
   - cards:
@@ -1849,9 +219,8 @@ views:
       more_info_on_tap: true
       show_empty: false
       show_notification_title: false
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.1);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n  padding-top: 16px !important;\n}\nha-markdown\
-        \ {\n  font-size: 1.2em;\n  font-weight: bold;\n}\n#header {\n  display: none;\n\
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.1);\n  padding-top: 16px\
+        \ !important;\n}\nha-markdown {\n  font-size: 1.2em;\n  font-weight: bold;\n\
         }\n"
       title: Safety notifications
       type: custom:home-feed-card
@@ -1929,9 +298,8 @@ views:
       more_info_on_tap: true
       show_empty: false
       show_notification_title: false
-      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n  padding-top: 16px !important;\n}\n#header\
-        \ { display: none; }\n"
+      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n  padding-top: 16px\
+        \ !important;\n}\n#header { display: none; }\n"
       title: Informational notifications
       type: custom:home-feed-card
     - cards:
@@ -1994,13 +362,11 @@ views:
           count: 3
           method: state
         type: custom:auto-entities
-      style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n"
+      style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n}\n"
       type: custom:stack-in-card
     - card:
         card_mod:
-          style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n  border-radius:\
-            \ var(--border-radius);\n  box-shadow: var(--box-shadow);\n}\n"
+          style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n}\n"
         type: entities
       filter:
         exclude:
@@ -2018,953 +384,730 @@ views:
       show_empty: false
       sort:
         method: none
-      style: "ha-card {\n  background: none;\n}\n"
       type: custom:auto-entities
     type: vertical-stack
     view_layout:
       position: sidebar
-  - dateSize: 175
-    dimFinishedEvents: true
-    disableEventLink: true
-    disableLocationLink: true
-    entities:
-    - color: teal
-      entity: calendar.us_holidays
-    - color: black
-      entity: calendar.birthdays_anniversary
-      eventCalName: Milestones
-    - color: green
-      entity: calendar.brian
-      eventCalName: Brian
-    - color: purple
-      entity: calendar.nerene
-      eventCalName: Nerene
-    - color: maroon
-      entity: calendar.hanifins
-      eventCalName: Hanifin's
-    - blacklist: Math Tutor,Period
-      color: blue
-      entity: calendar.kyle
-      eventCalName: Kyle
-    - blacklist: Advisory,Period
-      color: maroon
-      entity: calendar.lucas
-      eventCalName: Lucas
-    eventTitleSize: 125
-    firstDayOfWeek: 1
-    hideDuplicates: false
-    hideFinishedEvents: false
-    maxDaysToShow: 2
-    position: sidebar
-    refreshInterval: 3600
-    showDate: false
-    showDeclined: false
-    showDescription: true
-    showEventIcon: false
-    showFullDayProgress: false
-    showHiddenText: false
-    showLoader: false
-    showLocation: false
-    showMonth: false
-    showNoEventsForToday: false
-    showProgressBar: false
-    showRelativeTime: true
-    showWeekDay: true
-    sortByStartTime: true
-    type: custom:atomic-calendar-revive
-    view_layout: null
   - cards:
-    - label: Control lights and devices.
-      name: Family room
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.family_room_temperature
-          icon: 🌡️
-          unit: °F
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.family_room_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
+    - subtitle: Control lights and devices.
+      title: Family room
+      type: custom:mushroom-title-card
     - cards:
       - entity: light.family_room
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Family room
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.table_lamp
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Table lamp
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.family_room_floor_lamp
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Floor lamp
+        name: Floor lamp
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: switch.adaptive_lighting_family_room
-        template: card_power_outlet
-        type: custom:button-card
-      - entity: fan.family_room
-        name: Fan
-        template: card_power_outlet
-        type: custom:button-card
-        variables:
-          ulm_card_power_outlet_consumption_sensor: sensor.family_room_fan_power
+        name: Adaptive lighting
+        type: custom:mushroom-entity-card
       - entity: media_player.tv_family_room
-        icon: mdi:television
+        icon: ''
         name: TV
-        template: card_media_player_with_control
-        type: custom:button-card
+        type: custom:mushroom-entity-card
+      - entity: fan.family_room
+        icon_animation: true
+        name: Fan
+        show_oscillate_control: false
+        show_percentage_control: false
+        type: custom:mushroom-fan-card
       columns: 3
       square: false
       type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.family_room_temperature
+        icon_color: amber
+        type: entity
+      - entity: sensor.family_room_humidity
+        icon_color: light-blue
+        type: entity
+      - entity: binary_sensor.family_room_presence
+        icon: mdi:motion-sensor
+        icon_color: brown
+        type: entity
+      type: custom:mushroom-chips-card
     type: vertical-stack
   - cards:
-    - label: Control lights.
-      name: Kitchen & dining
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.kitchen_temperature
-          icon: 🌡️
-          unit: °F
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.kitchen_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
+    - subtitle: Control lights.
+      title: Kitchen & dining
+      type: custom:mushroom-title-card
     - cards:
       - entity: light.kitchen
-        template: card_light
-        type: custom:button-card
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.kitchen_prep
-        template: card_light
-        type: custom:button-card
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.dining_room
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Dining room
+        show_brightness_control: false
+        show_color_temp_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
       columns: 3
       square: false
       type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.kitchen_temperature
+        icon_color: amber
+        type: entity
+      - entity: sensor.kitchen_temperature_humidity
+        icon_color: cyan
+        type: entity
+      - entity: binary_sensor.kitchen_presence
+        icon: mdi:motion-sensor
+        icon_color: brown
+        type: entity
+      - entity: input_select.dishwasher_status
+        icon: mdi:dishwasher
+        type: entity
+      type: custom:mushroom-chips-card
     type: vertical-stack
   - cards:
-    - label: Control lights.
-      name: Play room
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_contact_sensor
-        type: custom:button-card
-        variables:
-          entity: binary_sensor.garage_entry_door
-      type: horizontal-stack
+    - subtitle: Control lights.
+      title: Play room
+      type: custom:mushroom-title-card
     - cards:
       - entity: light.play_room
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Play room
+        name: Play room
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: false
       - entity: light.play_room_floor_lamp
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Floor lamp
+        name: Floor lamp
+        show_brightness_control: false
+        show_color_temp_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.play_room_entry
-        template: card_light
-        type: custom:button-card
+        show_brightness_control: false
+        show_color_temp_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: switch.adaptive_lighting_play_room
-        template: card_power_outlet
-        type: custom:button-card
+        name: Adaptive lighting
+        type: custom:mushroom-entity-card
       columns: 3
       square: false
       type: grid
     type: vertical-stack
   - cards:
-    - label: Control lights.
-      name: Home entry
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_contact_sensor
-        type: custom:button-card
-        variables:
-          entity: binary_sensor.front_door
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.front_walkway_person_motion
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
+    - subtitle: Control lights and devices.
+      title: Home entry
+      type: custom:mushroom-title-card
     - cards:
       - entity: light.home_entry
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Home entry
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.porch
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Porch
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.entry_railing
-        template: card_light
-        type: custom:button-card
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: false
       - entity: switch.adaptive_lighting_home_entry
-        template: card_power_outlet
-        type: custom:button-card
+        name: Adaptive lighting
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       - entity: lock.front_door
-        lock:
-          enabled: 'true'
-        template: card_power_outlet
-        type: custom:button-card
+        icon: ''
+        type: custom:mushroom-entity-card
       - entity: input_boolean.leave_unlocked
-        icon: hass:toggle-switch-off
-        template: custom_chip_brianhanifin_toggle
-        type: custom:button-card
+        icon: fas:toggle-on
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       columns: 3
       square: false
       type: grid
     type: vertical-stack
   - cards:
-    - label: Control lights & devices.
-      name: Garage
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.garage_temperature
-          icon: 🌡️
-          unit: °F
-      - template: custom_chip_brianhanifin_contact_sensor
-        type: custom:button-card
-        variables:
-          entity: binary_sensor.garage_entry_door
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.garage_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
+    - subtitle: Control lights and devices.
+      title: Garage
+      type: custom:mushroom-title-card
     - cards:
       - entity: light.laundry
-        template: card_light
-        type: custom:button-card
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: cover.garage_door
-        lock:
-          enabled: 'true'
-        template: custom_chip_brianhanifin_toggle
-        type: custom:button-card
+        show_buttons_control: true
+        type: custom:mushroom-cover-card
       columns: 2
       square: false
       type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.garage_temperature
+        icon_color: amber
+        type: entity
+      - entity: sensor.garage_humidity
+        icon_color: light-blue
+        type: entity
+      - entity: binary_sensor.garage_presence
+        icon: mdi:motion-sensor
+        icon_color: brown
+        type: entity
+      - entity: input_select.laundry_status
+        icon: mdi:washing-machine
+        type: entity
+      type: custom:mushroom-chips-card
     type: vertical-stack
-  - cards:
-    - type: custom:gap-card
-    - template: chip_navigate
-      type: custom:button-card
-      variables:
-        ulm_chip_navigate_icon: mdi:server
-        ulm_chip_navigate_path: /lovelace/system
-    - template: chip_navigate
-      type: custom:button-card
-      variables:
-        ulm_chip_navigate_icon: mdi:format-list-bulleted
-        ulm_chip_navigate_path: /logbook
-    - template: chip_navigate
-      type: custom:button-card
-      variables:
-        ulm_chip_navigate_icon: mdi:google-home
-        ulm_chip_navigate_path: /lovelace/smart-speakers
-    - template: chip_navigate
-      type: custom:button-card
-      variables:
-        ulm_chip_navigate_icon: mdi:robot
-        ulm_chip_navigate_path: /lovelace/routines
-    - template: chip_navigate
-      type: custom:button-card
-      variables:
-        ulm_chip_navigate_icon: mdi:cake-variant
-        ulm_chip_navigate_path: /lovelace/family-days
-    - type: custom:gap-card
-    columns: 7
-    square: false
-    type: grid
+  - alignment: justify
+    chips:
+    - icon: mdi:server
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/system
+      type: template
+    - icon: mdi:format-list-bulleted
+      tap_action:
+        action: navigate
+        navigation_path: /logbook
+      type: template
+    - icon: mdi:google-home
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/smart-speakers
+      type: template
+    - icon: mdi:robot
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/routines
+      type: template
+    - icon: mdi:cake-variant
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/family-dates
+      type: template
+    type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
-  - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n  border-radius: var(--border-radius);\n\
-      \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ \"none\" if user.is_admin\
-      \ else \"block\" }}\n}\n"
+  - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
+      \ {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
     type: shopping-list
     view_layout:
       position: sidebar
-  icon: mdi:home
-  path: home
-  theme: minimalist-mobile
-  title: Overview
+  icon: mdi:home-floor-1
+  theme: Backend-selected
+  title: Home
   type: sidebar
 - badges: []
   cards:
   - cards:
-    - icon: mdi:home
-      label: common
-      name: Home
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/home
-    - icon: mdi:home-floor-2
-      label: zone
-      name: Upstairs
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/upstairs
-    - icon: mdi:flower
-      label: zone
-      name: Outdoor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/outdoors
-    - icon: mdi:speedometer-slow
-      label: status
-      name: Monitor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/monitoring
-    - icon: mdi:calendar-clock
-      label: wakeup
-      name: Events
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/events
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-1
+      icon_color: green
+      layout: vertical
+      primary: Downstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-2
+      icon_color: green
+      layout: vertical
+      primary: Upstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/upstairs
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:flower
+      icon_color: green
+      layout: vertical
+      primary: Outdoor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/outdoor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:speedometer-slow
+      icon_color: green
+      layout: vertical
+      primary: Monitor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/monitor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:calendar-clock
+      icon_color: green
+      layout: vertical
+      primary: Events
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/events
+      type: custom:mushroom-template-card
     columns: 5
     square: false
     type: grid
-  - cards:
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.ui_date
-        ulm_chip_icon_state_icon: 📅
-    - template: custom_chip_brianhanifin_weather
-      type: custom:button-card
-      variables:
-        entity: weather.home
-        temperature: sensor.outdoor_temperature
-    - template: presence
-      type: custom:button-card
-      variables:
-        presence_counter: sensor.family_present
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.lights_on_count
-        ulm_chip_icon_state_icon: 💡
-    type: horizontal-stack
+  - alignment: center
+    chips:
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      type: weather
+    - entity: sensor.family_present
+      type: entity
+    - chip:
+        entity: sensor.lights_on_count
+        icon: mdi:home-lightbulb
+        icon_color: amber
+        name: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on_count
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
   - cards:
-    - label: Control lights and devices.
-      name: Bedroom
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.bedroom_display_temperature
-          icon: 🌡️
-          unit: °F
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.bedroom_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.bedroom_ac_power
-          icon: 🧊
-          unit: w
-      type: horizontal-stack
+    - subtitle: Control lights and devices.
+      title: ' Bedroom'
+      type: custom:mushroom-title-card
     - cards:
       - entity: light.bedroom
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: West lamp
+        name: Bedroom west
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.bedroom_east
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: East lamp
+        name: Bedroom east
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.bedroom_table_lamp
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Table lamp
+        name: Floor lamp
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: fan.bedroom
+        icon_animation: true
         name: Fan
-        template: card_power_outlet
-        type: custom:button-card
-      - entity: switch.sound_machine
-        name: Sound machine
-        template: card_power_outlet
-        type: custom:button-card
+        show_oscillate_control: false
+        show_percentage_control: false
+        type: custom:mushroom-fan-card
       - entity: climate.bedroom
-        name: Air conditioner
-        template: card_power_outlet
-        type: custom:button-card
-        variables:
-          ulm_card_power_outlet_consumption_sensor: sensor.bedroom_ac_power
-      - entity: switch.hot_water_pump
-        name: Hot water
-        template: card_power_outlet
-        type: custom:button-card
+        name: A/C
+        type: custom:mushroom-entity-card
       columns: 3
       square: false
       type: grid
-    - cards:
-      - tap_action:
-          action: none
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: ' '
-          label: 'A/C force:'
-      - tap_action:
-          action: call-service
-          service: sensibo.assume_state
-          service_data:
-            entity_id: climate.bedroom
-            state: 'off'
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: ⏻
-          label: 'off'
-      - tap_action:
-          action: call-service
-          service: sensibo.assume_state
-          service_data:
-            entity_id: climate.bedroom
-            state: cool
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: ❄️
-          label: 'off'
-      - tap_action:
-          action: call-service
-          service: sensibo.assume_state
-          service_data:
-            entity_id: climate.bedroom
-            state: fan_only
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: 💨
-          label: fan_only
-      type: horizontal-stack
+    - alignment: center
+      chips:
+      - entity: sensor.bedroom_temperature
+        icon_color: amber
+        type: entity
+      - entity: sensor.bedroom_humidity
+        icon: ''
+        icon_color: light-blue
+        type: entity
+      - entity: binary_sensor.bedroom_presence
+        icon_color: brown
+        type: entity
+      - entity: input_select.glowforge_status
+        icon: mdi:alpha-g-box
+        type: entity
+      type: custom:mushroom-chips-card
     type: vertical-stack
   - cards:
-    - label: Control lights and devices.
-      name: Kyle's room
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.kyles_bedroom_temperature
-          icon: 🌡️
-          unit: °F
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.kyles_room_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
-    - cards:
-      - entity: light.kyle_bedside
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Bedside
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-  - cards:
-    - label: Control lights and devices.
-      name: Lucas' room
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.lucas_room_display_temperature
-          icon: 🌡️
-          unit: °F
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.lucas_room_humidity
-          icon: 💧
-          unit: '%'
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.lucas_ac_power
-          icon: 🧊
-          unit: w
-      type: horizontal-stack
-    - cards:
-      - entity: light.lucas_room
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Light
-      - entity: switch.adaptive_lighting_lucas_room
-        template: card_power_outlet
-        type: custom:button-card
-      - entity: climate.lucas_room
-        name: Air conditioner
-        template: card_power_outlet
-        type: custom:button-card
-        variables:
-          ulm_card_power_outlet_consumption_sensor: sensor.lucas_room_ac_power
-      columns: 3
-      square: false
-      type: grid
-    - cards:
-      - tap_action:
-          action: none
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: ' '
-          label: 'A/C force:'
-      - tap_action:
-          action: call-service
-          service: sensibo.assume_state
-          service_data:
-            entity_id: climate.lucas_room
-            state: 'off'
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: ⏻
-          label: 'off'
-      - tap_action:
-          action: call-service
-          service: sensibo.assume_state
-          service_data:
-            entity_id: climate.lucas_room
-            state: cool
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: ❄️
-          label: cool
-      - tap_action:
-          action: call-service
-          service: sensibo.assume_state
-          service_data:
-            entity_id: climate.lucas_room
-            state: dry
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: 💧
-          label: dry
-      - tap_action:
-          action: call-service
-          service: sensibo.assume_state
-          service_data:
-            entity_id: climate.lucas_room
-            state: fan_only
-        template: custom_chip_brianhanifin_label
-        type: custom:button-card
-        variables:
-          icon: 💨
-          label: fan_only
-      type: horizontal-stack
-    type: vertical-stack
-  - cards:
-    - label: Control & monitor devices.
-      name: Upstairs bathroom
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.upstairs_bathroom_temperature
-          icon: 🌡️
-          unit: °F
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.upstairs_bathroom_humidity
-          icon: 💧
-          unit: '%'
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.upstairs_bathroom_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      - template: custom_chip_brianhanifin_contact_sensor
-        type: custom:button-card
-        variables:
-          entity: binary_sensor.upstairs_bathroom_window
-          icon: 🪟
-      type: horizontal-stack
+    - subtitle: Control devices.
+      title: Upstairs bathroom
+      type: custom:mushroom-title-card
     - cards:
       - entity: fan.upstairs_bathroom
+        icon_animation: true
         name: Exhaust fan
-        template: card_power_outlet
-        type: custom:button-card
-      columns: 3
+        show_oscillate_control: false
+        show_percentage_control: false
+        type: custom:mushroom-fan-card
+      - entity: number.upstairs_bathroom_humidity_trigger
+        name: Humidity trigger
+        type: custom:mushroom-entity-card
+      columns: 2
       square: false
       type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.upstairs_bathroom_temperature
+        icon_color: amber
+        type: entity
+      - entity: sensor.upstairs_bathroom_humidity
+        icon: ''
+        icon_color: light-blue
+        type: entity
+      - entity: binary_sensor.upstairs_bathroom_presence
+        icon_color: brown
+        type: entity
+      type: custom:mushroom-chips-card
+    type: vertical-stack
+  - cards:
+    - subtitle: Control lights and devices.
+      title: ' Lucas'' room'
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.lucas_room
+        name: Light
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: climate.lucas_room
+        name: A/C
+        type: custom:mushroom-entity-card
+      columns: 2
+      square: false
+      type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.lucas_room_temperature
+        icon_color: amber
+        type: entity
+      - entity: sensor.lucas_room_humidity
+        icon: ''
+        icon_color: light-blue
+        type: entity
+      type: custom:mushroom-chips-card
     type: vertical-stack
     view_layout:
-      position: main
+      position: sidebar
+  - cards:
+    - subtitle: Control lights.
+      title: Kyle's room
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.kyle_bedside
+        name: Light
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
+      columns: 2
+      square: false
+      type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.kyles_bedroom_temperature
+        icon_color: amber
+        type: entity
+      - entity: binary_sensor.kyles_room_presence
+        icon: mdi:motion-sensor
+        icon_color: brown
+        type: entity
+      type: custom:mushroom-chips-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
   icon: mdi:home-floor-2
   path: upstairs
+  theme: Backend-selected
   title: Upstairs
   type: sidebar
 - badges: []
   cards:
   - cards:
-    - icon: mdi:home
-      label: common
-      name: Home
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/home
-    - icon: mdi:home-floor-2
-      label: zone
-      name: Upstairs
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/upstairs
-    - icon: mdi:flower
-      label: zone
-      name: Outdoor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/outdoors
-    - icon: mdi:speedometer-slow
-      label: status
-      name: Monitor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/monitoring
-    - icon: mdi:calendar-clock
-      label: wakeup
-      name: Events
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/events
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-1
+      icon_color: green
+      layout: vertical
+      primary: Downstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-2
+      icon_color: green
+      layout: vertical
+      primary: Upstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/upstairs
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:flower
+      icon_color: green
+      layout: vertical
+      primary: Outdoor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/outdoor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:speedometer-slow
+      icon_color: green
+      layout: vertical
+      primary: Monitor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/monitor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:calendar-clock
+      icon_color: green
+      layout: vertical
+      primary: Events
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/events
+      type: custom:mushroom-template-card
     columns: 5
     square: false
     type: grid
-  - cards:
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.ui_date
-        ulm_chip_icon_state_icon: 📅
-    - template: custom_chip_brianhanifin_weather
-      type: custom:button-card
-      variables:
-        entity: weather.home
-        temperature: sensor.outdoor_temperature
-    - template: presence
-      type: custom:button-card
-      variables:
-        presence_counter: sensor.family_present
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.lights_on_count
-        ulm_chip_icon_state_icon: 💡
-    type: horizontal-stack
+  - alignment: center
+    chips:
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      type: weather
+    - entity: sensor.family_present
+      type: entity
+    - chip:
+        entity: sensor.lights_on_count
+        icon: mdi:home-lightbulb
+        icon_color: amber
+        name: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on_count
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
   - cards:
-    - label: Control lights and view cameras.
-      name: Outdoors
-      template: card_title
-      type: custom:button-card
-    - cards:
-      - template: custom_chip_brianhanifin_icon_state
-        type: custom:button-card
-        variables:
-          entity: sensor.kyles_bedroom_temperature
-          icon: 🌡️
-          unit: °F
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.kyles_room_presence
-          ulm_chip_icon_state_icon: 🏃‍♂️
-      type: horizontal-stack
+    - subtitle: Control lights and view cameras.
+      title: Outdoors
+      type: custom:mushroom-title-card
     - cards:
       - entity: light.porch
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Porch
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.home_entry
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Home entry
+        type: custom:mushroom-entity-card
       - entity: switch.adaptive_lighting_home_entry
-        template: card_power_outlet
-        type: custom:button-card
+        type: custom:mushroom-entity-card
       - entity: cover.garage_door
-        lock:
-          enabled: 'true'
         name: Garage
-        template: card_power_outlet
-        type: custom:button-card
+        show_buttons_control: false
+        show_position_control: false
+        tap_action:
+          action: more-info
+        type: custom:mushroom-cover-card
       - entity: lock.front_door
-        lock:
-          enabled: 'true'
-        name: Deadbolt
-        template: card_power_outlet
-        type: custom:button-card
+        type: custom:mushroom-entity-card
       - entity: input_boolean.leave_unlocked
-        name: Leave unlocked
-        template: card_power_outlet
-        type: custom:button-card
+        hide_icon: false
+        icon: fas:toggle-on
+        type: custom:mushroom-entity-card
       columns: 3
       square: false
       type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.backyard_temperature
+        icon_color: amber
+        type: entity
+      - entity: binary_sensor.front_door_person_motion
+        type: entity
+      type: custom:mushroom-chips-card
     type: vertical-stack
-  - camera_entity: camera.driveway
-    dimensions:
-      aspect_ratio_mode: dynamic
-    event_viewer:
-      autoplay_clip: true
-    frigate:
-      url: http://10.0.0.4:5003/
-    live:
-      controls:
-        thumbnails:
-          media: clips
-          mode: below
-      preload: false
-      provider: frigate
-    type: custom:frigate-card
-  - camera_entity: camera.front_door
-    dimensions:
-      aspect_ratio_mode: dynamic
-    event_viewer:
-      autoplay_clip: true
-    frigate:
-      url: http://10.0.0.4:5000/
-    live:
-      controls:
-        thumbnails:
-          media: clips
-          mode: below
-      preload: false
-      provider: frigate
-    type: custom:frigate-card
-    view:
-      default: live
-  - entity: camera.doorbell_person
+  - cards:
+    - camera_view: auto
+      entity: camera.front_door_person
+      show_name: true
+      show_state: true
+      type: picture-entity
+    - camera_image: ''
+      camera_view: auto
+      entity: camera.doorbell_person
+      show_name: true
+      show_state: false
+      type: picture-entity
+    - camera_image: ''
+      camera_view: auto
+      entity: camera.driveway_person
+      show_name: true
+      show_state: false
+      type: picture-entity
+    columns: 3
+    square: true
+    type: grid
+    view_layout:
+      position: main
+  - camera_image: camera.front_door
+    camera_view: live
+    entity: switch.adaptive_lighting_adapt_brightness_play_room
     show_name: false
     show_state: false
-    style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-      \  box-shadow: var(--box-shadow);\n}\n"
     type: picture-entity
     view_layout:
       position: sidebar
-  - cards:
-    - entity: camera.front_door_person
-      show_name: false
-      show_state: false
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n"
-      type: picture-entity
-    - entity: camera.driveway_person
-      show_name: false
-      show_state: false
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n"
-      type: picture-entity
-    type: horizontal-stack
+  - camera_image: camera.driveway
+    camera_view: live
+    entity: switch.adaptive_lighting_adapt_brightness_family_room
+    show_name: false
+    show_state: false
+    type: picture-entity
     view_layout:
       position: sidebar
   icon: mdi:flower
-  path: outdoors
-  title: Outdoors
+  path: outdoor
+  theme: Backend-selected
+  title: Outdoor
   type: sidebar
 - badges: []
   cards:
   - cards:
-    - icon: mdi:home
-      label: common
-      name: Home
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/home
-    - icon: mdi:home-floor-2
-      label: zone
-      name: Upstairs
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/upstairs
-    - icon: mdi:flower
-      label: zone
-      name: Outdoor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/outdoors
-    - icon: mdi:speedometer-slow
-      label: status
-      name: Monitor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/monitoring
-    - icon: mdi:calendar-clock
-      label: wakeup
-      name: Events
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/events
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-1
+      icon_color: green
+      layout: vertical
+      primary: Downstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-2
+      icon_color: green
+      layout: vertical
+      primary: Upstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/upstairs
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:flower
+      icon_color: green
+      layout: vertical
+      primary: Outdoor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/outdoor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:speedometer-slow
+      icon_color: green
+      layout: vertical
+      primary: Monitor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/monitor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:calendar-clock
+      icon_color: green
+      layout: vertical
+      primary: Events
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/events
+      type: custom:mushroom-template-card
     columns: 5
     square: false
     type: grid
-  - cards:
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.ui_date
-        ulm_chip_icon_state_icon: 📅
-    - template: custom_chip_brianhanifin_weather
-      type: custom:button-card
-      variables:
-        entity: weather.home
-        temperature: sensor.outdoor_temperature
-    - template: presence
-      type: custom:button-card
-      variables:
-        presence_counter: sensor.family_present
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.lights_on_count
-        ulm_chip_icon_state_icon: 💡
-    type: horizontal-stack
+  - alignment: center
+    chips:
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      type: weather
+    - entity: sensor.family_present
+      type: entity
+    - chip:
+        entity: sensor.lights_on_count
+        icon: mdi:home-lightbulb
+        icon_color: amber
+        name: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on_count
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
+  - title: Monitor devices
+    type: custom:mushroom-title-card
   - cards:
-    - label: Monitor devices.
-      template: card_title
-      type: custom:button-card
-    type: vertical-stack
-  - cards:
-    - cards:
-      - template: custom_card_mpse_dual_graph
-        type: custom:button-card
-        variables:
-          ulm_card_graph_color: var(--google-blue)
-          ulm_card_graph_color_2: var(--google-green)
-          ulm_card_graph_entity: sensor.fridge_temperature
-          ulm_card_graph_entity_2: sensor.garage_fridge_temperature
-          ulm_card_graph_name: Fridge temperatures
-      - template: custom_card_mpse_dual_graph
-        type: custom:button-card
-        variables:
-          ulm_card_graph_color: var(--google-blue)
-          ulm_card_graph_color_2: var(--google-green)
-          ulm_card_graph_entity: sensor.freezer_temperature
-          ulm_card_graph_entity_2: sensor.garage_freezer_temperature
-          ulm_card_graph_name: Freezer temperatures
-      type: horizontal-stack
-      view_layout:
-        position: sidebar
-    - show_last_changed: true
-      template:
-      - card_input_number
-      type: custom:button-card
-      variables:
-        ulm_card_input_number_entity: input_number.fridge_temperature_threshold
-        ulm_card_input_number_name: ''
-    - show_last_changed: true
-      template:
-      - card_input_number
-      type: custom:button-card
-      variables:
-        ulm_card_input_number_entity: input_number.freezer_temperature_threshold
-        ulm_card_input_number_name: ''
-    - entity: automation.fridge_freezer_temperature_alert
-      label: automation
-      template: card_power_outlet
-      type: custom:button-card
-    type: vertical-stack
-    view_layout:
-      position: sidebar
-  - cards:
-    - label: Pew pew, woo woo.
-      name: Glowforge
-      template: card_title
-      type: custom:button-card
+    - subtitle: Pew pew, woo woo.
+      title: Glowforge
+      type: custom:mushroom-title-card
     - cards:
       - entities:
         - entity: binary_sensor.glowforge_on
-        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-          }\n"
         type: entities
       - entity: binary_sensor.glowforge_on
         states:
@@ -2995,19 +1138,14 @@ views:
             - name: Camera UI
               type: weblink
               url: http://10.0.20.32
-            style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius:\
-              \ var(--border-radius);\n}\n"
             type: entities
         type: custom:state-switch
       type: vertical-stack
     type: vertical-stack
-    view_layout:
-      position: main
   - cards:
-    - label: 3D printer.
-      name: Prusa
-      template: card_title
-      type: custom:button-card
+    - subtitle: Prusa MK2.5s
+      title: 3D printer
+      type: custom:mushroom-title-card
     - cards:
       - entities:
         - card:
@@ -3021,8 +1159,6 @@ views:
         - name: Octoprint UI
           type: weblink
           url: http://octopi.local
-        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-          }\n"
         type: entities
       - entity: switch.prusa
         states:
@@ -3037,8 +1173,6 @@ views:
               state_filter:
                 Operational: grayscale(100%)
                 Printing: brightness(110%) saturate(1.2)
-              style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius:\
-                \ var(--border-radius);\n}\n"
               tap_action:
                 action: call-service
                 service: browser_mod.more_info
@@ -3087,91 +1221,151 @@ views:
                 icon: mdi:cellphone-message
                 name: Notify On Status Change
                 show_state: false
-              style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius:\
-                \ var(--border-radius);\n}\n"
               type: custom:hui-entities-card
             type: vertical-stack
         type: custom:state-switch
       type: vertical-stack
     type: vertical-stack
+  - cards:
+    - cards:
+      - template: custom_card_mpse_dual_graph
+        type: custom:button-card
+        variables:
+          ulm_card_graph_color: var(--google-blue)
+          ulm_card_graph_color_2: var(--google-green)
+          ulm_card_graph_entity: sensor.fridge_temperature
+          ulm_card_graph_entity_2: sensor.garage_fridge_temperature
+          ulm_card_graph_name: Fridge temperatures
+      - template: custom_card_mpse_dual_graph
+        type: custom:button-card
+        variables:
+          ulm_card_graph_color: var(--google-blue)
+          ulm_card_graph_color_2: var(--google-green)
+          ulm_card_graph_entity: sensor.freezer_temperature
+          ulm_card_graph_entity_2: sensor.garage_freezer_temperature
+          ulm_card_graph_name: Freezer temperatures
+      type: horizontal-stack
+      view_layout:
+        position: sidebar
+    - show_last_changed: true
+      template:
+      - card_input_number
+      type: custom:button-card
+      variables:
+        ulm_card_input_number_entity: input_number.fridge_temperature_threshold
+        ulm_card_input_number_name: ''
+    - show_last_changed: true
+      template:
+      - card_input_number
+      type: custom:button-card
+      variables:
+        ulm_card_input_number_entity: input_number.freezer_temperature_threshold
+        ulm_card_input_number_name: ''
+    - entity: automation.fridge_freezer_temperature_alert
+      label: automation
+      template: card_power_outlet
+      type: custom:button-card
+    type: vertical-stack
     view_layout:
-      position: main
+      position: sidebar
   icon: mdi:speedometer-slow
-  path: monitoring
-  title: Monitoring
+  path: monitor
+  theme: Backend-selected
+  title: Monitor
   type: sidebar
 - badges: []
   cards:
   - cards:
-    - icon: mdi:home
-      label: common
-      name: Home
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/home
-    - icon: mdi:home-floor-2
-      label: zone
-      name: Upstairs
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/upstairs
-    - icon: mdi:flower
-      label: zone
-      name: Outdoor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/outdoors
-    - icon: mdi:speedometer-slow
-      label: status
-      name: Monitor
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/monitoring
-    - icon: mdi:calendar-clock
-      label: wakeup
-      name: Events
-      template: custom_card_brianhanifin_vertical_button_navigate
-      type: custom:button-card
-      variables:
-        color: green
-        path: /lovelace/events
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-1
+      icon_color: green
+      layout: vertical
+      primary: Downstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/home
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:home-floor-2
+      icon_color: green
+      layout: vertical
+      primary: Upstairs
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/upstairs
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:flower
+      icon_color: green
+      layout: vertical
+      primary: Outdoor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/outdoor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:speedometer-slow
+      icon_color: green
+      layout: vertical
+      primary: Monitor
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/monitor
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      hold_action:
+        action: none
+      icon: mdi:calendar-clock
+      icon_color: green
+      layout: vertical
+      primary: Events
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/events
+      type: custom:mushroom-template-card
     columns: 5
     square: false
     type: grid
-  - cards:
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.ui_date
-        ulm_chip_icon_state_icon: 📅
-    - template: custom_chip_brianhanifin_weather
-      type: custom:button-card
-      variables:
-        entity: weather.home
-        temperature: sensor.outdoor_temperature
-    - template: presence
-      type: custom:button-card
-      variables:
-        presence_counter: sensor.family_present
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.lights_on_count
-        ulm_chip_icon_state_icon: 💡
-    type: horizontal-stack
+  - alignment: center
+    chips:
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      type: weather
+    - entity: sensor.family_present
+      type: entity
+    - chip:
+        entity: sensor.lights_on_count
+        icon: mdi:home-lightbulb
+        icon_color: amber
+        name: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on_count
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
-  - label: Scheduled announcements & wakeup lights
-    template: card_title
-    type: custom:button-card
+  - subtitle: Scheduled announcements & wakeup lights.
+    title: Events
+    type: custom:mushroom-title-card
   - template: event
     type: custom:decluttering-card
     variables:
@@ -3223,772 +1417,78 @@ views:
     - sensors:
       - binary_sensor.middle_school_day
       - binary_sensor.high_school_day
+  - subtitle: Scheduled device on/off times.
+    title: Device scheduler
+    type: custom:mushroom-title-card
+    view_layout:
+      position: sidebar
+  - am_pm: true
+    discover_existing: false
+    display_options:
+      primary_info:
+      - name
+      - '<i>Action: {entity} [{action}]</i>'
+      secondary_info:
+      - relative-time
+      - days
+    exclude: []
+    include:
+    - climate.lucas_room
+    - fan.bedroom
+    - fan.family_room
+    - fan.play_room
+    - fan.upstairs_bathroom
+    - light.bedroom
+    - light.brian
+    - light.dining_room
+    - light.entry
+    - light.entry_railing
+    - light.family_room
+    - light.family_room_floor_lamp
+    - light.glowforge
+    - light.home_entry
+    - light.kitchen
+    - light.kitchen_prep
+    - light.play_room
+    - light.play_room_entry
+    - light.play_room_floor_lamp
+    - light.porch
+    - light.table_lamp
+    - light.wled_holiday_string
+    - switch.front_yard1
+    - switch.front_yard2
+    - switch.hot_water_pump
+    - switch.lucas_auto_climate
+    - switch.printers
+    show_header_toggle: false
+    sort_by:
+    - state
+    - title
+    time_step: 10
+    title: false
+    type: custom:scheduler-card
+    view_layout:
+      position: sidebar
   icon: mdi:calendar-clock
   path: events
+  theme: Backend-selected
   title: Events
   type: sidebar
 - badges: []
   cards:
   - cards:
-    - template: edge
-      type: custom:button-card
-    - entity: group.family_room_lights
-      template:
-      - card_light
-      type: custom:button-card
-    - entity: group.kitchen_lights
-      template:
-      - card_light
-      type: custom:button-card
-    - template: edge
-      type: custom:button-card
-    type: horizontal-stack
-  - cards:
-    - template: chip_temperature
-      type: custom:button-card
-      variables:
-        ulm_chip_temperature_inside: sensor.home_temperature_average
-        ulm_chip_temperature_outside: sensor.outdoor_temperature
-        ulm_chip_temperature_weather: weather.home
-    - template: chip_presence_detection
-      type: custom:button-card
-      variables:
-        ulm_chip_presence_counter_guests: sensor.none
-        ulm_chip_presence_counter_residents: sensor.family_present
-    - template: chip_icon_state
-      type: custom:button-card
-      variables:
-        ulm_chip_icon_state_entity: sensor.lights_on_count
-        ulm_chip_icon_state_icon: 💡
-    type: horizontal-stack
-    view_layout:
-      position: sidebar
-  - cards:
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: chip_back
-        type: custom:button-card
-        variables:
-          ulm_chip_back_path: /lovelace/home
-      - content: 'Chip Back Button
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: chip_icon_double_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_double_state_entity_1: sensor.bedroom_display_temperature
-          ulm_chip_icon_double_state_entity_2: sensor.bedroom_temperature
-          ulm_chip_icon_double_state_icon: 💻
-      - content: 'Chip Icon With Double State
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: chip_icon_only
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_only: ❤️
-      - content: 'Chip Icon Only
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: chip_icon_state
-        type: custom:button-card
-        variables:
-          ulm_chip_icon_state_entity: binary_sensor.eight_right_bed_presence
-          ulm_chip_icon_state_icon: 🛏️
-      - content: 'Chip Icon With State
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: chip_presence_detection
-        type: custom:button-card
-        variables:
-          ulm_chip_presence_counter_guests: sensor.none
-          ulm_chip_presence_counter_residents: sensor.family_present
-      - content: 'Chip Presence Detection (counter)
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: chip_temperature
-        type: custom:button-card
-        variables:
-          ulm_chip_temperature_inside: sensor.home_temperature_average
-          ulm_chip_temperature_outside: sensor.outdoor_temperature
-          ulm_chip_temperature_weather: weather.home
-      - content: 'Chip Temperature
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    type: vertical-stack
-    view_layout:
-      position: sidebar
-  - cards:
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: sensor.family_room_temperature_battery
-        template: card_battery
-        type: custom:button-card
-      - content: 'Battery Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: binary_sensor.network_closet_door
-        show_last_changed: true
-        template: card_binary_sensor
-        type: custom:button-card
-        variables:
-        - ulm_card_binary_sensor_alert: true
-      - content: 'Binary Sensor Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: binary_sensor.network_closet_door
-        show_last_changed: true
-        template: card_binary_sensor_alert
-        type: custom:button-card
-        variables:
-        - ulm_card_binary_sensor_alert: true
-      - content: 'Binary Sensor Card (alert)
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template:
-        - card_cover_with_buttons
-        type: custom:button-card
-        variables:
-          ulm_card_cover_with_buttons_entity: cover.garage_door
-          ulm_card_cover_with_buttons_name: Garage Door
-      - content: 'Cover Card with buttons
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: sensor.time
-        template: card_generic
-        type: custom:button-card
-      - content: 'Generic Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: sensor.time
-        template: card_generic_swap
-        type: custom:button-card
-      - content: 'Generic Card Swapped
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: card_graph
-        type: custom:button-card
-        variables:
-          ulm_card_graph_color: var(--google-blue)
-          ulm_card_graph_entity: sensor.family_room_temperature
-          ulm_card_graph_name: Temperature Family Room
-      - content: 'Graph Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: input_boolean.nothing
-        template: card_input_boolean
-        type: custom:button-card
-      - content: 'Input Boolean Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: light.table_lamp
-        template: card_light
-        type: custom:button-card
-      - content: 'Light Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: light.table_lamp
-        template: card_light_slider
-        type: custom:button-card
-      - content: 'Light Slider Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: light.table_lamp
-        template: card_light_slider_collapse
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_collapse_name: Table Lamp
-      - content: 'Light Slider Card (collapse)
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: light.table_lamp
-        template: card_light_slider_horizontal
-        type: custom:button-card
-        variables:
-          ulm_card_light_slider_horizontal_name: Table Lamp
-      - content: 'Light Slider Card (horizontal)
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: media_player.google_family_room
-        name: 'Google: Family Room'
-        template: card_media_player
-        type: custom:button-card
-      - content: 'Media Player Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: media_player.google_family_room
-        name: 'Google: Family Room'
-        template: card_media_player_with_control
-        type: custom:button-card
-      - content: 'Media Player Card (with control)
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template:
-        - card_media_player_with_controls
-        type: custom:button-card
-        variables:
-          ulm_card_media_player_with_controls_entity: media_player.google_family_room
-          ulm_card_media_player_with_controls_name: 'Google: Family Room'
-      - content: 'Media Player Card (with controls)
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: card_navigate
-        type: custom:button-card
-        variables:
-          ulm_card_navigate_icon: mdi:cctv
-          ulm_card_navigate_path: /lovelace/cameras
-          ulm_card_navigate_title: Cameras
-      - content: 'Navigate Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - template: card_person
-        type: custom:button-card
-        variables:
-          ulm_card_person_entity: person.lucas
-          ulm_card_person_use_entity_picture: true
-          ulm_card_person_zone1: west hills
-          ulm_card_person_zone2: school
-      - content: 'Person Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - entity: fan.family_room
-        name: Family Room Fan
-        template: card_power_outlet
-        type: custom:button-card
-        variables:
-          ulm_card_power_outlet_consumption_sensor: sensor.family_room_fan_power
-      - content: 'Power Outlet Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - template: edge
-        type: custom:button-card
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: none
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:beaker
-          ulm_card_script_title: Test
-      - content: 'Script Card
-
-          '
-        type: markdown
-      - template: edge
-        type: custom:button-card
-      type: horizontal-stack
-    type: vertical-stack
-  path: example
-  theme: minimalist-desktop
-  title: example
-  type: sidebar
-- badges: []
-  cards:
-  - card:
-      cards:
-      - compact_mode: false
-        entities:
-        - content_template: '**SMOKE DETECTED*'
-          entity: binary_sensor.safety_alarm_smoke
-          exclude_states:
-          - 'off'
-        - content_template: '**CARBON MONOXIDE DETECTED**'
-          entity: binary_sensor.safety_alarm_co
-          exclude_states:
-          - 'off'
-        - content_template: '**WATER LEAK DETECTED**'
-          entity: binary_sensor.safety_alarm_leak
-          exclude_states:
-          - 'off'
-        - content_template: '**{{display_name}}** is Unlocked'
-          entity: lock.front_door
-          exclude_states:
-          - locked
-          - unavailable
-          name: Front Door
-        - content_template: '**Lock countdown** is Active'
-          entity: timer.front_door_unlocked
-          exclude_states:
-          - idle
-        - content_template: '**Leave door unlocked** is Active'
-          entity: input_boolean.leave_unlocked
-          exclude_states:
-          - 'off'
-        - content_template: '**{{display_name}}** is {{state}}'
-          entity: binary_sensor.front_door
-          exclude_states:
-          - 'off'
-          - unavailable
-          name: Front Door
-          state_map:
-            'on': Open
-        - content_template: '**{{display_name}}** is {{state}}'
-          entity: cover.garage_door
-          exclude_states:
-          - closed
-          - unavailable
-        - content_template: '**{{display_name}}** is Open'
-          entity: binary_sensor.network_closet_door
-          exclude_states:
-          - 'off'
-          - unavailable
-        - content_template: '**{{display_name}}** is Open'
-          entity: binary_sensor.upstairs_bathroom_window
-          exclude_states:
-          - 'off'
-          - unavailable
-        - content_template: '**{{display_name}}** is Active'
-          entity: input_boolean.guest_mode
-          exclude_states:
-          - 'off'
-        - content_template: '**{{display_name}}** is Active'
-          entity: input_boolean.away_mode
-          exclude_states:
-          - 'off'
-        - content_template: '**{{display_name}}** is Offline'
-          entity: binary_sensor.irrigation_controller_status
-          exclude_states:
-          - 'on'
-          - unavailable
-        - content_template: '**3D Printer** is {{state}}'
-          entity: sensor.octoprint_current_state
-          exclude_states:
-          - unavailable
-          include_states:
-          - Printing
-        max_item_count: 5
-        more_info_on_tap: true
-        show_empty: false
-        show_notification_title: true
-        style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
-          \ 0;\n  margin: 1em 0 -1em 6px;\n}\nha-markdown, hui-timestamp-display {\n\
-          \  margin-left: 16px;\n}\n"
-        title: ''
-        type: custom:home-feed-card
-      - card:
-          card_mod:
-            style: "ha-card {\n  background-color: transparent;\n}\n"
-          type: entities
-        filter:
-          exclude:
-          - state: '>30'
-          - entity_id: '*ipad*'
-          - entity_id: '*iphone*'
-          - entity_id: '*life360*'
-          - entity_id: '*macbook*'
-          - entity_id: '*watch*'
-          - entity_id: sensor.family_room_remote_battery
-          - entity_id: sensor.*simulated*_battery
-          include:
-          - entity_id: sensor.*_battery
-        numeric: true
-        show_empty: false
-        sort:
-          count: 3
-          method: state
-        type: custom:auto-entities
-      type: vertical-stack
-    style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  box-shadow: var(--box-shadow);\n\
-      }\n"
-    type: custom:mod-card
-  - aspect_ratio: 1/1
-    custom_fields:
-      graph:
-        card:
-          entity: sensor.backyard_temperature
-          graph: line
-          style: "ha-card {\n  box-shadow: none;\n}\n"
-          type: sensor
-    entity: light.table_lamp
-    hold_action:
-      action: more-info
-    styles:
-      card:
-      - overflow: unset
-      custom_fields:
-        graph:
-        - filter: opacity(50%)
-        - overflow: unset
-      grid:
-      - grid-template-areas: '"i" "n" "graph"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: 1fr min-content min-content
-    type: custom:button-card
-  - aspect_ratio: 1/1
-    custom_fields:
-      graph:
-        card:
-          entity: sensor.backyard_temperature
-          graph: line
-          style: "ha-card {\n  box-shadow: none;\n}\n"
-          type: sensor
-    entity: light.table_lamp
-    hold_action:
-      action: more-info
-    styles:
-      card:
-      - overflow: unset
-      custom_fields:
-        graph:
-        - filter: opacity(50%)
-        - overflow: unset
-      grid:
-      - grid-template-areas: '"i" "n" "graph"'
-      - grid-template-columns: 1fr
-      - grid-template-rows: 1fr min-content min-content
-    type: custom:button-card
-  - cards:
-    - template: chip_navigate
-      type: custom:button-card
-      variables:
-        ulm_chip_navigate_icon: mdi:home
-        ulm_chip_navigate_path: /lovelace/home
-    - template: chip_navigate
-      type: custom:button-card
-      variables:
-        ulm_chip_navigate_icon: mdi:home-floor-2
-        ulm_chip_navigate_path: /lovelace/upstairs
-    type: horizontal-stack
-  - cards:
-    - content: 'This is only shown on screens more than 800 px wide
+    - chips:
+      - type: back
+      type: custom:mushroom-chips-card
+    - subtitle: Status
+      title: Home Assistant
+      type: custom:mushroom-title-card
+    - content: '{{ states("sensor.update_message") }}
 
         '
+      entity_id: sensor.updates
+      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n"
       type: markdown
-      view_layout:
-        show:
-          mediaquery: '(min-width: 800px)'
-    - content: 'This is only shown on screens less than 400 px wide
-
-        '
-      type: markdown
-      view_layout:
-        show:
-          mediaquery: '(max-width: 400px)'
-    - content: 'This is only shown on touch screen devices
-
-        '
-      type: markdown
-      view_layout:
-        show:
-          mediaquery: '(pointer: coarse)'
-    type: vertical-stack
-  path: test
-  title: test
-- badges: []
-  cards:
-  - cards:
-    - cards:
-      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
-        template: chip_back
-        type: custom:button-card
-        variables:
-          ulm_chip_back_path: /lovelace/home
-      - name: Actions
-        template: card_title
-        type: custom:button-card
-      type: horizontal-stack
-    - cards:
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.config_check
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:check-bold
-          ulm_card_script_title: Config
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.automation_reload
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:refresh-circle
-          ulm_card_script_title: Automation
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.script_reload
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:refresh-circle
-          ulm_card_script_title: Script
-      - tap_action:
-          action: call-service
-          confirmation:
-            text: Are you sure you want to Reboot the Virtual Machine?
-          service: script.turn_on
-          service_data:
-            entity_id: script.config_check_and_reboot_server
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:power-standby
-          ulm_card_script_title: Reboot VM
-      - tap_action:
-          action: call-service
-          confirmation:
-            text: Are you sure you want to Restart Home Assistant?
-          service: script.turn_on
-          service_data:
-            entity_id: script.config_check_and_restart
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:recycle
-          ulm_card_script_title: Restart
-      - tap_action:
-          action: navigate
-          navigation_path: ./home?disable_km&edit=1
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:pencil
-          ulm_card_script_title: Edit
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.refresh_count_sensors
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:cog-refresh
-          ulm_card_script_title: Sensor count
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.refresh_update_sensors
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:cog-refresh
-          ulm_card_script_title: Update sensors
-      - tap_action:
-          action: call-service
-          service: watchman.report
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:shield-half-full
-          ulm_card_script_title: Update watchman
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.ci_generate_fake_secrets
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:thought-bubble
-          ulm_card_script_title: Secrets generate
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.ci_generate_readme
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:github
-          ulm_card_script_title: Readme generate
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-    view_layout:
-      position: main
-  - cards:
-    - label: Status
-      name: Home Assistant
-      template: card_title
-      type: custom:button-card
-    - card:
-        cards:
-        - content: '{{ states("sensor.update_message") }}
-
-            '
-          entity_id: sensor.updates
-          style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
-            \ 0;\n}\n"
-          type: markdown
-        type: vertical-stack
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.3);\n  border-radius: var(--border-radius);\n\
-        \  box-shadow: var(--box-shadow);\n}\n:host {\n  display: {{ \"none\" if states(\"\
-        sensor.updates\")|default(0)|int == 0 else \"block\" }}\n}\n"
-      type: custom:mod-card
     - cards:
       - entities:
         - entities:
@@ -4092,15 +1592,160 @@ views:
           show_state: false
           type: custom:multiple-entity-row
         type: entities
-      style: "ha-card {\n  border-radius: var(--border-radius);\n}\n"
       type: custom:stack-in-card
+    type: vertical-stack
+  - cards:
+    - subtitle: null
+      title: Actions
+      type: custom:mushroom-title-card
+    - alignment: justify
+      chips:
+      - content: Config check
+        icon: mdi:check-bold
+        icon_color: blue
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.config_check
+        type: template
+      - content: Automation reload
+        icon: mdi:refresh-circle
+        icon_color: blue
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.automation_reload
+        type: template
+      - content: Script reload
+        icon: mdi:refresh-circle
+        icon_color: blue
+        tap_action:
+          action: call-service
+          service: script.script_reload
+          service_data: {}
+          target:
+            entity_id: script.automation_reload
+        type: template
+      type: custom:mushroom-chips-card
+    - alignment: justify
+      chips:
+      - content: Reboot VM
+        icon: mdi:power-standby
+        icon_color: orange
+        tap_action:
+          action: call-service
+          confirmation:
+            text: Are you sure you want to Reboot the Virtual Machine?
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.config_check_and_reboot_server
+        type: template
+      - content: Restart HA
+        icon: mdi:recycle
+        icon_color: orange
+        tap_action:
+          action: call-service
+          confirmation:
+            text: Are you sure you want to Restart Home Assistant?
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.config_check_and_restart
+        type: template
+      - content: Edit Dashboard
+        icon: mdi:pencil
+        icon_color: orange
+        tap_action:
+          action: navigate
+          navigation_path: ./home?disable_km&edit=1
+        type: template
+      type: custom:mushroom-chips-card
+    - alignment: justify
+      chips:
+      - content: Entity counts
+        icon: mdi:cog-refresh
+        icon_color: grey
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.refresh_count_sensors
+        type: template
+      - content: Update sensors
+        icon: mdi:cog-refresh
+        icon_color: grey
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.refresh_update_sensors
+        type: template
+      - content: Watchman
+        icon: mdi:shield-half-full
+        icon_color: grey
+        tap_action:
+          action: call-service
+          service: script.script_reload
+          service_data: {}
+          target:
+            entity_id: watchman.report
+        type: template
+      type: custom:mushroom-chips-card
+    - alignment: justify
+      chips:
+      - content: Generate readme
+        icon: mdi:github
+        icon_color: grey
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.ci_generate_readme
+        type: template
+      - content: Generate secrets
+        icon: mdi:thought-bubble
+        icon_color: grey
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data: {}
+          target:
+            entity_id: script.ci_generate_fake_secrets
+        type: template
+      type: custom:mushroom-chips-card
     type: vertical-stack
     view_layout:
       position: sidebar
   - cards:
-    - name: Entity Counts
-      template: card_title
-      type: custom:button-card
+    - subtitle: null
+      title: Watchman report
+      type: custom:mushroom-title-card
+    - content: '<h3>Missing Entities: {{ states.sensor.watchman_missing_entities.state
+        }}</h3>'
+      type: markdown
+    - content: "<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n      \
+        \    <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n  {%-\
+        \ for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
+        ) %}\n  <tr>\n    <td>{{ item.id }}</td>\n    <td><ha-icon icon=\"mdi:cloud-{%-\
+        \ if item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
+        \ else-%}question{%- endif -%}\"></ha-icon></td>\n    <td><a title=\"{{item.occurrences}}\"\
+        > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n  </tr>\n{%-\
+        \ endfor %}\n</table>"
+      type: markdown
+    type: vertical-stack
+    view_layout:
+      position: main
+  - cards:
+    - title: Entity counts
+      type: custom:mushroom-title-card
     - columns: 6
       entities:
       - entity: sensor.entity_count
@@ -4137,45 +1782,20 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
-  - cards:
-    - icon: mdi-shield-half-full
-      name: <ha-icon icon="mdi:shield-half-full" style="height:1em"></ha-icon> Watchman
-        report
-      template: card_title
-      type: custom:button-card
-    - content: '<h3>Missing Entities: {{ states.sensor.watchman_missing_entities.state
-        }}</h3>'
-      type: markdown
-    - content: "<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n      \
-        \    <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n  {%-\
-        \ for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
-        ) %}\n  <tr>\n    <td>{{ item.id }}</td>\n    <td><ha-icon icon=\"mdi:cloud-{%-\
-        \ if item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
-        \ else-%}question{%- endif -%}\"></ha-icon></td>\n    <td><a title=\"{{item.occurrences}}\"\
-        > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n  </tr>\n{%-\
-        \ endfor %}\n</table>"
-      type: markdown
-    type: vertical-stack
-    view_layout:
-      position: main
   icon: mdi:server
   path: system
+  theme: Backend-selected
   title: System
   type: sidebar
 - badges: []
   cards:
   - cards:
-    - cards:
-      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
-        template: chip_back
-        type: custom:button-card
-        variables:
-          ulm_chip_back_path: /lovelace/home
-      - label: Tap away from message box before tapping announce
-        name: Speech notifications
-        template: card_title
-        type: custom:button-card
-      type: horizontal-stack
+    - chips:
+      - type: back
+      type: custom:mushroom-chips-card
+    - subtitle: Tap away from message box before tapping announce.
+      title: Speech notifications
+      type: custom:mushroom-title-card
     - cards:
       - entities:
         - entity: sensor.last_speaker
@@ -4206,58 +1826,24 @@ views:
           type: buttons
         show_header_toggle: false
         state_color: false
-        style: "ha-card {\n  box-shadow: none;\n}\n"
         type: entities
-      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-        }\n"
       type: custom:stack-in-card
     type: vertical-stack
   icon: mdi:google-home
   path: smart-speakers
+  theme: Backend-selected
   title: Smart speakers
 - badges: []
   cards:
   - cards:
-    - label: Enable & disable automated features
-      name: Mode overrides
-      template: card_title
-      type: custom:button-card
     - cards:
-      - entity: input_boolean.guest_mode
-        icon: mdi:account-supervisor-circle
-        label: Mode
-        name: Guest
-        template: card_power_outlet
-        type: custom:button-card
-      - entity: input_boolean.away_mode
-        icon: mdi:rv-truck
-        label: Mode
-        name: Away
-        template: card_power_outlet
-        type: custom:button-card
-      - entity: input_boolean.leave_unlocked
-        label: Unlocked
-        name: Leave
-        template: card_power_outlet
-        type: custom:button-card
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-    view_layout:
-      position: sidebar
-  - cards:
-    - cards:
-      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
-        template: chip_back
-        type: custom:button-card
-        variables:
-          ulm_chip_back_path: /lovelace/home
-      - label: Default volume
-        name: Notification settings
-        template: card_title
-        type: custom:button-card
-      type: horizontal-stack
+      - chips:
+        - type: back
+        type: custom:mushroom-chips-card
+      - subtitle: Default volume.
+        title: Notification settings
+        type: custom:mushroom-title-card
+      type: vertical-stack
     - cards:
       - entity: input_boolean.mobile_notifications
         icon: mdi:cellphone-message
@@ -4288,12 +1874,10 @@ views:
           name: Sound only
         row: true
         type: custom:restriction-card
-      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-        }\n"
       type: custom:hui-entities-card
-    - label: Quiet time (critical alerts excluded)
-      template: card_title
-      type: custom:button-card
+    - subtitle: Critical alerts excluded.
+      title: Quiet time
+      type: custom:mushroom-title-card
     - cards:
       - entities:
         - card:
@@ -4313,15 +1897,41 @@ views:
           name: Quiet time mode
         type: custom:badge-card
       mode: horizontal
-      style: "ha-card {\n  padding-top: 1.5em;\n  box-shadow: var(--box-shadow);\n\
-        \  border-radius: var(--border-radius);\n}\n"
+      style: "ha-card {\n  padding-top: 1.5em;\n}\n"
       type: custom:stack-in-card
     type: vertical-stack
   - cards:
-    - label: One time actions
-      name: Routines
-      template: card_title
-      type: custom:button-card
+    - subtitle: Enable & disable automated features.
+      title: Mode overrides
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: input_boolean.guest_mode
+        icon: mdi:account-supervisor-circle
+        label: Mode
+        name: Guest
+        template: card_power_outlet
+        type: custom:button-card
+      - entity: input_boolean.away_mode
+        icon: mdi:rv-truck
+        label: Mode
+        name: Away
+        template: card_power_outlet
+        type: custom:button-card
+      - entity: input_boolean.leave_unlocked
+        label: Unlocked
+        name: Leave
+        template: card_power_outlet
+        type: custom:button-card
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+    view_layout:
+      position: sidebar
+  - cards:
+    - subtitle: One time actions.
+      title: Routines
+      type: custom:mushroom-title-card
     - cards:
       - tap_action:
           action: call-service
@@ -4346,10 +1956,9 @@ views:
       columns: 2
       square: false
       type: grid
-    - label: Toggle miscellaneous devices
-      name: Other devices
-      template: card_title
-      type: custom:button-card
+    - subtitle: Toggle miscellaneous devices.
+      title: Other devices
+      type: custom:mushroom-title-card
     - cards:
       - entity: switch.hot_water_pump
         icon: mdi:hot-tub
@@ -4364,40 +1973,36 @@ views:
       columns: 2
       square: false
       type: grid
+    - entities:
+      - entity: sensor.hp_colorlaserjet
+        secondary_info: last-updated
+      - entity: automation.printer_status_update_when_on
+        secondary_info: last-triggered
+      - entity: automation.printer_turn_off_when_idle
+        secondary_info: last-triggered
+      show_header_toggle: false
+      type: entities
+      view_layout:
+        position: sidebar
     type: vertical-stack
-    view_layout:
-      position: sidebar
-  - entities:
-    - entity: sensor.hp_colorlaserjet
-      secondary_info: last-updated
-    - entity: automation.printer_status_update_when_on
-      secondary_info: last-triggered
-    - entity: automation.printer_turn_off_when_idle
-      secondary_info: last-triggered
-    show_header_toggle: false
-    style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-      }\n"
-    type: entities
     view_layout:
       position: sidebar
   icon: mdi:robot
   path: routines
+  theme: Backend-selected
   title: Routines
   type: sidebar
 - badges: []
   cards:
   - cards:
     - cards:
-      - style: "ha-card {\n  margin-top: 1.25em;\n}\n"
-        template: chip_back
-        type: custom:button-card
-        variables:
-          ulm_chip_back_path: /lovelace/home
-      - label: Birthdays & anniversaries
-        name: Family dates
-        template: card_title
-        type: custom:button-card
-      type: horizontal-stack
+      - chips:
+        - type: back
+        type: custom:mushroom-chips-card
+      - subtitle: Birthdays & anniversaries.
+        title: Family dates
+        type: custom:mushroom-title-card
+      type: vertical-stack
     - card:
         show_header_toggle: false
         style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
@@ -4429,10 +2034,8 @@ views:
     type: vertical-stack
   - type: custom:layout-break
   - cards:
-    - label: null
-      name: Holidays
-      template: card_title
-      type: custom:button-card
+    - title: Holidays
+      type: custom:mushroom-title-card
     - cards:
       - content: "{% set current_holiday = states(\"sensor.holiday\") %}\n{#% set\
           \ current_holiday = \"Holiday1, Holiday2\" %#}\n{%- if current_holiday !=\
@@ -4444,15 +2047,13 @@ views:
           %B %d, %Y\") }}\n{% endfor %}\n"
         type: markdown
       in_card: true
-      style: "ha-card {\n  box-shadow: none;\n  border-radius: none;\n}\n"
       type: vertical-stack
     type: vertical-stack
   - cards:
     - cards:
-      - label: Edit files in /integration_entities/binary_sensors/datetime
-        name: School dates
-        template: card_title
-        type: custom:button-card
+      - subtitle: Edit files in /integration_entities/binary_sensors/datetime.
+        title: School dates
+        type: custom:mushroom-title-card
       type: horizontal-stack
     - cards:
       - cards:
@@ -4464,22 +2065,18 @@ views:
           - entity: binary_sensor.holiday
             name: Public holiday
           show_state: false
-          style: "ha-card {\n  box-shadow: none;\n  border-radius: none;\n}\n"
           type: glance
         - entities:
           - entity: sensor.holiday
-          style: "ha-card {\n  box-shadow: none;\n  border-radius: none;\n}\n:host\
-            \ {\n  display: {{ \"none\" if states(\"sensor.holiday\") == \"\" else\
-            \ \"block\" }};\n}\n"
+          style: ":host {\n  display: {{ \"none\" if states(\"sensor.holiday\") ==\
+            \ \"\" else \"block\" }};\n}\n"
           type: entities
-        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-          }\n"
+        style: ''
         type: custom:stack-in-card
       type: vertical-stack
-    - label: Manually set
-      name: ''
-      template: card_title
-      type: custom:button-card
+    - subtitle: Manually set.
+      title: ''
+      type: custom:mushroom-title-card
     - cards:
       - entities:
         - entity: input_datetime.high_school_summer_begin
@@ -4487,8 +2084,6 @@ views:
         - entity: input_datetime.high_school_summer_ends
           name: High school first day
         show_icon: false
-        style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
-          \ none;\n}\n"
         type: glance
       - entities:
         - entity: input_datetime.school_summer_begin
@@ -4496,15 +2091,11 @@ views:
         - entity: input_datetime.school_summer_ends
           name: Middle school first day
         show_icon: false
-        style: "ha-card {\n  background: none;\n  box-shadow: none;\n  border-radius:\
-          \ none;\n}\n"
         type: glance
-      style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-        }\n"
       type: custom:stack-in-card
     type: vertical-stack
   icon: mdi:cake-variant
-  path: family-days
-  title: Family days
+  path: family-dates
+  theme: Backend-selected
+  title: Family dates
   type: custom:vertical-layout
-            

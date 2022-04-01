@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1235 total entities**, 
-including **667 sensors**.
+Our Home Assistant install has approximately **1338 total entities**, 
+including **701 sensors**.
 
-<details><summary>25 Custom integrations</summary>
+<details><summary>24 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -234,7 +234,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.23.0](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.24.0](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -264,7 +264,7 @@ None
 Authors: [@jrhorrisberger](https://github.com/jrhorrisberger), [@damienheiser](https://github.com/damienheiser).
 
 
-#### [SamsungTV Smart v0.6.0](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.6.2](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -294,12 +294,6 @@ Authors: [@djtimca](https://github.com/djtimca).
 Authors: [@pnbruckner](https://github.com/pnbruckner).
 
 
-#### [UI Lovelace Minimalist v0.0.7](https://ui-lovelace-minimalist.github.io/UI/)
-
-
-Authors: [@stokkie90](https://github.com/stokkie90).
-
-
 #### [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
 
 
@@ -318,13 +312,13 @@ A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
 
 
-#### [Wyze v0.1.7](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v0.1.8](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>30 lovelace plugins</summary>
+<details><summary>31 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -346,7 +340,7 @@ Custom calendar card for Home Assistant with Lovelace
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
 
-#### [Card Mod v3.1.3](https://github.com/thomasloven/lovelace-card-mod)
+#### [Card Mod v3.1.4](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 
@@ -402,6 +396,10 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
+#### [Mushroom v1.3.0](https://github.com/piitaya/lovelace-mushroom)
+Mushroom Cards - Build a beautiful dashboard easily 🍄
+
+
 #### [My Cards Bundle](https://github.com/AnthonMS/my-cards)
 Bundle of my custom Lovalace cards for Home Assistant. Includes: my-slider
 
@@ -449,7 +447,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 addons</summary>
 
-#### ESPHome v2022.3.0
+#### ESPHome v2022.3.2
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -461,7 +459,7 @@ Simple browser-based file editor for Home Assistant
 Home Assistant scheduler
 
 
-#### Home Assistant Google Drive Backup v0.105.2
+#### Home Assistant Google Drive Backup v0.106.2
 Automatically manage backups between Home Assistant and Google Drive
 
 
@@ -508,7 +506,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.3.5-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.4.0b1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -518,7 +516,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-56702-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38640-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
