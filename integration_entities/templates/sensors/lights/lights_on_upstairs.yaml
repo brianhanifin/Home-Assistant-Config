@@ -1,0 +1,9 @@
+---
+unique_id: lights_on_upstairs
+name: Lights on upstairs
+icon: mdi:lightbulb-on
+state: |
+  {{ expand("group.upstairs_lights") | selectattr("state","eq","on") | map(attribute='entity_id') | list | count }}
+attributes:
+  lights: |
+    {{ expand("group.upstairs_lights") | selectattr("state","eq","on") | map(attribute="name") | join(", ") }}
