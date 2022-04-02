@@ -218,8 +218,8 @@
   {%- endmacro -%}
 
   {%- macro light_check() -%}
-    {% set lights_on = states('sensor.lights_on_count')|default(0)|int %}
-    {% set lights_on_list = get_friendly_names(states('sensor.lights_on').split(", ")) %}
+    {% set lights_on = states('sensor.lights_on')|default(0)|int %}
+    {% set lights_on_list = get_friendly_names(state_attr('sensor.lights_on','lights').split(", ")) %}
     {% if lights_on > 0 %}
       {%- if lights_on == 1 %}
         There is 1 light on right now.
