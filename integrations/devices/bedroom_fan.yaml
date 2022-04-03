@@ -180,32 +180,39 @@ fan:
       friendly_name: Bedroom fan
       unique_id: bedroom_fan
       value_template: '{{ states("binary_sensor.bedroom_fan_power") }}'
-      turn_on:        
-        - alias: Turn power on.
-          service: remote.send_command
-          data:
-            device: bedroom_fan
-            command: power
-          target:
-            entity_id: remote.broadlink_bedroom
-        - delay:
-            seconds: 5
-        - alias: Turn leds off.
-          service: input_button.press
-          target:
-            entity_id: input_button.bedroom_fan_led_toggle
+      turn_on:
+        - choose:
+            - alias: Turn power on, if power is currently off.
+              conditions: '{{ is_state("fan.bedroom","off") }}'
+              sequence:
+                - service: remote.send_command
+                  data:
+                    device: bedroom_fan
+                    command: power
+                  target:
+                    entity_id: remote.broadlink_bedroom
+                - delay:
+                    seconds: 5
+                - alias: Turn leds off.
+                  service: input_button.press
+                  target:
+                    entity_id: input_button.bedroom_fan_led_toggle
       turn_off:
-        - alias: Turn leds back on.
-          service: input_button.press
-          target:
-            entity_id: input_button.bedroom_fan_led_toggle
-        - alias: Turn power off.
-          service: remote.send_command
-          data:
-            device: bedroom_fan
-            command: power
-          target:
-            entity_id: remote.broadlink_bedroom
+        - choose:
+            - alias: Turn power on, if power is currently on.
+              conditions: '{{ is_state("fan.bedroom","on") }}'
+              sequence:
+                - alias: Turn leds back on.
+                  service: input_button.press
+                  target:
+                    entity_id: input_button.bedroom_fan_led_toggle
+                - alias: Turn power off.
+                  service: remote.send_command
+                  data:
+                    device: bedroom_fan
+                    command: power
+                  target:
+                    entity_id: remote.broadlink_bedroom
 
       speed_count: 5
       percentage_template: '{{ states("input_number.bedroom_fan_speed") }}'
