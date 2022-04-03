@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1338 total entities**, 
-including **701 sensors**.
+Our Home Assistant install has approximately **1306 total entities**, 
+including **669 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -234,7 +234,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.24.0](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.24.2](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -396,7 +396,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
-#### [Mushroom v1.3.0](https://github.com/piitaya/lovelace-mushroom)
+#### [Mushroom v1.3.2](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 
@@ -445,23 +445,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>7 addons</summary>
-
-#### ESPHome v2022.3.2
-ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
-
-
-#### File editor v5.3.3
-Simple browser-based file editor for Home Assistant
-
-
-#### HA Scheduler v0.17
-Home Assistant scheduler
-
-
-#### Home Assistant Google Drive Backup v0.106.2
-Automatically manage backups between Home Assistant and Google Drive
-
+<details><summary>3 addons</summary>
 
 #### Portainer v2.0.0
 Manage your Docker environment with ease
@@ -506,7 +490,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.4.0b1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.4.0b3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -516,7 +500,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38640-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38683-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

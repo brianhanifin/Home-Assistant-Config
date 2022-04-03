@@ -56,97 +56,104 @@ decluttering_templates:
     default:
       label: ''
       name: ''
+  graph:
+    card:
+      entities:
+      - entities: '[[entities]]'
+        entity: '[[entity1]]'
+        icon: '[[icon]]'
+        name: '[[name]]'
+        show_state: false
+        type: custom:multiple-entity-row
+      footer:
+        animate: true
+        entities: '[[entities]]'
+        height: 75
+        hours_to_show: '[[hours]]'
+        line_width: 2
+        show:
+          icon: false
+          labels: true
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: entities
+    default:
+      entities: []
+      entity1: sensor.none
+      hours: 24
+      icon: mdi:thermometer-low
+      name: ' '
+kiosk_mode:
+  hide_header: true
 views:
 - badges: []
   cards:
-  - cards:
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-1
-      icon_color: green
-      layout: vertical
-      primary: Downstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-2
-      icon_color: green
-      layout: vertical
-      primary: Upstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/upstairs
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:flower
-      icon_color: green
-      layout: vertical
-      primary: Outdoor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/outdoor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:speedometer-slow
-      icon_color: green
-      layout: vertical
-      primary: Monitor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/monitor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:calendar-clock
-      icon_color: green
-      layout: vertical
-      primary: Events
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/events
-      type: custom:mushroom-template-card
-    columns: 5
-    square: false
-    type: grid
   - alignment: center
     chips:
     - entity: sensor.ui_date
       icon: mdi:calendar
+      icon_color: red
       type: entity
     - entity: weather.home
-      show_conditions: false
+      show_conditions: true
       show_temperature: true
       type: weather
     - entity: sensor.family_present
+      icon_color: teal
       type: entity
     - chip:
-        entity: sensor.lights_on_count
-        icon: mdi:home-lightbulb
+        entity: sensor.lights_on
         icon_color: amber
-        name: Lights on
         type: entity
       conditions:
-      - entity: sensor.lights_on_count
+      - entity: sensor.lights_on
         state_not: '0'
       type: conditional
     type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
+  - cards:
+    - entity: sensor.downstairs_temperature_average
+      icon: mdi:home-floor-1
+      icon_color: teal
+      layout: vertical
+      multiline_secondary: false
+      primary: Downstairs
+      secondary: '{{ states("sensor.lights_on_downstairs") + " lights on" }} ‧
+
+        {{ states("sensor.downstairs_temperature_average")|round }}°'
+      tap_action:
+        action: navigate
+        navigation_path: ./downstairs
+      type: custom:mushroom-template-card
+    - entity: sensor.upstairs_temperature_average
+      icon: mdi:home-floor-2
+      icon_color: purple
+      layout: vertical
+      primary: Upstairs
+      secondary: '{{ states("sensor.lights_on_upstairs") + " lights on" }} ‧
+
+        {{ states("sensor.upstairs_temperature_average")|round }}°'
+      tap_action:
+        action: navigate
+        navigation_path: ./upstairs
+      type: custom:mushroom-template-card
+    - entity: sensor.backyard_temperature
+      icon: mdi:flower
+      icon_color: orange
+      layout: vertical
+      primary: Outside
+      secondary: '{{ states("weather.home") }} ‧
+
+        {{ states("sensor.backyard_temperature")|round }}°'
+      tap_action:
+        action: navigate
+        navigation_path: ./outdoor
+      type: custom:mushroom-template-card
+    columns: 3
+    square: false
+    type: grid
   - dateSize: 175
     dimFinishedEvents: true
     disableEventLink: true
@@ -219,9 +226,8 @@ views:
       more_info_on_tap: true
       show_empty: false
       show_notification_title: false
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.1);\n  padding-top: 16px\
-        \ !important;\n}\nha-markdown {\n  font-size: 1.2em;\n  font-weight: bold;\n\
-        }\n"
+      style: "ha-card {\n  background: rgba(128, 0, 0, 0.1);\n}\nha-markdown {\n \
+        \ font-size: 1.2em;\n  font-weight: bold;\n}\n"
       title: Safety notifications
       type: custom:home-feed-card
     - compact_mode: false
@@ -378,7 +384,6 @@ views:
         - state: unavailable
         - state: unknown
         include:
-        - domain: climate
         - domain: alert
         - entity_id: sensor.plex
       show_empty: false
@@ -389,184 +394,96 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: Control lights and devices.
-      title: Family room
+    - subtitle: Thermostats
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.family_room
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.table_lamp
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.family_room_floor_lamp
-        name: Floor lamp
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: switch.adaptive_lighting_family_room
-        name: Adaptive lighting
-        type: custom:mushroom-entity-card
-      - entity: media_player.tv_family_room
-        icon: ''
-        name: TV
-        type: custom:mushroom-entity-card
-      - entity: fan.family_room
-        icon_animation: true
-        name: Fan
-        show_oscillate_control: false
-        show_percentage_control: false
-        type: custom:mushroom-fan-card
-      columns: 3
-      square: false
-      type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.family_room_temperature
-        icon_color: amber
-        type: entity
-      - entity: sensor.family_room_humidity
-        icon_color: light-blue
-        type: entity
-      - entity: binary_sensor.family_room_presence
-        icon: mdi:motion-sensor
-        icon_color: brown
-        type: entity
-      type: custom:mushroom-chips-card
-    type: vertical-stack
-  - cards:
-    - subtitle: Control lights.
-      title: Kitchen & dining
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: light.kitchen
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.kitchen_prep
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.dining_room
-        show_brightness_control: false
-        show_color_temp_control: false
-        type: custom:mushroom-light-card
-        use_light_color: true
-      columns: 3
-      square: false
-      type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.kitchen_temperature
-        icon_color: amber
-        type: entity
-      - entity: sensor.kitchen_temperature_humidity
-        icon_color: cyan
-        type: entity
-      - entity: binary_sensor.kitchen_presence
-        icon: mdi:motion-sensor
-        icon_color: brown
-        type: entity
-      - entity: input_select.dishwasher_status
-        icon: mdi:dishwasher
-        type: entity
-      type: custom:mushroom-chips-card
-    type: vertical-stack
-  - cards:
-    - subtitle: Control lights.
-      title: Play room
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: light.play_room
-        name: Play room
-        show_brightness_control: false
-        type: custom:mushroom-light-card
-        use_light_color: false
-      - entity: light.play_room_floor_lamp
-        name: Floor lamp
-        show_brightness_control: false
-        show_color_temp_control: false
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.play_room_entry
-        show_brightness_control: false
-        show_color_temp_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: switch.adaptive_lighting_play_room
-        name: Adaptive lighting
-        type: custom:mushroom-entity-card
-      columns: 3
-      square: false
-      type: grid
-    type: vertical-stack
-  - cards:
-    - subtitle: Control lights and devices.
-      title: Home entry
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: light.home_entry
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.porch
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.entry_railing
-        show_brightness_control: false
-        type: custom:mushroom-light-card
-        use_light_color: false
-      - entity: switch.adaptive_lighting_home_entry
-        name: Adaptive lighting
+      - entity: climate.home_thermostat
+        icon: mdi:thermostat
+        icon_color: red
+        layout: vertical
+        multiline_secondary: true
+        primary: House
+        secondary: "  {%- set current_state = state_attr(\"climate.home_thermostat\"\
+          ,\"hvac_action\")|title %}\n  {%- if states(\"climate.home_thermostat\"\
+          ) == \"heat_cool\" %}\n    {%- set target_temperature = state_attr(\"climate.home_thermostat\"\
+          ,\"target_temp_low\") ~ \"-\" ~ state_attr(\"climate.home_thermostat\",\"\
+          target_temp_high\") %}\n  {%- else %}\n    {%- set target_temperature =\
+          \ state_attr(\"climate.home_thermostat\",\"temperature\") %}\n  {%- endif\
+          \ %}\n  {%- if current_state == \"Idle\" -%}\n    Idle until {{ target_temperature\
+          \ }}°\n  {%- elif current_state in [\"Cooling\",\"Heating\"] %}\n    Cooling\
+          \ to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state }}\n\
+          \  {%- endif %}\n  Currently {{ state_attr(\"climate.home_thermostat\",\"\
+          current_temperature\")|round ~ \"°\"\n  }}"
         tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: lock.front_door
-        icon: ''
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.leave_unlocked
-        icon: fas:toggle-on
+          action: more-info
+        type: custom:mushroom-template-card
+      - entity: climate.bedroom
+        icon: mdi:thermostat
+        icon_color: green
+        layout: vertical
+        multiline_secondary: true
+        primary: Bedroom
+        secondary: "  {%- set current_state = states(\"sensor.bedroom_ac_current_state\"\
+          ) %}\n  {%- set target_temperature = state_attr(\"climate.bedroom\",\"temperature\"\
+          ) %}\n  {%- if current_state == \"Idle\" -%}\n    Idle until {{ target_temperature\
+          \ }}°\n  {%- elif current_state == \"Cooling\" %}\n    Cooling to {{ target_temperature\
+          \ }}°\n  {%- else %}\n    {{ current_state }}\n  {%- endif %}\n  Currently\
+          \ {{ state_attr(\"climate.bedroom\",\"current_temperature\")|round ~ \"\
+          °\"\n  }}"
         tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
+          action: more-info
+        type: custom:mushroom-template-card
+      - entity: climate.lucas_room
+        icon: mdi:thermostat
+        icon_color: blue
+        layout: vertical
+        multiline_secondary: true
+        primary: Lucas
+        secondary: "  {%- set current_state = states(\"sensor.lucas_ac_current_state\"\
+          ) %}\n  {%- set target_temperature = state_attr(\"climate.lucas_room\",\"\
+          temperature\") %}\n  {%- if current_state == \"Idle\" -%}\n    Idle until\
+          \ {{ target_temperature }}°\n  {%- elif current_state == \"Cooling\" %}\n\
+          \    Cooling to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state\
+          \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.lucas_room\",\"\
+          current_temperature\")|round ~ \"°\"\n  }}"
+        tap_action:
+          action: more-info
+        type: custom:mushroom-template-card
       columns: 3
       square: false
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: Control lights and devices.
-      title: Garage
+    - subtitle: Other
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.laundry
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: cover.garage_door
-        show_buttons_control: true
-        type: custom:mushroom-cover-card
-      columns: 2
+      - double_tap_action:
+          action: none
+        hold_action:
+          action: none
+        icon: mdi:speedometer-slow
+        icon_color: deep-purple
+        layout: vertical
+        primary: Monitor
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/monitor
+        type: custom:mushroom-template-card
+      - double_tap_action:
+          action: none
+        hold_action:
+          action: none
+        icon: mdi:calendar-clock
+        icon_color: indigo
+        layout: vertical
+        primary: Events
+        tap_action:
+          action: navigate
+          navigation_path: /lovelace/events
+        type: custom:mushroom-template-card
+      columns: 3
       square: false
       type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.garage_temperature
-        icon_color: amber
-        type: entity
-      - entity: sensor.garage_humidity
-        icon_color: light-blue
-        type: entity
-      - entity: binary_sensor.garage_presence
-        icon: mdi:motion-sensor
-        icon_color: brown
-        type: entity
-      - entity: input_select.laundry_status
-        icon: mdi:washing-machine
-        type: entity
-      type: custom:mushroom-chips-card
     type: vertical-stack
   - alignment: justify
     chips:
@@ -603,102 +520,368 @@ views:
     type: shopping-list
     view_layout:
       position: sidebar
-  icon: mdi:home-floor-1
+  icon: mdi:home-circle
   theme: Backend-selected
   title: Home
   type: sidebar
 - badges: []
   cards:
-  - cards:
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-1
-      icon_color: green
-      layout: vertical
-      primary: Downstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-2
-      icon_color: green
-      layout: vertical
-      primary: Upstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/upstairs
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:flower
-      icon_color: green
-      layout: vertical
-      primary: Outdoor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/outdoor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:speedometer-slow
-      icon_color: green
-      layout: vertical
-      primary: Monitor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/monitor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:calendar-clock
-      icon_color: green
-      layout: vertical
-      primary: Events
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/events
-      type: custom:mushroom-template-card
-    columns: 5
-    square: false
-    type: grid
   - alignment: center
     chips:
+    - type: back
     - entity: sensor.ui_date
       icon: mdi:calendar
+      icon_color: red
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
       type: weather
     - entity: sensor.family_present
+      icon_color: teal
       type: entity
     - chip:
-        entity: sensor.lights_on_count
-        icon: mdi:home-lightbulb
+        entity: sensor.lights_on
         icon_color: amber
-        name: Lights on
         type: entity
       conditions:
-      - entity: sensor.lights_on_count
+      - entity: sensor.lights_on
         state_not: '0'
       type: conditional
     type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: Control lights and devices.
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.family_room\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
+        \ = iif(is_state(\"light.family_room_floor_lamp\",\"on\"), lights_on + 1,\
+        \ lights_on) %}\n{{- states(\"sensor.family_room_temperature\")|round }}°\n\
+        {{- \" ‧ \" ~ states(\"sensor.family_room_humidity\")|round }}%\n{%- if lights_on\
+        \ > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~\
+        \ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.family_room_presence\"\
+        ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.tv_family_room\"\
+        ,\"on\"), \" ‧ tv is on\", \"\") }}"
+      title: Family room
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.family_room
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: light.table_lamp
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: light.family_room_floor_lamp
+        name: Floor lamp
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: switch.adaptive_lighting_family_room
+        name: Adaptive lighting
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: fan.family_room
+        icon_animation: true
+        name: Fan
+        show_oscillate_control: false
+        show_percentage_control: false
+        type: custom:mushroom-fan-card
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+  - cards:
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.kitchen\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.kitchen_prep\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
+        \ = iif(is_state(\"light.dining_room\",\"on\"), lights_on + 1, lights_on)\
+        \ %}\n{{- states(\"sensor.kitchen_temperature\")|round }}°\n{{- \" ‧ \" ~states(\"\
+        sensor.kitchen_humidity\")|round }}%\n{%- if lights_on > 0 %}\n  {{- \" ‧\
+        \ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
+        {%- endif %}\n{{- iif(is_state(\"binary_sensor.kitchen_presence\",\"on\"),\
+        \ \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"input_select.dishwasher_status\"\
+        ,\"-\"), \" ‧ dishes are \" ~ states(\"input_select.dishwasher_status\")|lower,\
+        \ \"\") }}"
+      title: Kitchen & dining
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.kitchen
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: light.kitchen_prep
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: light.dining_room
+        show_brightness_control: false
+        show_color_temp_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+  - cards:
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.play_room\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.play_room_floor_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set\
+        \ lights_on = iif(is_state(\"light.play_room_entry\",\"on\"), lights_on +\
+        \ 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- iif(lights_on == 1, \"\
+        1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.play_room_presence\",\"on\"), \" ‧ occupied\", \"\") }}"
+      title: Play room
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.play_room
+        name: Play room
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: false
+      - entity: light.play_room_floor_lamp
+        name: Floor lamp
+        show_brightness_control: false
+        show_color_temp_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: light.play_room_entry
+        show_brightness_control: false
+        show_color_temp_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: switch.adaptive_lighting_play_room
+        name: Adaptive lighting
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+  - cards:
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.home_entry\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.porch\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.entry_railing\",\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"\
+        sensor.family_room_temperature\")|round }}°\n{{- \" ‧ \" ~ states(\"sensor.family_room_humidity\"\
+        )|round }}%\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1,\
+        \ \"1 light is on\", lights_on ~ \" lights are on\") }}\n{%- endif %}\n{{-\
+        \ iif(is_state(\"binary_sensor.doorbell_person_motion\",\"on\"), \" ‧ someone\
+        \ is at the front door\", \"\") }}\n{{- iif(is_state(\"lock.front_door\",\"\
+        unlocked\"), \" ‧ front door is unlocked\", \"\") }}"
+      title: Home entry
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.home_entry
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: light.porch
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: light.entry_railing
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: false
+      - entity: switch.adaptive_lighting_home_entry
+        name: Adaptive lighting
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: lock.front_door
+        icon: ''
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.leave_unlocked
+        icon: fas:toggle-on
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      columns: 3
+      square: false
+      type: grid
+    type: vertical-stack
+  - cards:
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.laundry\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"sensor.garage_temperature\"\
+        )|round }}°\n{{- \" ‧ \" ~ states(\"sensor.garage_humidity\")|round }}%\n\
+        {%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\"\
+        , lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_presence\"\
+        ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
+        ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\"\
+        ) }}\n{{- iif(not states(\"input_select.laundry_status\") in [\"Off\",\"Unknown\"\
+        ], \" ‧ laundry is \" ~ states(\"input_select.laundry_status\")|lower, \"\"\
+        ) }}"
+      title: Garage
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.laundry
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: cover.garage_door
+        show_buttons_control: true
+        type: custom:mushroom-cover-card
+      columns: 2
+      square: false
+      type: grid
+    - alignment: center
+      chips:
+      - entity: sensor.garage_temperature
+        icon_color: amber
+        type: entity
+      - entity: sensor.garage_humidity
+        icon_color: light-blue
+        type: entity
+      - entity: binary_sensor.garage_presence
+        icon: mdi:motion-sensor
+        icon_color: brown
+        type: entity
+      - entity: input_select.laundry_status
+        icon: mdi:washing-machine
+        type: entity
+      type: custom:mushroom-chips-card
+    type: vertical-stack
+  - cards:
+    - subtitle: Swipe for more.
+      title: Downstairs temperature
+      type: custom:mushroom-title-card
+    - cards:
+      - cards:
+        - animate: true
+          entities:
+          - entity: sensor.downstairs_temperature_average
+          height: 75
+          line_width: 2
+          lower_bound: 60
+          points_per_hour: 4
+          show:
+            extrema: true
+            graph: line
+            icon: false
+            name: false
+          type: custom:mini-graph-card
+        mode: vertical
+        style: "ha-card div {\n  margin-top: -1.5em;\n}\n"
+        title: Temperature Average
+        type: custom:stack-in-card
+      - cards:
+        - entities:
+          - entity: sensor.family_room_temperature
+            name: Family Room
+          - entity: sensor.kitchen_temperature
+            name: Kitchen
+          - entity: sensor.home_thermostat_temperature
+            name: Thermostat
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.family_room_temperature
+            name: Family Room
+          - entity: sensor.kitchen_temperature
+            name: Kitchen
+          - entity: sensor.home_thermostat_temperature
+            name: Thermostat
+          height: 75
+          hours_to_show: 24
+          line_width: 2
+          points_per_hour: 2
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        mode: vertical
+        title: Room Temperature
+        type: custom:stack-in-card
+      - cards:
+        - entities:
+          - entity: sensor.family_room_humidity
+            name: Family Room
+          - entity: sensor.kitchen_temperature_humidity
+            name: Kitchen
+          - entity: sensor.home_thermostat_humidity
+            name: Thermostat
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.family_room_humidity
+            name: Family Room
+          - entity: sensor.kitchen_temperature_humidity
+            name: Kitchen
+          - entity: sensor.home_thermostat_humidity
+            name: Thermostat
+          height: 75
+          hours_to_show: 12
+          line_width: 2
+          points_per_hour: 4
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        mode: vertical
+        title: Room Humidity
+        type: custom:stack-in-card
+      parameters:
+        pagination:
+          type: bullets
+        spaceBetween: 8
+      type: custom:swipe-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
+  icon: mdi:home-floor-1
+  path: downstairs
+  theme: Backend-selected
+  title: Downstairs
+  type: sidebar
+- badges: []
+  cards:
+  - alignment: center
+    chips:
+    - type: back
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      icon_color: red
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      type: weather
+    - entity: sensor.family_present
+      icon_color: teal
+      type: entity
+    - chip:
+        entity: sensor.lights_on
+        icon_color: amber
+        type: entity
+      conditions:
+      - entity: sensor.lights_on
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
+    view_layout:
+      position: sidebar
+  - cards:
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.bedroom\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.bedroom_table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set\
+        \ lights_on = iif(is_state(\"light.bedroom_floor_lamp\",\"on\"), lights_on\
+        \ + 1, lights_on) %}\n{{- states(\"sensor.bedroom_temperature\")|round }}°\n\
+        {{- \" ‧ \" ~ states(\"sensor.bedroom_humidity\")|round }}%\n{%- if lights_on\
+        \ > 0 %}\n  {{- \" ‧ \" ~ lights_on }} {{ iif(lights_on == 1, \"light on\"\
+        , \"lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_presence\"\
+        ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"input_select.glowforge_status\"\
+        ,\"Off\"), \" ‧ glowforge is \" ~ states(\"input_select.glowforge_status\"\
+        )|lower, \"\") }}"
       title: ' Bedroom'
       type: custom:mushroom-title-card
     - cards:
@@ -713,10 +896,12 @@ views:
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.bedroom_table_lamp
-        name: Floor lamp
+        name: Table lamp
         show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
+      - entity: switch.sound_machine
+        type: custom:mushroom-entity-card
       - entity: fan.bedroom
         icon_animation: true
         name: Fan
@@ -729,25 +914,14 @@ views:
       columns: 3
       square: false
       type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.bedroom_temperature
-        icon_color: amber
-        type: entity
-      - entity: sensor.bedroom_humidity
-        icon: ''
-        icon_color: light-blue
-        type: entity
-      - entity: binary_sensor.bedroom_presence
-        icon_color: brown
-        type: entity
-      - entity: input_select.glowforge_status
-        icon: mdi:alpha-g-box
-        type: entity
-      type: custom:mushroom-chips-card
     type: vertical-stack
   - cards:
-    - subtitle: Control devices.
+    - subtitle: '{{- states("sensor.upstairs_bathroom_temperature")|round }}°
+
+        {{- " ‧ " ~ states("sensor.upstairs_bathroom_humidity")|round }}%
+
+        {{- iif(is_state("binary_sensor.upstairs_bathroom_presence","on"), " ‧ occupied",
+        "") }}'
       title: Upstairs bathroom
       type: custom:mushroom-title-card
     - cards:
@@ -763,22 +937,14 @@ views:
       columns: 2
       square: false
       type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.upstairs_bathroom_temperature
-        icon_color: amber
-        type: entity
-      - entity: sensor.upstairs_bathroom_humidity
-        icon: ''
-        icon_color: light-blue
-        type: entity
-      - entity: binary_sensor.upstairs_bathroom_presence
-        icon_color: brown
-        type: entity
-      type: custom:mushroom-chips-card
     type: vertical-stack
   - cards:
-    - subtitle: Control lights and devices.
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"sensor.lucas_room_display_temperature\"\
+        )|round }}°\n{{- \" ‧ \" ~ states(\"sensor.lucas_room_display_humidity\")|round\
+        \ }}%\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ lights_on }} {{ iif(lights_on\
+        \ == 1, \"light on\", \"lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.bedroom_presence\",\"on\"), \" ‧ occupied\", \"\") }}"
       title: ' Lucas'' room'
       type: custom:mushroom-title-card
     - cards:
@@ -786,28 +952,21 @@ views:
         name: Light
         show_brightness_control: false
         type: custom:mushroom-light-card
-        use_light_color: true
       - entity: climate.lucas_room
         name: A/C
         type: custom:mushroom-entity-card
       columns: 2
       square: false
       type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.lucas_room_temperature
-        icon_color: amber
-        type: entity
-      - entity: sensor.lucas_room_humidity
-        icon: ''
-        icon_color: light-blue
-        type: entity
-      type: custom:mushroom-chips-card
     type: vertical-stack
     view_layout:
-      position: sidebar
+      position: main
   - cards:
-    - subtitle: Control lights.
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"sensor.kyles_bedroom_temperature\"\
+        )|round }}° \n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ lights_on }} {{ iif(lights_on\
+        \ == 1, \"light on\", \"lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.kyles_room_presence\",\"on\"), \" ‧ occupied\", \"\") }}"
       title: Kyle's room
       type: custom:mushroom-title-card
     - cards:
@@ -819,16 +978,103 @@ views:
       columns: 2
       square: false
       type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.kyles_bedroom_temperature
-        icon_color: amber
-        type: entity
-      - entity: binary_sensor.kyles_room_presence
-        icon: mdi:motion-sensor
-        icon_color: brown
-        type: entity
-      type: custom:mushroom-chips-card
+    type: vertical-stack
+    view_layout:
+      position: main
+  - cards:
+    - subtitle: Swipe for more.
+      title: Climate sensors
+      type: custom:mushroom-title-card
+    - cards:
+      - cards:
+        - animate: true
+          entities:
+          - entity: sensor.upstairs_temperature_average
+          height: 75
+          line_width: 2
+          lower_bound: 60
+          points_per_hour: 4
+          show:
+            extrema: true
+            graph: line
+            icon: false
+            name: false
+          type: custom:mini-graph-card
+        mode: vertical
+        style: "ha-card div {\n  margin-top: -1.5em;\n}\n"
+        title: Temperature Average
+        type: custom:stack-in-card
+      - cards:
+        - entities:
+          - entity: sensor.upstairs_bathroom_temperature
+            name: Bath
+          - entity: sensor.guest_room_temperature
+            name: Guest
+          - entity: sensor.lucas_room_temperature
+            name: Lucas
+          - entity: sensor.bedroom_temperature
+            name: Bedroom
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.upstairs_bathroom_temperature
+            name: Bath
+          - entity: sensor.guest_room_temperature
+            name: Guest
+          - entity: sensor.lucas_room_temperature
+            name: Lucas
+          - entity: sensor.bedroom_temperature
+            name: Bedroom
+          height: 75
+          hours_to_show: 24
+          line_width: 2
+          points_per_hour: 2
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        mode: vertical
+        title: Room Temperature
+        type: custom:stack-in-card
+      - cards:
+        - entities:
+          - entity: sensor.upstairs_bathroom_humidity
+            name: Bath
+          - entity: sensor.guest_room_humidity
+            name: Guest
+          - entity: sensor.lucas_room_humidity
+            name: Lucas
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.upstairs_bathroom_humidity
+            name: Bath
+          - entity: sensor.guest_room_humidity
+            name: Guest
+          - entity: sensor.lucas_room_humidity
+            name: Lucas
+          height: 75
+          hours_to_show: 12
+          line_width: 2
+          points_per_hour: 4
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        mode: vertical
+        title: Room Humidity
+        type: custom:stack-in-card
+      parameters:
+        pagination:
+          type: bullets
+        spaceBetween: 8
+      type: custom:swipe-card
     type: vertical-stack
     view_layout:
       position: sidebar
@@ -839,107 +1085,45 @@ views:
   type: sidebar
 - badges: []
   cards:
-  - cards:
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-1
-      icon_color: green
-      layout: vertical
-      primary: Downstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-2
-      icon_color: green
-      layout: vertical
-      primary: Upstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/upstairs
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:flower
-      icon_color: green
-      layout: vertical
-      primary: Outdoor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/outdoor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:speedometer-slow
-      icon_color: green
-      layout: vertical
-      primary: Monitor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/monitor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:calendar-clock
-      icon_color: green
-      layout: vertical
-      primary: Events
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/events
-      type: custom:mushroom-template-card
-    columns: 5
-    square: false
-    type: grid
   - alignment: center
     chips:
+    - type: back
     - entity: sensor.ui_date
       icon: mdi:calendar
+      icon_color: red
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
       type: weather
     - entity: sensor.family_present
+      icon_color: teal
       type: entity
     - chip:
-        entity: sensor.lights_on_count
-        icon: mdi:home-lightbulb
+        entity: sensor.lights_on
         icon_color: amber
-        name: Lights on
         type: entity
       conditions:
-      - entity: sensor.lights_on_count
+      - entity: sensor.lights_on
         state_not: '0'
       type: conditional
     type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: Control lights and view cameras.
+    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.porch\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"weather.home\") }}\n\
+        {{- \" ‧ \" ~ states(\"sensor.backyard_temperature\")|round }}°\n{{- \" ‧\
+        \ \" ~ state_attr(\"weather.home\",\"humidity\") }}%\n{{ \"front door is \"\
+        \ ~ states(\"lock.front_door\") }}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \"\
+        \ ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%-\
+        \ endif %}\n{{- iif(is_state(\"binary_sensor.front_door_person_motion\",\"\
+        on\"), \" ‧ front door occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
+        ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\"\
+        ) }}"
       title: Outdoors
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.porch
-        show_brightness_control: false
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: light.home_entry
-        type: custom:mushroom-entity-card
-      - entity: switch.adaptive_lighting_home_entry
-        type: custom:mushroom-entity-card
       - entity: cover.garage_door
         name: Garage
         show_buttons_control: false
@@ -952,18 +1136,20 @@ views:
       - entity: input_boolean.leave_unlocked
         hide_icon: false
         icon: fas:toggle-on
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: light.porch
+        show_brightness_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: switch.adaptive_lighting_home_entry
+        tap_action:
+          action: toggle
         type: custom:mushroom-entity-card
       columns: 3
       square: false
       type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.backyard_temperature
-        icon_color: amber
-        type: entity
-      - entity: binary_sensor.front_door_person_motion
-        type: entity
-      type: custom:mushroom-chips-card
     type: vertical-stack
   - cards:
     - camera_view: auto
@@ -995,13 +1181,61 @@ views:
     show_state: false
     type: picture-entity
     view_layout:
-      position: sidebar
+      position: main
   - camera_image: camera.driveway
     camera_view: live
     entity: switch.adaptive_lighting_adapt_brightness_family_room
     show_name: false
     show_state: false
     type: picture-entity
+    view_layout:
+      position: main
+  - cards:
+    - subtitle: null
+      title: Current conditions
+      type: custom:mushroom-title-card
+    - current: true
+      details: true
+      entity: weather.home
+      forecast: false
+      hourly_forecast: false
+      number_of_forecasts: '4'
+      type: custom:weather-card
+    - animate: true
+      entities:
+      - entity: sensor.outdoor_temperature
+        name: Temperature
+        show_fill: false
+      - entity: sensor.outdoor_humidity
+        name: Humidity
+        show_line: false
+        show_points: false
+        y_axis: secondary
+      icon: mdi:weather-sunny
+      line_width: 2
+      name: Outdoor
+      points_per_hour: 4
+      show:
+        extrema: true
+        icon: false
+        labels: true
+        labels_secondary: true
+        name: false
+        state: false
+      type: custom:mini-graph-card
+    - entity: binary_sensor.rain_today
+      states:
+        'on':
+          cards:
+          - template: heading
+            type: custom:decluttering-card
+            variables:
+            - content: Radar
+          - entity: camera.san_diego
+            type: picture-entity
+          type: vertical-stack
+      type: custom:state-switch
+    type: vertical-stack
     view_layout:
       position: sidebar
   icon: mdi:flower
@@ -1011,96 +1245,115 @@ views:
   type: sidebar
 - badges: []
   cards:
-  - cards:
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-1
-      icon_color: green
-      layout: vertical
-      primary: Downstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-2
-      icon_color: green
-      layout: vertical
-      primary: Upstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/upstairs
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:flower
-      icon_color: green
-      layout: vertical
-      primary: Outdoor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/outdoor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:speedometer-slow
-      icon_color: green
-      layout: vertical
-      primary: Monitor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/monitor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:calendar-clock
-      icon_color: green
-      layout: vertical
-      primary: Events
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/events
-      type: custom:mushroom-template-card
-    columns: 5
-    square: false
-    type: grid
   - alignment: center
     chips:
+    - type: back
     - entity: sensor.ui_date
       icon: mdi:calendar
+      icon_color: red
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
       type: weather
     - entity: sensor.family_present
+      icon_color: teal
       type: entity
     - chip:
-        entity: sensor.lights_on_count
-        icon: mdi:home-lightbulb
+        entity: sensor.lights_on
         icon_color: amber
-        name: Lights on
         type: entity
       conditions:
-      - entity: sensor.lights_on_count
+      - entity: sensor.lights_on
         state_not: '0'
       type: conditional
     type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
-  - title: Monitor devices
-    type: custom:mushroom-title-card
+  - cards:
+    - subtitle: Swipe for more.
+      title: House temperature
+      type: custom:mushroom-title-card
+    - cards:
+      - cards:
+        - entities:
+          - entity: weather.home
+            name: Outdoor
+          - entity: sensor.attic_temperature
+            icon: hass:home-floor-a
+          - entity: sensor.upstairs_temperature_average
+            icon: hass:home-floor-2
+          - entity: sensor.downstairs_temperature_average
+            icon: hass:home-floor-1
+          type: entities
+        mode: vertical
+        style: "ha-card div {\n  margin-top: -.4em;\n}\n"
+        title: Summary
+        type: custom:stack-in-card
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.downstairs_temperature_average
+          name: Average
+        - entity: sensor.family_room_temperature
+          name: Family
+        - entity: sensor.kitchen_temperature
+          name: Kitchen
+        - entity: sensor.home_thermostat_temperature
+          name: Thermostat
+        icon: mdi:home-floor-1
+        line_width: 2
+        lower_bound: 60
+        name: Downstairs Temperature
+        points_per_hour: 4
+        show:
+          extrema: true
+          graph: line
+        type: custom:mini-graph-card
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.upstairs_temperature_average
+          name: Average
+        - entity: sensor.bedroom_temperature
+          name: Master
+        - entity: sensor.kyles_bedroom_temperature
+          name: Kyle
+        - entity: sensor.lucas_room_temperature
+          name: Lucas
+        - entity: sensor.guest_room_temperature
+          name: Guest
+        - entity: sensor.upstairs_bathroom_temperature
+          name: Bath
+        icon: mdi:home-floor-2
+        line_width: 2
+        lower_bound: 60
+        name: Upstairs Temperature
+        points_per_hour: 4
+        show:
+          extrema: true
+          graph: line
+        type: custom:mini-graph-card
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.attic_temperature
+        icon: hass:home-floor-a
+        line_width: 2
+        lower_bound: 60
+        points_per_hour: 4
+        show:
+          extrema: true
+          graph: line
+        type: custom:mini-graph-card
+      parameters:
+        pagination:
+          type: bullets
+        spaceBetween: 8
+      type: custom:swipe-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
   - cards:
     - subtitle: Pew pew, woo woo.
       title: Glowforge
@@ -1146,16 +1399,16 @@ views:
     - subtitle: Prusa MK2.5s
       title: 3D printer
       type: custom:mushroom-title-card
+    - entity: switch.prusa
+      icon_color: red
+      name: 3D Printer Kill Switch!!!
+      tap_action:
+        action: toggle
+        confirmation:
+          text: Are you sure you want to change the power state of the 3D Printer?
+      type: custom:mushroom-entity-card
     - cards:
       - entities:
-        - card:
-            entity: switch.prusa
-            name: 3D Printer Kill Switch!!!
-          restrictions:
-            confirm:
-              text: This will unlock the 3D Printer Kill Switch!
-          row: true
-          type: custom:restriction-card
         - name: Octoprint UI
           type: weblink
           url: http://octopi.local
@@ -1227,47 +1480,56 @@ views:
       type: vertical-stack
     type: vertical-stack
   - cards:
+    - subtitle: Monitor fridge and freezer temperatures.
+      title: Refridgerators
+      type: custom:mushroom-title-card
     - cards:
-      - template: custom_card_mpse_dual_graph
-        type: custom:button-card
+      - template: graph
+        type: custom:decluttering-card
         variables:
-          ulm_card_graph_color: var(--google-blue)
-          ulm_card_graph_color_2: var(--google-green)
-          ulm_card_graph_entity: sensor.fridge_temperature
-          ulm_card_graph_entity_2: sensor.garage_fridge_temperature
-          ulm_card_graph_name: Fridge temperatures
-      - template: custom_card_mpse_dual_graph
-        type: custom:button-card
+        - name: Fridge
+        - icon: mdi:fridge-bottom
+        - hours: 12
+        - entity1: sensor.fridge_temperature
+        - entities:
+          - entity: sensor.fridge_temperature
+            name: Kitchen
+          - entity: sensor.garage_fridge_temperature
+            name: Garage
+      - template: graph
+        type: custom:decluttering-card
         variables:
-          ulm_card_graph_color: var(--google-blue)
-          ulm_card_graph_color_2: var(--google-green)
-          ulm_card_graph_entity: sensor.freezer_temperature
-          ulm_card_graph_entity_2: sensor.garage_freezer_temperature
-          ulm_card_graph_name: Freezer temperatures
-      type: horizontal-stack
-      view_layout:
-        position: sidebar
-    - show_last_changed: true
-      template:
-      - card_input_number
-      type: custom:button-card
-      variables:
-        ulm_card_input_number_entity: input_number.fridge_temperature_threshold
-        ulm_card_input_number_name: ''
-    - show_last_changed: true
-      template:
-      - card_input_number
-      type: custom:button-card
-      variables:
-        ulm_card_input_number_entity: input_number.freezer_temperature_threshold
-        ulm_card_input_number_name: ''
-    - entity: automation.fridge_freezer_temperature_alert
-      label: automation
-      template: card_power_outlet
-      type: custom:button-card
+        - name: Freezer
+        - icon: mdi:fridge-top
+        - hours: 12
+        - entity1: sensor.freezer_temperature
+        - entities:
+          - entity: sensor.freezer_temperature
+            name: Kitchen
+          - entity: sensor.garage_freezer_temperature
+            name: Garage
+      columns: 1
+      square: false
+      type: grid
     type: vertical-stack
     view_layout:
       position: sidebar
+  - cards:
+    - subtitle: Alert when temperatures go above the set threshold.
+      title: Fridge alerts
+      type: custom:mushroom-title-card
+    - entity: automation.fridge_freezer_temperature_alert
+      icon_color: orange
+      type: custom:mushroom-entity-card
+    - entities:
+      - entity: input_number.fridge_temperature_threshold
+        name: Fridge threshold
+      - entity: input_number.freezer_temperature_threshold
+        name: Freezer threshold
+      type: entities
+    type: vertical-stack
+    view_layout:
+      position: main
   icon: mdi:speedometer-slow
   path: monitor
   theme: Backend-selected
@@ -1275,89 +1537,26 @@ views:
   type: sidebar
 - badges: []
   cards:
-  - cards:
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-1
-      icon_color: green
-      layout: vertical
-      primary: Downstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/home
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:home-floor-2
-      icon_color: green
-      layout: vertical
-      primary: Upstairs
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/upstairs
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:flower
-      icon_color: green
-      layout: vertical
-      primary: Outdoor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/outdoor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:speedometer-slow
-      icon_color: green
-      layout: vertical
-      primary: Monitor
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/monitor
-      type: custom:mushroom-template-card
-    - double_tap_action:
-        action: none
-      hold_action:
-        action: none
-      icon: mdi:calendar-clock
-      icon_color: green
-      layout: vertical
-      primary: Events
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/events
-      type: custom:mushroom-template-card
-    columns: 5
-    square: false
-    type: grid
   - alignment: center
     chips:
+    - type: back
     - entity: sensor.ui_date
       icon: mdi:calendar
+      icon_color: red
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
       type: weather
     - entity: sensor.family_present
+      icon_color: teal
       type: entity
     - chip:
-        entity: sensor.lights_on_count
-        icon: mdi:home-lightbulb
+        entity: sensor.lights_on
         icon_color: amber
-        name: Lights on
         type: entity
       conditions:
-      - entity: sensor.lights_on_count
+      - entity: sensor.lights_on
         state_not: '0'
       type: conditional
     type: custom:mushroom-chips-card
@@ -1366,19 +1565,75 @@ views:
   - subtitle: Scheduled announcements & wakeup lights.
     title: Events
     type: custom:mushroom-title-card
+  - cards:
+    - subtitle: 'Drip system: zone1'
+      title: Irrigation control
+      type: custom:mushroom-title-card
+    - entity: switch.irrigation_zone1
+      icon: mdi:sprinkler-variant
+      name: Start cycle
+      tap_action:
+        action: toggle
+      type: custom:mushroom-entity-card
+    - entity: switch.irrigation_zone1
+      states:
+        offn:
+          bar_background: 'var(--mdc-theme-primary, #6200ee)'
+          bar_direction: rtl
+          bar_foreground: '#eee'
+          duration:
+            entity: number.irrigation_zone1_duration
+            units: minutes
+          entity: switch.irrigation_zone1
+          full_row: true
+          text_width: 0px
+          type: custom:timer-bar-card
+      type: custom:state-switch
+    - cards:
+      - entities:
+        - entities:
+          - entity: sensor.irrigation_zone1_next
+            name: Next 🕑
+          - entity: sensor.irrigation_zone1_remaining
+            name: Remaining ⏳
+            unit: min
+          entity: switch.irrigation_zone1
+          icon: mdi:sprinkler
+          name: Status
+          state_header: State
+          type: custom:multiple-entity-row
+        - entity: input_text.irrigation_zone1_times
+          type: custom:text-input-row
+        - label: Duration in Minutes
+          type: section
+        - entity: number.irrigation_zone1_duration
+          full_row: true
+          type: custom:slider-entity-row
+        show_header_toggle: false
+        style: "ha-card {\n  background: none;\n}\n"
+        type: entities
+      - content: '*Set Duration to 0 to disable.*'
+        style: "ha-card {\n  background: none;\n  margin-top: -2em;\n  text-align:\
+          \ center;\n}\n"
+        type: markdown
+      keep:
+        background: true;
+      style: "ha-card {\n  padding-top: 1em;\n}\n"
+      type: custom:stack-in-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
   - template: event
     type: custom:decluttering-card
     variables:
-    - name: Wakeup Nerene
-    - label: Work day
+    - label: 'Wakeup: Nerene work day'
     - id: wakeup_nerene
     - sensors:
       - binary_sensor.work_day
   - template: event
     type: custom:decluttering-card
     variables:
-    - name: Wakeup Brian
-    - label: School day
+    - label: 'Wakeup: Brian school day'
     - id: wakeup_brian
     - sensors:
       - binary_sensor.middle_school_day
@@ -1386,24 +1641,21 @@ views:
   - template: event
     type: custom:decluttering-card
     variables:
-    - name: Wakeup Kyle
-    - label: School day
+    - label: 'Wakeup: Kyle school day'
     - id: wakeup_kyle
     - sensors:
       - binary_sensor.middle_school_day
   - template: event
     type: custom:decluttering-card
     variables:
-    - name: Wakeup Lucas
-    - label: School day
+    - label: 'Wakeup: Lucas school day'
     - id: wakeup_lucas
     - sensors:
       - binary_sensor.high_school_day
   - template: event
     type: custom:decluttering-card
     variables:
-    - name: Bed time
-    - label: School day
+    - label: 'Bed time: school day'
     - id: bedtime_weekday
     - sensors:
       - binary_sensor.middle_school_day_tomorrow
@@ -1411,8 +1663,7 @@ views:
   - template: event
     type: custom:decluttering-card
     variables:
-    - name: Bed time
-    - label: Weekend or vacation
+    - label: 'Bed time: Weekend or vacation'
     - id: bedtime_weekend
     - sensors:
       - binary_sensor.middle_school_day
@@ -1487,7 +1738,9 @@ views:
 
         '
       entity_id: sensor.updates
-      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n"
+      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n  display:\
+        \ {{ \"block\" if states(\"sensor.update_message\")|int > 0 else \"none\"\
+        \ }}\n}\n"
       type: markdown
     - cards:
       - entities:
@@ -1555,44 +1808,45 @@ views:
           name: Supervisor
           state_header: Installed
           type: custom:multiple-entity-row
-        - type: divider
-        - entities:
-          - entity: sensor.backup_state
-            name: State
-          - entity: binary_sensor.backups_stale
-            name: Current?
-          entity: sensor.backup_state
-          icon: mdi:cloud-upload
-          name: Backups
-          show_state: false
-          type: custom:multiple-entity-row
-        - entities:
-          - entity: sensor.processor_use
-            name: CPU
-          - entity: sensor.disk_use_percent
-            name: Disk
-          - entity: sensor.memory_use_percent
-            format: precision0
-            name: RAM
-          entity: sensor.processor_use
-          name: VM resources used
-          show_state: false
-          type: custom:multiple-entity-row
-        - entities:
-          - entity: sensor.last_restart
-            format: total
-            name: Core
-          - entity: sensor.last_boot
-            format: total
-            name: VM
-          entity: sensor.last_boot
-          icon: mdi:power
-          name: Last restart
-          secondary_info: null
-          show_state: false
-          type: custom:multiple-entity-row
         type: entities
       type: custom:stack-in-card
+    - entities:
+      - entities:
+        - entity: sensor.backup_state
+          name: State
+        - entity: binary_sensor.backups_stale
+          name: Current?
+        entity: sensor.backup_state
+        icon: mdi:cloud-upload
+        name: Backups
+        show_state: false
+        type: custom:multiple-entity-row
+      - entities:
+        - entity: sensor.processor_use
+          name: CPU
+        - entity: sensor.disk_use_percent
+          name: Disk
+        - entity: sensor.memory_use_percent
+          format: precision0
+          name: RAM
+        entity: sensor.processor_use
+        name: VM resources used
+        show_state: false
+        type: custom:multiple-entity-row
+      - entities:
+        - entity: sensor.last_restart
+          format: total
+          name: Core
+        - entity: sensor.last_boot
+          format: total
+          name: VM
+        entity: sensor.last_boot
+        icon: mdi:power
+        name: Last restart
+        secondary_info: null
+        show_state: false
+        type: custom:multiple-entity-row
+      type: entities
     type: vertical-stack
   - cards:
     - subtitle: null
@@ -1692,10 +1946,9 @@ views:
         icon_color: grey
         tap_action:
           action: call-service
-          service: script.script_reload
+          service: watchman.report
           service_data: {}
-          target:
-            entity_id: watchman.report
+          target: {}
         type: template
       type: custom:mushroom-chips-card
     - alignment: justify
@@ -1723,7 +1976,7 @@ views:
       type: custom:mushroom-chips-card
     type: vertical-stack
     view_layout:
-      position: sidebar
+      position: main
   - cards:
     - subtitle: null
       title: Watchman report
@@ -1782,53 +2035,125 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
+  - cards:
+    - title: Unifi
+      type: custom:mushroom-title-card
+    - entities:
+      - entities:
+        - entity: sensor.unifi_gateway_wan
+          name: WAN
+        - entity: sensor.unifi_gateway_wlan
+          name: WLAN
+        - entity: sensor.unifi_gateway_lan
+          name: LAN
+        entity: sensor.unifi_gateway_www
+        name: Connectivity
+        secondary_info:
+          entity: sensor.unifi_gateway_www
+          name: ''
+        show_state: false
+        type: custom:multiple-entity-row
+      - entities:
+        - entity: sensor.unifi_gateway_firmware_upgradable
+          name: Upgrades
+        - entity: sensor.unifi_gateway_alerts
+          name: Alerts
+        entity: sensor.unifi_gateway_wan
+        name: Status
+        show_state: false
+        type: custom:multiple-entity-row
+      - type: divider
+      - name: UniFi Controller
+        type: weblink
+        url: https://unraid.local:8443
+      theme: Caule Dark Purple
+      type: entities
+    type: vertical-stack
+    view_layout:
+      position: sidebar
+  - cards:
+    - subtitle: Manual control
+      title: Network Access Control
+      type: custom:mushroom-title-card
+    - entities:
+      - entity: switch.network_blackpc
+        name: Black PC
+      - entity: switch.network_bluepc
+        name: Blue PC
+      - entity: switch.network_redpc
+        name: Red PC
+      - entity: switch.network_greenpc
+        name: Green PC
+      footer:
+        entities:
+        - entity: switch.unraid_docker_unifi_controller
+          name: UniFi Controller
+        type: buttons
+      show_header_toggle: false
+      state_color: true
+      theme: Caule Dark Purple
+      title: ''
+      type: entities
+    - subtitle: Scheduler
+      type: custom:mushroom-title-card
+    - am_pm: true
+      discover_existing: false
+      include:
+      - switch.network_blackpc
+      - switch.network_bluepc
+      - switch.network_greenpc
+      - switch.network_nintendo_switch
+      - switch.network_redpc
+      title: false
+      type: custom:scheduler-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
   icon: mdi:server
   path: system
   theme: Backend-selected
   title: System
   type: sidebar
+  visible:
+  - user: dd8d7d8c949148fa945f68d1c2a1a0d5
 - badges: []
   cards:
-  - cards:
-    - chips:
-      - type: back
-      type: custom:mushroom-chips-card
-    - subtitle: Tap away from message box before tapping announce.
-      title: Speech notifications
-      type: custom:mushroom-title-card
-    - cards:
-      - entities:
-        - entity: sensor.last_speaker
-          icon: mdi:account-voice
-          name: Last announcement from
-          secondary_info: last-changed
-        - entity: sensor.last_google
-          icon: mdi:google-home
-          name: Last active speaker
-          secondary_info: last-changed
-        - entity: sensor.last_message
-          icon: mdi:comment-text
-          name: ' '
-        - type: section
-        - entity: input_boolean.audio_notifications
-        - input_select.tts_phrase_room
-        - entity: input_select.tts_phrases
-        - entity: input_text.tts_phrase
-          type: custom:text-input-row
-        footer:
-          entities:
-          - entity: script.tts_phrase_say
-            icon: mdi:account-voice
-            name: Say
-          - entity: script.repeat_last_message
-            icon: mdi:refresh-circle
-            name: Last message
-          type: buttons
-        show_header_toggle: false
-        state_color: false
-        type: entities
-      type: custom:stack-in-card
-    type: vertical-stack
+  - chips:
+    - type: back
+    type: custom:mushroom-chips-card
+  - subtitle: Tap away from message box before tapping announce.
+    title: Speech notifications
+    type: custom:mushroom-title-card
+  - entities:
+    - entity: sensor.last_speaker
+      icon: mdi:account-voice
+      name: Last announcement from
+      secondary_info: last-changed
+    - entity: sensor.last_google
+      icon: mdi:google-home
+      name: Last active speaker
+      secondary_info: last-changed
+    - entity: sensor.last_message
+      icon: mdi:comment-text
+      name: ' '
+    - type: section
+    - entity: input_boolean.audio_notifications
+    - input_select.tts_phrase_room
+    - entity: input_select.tts_phrases
+    - entity: input_text.tts_phrase
+      type: custom:text-input-row
+    footer:
+      entities:
+      - entity: script.tts_phrase_say
+        icon: mdi:account-voice
+        name: Say
+      - entity: script.repeat_last_message
+        icon: mdi:refresh-circle
+        name: Last message
+      type: buttons
+    show_header_toggle: false
+    state_color: false
+    type: entities
   icon: mdi:google-home
   path: smart-speakers
   theme: Backend-selected
@@ -1846,20 +2171,18 @@ views:
       type: vertical-stack
     - cards:
       - entity: input_boolean.mobile_notifications
-        icon: mdi:cellphone-message
-        name: Notify mobile
-        template: card_power_outlet
-        type: custom:button-card
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       - entity: input_boolean.audio_notifications
-        icon: mdi:speaker-wireless
-        name: Notify speakers
-        template: card_power_outlet
-        type: custom:button-card
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       - entity: automation.temperature_cooler_outside
         icon: mdi:thermometer
-        name: Cooler outside
-        template: card_power_outlet
-        type: custom:button-card
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       columns: 2
       square: false
       type: grid
@@ -1878,27 +2201,22 @@ views:
     - subtitle: Critical alerts excluded.
       title: Quiet time
       type: custom:mushroom-title-card
-    - cards:
-      - entities:
-        - card:
-            entity: input_number.quiet_hour_start
-            name: Start
-          row: true
-          type: custom:restriction-card
-        - card:
-            entity: input_number.quiet_hour_end
-            name: End
-          row: true
-          type: custom:restriction-card
-        style: "ha-card {\n  margin-top: -1.5em;\n}\n"
-        type: entities
-      - entities:
-        - entity: binary_sensor.noncritical_alert_quiet_time
-          name: Quiet time mode
-        type: custom:badge-card
-      mode: horizontal
-      style: "ha-card {\n  padding-top: 1.5em;\n}\n"
-      type: custom:stack-in-card
+    - entity: binary_sensor.noncritical_alert_quiet_time
+      tap_action:
+        action: toggle
+      type: custom:mushroom-entity-card
+    - entities:
+      - card:
+          entity: input_number.quiet_hour_start
+          name: Start
+        row: true
+        type: custom:restriction-card
+      - card:
+          entity: input_number.quiet_hour_end
+          name: End
+        row: true
+        type: custom:restriction-card
+      type: entities
     type: vertical-stack
   - cards:
     - subtitle: Enable & disable automated features.
@@ -1906,23 +2224,18 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: input_boolean.guest_mode
-        icon: mdi:account-supervisor-circle
-        label: Mode
-        name: Guest
-        template: card_power_outlet
-        type: custom:button-card
-      - entity: input_boolean.away_mode
-        icon: mdi:rv-truck
-        label: Mode
-        name: Away
-        template: card_power_outlet
-        type: custom:button-card
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       - entity: input_boolean.leave_unlocked
-        label: Unlocked
-        name: Leave
-        template: card_power_outlet
-        type: custom:button-card
-      columns: 3
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.away_mode
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      columns: 2
       square: false
       type: grid
     type: vertical-stack
@@ -1933,26 +2246,18 @@ views:
       title: Routines
       type: custom:mushroom-title-card
     - cards:
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.goodbye_routine
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:exit-run
-          ulm_card_script_title: Goodbye
-      - tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data:
-            entity_id: script.goodnight_routine
-        template: card_script
-        type: custom:button-card
-        variables:
-          ulm_card_script_icon: mdi:weather-night
-          ulm_card_script_title: Goodnight
+      - entity: script.goodbye_routine
+        icon: mdi:exit-run
+        name: Goodbye
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: script.goodnight_routine
+        icon: mdi:weather-night
+        name: Goodnight
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       columns: 2
       square: false
       type: grid
@@ -1961,15 +2266,13 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: switch.hot_water_pump
-        icon: mdi:hot-tub
-        name: Hot Water
-        template: card_power_outlet
-        type: custom:button-card
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       - entity: switch.printer
-        icon: mdi:printer
-        name: Printer
-        template: card_power_outlet
-        type: custom:button-card
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       columns: 2
       square: false
       type: grid
