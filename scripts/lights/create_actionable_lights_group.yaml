@@ -13,5 +13,5 @@ sequence:
     data:
       object_id: actionable_lights
       entities: >
-        {%- set ignore_list = expand("group.ignore_lights") | map(attribute='entity_id') | list -%}
-        {{ states.light | rejectattr("state","eq","unavailable") | rejectattr('attributes.type','eq','browser_mod') | rejectattr('entity_id','in',ignore_list) | map(attribute='entity_id') | join(',') }}
+        {%- set ignore_list = expand("group.ignore_lights") | map(attribute="entity_id") | join(",") -%}
+        {{ states.light | rejectattr("state","eq","unavailable") | rejectattr("attributes.type","eq","browser_mod") | rejectattr("entity_id","in",ignore_list) | map(attribute="entity_id") | join(",") | replace("light.dining1,","") | replace("1","") }}
