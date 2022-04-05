@@ -1,6 +1,0 @@
----
-unique_id: lights_on_count
-name: Lights on count
-state_class: total
-state: |
-  {{ expand("group.actionable_lights") | selectattr("state","eq","on") | map(attribute='entity_id') | list | count }}

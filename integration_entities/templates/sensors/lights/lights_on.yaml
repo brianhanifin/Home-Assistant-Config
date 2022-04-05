@@ -3,9 +3,7 @@ unique_id: lights_on
 name: Lights on
 icon: mdi:lightbulb-on
 state: |
-  {%- set ignore_list = expand("group.ignore_lights") | map(attribute='entity_id') | list -%}
-  {{ expand("group.actionable_lights") | rejectattr('entity_id','in',ignore_list) | selectattr("state","eq","on") | map(attribute='entity_id') | list | count }}
+  {{ expand("group.house_lights") | selectattr("state","eq","on") | map(attribute='entity_id') | list | count }}
 attributes:
   lights: |
-    {%- set ignore_list = expand("group.ignore_lights") | map(attribute='entity_id') | list -%}
-    {{ expand("group.actionable_lights") | rejectattr('entity_id','in',ignore_list) | selectattr("state","eq","on") | map(attribute="name") | join(", ") | replace("Dining","Dining room") | replace("1","") }}
+    {{ expand("group.house_lights") | selectattr("state","eq","on") | map(attribute="name") | join(", ") | replace("Dining","Dining room") | replace("1","") }}
