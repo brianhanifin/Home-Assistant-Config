@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1306 total entities**, 
-including **669 sensors**.
+Our Home Assistant install has approximately **1229 total entities**, 
+including **608 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -204,6 +204,12 @@ Component to show potential breaking_changes in the current published version ba
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
+#### [Browser mod v1.3.1](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
+
+
+
+
+
 #### [Config Check v0.1.1](https://github.com/custom-components/config_check)
 
 Run the CLI config_check from a service call.
@@ -234,7 +240,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.24.2](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.24.3](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -282,12 +288,6 @@ Authors: [@nielsfaber](https://github.com/nielsfaber).
 Authors: [@ollo69](https://github.com/ollo69).
 
 
-#### [SpaceX Launches and Starman v029](https://github.com/djtimca/haspacex)
-
-
-Authors: [@djtimca](https://github.com/djtimca).
-
-
 #### [Sun2 v2.0.3](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
 
 
@@ -318,7 +318,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>31 lovelace plugins</summary>
+<details><summary>26 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -326,14 +326,6 @@ Custom calendar card for Home Assistant with Lovelace
 
 #### [Auto Entities v1.11.0](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
-
-
-#### [Badge Card](https://github.com/thomasloven/lovelace-badge-card)
-🔹 Place badges anywhere in the lovelace layout
-
-
-#### [Button Card v3.4.2](https://github.com/custom-cards/button-card)
-❇️ Lovelace button-card for home assistant
 
 
 #### [Canary v0.3.4](https://github.com/jcwillox/lovelace-canary)
@@ -356,16 +348,12 @@ Custom calendar card for Home Assistant with Lovelace
 Show a notification count badge.
 
 
-#### [Fold Entity Row v20.0.12](https://github.com/thomasloven/lovelace-fold-entity-row)
+#### [Fold Entity Row v2.2.0](https://github.com/thomasloven/lovelace-fold-entity-row)
 🔹 A foldable row for entities card, containing other rows
 
 
 #### [Frigate Card v3.0.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
-
-
-#### [Ha (Lovelace) Card Weather Conditions v1.9.12](https://github.com/r-renato/ha-card-weather-conditions)
-Weather condition card (Lovelace) for Home Assistant.
 
 
 #### [Kiosk Mode v1.7.2](https://github.com/maykar/kiosk-mode)
@@ -388,20 +376,12 @@ A custom Lovelace text input row for use in entities cards
 Minimalistic graph card for Home Assistant Lovelace UI
 
 
-#### [More Info Card](https://github.com/thomasloven/lovelace-more-info-card)
-🔹 Display the more-info dialog of any entity as a lovelace card
-
-
 #### [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
 #### [Mushroom v1.3.2](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
-
-
-#### [My Cards Bundle](https://github.com/AnthonMS/my-cards)
-Bundle of my custom Lovalace cards for Home Assistant. Includes: my-slider
 
 
 #### [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
@@ -445,7 +425,23 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>3 addons</summary>
+<details><summary>7 addons</summary>
+
+#### ESPHome v2022.3.2
+ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
+
+
+#### File editor v5.3.3
+Simple browser-based file editor for Home Assistant
+
+
+#### HA Scheduler v0.17
+Home Assistant scheduler
+
+
+#### Home Assistant Google Drive Backup v0.106.2
+Automatically manage backups between Home Assistant and Google Drive
+
 
 #### Portainer v2.0.0
 Manage your Docker environment with ease
@@ -490,7 +486,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.4.0b3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.4.0b5-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -500,7 +496,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38683-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39075-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

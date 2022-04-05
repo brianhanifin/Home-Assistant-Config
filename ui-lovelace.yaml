@@ -94,17 +94,193 @@ views:
     - entity: sensor.ui_date
       icon: mdi:calendar
       icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
       type: entity
     - entity: weather.home
-      show_conditions: true
+      show_conditions: false
       show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
       type: weather
     - entity: sensor.family_present
       icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
       type: entity
     - chip:
         entity: sensor.lights_on
         icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.dining1
+                - entity_id: light.dining2
+                - entity_id: light.dining3
+                - entity_id: light.dining4
+                - entity_id: light.dining5
+                - entity_id: light.dining6
+                - entity_id: light.dining7
+                - entity_id: light.dining8
+                - entity_id: light.dining9
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
         type: entity
       conditions:
       - entity: sensor.lights_on
@@ -185,7 +361,7 @@ views:
     firstDayOfWeek: 1
     hideDuplicates: false
     hideFinishedEvents: false
-    maxDaysToShow: 2
+    maxDaysToShow: 1
     position: sidebar
     refreshInterval: 3600
     showDate: false
@@ -415,7 +591,20 @@ views:
           \  {%- endif %}\n  Currently {{ state_attr(\"climate.home_thermostat\",\"\
           current_temperature\")|round ~ \"°\"\n  }}"
         tap_action:
-          action: more-info
+          action: fire-dom-event
+          browser_mod:
+            card:
+              entity: climate.home_thermostat
+              header: false
+              layout:
+                mode:
+                  headings: false
+                  icons: true
+                  names: false
+              type: custom:simple-thermostat
+            command: popup
+            deviceID: this
+            title: House thermostat
         type: custom:mushroom-template-card
       - entity: climate.bedroom
         icon: mdi:thermostat
@@ -431,7 +620,20 @@ views:
           \ {{ state_attr(\"climate.bedroom\",\"current_temperature\")|round ~ \"\
           °\"\n  }}"
         tap_action:
-          action: more-info
+          action: fire-dom-event
+          browser_mod:
+            card:
+              entity: climate.bedroom
+              header: false
+              layout:
+                mode:
+                  headings: false
+                  icons: true
+                  names: false
+              type: custom:simple-thermostat
+            command: popup
+            deviceID: this
+            title: Bedroom thermostat
         type: custom:mushroom-template-card
       - entity: climate.lucas_room
         icon: mdi:thermostat
@@ -447,7 +649,20 @@ views:
           \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.lucas_room\",\"\
           current_temperature\")|round ~ \"°\"\n  }}"
         tap_action:
-          action: more-info
+          action: fire-dom-event
+          browser_mod:
+            card:
+              entity: climate.lucas_room
+              header: false
+              layout:
+                mode:
+                  headings: false
+                  icons: true
+                  names: false
+              type: custom:simple-thermostat
+            command: popup
+            deviceID: this
+            title: Lucas' thermostat
         type: custom:mushroom-template-card
       columns: 3
       square: false
@@ -532,17 +747,184 @@ views:
     - entity: sensor.ui_date
       icon: mdi:calendar
       icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
       type: weather
     - entity: sensor.family_present
       icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
       type: entity
     - chip:
         entity: sensor.lights_on
         icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
         type: entity
       conditions:
       - entity: sensor.lights_on
@@ -552,14 +934,14 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.family_room\"\
+    - subtitle: "{{- states(\"sensor.family_room_temperature\")|round }}°\n{{- \"\
+        \ ‧ \" ~ states(\"sensor.family_room_humidity\")|round }}%\n{%- set lights_on\
+        \ = 0 %}\n{%- set lights_on = iif(is_state(\"light.family_room\",\"on\"),\
+        \ lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.table_lamp\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
-        \ = iif(is_state(\"light.family_room_floor_lamp\",\"on\"), lights_on + 1,\
-        \ lights_on) %}\n{{- states(\"sensor.family_room_temperature\")|round }}°\n\
-        {{- \" ‧ \" ~ states(\"sensor.family_room_humidity\")|round }}%\n{%- if lights_on\
-        \ > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~\
-        \ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.family_room_presence\"\
+        light.family_room_floor_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%-\
+        \ if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\"\
+        , lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.family_room_presence\"\
         ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.tv_family_room\"\
         ,\"on\"), \" ‧ tv is on\", \"\") }}"
       title: Family room
@@ -594,13 +976,13 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.kitchen\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.kitchen_prep\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
-        \ = iif(is_state(\"light.dining_room\",\"on\"), lights_on + 1, lights_on)\
-        \ %}\n{{- states(\"sensor.kitchen_temperature\")|round }}°\n{{- \" ‧ \" ~states(\"\
-        sensor.kitchen_humidity\")|round }}%\n{%- if lights_on > 0 %}\n  {{- \" ‧\
-        \ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
+    - subtitle: "{{- states(\"sensor.kitchen_temperature\")|round }}°\n{{- \" ‧ \"\
+        \ ~states(\"sensor.kitchen_humidity\")|round }}%\n{%- set lights_on = 0 %}\n\
+        {%- set lights_on = iif(is_state(\"light.kitchen\",\"on\"), lights_on + 1,\
+        \ lights_on) %}\n{%- set lights_on = iif(is_state(\"light.kitchen_prep\",\"\
+        on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.dining_room\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
+        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
         {%- endif %}\n{{- iif(is_state(\"binary_sensor.kitchen_presence\",\"on\"),\
         \ \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"input_select.dishwasher_status\"\
         ,\"-\"), \" ‧ dishes are \" ~ states(\"input_select.dishwasher_status\")|lower,\
@@ -662,16 +1044,16 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.home_entry\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.porch\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.entry_railing\",\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"\
-        sensor.family_room_temperature\")|round }}°\n{{- \" ‧ \" ~ states(\"sensor.family_room_humidity\"\
-        )|round }}%\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1,\
-        \ \"1 light is on\", lights_on ~ \" lights are on\") }}\n{%- endif %}\n{{-\
-        \ iif(is_state(\"binary_sensor.doorbell_person_motion\",\"on\"), \" ‧ someone\
-        \ is at the front door\", \"\") }}\n{{- iif(is_state(\"lock.front_door\",\"\
-        unlocked\"), \" ‧ front door is unlocked\", \"\") }}"
+    - subtitle: "{{- states(\"sensor.family_room_temperature\")|round }}°\n{{- \"\
+        \ ‧ \" ~ states(\"sensor.family_room_humidity\")|round }}%\n{%- set lights_on\
+        \ = 0 %}\n{%- set lights_on = iif(is_state(\"light.home_entry\",\"on\"), lights_on\
+        \ + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.porch\",\"\
+        on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.entry_railing\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
+        \ ‧ \" ~ iif(lights_on == 1, \"1 light is on\", lights_on ~ \" lights are\
+        \ on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.doorbell_person_motion\"\
+        ,\"on\"), \" ‧ someone is at the front door\", \"\") }}\n{{- iif(is_state(\"\
+        lock.front_door\",\"unlocked\"), \" ‧ front door is unlocked\", \"\") }}"
       title: Home entry
       type: custom:mushroom-title-card
     - cards:
@@ -705,16 +1087,17 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.laundry\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"sensor.garage_temperature\"\
-        )|round }}°\n{{- \" ‧ \" ~ states(\"sensor.garage_humidity\")|round }}%\n\
-        {%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\"\
-        , lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_presence\"\
-        ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
-        ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\"\
-        ) }}\n{{- iif(not states(\"input_select.laundry_status\") in [\"Off\",\"Unknown\"\
-        ], \" ‧ laundry is \" ~ states(\"input_select.laundry_status\")|lower, \"\"\
-        ) }}"
+    - subtitle: "{{- states(\"sensor.garage_temperature\")|round }}°\n{{- \" ‧ \"\
+        \ ~ states(\"sensor.garage_humidity\")|round }}%\n{%- set lights_on = 0 %}\n\
+        {%- set lights_on = iif(is_state(\"light.laundry\",\"on\"), lights_on + 1,\
+        \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
+        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.garage_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not\
+        \ is_state(\"cover.garage_door\",\"closed\"), \" ‧ garage door is \" ~ states(\"\
+        cover.garage_door\"), \"\") }}\n{%- if not states(\"input_select.laundry_status\"\
+        ) in [\"Off\",\"Unknown\"] %}\n  {{- \" ‧ \" ~ iif(states(\"input_select.laundry_status\"\
+        ) != \"Please transfer to dryer\", \"laundry is \", \"\") ~ states(\"input_select.laundry_status\"\
+        )|lower }}\n{%- endif %}"
       title: Garage
       type: custom:mushroom-title-card
     - cards:
@@ -728,22 +1111,6 @@ views:
       columns: 2
       square: false
       type: grid
-    - alignment: center
-      chips:
-      - entity: sensor.garage_temperature
-        icon_color: amber
-        type: entity
-      - entity: sensor.garage_humidity
-        icon_color: light-blue
-        type: entity
-      - entity: binary_sensor.garage_presence
-        icon: mdi:motion-sensor
-        icon_color: brown
-        type: entity
-      - entity: input_select.laundry_status
-        icon: mdi:washing-machine
-        type: entity
-      type: custom:mushroom-chips-card
     type: vertical-stack
   - cards:
     - subtitle: Swipe for more.
@@ -851,17 +1218,184 @@ views:
     - entity: sensor.ui_date
       icon: mdi:calendar
       icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
       type: weather
     - entity: sensor.family_present
       icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
       type: entity
     - chip:
         entity: sensor.lights_on
         icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
         type: entity
       conditions:
       - entity: sensor.lights_on
@@ -871,14 +1405,14 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.bedroom\"\
+    - subtitle: "{{- states(\"sensor.bedroom_temperature\")|round }}°\n{{- \" ‧ \"\
+        \ ~ states(\"sensor.bedroom_humidity\")|round }}%\n{%- set lights_on = 0 %}\n\
+        {%- set lights_on = iif(is_state(\"light.bedroom\",\"on\"), lights_on + 1,\
+        \ lights_on) %}\n{%- set lights_on = iif(is_state(\"light.bedroom_table_lamp\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.bedroom_table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set\
-        \ lights_on = iif(is_state(\"light.bedroom_floor_lamp\",\"on\"), lights_on\
-        \ + 1, lights_on) %}\n{{- states(\"sensor.bedroom_temperature\")|round }}°\n\
-        {{- \" ‧ \" ~ states(\"sensor.bedroom_humidity\")|round }}%\n{%- if lights_on\
-        \ > 0 %}\n  {{- \" ‧ \" ~ lights_on }} {{ iif(lights_on == 1, \"light on\"\
-        , \"lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_presence\"\
+        light.bedroom_floor_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on\
+        \ > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~\
+        \ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_presence\"\
         ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"input_select.glowforge_status\"\
         ,\"Off\"), \" ‧ glowforge is \" ~ states(\"input_select.glowforge_status\"\
         )|lower, \"\") }}"
@@ -939,12 +1473,13 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"sensor.lucas_room_display_temperature\"\
-        )|round }}°\n{{- \" ‧ \" ~ states(\"sensor.lucas_room_display_humidity\")|round\
-        \ }}%\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ lights_on }} {{ iif(lights_on\
-        \ == 1, \"light on\", \"lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.bedroom_presence\",\"on\"), \" ‧ occupied\", \"\") }}"
+    - subtitle: "{{- states(\"sensor.lucas_room_display_temperature\")|round }}°\n\
+        {{- \" ‧ \" ~ states(\"sensor.lucas_room_display_humidity\")|round }}%\n{%-\
+        \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
+        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
+        {%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_presence\",\"on\"),\
+        \ \" ‧ occupied\", \"\") }}"
       title: ' Lucas'' room'
       type: custom:mushroom-title-card
     - cards:
@@ -962,11 +1497,12 @@ views:
     view_layout:
       position: main
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"sensor.kyles_bedroom_temperature\"\
-        )|round }}° \n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ lights_on }} {{ iif(lights_on\
-        \ == 1, \"light on\", \"lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.kyles_room_presence\",\"on\"), \" ‧ occupied\", \"\") }}"
+    - subtitle: "{{- states(\"sensor.kyles_bedroom_temperature\")|round }}° \n{%-\
+        \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
+        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
+        {%- endif %}\n{{- iif(is_state(\"binary_sensor.kyles_room_presence\",\"on\"\
+        ), \" ‧ occupied\", \"\") }}"
       title: Kyle's room
       type: custom:mushroom-title-card
     - cards:
@@ -1091,17 +1627,184 @@ views:
     - entity: sensor.ui_date
       icon: mdi:calendar
       icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
       type: weather
     - entity: sensor.family_present
       icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
       type: entity
     - chip:
         entity: sensor.lights_on
         icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
         type: entity
       conditions:
       - entity: sensor.lights_on
@@ -1152,6 +1855,26 @@ views:
       type: grid
     type: vertical-stack
   - cards:
+    - camera_image: camera.front_door
+      camera_view: auto
+      entity: camera.front_door
+      show_name: false
+      show_state: false
+      type: picture-entity
+      view_layout:
+        position: main
+    - camera_image: camera.driveway
+      camera_view: auto
+      entity: camera.driveway
+      show_name: false
+      show_state: false
+      type: picture-entity
+      view_layout:
+        position: main
+    columns: 2
+    square: false
+    type: grid
+  - cards:
     - camera_view: auto
       entity: camera.front_door_person
       show_name: true
@@ -1172,22 +1895,6 @@ views:
     columns: 3
     square: true
     type: grid
-    view_layout:
-      position: main
-  - camera_image: camera.front_door
-    camera_view: live
-    entity: switch.adaptive_lighting_adapt_brightness_play_room
-    show_name: false
-    show_state: false
-    type: picture-entity
-    view_layout:
-      position: main
-  - camera_image: camera.driveway
-    camera_view: live
-    entity: switch.adaptive_lighting_adapt_brightness_family_room
-    show_name: false
-    show_state: false
-    type: picture-entity
     view_layout:
       position: main
   - cards:
@@ -1251,17 +1958,184 @@ views:
     - entity: sensor.ui_date
       icon: mdi:calendar
       icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
       type: weather
     - entity: sensor.family_present
       icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
       type: entity
     - chip:
         entity: sensor.lights_on
         icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
         type: entity
       conditions:
       - entity: sensor.lights_on
@@ -1543,17 +2417,184 @@ views:
     - entity: sensor.ui_date
       icon: mdi:calendar
       icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
       type: entity
     - entity: weather.home
       show_conditions: false
       show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
       type: weather
     - entity: sensor.family_present
       icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
       type: entity
     - chip:
         entity: sensor.lights_on
         icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
         type: entity
       conditions:
       - entity: sensor.lights_on
@@ -1565,6 +2606,51 @@ views:
   - subtitle: Scheduled announcements & wakeup lights.
     title: Events
     type: custom:mushroom-title-card
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: 'Wakeup: Nerene work day'
+    - id: wakeup_nerene
+    - sensors:
+      - binary_sensor.work_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: 'Wakeup: Brian school day'
+    - id: wakeup_brian
+    - sensors:
+      - binary_sensor.middle_school_day
+      - binary_sensor.high_school_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: 'Wakeup: Kyle school day'
+    - id: wakeup_kyle
+    - sensors:
+      - binary_sensor.middle_school_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: 'Wakeup: Lucas school day'
+    - id: wakeup_lucas
+    - sensors:
+      - binary_sensor.high_school_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: 'Bed time: school day'
+    - id: bedtime_weekday
+    - sensors:
+      - binary_sensor.middle_school_day_tomorrow
+      - binary_sensor.high_school_day_tomorrow
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: 'Bed time: Weekend or vacation'
+    - id: bedtime_weekend
+    - sensors:
+      - binary_sensor.middle_school_day
+      - binary_sensor.high_school_day
   - cards:
     - subtitle: 'Drip system: zone1'
       title: Irrigation control
@@ -1623,51 +2709,6 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Wakeup: Nerene work day'
-    - id: wakeup_nerene
-    - sensors:
-      - binary_sensor.work_day
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Wakeup: Brian school day'
-    - id: wakeup_brian
-    - sensors:
-      - binary_sensor.middle_school_day
-      - binary_sensor.high_school_day
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Wakeup: Kyle school day'
-    - id: wakeup_kyle
-    - sensors:
-      - binary_sensor.middle_school_day
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Wakeup: Lucas school day'
-    - id: wakeup_lucas
-    - sensors:
-      - binary_sensor.high_school_day
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Bed time: school day'
-    - id: bedtime_weekday
-    - sensors:
-      - binary_sensor.middle_school_day_tomorrow
-      - binary_sensor.high_school_day_tomorrow
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Bed time: Weekend or vacation'
-    - id: bedtime_weekend
-    - sensors:
-      - binary_sensor.middle_school_day
-      - binary_sensor.high_school_day
   - subtitle: Scheduled device on/off times.
     title: Device scheduler
     type: custom:mushroom-title-card
@@ -1727,127 +2768,198 @@ views:
   type: sidebar
 - badges: []
   cards:
-  - cards:
-    - chips:
-      - type: back
-      type: custom:mushroom-chips-card
-    - subtitle: Status
-      title: Home Assistant
-      type: custom:mushroom-title-card
-    - content: '{{ states("sensor.update_message") }}
-
-        '
-      entity_id: sensor.updates
-      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n  display:\
-        \ {{ \"block\" if states(\"sensor.update_message\")|int > 0 else \"none\"\
-        \ }}\n}\n"
-      type: markdown
-    - cards:
-      - entities:
-        - entities:
-          - attribute: home_assistant_updates
-            entity: sensor.updates
-            name: Core
-          - entity: sensor.hacs
-            name: HACS
-            unit: ' '
-          - entity: sensor.addon_updates
-            name: Addons
-          entity: sensor.updates
-          icon: mdi:home-assistant
-          name: Updates
-          state_header: TOTAL
-          type: custom:multiple-entity-row
-        - entities:
-          - entity: sensor.latest_beta
-            name: Beta
-          - entity: sensor.latest_release
-            name: Stable
-          entity: sensor.current_version
-          name: Core
-          state_header: Installed
-          type: custom:multiple-entity-row
-        footer:
-          entities:
-          - entity: sensor.latest_release
-            icon: mdi:link
-            name: Release notes
-            tap_action:
-              action: url
-              url_path: https://www.home-assistant.io/latest-release-notes/
-          - entity: sensor.latest_beta
-            icon: mdi:link
-            name: Beta notes
-            tap_action:
-              action: url
-              url_path: https://rc.home-assistant.io/latest-release-notes/
-          - entity: sensor.current_version
-            icon: mdi:link
-            name: RC blogposts
-            tap_action:
-              action: url
-              url_path: https://github.com/home-assistant/home-assistant.io/blob/rc/source/_posts/
-          type: buttons
-        type: entities
-      - entities:
-        - type: divider
-        - entities:
-          - entity: sensor.home_assistant_operating_system_newest_version
-            name: Latest
-          entity: sensor.home_assistant_operating_system_version
-          icon: fab:docker
-          name: OS
-          state_header: Installed
-          type: custom:multiple-entity-row
-        - entities:
-          - attribute: version_latest
-            entity: sensor.supervisor
-            name: Latest
-          entity: sensor.supervisor
-          icon: fab:docker
-          name: Supervisor
-          state_header: Installed
-          type: custom:multiple-entity-row
-        type: entities
-      type: custom:stack-in-card
-    - entities:
-      - entities:
-        - entity: sensor.backup_state
-          name: State
-        - entity: binary_sensor.backups_stale
-          name: Current?
-        entity: sensor.backup_state
-        icon: mdi:cloud-upload
-        name: Backups
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: sensor.processor_use
-          name: CPU
-        - entity: sensor.disk_use_percent
-          name: Disk
-        - entity: sensor.memory_use_percent
-          format: precision0
-          name: RAM
-        entity: sensor.processor_use
-        name: VM resources used
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: sensor.last_restart
-          format: total
-          name: Core
-        - entity: sensor.last_boot
-          format: total
-          name: VM
-        entity: sensor.last_boot
-        icon: mdi:power
-        name: Last restart
-        secondary_info: null
-        show_state: false
-        type: custom:multiple-entity-row
-      type: entities
-    type: vertical-stack
+  - alignment: center
+    chips:
+    - type: back
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
+      type: weather
+    - entity: sensor.family_present
+      icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
+      type: entity
+    - chip:
+        entity: sensor.lights_on
+        icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
+    view_layout:
+      position: sidebar
   - cards:
     - subtitle: null
       title: Actions
@@ -1978,63 +3090,123 @@ views:
     view_layout:
       position: main
   - cards:
-    - subtitle: null
-      title: Watchman report
+    - subtitle: Status
+      title: Home Assistant
       type: custom:mushroom-title-card
-    - content: '<h3>Missing Entities: {{ states.sensor.watchman_missing_entities.state
-        }}</h3>'
+    - content: '{{ states("sensor.update_message") }}
+
+        '
+      entity_id: sensor.updates
+      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n  display:\
+        \ {{ \"block\" if states(\"sensor.update_message\")|int > 0 else \"none\"\
+        \ }}\n}\n"
       type: markdown
-    - content: "<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n      \
-        \    <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n  {%-\
-        \ for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
-        ) %}\n  <tr>\n    <td>{{ item.id }}</td>\n    <td><ha-icon icon=\"mdi:cloud-{%-\
-        \ if item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
-        \ else-%}question{%- endif -%}\"></ha-icon></td>\n    <td><a title=\"{{item.occurrences}}\"\
-        > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n  </tr>\n{%-\
-        \ endfor %}\n</table>"
-      type: markdown
+    - cards:
+      - entities:
+        - entities:
+          - attribute: home_assistant_updates
+            entity: sensor.updates
+            name: Core
+          - entity: sensor.hacs
+            name: HACS
+            unit: ' '
+          - entity: sensor.addon_updates
+            name: Addons
+          entity: sensor.updates
+          icon: mdi:home-assistant
+          name: Updates
+          state_header: TOTAL
+          type: custom:multiple-entity-row
+        - entities:
+          - entity: sensor.latest_beta
+            name: Beta
+          - entity: sensor.latest_release
+            name: Stable
+          entity: sensor.current_version
+          name: Core
+          state_header: Installed
+          type: custom:multiple-entity-row
+        footer:
+          entities:
+          - entity: sensor.latest_release
+            icon: mdi:link
+            name: Release notes
+            tap_action:
+              action: url
+              url_path: https://www.home-assistant.io/latest-release-notes/
+          - entity: sensor.latest_beta
+            icon: mdi:link
+            name: Beta notes
+            tap_action:
+              action: url
+              url_path: https://rc.home-assistant.io/latest-release-notes/
+          - entity: sensor.current_version
+            icon: mdi:link
+            name: RC blogposts
+            tap_action:
+              action: url
+              url_path: https://github.com/home-assistant/home-assistant.io/blob/rc/source/_posts/
+          type: buttons
+        type: entities
+      - entities:
+        - type: divider
+        - entities:
+          - entity: sensor.home_assistant_operating_system_newest_version
+            name: Latest
+          entity: sensor.home_assistant_operating_system_version
+          icon: fab:docker
+          name: OS
+          state_header: Installed
+          type: custom:multiple-entity-row
+        - entities:
+          - attribute: version_latest
+            entity: sensor.supervisor
+            name: Latest
+          entity: sensor.supervisor
+          icon: fab:docker
+          name: Supervisor
+          state_header: Installed
+          type: custom:multiple-entity-row
+        type: entities
+      type: custom:stack-in-card
+    - entities:
+      - entities:
+        - entity: sensor.backup_state
+          name: State
+        - entity: binary_sensor.backups_stale
+          name: Current?
+        entity: sensor.backup_state
+        icon: mdi:cloud-upload
+        name: Backups
+        show_state: false
+        type: custom:multiple-entity-row
+      - entities:
+        - entity: sensor.processor_use
+          name: CPU
+        - entity: sensor.disk_use_percent
+          name: Disk
+        - entity: sensor.memory_use_percent
+          format: precision0
+          name: RAM
+        entity: sensor.processor_use
+        name: VM resources used
+        show_state: false
+        type: custom:multiple-entity-row
+      - entities:
+        - entity: sensor.last_restart
+          format: total
+          name: Core
+        - entity: sensor.last_boot
+          format: total
+          name: VM
+        entity: sensor.last_boot
+        icon: mdi:power
+        name: Last restart
+        secondary_info: null
+        show_state: false
+        type: custom:multiple-entity-row
+      type: entities
     type: vertical-stack
-    view_layout:
-      position: main
-  - cards:
-    - title: Entity counts
-      type: custom:mushroom-title-card
-    - columns: 6
-      entities:
-      - entity: sensor.entity_count
-      - entity: sensor.domain_count
-      - entity: sensor.automation_count
-      - entity: sensor.script_count
-      - entity: sensor.alert_count
-      - entity: sensor.unknown_count
-      - entity: sensor.unavailable_count
-      - entity: sensor.media_player_count
-      - entity: sensor.camera_count
-      - entity: sensor.cover_lock_count
-      - entity: sensor.fan_count
-      - entity: sensor.light_count
-      - entity: sensor.sensor_count
-      - entity: sensor.binary_sensor_count
-      - entity: sensor.remote_count
-      - entity: sensor.switch_count
-      - entity: sensor.climate_count
-      - entity: sensor.input_boolean_count
-      - entity: sensor.input_datetime_count
-      - entity: sensor.input_number_count
-      - entity: sensor.input_select_count
-      - entity: sensor.input_text_count
-      - entity: sensor.calendar_count
-      - entity: sensor.group_count
-      - entity: sensor.timer_count
-      - entity: sensor.counter_count
-      - entity: sensor.zone_count
-      show_name: false
-      show_state: true
-      style: "ha-card {\n  border-radius: var(--border-radius);\n}\n"
-      type: glance
-    type: vertical-stack
-    view_layout:
-      position: sidebar
   - cards:
     - title: Unifi
       type: custom:mushroom-title-card
@@ -2071,6 +3243,25 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
+  - cards:
+    - subtitle: null
+      title: Watchman report
+      type: custom:mushroom-title-card
+    - content: '<h3>Missing Entities: {{ states.sensor.watchman_missing_entities.state
+        }}</h3>'
+      type: markdown
+    - content: "<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n      \
+        \    <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n  {%-\
+        \ for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
+        ) %}\n  <tr>\n    <td>{{ item.id }}</td>\n    <td><ha-icon icon=\"mdi:cloud-{%-\
+        \ if item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
+        \ else-%}question{%- endif -%}\"></ha-icon></td>\n    <td><a title=\"{{item.occurrences}}\"\
+        > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n  </tr>\n{%-\
+        \ endfor %}\n</table>"
+      type: markdown
+    type: vertical-stack
+    view_layout:
+      position: main
   - cards:
     - subtitle: Manual control
       title: Network Access Control
@@ -2109,6 +3300,48 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
+  - cards:
+    - title: Entity counts
+      type: custom:mushroom-title-card
+    - columns: 8
+      entities:
+      - entity: sensor.entity_count
+      - entity: sensor.domain_count
+      - entity: sensor.automation_count
+      - entity: sensor.script_count
+      - entity: sensor.unknown_count
+      - entity: sensor.unavailable_count
+      - entity: sensor.alert_count
+      - entity: sensor.media_player_count
+      - entity: sensor.camera_count
+      - entity: sensor.cover_lock_count
+      - entity: sensor.fan_count
+      - entity: sensor.light_count
+      - entity: sensor.sensor_count
+      - entity: sensor.binary_sensor_count
+      - entity: sensor.button_count
+      - entity: sensor.switch_count
+      - entity: sensor.climate_count
+      - entity: sensor.input_boolean_count
+      - entity: sensor.input_datetime_count
+      - entity: sensor.number_count
+      - entity: sensor.select_count
+      - entity: sensor.input_text_count
+      - entity: sensor.calendar_count
+      - entity: sensor.group_count
+      - entity: sensor.timer_count
+      - entity: sensor.counter_count
+      - entity: sensor.update_count
+      - entity: sensor.weather_count
+      - entity: sensor.zone_count
+      show_icon: true
+      show_name: false
+      show_state: true
+      state_color: false
+      type: glance
+    type: vertical-stack
+    view_layout:
+      position: main
   icon: mdi:server
   path: system
   theme: Backend-selected
@@ -2118,9 +3351,198 @@ views:
   - user: dd8d7d8c949148fa945f68d1c2a1a0d5
 - badges: []
   cards:
-  - chips:
+  - alignment: center
+    chips:
     - type: back
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
+      type: weather
+    - entity: sensor.family_present
+      icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
+      type: entity
+    - chip:
+        entity: sensor.lights_on
+        icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on
+        state_not: '0'
+      type: conditional
     type: custom:mushroom-chips-card
+    view_layout:
+      position: sidebar
   - subtitle: Tap away from message box before tapping announce.
     title: Speech notifications
     type: custom:mushroom-title-card
@@ -2158,17 +3580,205 @@ views:
   path: smart-speakers
   theme: Backend-selected
   title: Smart speakers
+  type: sidebar
 - badges: []
   cards:
+  - alignment: center
+    chips:
+    - type: back
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
+      type: weather
+    - entity: sensor.family_present
+      icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
+      type: entity
+    - chip:
+        entity: sensor.lights_on
+        icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
+    view_layout:
+      position: sidebar
   - cards:
-    - cards:
-      - chips:
-        - type: back
-        type: custom:mushroom-chips-card
-      - subtitle: Default volume.
-        title: Notification settings
-        type: custom:mushroom-title-card
-      type: vertical-stack
+    - subtitle: Default volume.
+      title: Notification settings
+      type: custom:mushroom-title-card
     - cards:
       - entity: input_boolean.mobile_notifications
         tap_action:
@@ -2202,8 +3812,6 @@ views:
       title: Quiet time
       type: custom:mushroom-title-card
     - entity: binary_sensor.noncritical_alert_quiet_time
-      tap_action:
-        action: toggle
       type: custom:mushroom-entity-card
     - entities:
       - card:
@@ -2297,15 +3905,202 @@ views:
   type: sidebar
 - badges: []
   cards:
+  - alignment: center
+    chips:
+    - type: back
+    - entity: sensor.ui_date
+      icon: mdi:calendar
+      icon_color: red
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            dateSize: 175
+            dimFinishedEvents: true
+            disableEventLink: true
+            disableLocationLink: true
+            entities:
+            - color: teal
+              entity: calendar.us_holidays
+            - color: black
+              entity: calendar.birthdays_anniversary
+              eventCalName: Milestones
+            - color: green
+              entity: calendar.brian
+              eventCalName: Brian
+            - color: purple
+              entity: calendar.nerene
+              eventCalName: Nerene
+            - color: maroon
+              entity: calendar.hanifins
+              eventCalName: Hanifin's
+            - blacklist: Math Tutor,Period
+              color: blue
+              entity: calendar.kyle
+              eventCalName: Kyle
+            - blacklist: Advisory,Period
+              color: maroon
+              entity: calendar.lucas
+              eventCalName: Lucas
+            eventTitleSize: 125
+            firstDayOfWeek: 1
+            hideDuplicates: false
+            hideFinishedEvents: false
+            maxDaysToShow: 2
+            position: sidebar
+            refreshInterval: 3600
+            showDate: false
+            showDeclined: false
+            showDescription: true
+            showEventIcon: false
+            showFullDayProgress: false
+            showHiddenText: false
+            showLoader: false
+            showLocation: false
+            showMonth: false
+            showNoEventsForToday: false
+            showProgressBar: false
+            showRelativeTime: true
+            showWeekDay: true
+            sortByStartTime: true
+            type: custom:atomic-calendar-revive
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Calendar
+      type: entity
+    - entity: weather.home
+      show_conditions: false
+      show_temperature: true
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            cards:
+            - subtitle: null
+              title: Current conditions
+              type: custom:mushroom-title-card
+            - current: true
+              details: true
+              entity: weather.home
+              forecast: false
+              hourly_forecast: false
+              number_of_forecasts: '4'
+              type: custom:weather-card
+            - animate: true
+              entities:
+              - entity: sensor.outdoor_temperature
+                name: Temperature
+                show_fill: false
+              - entity: sensor.outdoor_humidity
+                name: Humidity
+                show_line: false
+                show_points: false
+                y_axis: secondary
+              icon: mdi:weather-sunny
+              line_width: 2
+              name: Outdoor
+              points_per_hour: 4
+              show:
+                extrema: true
+                icon: false
+                labels: true
+                labels_secondary: true
+                name: false
+                state: false
+              type: custom:mini-graph-card
+            - entity: binary_sensor.rain_today
+              states:
+                'on':
+                  cards:
+                  - template: heading
+                    type: custom:decluttering-card
+                    variables:
+                    - content: Radar
+                  - entity: camera.san_diego
+                    type: picture-entity
+                  type: vertical-stack
+              type: custom:state-switch
+            type: vertical-stack
+            view_layout:
+              position: sidebar
+          command: popup
+          deviceID: this
+          title: Weather
+      type: weather
+    - entity: sensor.family_present
+      icon_color: teal
+      tap_action:
+        action: fire-dom-event
+        browser_mod:
+          card:
+            card:
+              columns: 3
+              show_header_toggle: false
+              show_name: false
+              show_state: false
+              type: glance
+            filter:
+              exclude:
+              - state: not_home
+              - state: unknown
+              - state: unavailable
+              include:
+              - entity_id: person.*
+            show_empty: false
+            sort:
+              method: name
+            type: custom:auto-entities
+          command: popup
+          deviceID: this
+          title: People at home
+      type: entity
+    - chip:
+        entity: sensor.lights_on
+        icon_color: amber
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              card:
+                columns: 3
+                show_header_toggle: false
+                show_name: true
+                show_state: false
+                type: entities
+              filter:
+                exclude:
+                - entity_id: light.fake_all_lights
+                - entity_id: light.kyle_bedside_nightlight
+                - entity_id: light.play_room_entry
+                - entity_id: light.kitchen_cabinet
+                - entity_id: light.network_closet
+                - entity_id: light.entry_railing
+                - state: 'off'
+                - state: unknown
+                - state: unavailable
+                include:
+                - domain: light
+              show_empty: false
+              sort:
+                method: name
+              type: custom:auto-entities
+            command: popup
+            deviceID: this
+            title: Lights on
+        type: entity
+      conditions:
+      - entity: sensor.lights_on
+        state_not: '0'
+      type: conditional
+    type: custom:mushroom-chips-card
+    view_layout:
+      position: sidebar
   - cards:
-    - cards:
-      - chips:
-        - type: back
-        type: custom:mushroom-chips-card
-      - subtitle: Birthdays & anniversaries.
-        title: Family dates
-        type: custom:mushroom-title-card
-      type: vertical-stack
+    - subtitle: Birthdays & anniversaries.
+      title: Family dates
+      type: custom:mushroom-title-card
     - card:
         show_header_toggle: false
         style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
@@ -2335,7 +4130,6 @@ views:
         numeric: true
       type: custom:auto-entities
     type: vertical-stack
-  - type: custom:layout-break
   - cards:
     - title: Holidays
       type: custom:mushroom-title-card
@@ -2352,6 +4146,8 @@ views:
       in_card: true
       type: vertical-stack
     type: vertical-stack
+    view_layout:
+      position: sidebar
   - cards:
     - cards:
       - subtitle: Edit files in /integration_entities/binary_sensors/datetime.
@@ -2397,8 +4193,10 @@ views:
         type: glance
       type: custom:stack-in-card
     type: vertical-stack
+    view_layout:
+      position: sidebar
   icon: mdi:cake-variant
   path: family-dates
   theme: Backend-selected
   title: Family dates
-  type: custom:vertical-layout
+  type: sidebar
