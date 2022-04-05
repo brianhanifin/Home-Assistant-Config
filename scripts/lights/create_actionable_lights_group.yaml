@@ -3,16 +3,15 @@
 ## Create the actionable lights group.
 ############################################
 sequence:
-  - service: group.set
+  - alias: Remove the group so the members can be updated.
+    service: group.remove
     data:
-      object_id: "actionable_lights"
+      object_id: actionable_lights
+
+  - alias: Recreate the actionable lights group.
+    service: group.set
+    data:
+      object_id: actionable_lights
       entities: >
-        {%- set ignore_list = [
-          'light.fake_all_lights',
-          'light.kyle_bedside_nightlight',
-          'light.play_room_entry',
-          'light.kitchen_cabinet',
-          'light.network_closet',
-          'light.entry_railing'
-        ] -%}
+        {%- set ignore_list = expand("group.ignore_lights") | map(attribute='entity_id') | list -%}
         {{ states.light | rejectattr("state","eq","unavailable") | rejectattr('attributes.type','eq','browser_mod') | rejectattr('entity_id','in',ignore_list) | map(attribute='entity_id') | join(',') }}
