@@ -3,7 +3,37 @@ unique_id: lights_on_downstairs
 name: Lights on downstairs
 icon: mdi:lightbulb-on
 state: |
-  {{ expand("group.downstairs_lights") | selectattr("state","eq","on") | map(attribute='entity_id') | list | count }}
+  {%- set lights = namespace(entities="") %}
+  {%- set entities = expand("group.downstairs_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
+  {%- for entity in entities %}
+    {%- if not entity.endswith("2")
+          and not entity.endswith("3")
+          and not entity.endswith("4")
+          and not entity.endswith("5")
+          and not entity.endswith("6")
+          and not entity.endswith("7")
+          and not entity.endswith("8")
+          and not entity.endswith("9")
+    %}
+      {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
+    {%- endif %}
+  {%- endfor %}
+  {{ iif(lights.entities|trim|length > 0, (lights.entities|trim).split("\t") | count, 0) }}
 attributes:
   lights: |
-    {{ expand("group.downstairs_lights") | selectattr("state","eq","on") | map(attribute="name") | join(", ") | replace("Dining","Dining room") | replace("1","") }}
+    {%- set lights = namespace(entities="") %}
+    {%- set entities = expand("group.downstairs_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
+    {%- for entity in entities %}
+      {%- if not entity.endswith("2")
+            and not entity.endswith("3")
+            and not entity.endswith("4")
+            and not entity.endswith("5")
+            and not entity.endswith("6")
+            and not entity.endswith("7")
+            and not entity.endswith("8")
+            and not entity.endswith("9")
+      %}
+        {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
+      {%- endif %}
+    {%- endfor %}
+    {{ iif(lights.entities|trim|length > 0, (lights.entities|trim|replace("Dining1","Dining room")|replace("Play room floor lamp 1","Play room floor lamp")).split("\t"), "") }}
