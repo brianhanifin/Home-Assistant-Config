@@ -1,5 +1,5 @@
 blueprint:
-  name: Inovelli LED notification script (Z-Wave JS)
+  name: Inovelli LED notification script
   description: >-
     A script that displays a notification on an Inovelli dimmer, switch, or fan combo switch. 
   domain: script
@@ -12,6 +12,10 @@ blueprint:
       default: light.family_room
       selector:
         entity:
+          domain:
+            - light
+            - switch
+          integration: zwave_js
     input_color:
       name: Color
       description: Choose a color to display on your Inovelli device.
