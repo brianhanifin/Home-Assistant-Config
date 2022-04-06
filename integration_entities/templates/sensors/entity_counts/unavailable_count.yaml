@@ -2,7 +2,6 @@
 unique_id: unavailable_count
 name: Unavailable count
 icon: mdi:alert
-    #value_template: '{{ states | selectattr("state","eq","unavailable") | map(attribute="entity_id") | list | count }}'
 state_class: total
 state: |
   {% set storage = namespace(entities="") %}
@@ -22,8 +21,7 @@ state: |
       {% endif %}
     {% endif %}
   {%- endfor %}
-  {%- set storage.entities = storage.entities|trim %}
-  {{ storage.entities.split(" ") | count }}
+  {{ iif(storage.entities|trim|length > 0, (storage.entities|trim).split(" ")|count, 0) }}
 attributes:
   entities: |
     {% set storage = namespace(entities="") %}
@@ -43,5 +41,4 @@ attributes:
         {% endif %}
       {% endif %}
     {%- endfor %}
-    {%- set storage.entities = storage.entities|trim %}
-    {{ storage.entities.split(" ") }}
+    {{ iif(storage.entities|trim|length > 0, (storage.entities|trim).split(" "), "") }}

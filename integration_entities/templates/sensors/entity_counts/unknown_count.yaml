@@ -14,11 +14,11 @@ state: |
     {%- if not is_device_attr(entity, "name", "BLACKPC")
         and not entity.split(".")[0] in ["button", "group", "person", "scene"]
         and not "octoprint" in entity %}
-      {%- set selected.entities = selected.entities ~", " if not loop.first %}
+      {%- set selected.entities = selected.entities ~ " " if not loop.first %}
       {%- set selected.entities = selected.entities ~ entity %}
     {%- endif %}
   {%- endfor %}
-  {{ selected.entities.split(", ") | count }}
+  {{ (selected.entities|trim).split(" ") | count }}
 attributes:
   entities: |
     {%- set ignore_list = [
@@ -31,8 +31,8 @@ attributes:
       {%- if not is_device_attr(entity, "name", "BLACKPC")
           and not entity.split(".")[0] in ["button", "group", "person", "scene"]
           and not "octoprint" in entity %}
-        {%- set selected.entities = selected.entities ~", " if not loop.first %}
+        {%- set selected.entities = selected.entities ~ " " if selected.entities|length > 0 and not loop.first %}
         {%- set selected.entities = selected.entities ~ entity %}
       {%- endif %}
     {%- endfor %}
-    {{ selected.entities }}
+    {{ (selected.entities|trim).split(" ") }}
