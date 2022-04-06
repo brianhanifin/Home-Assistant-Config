@@ -4,13 +4,13 @@ name: Updates
 icon: mdi:counter
 state: |
   {% set updates = 0 %}
-  {%- if is_state("binary_sensor.release_update_available","on") or is_state("binary_sensor.beta_update_available","on") %}
+  {%- if is_state("update.home_assistant_core_update","on") %}
     {%- set updates = updates + 1 %}
   {% endif %}
-  {%- if is_state("binary_sensor.home_assistant_operating_system_update_available","on") %}
+  {%- if is_state("update.home_assistant_operating_system_update","on") %}
     {%- set updates = updates + 1 %}
   {% endif %}
-  {%- if state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") %}
+  {%- if is_state("update.home_assistant_supervisor_update","on") %}
     {%- set updates = updates + 1 %}
   {% endif %}
   {%- set updates = updates + states("sensor.hacs")|default(0)|int %}
@@ -21,19 +21,19 @@ state: |
 attributes:
   home_assistant_updates: |
     {% set updates = 0 %}
-    {% if is_state("binary_sensor.release_update_available","on") or is_state("binary_sensor.beta_update_available","on") %}
+    {% if is_state("update.home_assistant_core_update","on") %}
       {% set updates = updates + 1 %}
     {% endif %}
-    {% if is_state("binary_sensor.home_assistant_operating_system_update_available","on") %}
+    {% if is_state("update.home_assistant_operating_system_update","on") %}
       {% set updates = updates + 1 %}
     {% endif %}
-    {% if state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") %}
+    {%- if is_state("update.home_assistant_supervisor_update","on") %}
       {% set updates = updates + 1 %}
     {% endif %}
     {{ updates > 0 }}
-  core_update: '{{  is_state("binary_sensor.release_update_available","on") or is_state("binary_sensor.beta_update_available","on") }}'
-  os_update: '{{ is_state("binary_sensor.home_assistant_operating_system_update_available","on") }}'
-  supervisor_update: '{{ state_attr("sensor.supervisor","version") != state_attr("sensor.supervisor","version_latest") }}'
+  core_update: '{{  is_state("update.home_assistant_core_update","on") or is_state("binary_sensor.beta_update_available","on") }}'
+  os_update: '{{ is_state("update.home_assistant_operating_system_update","on") }}'
+  supervisor_update: '{{ is_state("update.home_assistant_supervisor_update","on") }}'
   hacs_update: '{{ states("sensor.hacs")|default(0)|int > 0 }}'
   addon_update: '{{ states("sensor.addon_updates")|default(0)|int > 0 }}'
   unifi_firmware_update: '{{ states("sensor.unifi_gateway_firmware_upgradable")|default(0)|int > 0 }}'

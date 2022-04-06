@@ -2,6 +2,24 @@
 unique_id: addon_updates
 name: Addon updates
 icon: mdi:counter
-state: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list | count }}'
+state: |
+  {%- set updates = namespace(entity_id="") %}
+  {%- set entities = states.update | map(attribute="entity_id") | list %}
+  {%- for entity in entities %}
+    {%- set picture = state_attr(entity,"entity_picture") %}
+    {%- if picture != none and picture.startswith("/api/hassio/addons") and is_state(entity,"on") %}
+      {%- set updates.entities = updates.entities ~ " " ~ entity %}
+    {%- endif %}
+  {%- endfor %}
+  {{ iif(updates.entities|trim|length > 0, (updates.entities|trim).split(" ")|count, 0) }}
 attributes:
-  addons: '{{ states.sensor.addons.attributes.addons | selectattr("update_available","eq",True) | map(attribute="name") | list }}'
+  addons: |
+    {%- set updates = namespace(entity_id="") %}
+    {%- set entities = states.update | map(attribute="entity_id") | list %}
+    {%- for entity in entities %}
+      {%- set picture = state_attr(entity,"entity_picture") %}
+      {%- if picture != none and picture.startswith("/api/hassio/addons") and is_state(entity,"on") %}
+        {%- set updates.entities = updates.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
+      {%- endif %}
+    {%- endfor %}
+    {{ iif(updates.entities|trim|length > 0, (updates.entities|trim).split("\t"), "") }}
