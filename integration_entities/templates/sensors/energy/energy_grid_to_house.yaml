@@ -6,7 +6,7 @@ device_class: energy
 state_class: measurement
 unit_of_measurement: kW
 state: >
-  {%- set from_grid = states("sensor.rainforest_energy_monitoring_unit")|float(default=0) -%}
+  {%- set from_grid = states("sensor.rainforest_emu_2_power")|float(default=0) -%}
   {%- if from_grid > 0 %}
     {{ "%0.3f"|format( from_grid ) }}
   {%- else %}
