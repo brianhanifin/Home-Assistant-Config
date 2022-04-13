@@ -18,7 +18,7 @@ state: |
       {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
     {%- endif %}
   {%- endfor %}
-  {{ (lights.entities|trim).split("\t") | count }}
+  {{ iif(lights.entities|trim|length > 0, (lights.entities|trim).split("\t")|count, 0) }}
 attributes:
   lights: |
     {%- set lights = namespace(entities="") %}
