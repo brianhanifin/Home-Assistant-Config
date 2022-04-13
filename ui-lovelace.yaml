@@ -128,7 +128,6 @@ decluttering_templates:
               hideDuplicates: false
               hideFinishedEvents: false
               maxDaysToShow: 2
-              position: sidebar
               refreshInterval: 3600
               showDate: false
               showDeclined: false
@@ -145,8 +144,6 @@ decluttering_templates:
               showWeekDay: true
               sortByStartTime: true
               type: custom:atomic-calendar-revive
-              view_layout:
-                position: sidebar
             command: popup
             deviceID: this
             title: Calendar
@@ -159,16 +156,29 @@ decluttering_templates:
           browser_mod:
             card:
               cards:
-              - subtitle: null
-                title: Current conditions
+              - subtitle: Current conditions
                 type: custom:mushroom-title-card
               - current: true
                 details: true
                 entity: weather.home
-                forecast: false
+                forecast: true
                 hourly_forecast: false
                 number_of_forecasts: '4'
                 type: custom:weather-card
+              - entity: binary_sensor.rain_today
+                states:
+                  'on':
+                    cards:
+                    - subtitle: Radar
+                      type: custom:mushroom-title-card
+                    - entity: camera.san_diego
+                      show_name: false
+                      show_state: false
+                      type: picture-entity
+                    type: vertical-stack
+                type: custom:state-switch
+              - subtitle: Last 24 hours
+                type: custom:mushroom-title-card
               - animate: true
                 entities:
                 - entity: sensor.outdoor_temperature
@@ -191,21 +201,7 @@ decluttering_templates:
                   name: false
                   state: false
                 type: custom:mini-graph-card
-              - entity: binary_sensor.rain_today
-                states:
-                  'on':
-                    cards:
-                    - template: heading
-                      type: custom:decluttering-card
-                      variables:
-                      - content: Radar
-                    - entity: camera.san_diego
-                      type: picture-entity
-                    type: vertical-stack
-                type: custom:state-switch
               type: vertical-stack
-              view_layout:
-                position: sidebar
             command: popup
             deviceID: this
             title: Weather
@@ -244,29 +240,46 @@ decluttering_templates:
             action: fire-dom-event
             browser_mod:
               card:
-                card:
-                  columns: 3
-                  show_header_toggle: false
-                  show_name: true
-                  show_state: false
-                  type: entities
-                filter:
-                  exclude:
-                  - entity_id: light.fake_all_lights
-                  - entity_id: light.kyle_bedside_nightlight
-                  - entity_id: light.play_room_entry
-                  - entity_id: light.kitchen_cabinet
-                  - entity_id: light.network_closet
-                  - entity_id: light.entry_railing
-                  - state: 'off'
-                  - state: unknown
-                  - state: unavailable
-                  include:
-                  - domain: light
-                show_empty: false
-                sort:
-                  method: name
-                type: custom:auto-entities
+                cards:
+                - subtitle: Downstairs lights
+                  type: custom:mushroom-title-card
+                - card:
+                    columns: 3
+                    show_header_toggle: false
+                    show_name: true
+                    show_state: false
+                    type: entities
+                  filter:
+                    exclude:
+                    - state: 'off'
+                    - state: unknown
+                    - state: unavailable
+                    include:
+                    - group: group.downstairs_lights
+                  show_empty: false
+                  sort:
+                    method: name
+                  type: custom:auto-entities
+                - subtitle: Upstairs lights
+                  type: custom:mushroom-title-card
+                - card:
+                    columns: 3
+                    show_header_toggle: false
+                    show_name: true
+                    show_state: false
+                    type: entities
+                  filter:
+                    exclude:
+                    - state: 'off'
+                    - state: unknown
+                    - state: unavailable
+                    include:
+                    - group: group.upstairs_lights
+                  show_empty: false
+                  sort:
+                    method: name
+                  type: custom:auto-entities
+                type: vertical-stack
               command: popup
               deviceID: this
               title: Lights on
@@ -585,11 +598,12 @@ views:
           ,\"target_temp_low\") ~ \"-\" ~ state_attr(\"climate.home_thermostat\",\"\
           target_temp_high\") %}\n  {%- else %}\n    {%- set target_temperature =\
           \ state_attr(\"climate.home_thermostat\",\"temperature\") %}\n  {%- endif\
-          \ %}\n  {%- if current_state == \"Idle\" -%}\n    Idle until {{ target_temperature\
-          \ }}°\n  {%- elif current_state in [\"Cooling\",\"Heating\"] %}\n    Cooling\
-          \ to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state }}\n\
-          \  {%- endif %}\n  Currently {{ state_attr(\"climate.home_thermostat\",\"\
-          current_temperature\")|round ~ \"°\"\n  }}"
+          \ %}\n  {%- if is_state(\"climate.home_thermostat\",\"off\") %}\n    Off\n\
+          \  {%- elif current_state == \"Idle\" -%}\n    Idle until {{ target_temperature\
+          \ }}°\n  {%- elif current_state in [\"Cooling\",\"Heating\"] %}\n    {{\
+          \ current_state}}  to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state\
+          \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.home_thermostat\"\
+          ,\"current_temperature\")|round ~ \"°\"\n  }}"
         tap_action:
           action: fire-dom-event
           browser_mod:
@@ -993,6 +1007,28 @@ views:
     type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
+  - cards:
+    - entities:
+      - entity: sensor.downstairs_temperature_average
+        icon: hass:home-floor-1
+      - entity: sensor.upstairs_temperature_average
+        icon: hass:home-floor-2
+      - entity: sensor.attic_temperature
+        icon: hass:home-floor-a
+      show_icon: true
+      show_name: false
+      show_state: true
+      state_color: false
+      type: glance
+    - entity: mediaquery
+      states:
+        '(min-width: 800px)':
+          link_dashboard: true
+          type: energy-distribution
+      type: custom:state-switch
+    type: custom:stack-in-card
+    view_layout:
+      position: main
   - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
       \ {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
     type: shopping-list
@@ -1023,24 +1059,29 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: light.family_room
-        show_brightness_control: true
+        layout: vertical
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.table_lamp
-        show_brightness_control: true
+        layout: vertical
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.family_room_floor_lamp
+        layout: vertical
         name: Floor lamp
-        show_brightness_control: true
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: switch.adaptive_lighting_family_room
-        name: Adaptive lighting
+        name: Adaptive
+        secondary_info: none
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
       - entity: fan.family_room
+        hide_state: true
         icon_animation: true
         name: Fan
         show_oscillate_control: false
@@ -1066,14 +1107,17 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: light.kitchen
+        layout: vertical
         show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.kitchen_prep
+        layout: vertical
         show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.dining_room
+        layout: vertical
         show_brightness_control: false
         show_color_temp_control: false
         type: custom:mushroom-light-card
@@ -1094,23 +1138,27 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: light.play_room
+        layout: vertical
         name: Play room
         show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: false
       - entity: light.play_room_floor_lamp
+        layout: vertical
         name: Floor lamp
         show_brightness_control: false
         show_color_temp_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.play_room_entry
+        layout: vertical
         show_brightness_control: false
         show_color_temp_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: switch.adaptive_lighting_play_room
-        name: Adaptive lighting
+        name: Adaptive
+        secondary_info: none
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
@@ -1133,27 +1181,34 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: light.home_entry
-        show_brightness_control: true
+        layout: vertical
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.porch
-        show_brightness_control: true
+        layout: vertical
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.entry_railing
+        layout: vertical
         show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: false
       - entity: switch.adaptive_lighting_home_entry
-        name: Adaptive lighting
+        name: Adaptive
+        secondary_info: none
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
       - entity: lock.front_door
         icon: ''
+        name: Door
+        secondary_info: none
         type: custom:mushroom-entity-card
       - entity: input_boolean.leave_unlocked
         icon: fas:toggle-on
+        secondary_info: none
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
@@ -1177,11 +1232,14 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: light.laundry
-        show_brightness_control: true
+        hide_state: false
+        layout: vertical
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: cover.garage_door
-        show_buttons_control: true
+        layout: vertical
+        show_buttons_control: false
         type: custom:mushroom-cover-card
       columns: 2
       square: false
@@ -1245,7 +1303,7 @@ views:
         - entities:
           - entity: sensor.family_room_humidity
             name: Family Room
-          - entity: sensor.kitchen_temperature_humidity
+          - entity: sensor.kitchen_humidity
             name: Kitchen
           - entity: sensor.home_thermostat_humidity
             name: Thermostat
@@ -1256,7 +1314,7 @@ views:
           entities:
           - entity: sensor.family_room_humidity
             name: Family Room
-          - entity: sensor.kitchen_temperature_humidity
+          - entity: sensor.kitchen_humidity
             name: Kitchen
           - entity: sensor.home_thermostat_humidity
             name: Thermostat
@@ -1307,21 +1365,25 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: light.bedroom
-        name: Bedroom west
-        show_brightness_control: true
+        layout: vertical
+        name: West lamp
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.bedroom_east
-        name: Bedroom east
-        show_brightness_control: true
+        layout: vertical
+        name: East lamp
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.bedroom_table_lamp
+        layout: vertical
         name: Table lamp
-        show_brightness_control: true
+        show_brightness_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: switch.sound_machine
+        secondary_info: none
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
@@ -1335,6 +1397,7 @@ views:
         type: custom:mushroom-fan-card
       - entity: climate.bedroom
         name: A/C
+        secondary_info: none
         tap_action:
           action: more-info
         type: custom:mushroom-entity-card
@@ -1353,6 +1416,7 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: fan.upstairs_bathroom
+        hide_state: true
         icon_animation: true
         name: Exhaust fan
         show_oscillate_control: false
@@ -1548,6 +1612,9 @@ views:
           action: more-info
         type: custom:mushroom-cover-card
       - entity: lock.front_door
+        name: Door
+        tap_action:
+          action: toggle
         type: custom:mushroom-entity-card
       - entity: input_boolean.leave_unlocked
         hide_icon: false
@@ -1610,54 +1677,6 @@ views:
     type: grid
     view_layout:
       position: main
-  - cards:
-    - subtitle: null
-      title: Current conditions
-      type: custom:mushroom-title-card
-    - current: true
-      details: true
-      entity: weather.home
-      forecast: false
-      hourly_forecast: false
-      number_of_forecasts: '4'
-      type: custom:weather-card
-    - animate: true
-      entities:
-      - entity: sensor.outdoor_temperature
-        name: Temperature
-        show_fill: false
-      - entity: sensor.outdoor_humidity
-        name: Humidity
-        show_line: false
-        show_points: false
-        y_axis: secondary
-      icon: mdi:weather-sunny
-      line_width: 2
-      name: Outdoor
-      points_per_hour: 4
-      show:
-        extrema: true
-        icon: false
-        labels: true
-        labels_secondary: true
-        name: false
-        state: false
-      type: custom:mini-graph-card
-    - entity: binary_sensor.rain_today
-      states:
-        'on':
-          cards:
-          - template: heading
-            type: custom:decluttering-card
-            variables:
-            - content: Radar
-          - entity: camera.san_diego
-            type: picture-entity
-          type: vertical-stack
-      type: custom:state-switch
-    type: vertical-stack
-    view_layout:
-      position: sidebar
   icon: mdi:flower
   path: outdoor
   theme: Backend-selected

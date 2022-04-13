@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1232 total entities**, 
-including **616 sensors**.
+Our Home Assistant install has approximately **1217 total entities**, 
+including **600 sensors**.
 
-<details><summary>24 Custom integrations</summary>
+<details><summary>23 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -184,12 +184,6 @@ Authors: [@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://g
 
 Anniversary Countdown Sensor for Home Assistant
 Authors: [@pinkywafer](https://github.com/pinkywafer).
-
-
-#### [Average Sensor v2.2.1](https://github.com/Limych/ha-average)
-
-Average Sensor for Home Assistant
-Authors: [@Limych](https://github.com/Limych).
 
 
 #### [Battery Simulation v1.0](https://github.com/hif2k1/battery_sim/)
@@ -240,7 +234,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.24.4](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.24.5](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -380,7 +374,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
-#### [Mushroom v1.4.0](https://github.com/piitaya/lovelace-mushroom)
+#### [Mushroom v1.5.0](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 
@@ -486,7 +480,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.4.2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.4.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -496,7 +490,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39439-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39315-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
