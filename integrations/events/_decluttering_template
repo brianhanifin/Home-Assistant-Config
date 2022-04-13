@@ -1,77 +1,62 @@
   event:
+    default:
+      name: ''
+      label: ''
     card:
       type: vertical-stack
       cards:
-        - type: 'custom:decluttering-card'
-          template: heading
-          variables:
-            - content: '*[[label]]*'
+        - type: custom:mushroom-title-card
+          title: '[[name]]'
+          subtitle: '[[label]]'
         - type: grid
           cards:
-            - type: 'custom:button-card'
-              template: button_rounded_active
-              entity: 'input_boolean.event_enabled_[[id]]'
-            - type: 'custom:button-card'
-              template: button_rounded_skipnext
-              entity: 'input_boolean.event_skipnext_[[id]]'
+            - type: custom:mushroom-entity-card
+              entity: input_boolean.event_enabled_[[id]]
+              tap_action:
+                action: toggle
+            - type: custom:mushroom-entity-card
+              entity: input_boolean.event_skipnext_[[id]]
+              tap_action:
+                action: toggle
           columns: 2
           square: false
         - type: vertical-stack
+          in_card: true
           cards:
-            - type: grid
-              columns: 7
-              cards:
-                - type: 'custom:button-card'
-                  template: button_weekday
-                  entity: 'input_boolean.event_mon_[[id]]'
-                  name: Mon
-                - type: 'custom:button-card'
-                  template: button_weekday
-                  entity: 'input_boolean.event_tue_[[id]]'
-                  name: Tue
-                - type: 'custom:button-card'
-                  template: button_weekday
-                  entity: 'input_boolean.event_wed_[[id]]'
-                  name: Wed
-                - type: 'custom:button-card'
-                  template: button_weekday
-                  entity: 'input_boolean.event_thu_[[id]]'
-                  name: Thu
-                - type: 'custom:button-card'
-                  template: button_weekday
-                  entity: 'input_boolean.event_fri_[[id]]'
-                  name: Fri
-                - type: 'custom:button-card'
-                  template: button_weekday
-                  entity: 'input_boolean.event_sat_[[id]]'
-                  name: Sat
-                - type: 'custom:button-card'
-                  template: button_weekday
-                  entity: 'input_boolean.event_sun_[[id]]'
-                  name: Sun
+            - type: entities
+              state_color: true
+              entities: '[[sensors]]'
             - type: entities
               state_color: true
               show_header_toggle: false
               entities:
-                - type: 'custom:fold-entity-row'
-                  head: 'input_boolean.event_announcement_[[id]]'
+                - type: divider
+                - type: custom:fold-entity-row
+                  head: input_boolean.event_announcement_[[id]]
                   entities:
-                    - entity: 'input_select.event_speakers_[[id]]'
-                    - type: 'custom:fold-entity-row'
-                      head: 'input_datetime.event_1st_[[id]]'
+                    - entity: input_select.event_speakers_[[id]]
+                    - type: custom:fold-entity-row
+                      head: input_datetime.event_1st_[[id]]
                       entities:
-                        - entity: 'input_text.event_1st_[[id]]'
-                          type: 'custom:text-input-row'
-                    - type: 'custom:fold-entity-row'
-                      head: 'input_datetime.event_2nd_[[id]]'
+                        - entity: input_text.event_1st_[[id]]
+                          type: custom:text-input-row
+                    - type: custom:fold-entity-row
+                      head: input_datetime.event_2nd_[[id]]
                       entities:
-                        - entity: 'input_text.event_2nd_[[id]]'
-                          type: 'custom:text-input-row'
+                        - entity: input_text.event_2nd_[[id]]
+                          type: custom:text-input-row
             - type: entities
+              style: |
+                ha-card {
+                  padding-top: 16px !important;
+                }
+                :host {
+                  display: {{ "block" if "wakeup" in "[[id]]" else "none" }};
+                }
               state_color: true
               show_header_toggle: false
               entities:
-                - type: 'custom:fold-entity-row'
-                  head: 'input_boolean.event_light_[[id]]'
+                - type: custom:fold-entity-row
+                  head: input_boolean.event_light_[[id]]
                   entities:
-                    - entity: 'input_datetime.event_light_[[id]]'
+                    - entity: input_datetime.event_light_[[id]]
