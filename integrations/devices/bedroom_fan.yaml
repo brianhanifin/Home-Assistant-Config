@@ -1,18 +1,18 @@
 ---
 automation:
-  # - alias: Bedroom fan on turn on
-  #   id: bedroom_fan_on_turn_on
-  #   trigger:
-  #     - platform: state
-  #       entity_id: fan.bedroom
-  #       to: "on"
-  #       for:
-  #         seconds: 5
-  #   action:
-  #     - alias: Turn leds off.
-  #       service: input_button.press
-  #       target:
-  #         entity_id: input_button.bedroom_fan_led_toggle
+  - alias: Bedroom fan on turn on
+    id: bedroom_fan_on_turn_on
+    trigger:
+      - platform: state
+        entity_id: fan.bedroom
+        to: "on"
+        for:
+          seconds: 5
+    action:
+      - alias: Turn leds off.
+        service: input_button.press
+        target:
+          entity_id: input_button.bedroom_fan_led_toggle
 
   - alias: Bedroom fan plug always on
     id: bedroom_fan_plug_always_on
@@ -199,14 +199,6 @@ fan:
             - alias: Turn power on, if power is currently off.
               conditions: '{{ is_state("fan.bedroom","off") }}'
               sequence:
-                # Remove these 2 actions when "on_turn_on" automation is enabled.
-                - delay:
-                    seconds: 5
-                - alias: Turn leds off.
-                  service: input_button.press
-                  target:
-                    entity_id: input_button.bedroom_fan_led_toggle
-
                 - service: remote.send_command
                   data:
                     device: bedroom_fan
