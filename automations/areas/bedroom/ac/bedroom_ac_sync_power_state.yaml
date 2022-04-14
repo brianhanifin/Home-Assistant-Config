@@ -10,6 +10,8 @@ trigger:
     above: 100
     for:
       seconds: 10
+    variables:
+      powered_state: "on"
   # - id: "fan_only"
   #   platform: numeric_state
   #   entity_id: sensor.bedroom_ac_power
@@ -22,10 +24,11 @@ trigger:
     below: 10
     for:
       minutes: 15
+    variables:
+      powered_state: "off"
 variables:
   # hvac_modes: off, cool, fan_only, dry, heat_cool
   assumed_state: '{{ states("climate.bedroom") }}'
-  powered_state: '{{ trigger.id }}'
 
   # power: '{{ states("sensor.bedroom_ac_power")|default(0)|int }}'
   # powered_state: |
@@ -39,6 +42,7 @@ condition:
     value_template: '{{ powered_state != assumed_state }}'
 action:
   - service: sensibo.assume_state
-    data:
+    target:
       entity_id: climate.bedroom
+    data:
       state: '{{ powered_state }}'
