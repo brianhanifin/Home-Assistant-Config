@@ -6,15 +6,18 @@ mode: queued
 trigger:
   - platform: event
     event_type: timer.finished
+    variables:
+      person: '{{ trigger.event.data.entity_id.split("_")[1]|default("") }}'
+      current_option: '{{ states("input_select." + person) }}'
 
 # Only process xpresence timers.
 condition:
   - condition: template
     value_template: '{{ trigger.event.data.entity_id.split("_")[0] == "timer.xpresence" }}'
 
-variables:
-  person: '{{ trigger.event.data.entity_id.split("_")[1] }}'
-  current_option: '{{ states("input_select." + person)}}'
+# variables:
+#   person: '{{ trigger.event.data.entity_id.split("_")[1] }}'
+#   current_option: '{{ states("input_select." + person) }}'
 
 action:
   - condition: template
