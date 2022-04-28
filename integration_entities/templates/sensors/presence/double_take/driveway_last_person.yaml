@@ -3,7 +3,9 @@ unique_id: driveway_last_person
 name: Driveway Last Person
 icon: mdi:face-recognition
 state: |
-  {%- if states("sensor.double_take_driveway")|default(0)|int > 0 %}
-    {%- set match = state_attr("sensor.double_take_driveway","matches")[0] %}
-    {{ match["name"] if match["confidence"] > 96 }}
+  {%- if not is_state("sensor.double_take_driveway","unavailable") %}
+    {%- if states("sensor.double_take_driveway")|default(0)|int > 0 %}
+      {%- set match = state_attr("sensor.double_take_driveway","matches")[0] %}
+      {{ match["name"] if match["confidence"] > 96 }}
+    {% endif %}
   {% endif %}

@@ -3,7 +3,7 @@ unique_id: addon_updates
 name: Addon updates
 icon: mdi:counter
 state: |
-  {%- set updates = namespace(entity_id="") %}
+  {%- set updates = namespace(entities="") %}
   {%- set entities = states.update | map(attribute="entity_id") | list %}
   {%- for entity in entities %}
     {%- set picture = state_attr(entity,"entity_picture") %}
@@ -14,7 +14,7 @@ state: |
   {{ iif(updates.entities|trim|length > 0, (updates.entities|trim).split(" ")|count, 0) }}
 attributes:
   addons: |
-    {%- set updates = namespace(entity_id="") %}
+    {%- set updates = namespace(entities="") %}
     {%- set entities = states.update | map(attribute="entity_id") | list %}
     {%- for entity in entities %}
       {%- set picture = state_attr(entity,"entity_picture") %}

@@ -29,12 +29,14 @@ attributes:
   unsorted_timers: |
     {%- macro friendly_label(label, duration) %}
       {%- set label = label|trim|title %}
-      {%- if label in ["","None"] %}
-        {%- set time_part = duration.split(":") %}
-        {%- set label = time_part[0]|int ~ " hour " if time_part[0]|default(0)|int > 0 else "" %}
-        {%- set label = label ~ iif(time_part[1]|default(0)|int > 0, time_part[1]|int ~ " minute ", "") %}
-        {%- set label = label ~ iif(time_part[2]|default(0)|int > 0, time_part[2]|int ~ " second", "") %}
-        {%- set label = label|trim %}
+      {%- if duration is not none %}
+        {%- if label in ["","None"] %}
+          {%- set time_part = duration.split(":") %}
+          {%- set label = time_part[0]|int ~ " hour " if time_part[0]|default(0)|int > 0 else "" %}
+          {%- set label = label ~ iif(time_part[1]|default(0)|int > 0, time_part[1]|int ~ " minute ", "") %}
+          {%- set label = label ~ iif(time_part[2]|default(0)|int > 0, time_part[2]|int ~ " second", "") %}
+          {%- set label = label|trim %}
+        {%- endif %}
       {%- endif %}
       {{- label ~ " timer" }}
     {%- endmacro %}
