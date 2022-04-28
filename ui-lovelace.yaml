@@ -219,12 +219,9 @@ decluttering_templates:
                 show_state: false
                 type: glance
               filter:
-                exclude:
-                - state: not_home
-                - state: unknown
-                - state: unavailable
                 include:
-                - entity_id: person.*
+                - domain: person
+                  state: home
               show_empty: false
               sort:
                 method: name
@@ -311,7 +308,7 @@ views:
       primary: Downstairs
       secondary: '{{ states("sensor.lights_on_downstairs") ~ " lights on" }} ‧
 
-        {{ states("sensor.downstairs_temperature_average")|round }}°'
+        {{ states("sensor.downstairs_temperature_average")|round(default=0) }}°'
       tap_action:
         action: navigate
         navigation_path: ./downstairs
@@ -323,7 +320,7 @@ views:
       primary: Upstairs
       secondary: '{{ states("sensor.lights_on_upstairs") ~ " lights on" }} ‧
 
-        {{ states("sensor.upstairs_temperature_average")|round }}°'
+        {{ states("sensor.upstairs_temperature_average")|round(default=0) }}°'
       tap_action:
         action: navigate
         navigation_path: ./upstairs
@@ -335,7 +332,7 @@ views:
       primary: Outside
       secondary: '{{ states("weather.home") }} ‧
 
-        {{ states("sensor.backyard_temperature")|round }}°'
+        {{ states("sensor.backyard_temperature")|round(default=0) }}°'
       tap_action:
         action: navigate
         navigation_path: ./outdoor
@@ -603,7 +600,7 @@ views:
           \ }}°\n  {%- elif current_state in [\"Cooling\",\"Heating\"] %}\n    {{\
           \ current_state}}  to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state\
           \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.home_thermostat\"\
-          ,\"current_temperature\")|round ~ \"°\"\n  }}"
+          ,\"current_temperature\")|round(default=0) ~ \"°\"\n  }}"
         tap_action:
           action: fire-dom-event
           browser_mod:
@@ -688,8 +685,8 @@ views:
           ) %}\n  {%- if current_state == \"Idle\" -%}\n    Idle until {{ target_temperature\
           \ }}°\n  {%- elif current_state == \"Cooling\" %}\n    Cooling to {{ target_temperature\
           \ }}°\n  {%- else %}\n    {{ current_state }}\n  {%- endif %}\n  Currently\
-          \ {{ state_attr(\"climate.bedroom\",\"current_temperature\")|round ~ \"\
-          °\"\n  }}"
+          \ {{ state_attr(\"climate.bedroom\",\"current_temperature\")|round(default=0)\
+          \ ~ \"°\"\n  }}"
         tap_action:
           action: fire-dom-event
           browser_mod:
@@ -813,7 +810,7 @@ views:
           \ {{ target_temperature }}°\n  {%- elif current_state == \"Cooling\" %}\n\
           \    Cooling to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state\
           \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.lucas_room\",\"\
-          current_temperature\")|round ~ \"°\"\n  }}"
+          current_temperature\")|round(default=0) ~ \"°\"\n  }}"
         tap_action:
           action: fire-dom-event
           browser_mod:
@@ -984,11 +981,6 @@ views:
         action: navigate
         navigation_path: /lovelace/system
       type: template
-    - icon: mdi:format-list-bulleted
-      tap_action:
-        action: navigate
-        navigation_path: /logbook
-      type: template
     - icon: mdi:google-home
       tap_action:
         action: navigate
@@ -1027,8 +1019,6 @@ views:
           type: energy-distribution
       type: custom:state-switch
     type: custom:stack-in-card
-    view_layout:
-      position: main
   - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
       \ {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
     type: shopping-list
@@ -1045,16 +1035,17 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: "{{- states(\"sensor.family_room_temperature\")|round }}°\n{{- \"\
-        \ ‧ \" ~ states(\"sensor.family_room_humidity\")|round }}%\n{%- set lights_on\
-        \ = 0 %}\n{%- set lights_on = iif(is_state(\"light.family_room\",\"on\"),\
-        \ lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.table_lamp\"\
+    - subtitle: "{{- states(\"sensor.family_room_temperature\")|round(default=0) }}°\n\
+        {{- \" ‧ \" ~ states(\"sensor.family_room_humidity\")|round(default=0) }}%\n\
+        {%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.family_room\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.family_room_floor_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%-\
-        \ if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\"\
-        , lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.family_room_presence\"\
-        ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.tv_family_room\"\
-        ,\"on\"), \" ‧ tv is on\", \"\") }}"
+        light.table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
+        \ = iif(is_state(\"light.family_room_floor_lamp\",\"on\"), lights_on + 1,\
+        \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
+        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.family_room_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n\
+        {{- iif(is_state(\"media_player.tv_family_room\",\"on\"), \" ‧ tv is on\"\
+        , \"\") }}"
       title: Family room
       type: custom:mushroom-title-card
     - cards:
@@ -1092,17 +1083,17 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{{- states(\"sensor.kitchen_temperature\")|round }}°\n{{- \" ‧ \"\
-        \ ~states(\"sensor.kitchen_humidity\")|round }}%\n{%- set lights_on = 0 %}\n\
-        {%- set lights_on = iif(is_state(\"light.kitchen\",\"on\"), lights_on + 1,\
-        \ lights_on) %}\n{%- set lights_on = iif(is_state(\"light.kitchen_prep\",\"\
-        on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.dining_room\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
-        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
-        {%- endif %}\n{{- iif(is_state(\"binary_sensor.kitchen_presence\",\"on\"),\
-        \ \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"input_select.dishwasher_status\"\
-        ,\"-\"), \" ‧ dishes are \" ~ states(\"input_select.dishwasher_status\")|lower,\
-        \ \"\") }}"
+    - subtitle: "{{- states(\"sensor.kitchen_temperature\")|round(default=0) }}°\n\
+        {{- \" ‧ \" ~states(\"sensor.kitchen_humidity\")|round(default=0) }}%\n{%-\
+        \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.kitchen\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.kitchen_prep\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
+        \ = iif(is_state(\"light.dining_room\",\"on\"), lights_on + 1, lights_on)\
+        \ %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light\
+        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.kitchen_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not\
+        \ is_state(\"input_select.dishwasher_status\",\"-\"), \" ‧ dishes are \" ~\
+        \ states(\"input_select.dishwasher_status\")|lower, \"\") }}"
       title: Kitchen & dining
       type: custom:mushroom-title-card
     - cards:
@@ -1167,14 +1158,14 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{{- states(\"sensor.family_room_temperature\")|round }}°\n{{- \"\
-        \ ‧ \" ~ states(\"sensor.family_room_humidity\")|round }}%\n{%- set lights_on\
-        \ = 0 %}\n{%- set lights_on = iif(is_state(\"light.home_entry\",\"on\"), lights_on\
-        \ + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.porch\",\"\
-        on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"light.entry_railing\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
-        \ ‧ \" ~ iif(lights_on == 1, \"1 light is on\", lights_on ~ \" lights are\
-        \ on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.doorbell_person_motion\"\
+    - subtitle: "{{- states(\"sensor.family_room_temperature\")|round(default=0) }}°\n\
+        {{- \" ‧ \" ~ states(\"sensor.family_room_humidity\")|round(default=0) }}%\n\
+        {%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.home_entry\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.porch\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
+        light.entry_railing\",\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on\
+        \ > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light is on\", lights_on\
+        \ ~ \" lights are on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.doorbell_person_motion\"\
         ,\"on\"), \" ‧ someone is at the front door\", \"\") }}\n{{- iif(is_state(\"\
         lock.front_door\",\"unlocked\"), \" ‧ front door is unlocked\", \"\") }}"
       title: Home entry
@@ -1217,16 +1208,17 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{{- states(\"sensor.garage_temperature\")|round }}°\n{{- \" ‧ \"\
-        \ ~ states(\"sensor.garage_humidity\")|round }}%\n{%- set lights_on = 0 %}\n\
-        {%- set lights_on = iif(is_state(\"light.laundry\",\"on\"), lights_on + 1,\
-        \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
-        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.garage_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not\
-        \ is_state(\"cover.garage_door\",\"closed\"), \" ‧ garage door is \" ~ states(\"\
-        cover.garage_door\"), \"\") }}\n{%- if not states(\"input_select.laundry_status\"\
-        ) in [\"Off\",\"Unknown\"] %}\n  {{- \" ‧ \" ~ iif(states(\"input_select.laundry_status\"\
-        ) != \"Please transfer to dryer\", \"laundry is \", \"\") ~ states(\"input_select.laundry_status\"\
+    - subtitle: "{{- states(\"sensor.garage_temperature\")|round(default=0) }}°\n\
+        {{- \" ‧ \" ~ states(\"sensor.garage_humidity\")|round(default=0) }}%\n{%-\
+        \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.laundry\"\
+        ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
+        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
+        {%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_presence\",\"on\"),\
+        \ \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\",\"\
+        closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\") }}\n\
+        {%- if not states(\"input_select.laundry_status\") in [\"Off\",\"Unknown\"\
+        ] %}\n  {{- \" ‧ \" ~ iif(states(\"input_select.laundry_status\") != \"Please\
+        \ transfer to dryer\", \"laundry is \", \"\") ~ states(\"input_select.laundry_status\"\
         )|lower }}\n{%- endif %}"
       title: Garage
       type: custom:mushroom-title-card
@@ -1350,17 +1342,17 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: "{{- states(\"sensor.bedroom_temperature\")|round }}°\n{{- \" ‧ \"\
-        \ ~ states(\"sensor.bedroom_humidity\")|round }}%\n{%- set lights_on = 0 %}\n\
-        {%- set lights_on = iif(is_state(\"light.bedroom\",\"on\"), lights_on + 1,\
-        \ lights_on) %}\n{%- set lights_on = iif(is_state(\"light.bedroom_table_lamp\"\
+    - subtitle: "{{- states(\"sensor.bedroom_temperature\")|round(default=0) }}°\n\
+        {{- \" ‧ \" ~ states(\"sensor.bedroom_humidity\")|round(default=0) }}%\n{%-\
+        \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.bedroom\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.bedroom_floor_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on\
-        \ > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~\
-        \ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_presence\"\
-        ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"input_select.glowforge_status\"\
-        ,\"Off\"), \" ‧ glowforge is \" ~ states(\"input_select.glowforge_status\"\
-        )|lower, \"\") }}"
+        light.bedroom_table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set\
+        \ lights_on = iif(is_state(\"light.bedroom_east\",\"on\"), lights_on + 1,\
+        \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
+        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.bedroom_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not\
+        \ is_state(\"input_select.glowforge_status\",\"Off\"), \" ‧ glowforge is \"\
+        \ ~ states(\"input_select.glowforge_status\")|lower, \"\") }}"
       title: ' Bedroom'
       type: custom:mushroom-title-card
     - cards:
@@ -1401,14 +1393,20 @@ views:
         tap_action:
           action: more-info
         type: custom:mushroom-entity-card
+      - entity: switch.google_bedroom_do_not_disturb
+        name: DND
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       columns: 3
       square: false
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: '{{- states("sensor.upstairs_bathroom_temperature")|round }}°
+    - subtitle: '{{- states("sensor.upstairs_bathroom_temperature")|round(default=0)
+        }}°
 
-        {{- " ‧ " ~ states("sensor.upstairs_bathroom_humidity")|round }}%
+        {{- " ‧ " ~ states("sensor.upstairs_bathroom_humidity")|round(default=0) }}%
 
         {{- iif(is_state("binary_sensor.upstairs_bathroom_presence","on"), " ‧ occupied",
         "") }}'
@@ -1434,9 +1432,9 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - subtitle: "{{- states(\"sensor.lucas_room_display_temperature\")|round }}°\n\
-        {{- \" ‧ \" ~ states(\"sensor.lucas_room_display_humidity\")|round }}%\n{%-\
-        \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
+    - subtitle: "{{- states(\"sensor.lucas_room_display_temperature\")|round(default=0)\
+        \ }}°\n{{- \" ‧ \" ~ states(\"sensor.lucas_room_display_humidity\")|round(default=0)\
+        \ }}%\n{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
         {%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_presence\",\"on\"),\
@@ -1462,8 +1460,8 @@ views:
     view_layout:
       position: main
   - cards:
-    - subtitle: "{{- states(\"sensor.kyles_bedroom_temperature\")|round }}° \n{%-\
-        \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
+    - subtitle: "{{- states(\"sensor.kyles_bedroom_temperature\")|round(default=0)\
+        \ }}° \n{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
         {%- endif %}\n{{- iif(is_state(\"binary_sensor.kyles_room_presence\",\"on\"\
@@ -1593,12 +1591,12 @@ views:
   - cards:
     - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.porch\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"weather.home\") }}\n\
-        {{- \" ‧ \" ~ states(\"sensor.backyard_temperature\")|round }}°\n{{- \" ‧\
-        \ \" ~ state_attr(\"weather.home\",\"humidity\") }}%\n{{ \"front door is \"\
-        \ ~ states(\"lock.front_door\") }}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \"\
-        \ ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%-\
-        \ endif %}\n{{- iif(is_state(\"binary_sensor.front_door_person_motion\",\"\
-        on\"), \" ‧ front door occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
+        {{- \" ‧ \" ~ states(\"sensor.backyard_temperature\")|round(default=0) }}°\n\
+        {{- \" ‧ \" ~ state_attr(\"weather.home\",\"humidity\") }}%\n{{ \"front door\
+        \ is \" ~ states(\"lock.front_door\") }}\n{%- if lights_on > 0 %}\n  {{- \"\
+        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
+        {%- endif %}\n{{- iif(is_state(\"binary_sensor.front_door_person_motion\"\
+        ,\"on\"), \" ‧ front door occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
         ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\"\
         ) }}"
       title: Outdoors
@@ -1777,14 +1775,24 @@ views:
       title: Glowforge
       type: custom:mushroom-title-card
     - cards:
-      - entities:
-        - entity: binary_sensor.glowforge_on
-        type: entities
+      - cards:
+        - entities:
+          - entity: binary_sensor.glowforge_on
+          type: entities
+        - camera_image: camera.glowforge
+          camera_view: auto
+          entity: camera.glowforge
+          image: https://demo.home-assistant.io/stub_config/bedroom.png
+          show_name: false
+          show_state: false
+          type: picture-entity
+        columns: 2
+        square: false
+        type: grid
       - entity: binary_sensor.glowforge_on
         states:
           'on':
             entities:
-            - entity: camera.glowforge
             - entity: input_select.glowforge_status
             - entities:
               - entity: sensor.sonoff_s31_01_power
@@ -2102,7 +2110,7 @@ views:
     - light.play_room_floor_lamp
     - light.porch
     - light.table_lamp
-    - light.wled_holiday_string
+    - light.entry_railing
     - switch.front_yard1
     - switch.front_yard2
     - switch.hot_water_pump
@@ -2266,7 +2274,8 @@ views:
         '
       entity_id: sensor.updates
       style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n  display:\
-        \ {{ \"block\" if states(\"sensor.updates\")|int > 0 else \"none\" }}\n}\n"
+        \ {{ \"block\" if states(\"sensor.updates\")|default(0)|int > 0 else \"none\"\
+        \ }}\n}\n"
       type: markdown
     - cards:
       - entities:
@@ -2421,7 +2430,7 @@ views:
     - subtitle: null
       title: Watchman report
       type: custom:mushroom-title-card
-    - content: '<h3>Missing Entities: {{ states.sensor.watchman_missing_entities.state
+    - content: '<h3>Missing Entities: {{ states("sensor.watchman_missing_entities")|default(0)
         }}</h3>'
       type: markdown
     - content: "<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n      \
@@ -2546,7 +2555,7 @@ views:
       name: ' '
     - type: section
     - entity: input_boolean.audio_notifications
-    - input_select.tts_phrase_room
+    - entity: input_select.tts_phrase_room
     - entity: input_select.tts_phrases
     - entity: input_text.tts_phrase
       type: custom:text-input-row
@@ -2713,8 +2722,6 @@ views:
       type: custom:mushroom-title-card
     - card:
         show_header_toggle: false
-        style: "ha-card {\n  box-shadow: var(--box-shadow);\n  border-radius: var(--border-radius);\n\
-          }\n"
         type: entities
       filter:
         include:

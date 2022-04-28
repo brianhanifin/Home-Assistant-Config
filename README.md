@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1217 total entities**, 
-including **600 sensors**.
+Our Home Assistant install has approximately **1199 total entities**, 
+including **589 sensors**.
 
-<details><summary>23 Custom integrations</summary>
+<details><summary>24 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -198,7 +198,7 @@ Component to show potential breaking_changes in the current published version ba
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
-#### [Browser mod v1.3.1](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
+#### [Browser mod v1.5.3](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
 
 
 
@@ -258,13 +258,13 @@ Lovelace notification / alert component for Home Assistant
 Authors: [@rr326](https://github.com/rr326).
 
 
-#### [Rainforest EMU-2 v1.0.1](https://github.com/ryanwinter/hass-rainforest-emu-2)
+#### [Rainforest EMU-2 v1.1.6](https://github.com/ryanwinter/hass-rainforest-emu-2)
 
 
 Authors: [@ryanwinter](https://github.com/ryanwinter).
 
 
-#### [SamsungTV Smart v0.6.2](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.6.3](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -274,6 +274,12 @@ Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo
 
 
 Authors: [@nielsfaber](https://github.com/nielsfaber).
+
+
+#### [Simple Wyze Vacuum v1.7](https://github.com/romedtino/simple-wyze-vac)
+
+Home Assistant Custom Component for Wyze Vacuum
+Authors: [romedtino](https://github.com/romedtino).
 
 
 #### [SmartThinQ LGE Sensors v0.12.12](https://github.com/ollo69/ha-smartthinq-sensors)
@@ -294,7 +300,7 @@ Authors: [@pnbruckner](https://github.com/pnbruckner).
 Authors: [@jchasey](https://github.com/jchasey).
 
 
-#### [Watchman v0.5.0](https://github.com/dummylabs/thewatchman)
+#### [Watchman v0.5.1](https://github.com/dummylabs/thewatchman)
 
 Home Assistant custom integration to keep track of missing entities and services in your config files
 Authors: [@dummylabs](https://github.com/dummylabs).
@@ -306,7 +312,7 @@ A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
 
 
-#### [Wyze v0.1.9](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v0.1.10](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
@@ -374,7 +380,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
-#### [Mushroom v1.5.0](https://github.com/piitaya/lovelace-mushroom)
+#### [Mushroom v1.6.3](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 
@@ -421,7 +427,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>7 addons</summary>
 
-#### ESPHome v2022.3.2
+#### ESPHome v2022.4.0
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -441,7 +447,7 @@ Automatically manage backups between Home Assistant and Google Drive
 Manage your Docker environment with ease
 
 
-#### Samba share v9.5.1
+#### Samba share v9.6.0
 Expose Home Assistant folders with SMB/CIFS
 
 
@@ -480,7 +486,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.4.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.5.0b1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -490,7 +496,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39315-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39269-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

@@ -316,7 +316,9 @@
 
     1. Reset Adaptive lighting switches.
 
-    2. Update watchman report.'
+    2. Update watchman report.
+
+    3. Bedroom Do Not Disturb'
   trigger:
   - platform: sun
     event: sunrise
@@ -333,6 +335,15 @@
       entity_id: '{{ switches }}'
   - service: watchman.report
     data: {}
+  - if:
+    - condition: state
+      entity_id: switch.google_bedroom_do_not_disturb
+      state: 'off'
+    then:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.google_bedroom_do_not_disturb
   mode: single
   variables:
     switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%- for entity\
