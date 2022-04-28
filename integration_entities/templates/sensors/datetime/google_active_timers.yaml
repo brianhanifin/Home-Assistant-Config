@@ -3,25 +3,25 @@ unique_id: google_active_timers
 name: Google active timers
 icon: mdi:timer-settings-outline
 state: |
-  {% set timers = namespace(sensors="") %}
-  {%- set sensors = states.sensor | selectattr('attributes.device_class','eq','timestamp') | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
-  {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") %}
+  {%- set timers = namespace(sensors="") %}
+  {%- set sensors = states.sensor | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
+  {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") and sensor != "google_active_timers" %}
     {%- set timers.sensors = timers.sensors ~" "~ sensor|replace("google_","")|replace("_timers","") %}
   {%- endfor %}
   {%- set timers.sensors = timers.sensors|trim|replace(" ",", ") %}
   {{ timers.sensors }}
 attributes:
   sensors: |
-    {% set timers = namespace(sensors="") %}
-    {%- set sensors = states.sensor | selectattr('attributes.device_class','eq','timestamp') | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
-    {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") %}
+    {%- set timers = namespace(sensors="") %}
+    {%- set sensors = states.sensor | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
+    {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") and sensor != "google_active_timers" %}
       {%- set timers.sensors = timers.sensors ~" sensor."~ sensor %}
     {%- endfor %}
     {%- set timers.sensors = timers.sensors|trim|replace(" ",", ") %}
     {{ timers.sensors if timers.sensors != "" else "" }}
   timers: |
     {%- set unsorted_timers = state_attr("sensor.google_active_timers","unsorted_timers") %}
-    {%- if unsorted_timers[0] == null %}
+    {%- if unsorted_timers is mapping %}
       {{ unsorted_timers }}
     {%- else %}
       {{ unsorted_timers | sort(attribute="end_time") }}
