@@ -3,25 +3,17 @@ alias: Cast Site
 mode: single
 icon: 'mdi:cast'
 variables:
-  entity_id: '{{ display.entity_id|default("media_player.google_kitchen") }}'
-  path: |
-    {%- if path is undefined %}
-      {%- set path = [] %}
-    {%- else %}
-      {%- set path = path[1:] if path.startswith("/") else path  %}
-    {%- endif %}
-    {{ path }}
-  dashboard_path: '{{ path.split("/")[0] }}'
-  view_path: '{{ path.split("/")[1] if path.split("/")|count > 1 else "/0" }}'
-  dismiss_after: '{{ dismiss_after|default(60) }}'
+  full_path: '{{ iif(path is undefined, "lovelace/0", iif(path.startswith("/"), path[1:], path)) }}'
+  dashboard_path: '{{ full_path.split("/")[0] }}'
+  view_path: '{{ full_path.split("/")[1] }}'
 sequence:
-  # - service: script.debug
-  #   data:
-  #     message: |
-  #       display: "{{ display }}" -
-  #       path: "{{ path }}" -
-  #       dashboard_path: "{{ dashboard_path }}" -
-  #       view_path: "{{ view_path }}" -
+  - service: script.debug
+    data:
+      message: |
+        entity_id: "{{ display|default("media_player.google_kitchen") }}"
+        full_path: "{{ full_path }}"
+        dashboard_path: "{{ dashboard_path }}"
+        view_path: "{{ view_path }}"
 
   - service: cast.show_lovelace_view
     data:
@@ -29,12 +21,12 @@ sequence:
       dashboard_path: '{{ dashboard_path }}'
       view_path: '{{ view_path }}'
 
-  - delay: 
-      seconds: '{{ dismiss_after }}'
+  - delay:
+      seconds: '{{ dismiss_after|default(60) }}'
 
   - service: script.cast_stop
     data:
-      entity_id: media_player.google_kitchen
+      entity_id: '{{ display|default("media_player.google_kitchen") }}'
 
 fields:
   display:
