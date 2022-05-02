@@ -306,7 +306,8 @@ views:
       layout: vertical
       multiline_secondary: false
       primary: Downstairs
-      secondary: '{{ states("sensor.lights_on_downstairs") ~ " lights on" }} ‧
+      secondary: '{{ states("sensor.lights_on_downstairs")|default(0) ~ " lights on"
+        }} ‧
 
         {{ states("sensor.downstairs_temperature_average")|round(default=0) }}°'
       tap_action:
@@ -318,7 +319,8 @@ views:
       icon_color: purple
       layout: vertical
       primary: Upstairs
-      secondary: '{{ states("sensor.lights_on_upstairs") ~ " lights on" }} ‧
+      secondary: '{{ states("sensor.lights_on_upstairs")|default(0) ~ " lights on"
+        }} ‧
 
         {{ states("sensor.upstairs_temperature_average")|round(default=0) }}°'
       tap_action:
@@ -533,8 +535,8 @@ views:
         type: custom:auto-entities
       - card:
           card_mod:
-            style: ":host {\n  display: {{ \"none\" if user.is_admin else \"block\"\
-              \ }}\n}\n"
+            style: ":host {\n  display: {{ \"none\" if user.is_admin|default(false)\
+              \ else \"block\" }}\n}\n"
           type: entities
         filter:
           exclude:
@@ -600,7 +602,7 @@ views:
           \ }}°\n  {%- elif current_state in [\"Cooling\",\"Heating\"] %}\n    {{\
           \ current_state}}  to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state\
           \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.home_thermostat\"\
-          ,\"current_temperature\")|round(default=0) ~ \"°\"\n  }}"
+          ,\"current_temperature\")|default(0)|round ~ \"°\"\n  }}"
         tap_action:
           action: fire-dom-event
           browser_mod:
@@ -1020,7 +1022,7 @@ views:
       type: custom:state-switch
     type: custom:stack-in-card
   - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
-      \ {{ \"none\" if user.is_admin else \"block\" }}\n}\n"
+      \ {{ \"none\" if user.is_admin|default(false) else \"block\" }}\n}\n"
     type: shopping-list
     view_layout:
       position: sidebar
@@ -1078,6 +1080,17 @@ views:
         show_oscillate_control: false
         show_percentage_control: false
         type: custom:mushroom-fan-card
+      - entity: media_player.apple_tv_family_room
+        media_controls:
+        - play_pause_stop
+        name: Apple TV
+        tap_action:
+          action: toggle
+        type: custom:mushroom-media-player-card
+        use_media_artwork: true
+        use_media_info: true
+        volume_controls:
+        - volume_mute
       columns: 3
       square: false
       type: grid

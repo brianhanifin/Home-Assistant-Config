@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1199 total entities**, 
-including **589 sensors**.
+Our Home Assistant install has approximately **1216 total entities**, 
+including **606 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -258,7 +258,7 @@ Lovelace notification / alert component for Home Assistant
 Authors: [@rr326](https://github.com/rr326).
 
 
-#### [Rainforest EMU-2 v1.1.6](https://github.com/ryanwinter/hass-rainforest-emu-2)
+#### [Rainforest EMU-2 v1.2.0](https://github.com/ryanwinter/hass-rainforest-emu-2)
 
 
 Authors: [@ryanwinter](https://github.com/ryanwinter).
@@ -312,7 +312,7 @@ A sensor that gives you weather alerts from alerts.weather.gov.
 Authors: [@ludeeus](https://github.com/ludeeus), [@jlverhagen](https://github.com/jlverhagen).
 
 
-#### [Wyze v0.1.10](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+#### [Wyze v0.1.11](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 
 Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
@@ -380,7 +380,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
-#### [Mushroom v1.6.3](https://github.com/piitaya/lovelace-mushroom)
+#### [Mushroom v1.7.3](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 
@@ -447,7 +447,7 @@ Automatically manage backups between Home Assistant and Google Drive
 Manage your Docker environment with ease
 
 
-#### Samba share v9.6.0
+#### Samba share v9.6.1
 Expose Home Assistant folders with SMB/CIFS
 
 
@@ -486,7 +486,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.5.0b1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.5.0b5-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -496,7 +496,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39269-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39287-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
