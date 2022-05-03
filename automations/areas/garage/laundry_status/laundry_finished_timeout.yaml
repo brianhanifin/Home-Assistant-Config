@@ -18,19 +18,21 @@ trigger:
 action:
   - choose:
       - alias: 'Has the dryer been "Dry" for 6 hours?'
-        conditions: '{{ trigger.id == "dry_timeout" }}'
+        conditions: '{{ trigger.id == "dry_timeout" and is_state("input_select.dryer_status","Dry") }}'
         sequence:
           - alias: 'Set the dryer status to "Off".'
             service: input_select.select_option
-            data:
+            target:
               entity_id: input_select.dryer_status
+            data:
               option: 'Off'
 
       - alias: 'Has the washer been "Clean" for 6 hours?'
-        conditions: '{{ trigger.id == "clean_timeout" }}'
+        conditions: '{{ trigger.id == "clean_timeout" and is_state("input_select.washer_status","Clean") }}'
         sequence:
           - alias: 'Set the washer status to "Off".'
             service: input_select.select_option
-            data:
+            target:
               entity_id: input_select.washer_status
+            data:
               option: 'Off'

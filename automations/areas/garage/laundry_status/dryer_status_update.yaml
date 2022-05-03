@@ -6,7 +6,14 @@ mode: single
 trigger:
   - platform: state
     entity_id: sensor.sonoff_s31_04_power
+
+  - id: from_drying_to_dry
+    platform: state
+    entity_id: input_select.dryer_status
+    from: "Drying"
+    to: "Dry"
 variables:
+  trigger_id: '{{ trigger.id }}'
   power: '{{ states("sensor.sonoff_s31_04_power")|default(0)|int }}'
   previous_status: '{{ states("input_select.dryer_status") }}'
   status: |
@@ -20,17 +27,22 @@ condition:
     value_template: '{{ status != previous_status }}'
 action:
   - service: input_select.select_option
-    data:
+    target:
       entity_id: input_select.dryer_status
+    data:
       option: '{{ status }}'
 
   - alias: 'Start the "Off" timer.'
     if:
       - condition: template
-        value_template: '{{ status == "Dry" }}'
+        value_template: '{{
+          trigger_id == "from_drying_to_dry" or
+          (previous_status == "Drying" and status == "Dry")
+        }}'
     then:
+      - service: timer.cancel
+        target:
+          entity_id: timer.dryer_dry
       - service: timer.start
-        entity_id: timer.dryer_dry
-    else:
-      - service: timer.stop
-        entity_id: timer.dryer_dry
+        target:
+          entity_id: timer.dryer_dry
