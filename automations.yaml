@@ -281,9 +281,12 @@
     minutes: /10
   condition: []
   action:
-  - service: script.cast_site
+  - service: script.cast
     data:
-      path: /lovelace-sidebar/home
+      dashboard_path: lovelace-cast
+      view_path: home
+      dismiss_after: 599
+      display: 7d6b52507e25e7eeba10914e56052d1c
   mode: single
 - id: '1624556633877'
   alias: Safety alert garage door obstruction detected
@@ -689,15 +692,18 @@
     data:
       message: Someone pressed the doorbell!
       duration: 60
-  - service: script.cast_site
+  - service: script.cast
     data:
-      path: /lovelace-sidebar/cameras
+      dashboard_path: lovelace-cast
+      view_path: cameras
+      dismiss_after: 120
+      display: 7d6b52507e25e7eeba10914e56052d1c
   - delay:
       hours: 0
       minutes: 1
       seconds: 0
       milliseconds: 0
-  mode: single
+  mode: parallel
 - id: '1643829963937'
   alias: HACS install event - update sensors
   description: ''

@@ -1,0 +1,60 @@
+---
+alias: Cast
+mode: single
+icon: 'mdi:cast'
+sequence:
+  # - service: script.debug
+  #   data:
+  #     message: |
+  #       display: '{{ device_entities(display)[0] | default("media_player.google_kitchen") }}'
+  #       dashboard_path: "{{ dashboard_path }}"
+  #       view_path: "{{ view_path }}"
+
+  - service: cast.show_lovelace_view
+    data:
+      entity_id: '{{ device_entities(display)[0] | default("media_player.google_kitchen") }}'
+      dashboard_path: '{{ dashboard_path }}'
+      view_path: '{{ view_path }}'
+
+  - delay:
+      seconds: '{{ dismiss_after|default(60) }}'
+
+  - service: script.cast_stop
+    data:
+      entity_id: '{{ device_entities(display)[0] | default("media_player.google_kitchen") }}'
+
+fields:
+  display:
+    description: Select the Google cast display.
+    default: 7d6b52507e25e7eeba10914e56052d1c
+    selector:
+      device:
+        integration: cast
+        model: "Google Nest Hub"
+  # display:
+  #   description: Select the Google cast display.
+  #   default: media_player.google_kitchen
+  #   selector:
+  #     entity:
+  #       integration: cast
+  dashboard_path:
+    description: Path to the desired dashboard.
+    default: lovelace
+    example: lovelace
+    required: false
+    selector:
+      text:
+  view_path:
+    description: Path to the page within the dashboard
+    default: home
+    example: cameras
+    required: false
+    selector:
+      text:
+  dismiss_after:
+    description: "Reset the display after # seconds."
+    required: false
+    selector:
+      number:
+        min: 60
+        max: 300
