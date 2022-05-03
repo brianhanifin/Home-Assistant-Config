@@ -79,7 +79,7 @@ sequence:
             data:
               entity_id: "{{ speaker }}"
               volume_level: "{{ current_volume }}"
-      
+
     default:
       - alias: "Play the audio on all of the in a group."
         repeat:
@@ -111,21 +111,24 @@ sequence:
 
 fields:
   speakers:
-    description: Media Player entity_id or group id.
+    description: Select the speakers the audio should play on.
     example: media_player.google_kitchen or media_player.google_welcome
-    default: media_player.google_family_room
+    #default: media_player.google_family_room
+    selector:
+      entity:
+        multiple: true
+        integration: cast
+  audio_file:
+    description: Path to the audio file.
+    default: media-source://media_source/local/audio/jetsons-doorbell.mp3
+    required: true
     selector:
       text:
   volume:
+    description: 'WARNING: this will override your preset "Default audio volume"!'
     default: 10
     selector:
       number:
         min: 5
         max: 100
         step: 5
-  audio_file:
-    description: Audio file to play.
-    default: media-source://media_source/local/audio/jetsons-doorbell.mp3
-    required: true
-    selector:
-      text:
