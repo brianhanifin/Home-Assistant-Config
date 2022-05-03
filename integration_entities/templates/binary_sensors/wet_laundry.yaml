@@ -1,0 +1,10 @@
+---
+unique_id: wet_laundry
+name: Wet laundry
+icon: mdi:washing-machine-alert
+device_class: problem
+state: |
+  {{
+    is_state('input_select.laundry_status', 'Please transfer to dryer') or
+    is_state('input_select.laundry_status', 'Waiting for running dryer')
+  }}

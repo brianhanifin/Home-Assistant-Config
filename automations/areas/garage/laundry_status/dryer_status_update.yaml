@@ -23,3 +23,14 @@ action:
     data:
       entity_id: input_select.dryer_status
       option: '{{ status }}'
+
+  - alias: 'Start the "Off" timer.'
+    if:
+      - condition: template
+        value_template: '{{ status == "Dry" }}'
+    then:
+      - service: timer.start
+        entity_id: timer.dryer_dry
+    else:
+      - service: timer.stop
+        entity_id: timer.dryer_dry
