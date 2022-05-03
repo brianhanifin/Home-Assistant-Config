@@ -4,11 +4,21 @@ id: washer_status_update
 description: Update the current washer status when certain criteria are met.
 mode: single
 trigger:
-  # Update state when the wet laundry alert has been cleared.
+  # Update state when the wet laundry status changes.
+  - id: wet_laundry_alert_begins
+    platform: state
+    entity_id: binary_sensor.wet_laundry
+    to: "on"
   - id: wet_laundry_alert_cleared
     platform: state
     entity_id: binary_sensor.wet_laundry
     to: "off"
+
+  # Update when the dryer state changes to Drying.
+  - id: dryer_drying
+    platform: state
+    entity_id: input_select.dryer_status
+    to: "Drying"
 
   # LG washer running state.
   - id: washer_run_state_change
@@ -98,13 +108,20 @@ action:
 
   - if:
       - condition: template
-        value_template: '{{ status == "Clean" }}'
+        value_template: '{{ trigger_id == "wet_laundry_alert_begins" }}'
     then:
       - service: timer.start
         target:
           entity_id: timer.washer_clean
-    else:
-      - service: timer.cancel
+
+  - if:
+      - condition: template
+        value_template: '{{
+          trigger_id == "wet_laundry_alert_cleared" or
+          trigger_id == "dryer_drying"
+        }}'
+    then:
+      - service: timer.finish
         target:
           entity_id: timer.washer_clean
 
@@ -127,5 +144,5 @@ action:
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   # - In this case it stops the washer from toggling between Clean and back to Washing within 10 seconds.
   #   This should stop the complete announcement from repeating after 1 minute.
-  - delay:
-      seconds: 300
+  # - delay:
+  #     seconds: 300

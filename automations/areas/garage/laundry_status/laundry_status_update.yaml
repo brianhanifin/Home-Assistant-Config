@@ -43,15 +43,6 @@ action:
     data:
       option: '{{ status }}'
 
-  - alias: "Cancel the Wet Laundry alert."
-    if:
-      - condition: template
-        value_template: '{{ status in ["Drying","Washing"] }}'
-    then:
-      - service: alert.turn_off
-        target:
-          entity_id: alert.wet_laundry
-
   - alias: "Send the notifications when appropriate."
     if:
       - condition: template
