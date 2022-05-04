@@ -46,12 +46,13 @@ attributes:
     {%- for sensor in active_sensors %}
       {%- set active_timers = states.sensor | selectattr('entity_id','eq',sensor) | map(attribute="attributes.timers") | list %}
       {%- for timer in active_timers[0] %}
-        {%- set storage.timers = storage.timers ~ "{" %}
-        {%- set storage.timers = storage.timers ~ "'end_time':'" ~ timer.local_time_iso ~"'," %}
-        {%- set storage.timers = storage.timers ~ "'duration':'" ~ timer.duration ~"'," %}
-        {%- set storage.timers = storage.timers ~ "'label':'" ~ friendly_label(timer.label, timer.duration) ~"'," %}
-        {%- set storage.timers = storage.timers ~ "'status':'" ~ timer.status ~"'," %}
-        {%- set storage.timers = storage.timers ~ "'sensor':'" ~ sensor ~ "'" %}
+        {%- set storage.timers = storage.timers ~ '{' %}
+        {%- set storage.timers = storage.timers ~ '"end_time":"' ~ timer.local_time_iso ~'",' %}
+        {%- set storage.timers = storage.timers ~ '"duration":"' ~ timer.duration ~'",' %}
+        {%- set storage.timers = storage.timers ~ '"label":"' ~ friendly_label(timer.label, timer.duration) ~'",' %}
+        {%- set storage.timers = storage.timers ~ '"status":"' ~ timer.status ~'",' %}
+        {%- set storage.timers = storage.timers ~ '"sensor":"' ~ sensor ~'",' %}
+        {%- set storage.timers = storage.timers ~ '"timer_id":"' ~ timer.timer_id ~'"' %}
         {%- set storage.timers = storage.timers ~ "}" %}
         {%- set storage.timers = storage.timers ~ iif(not loop.last, ",", "")  %}
       {%- endfor %}

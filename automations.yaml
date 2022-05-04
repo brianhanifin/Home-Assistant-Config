@@ -283,7 +283,7 @@
   action:
   - service: script.cast
     data:
-      dashboard_path: lovelace-cast
+      dashboard_path: dashboard-cast
       view_path: home
       dismiss_after: 599
       display: 7d6b52507e25e7eeba10914e56052d1c
@@ -678,33 +678,34 @@
     discovery_id: 0x0008890001d9f410 action_bell1
   condition: []
   action:
-  - service: script.notify_audio
-    data:
-      audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
-      speakers:
-      - media_player.google_family_room
-  - service: script.notify_mobile
-    data:
-      who: brian
-      title: Doorbell
-      message: Someone pushed the doorbell.
-      camera: camera.front_door
-  - service: script.notify_web
-    data:
-      message: Someone pressed the doorbell!
-      duration: 60
-  - service: script.cast
-    data:
-      dashboard_path: lovelace-cast
-      view_path: cameras
-      dismiss_after: 120
-      display: 7d6b52507e25e7eeba10914e56052d1c
-  - delay:
-      hours: 0
-      minutes: 1
-      seconds: 0
-      milliseconds: 0
-  mode: parallel
+  - parallel:
+    - service: script.notify_audio
+      data:
+        audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
+        speakers:
+        - media_player.google_family_room
+    - service: script.cast
+      data:
+        dashboard_path: dashboard-cast
+        view_path: cameras
+        dismiss_after: 120
+        display: 7d6b52507e25e7eeba10914e56052d1c
+    - service: script.notify_mobile
+      data:
+        who: brian
+        title: Doorbell
+        message: Someone pushed the doorbell.
+        camera: camera.front_door
+    - service: script.notify_web
+      data:
+        message: Someone pressed the doorbell!
+        duration: 60
+    - delay:
+        hours: 0
+        minutes: 1
+        seconds: 0
+        milliseconds: 0
+  mode: single
 - id: '1643829963937'
   alias: HACS install event - update sensors
   description: ''
@@ -749,60 +750,125 @@
     entity_id: sensor.google_next_timer
     attribute: end_time
     id: update_end_time
-  - platform: time
-    at: input_datetime.google_next_timer_ends
-    id: timer_ends
+  - platform: event
+    event_type: timer.started
+    event_data:
+      entity_id: timer.google_next_timer
+    id: timer_started
+    enabled: true
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.google_next_timer
+    id: timer_finished
+  - platform: event
+    event_type:
+    - timer.cancelled
+    - timer.paused
+    event_data:
+      entity_id: timer.google_next_timer
+    id: timer_cancelled
+  - platform: state
+    entity_id: input_button.google_next_timer_cancel
+    id: cancel_button_pressed
   condition: []
   action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: update_end_time
-      sequence:
-      - service: input_datetime.set_datetime
-        target:
-          entity_id: input_datetime.google_next_timer_ends
-        data:
-          datetime: '{{ as_datetime(state_attr("sensor.google_next_timer","end_time"))
-            }}'
-    - conditions:
-      - condition: and
-        conditions:
+  - if:
+    - condition: template
+      value_template: '{{ state_attr("sensor.google_next_timer","end_time") == none
+        }}'
+    then:
+    - service: timer.cancel
+      data: {}
+      target:
+        entity_id: timer.google_next_timer
+    - service: script.cast_stop
+      data:
+        display: 7d6b52507e25e7eeba10914e56052d1c
+    else:
+    - choose:
+      - conditions:
         - condition: trigger
-          id: timer_ends
-        - condition: template
-          value_template: '{{ state_attr("sensor.google_next_timer","end_time") !=
-            none }}'
-        - condition: not
+          id: update_end_time
+        sequence:
+        - service: timer.start
+          target:
+            entity_id: timer.google_next_timer
+          data:
+            duration: '{%- set now = now()|as_timestamp %}
+
+              {%- set end_time = state_attr("sensor.google_next_timer","end_time")|as_timestamp
+              %}
+
+              {%- set seconds_until_end = end_time - now %}
+
+              {{ seconds_until_end }}
+
+              '
+        - delay:
+            seconds: 5
+        - service: cast.show_lovelace_view
+          data:
+            entity_id: media_player.google_kitchen
+            dashboard_path: dashboard-cast
+            view_path: timers
+      - conditions:
+        - condition: trigger
+          id: timer_started
+          enabled: true
+        sequence:
+        - service: cast.show_lovelace_view
+          data:
+            entity_id: media_player.google_kitchen
+            dashboard_path: dashboard-cast
+            view_path: timers
+      - conditions:
+        - condition: trigger
+          id: timer_finished
+        sequence:
+        - service: script.notify_speech
+          data:
+            media_player: media_player.google_kitchen
+            message: Your {{ state_attr("sensor.google_next_timer", "label") }} just
+              ended.
+        - service: script.notify_web
+          data:
+            type: alert
+            title: '{{ state_attr("sensor.google_next_timer", "label") }} has ended'
+            message: '{%- set end_time = state_attr("sensor.google_next_timer","end_time")|default(now())|as_datetime
+              %}
+
+              **{{ state_attr("sensor.google_next_timer", "label") }}** {{ " ended
+              at " ~
+
+              "{:1}:{:02}:{:02}".format(end_time.hour, end_time.minute, end_time.second)
+              }}
+
+              '
+        - service: cast.show_lovelace_view
+          data:
+            entity_id: media_player.google_kitchen
+            dashboard_path: dashboard-cast
+            view_path: timers
+      - conditions:
+        - condition: or
           conditions:
-          - condition: state
-            entity_id: sensor.google_next_timer
-            attribute: active_sensor_area
-            state: Kitchen
-      sequence:
-      - service: script.notify_speech
-        data:
-          media_player: media_player.google_kitchen
-          message: Your {{ state_attr("sensor.google_next_timer", "label") }} just
-            ended.
-      - service: script.notify_web
-        data:
-          type: alert
-          title: '{{ state_attr("sensor.google_next_timer", "label") }} has ended'
-          message: '{%- set end_time = state_attr("sensor.google_next_timer","end_time")|default(now())|as_datetime
-            %}
-
-            **{{ state_attr("sensor.google_next_timer", "label") }}** {{ " ended at
-            " ~
-
-            "{:1}:{:02}:{:02}".format(end_time.hour, end_time.minute, end_time.second)
-            }}
-
-            '
-      - service: cast.show_lovelace_view
-        data:
-          entity_id: media_player.google_kitchen
-          dashboard_path: cast-timers
-          view_path: '0'
-    default: []
+          - condition: trigger
+            id: cancel_button_pressed
+          - condition: trigger
+            id: timer_cancelled
+        sequence:
+        - service: google_home.delete_timer
+          data:
+            entity_id: '{{ state_attr("sensor.google_next_timer","active_sensor")
+              }}'
+            timer_id: '{{ state_attr("sensor.google_next_timer","id") }}'
+        - service: timer.cancel
+          target:
+            entity_id: timer.google_next_timer
+          data: {}
+        - service: script.notify_web
+          data:
+            message: Timer stopped
+      default: []
   mode: single

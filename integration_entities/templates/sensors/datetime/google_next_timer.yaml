@@ -54,4 +54,11 @@ attributes:
   active_sensor_area: |
     {%- set sensor = state_attr("sensor.google_next_timer","active_sensor") %}
     {{ area_name(sensor) }}
-
+  id: |
+    {% set timers = state_attr("sensor.google_active_timers","timers") %}
+    {%- if timers.duration == null %}
+      {%- set timer = timers|first %}
+    {%- else %}
+      {%- set timer = timers %}
+    {%- endif %}
+    {{ timer["timer_id"] }}
