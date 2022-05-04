@@ -760,17 +760,25 @@
         id: update_end_time
       sequence:
       - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.google_next_timer_ends
         data:
           datetime: '{{ as_datetime(state_attr("sensor.google_next_timer","end_time"))
             }}'
-        target:
-          entity_id: input_datetime.google_next_timer_ends
     - conditions:
-      - condition: trigger
-        id: timer_ends
-      - condition: template
-        value_template: '{{ state_attr("sensor.google_next_timer","end_time") != none
-          }}'
+      - condition: and
+        conditions:
+        - condition: trigger
+          id: timer_ends
+        - condition: template
+          value_template: '{{ state_attr("sensor.google_next_timer","end_time") !=
+            none }}'
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: sensor.google_next_timer
+            attribute: active_sensor_area
+            state: Kitchen
       sequence:
       - service: script.notify_speech
         data:
