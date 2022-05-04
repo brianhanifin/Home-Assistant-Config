@@ -4,22 +4,22 @@
 alias: Update notification
 id: update_notification
 trigger:
-  - platform: state
-    entity_id: binary_sensor.beta_update_available
-    from: "off"
-    to: "on"
-  - platform: state
-    entity_id: binary_sensor.release_update_available
-    from: "off"
-    to: "on"
-  # - platform: numeric_state
-  #   entity_id: sensor.updates
-  #   above: 0
+  # - platform: state
+  #   entity_id: binary_sensor.beta_update_available
+  #   from: "off"
+  #   to: "on"
+  # - platform: state
+  #   entity_id: binary_sensor.release_update_available
+  #   from: "off"
+  #   to: "on"
+  - platform: numeric_state
+    entity_id: sensor.updates
+    above: 0
 variables:
   message: |
     {% set updates = states("sensor.updates")|default(0)|int %}
 
-    {%- if updates == 1 %} 
+    {%- if updates == 1 %}
       There is an update available.
     {% else %}
       There are {{ updates }} updates available.

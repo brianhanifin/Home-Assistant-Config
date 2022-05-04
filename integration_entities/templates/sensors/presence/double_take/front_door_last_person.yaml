@@ -3,9 +3,19 @@ unique_id: front_door_last_person
 name: Front Door Last Person
 icon: mdi:face-recognition
 state: |
-  {%- if not is_state("sensor.double_take_front_door","unavailable") %}
-    {%- if states("sensor.double_take_front_door")|default(0)|int > 0 %}
+  {%- if is_number(states("sensor.double_take_front_door")) %}
+    {%- if states("sensor.double_take_front_door")|int > 0 %}
       {%- set match = state_attr("sensor.double_take_front_door","matches")[0] %}
       {{ match["name"] if match["confidence"] > 96 }}
     {% endif %}
+  {%- else %}
+    none
   {% endif %}
+attributes:
+  match: |
+    {%- if is_number(states("sensor.double_take_front_door")) %}
+      {%- if states("sensor.double_take_front_door")|int > 0 %}
+        {%- set match = state_attr("sensor.double_take_front_door","matches")[0] %}
+        {{ match["name"] if match["confidence"] > 96 }}
+      {% endif %}
+    {% endif %}

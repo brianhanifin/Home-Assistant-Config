@@ -18,11 +18,11 @@ state: |
       {%- set selected.entities = selected.entities ~ entity %}
     {%- endif %}
   {%- endfor %}
-  {{ (selected.entities|trim).split(" ") | count }}
+  {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" ")|count, 0) }}
 attributes:
   entities: |
     {%- set ignore_list = [
-      "sensor.last_message", "sensor.last_speaker", 
+      "sensor.last_message", "sensor.last_speaker",
       "sensor.accuweather_ozone_0d"
     ] %}
     {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
@@ -35,4 +35,4 @@ attributes:
         {%- set selected.entities = selected.entities ~ entity %}
       {%- endif %}
     {%- endfor %}
-    {{ (selected.entities|trim).split(" ") }}
+    {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" "), "") }}
