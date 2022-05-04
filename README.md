@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1216 total entities**, 
-including **606 sensors**.
+Our Home Assistant install has approximately **1192 total entities**, 
+including **585 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -246,7 +246,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
 
 
-#### [Holidays v1.7.2](https://github.com/bruxy70/Holidays/)
+#### [Holidays v1.7.3](https://github.com/bruxy70/Holidays/)
 
 📅 Custom Home Assistant integration for public holidays - also used for garbage_collection integration to automatically move scheduled events that fall on a public holiday (by an automation blueprint)
 Authors: [@bruxy70](https://github.com/bruxy70).
@@ -288,7 +288,7 @@ Authors: [romedtino](https://github.com/romedtino).
 Authors: [@ollo69](https://github.com/ollo69).
 
 
-#### [Sun2 v2.0.3](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
+#### [Sun2 v2.1.0](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
 
 
 Authors: [@pnbruckner](https://github.com/pnbruckner).
@@ -318,7 +318,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>26 lovelace plugins</summary>
+<details><summary>27 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -346,6 +346,10 @@ Custom calendar card for Home Assistant with Lovelace
 
 #### [Favicon Counter v1.0.0](https://github.com/custom-cards/favicon-counter)
 Show a notification count badge.
+
+
+#### [Flipdown Timer Card v0.2](https://github.com/pmongloid/flipdown-timer-card)
+Flipdown Timer Card for Home Assistant Lovelace
 
 
 #### [Fold Entity Row v2.2.0](https://github.com/thomasloven/lovelace-fold-entity-row)
@@ -439,7 +443,7 @@ Simple browser-based file editor for Home Assistant
 Home Assistant scheduler
 
 
-#### Home Assistant Google Drive Backup v0.106.2
+#### Home Assistant Google Drive Backup v0.107.1
 Automatically manage backups between Home Assistant and Google Drive
 
 
@@ -486,7 +490,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.5.0b5-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.5.0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -496,7 +500,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39287-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39362-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

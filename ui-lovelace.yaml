@@ -510,7 +510,7 @@ views:
           - state: unknown
           - state: unavailable
           include:
-          - entity_id: sensor.google_next_timer
+          - entity_id: timer.google_next_timer
           - entity_id: timer.front_door_unlocked
         show_empty: false
         sort:
@@ -1014,12 +1014,6 @@ views:
       show_state: true
       state_color: false
       type: glance
-    - entity: mediaquery
-      states:
-        '(min-width: 800px)':
-          link_dashboard: true
-          type: energy-distribution
-      type: custom:state-switch
     type: custom:stack-in-card
   - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
       \ {{ \"none\" if user.is_admin|default(false) else \"block\" }}\n}\n"
@@ -1027,6 +1021,7 @@ views:
     view_layout:
       position: sidebar
   icon: mdi:home-circle
+  path: home
   theme: Backend-selected
   title: Home
   type: sidebar
@@ -1051,20 +1046,26 @@ views:
       title: Family room
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.family_room
+      - collapsible_controls: true
+        entity: light.family_room
         layout: vertical
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: light.table_lamp
+      - collapsible_controls: true
+        entity: light.table_lamp
+        fill_container: false
         layout: vertical
-        show_brightness_control: false
+        show_brightness_control: true
+        show_color_temp_control: false
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: light.family_room_floor_lamp
+      - collapsible_controls: true
+        entity: light.family_room_floor_lamp
         layout: vertical
         name: Floor lamp
-        show_brightness_control: false
+        show_brightness_control: true
+        show_color_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: switch.adaptive_lighting_family_room
@@ -1120,9 +1121,10 @@ views:
         show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: light.dining_room
+      - collapsible_controls: true
+        entity: light.dining_room
         layout: vertical
-        show_brightness_control: false
+        show_brightness_control: true
         show_color_temp_control: false
         type: custom:mushroom-light-card
         use_light_color: true
@@ -1141,23 +1143,28 @@ views:
       title: Play room
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.play_room
+      - collapsible_controls: true
+        entity: light.play_room
         layout: vertical
         name: Play room
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: false
-      - entity: light.play_room_floor_lamp
+      - collapsible_controls: true
+        entity: light.play_room_floor_lamp
         layout: vertical
         name: Floor lamp
-        show_brightness_control: false
+        show_brightness_control: true
         show_color_temp_control: false
+        tap_action:
+          action: toggle
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: light.play_room_entry
+      - collapsible_controls: true
+        entity: light.play_room_entry
         layout: vertical
-        show_brightness_control: false
-        show_color_temp_control: true
+        show_brightness_control: true
+        show_color_temp_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: switch.adaptive_lighting_play_room
@@ -1184,14 +1191,16 @@ views:
       title: Home entry
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.home_entry
+      - collapsible_controls: true
+        entity: light.home_entry
         layout: vertical
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: light.porch
+      - collapsible_controls: true
+        entity: light.porch
         layout: vertical
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: light.entry_railing
@@ -1236,10 +1245,11 @@ views:
       title: Garage
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.laundry
+      - collapsible_controls: true
+        entity: light.laundry
         hide_state: false
         layout: vertical
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: cover.garage_door
@@ -1369,22 +1379,25 @@ views:
       title: ' Bedroom'
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.bedroom
+      - collapsible_controls: true
+        entity: light.bedroom
         layout: vertical
         name: West lamp
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: light.bedroom_east
+      - collapsible_controls: true
+        entity: light.bedroom_east
         layout: vertical
         name: East lamp
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: light.bedroom_table_lamp
+      - collapsible_controls: true
+        entity: light.bedroom_table_lamp
         layout: vertical
         name: Table lamp
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: switch.sound_machine
@@ -1482,9 +1495,10 @@ views:
       title: Kyle's room
       type: custom:mushroom-title-card
     - cards:
-      - entity: light.kyle_bedside
+      - collapsible_controls: true
+        entity: light.kyle_bedside
         name: Light
-        show_brightness_control: false
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       columns: 2
@@ -1633,8 +1647,9 @@ views:
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
-      - entity: light.porch
-        show_brightness_control: false
+      - collapsible_controls: true
+        entity: light.porch
+        show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: switch.adaptive_lighting_home_entry
@@ -2440,15 +2455,34 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: null
-      title: Watchman report
+    - subtitle: Unknown and unavailable entities
+      title: Problem reports
       type: custom:mushroom-title-card
-    - content: '<h3>Missing Entities: {{ states("sensor.watchman_missing_entities")|default(0)
-        }}</h3>'
+    - content: '### {{ states("sensor.unknown_count")|default(0) }} unknown entit{{
+        iif(is_state("sensor.unknown_count","1"), "y", "ies") }}
+
+
+        {%- for item in state_attr("sensor.unknown_count", "entities") %}
+
+        * {{ item }}
+
+        {%- endfor %}'
       type: markdown
-    - content: "<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n      \
-        \    <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n  {%-\
-        \ for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
+    - content: '### {{ states("sensor.unavailable_count")|default(0) }} unavailable
+        entit{{ iif(is_state("sensor.unavailable_count","1"), "y", "ies") }}
+
+
+        {%- for item in state_attr("sensor.unavailable_count", "entities") %}
+
+        * {{ item }}
+
+        {%- endfor %}'
+      type: markdown
+    - content: "### {{ states(\"sensor.watchman_missing_entities\")|default(0) }}\
+        \ missing entit{{ iif(is_state(\"sensor.watchman_missing_entities\",\"1\"\
+        ), \"y\", \"ies\") }}\n<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n\
+        \          <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n\
+        \  {%- for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
         ) %}\n  <tr>\n    <td>{{ item.id }}</td>\n    <td><ha-icon icon=\"mdi:cloud-{%-\
         \ if item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
         \ else-%}question{%- endif -%}\"></ha-icon></td>\n    <td><a title=\"{{item.occurrences}}\"\
@@ -2497,36 +2531,42 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - title: Entity counts
+    - subtitle: Entity counts
+      title: ''
       type: custom:mushroom-title-card
-    - columns: 8
+    - columns: 4
       entities:
       - entity: sensor.entity_count
       - entity: sensor.domain_count
       - entity: sensor.automation_count
       - entity: sensor.script_count
-      - entity: sensor.unknown_count
-      - entity: sensor.unavailable_count
+      show_icon: true
+      show_name: false
+      show_state: true
+      state_color: false
+      type: glance
+    - columns: 6
+      entities:
       - entity: sensor.alert_count
-      - entity: sensor.media_player_count
-      - entity: sensor.camera_count
-      - entity: sensor.cover_lock_count
-      - entity: sensor.fan_count
-      - entity: sensor.light_count
-      - entity: sensor.sensor_count
       - entity: sensor.binary_sensor_count
       - entity: sensor.button_count
-      - entity: sensor.switch_count
+      - entity: sensor.calendar_count
+      - entity: sensor.camera_count
       - entity: sensor.climate_count
+      - entity: sensor.counter_count
+      - entity: sensor.cover_lock_count
+      - entity: sensor.fan_count
+      - entity: sensor.group_count
+      - entity: sensor.light_count
+      - entity: sensor.media_player_count
       - entity: sensor.input_boolean_count
       - entity: sensor.input_datetime_count
+      - entity: sensor.input_text_count
       - entity: sensor.number_count
       - entity: sensor.select_count
-      - entity: sensor.input_text_count
-      - entity: sensor.calendar_count
-      - entity: sensor.group_count
+      - entity: sensor.switch_count
       - entity: sensor.timer_count
-      - entity: sensor.counter_count
+      - entity: sensor.sensor_count
       - entity: sensor.update_count
       - entity: sensor.weather_count
       - entity: sensor.zone_count
@@ -2537,7 +2577,7 @@ views:
       type: glance
     type: vertical-stack
     view_layout:
-      position: main
+      position: sidebar
   icon: mdi:server
   path: system
   theme: Backend-selected
