@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1192 total entities**, 
-including **585 sensors**.
+Our Home Assistant install has approximately **1204 total entities**, 
+including **593 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -264,7 +264,7 @@ Authors: [@rr326](https://github.com/rr326).
 Authors: [@ryanwinter](https://github.com/ryanwinter).
 
 
-#### [SamsungTV Smart v0.6.3](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.7.0](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -300,7 +300,7 @@ Authors: [@pnbruckner](https://github.com/pnbruckner).
 Authors: [@jchasey](https://github.com/jchasey).
 
 
-#### [Watchman v0.5.1](https://github.com/dummylabs/thewatchman)
+#### [Watchman v0.5.0](https://github.com/dummylabs/thewatchman)
 
 Home Assistant custom integration to keep track of missing entities and services in your config files
 Authors: [@dummylabs](https://github.com/dummylabs).
@@ -318,7 +318,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>27 lovelace plugins</summary>
+<details><summary>28 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -374,6 +374,10 @@ A custom Lovelace card for displaying a combination of persistent notifications,
 
 #### [Lovelace Text Input Row v0.0.8](https://github.com/gadgetchnnel/lovelace-text-input-row)
 A custom Lovelace text input row for use in entities cards
+
+
+#### [Lovelace Theme Maker](https://github.com/thomasloven/lovelace-theme-maker)
+
 
 
 #### [Mini Graph Card v0.11.0](https://github.com/kalkih/mini-graph-card)
@@ -490,7 +494,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.5.0-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.5.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -500,7 +504,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39362-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39438-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

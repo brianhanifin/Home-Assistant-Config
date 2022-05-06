@@ -212,20 +212,38 @@ decluttering_templates:
           action: fire-dom-event
           browser_mod:
             card:
-              card:
-                columns: 3
-                show_header_toggle: false
-                show_name: false
-                show_state: false
-                type: glance
-              filter:
-                include:
-                - domain: person
-                  state: home
-              show_empty: false
-              sort:
-                method: name
-              type: custom:auto-entities
+              cards:
+              - card:
+                  columns: 3
+                  show_header_toggle: false
+                  show_name: false
+                  show_state: false
+                  type: glance
+                entities:
+                - person.brian
+                - person.eric
+                - person.heather
+                - person.lucas
+                - person.nerene
+                - person.sandy
+                state_filter:
+                - home
+                type: entity-filter
+              - aspect_ratio: '16:9'
+                entities:
+                - entity: device_tracker.life360_brian
+                - entity: device_tracker.life360_lucas
+                - entity: device_tracker.life360_eric_goez
+                - entity: device_tracker.life360_nerene
+                - entity: zone.court
+                - entity: zone.office
+                - entity: zone.high_school
+                - entity: zone.home
+                - entity: zone.range
+                - entity: zone.school
+                hours_to_show: 6
+                type: map
+              type: vertical-stack
             command: popup
             deviceID: this
             title: People at home
@@ -498,9 +516,6 @@ views:
       type: custom:home-feed-card
     - cards:
       - card:
-          card_mod:
-            style: ":host {\n  display: block;\n  margin-bottom: -24px !important;\n\
-              }\n"
           type: custom:timer-bar-card
         filter:
           exclude:
@@ -518,9 +533,6 @@ views:
           method: name
         type: custom:auto-entities
       - card:
-          card_mod:
-            style: ":host {\n  display: block;\n  margin-bottom: -24px !important;\n\
-              }\n"
           type: entities
         filter:
           exclude:
@@ -1111,6 +1123,13 @@ views:
       title: Kitchen & dining
       type: custom:mushroom-title-card
     - cards:
+      - collapsible_controls: true
+        entity: light.dining_room
+        layout: vertical
+        show_brightness_control: true
+        show_color_temp_control: false
+        type: custom:mushroom-light-card
+        use_light_color: true
       - entity: light.kitchen
         layout: vertical
         show_brightness_control: true
@@ -1119,13 +1138,6 @@ views:
       - entity: light.kitchen_prep
         layout: vertical
         show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - collapsible_controls: true
-        entity: light.dining_room
-        layout: vertical
-        show_brightness_control: true
-        show_color_temp_control: false
         type: custom:mushroom-light-card
         use_light_color: true
       columns: 3
@@ -2449,45 +2461,50 @@ views:
       - name: UniFi Controller
         type: weblink
         url: https://unraid.local:8443
-      theme: Caule Dark Purple
       type: entities
     type: vertical-stack
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: Unknown and unavailable entities
+    - subtitle: '{{ states("sensor.unknown_count")|default(0) }} unknown entit{{ iif(is_state("sensor.unknown_count","1"),
+        "y", "ies") }}'
       title: Problem reports
       type: custom:mushroom-title-card
-    - content: '### {{ states("sensor.unknown_count")|default(0) }} unknown entit{{
-        iif(is_state("sensor.unknown_count","1"), "y", "ies") }}
-
-
-        {%- for item in state_attr("sensor.unknown_count", "entities") %}
-
-        * {{ item }}
-
-        {%- endfor %}'
-      type: markdown
-    - content: '### {{ states("sensor.unavailable_count")|default(0) }} unavailable
-        entit{{ iif(is_state("sensor.unavailable_count","1"), "y", "ies") }}
-
-
-        {%- for item in state_attr("sensor.unavailable_count", "entities") %}
-
-        * {{ item }}
-
-        {%- endfor %}'
-      type: markdown
-    - content: "### {{ states(\"sensor.watchman_missing_entities\")|default(0) }}\
-        \ missing entit{{ iif(is_state(\"sensor.watchman_missing_entities\",\"1\"\
-        ), \"y\", \"ies\") }}\n<table>\n  <thead>\n      <tr>\n          <th>Entity</th>\n\
-        \          <th>State</th>\n          <th>File</th>\n      </tr>\n  </thead>\n\
-        \  {%- for item in state_attr(\"sensor.watchman_missing_entities\", \"entities\"\
-        ) %}\n  <tr>\n    <td>{{ item.id }}</td>\n    <td><ha-icon icon=\"mdi:cloud-{%-\
-        \ if item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
-        \ else-%}question{%- endif -%}\"></ha-icon></td>\n    <td><a title=\"{{item.occurrences}}\"\
-        > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n  </tr>\n{%-\
-        \ endfor %}\n</table>"
+    - card:
+        type: entities
+      filter:
+        options:
+          show_empty: false
+          type: custom:multiple-entity-row
+        template: '{{ state_attr("sensor.unknown_count","entities") }}'
+      sort:
+        method: state
+      type: custom:auto-entities
+    - subtitle: '{{ states("sensor.unavailable_count")|default(0) }} unavailable entit{{
+        iif(is_state("sensor.unavailable_count","1"), "y", "ies") }}'
+      title: ''
+      type: custom:mushroom-title-card
+    - card:
+        type: entities
+      filter:
+        options:
+          show_empty: false
+          type: custom:multiple-entity-row
+        template: '{{ state_attr("sensor.unavailable_count","entities") }}'
+      sort:
+        method: state
+      type: custom:auto-entities
+    - subtitle: ' {{ states("sensor.watchman_missing_entities")|default(0) }} missing
+        entit{{ iif(is_state("sensor.watchman_missing_entities","1"), "y", "ies")
+        }}'
+      title: ''
+      type: custom:mushroom-title-card
+    - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"sensor.watchman_missing_entities\"\
+        , \"entities\") %}\n  <tr>\n    <td><ha-icon icon=\"mdi:cloud-{%- if item.state=='missing'-%}alert{%-\
+        \ elif item.state=='unavail' -%}off-outline{%- else-%}question{%- endif -%}\"\
+        ></ha-icon> &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a title=\"\
+        {{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
+        \  </tr>\n{%- endfor %}\n</table>"
       type: markdown
     type: vertical-stack
     view_layout:
@@ -2512,7 +2529,6 @@ views:
         type: buttons
       show_header_toggle: false
       state_color: true
-      theme: Caule Dark Purple
       title: ''
       type: entities
     - subtitle: Scheduler
@@ -2774,26 +2790,26 @@ views:
       title: Family dates
       type: custom:mushroom-title-card
     - card:
-        show_header_toggle: false
         type: entities
       filter:
         include:
         - domain: sensor
           entity_id: /anniversary|birthday|wedding/
           options:
+            column: false
             entities:
+            - attribute: weeks_remaining
+              name: Remaining
+              unit: weeks
             - attribute: current_years
               hide_unavailable: true
               name: Currently
               unit: years
-            - entity: this.entity_id
-              name: Next
-              unit: days
-            secondary_info:
-              attribute: date
+            - attribute: date
               format: date
             show_state: false
             type: custom:multiple-entity-row
+            unit: days
       show_empty: true
       sort:
         method: state
@@ -2803,18 +2819,21 @@ views:
   - cards:
     - title: Holidays
       type: custom:mushroom-title-card
-    - cards:
-      - content: "{% set current_holiday = states(\"sensor.holiday\") %}\n{#% set\
-          \ current_holiday = \"Holiday1, Holiday2\" %#}\n{%- if current_holiday !=\
-          \ \"\" %}\n**Today's holiday{{ \"s\" if \",\" in current_holiday }}**\n\
-          {{ current_holiday }}\n---\n{% endif %}\n{%- set holidays = state_attr(\"\
-          sensor.holiday\",\"upcoming_holidays\") %}\n{%- for holiday in holidays\
-          \ %}\n  {%- set holiday = holiday.split(\": \") %}\n  {%- set holiday_date\
-          \ = as_datetime(holiday[0]) %}\n**{{ holiday[1] }}**\n{{ holiday_date.strftime(\"\
-          %B %d, %Y\") }}\n{% endfor %}\n"
-        type: markdown
-      in_card: true
-      type: vertical-stack
+    - card:
+        type: entities
+      filter:
+        include:
+        - attributes:
+            type: Holiday
+          domain: sensor
+          options:
+            entities:
+            - attribute: friendly_date
+            show_state: false
+            type: custom:multiple-entity-row
+      sort:
+        method: state
+      type: custom:auto-entities
     type: vertical-stack
     view_layout:
       position: sidebar
