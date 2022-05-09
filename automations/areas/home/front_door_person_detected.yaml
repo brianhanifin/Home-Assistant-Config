@@ -24,46 +24,52 @@ action:
   #   data:
   #     message: 'new_state: {{ new_state }}'
 
+  - service: script.cast
+    continue_on_error: true
+    data:
+      display:
+        - 0aae07dda66f42e9b8a67979e34770d0
+        - 7d6b52507e25e7eeba10914e56052d1c
+      dashboard_path: dashboard-cast
+      view_path: cameras
+      dismiss_after: 120
+
   # Skip turning on the entry lights in the middle of the day.
   - choose:
       - conditions: "{{ outdoor_illuminance|default(0)|int < 2000 }}"
         sequence:
-          - choose:
-              - conditions:
-                  - '{{ new_state == "on" }}'
-                sequence:
-                  # Store the current state of the porch light.
-                  - service: scene.create
-                    data:
-                      scene_id: front_door_presence_snapshot
-                      snapshot_entities:
-                        - light.home_entry
-                        - light.porch
+          # Store the current state of the porch light.
+          - service: scene.create
+            data:
+              scene_id: front_door_presence_snapshot
+              snapshot_entities:
+                - light.home_entry
+                - light.porch
 
-                  # Disable Adaptive Lighting automated control.
-                  # ** Porch
-                  # - service: adaptive_lighting.set_manual_control
-                  #   target:
-                  #     entity_id: switch.adaptive_lighting_home_entry
-                  #   data:
-                  #     manual_control: true
-                  # # ** Entry/Stair Chandelier
-                  # - service: adaptive_lighting.set_manual_control
-                  #   target:
-                  #     entity_id: switch.adaptive_lighting_home_entry
-                  #   data:
-                  #     manual_control: true
+          # Disable Adaptive Lighting automated control.
+          # ** Porch
+          # - service: adaptive_lighting.set_manual_control
+          #   target:
+          #     entity_id: switch.adaptive_lighting_home_entry
+          #   data:
+          #     manual_control: true
+          # # ** Entry/Stair Chandelier
+          # - service: adaptive_lighting.set_manual_control
+          #   target:
+          #     entity_id: switch.adaptive_lighting_home_entry
+          #   data:
+          #     manual_control: true
 
-                  # Full brightness!
-                  - service: light.turn_on
-                    data:
-                      entity_id: light.porch
-                      kelvin: 3500
-                      brightness: 255
-                  - service: light.turn_on
-                    data:
-                      entity_id: light.home_entry
-                      brightness: 255
+          # Full brightness!
+          - service: light.turn_on
+            data:
+              entity_id: light.porch
+              kelvin: 3500
+              brightness: 255
+          - service: light.turn_on
+            data:
+              entity_id: light.home_entry
+              brightness: 255
 
               # - conditions:
               #     - '{{ new_state == "off" }}'
@@ -101,6 +107,7 @@ action:
               seconds: 4
 
           - service: script.notify_mobile
+            continue_on_error: true
             data:
               title: Front Door
               message: Person Detected
@@ -110,6 +117,7 @@ action:
               url: /lovelace/outdoor
 
           - service: script.notify_pc
+            continue_on_error: true
             data:
               title: Front Door
               message: Person Detected
@@ -126,6 +134,7 @@ action:
           #       - service: remote.turn_on
           #         entity_id: remote.apple_tv_family_room
           #       - service: camera.play_stream
+          #         continue_on_error: true
           #         target:
           #           entity_id: camera.doorbell
           #         data:

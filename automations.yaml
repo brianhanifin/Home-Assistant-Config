@@ -275,22 +275,6 @@
     target:
       entity_id: automation.startup
   mode: single
-- id: '1621443029471'
-  alias: 'Kitchen display: refresh home assistant every 10 minutes'
-  description: The display times out after 10 minutes, so reload it. This also resets
-    the display to the home screen.
-  trigger:
-  - platform: time_pattern
-    minutes: /10
-  condition: []
-  action:
-  - service: script.cast
-    data:
-      dashboard_path: dashboard-cast
-      view_path: home
-      dismiss_after: 599
-      display: 7d6b52507e25e7eeba10914e56052d1c
-  mode: single
 - id: '1624556633877'
   alias: Safety alert garage door obstruction detected
   description: Alert when the garage door is unable to close due an obstruction.
@@ -683,23 +667,29 @@
   action:
   - parallel:
     - service: script.notify_audio
+      continue_on_error: true
       data:
         audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
         speakers:
         - media_player.google_family_room
     - service: script.cast
+      continue_on_error: true
       data:
         dashboard_path: dashboard-cast
         view_path: cameras
         dismiss_after: 120
-        display: 7d6b52507e25e7eeba10914e56052d1c
+        display:
+        - 0aae07dda66f42e9b8a67979e34770d0
+        - 7d6b52507e25e7eeba10914e56052d1c
     - service: script.notify_mobile
+      continue_on_error: true
       data:
         who: brian
         title: Doorbell
         message: Someone pushed the doorbell.
         camera: camera.front_door
     - service: script.notify_web
+      continue_on_error: true
       data:
         message: Someone pressed the doorbell!
         duration: 60
@@ -787,7 +777,8 @@
         entity_id: timer.google_next_timer
     - service: script.cast_stop
       data:
-        display: 7d6b52507e25e7eeba10914e56052d1c
+        display:
+        - 7d6b52507e25e7eeba10914e56052d1c
     else:
     - choose:
       - conditions:
@@ -810,21 +801,29 @@
               '
         - delay:
             seconds: 5
-        - service: cast.show_lovelace_view
+        - service: script.cast
+          continue_on_error: true
           data:
-            entity_id: media_player.google_kitchen
             dashboard_path: dashboard-cast
             view_path: timers
+            dismiss_after: 120
+            display:
+            - 0aae07dda66f42e9b8a67979e34770d0
+            - 7d6b52507e25e7eeba10914e56052d1c
       - conditions:
         - condition: trigger
           id: timer_started
           enabled: true
         sequence:
-        - service: cast.show_lovelace_view
+        - service: script.cast
+          continue_on_error: true
           data:
-            entity_id: media_player.google_kitchen
             dashboard_path: dashboard-cast
             view_path: timers
+            dismiss_after: 120
+            display:
+            - 0aae07dda66f42e9b8a67979e34770d0
+            - 7d6b52507e25e7eeba10914e56052d1c
       - conditions:
         - condition: trigger
           id: timer_finished
@@ -848,11 +847,15 @@
               }}
 
               '
-        - service: cast.show_lovelace_view
+        - service: script.cast
+          continue_on_error: true
           data:
-            entity_id: media_player.google_kitchen
             dashboard_path: dashboard-cast
             view_path: timers
+            dismiss_after: 120
+            display:
+            - 0aae07dda66f42e9b8a67979e34770d0
+            - 7d6b52507e25e7eeba10914e56052d1c
       - conditions:
         - condition: or
           conditions:

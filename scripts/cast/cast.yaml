@@ -2,35 +2,83 @@
 alias: Cast
 mode: single
 icon: 'mdi:cast'
+variables:
+  entities: |
+    {%- set data = namespace(displays="") %}
+    {%- if displays is defined %}
+      {%- if displays is not string %}
+        {%- for display in displays %}
+          {%- set data.displays = data.displays ~ '"' ~ device_entities(display)[0] ~ '"' ~ iif(not loop.last, ",", "") %}
+        {%- endfor %}
+      {%- else %}
+        {%- set data.displays = '"' ~ device_entities(displays)[0] ~ '"' %}
+      {%- endif %}
+    {%- else %}
+      {%- set data.displays = '"media_player.google_kitchen"' %}
+    {%- endif %}
+    [{{ data.displays }}]
 sequence:
   # - service: script.debug
   #   data:
   #     message: |
-  #       display: '{{ device_entities(display)[0] | default("media_player.google_kitchen") }}'
+  #       displays is not string: '{{ displays is not string }}'
+  #       dismiss_after is defined: '{{ dismiss_after is defined }}'
+
+  #       displays: '{{ displays }}'
+
+  #       entities: '{{ entities }}'
+  #       count: {{ entities|count }}
+
   #       dashboard_path: "{{ dashboard_path }}"
   #       view_path: "{{ view_path }}"
 
-  - service: cast.show_lovelace_view
-    data:
-      entity_id: '{{ device_entities(display)[0] | default("media_player.google_kitchen") }}'
-      dashboard_path: '{{ dashboard_path }}'
-      view_path: '{{ view_path }}'
+  - alias: "Turn on the displays."
+    repeat:
+      count: '{{ entities|count }}'
+      sequence:
+        - parallel:
+          - if: '{{ is_state_attr(entities[repeat.index-1], "app_name", "Home Assistant Lovelace") }}'
+            then:
+              - service: media_player.turn_off
+                target:
+                  entity_id: '{{ entities[repeat.index-1] }}'
+              - delay:
+                  seconds: 0.1
 
-  - delay:
-      seconds: '{{ dismiss_after|default(60) }}'
+  - alias: "Cast a dashboard to the displays."
+    repeat:
+      count: '{{ entities|count }}'
+      sequence:
+        - parallel:
+          - service: cast.show_lovelace_view
+            data:
+              entity_id: '{{ entities[repeat.index-1] }}'
+              dashboard_path: '{{ dashboard_path }}'
+              view_path: '{{ view_path }}'
 
-  - service: script.cast_stop
-    data:
-      entity_id: '{{ device_entities(display)[0] | default("media_player.google_kitchen") }}'
+  - alias: "If `dismiss_after` is set, then turn off the displays after the specified delay."
+    if: '{{ dismiss_after is defined }}'
+    then:
+      - delay:
+          seconds: '{{ dismiss_after }}'
+
+      - service: script.cast_stop
+        data:
+          displays: '{{ displays }}'
 
 fields:
-  display:
-    description: Select the Google cast display.
-    default: 7d6b52507e25e7eeba10914e56052d1c
+  displays:
+    description: Select the Google cast display(s).
+    default: 0aae07dda66f42e9b8a67979e34770d0
     selector:
       device:
+        multiple: true
         integration: cast
-        model: "Google Nest Hub"
+        entity:
+          domain: media_player
+# model: "Google Nest Hub"
+# model: "Google Nest Hub Max"
+
   # display:
   #   description: Select the Google cast display.
   #   default: media_player.google_kitchen

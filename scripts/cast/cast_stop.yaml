@@ -2,22 +2,39 @@
 alias: Cast Stop
 mode: single
 icon: 'mdi:cast-off'
+variables:
+  entities: |
+    {%- set data = namespace(displays="") %}
+    {%- if displays is defined %}
+      {%- if displays is not string %}
+        {%- for display in displays %}
+          {%- set data.displays = data.displays ~ '"' ~ device_entities(display)[0] ~ '"' ~ iif(not loop.last, ",", "") %}
+        {%- endfor %}
+      {%- else %}
+        {%- set data.displays = '"' ~ device_entities(displays)[0] ~ '"' %}
+      {%- endif %}
+    {%- else %}
+      {%- set data.displays = '"media_player.google_kitchen"' %}
+    {%- endif %}
+    [{{ data.displays }}]
 sequence:
-  - service: media_player.turn_off
-    target:
-      entity_id: '{{ device_entities(display)[0] | default("media_player.google_kitchen") }}'
+  - repeat:
+      count: '{{ entities|count }}'
+      sequence:
+        - parallel:
+          - if: '{{ is_state(entities[repeat.index-1], "playing") }}'
+            then:
+              - service: media_player.turn_off
+                target:
+                  entity_id: '{{ entities[repeat.index-1] }}'
 
 fields:
-  display:
-    description: Select the Google cast display.
-    default: 7d6b52507e25e7eeba10914e56052d1c
+  displays:
+    description: Select the Google cast display(s).
+    default: 0aae07dda66f42e9b8a67979e34770d0
     selector:
       device:
+        multiple: true
         integration: cast
-        model: "Google Nest Hub"
-  # display:
-  #   description: Select the Google cast display.
-  #   selector:
-  #     entity:
-  #       integration: cast
-
+        entity:
+          domain: media_player
