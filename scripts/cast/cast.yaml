@@ -37,24 +37,24 @@ sequence:
       count: '{{ entities|count }}'
       sequence:
         - parallel:
-          - if: '{{ is_state_attr(entities[repeat.index-1], "app_name", "Home Assistant Lovelace") }}'
-            then:
-              - service: media_player.turn_off
-                target:
-                  entity_id: '{{ entities[repeat.index-1] }}'
-              - delay:
-                  seconds: 0.1
+            - if: '{{ is_state_attr(entities[repeat.index-1], "app_name", "Home Assistant Lovelace") }}'
+              then:
+                - service: media_player.turn_off
+                  target:
+                    entity_id: '{{ entities[repeat.index-1] }}'
+                - delay:
+                    seconds: 0.1
 
   - alias: "Cast a dashboard to the displays."
     repeat:
       count: '{{ entities|count }}'
       sequence:
         - parallel:
-          - service: cast.show_lovelace_view
-            data:
-              entity_id: '{{ entities[repeat.index-1] }}'
-              dashboard_path: '{{ dashboard_path }}'
-              view_path: '{{ view_path }}'
+            - service: cast.show_lovelace_view
+              data:
+                entity_id: '{{ entities[repeat.index-1] }}'
+                dashboard_path: '{{ dashboard_path }}'
+                view_path: '{{ view_path }}'
 
   - alias: "If `dismiss_after` is set, then turn off the displays after the specified delay."
     if: '{{ dismiss_after is defined }}'
