@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1204 total entities**, 
-including **593 sensors**.
+Our Home Assistant install has approximately **1276 total entities**, 
+including **612 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -246,7 +246,7 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
 
 
-#### [Holidays v1.7.3](https://github.com/bruxy70/Holidays/)
+#### [Holidays v1.7.4](https://github.com/bruxy70/Holidays/)
 
 📅 Custom Home Assistant integration for public holidays - also used for garbage_collection integration to automatically move scheduled events that fall on a public holiday (by an automation blueprint)
 Authors: [@bruxy70](https://github.com/bruxy70).
@@ -264,7 +264,7 @@ Authors: [@rr326](https://github.com/rr326).
 Authors: [@ryanwinter](https://github.com/ryanwinter).
 
 
-#### [SamsungTV Smart v0.7.0](https://github.com/ollo69/ha-samsungtv-smart)
+#### [SamsungTV Smart v0.7.1](https://github.com/ollo69/ha-samsungtv-smart)
 
 
 Authors: [@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
@@ -282,7 +282,7 @@ Home Assistant Custom Component for Wyze Vacuum
 Authors: [romedtino](https://github.com/romedtino).
 
 
-#### [SmartThinQ LGE Sensors v0.12.12](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.13.0](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -300,7 +300,7 @@ Authors: [@pnbruckner](https://github.com/pnbruckner).
 Authors: [@jchasey](https://github.com/jchasey).
 
 
-#### [Watchman v0.5.0](https://github.com/dummylabs/thewatchman)
+#### [Watchman v0.5.1](https://github.com/dummylabs/thewatchman)
 
 Home Assistant custom integration to keep track of missing entities and services in your config files
 Authors: [@dummylabs](https://github.com/dummylabs).
@@ -318,7 +318,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>28 lovelace plugins</summary>
+<details><summary>29 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -388,7 +388,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
-#### [Mushroom v1.7.3](https://github.com/piitaya/lovelace-mushroom)
+#### [Mushroom v1.8.0](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 
@@ -420,6 +420,10 @@ A different take on the thermostat card for Home Assistant ♨️
 🔹Dynamically replace lovelace cards depending on occasion
 
 
+#### [Surveillance Card v0.0.5](https://github.com/custom-cards/surveillance-card)
+A custom component for displaying camera feeds in the style of a surveillance system.
+
+
 #### [Swipe Card v4.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
@@ -433,7 +437,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>7 addons</summary>
+<details><summary>8 addons</summary>
 
 #### ESPHome v2022.4.0
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
@@ -447,12 +451,16 @@ Simple browser-based file editor for Home Assistant
 Home Assistant scheduler
 
 
-#### Home Assistant Google Drive Backup v0.107.1
+#### Home Assistant Google Drive Backup v0.107.2
 Automatically manage backups between Home Assistant and Google Drive
 
 
 #### Portainer v2.0.0
 Manage your Docker environment with ease
+
+
+#### RTSPtoWeb - WebRTC v1.2.2
+RTSP Stream to WebBrowser over WebRTC and other protocols based on Pion
 
 
 #### Samba share v9.6.1
@@ -494,7 +502,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.5.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.5.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -504,7 +512,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39438-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39520-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
