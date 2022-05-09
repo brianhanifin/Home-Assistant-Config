@@ -11,7 +11,7 @@ variables:
     {%- set data = namespace(count=0) %}
     {%- set alerts = state_attr("sensor.san_diego_county_inland_valleys","alerts") %}
     {%- for alert in alerts if as_timestamp(alert.ends) - as_timestamp(now()) > 0 %}
-      {%- set data.count = data.count|default(0)|int + 1 %} 
+      {%- set data.count = data.count|default(0)|int + 1 %}
     {% endfor %}
     {%- set alert_count = data.count %}
   title: |
@@ -44,7 +44,7 @@ action:
       who: brian
       group: safety
       tag: weather-alert
-      url: /lovelace/outdoors#weather
+      url: /lovelace/outdoor
 
   - service: script.notify_web
     data:
