@@ -219,12 +219,15 @@
   - platform: time_pattern
     minutes: /15
   condition:
+  - condition: state
+    entity_id: binary_sensor.contact_home
+    state: 'on'
   - condition: template
     value_template: '{{ states("sensor.outdoor_temperature")|float(default=0) >= states("sensor.home_thermostat_temperature")|float(default=0)
       }}'
   - condition: time
     after: 06:00:00
-    before: '15:00:00'
+    before: '17:00:00'
   action:
   - choose:
     - conditions:
@@ -235,6 +238,7 @@
       - service: input_boolean.turn_off
         target:
           entity_id: input_boolean.warmer_outside_notification
+        data: {}
     default: []
   - service: script.notify_mobile
     data:

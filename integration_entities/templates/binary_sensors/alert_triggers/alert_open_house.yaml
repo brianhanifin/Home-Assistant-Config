@@ -1,0 +1,18 @@
+---
+unique_id: alert_open_house
+name: "Alert: open house"
+icon: mdi:home-lock-open
+device_class: problem
+state: |
+  {%- set outside_temp = states("sensor.outdoor_temperature")|round(default=0) %}
+  {%- set inside_temp = states("sensor.home_thermostat_temperature")|round(default=0) %}
+  {%- set outside_humidity = states("sensor.outdoor_humidity")|round(default=0) %}
+  {%- set indoor_humidity = states("sensor.home_thermostat_humidity")|round(default=0) %}
+  {%- set home_closed = is_state("binary_sensor.contact_home", "off") %}
+  {%- set current_hour = now().hour %}
+  {{
+    (outside_temp - inside_temp) <= -2
+    and (outside_humidity - indoor_humidity) <= 25
+    and home_closed
+    and 14 <= current_hour < 21
+  }}
