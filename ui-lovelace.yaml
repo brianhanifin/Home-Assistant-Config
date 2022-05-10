@@ -213,6 +213,20 @@ decluttering_templates:
           browser_mod:
             card:
               cards:
+              - aspect_ratio: '16:9'
+                entities:
+                - entity: device_tracker.life360_brian
+                - entity: device_tracker.life360_lucas
+                - entity: device_tracker.life360_eric_goez
+                - entity: device_tracker.life360_nerene
+                - entity: zone.court
+                - entity: zone.office
+                - entity: zone.high_school
+                - entity: zone.home
+                - entity: zone.range
+                - entity: zone.school
+                hours_to_show: 6
+                type: map
               - card:
                   columns: 3
                   show_header_toggle: false
@@ -229,20 +243,6 @@ decluttering_templates:
                 state_filter:
                 - home
                 type: entity-filter
-              - aspect_ratio: '16:9'
-                entities:
-                - entity: device_tracker.life360_brian
-                - entity: device_tracker.life360_lucas
-                - entity: device_tracker.life360_eric_goez
-                - entity: device_tracker.life360_nerene
-                - entity: zone.court
-                - entity: zone.office
-                - entity: zone.high_school
-                - entity: zone.home
-                - entity: zone.range
-                - entity: zone.school
-                hours_to_show: 6
-                type: map
               type: vertical-stack
             command: popup
             deviceID: this
@@ -1418,6 +1418,27 @@ views:
           action: toggle
         type: custom:mushroom-entity-card
       - entity: fan.bedroom
+        fill_container: false
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            card:
+              entities:
+              - entity: fan.bedroom
+              - entity: fan.bedroom
+                grow: true
+                hide_state: true
+                name: Speed
+                type: custom:slider-entity-row
+              - entity: sensor.bedroom_fan_power
+              - entity: input_button.bedroom_fan_oscillation
+                name: Oscillation toggle
+              - entity: input_button.bedroom_fan_led_toggle
+                name: LED toggle
+              type: entities
+            command: popup
+            deviceID: this
+            title: Bedroom fan
         icon_animation: true
         name: Fan
         show_oscillate_control: false
@@ -1673,22 +1694,18 @@ views:
       type: grid
     type: vertical-stack
   - cards:
-    - camera_image: camera.front_door
-      camera_view: auto
-      entity: camera.front_door
+    - camera_image: camera.front_door_rtsp
+      camera_view: live
+      entity: camera.front_door_rtsp
       show_name: false
       show_state: false
       type: picture-entity
-      view_layout:
-        position: main
-    - camera_image: camera.driveway
-      camera_view: auto
-      entity: camera.driveway
+    - camera_image: camera.driveway_rtsp
+      camera_view: live
+      entity: camera.driveway_rtsp
       show_name: false
       show_state: false
       type: picture-entity
-      view_layout:
-        position: main
     columns: 2
     square: false
     type: grid
@@ -2249,7 +2266,7 @@ views:
       type: custom:mushroom-chips-card
     - alignment: justify
       chips:
-      - content: Entity counts
+      - content: Refresh counts
         icon: mdi:cog-refresh
         icon_color: grey
         tap_action:
@@ -2259,7 +2276,7 @@ views:
           target:
             entity_id: script.refresh_count_sensors
         type: template
-      - content: Update sensors
+      - content: Refresh update sensors
         icon: mdi:cog-refresh
         icon_color: grey
         tap_action:
@@ -2269,8 +2286,8 @@ views:
           target:
             entity_id: script.refresh_update_sensors
         type: template
-      - content: Watchman
-        icon: mdi:shield-half-full
+      - content: Refresh watchman
+        icon: mdi:shield-refresh
         icon_color: grey
         tap_action:
           action: call-service
@@ -2786,25 +2803,22 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: Birthdays & anniversaries.
-      title: Family dates
+    - subtitle: ''
+      title: Family birthdays and anniversaries
       type: custom:mushroom-title-card
     - card:
         type: entities
       filter:
         include:
-        - domain: sensor
-          entity_id: /anniversary|birthday|wedding/
+        - attributes:
+            weeks_remaining: '! none'
+          domain: sensor
           options:
             column: false
             entities:
             - attribute: weeks_remaining
               name: Remaining
               unit: weeks
-            - attribute: current_years
-              hide_unavailable: true
-              name: Currently
-              unit: years
             - attribute: date
               format: date
             show_state: false
