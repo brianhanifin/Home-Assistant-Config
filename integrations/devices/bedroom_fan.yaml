@@ -34,35 +34,35 @@ automation:
       - id: high
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
-        above: 35
+        above: 47
         for:
           seconds: 2
       - id: medium_high
+        platform: numeric_state
+        entity_id: sensor.bedroom_fan_power
+        above: 42
+        below: 47
+        for:
+          seconds: 2
+      - id: medium
+        platform: numeric_state
+        entity_id: sensor.bedroom_fan_power
+        above: 35
+        below: 42
+        for:
+          seconds: 2
+      - id: medium_low
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
         above: 30
         below: 35
         for:
           seconds: 2
-      - id: medium
-        platform: numeric_state
-        entity_id: sensor.bedroom_fan_power
-        above: 25
-        below: 30
-        for:
-          seconds: 2
-      - id: medium_low
-        platform: numeric_state
-        entity_id: sensor.bedroom_fan_power
-        above: 20
-        below: 25
-        for:
-          seconds: 2
       - id: low
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
         above: 15
-        below: 20
+        below: 30
         for:
           seconds: 2
     variables:
@@ -85,6 +85,10 @@ automation:
     trigger:
       - platform: state
         entity_id: input_button.bedroom_fan_led_toggle
+    condition:
+      - condition: state
+        entity_id: automation.startup
+        state: "off"
     action:
       - service: remote.send_command
         data:
@@ -133,7 +137,7 @@ script:
           - alias: "Turn power off."
             conditions: '{{
               is_state("fan.bedroom","on")
-              and chosen_speed == 0 
+              and chosen_speed == 0
               and current_speed > 0
             }}'
             sequence:
