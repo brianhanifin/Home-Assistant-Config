@@ -206,9 +206,9 @@
       type: success
       duration: 60
   - service: automation.turn_off
+    data: {}
     target:
       entity_id: automation.startup
-    data: {}
   mode: single
   initial_state: true
 - id: '1619989994523'
@@ -220,7 +220,7 @@
     minutes: /15
   condition:
   - condition: state
-    entity_id: binary_sensor.contact_home
+    entity_id: binary_sensor.home_doors_windows
     state: 'on'
   - condition: template
     value_template: '{{ states("sensor.outdoor_temperature")|float(default=0) >= states("sensor.home_thermostat_temperature")|float(default=0)

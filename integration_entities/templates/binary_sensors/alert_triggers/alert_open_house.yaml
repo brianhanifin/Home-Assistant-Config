@@ -8,7 +8,7 @@ state: |
   {%- set inside_temp = states("sensor.home_thermostat_temperature")|round(default=0) %}
   {%- set outside_humidity = states("sensor.outdoor_humidity")|round(default=0) %}
   {%- set indoor_humidity = states("sensor.home_thermostat_humidity")|round(default=0) %}
-  {%- set home_closed = is_state("binary_sensor.contact_home", "off") %}
+  {%- set home_closed = is_state("binary_sensor.home_doors_windows", "off") %}
   {%- set current_hour = now().hour %}
   {{
     (outside_temp - inside_temp) <= -2
