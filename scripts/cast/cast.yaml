@@ -32,12 +32,13 @@ sequence:
   #       dashboard_path: "{{ dashboard_path }}"
   #       view_path: "{{ view_path }}"
 
-  - alias: "Turn on the displays."
+  - alias: "Cast a page to the specified displays."
     repeat:
       count: '{{ entities|count }}'
       sequence:
         - parallel:
-            - if: '{{ is_state_attr(entities[repeat.index-1], "app_name", "Home Assistant Lovelace") }}'
+            - alias: "Turn off the media player entity before we cast a new page for it to display."
+              if: '{{ is_state_attr(entities[repeat.index-1], "app_name", "Home Assistant Lovelace") }}'
               then:
                 - service: media_player.turn_off
                   target:
@@ -45,12 +46,8 @@ sequence:
                 - delay:
                     seconds: 0.1
 
-  - alias: "Cast a dashboard to the displays."
-    repeat:
-      count: '{{ entities|count }}'
-      sequence:
-        - parallel:
-            - service: cast.show_lovelace_view
+            - alias: "Cast a dashboard to a display."
+              service: cast.show_lovelace_view
               data:
                 entity_id: '{{ entities[repeat.index-1] }}'
                 dashboard_path: '{{ dashboard_path }}'
@@ -62,29 +59,20 @@ sequence:
       - delay:
           seconds: '{{ dismiss_after }}'
 
-      - service: script.cast_stop
+      - alias: "Stop the displays from display the page."
+        service: script.cast_stop
         data:
           displays: '{{ displays }}'
 
 fields:
   displays:
     description: Select the Google cast display(s).
-    default: 0aae07dda66f42e9b8a67979e34770d0
     selector:
       device:
         multiple: true
         integration: cast
         entity:
           domain: media_player
-# model: "Google Nest Hub"
-# model: "Google Nest Hub Max"
-
-  # display:
-  #   description: Select the Google cast display.
-  #   default: media_player.google_kitchen
-  #   selector:
-  #     entity:
-  #       integration: cast
   dashboard_path:
     description: Path to the desired dashboard.
     default: lovelace
