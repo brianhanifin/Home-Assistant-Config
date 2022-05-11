@@ -170,9 +170,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 ## Technical details
 
 Our Home Assistant install has approximately **1261 total entities**, 
-including **601 sensors**.
+including **596 sensors**.
 
-<details><summary>24 Custom integrations</summary>
+<details><summary>25 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -238,6 +238,12 @@ Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://g
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
+
+
+#### [HASS.Agent MediaPlayer v2022.5.6](https://github.com/LAB02-Research/HASS.Agent-MediaPlayer)
+
+
+Authors: [@LAB02-Admin](https://github.com/LAB02-Admin).
 
 
 #### [HASS.Agent Notifier v2022.3.15](https://github.com/LAB02-Research/HASS.Agent-Notifier)
@@ -352,7 +358,7 @@ Show a notification count badge.
 Flipdown Timer Card for Home Assistant Lovelace
 
 
-#### [Fold Entity Row v2.2.0](https://github.com/thomasloven/lovelace-fold-entity-row)
+#### [Fold Entity Row v20.0.4](https://github.com/thomasloven/lovelace-fold-entity-row)
 🔹 A foldable row for entities card, containing other rows
 
 
@@ -512,7 +518,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39568-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39808-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

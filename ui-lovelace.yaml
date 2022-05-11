@@ -149,7 +149,6 @@ decluttering_templates:
             title: Calendar
         type: entity
       - entity: weather.home
-        show_conditions: false
         show_temperature: true
         tap_action:
           action: fire-dom-event
@@ -301,6 +300,95 @@ decluttering_templates:
           type: entity
         conditions:
         - entity: sensor.lights_on
+          state_not: '0'
+        type: conditional
+      - chip:
+          entity: sensor.windows_open
+          icon_color: blue
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              card:
+                cards:
+                - subtitle: Downstairs windows
+                  type: custom:mushroom-title-card
+                - card:
+                    columns: 3
+                    show_header_toggle: false
+                    show_name: true
+                    show_state: false
+                    type: entities
+                  filter:
+                    exclude:
+                    - state: 'off'
+                    - state: unknown
+                    - state: unavailable
+                    include:
+                    - group: group.downstairs_windows
+                  show_empty: false
+                  sort:
+                    method: name
+                  type: custom:auto-entities
+                - subtitle: Upstairs windows
+                  type: custom:mushroom-title-card
+                - card:
+                    columns: 3
+                    show_header_toggle: false
+                    show_name: true
+                    show_state: false
+                    type: entities
+                  filter:
+                    exclude:
+                    - state: 'off'
+                    - state: unknown
+                    - state: unavailable
+                    include:
+                    - group: group.upstairs_windows
+                  show_empty: false
+                  sort:
+                    method: name
+                  type: custom:auto-entities
+                type: vertical-stack
+              command: popup
+              deviceID: this
+              title: Windows open
+          type: entity
+        conditions:
+        - entity: sensor.windows_open
+          state_not: '0'
+        type: conditional
+      - chip:
+          entity: sensor.doors_open
+          icon_color: purple
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              card:
+                card:
+                  columns: 3
+                  show_header_toggle: false
+                  show_name: true
+                  show_state: false
+                  type: entities
+                filter:
+                  exclude:
+                  - state: closed
+                  - state: locked
+                  - state: 'off'
+                  - state: unknown
+                  - state: unavailable
+                  include:
+                  - group: group.entry_doors
+                show_empty: false
+                sort:
+                  method: name
+                type: custom:auto-entities
+              command: popup
+              deviceID: this
+              title: Doors open or unlocked
+          type: entity
+        conditions:
+        - entity: sensor.doors_open
           state_not: '0'
         type: conditional
       type: custom:mushroom-chips-card
@@ -1116,10 +1204,12 @@ views:
         light.kitchen_prep\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
         \ = iif(is_state(\"light.dining_room\",\"on\"), lights_on + 1, lights_on)\
         \ %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light\
-        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.kitchen_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not\
-        \ is_state(\"input_select.dishwasher_status\",\"-\"), \" ‧ dishes are \" ~\
-        \ states(\"input_select.dishwasher_status\")|lower, \"\") }}"
+        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n\n{{- iif(is_state(\"\
+        binary_sensor.kitchen_window\", \"on\"), \" ‧ window open\", \"\") }}\n{{-\
+        \ iif(is_state(\"binary_sensor.kitchen_presence\",\"on\"), \" ‧ occupied\"\
+        , \"\") }}\n{{- iif(not is_state(\"input_select.dishwasher_status\",\"-\"\
+        ), \" ‧ dishes are \" ~ states(\"input_select.dishwasher_status\")|lower,\
+        \ \"\") }}"
       title: Kitchen & dining
       type: custom:mushroom-title-card
     - cards:
@@ -1150,8 +1240,11 @@ views:
         light.play_room_floor_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set\
         \ lights_on = iif(is_state(\"light.play_room_entry\",\"on\"), lights_on +\
         \ 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- iif(lights_on == 1, \"\
-        1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.play_room_presence\",\"on\"), \" ‧ occupied\", \"\") }}"
+        1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- set contact_open\
+        \ = is_state(\"binary_sensor.sliding_door\", \"on\") %}\n{%- if contact_open\
+        \ %}\n  {{- \" ‧ \" if lights_on }}\n  {{- \"sliding door open\" }}\n{%- endif\
+        \ %}\n{{- iif(is_state(\"binary_sensor.play_room_presence\",\"on\"), \" ‧\
+        \ occupied\", \"\") }}"
       title: Play room
       type: custom:mushroom-title-card
     - cards:
@@ -1197,9 +1290,12 @@ views:
         light.porch\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
         light.entry_railing\",\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on\
         \ > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light is on\", lights_on\
-        \ ~ \" lights are on\") }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.doorbell_person_motion\"\
-        ,\"on\"), \" ‧ someone is at the front door\", \"\") }}\n{{- iif(is_state(\"\
-        lock.front_door\",\"unlocked\"), \" ‧ front door is unlocked\", \"\") }}"
+        \ ~ \" lights are on\") }}\n{%- endif %}\n{%- set contact_open = is_state(\"\
+        binary_sensor.front_door\", \"on\") %}\n{%- if contact_open %}\n  {{- \" ‧\
+        \ \" if lights_on }}\n  {{- \"door open\" }}\n{%- endif %}\n{{- iif(is_state(\"\
+        binary_sensor.doorbell_person_motion\",\"on\"), \" ‧ someone is at the front\
+        \ door\", \"\") }}\n{{- iif(is_state(\"lock.front_door\",\"unlocked\"), \"\
+        \ ‧ front door is unlocked\", \"\") }}"
       title: Home entry
       type: custom:mushroom-title-card
     - cards:
@@ -1247,10 +1343,12 @@ views:
         \ set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.laundry\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
-        {%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_presence\",\"on\"),\
-        \ \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\",\"\
-        closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\") }}\n\
-        {%- if not states(\"input_select.laundry_status\") in [\"Off\",\"Unknown\"\
+        {%- endif %}\n{%- set contact_open = is_state(\"cover.garage_door\", \"open\"\
+        ) %}\n{%- if contact_open %}\n  {{- \" ‧ \" if lights_on }}\n  {{- \"garage\
+        \ door open\" }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_presence\"\
+        ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
+        ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\"\
+        ) }}\n{%- if not states(\"input_select.laundry_status\") in [\"Off\",\"Unknown\"\
         ] %}\n  {{- \" ‧ \" ~ iif(states(\"input_select.laundry_status\") != \"Please\
         \ transfer to dryer\", \"laundry is \", \"\") ~ states(\"input_select.laundry_status\"\
         )|lower }}\n{%- endif %}"
@@ -1467,6 +1565,9 @@ views:
 
         {{- " ‧ " ~ states("sensor.upstairs_bathroom_humidity")|round(default=0) }}%
 
+        {{- iif(is_state("binary_sensor.upstairs_bathroom_window", "on"), " ‧ window
+        open", "") }}
+
         {{- iif(is_state("binary_sensor.upstairs_bathroom_presence","on"), " ‧ occupied",
         "") }}'
       title: Upstairs bathroom
@@ -1652,13 +1753,13 @@ views:
     - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.porch\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"weather.home\") }}\n\
         {{- \" ‧ \" ~ states(\"sensor.backyard_temperature\")|round(default=0) }}°\n\
-        {{- \" ‧ \" ~ state_attr(\"weather.home\",\"humidity\") }}%\n{{ \"front door\
-        \ is \" ~ states(\"lock.front_door\") }}\n{%- if lights_on > 0 %}\n  {{- \"\
-        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
-        {%- endif %}\n{{- iif(is_state(\"binary_sensor.front_door_person_motion\"\
-        ,\"on\"), \" ‧ front door occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
-        ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\"\
-        ) }}"
+        {{- \" ‧ \" ~ state_attr(\"weather.home\",\"humidity\") }}%\n{%- set lock\
+        \ = states(\"lock.front_door\") %}\n{{- iif(lock != \"locked\", \" ‧ front\
+        \ door is \" ~ lock, \"\") }}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on\
+        \ == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{-\
+        \ iif(is_state(\"binary_sensor.front_door_person_motion\",\"on\"), \" ‧ front\
+        \ door occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\",\"\
+        closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\") }}"
       title: Outdoors
       type: custom:mushroom-title-card
     - cards:
@@ -1693,22 +1794,12 @@ views:
       square: false
       type: grid
     type: vertical-stack
-  - cards:
-    - camera_image: camera.front_door_rtsp
-      camera_view: live
-      entity: camera.front_door_rtsp
-      show_name: false
-      show_state: false
-      type: picture-entity
-    - camera_image: camera.driveway_rtsp
-      camera_view: live
-      entity: camera.driveway_rtsp
-      show_name: false
-      show_state: false
-      type: picture-entity
-    columns: 2
-    square: false
-    type: grid
+  - camera_image: camera.front_door_rtsp
+    camera_view: live
+    entity: camera.front_door_rtsp
+    show_name: false
+    show_state: false
+    type: picture-entity
   - cards:
     - camera_view: auto
       entity: camera.front_door_person
@@ -1732,6 +1823,12 @@ views:
     type: grid
     view_layout:
       position: main
+  - camera_image: camera.driveway_rtsp
+    camera_view: live
+    entity: camera.driveway_rtsp
+    show_name: false
+    show_state: false
+    type: picture-entity
   icon: mdi:flower
   path: outdoor
   theme: Backend-selected
@@ -2779,7 +2876,7 @@ views:
       type: grid
     - entities:
       - entity: sensor.hp_colorlaserjet
-        secondary_info: last-updated
+        secondary_info: last-changed
       - entity: automation.printer_status_update_when_on
         secondary_info: last-triggered
       - entity: automation.printer_turn_off_when_idle
