@@ -1,7 +1,6 @@
 ---
-# Pre-render text for the UI to lighten the browser's workload.
 unique_id: ui_date
 state: |
-  {%- set update_entity = states("sensor.date") %}
-  {{ now().strftime("%A") }}
-  {{ now().strftime("%B") + ", " ~ now().day }}
+  {{- now().strftime("%a") ~ " " }}
+  {{- now().strftime("%b") + " " }}
+  {{- now().day }}

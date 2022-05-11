@@ -6,21 +6,24 @@ trigger:
   - platform: state
     entity_id: switch.printer
     to: "on"
+    for:
+      minutes: 1
+      seconds: 30
 action:
   - alias: "Repeat update every minute until the power is turned off."
     repeat:
       sequence:
         - delay:
-            minutes: 1
+            seconds: 30
 
         - service: homeassistant.update_entity
           target:
             entity_id:
               - sensor.hp_colorlaserjet
-              - sensor.hp_colorlaserjet_black_cartridge_hp_cf500a
-              - sensor.hp_colorlaserjet_cyan_cartridge_hp_cf501a
-              - sensor.hp_colorlaserjet_magenta_cartridge_hp_cf503a
-              - sensor.hp_colorlaserjet_yellow_cartridge_hp_cf502a
+              #- sensor.hp_colorlaserjet_black_cartridge_hp_cf500a
+              #- sensor.hp_colorlaserjet_cyan_cartridge_hp_cf501a
+              #- sensor.hp_colorlaserjet_magenta_cartridge_hp_cf503a
+              #- sensor.hp_colorlaserjet_yellow_cartridge_hp_cf502a
       until:
         - condition: state
           entity_id: switch.printer
