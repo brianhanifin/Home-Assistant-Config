@@ -18,15 +18,22 @@ variables:
     {%- endif %}
     [{{ data.displays }}]
 sequence:
+  - service: script.debug
+    data:
+      title: script.cast_stop
+      message: |
+        displays is not string: '{{ displays is not string }}'
+        displays: '{{ displays }}'
+
   - repeat:
       count: '{{ entities|count }}'
       sequence:
         - parallel:
-            - if: '{{ is_state(entities[repeat.index-1], "playing") }}'
-              then:
-                - service: media_player.turn_off
-                  target:
-                    entity_id: '{{ entities[repeat.index-1] }}'
+          - if: '{{ is_state(entities[repeat.index-1], "playing") }}'
+            then:
+              - service: media_player.turn_off
+                target:
+                  entity_id: '{{ entities[repeat.index-1] }}'
 
 fields:
   displays:

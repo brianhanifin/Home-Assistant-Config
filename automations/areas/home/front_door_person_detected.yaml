@@ -24,16 +24,6 @@ action:
   #   data:
   #     message: 'new_state: {{ new_state }}'
 
-  - service: script.cast
-    continue_on_error: true
-    data:
-      display:
-        - 0aae07dda66f42e9b8a67979e34770d0
-        - 7d6b52507e25e7eeba10914e56052d1c
-      dashboard_path: dashboard-cast
-      view_path: cameras
-      dismiss_after: 120
-
   # Skip turning on the entry lights in the middle of the day.
   - choose:
       - conditions: "{{ outdoor_illuminance|default(0)|int < 2000 }}"
@@ -139,6 +129,15 @@ action:
           #           entity_id: camera.doorbell
           #         data:
           #           media_player: media_player.apple_tv_family_room
+
+  - service: script.cast
+    data:
+      displays:
+        - 0aae07dda66f42e9b8a67979e34770d0
+        - 7d6b52507e25e7eeba10914e56052d1c
+      dashboard_path: dashboard-cast
+      view_path: cameras
+      dismiss_after: 120
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:

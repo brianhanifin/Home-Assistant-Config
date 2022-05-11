@@ -775,14 +775,14 @@
       value_template: '{{ state_attr("sensor.google_next_timer","end_time") == none
         }}'
     then:
-    - service: timer.cancel
-      data: {}
-      target:
-        entity_id: timer.google_next_timer
-    - service: script.cast_stop
-      data:
-        display:
-        - 7d6b52507e25e7eeba10914e56052d1c
+      - service: timer.cancel
+        data: {}
+        target:
+          entity_id: timer.google_next_timer
+
+      - service: media_player.turn_off
+        target:
+          entity_id: "media_player.google_kitchen"
     else:
     - choose:
       - conditions:
