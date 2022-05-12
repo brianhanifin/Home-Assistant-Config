@@ -313,18 +313,10 @@ decluttering_templates:
                 - subtitle: Downstairs windows
                   type: custom:mushroom-title-card
                 - card:
-                    columns: 3
-                    show_header_toggle: false
-                    show_name: true
-                    show_state: false
                     type: entities
                   filter:
-                    exclude:
-                    - state: 'off'
-                    - state: unknown
-                    - state: unavailable
-                    include:
-                    - group: group.downstairs_windows
+                    template: '{{ state_attr("sensor.windows_open_downstairs", "open_windows")
+                      }}'
                   show_empty: false
                   sort:
                     method: name
@@ -332,18 +324,10 @@ decluttering_templates:
                 - subtitle: Upstairs windows
                   type: custom:mushroom-title-card
                 - card:
-                    columns: 3
-                    show_header_toggle: false
-                    show_name: true
-                    show_state: false
                     type: entities
                   filter:
-                    exclude:
-                    - state: 'off'
-                    - state: unknown
-                    - state: unavailable
-                    include:
-                    - group: group.upstairs_windows
+                    template: '{{ state_attr("sensor.windows_open_upstairs", "open_windows")
+                      }}'
                   show_empty: false
                   sort:
                     method: name
@@ -1192,6 +1176,20 @@ views:
         use_media_info: true
         volume_controls:
         - volume_mute
+      - collapsible_controls: true
+        entity: media_player.google_family_room_display
+        fill_container: false
+        icon: ''
+        media_controls:
+        - on_off
+        - play_pause_stop
+        name: Google display
+        type: custom:mushroom-media-player-card
+        use_media_artwork: true
+        use_media_info: true
+        volume_controls:
+        - volume_mute
+        - volume_buttons
       columns: 3
       square: false
       type: grid
