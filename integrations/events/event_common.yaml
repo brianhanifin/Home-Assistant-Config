@@ -174,6 +174,7 @@ automation:
 
   - alias: Event light timeout
     id: event_light_timeout
+    mode: parallel
     trigger:
       - platform: event
         event_type: timer.finished
@@ -194,6 +195,7 @@ automation:
 script:
   event_announce:
     alias: Event announce
+    mode: parallel
     variables:
       room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","") }}'
       speaker:
@@ -219,6 +221,7 @@ script:
 
   event_light:
     alias: Event light fade-up
+    mode: parallel
     variables:
       light_area: '{{ area_name(light) | lower| replace(" ","_") }}'
       adaptive_lighting_entity: '{{ "switch.adaptive_lighting_" ~ light_area }}'
