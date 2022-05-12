@@ -169,7 +169,7 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1269 total entities**, 
+Our Home Assistant install has approximately **1278 total entities**, 
 including **605 sensors**.
 
 <details><summary>24 Custom integrations</summary>
@@ -282,7 +282,7 @@ Home Assistant Custom Component for Wyze Vacuum
 Authors: [romedtino](https://github.com/romedtino).
 
 
-#### [SmartThinQ LGE Sensors v0.13.0](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.13.1](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -388,7 +388,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
 
-#### [Mushroom v1.8.1](https://github.com/piitaya/lovelace-mushroom)
+#### [Mushroom v1.8.3](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 
@@ -512,7 +512,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39761-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-39937-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

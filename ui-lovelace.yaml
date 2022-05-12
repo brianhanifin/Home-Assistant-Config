@@ -42,6 +42,7 @@ decluttering_templates:
           type: entities
         - entities:
           - entities:
+            - entity: input_select.event_light_[[id]]
             - entity: input_datetime.event_light_[[id]]
             head: input_boolean.event_light_[[id]]
             type: custom:fold-entity-row
@@ -1123,10 +1124,15 @@ views:
         light.table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
         \ = iif(is_state(\"light.family_room_floor_lamp\",\"on\"), lights_on + 1,\
         \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
-        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.family_room_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n\
-        {{- iif(is_state(\"media_player.tv_family_room\",\"on\"), \" ‧ tv is on\"\
-        , \"\") }}"
+        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- set\
+        \ open_count = 0 %}\n{%- if is_state(\"binary_sensor.family_room_south_window\"\
+        , \"on\") %}\n  {%- set open_count = open_count + 1  %}\n{%- endif %}\n{%-\
+        \ if is_state(\"binary_sensor.family_room_north_window\", \"on\") %}\n  {%-\
+        \ set open_count = open_count + 1  %}\n{%- endif %}\n{{- iif(open_count==1,\
+        \ \" ‧ 1 window open\", iif(open_count>1, \" ‧ \"~open_count~\" windows open\"\
+        , \"\")) }}\n{{- iif(is_state(\"binary_sensor.family_room_presence\",\"on\"\
+        ), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.tv_family_room\"\
+        ,\"on\"), \" ‧ tv is on\", \"\") }}"
       title: Family room
       type: custom:mushroom-title-card
     - cards:
@@ -1202,7 +1208,7 @@ views:
         light.kitchen_prep\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
         \ = iif(is_state(\"light.dining_room\",\"on\"), lights_on + 1, lights_on)\
         \ %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light\
-        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n\n{{- iif(is_state(\"\
+        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
         binary_sensor.kitchen_window\", \"on\"), \" ‧ window open\", \"\") }}\n{{-\
         \ iif(is_state(\"binary_sensor.kitchen_presence\",\"on\"), \" ‧ occupied\"\
         , \"\") }}\n{{- iif(not is_state(\"input_select.dishwasher_status\",\"-\"\
@@ -2137,6 +2143,15 @@ views:
     - sensors:
       - binary_sensor.middle_school_day
       - binary_sensor.high_school_day
+  - fill_container: false
+    icon: mdi:clock
+    multiline_secondary: true
+    primary: '{{ states("sensor.time") }}'
+    secondary: 'selected: {{ states("input_text.event_light_wakeup_brian") }}
+
+      brightness: {{ (state_attr("light.table_lamp","brightness")|float / 255 * 100)
+      | round }}% '
+    type: custom:mushroom-template-card
   - template: event
     type: custom:decluttering-card
     variables:

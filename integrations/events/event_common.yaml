@@ -29,9 +29,8 @@ automation:
       skipnext: '{{ is_state(skipnext_entity, "on") }}'
       announcement_enabled: '{{ is_state("input_boolean.event_announcement_" + id, "on") }}'
       announcement: '{{ states("input_text.event_" + entity_id[21:]) }}'
-      
-      event_time: '{{ states(entity_id) }}'
-      event_hour: '{{ event_time.split(":")[0]|default(0)|int }}'
+
+      event_hour: '{{ states(entity_id)[:2]|int }}'
       workday: '{{ is_state("binary_sensor.work_day","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
@@ -98,17 +97,17 @@ automation:
                 data:
                   entity_id: '{{ skipnext_entity }}'
 
-  - alias: Event Light
+  - alias: Event light
     id: event_light
     mode: parallel
     trigger:
       - platform: time
         at:
+          - input_datetime.event_light_wakeup_nerene
           - input_datetime.event_light_wakeup_brian
+          - input_datetime.event_light_wakeup_kyle
           - input_datetime.event_light_wakeup_lucas
           #- input_datetime.event_light_wakeup_lucas_late_start
-          - input_datetime.event_light_wakeup_kyle
-          - input_datetime.event_light_wakeup_nerene
           #- input_datetime.event_light_wakeup_bedtime_weekday
           #- input_datetime.event_light_wakeup_bedtime_weekend
     variables:
@@ -118,9 +117,8 @@ automation:
       skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
       light_enabled: '{{ is_state("input_boolean.event_light_" + id, "on") }}'
-      
-      event_time: '{{ states(entity_id) }}'
-      event_hour: '{{ event_time.split(":")[0]|default(0)|int }}'
+
+      event_hour: '{{ states(entity_id)[:2]|int }}'
       workday: '{{ is_state("binary_sensor.work_day","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
@@ -174,7 +172,7 @@ automation:
                 target:
                   entity_id: switch.hot_water_pump
 
-  - alias: Event Light Timeout
+  - alias: Event light timeout
     id: event_light_timeout
     trigger:
       - platform: event
@@ -195,7 +193,7 @@ automation:
 
 script:
   event_announce:
-    alias: Event Announce
+    alias: Event announce
     variables:
       room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","") }}'
       speaker:
@@ -208,6 +206,7 @@ script:
         kitchen-garage: "media_player.google_welcome"
         kitchen: "media_player.google_kitchen"
         family_room: "media_player.google_family_room"
+        family_room_display: "media_player.google_family_room_display"
         garage: "media_player.google_garage"
         play_room: "media_player.google_play_room"
         upstairs: "media_player.google_upstairs"
@@ -219,10 +218,26 @@ script:
           media_player: '{{ speaker[room] }}'
 
   event_light:
-    alias: Event Light Fade-up
+    alias: Event light fade-up
+    variables:
+      light_area: '{{ area_name(light) | lower| replace(" ","_") }}'
+      adaptive_lighting_entity: '{{ "switch.adaptive_lighting_" ~ light_area }}'
+      adaptive_lighting_on: |
+        {%- if states(adaptive_lighting_entity) is defined %}
+          {{ is_state(adaptive_lighting_entity, "on") }}
+        {%- else %}
+          False
+        {%- endif %}
     sequence:
-      # Transition the light to 100% over 10 minutes.
-      - service: light.turn_on
+      - alias: "Temporarily disable adaptive lighting for this room."
+        if: '{{ adaptive_lighting_on }}'
+        then:
+          - service: switch.turn_off
+            target:
+              entity_id: '{{ adaptive_lighting_entity }}'
+
+      - alias: "Transition the light to 100% over 10 minutes."
+        service: light.turn_on
         target:
           entity_id: '{{ light }}'
         data:
@@ -250,8 +265,8 @@ script:
             #       repeat.index: {{ repeat.index }}
             #       - brightness: {{ brightness }}
 
-            # Delay before next increase.
-            - choose:
+            - alias: "Delay before next increase."
+              choose:
                 - conditions: '{{ repeat.index < 10 }}'
                   sequence:
                     - delay:
@@ -261,6 +276,13 @@ script:
             - '{{ repeat.index == 10
                   or is_state(light, "off") }}'
 
+      - alias: "Restore adaptive lighting for this room."
+        if: '{{ adaptive_lighting_on }}'
+        then:
+          - service: switch.turn_on
+            target:
+              entity_id: '{{ adaptive_lighting_entity }}'
+
       # Start a countdown timer which triggers and automation upon its conclusion.
       # see: automation.event_light_timeout
       - service: timer.start
@@ -269,7 +291,7 @@ script:
 
       - service: script.notify_web
         data:
-          message: '{{ id|replace("_"," ")|title }} Complete'
+          message: '{{ id|replace("_"," ")|title }} complete'
 
 # trigger_variables:
 #   trigger_entities: |
