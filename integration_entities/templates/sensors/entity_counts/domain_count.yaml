@@ -4,3 +4,5 @@ name: Domain count
 icon: mdi:package-variant-closed
 state_class: total
 state: '{{ states | map(attribute="domain") | unique | list | count }}'
+attributes:
+  domains: '{{ states | map(attribute="domain") | unique | list }}'
