@@ -1131,7 +1131,7 @@ views:
         \ set open_count = open_count + 1  %}\n{%- endif %}\n{{- iif(open_count==1,\
         \ \" ‧ 1 window open\", iif(open_count>1, \" ‧ \"~open_count~\" windows open\"\
         , \"\")) }}\n{{- iif(is_state(\"binary_sensor.family_room_presence\",\"on\"\
-        ), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.tv_family_room\"\
+        ), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.family_room_tv\"\
         ,\"on\"), \" ‧ tv is on\", \"\") }}"
       title: Family room
       type: custom:mushroom-title-card
@@ -1158,12 +1158,6 @@ views:
         show_color_control: false
         type: custom:mushroom-light-card
         use_light_color: true
-      - entity: switch.adaptive_lighting_family_room
-        name: Adaptive
-        secondary_info: none
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
       - entity: fan.family_room
         hide_state: true
         icon_animation: true
@@ -1171,17 +1165,6 @@ views:
         show_oscillate_control: false
         show_percentage_control: false
         type: custom:mushroom-fan-card
-      - entity: media_player.apple_tv_family_room
-        media_controls:
-        - play_pause_stop
-        name: Apple TV
-        tap_action:
-          action: toggle
-        type: custom:mushroom-media-player-card
-        use_media_artwork: true
-        use_media_info: true
-        volume_controls:
-        - volume_mute
       - collapsible_controls: true
         entity: media_player.google_family_room_display
         fill_container: false
@@ -1196,6 +1179,26 @@ views:
         volume_controls:
         - volume_mute
         - volume_buttons
+      - entity: media_player.family_room_apple_tv
+        media_controls:
+        - play_pause_stop
+        name: Apple TV
+        tap_action:
+          action: call-service
+          service: media_player.toggle
+          service_data: {}
+          target:
+            entity_id: media_player.family_room_tv
+        type: custom:mushroom-media-player-card
+        use_media_artwork: true
+        use_media_info: true
+        volume_controls: []
+      - entity: switch.adaptive_lighting_family_room
+        name: Adaptive
+        secondary_info: none
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       columns: 3
       square: false
       type: grid
@@ -1486,10 +1489,12 @@ views:
         light.bedroom_table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set\
         \ lights_on = iif(is_state(\"light.bedroom_east\",\"on\"), lights_on + 1,\
         \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
-        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.bedroom_presence\",\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not\
-        \ is_state(\"input_select.glowforge_status\",\"Off\"), \" ‧ glowforge is \"\
-        \ ~ states(\"input_select.glowforge_status\")|lower, \"\") }}"
+        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n\n{{- iif(is_state(\"\
+        binary_sensor.bedroom_window\", \"on\"), \" ‧ window open\", \"\") }}\n{{-\
+        \ iif(is_state(\"binary_sensor.bedroom_presence\",\"on\"), \" ‧ occupied\"\
+        , \"\") }}\n{{- iif(not is_state(\"input_select.glowforge_status\",\"Off\"\
+        ), \" ‧ glowforge is \" ~ states(\"input_select.glowforge_status\")|lower,\
+        \ \"\") }}"
       title: ' Bedroom'
       type: custom:mushroom-title-card
     - cards:
