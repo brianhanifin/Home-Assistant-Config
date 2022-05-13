@@ -17,36 +17,43 @@ sequence:
                         sequence:
                           # Toggle the fan.
                           - service: fan.toggle
-                            entity_id: fan.family_room
+                            target:
+                              entity_id: fan.family_room
                       # Double click
                       - conditions: '{{ click_count == 2 }}'
                         sequence:
                           - service: media_player.toggle
-                            entity_id: media_player.tv_family_room
+                            target:
+                              entity_id: media_player.family_room_tv
                       # Triple click
                       - conditions: '{{ click_count == 3 }}'
-                        sequence:                        
+                        sequence:
                           - choose:
                               # The door is locked
                               - conditions: '{{ is_state("lock.front_door","locked") }}'
                                 sequence:
                                   - service: lock.unlock
-                                    entity_id: lock.front_door
-                                  
+                                    target:
+                                      entity_id: lock.front_door
+
                                   - service: input_boolean.turn_on
-                                    entity_id: input_boolean.leave_unlocked
+                                    target:
+                                      entity_id: input_boolean.leave_unlocked
                             # The door is unlocked
                             default:
                               - service: input_boolean.turn_off
-                                entity_id: input_boolean.leave_unlocked
-                              
+                                target:
+                                  entity_id: input_boolean.leave_unlocked
+
                               - service: lock.lock
-                                entity_id: lock.front_door
+                                target:
+                                  entity_id: lock.front_door
                       # Quadruple Click
                       - conditions: '{{ click_count == 4 }}'
                         sequence:
                           - service: input_boolean.toggle
-                            entity_id: input_boolean.guest_mode
+                            target:
+                              entity_id: input_boolean.guest_mode
 
               # Brightness Up
               - conditions: '{{ command == "brightness_up_click" }}'
@@ -56,15 +63,17 @@ sequence:
                       - conditions: '{{ click_count == 1 }}'
                         sequence:
                           - service: light.turn_on
-                            data:
+                            target:
                               entity_id: light.family_room
+                            data:
                               brightness_pct: 100
                       # Double click
                       - conditions: '{{ click_count == 2 }}'
                         sequence:
                           - service: light.turn_on
-                            data:
+                            target:
                               entity_id: light.table_lamp
+                            data:
                               brightness_pct: 100
 
               # Brightness down
@@ -75,27 +84,31 @@ sequence:
                       - conditions: '{{ click_count == 1 }}'
                         sequence:
                           - service: light.turn_off
-                            entity_id:
+                            target:
+                              entity_id:
                               - light.family_room
                               - light.table_lamp
                       # Double click
                       - conditions: '{{ click_count == 2 }}'
                         sequence:
                           - service: light.turn_off
-                            entity_id: light.table_lamp
+                            target:
+                              entity_id: light.table_lamp
 
               # Single Click: Arrow right
               - conditions: '{{ command == "arrow_right_click" }}'
                 sequence:
                   - service: light.turn_on
-                    data:
+                    target:
                       entity_id: light.family_room_floor_lamp
+                    data:
                       brightness_pct: 100
               # Single Click: Arrow left
               - conditions: '{{ command == "arrow_right_click" }}'
                 sequence:
                   - service: light.turn_off
-                    entity_id: light.family_room_floor_lamp
+                    target:
+                      entity_id: light.family_room_floor_lamp
 
               #############################################################################################
               # HOLD BUTTONS
@@ -105,33 +118,37 @@ sequence:
               - conditions: '{{ command == "brightness_up_hold" }}'
                 sequence:
                   - service: light.turn_on
-                    data:
+                    target:
                       entity_id:
                         - light.family_room
                         - light.table_lamp
+                    data:
                       brightness_step_pct: "-20"
               # Hold: Brightness down
               - conditions: '{{ command == "brightness_down_hold" }}'
                 sequence:
                   - service: light.turn_on
-                    data:
+                    target:
                       entity_id:
                         - light.family_room
                         - light.table_lamp
+                    data:
                       brightness_step_pct: "20"
               # Hold: Arrow left
               - conditions: '{{ command == "arrow_left_hold" }}'
                 sequence:
                   - service: light.turn_on
-                    data:
+                    target:
                       entity_id: light.family_room_floor_lamp
+                    data:
                       brightness_step_pct: "-20"
               # Hold: Arrow right
               - conditions: '{{ command == "arrow_right_hold" }}'
                 sequence:
                   - service: light.turn_on
-                    data:
+                    target:
                       entity_id: light.family_room_floor_lamp
+                    data:
                       brightness_step_pct: "20"
 
       # Unused Remotes
@@ -186,14 +203,13 @@ sequence:
       #                 - switch.sound_machine
       #                 - switch.bedroom_fan
 
-  - choose:
-      - conditions: '{{ debug_output == True }}'
-        sequence:
-          - service: script.debug
-            data_template:
-              title: '"{{ remote }}" click'
-              message: |
-                command: {{ command }}
-                click_count: {{ click_count }}
-                manufacturer: {{ manufacturer }}
-                remote: {{ remote }}
+  - if: '{{ debug_output == True }}'
+    then:
+      - service: script.debug
+        data_template:
+          title: '"{{ remote }}" click'
+          message: |
+            command: {{ command }}
+            click_count: {{ click_count }}
+            manufacturer: {{ manufacturer }}
+            remote: {{ remote }}

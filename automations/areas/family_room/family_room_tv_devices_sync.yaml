@@ -5,43 +5,49 @@ description: Show Apple TV home screen when the TV turns on.
 mode: single
 trigger:
   - platform: state
-    entity_id: media_player.tv_family_room  # Samsung TV
+    entity_id: media_player.family_room_tv  # Samsung TV
     from: "off"
     to: "on"
 variables:
-  # old_state: '{{ trigger.from_state.state }}'
-  # new_state: '{{ trigger.to_state.state }}'
-
-  #entity_id: '{{ trigger.to_state.entity_id }}'
-
-  #tv_source: '{{ state_attr("media_player.tv_family_room","source") }}'
-  apple_tv_state: '{{ states("media_player.tv_family_room") }}'
+  tv_source: '{{ state_attr("media_player.family_room_tv","source") }}'
+  apple_tv_state: '{{ states("media_player.family_room_apple_tv") }}'
 action:
   # - service: script.debug
   #   data:
   #     message: |
-  #       old_state: {{ old_state }}
-  #       new_state: {{ new_state }}
-  #       entity_id: {{ entity_id }}
-  ##       tv_source: {{ tv_source }}
   #       apple_tv_state: {{ apple_tv_state }}
+  #       tv_source: {{ tv_source }}
 
-  - choose:
-      # When the Apple TV is "idle", wake it up.
-      - conditions: '{{ apple_tv_state in ["idle","off"] }}'
-        sequence:
-          - service: remote.turn_on
-            entity_id: remote.apple_tv_family_room
+  - alias: 'When the Apple TV is "idle", wake it up.'
+    if: '{{ apple_tv_state in ["idle","off"] }}'
+    then:
+      - service: remote.turn_on
+        target:
+          entity_id: remote.family_room_apple_tv
 
-          # Apple TV: let us know the TV is on by putting something on the screen.
-          - delay:
-              seconds: 0.5
+      # Apple TV: let us know the TV is on by putting something on the screen.
+      - delay:
+          seconds: 0.5
 
-          - service: remote.send_command
-            data:
-              entity_id: remote.apple_tv_family_room
-              command:
-                - home
+      # - service: remote.send_command
+      #   target:
+      #     entity_id: remote.family_room_apple_tv
+      #   data:
+      #     command:
+      #       - home
+      - service: media_player.select_source
+        target:
+          entity_id: media_player.family_room_apple_tv
+        data:
+          source: YouTube
+
+
+  - alias: "Set the TV speaker's volume to zero!"
+    service: media_player.volume_set
+    target:
+      entity_id: media_player.family_room_tv
+    data:
+      volume_level: 0
 
   # Cool down timer. When "mode: single" this stops this automation from running more often than this.
   - delay:
