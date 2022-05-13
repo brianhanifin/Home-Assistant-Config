@@ -109,32 +109,32 @@ action:
           seconds: 4
 
       - parallel:
-        - service: script.notify_mobile
-          continue_on_error: true
-          data:
-            title: Front Door
-            message: Person Detected
-            camera: camera.front_door_rtsp
-            who: brian
-            tag: 'person_detected'
-            url: /lovelace/outdoor
+          - service: script.notify_mobile
+            continue_on_error: true
+            data:
+              title: Front Door
+              message: Person Detected
+              camera: camera.front_door_rtsp
+              who: brian
+              tag: 'person_detected'
+              url: /lovelace/outdoor
 
-        - service: script.notify_pc
-          continue_on_error: true
-          data:
-            title: Front Door
-            message: Person Detected
-            camera: camera.front_door
-            pc: blackpc
+          - service: script.notify_pc
+            continue_on_error: true
+            data:
+              title: Front Door
+              message: Person Detected
+              camera: camera.front_door
+              pc: blackpc
 
-        - service: script.cast
-          data:
-            displays:
-              - 0aae07dda66f42e9b8a67979e34770d0
-              - 7d6b52507e25e7eeba10914e56052d1c
-            dashboard_path: dashboard-cast
-            view_path: cameras
-            dismiss_after: 120
+          - service: script.cast
+            data:
+              displays:
+                - 0aae07dda66f42e9b8a67979e34770d0
+                - 7d6b52507e25e7eeba10914e56052d1c
+              dashboard_path: dashboard-cast
+              view_path: cameras
+              dismiss_after: 120
 
       - delay:
           seconds: 60
