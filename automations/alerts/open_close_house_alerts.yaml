@@ -1,0 +1,22 @@
+---
+alias: Open/close house alerts
+description: Actions to take when the alert has been cleared.
+mode: single
+trigger:
+  - id: open_house_complete
+    platform: state
+    entity_id: alert.open_house
+    from: "on"
+    to: "idle"
+  - id: close_house_complete
+    platform: state
+    entity_id: alert.close_house
+    from: "on"
+    to: "idle"
+action:
+  - service: climate.set_temperature
+    target:
+      entity_id: climate.home_thermostat
+    data:
+      hvac_mode: cool
+      temperature: 77
