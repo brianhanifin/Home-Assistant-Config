@@ -8,14 +8,14 @@ blueprint:
   input:
     input_entity:
       name: Entity
-      description: Inovelli device to notify.
-      default: light.family_room
+      description: Inovelli devices to notify.
       selector:
         entity:
           domain:
             - light
             - switch
           integration: zwave_js
+          multiple: true
     input_color:
       name: Color
       description: Choose a color to display on your Inovelli device.
@@ -100,35 +100,12 @@ variables:
   debug: false
 
   # Store the input values as local variables.
-  entity_id: !input input_entity
+  entity_list: !input input_entity
   color: !input input_color
   level: !input input_level
   effect: !input input_effect
   duration: !input input_duration
 
-  # Automatically extract the model name.
-  model_name: |
-    {%- set model_name = device_attr(entity_id, "model") %}
-    {%- if "-" in model_name %}
-      {{ model_name.split("-")[0] }}
-    {%- else %}
-      {{ model_name }}
-    {%- endif %}
-
-  # 1st. Use the automatically detected "model_name".
-  # 2nd. Assume the model type is "dimmer".
-  model_type: |
-    {%- if model_name is string %}
-      {%- if "LZW31" in model_name %}
-        dimmer
-      {%- elif "LZW36" in model_name %}
-        combo_light
-      {%- else %}
-        switch
-      {%- endif %}
-    {%- else %}
-      dimmer
-    {%- endif %}
   parameters:
     "dimmer": 16
     "combo_light": 24
@@ -199,7 +176,6 @@ mode: parallel
 sequence:
   # Preform the Inovelli math.
   - variables:
-      parameter: "{{ parameters[model_type|lower]|int }}"
       level: "{{ level|default(4)|int }}"
       duration: '{{ durations[duration|default("Indefinitely")|title] }}'
       color: |
@@ -209,65 +185,94 @@ sequence:
           {%- set color = color|int %}
         {% endif %}
         {{ colors[color|title]|int }}
-      effect: |
-        {% if model_type == "switch" %}
-          {{- effects_switch[effect|default("Blink")|title] }}
-        {%- else %}
-          {{- effects_dimmer[effect|default("Blink")|title] }}
-        {% endif %}
-      inovelli_math: |
-        {%- if effect|int > 0 %}
-          {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
-        {%- else %}
-          0
-        {% endif %}
 
-  # Set debug = true above to provide output troubleshooting information.
-  - choose:
-      - conditions:
-          - '{{ debug == true }}'
-        sequence:
-          - variables:
-              input_entity: !input input_entity
-              input_color: !input input_color
-              input_level: !input input_level
-              input_effect: !input input_effect
-              input_duration: !input input_duration
-          - service: persistent_notification.create
-            data:
-              title: "DEBUG: script.inovelli_led"
-              notification_id: "inovelli_led"
-              message: |
-                input_entity: {{ input_entity }}
-                input_color: {{ input_color }}
-                input_level: {{ input_level }}
-                input_effect: {{ input_effect }}
-                input_duration: {{ input_duration }}
+  # Loop through each entity_id
+  - repeat:
+      for_each: '{{ entity_list }}'
+      sequence:
+        - variables:
+            # Automatically extract the model name.
+            model_name: |
+              {%- set model_name = device_attr(repeat.item, "model") %}
+              {%- if "-" in model_name %}
+                {{ model_name.split("-")[0] }}
+              {%- else %}
+                {{ model_name }}
+              {%- endif %}
 
-                model_name: {{ model_name }}
-                model_type: {{ model_type }}
-                color: {{ color|title }}
-                level: {{ level }}
-                duration: {{ duration|title }}
-                effect: {{ effect|title }}'
-                parameter: {{ parameter }}
-                inovelli_math: {{ inovelli_math }}
+            # 1st. Use the automatically detected "model_name".
+            # 2nd. Assume the model type is "dimmer".
+            model_type: |
+              {%- if model_name is string %}
+                {%- if "LZW31" in model_name %}
+                  dimmer
+                {%- elif "LZW36" in model_name %}
+                  combo_light
+                {%- else %}
+                  switch
+                {%- endif %}
+              {%- else %}
+                dimmer
+              {%- endif %}
+            parameter: "{{ parameters[model_type|lower]|int }}"
+            effect: |
+              {% if model_type == "switch" %}
+                {{- effects_switch[effect|default("Blink")|title] }}
+              {%- else %}
+                {{- effects_dimmer[effect|default("Blink")|title] }}
+              {% endif %}
+            inovelli_math: |
+              {%- if effect|int > 0 %}
+                {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
+              {%- else %}
+                0
+              {% endif %}
 
-  # Clear the previous effect.
-  - service: zwave_js.bulk_set_partial_config_parameters
-    target:
-      entity_id: "{{ entity_id }}"
-    data:
-      parameter: "{{ parameter }}"
-      value: '16714410'
+        # Set debug = true above to provide output troubleshooting information.
+        - choose:
+            - conditions:
+                - '{{ debug == true }}'
+              sequence:
+                - variables:
+                    input_entity: "{{ repeat.item }}"
+                    input_color: !input input_color
+                    input_level: !input input_level
+                    input_effect: !input input_effect
+                    input_duration: !input input_duration
+                - service: persistent_notification.create
+                  data:
+                    title: "DEBUG: script.inovelli_led"
+                    message: |
+                      input_entity: {{ input_entity }}
+                      input_color: {{ input_color }}
+                      input_level: {{ input_level }}
+                      input_effect: {{ input_effect }}
+                      input_duration: {{ input_duration }}
 
-  # Start the new effect, unless we were just turning it off.
-  - choose:
-      - conditions: '{{ inovelli_math > 0 }}'
-        sequence:
-          - service: zwave_js.bulk_set_partial_config_parameters
-            target:
-              entity_id: "{{ entity_id }}"
-            data:
-              parameter: "{{ parameter }}"
-              value: "{{ inovelli_math }}"
+                      model_name: {{ model_name }}
+                      model_type: {{ model_type }}
+                      color: {{ color|title }}
+                      level: {{ level }}
+                      duration: {{ duration|title }}
+                      effect: {{ effect|title }}'
+                      parameter: {{ parameter }}
+                      inovelli_math: {{ inovelli_math }}
+
+        # Clear the previous effect.
+        - service: zwave_js.bulk_set_partial_config_parameters
+          target:
+            entity_id: "{{ repeat.item }}"
+          data:
+            parameter: "{{ parameter }}"
+            value: '16714410'
+
+        # Start the new effect, unless we were just turning it off.
+        - choose:
+            - conditions: '{{ inovelli_math > 0 }}'
+              sequence:
+                - service: zwave_js.bulk_set_partial_config_parameters
+                  target:
+                    entity_id: "{{ repeat.item }}"
+                  data:
+                    parameter: "{{ parameter }}"
+                    value: "{{ inovelli_math }}"
