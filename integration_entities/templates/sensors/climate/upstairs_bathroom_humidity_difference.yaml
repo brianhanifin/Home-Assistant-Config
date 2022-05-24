@@ -3,27 +3,16 @@ unique_id: upstairs_bathroom_humidity_difference
 name: Upstairs Bathroom Humidity Difference
 unit_of_measurement: "%"
 state_class: measurement
-# Use alternate humidity sensor should the first humidity sensor be unavailable.
 state: |
-  {% set bathroom_humidity = states('sensor.upstairs_bathroom_humidity') %}
-  {%- set reference_humidity = states('sensor.guest_room_humidity') %}
-  {%- if reference_humidity|lower in ['unknown','unavailable'] -%}
-    {%- set reference_humidity = states('sensor.lucas_room_humidity') -%}
-  {%- endif -%}
-  {%- if reference_humidity|lower in ['unknown','unavailable'] -%}
-    {%- set reference_humidity = states('sensor.home_thermostat_humidity') -%}
-  {%- endif -%}
-  {% set diff = (bathroom_humidity|default(0)|int) - reference_humidity|default(0)|int %}
+  {%- set bathroom_humidity = state_attr(this.entity_id, "bathroom_humidity") %}
+  {%- set reference_humidity = state_attr(this.entity_id, "reference_humidity") %}
+  {%- set diff = (bathroom_humidity|default(0)|int) - reference_humidity|default(0)|int %}
   {{ ([0, diff, 99]|sort)[1] }}
 attributes:
-  bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity") }}'
+  #bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity") }}'
+  bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity_average_last_24_hours") | round }}'
+  # Use an alternate humidity sensor should the first humidity sensor be unavailable.
   reference_humidity: |
-    {%- set reference_humidity = states("sensor.guest_room_humidity") %}
-    {%- if reference_humidity|lower in ["unknown","unavailable"] -%}
-      {%- set reference_humidity = states("sensor.lucas_room_humidity") -%}
-    {%- endif -%}
-    {%- if reference_humidity|lower in ["unknown","unavailable"] -%}
-      {%- set reference_humidity = states("sensor.home_thermostat_humidity") -%}
-    {%- endif -%}
-    {{ reference_humidity }}
+    {%- set reference_sensors = ["sensor.guest_room_humidity", "sensor.lucas_room_humidity", "sensor.home_thermostat_humidity"] %}
+    {{ states.sensor | selectattr("entity_id","in",reference_sensors) | rejectattr("state","in",["unknown","unavailable"]) | map(attribute="state") | first }}
 
