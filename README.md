@@ -169,8 +169,8 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1282 total entities**, 
-including **607 sensors**.
+Our Home Assistant install has approximately **1281 total entities**, 
+including **606 sensors**.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -439,7 +439,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>8 addons</summary>
 
-#### ESPHome v2022.5.0
+#### ESPHome v2022.5.1
 ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
 
 
@@ -512,7 +512,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40063-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40028-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
