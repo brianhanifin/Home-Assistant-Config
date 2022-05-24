@@ -194,10 +194,9 @@
       minutes: 1
       seconds: 0
       milliseconds: 0
-  - service: script.turn_on
-    target:
-      entity_id: script.inovelli_led_set_defaults
-    data: {}
+  - service: script.inovelli_led_set_defaults
+    continue_on_error: true
+    enabled: false
   - service: watchman.report
     data: {}
   - service: script.notify_web

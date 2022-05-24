@@ -98,6 +98,15 @@ action:
             target:
               entity_id: remote.family_room_apple_tv
 
+          - service: remote.send_command
+            target:
+              entity_id: remote.family_room_apple_tv
+            data:
+              command: pause
+
+          - delay:
+              seconds: 4
+
           - service: camera.play_stream
             continue_on_error: true
             target:
@@ -114,18 +123,11 @@ action:
             data:
               title: Front Door
               message: Person Detected
-              camera: camera.front_door_rtsp
+              #camera: camera.front_door_rtsp
+              camera: camera.front_door
               who: brian
               tag: 'person_detected'
               url: /lovelace/outdoor
-
-          - service: script.notify_pc
-            continue_on_error: true
-            data:
-              title: Front Door
-              message: Person Detected
-              camera: camera.front_door
-              pc: blackpc
 
           - service: script.cast
             data:
@@ -135,6 +137,14 @@ action:
               dashboard_path: dashboard-cast
               view_path: cameras
               dismiss_after: 120
+
+          - service: script.notify_pc
+            continue_on_error: true
+            data:
+              title: Front Door
+              message: Person Detected
+              camera: camera.front_door_rtsp
+              pc: blackpc
 
       - delay:
           seconds: 60
