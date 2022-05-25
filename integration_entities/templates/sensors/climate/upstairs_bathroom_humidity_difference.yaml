@@ -1,18 +1,25 @@
 ---
 unique_id: upstairs_bathroom_humidity_difference
 name: Upstairs Bathroom Humidity Difference
+icon: mdi:water-percent
 unit_of_measurement: "%"
 state_class: measurement
 state: |
-  {%- set bathroom_humidity = state_attr(this.entity_id, "bathroom_humidity") %}
-  {%- set reference_humidity = state_attr(this.entity_id, "reference_humidity") %}
-  {%- set diff = (bathroom_humidity|default(0)|int) - reference_humidity|default(0)|int %}
-  {{ ([0, diff, 99]|sort)[1] }}
+  {%- set humidity_now = state_attr(this.entity_id, "bathroom_humidity")|float(default=0)|round(1) %}
+  {%- set humidity_24h = state_attr(this.entity_id, "bathroom_humidity_24h")|float(default=0)|round(1) %}
+  {%- set diff = humidity_now - humidity_24h %}
+  {{ ([0, diff, 99]|sort)[1] | float(default=0) | round(1) }}
 attributes:
-  #bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity") }}'
-  bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity_average_last_24_hours") | round }}'
+  bathroom_humidity: '{{ states("sensor.upstairs_bathroom_humidity")|float(default=0)|round(1) }}'
+  # 24 hour bathroom humidity average - current bathroom humidity
+  bathroom_humidity_24h: '{{ states("sensor.upstairs_bathroom_humidity_average_last_24_hours")|float(default=0)|round(1) }}'
+
   # Use an alternate humidity sensor should the first humidity sensor be unavailable.
   reference_humidity: |
     {%- set reference_sensors = ["sensor.guest_room_humidity", "sensor.lucas_room_humidity", "sensor.home_thermostat_humidity"] %}
-    {{ states.sensor | selectattr("entity_id","in",reference_sensors) | rejectattr("state","in",["unknown","unavailable"]) | map(attribute="state") | first }}
-
+    {{ states.sensor | selectattr("entity_id","in",reference_sensors) | rejectattr("state","in",["unknown","unavailable"]) | map(attribute="state") | first | float(default=0) | round(1) }}
+  reference_difference: |
+    {%- set bathroom_humidity = state_attr(this.entity_id, "bathroom_humidity")|float(default=0)|round(1) %}
+    {%- set reference_humidity = state_attr(this.entity_id, "reference_humidity")|float(default=0)|round(1) %}
+    {%- set diff = bathroom_humidity - reference_humidity %}
+    {{ ([0, diff, 99]|sort)[1] | float(default=0) | round(1) }}
