@@ -6,7 +6,7 @@ variables:
   zwave_integration: "zwave_js"
 
   # * Strongly recommended -> Use the passed model type ("dimmer", "switch", "combo_light") when present.
-  # * If not present, then attempt to identify the type using the "product_name" attribute (which is only 
+  # * If not present, then attempt to identify the type using the "product_name" attribute (which is only
   #   unfortunately only available in the original zwave integration).
   # * Finally, assume the model type is "dimmer".
   model: |
@@ -25,8 +25,8 @@ variables:
     {%- endif %}
   node_id: '{{ state_attr(entity_id,"node_id") }}'
   color: '{{ color|default("Blue") }}'
-  level_on: '{{ level_on|int(default=10) }}'
-  level_off: '{{ level_off|int(default=3) }}'
+  level_on: '{{ level_on|default(10)|int }}'
+  level_off: '{{ level_off|default(3)|int }}'
   parameters:
     dimmer:
       color: 13
