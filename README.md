@@ -169,10 +169,10 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1281 total entities**, 
+Our Home Assistant install has approximately **1276 total entities**, 
 including **606 sensors**.
 
-<details><summary>24 Custom integrations</summary>
+<details><summary>25 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -184,6 +184,12 @@ Authors: [@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://g
 
 Anniversary Countdown Sensor for Home Assistant
 Authors: [@pinkywafer](https://github.com/pinkywafer).
+
+
+#### [Authenticated v21.9.0](https://github.com/custom-components/authenticated)
+
+A platform which allows you to get information about sucessfull logins to Home Assistant.
+Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 #### [Battery Simulation v1.0](https://github.com/hif2k1/battery_sim/)
@@ -318,7 +324,7 @@ Home Assistant Integration for Wyze devices.
 Authors: [@JoshuaMulliken](https://github.com/JoshuaMulliken).
 </details>
 
-<details><summary>29 lovelace plugins</summary>
+<details><summary>26 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -356,10 +362,6 @@ Flipdown Timer Card for Home Assistant Lovelace
 🔹 A foldable row for entities card, containing other rows
 
 
-#### [Frigate Card v3.0.0](https://github.com/dermotduffy/frigate-hass-card)
-A Lovelace card for Frigate in Home Assistant
-
-
 #### [Kiosk Mode v1.7.2](https://github.com/maykar/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
@@ -374,10 +376,6 @@ A custom Lovelace card for displaying a combination of persistent notifications,
 
 #### [Lovelace Text Input Row v0.0.8](https://github.com/gadgetchnnel/lovelace-text-input-row)
 A custom Lovelace text input row for use in entities cards
-
-
-#### [Lovelace Theme Maker](https://github.com/thomasloven/lovelace-theme-maker)
-
 
 
 #### [Mini Graph Card v0.11.0](https://github.com/kalkih/mini-graph-card)
@@ -418,10 +416,6 @@ A different take on the thermostat card for Home Assistant ♨️
 
 #### [State Switch v1.9.3](https://github.com/thomasloven/lovelace-state-switch)
 🔹Dynamically replace lovelace cards depending on occasion
-
-
-#### [Surveillance Card v0.0.5](https://github.com/custom-cards/surveillance-card)
-A custom component for displaying camera feeds in the style of a surveillance system.
 
 
 #### [Swipe Card v4.0.0](https://github.com/bramkragten/swipe-card)
@@ -502,7 +496,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.5.5-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.6.0b0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -512,7 +506,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40028-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40234-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
