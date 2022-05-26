@@ -11,9 +11,9 @@
 #   September 17, 2020: There are some massive improvements to my version of this code. Here are the highlights:
 #     1. Choose - using the recently added choose: feature a separate call has been created for the Z-wave and OZW
 #        versions of the service call.
-#     2. Variables - using 0.115’s new variables: feature the variables sent each service call only have to be 
+#     2. Variables - using 0.115’s new variables: feature the variables sent each service call only have to be
 #        calculated once.
-#     3. Supported Features - I realized that I could probably tell the difference between modules using the 
+#     3. Supported Features - I realized that I could probably tell the difference between modules using the
 #        “supported_features” attribute of each switch. For example my dimmer’s supported features is “33”.
 #
 #   September 18, 2020: Added "model" parameter with options of dimmer, switch, combo_light, combo_fan. This replaces
@@ -23,7 +23,7 @@
 #     The ozw code is remarked out for those that still need it.
 #
 #   February 27, 2021:
-#     1. Added zwave_integration at top of "variables:" section to allow users to define which integration is 
+#     1. Added zwave_integration at top of "variables:" section to allow users to define which integration is
 #        installed ("zwave", "ozw", "zwave_js"). I just don't see a simple way to auto-detect this.
 #     2. Added a comment describing the "model" variable.
 #     3. Replaced personal "script.debug" service call with universal "persistent_notification.create".
@@ -54,6 +54,13 @@
 #     2. Added Brightness "level" parameter to fields.
 #     3. Little bit of code cleanup.
 #   Blueprint script -> https://github.com/brianhanifin/Home-Assistant-Config/blob/master/blueprints/script/brianhanifin/inovelli_led_notify.yaml
+#
+#   May 26, 2022
+#   Added support for the White LED color.
+#     * @kschlichter and @mwav3 thank you for the heads up and your help.
+#     * Support for the color white was supposedly added to the LZW31-SN dimmer [in Firmware 1.45 accoding to Inovelli](https://support.inovelli.com/portal/en/kb/articles/firmware-change-log-lzw31-sn-dimmer-switch-red-series).
+#     * I ended up having to flash both LZW31-SN Z-Wave 1.61 and LZW31-SN Holtek 1.45 firmware twice before I could see white light.
+#
 mode: parallel
 variables:
   # Set to true to create a "persistent_notification" with debugging information.
@@ -132,6 +139,7 @@ variables:
     "Purple": 195
     "Light Pink": 220
     "Pink": 234
+    "White": 255
   durations:
     "Off": 0
     "1 Second": 1
@@ -309,6 +317,7 @@ fields:
           - Purple
           - Light Pink
           - Pink
+          - White
   level:
     name: Brightness level
     description: Value from 0 (off) to 10 (100% brightness).
