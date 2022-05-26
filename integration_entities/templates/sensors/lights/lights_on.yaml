@@ -7,7 +7,7 @@ state: |
   {%- set lights = namespace(entities="") %}
   {%- set entities = expand("group.house_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
   {%- for entity in entities %}
-    {%- if not entity.endswith("1")
+    {%- if not entity.endswith("2")
           and not entity.endswith("3")
           and not entity.endswith("4")
           and not entity.endswith("5")
@@ -25,7 +25,7 @@ attributes:
     {%- set lights = namespace(entities="") %}
     {%- set entities = expand("group.house_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
     {%- for entity in entities %}
-      {%- if not entity.endswith("1")
+      {%- if not entity.endswith("2")
             and not entity.endswith("3")
             and not entity.endswith("4")
             and not entity.endswith("5")
@@ -37,4 +37,4 @@ attributes:
         {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
       {%- endif %}
     {%- endfor %}
-    {{ (lights.entities|trim|replace("bedroom_east2","Bedroom east")|replace("Dining2","Dining room")|replace("Play room floor lamp 2","Play room floor lamp")).split("\t") }}
+    {{ (lights.entities|trim|replace("bedroom_east1","Bedroom east")|replace("Dining1","Dining room")|replace("Play room floor lamp 1","Play room floor lamp")).split("\t") }}
