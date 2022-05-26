@@ -11,12 +11,14 @@
 #     * @kschlichter and @mwav3 thank you for your help.
 #     * Support for the color white was supposedly added to the LZW31-SN dimmer [in Firmware 1.45 accoding to Inovelli](https://support.inovelli.com/portal/en/kb/articles/firmware-change-log-lzw31-sn-dimmer-switch-red-series).
 #     * I ended up having to flash both LZW31-SN Z-Wave 1.61 and LZW31-SN Holtek 1.45 firmware twice before I could see white light.
+#   3. Added
 #
 mode: parallel
 variables:
   # Set to true to create a "persistent_notification" with debugging information.
-  debug: false  # Preform the Inovelli math.
+  debug: '{{ iif(enable_debug is defined, enable_debug, false) }}'
 
+  entity_list: "{{ entity_id }}"
   level: "{{ level|default(4)|int }}"
   duration: '{{ duration|default("Indefinitely")|title }}'
   effect: '{{ effect|default("Blink")|title }}'
@@ -135,6 +137,7 @@ sequence:
               {%- else %}
                 {{- effects_dimmer[effect|default("Blink")|title] }}
               {% endif %}
+            # Preform the Inovelli math.
             inovelli_math: |
               {%- if effect|int > 0 %}
                 {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
@@ -147,22 +150,10 @@ sequence:
             - conditions:
                 - '{{ debug == true }}'
               sequence:
-                - variables:
-                    input_entity: "{{ repeat.item }}"
-                    input_color: !input input_color
-                    input_level: !input input_level
-                    input_effect: !input input_effect
-                    input_duration: !input input_duration
                 - service: persistent_notification.create
                   data:
                     title: "DEBUG: script.inovelli_led"
                     message: |
-                      input_entity: {{ input_entity }}
-                      input_color: {{ input_color }}
-                      input_level: {{ input_level }}
-                      input_effect: {{ input_effect }}
-                      input_duration: {{ input_duration }}
-
                       model_name: {{ model_name }}
                       model_type: {{ model_type }}
                       color: {{ color|title }}
@@ -193,8 +184,8 @@ sequence:
 
 fields:
   entity_id:
-    name: Entity
-    description: Inovelli device to notify.
+    name: Entities
+    description: Inovelli devices to notify.
     example: light.family_room
     selector:
       entity:
@@ -283,3 +274,7 @@ fields:
           - 1 Hour
           - 2 Hours
           - Indefinitely
+  enable_debug:
+    name: Enable debug output?
+    selector:
+      boolean:
