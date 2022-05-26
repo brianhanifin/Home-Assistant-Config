@@ -2,6 +2,7 @@
 unique_id: windows_open
 name: Windows open
 icon: mdi:window-open
+state_class: total
 state: |
   {%- set windows = state_attr("binary_sensor.downstairs_windows","entity_id") | replace("]",",") ~ state_attr("binary_sensor.upstairs_windows","entity_id") | replace("[","") %}
   {%- set open_windows = states.binary_sensor | selectattr("entity_id","in",windows) | selectattr("state","eq","on") | map(attribute="entity_id") | list %}

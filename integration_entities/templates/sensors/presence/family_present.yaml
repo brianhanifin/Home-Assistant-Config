@@ -2,6 +2,7 @@
 unique_id: family_present
 name: Family Present
 icon: mdi:cellphone
+state_class: total
 state: |
   {{ states.person | selectattr('state','eq','home') | map(attribute='entity_id') | list | count  }}
 attributes:

@@ -2,6 +2,7 @@
 unique_id: lights_on_upstairs
 name: Lights on upstairs
 icon: mdi:lightbulb-on
+state_class: total
 state: |
   {%- set lights = namespace(entities="") %}
   {%- set entities = expand("group.upstairs_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
