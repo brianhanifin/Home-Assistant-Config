@@ -5,16 +5,22 @@ icon: mdi:counter
 state_class: total
 state: |
   {{
-    state_attr("sensor.updates","home_assistant_update_count")|default(0)|int
+    states.update|selectattr("state","eq","on")|map(attribute="entity_id")|list|count
+    + iif(is_state("binary_sensor.beta_update_available","on"), 1, 0)
     + states("sensor.unifi_gateway_firmware_upgradable")|default(0)|int
   }}
 
 attributes:
-  home_assistant_update_count: '{{ states.update | selectattr("state","eq","on") | map(attribute="entity_id") | list | count }}'
-  home_assistant_updates: '{{ state_attr("sensor.updates","home_assistant_update_count") > 0 }}'
-  core_update: '{{  is_state("update.home_assistant_core_update","on") or is_state("binary_sensor.beta_update_available","on") }}'
+  home_assistant_update_count: |
+    {{
+      iif(state_attr(this.entity_id,"core_update"), 1, 0)
+      + iif(state_attr(this.entity_id,"os_update"), 1, 0)
+      + iif(state_attr(this.entity_id,"supervisor_update"), 1, 0)
+    }}
+  core_update: '{{ is_state("update.home_assistant_core_update","on") or is_state("binary_sensor.beta_update_available","on") }}'
   os_update: '{{ is_state("update.home_assistant_operating_system_update","on") }}'
   supervisor_update: '{{ is_state("update.home_assistant_supervisor_update","on") }}'
   addon_update: '{{ states("sensor.addon_updates")|default(0)|int > 0 }}'
-  hacs_update: '{{ states("sensor.hacs")|default(0)|int > 0 }}'
+  hacs_update: '{{ states("sensor.hacs_updates")|default(0)|int > 0 }}'
+  device_updates: '{{ states("sensor.device_updates")|default(0)|int > 0 }}'
   unifi_firmware_update: '{{ states("sensor.unifi_gateway_firmware_upgradable")|default(0)|int > 0 }}'

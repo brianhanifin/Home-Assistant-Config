@@ -1,0 +1,12 @@
+---
+unique_id: hacs_updates
+name: HACS updates
+icon: mdi:counter
+state_class: total
+state: |
+  {%- set entities = integration_entities("hacs") %}
+  {{ states.update | selectattr("entity_id","in",entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="entity_id") | list | count }}
+attributes:
+  updates_available: |
+    {%- set entities = integration_entities("hacs") %}
+    {{ states.update | selectattr("entity_id","in",entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="attributes.title") | list }}

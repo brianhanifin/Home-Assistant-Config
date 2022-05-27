@@ -4,23 +4,19 @@ name: Addon updates
 icon: mdi:counter
 state_class: total
 state: |
-  {%- set updates = namespace(entities="") %}
-  {%- set entities = states.update | map(attribute="entity_id") | list %}
-  {%- for entity in entities %}
-    {%- set picture = state_attr(entity,"entity_picture") %}
-    {%- if picture != none and picture.startswith("/api/hassio/addons") and is_state(entity,"on") %}
-      {%- set updates.entities = updates.entities ~ " " ~ entity %}
-    {%- endif %}
-  {%- endfor %}
-  {{ iif(updates.entities|trim|length > 0, (updates.entities|trim).split(" ")|count, 0) }}
+  {%- set ignored_entities = [
+    "update.home_assistant_core_update",
+    "update.home_assistant_operating_system_update",
+    "update.home_assistant_supervisor_update"
+  ] %}
+  {%- set entities = expand(integration_entities("Home Assistant Supervisor")) | rejectattr("entity_id","in",ignored_entities) | map(attribute="entity_id") | list %}
+  {{ states.update | selectattr("entity_id","in",entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="entity_id") | list | count }}
 attributes:
-  addons: |
-    {%- set updates = namespace(entities="") %}
-    {%- set entities = states.update | map(attribute="entity_id") | list %}
-    {%- for entity in entities %}
-      {%- set picture = state_attr(entity,"entity_picture") %}
-      {%- if picture != none and picture.startswith("/api/hassio/addons") and is_state(entity,"on") %}
-        {%- set updates.entities = updates.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
-      {%- endif %}
-    {%- endfor %}
-    {{ iif(updates.entities|trim|length > 0, (updates.entities|trim).split("\t"), "") }}
+  updates_available: |
+    {%- set ignored_entities = [
+      "update.home_assistant_core_update",
+      "update.home_assistant_operating_system_update",
+      "update.home_assistant_supervisor_update"
+    ] %}
+    {%- set entities = expand(integration_entities("Home Assistant Supervisor")) | rejectattr("entity_id","in",ignored_entities) | map(attribute="entity_id") | list %}
+    {{ states.update | selectattr("entity_id","in",entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="attributes.title") | list }}
