@@ -101,7 +101,7 @@ This chinese company makes a lot of very useful and inexpensive wireless smart h
 
 ## DIY smart home devices
 
-I have flashed the below devices with ESPHome firmware which I have full control 
+I have flashed the below devices with ESPHome firmware which I have full control
 over! You can see my code at my [esphome-config GitHub repository][esphome-config].
 
 ### Shelly 1 boards
@@ -174,8 +174,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
   {%- set plugins = hacs_components | selectattr('category', 'equalto', 'plugin') | rejectattr("installed","equalto",false) | sort(attribute='name') %}
 ## Technical details
 
-Our Home Assistant install has approximately **{{ states|count }} total entities**, 
-including **{{ states.sensor|count + states.binary_sensor|count }} sensors**.
+Our Home Assistant install has approximately **{{ states|count }} total entities**,
+including **{{ states.sensor|count + states.binary_sensor|count }} sensors**. My YAML
+files contain {{ "{0:,.0f}".format( states("sensor.code_line_count")|int ) }} lines of code.
 
 <details><summary>{{ integrations|count }} Custom integrations</summary>
 {%- for integration in integrations %}
@@ -267,7 +268,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-{{ states('sensor.code_line_count') }}-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-{{ "{0:,.0f}".format( states("sensor.code_line_count")|int ) }}-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/{{ states('sensor.date')[0:4] }}.svg
