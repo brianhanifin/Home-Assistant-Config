@@ -1377,7 +1377,7 @@ views:
         layout: vertical
         show_buttons_control: false
         type: custom:mushroom-cover-card
-      columns: 2
+      columns: 3
       square: false
       type: grid
     type: vertical-stack
@@ -1586,7 +1586,7 @@ views:
       title: Upstairs bathroom
       type: custom:mushroom-title-card
     - cards:
-      - entity: fan.upstairs_bathroom
+      - entity: fan.upstairs_bathroom_exhaust
         hide_state: true
         icon_animation: true
         name: Exhaust fan
@@ -1595,7 +1595,7 @@ views:
         tap_action:
           action: toggle
         type: custom:mushroom-fan-card
-      - entity: number.upstairs_bathroom_humidity_trigger
+      - entity: number.upstairs_bathroom_exhaust_humidity_delta_trigger
         name: Humidity trigger
         tap_action:
           action: more-info
@@ -1720,6 +1720,8 @@ views:
             name: Guest
           - entity: sensor.lucas_room_humidity
             name: Lucas
+          - entity: sensor.bedroom_display_humidity
+            name: Bedroom
           show_icon: false
           type: glance
         - aggregate_func: max
@@ -1731,6 +1733,8 @@ views:
             name: Guest
           - entity: sensor.lucas_room_humidity
             name: Lucas
+          - entity: sensor.bedroom_display_humidity
+            name: Bedroom
           height: 75
           hours_to_show: 12
           line_width: 2
@@ -1961,18 +1965,8 @@ views:
           'on':
             entities:
             - entity: input_select.glowforge_status
-            - entities:
-              - entity: sensor.sonoff_s31_01_power
-                name: Power
-              - entity: sensor.sonoff_s31_01_current
-                name: Current
-              - entity: sensor.sonoff_s31_01_voltage
-                name: A/C
-              entity: sensor.sonoff_s31_01_power
+            - entity: sensor.glowforge_power_monitor_power
               icon: mdi:power-plug
-              name: Electricity
-              show_state: false
-              type: custom:multiple-entity-row
             - entity: automation.glowforge_announce_complete
               icon: mdi:cellphone-message
               name: Notify When Complete
@@ -2051,18 +2045,8 @@ views:
                 name: Progress
                 show_state: false
                 type: custom:multiple-entity-row
-              - entities:
-                - entity: sensor.sonoff_s31_03_power
-                  name: Power
-                - entity: sensor.sonoff_s31_03_current
-                  name: Current
-                - entity: sensor.sonoff_s31_03_voltage
-                  name: A/C
-                entity: sensor.sonoff_s31_03_power
-                icon: mdi:power-plug
-                name: Electricity
-                show_state: false
-                type: custom:multiple-entity-row
+              - entity: sensor.prusa_power
+                name: Power
               - entity: automation.3d_print_status_update
                 icon: mdi:cellphone-message
                 name: Notify On Status Change
@@ -2448,7 +2432,6 @@ views:
     - content: '{{ states("sensor.update_message") }}
 
         '
-      entity_id: sensor.updates
       style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n  display:\
         \ {{ \"block\" if states(\"sensor.updates\")|default(0)|int > 0 else \"none\"\
         \ }}\n}\n"
@@ -2456,14 +2439,16 @@ views:
     - cards:
       - entities:
         - entities:
-          - attribute: home_assistant_updates
+          - attribute: home_assistant_update_count
             entity: sensor.updates
             name: Home Assistant
-          - entity: sensor.hacs
+          - entity: sensor.hacs_updates
             name: HACS
             unit: ' '
           - entity: sensor.addon_updates
-            name: Addons
+            name: Addon
+          - entity: sensor.device_updates
+            name: Device
           - entity: sensor.updates
             name: TOTAL
           entity: update.home_assistant_core_update
