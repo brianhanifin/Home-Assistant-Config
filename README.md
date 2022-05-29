@@ -169,9 +169,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1280 total entities**,
-including **607 sensors**. My YAML
-files contain 40,622 lines of code.
+Our Home Assistant install has approximately **1269 total entities**,
+including **601 sensors**. My YAML
+files contain 40,578 lines of code.
 
 <details><summary>25 Custom integrations</summary>
 
@@ -201,7 +201,7 @@ Authors: [@hif2k1](https://github.com/hif2k1).
 
 #### [Breaking Changes v21.12.0](https://github.com/custom-components/breaking_changes)
 
-Component to show potential breaking_changes in the current published version based on your loaded components
+
 Authors: [@ludeeus](https://github.com/ludeeus).
 
 
@@ -497,7 +497,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.6.0b0-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.6.0b3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -507,7 +507,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,622-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,578-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
