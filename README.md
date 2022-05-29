@@ -169,9 +169,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1269 total entities**,
-including **599 sensors**. My YAML
-files contain 40,508 lines of code.
+Our Home Assistant install has approximately **1280 total entities**,
+including **607 sensors**. My YAML
+files contain 40,622 lines of code.
 
 <details><summary>25 Custom integrations</summary>
 
@@ -229,7 +229,7 @@ Frigate integration for Home Assistant
 Authors: [@blakeblackshear](https://github.com/blakeblackshear).
 
 
-#### [Generate readme v0.4.0](https://github.com/custom-components/readme)
+#### [Generate readme v0.5.0](https://github.com/custom-components/readme)
 
 
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -241,7 +241,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.25.1](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.25.2](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -289,7 +289,7 @@ Home Assistant Custom Component for Wyze Vacuum
 Authors: [romedtino](https://github.com/romedtino).
 
 
-#### [SmartThinQ LGE Sensors v0.21.1](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.22.0](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -497,7 +497,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.6.0b1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.6.0b0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -507,7 +507,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,508-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,622-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
