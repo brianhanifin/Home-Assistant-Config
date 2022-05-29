@@ -29,8 +29,17 @@ state: |
     * There is a Supervisor update.
     {%- endif %}
 
+    {%- if state_attr("sensor.updates", "addon_update") %}
+      {%- set addon_updates = states("sensor.addon_updates")|default(0)|int %}
+      {%- if addon_updates == 1 %}
+    * There is one Addon update.
+      {%- else %}
+    * There are {{ addon_updates }} Addon updates.
+      {%- endif %}
+    {%- endif %}
+
     {%- if state_attr("sensor.updates", "hacs_update") %}
-      {%- set hacs_updates = states("sensor.hacs")|default(0)|int %}
+      {%- set hacs_updates = states("sensor.hacs_updates")|default(0)|int %}
       {%- if hacs_updates == 1 %}
     * There is one HACS update.
       {%- else %}
@@ -38,12 +47,12 @@ state: |
       {%- endif %}
     {%- endif %}
 
-    {%- if state_attr("sensor.updates", "addon_update") %}
-      {%- set addon_updates = states("sensor.addon_updates")|default(0)|int %}
-      {%- if addon_updates == 1 %}
-    * There is one Addon update.
+    {%- if state_attr("sensor.updates", "device_update") %}
+      {%- set hacs_updates = states("sensor.device_updates")|default(0)|int %}
+      {%- if hacs_updates == 1 %}
+    * There is one HACS update.
       {%- else %}
-    * There are {{ addon_updates }} Addon updates.
+    * There are {{ hacs_updates }} HACS updates.
       {%- endif %}
     {%- endif %}
 

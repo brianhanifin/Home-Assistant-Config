@@ -1,0 +1,16 @@
+---
+unique_id: device_updates
+name: Device updates
+icon: mdi:counter
+state_class: total
+state: |
+  {%- set addon_entities = integration_entities("Home Assistant Supervisor") %}
+  {%- set hacs_entities = integration_entities("hacs") %}
+  {%- set already_counted_entities = addon_entities|replace("]",",") ~ hacs_entities|replace("[","") %}
+  {{ states.update | rejectattr("entity_id","in",already_counted_entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="entity_id") | list | count }}
+attributes:
+  updates_available: |
+    {%- set addon_entities = integration_entities("Home Assistant Supervisor") %}
+    {%- set hacs_entities = integration_entities("hacs") %}
+    {%- set already_counted_entities = expand(addon_entities, hacs_entities) | join(",","entity_id") %}
+    {{ states.update | rejectattr("entity_id","in",already_counted_entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="entity_id") | list }}

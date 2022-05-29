@@ -101,7 +101,7 @@ This chinese company makes a lot of very useful and inexpensive wireless smart h
 
 ## DIY smart home devices
 
-I have flashed the below devices with ESPHome firmware which I have full control 
+I have flashed the below devices with ESPHome firmware which I have full control
 over! You can see my code at my [esphome-config GitHub repository][esphome-config].
 
 ### Shelly 1 boards
@@ -169,8 +169,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1276 total entities**, 
-including **606 sensors**.
+Our Home Assistant install has approximately **1269 total entities**,
+including **599 sensors**. My YAML
+files contain 40,508 lines of code.
 
 <details><summary>25 Custom integrations</summary>
 
@@ -288,7 +289,7 @@ Home Assistant Custom Component for Wyze Vacuum
 Authors: [romedtino](https://github.com/romedtino).
 
 
-#### [SmartThinQ LGE Sensors v0.21.0](https://github.com/ollo69/ha-smartthinq-sensors)
+#### [SmartThinQ LGE Sensors v0.21.1](https://github.com/ollo69/ha-smartthinq-sensors)
 
 
 Authors: [@ollo69](https://github.com/ollo69).
@@ -496,7 +497,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.6.0b0-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.6.0b1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -506,7 +507,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40234-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,508-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
