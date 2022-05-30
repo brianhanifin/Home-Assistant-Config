@@ -11,7 +11,8 @@ state: |
                         and is_state("binary_sensor.sliding_door", "on") %}
   {%- set current_hour = now().hour %}
   {{
-    outside_temp > inside_temp
+    is_state("input_boolean.warmer_outside_notification","on")
+    and outside_temp > inside_temp
     and home_open
     and 7 <= current_hour < 17
   }}

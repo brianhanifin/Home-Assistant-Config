@@ -211,46 +211,6 @@
       entity_id: automation.startup
   mode: single
   initial_state: true
-- id: '1619989994523'
-  alias: Temperature warmer outside
-  description: Notify me to open up the house when the temperature is getting warmer
-    outside.
-  trigger:
-  - platform: time_pattern
-    minutes: /15
-  condition:
-  - condition: state
-    entity_id: binary_sensor.home_doors_windows
-    state: 'on'
-  - condition: template
-    value_template: '{{ states("sensor.outdoor_temperature")|float(default=0) >= states("sensor.home_thermostat_temperature")|float(default=0)
-      }}'
-  - condition: time
-    after: 06:00:00
-    before: '17:00:00'
-  action:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.warmer_outside_notification
-        state: 'on'
-      sequence:
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.warmer_outside_notification
-        data: {}
-    default: []
-  - service: script.notify_mobile
-    data:
-      group: comfort-action
-      title: Warming up!
-      message: It is getting warmer outside. Please close up the house.
-      url: /lovelace/climate
-  - service: script.notify_speech
-    data:
-      media_player: media_player.google_downstairs
-      message: It is getting warmer outside. Please close up the house.
-  mode: single
 - id: '1620056955070'
   alias: 'Scheduled tasks: hourly'
   description: Tasks to run every hour.
