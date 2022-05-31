@@ -3,18 +3,11 @@ alias: Bedroom light on state change
 id: bedroom_light_on_state_change
 mode: single
 trigger:
-  - id: light_off
-    platform: state
-    entity_id: light.bedroom
-    from: "on"
-    to: "off"
-
   - id: light_on
     platform: state
     entity_id: light.bedroom
     from: "off"
     to: "on"
-
   - id: secondary_light_on
     platform: state
     entity_id:
@@ -22,15 +15,34 @@ trigger:
       - light.bedroom_table_lamp
     from: "off"
     to: "on"
-
+  - id: light_off
+    platform: state
+    entity_id: light.bedroom
+    from: "on"
+    to: "off"
 variables:
-  # old_state: '{{ trigger.from_state.state|lower }}'
-  # new_state: '{{ trigger.to_state.state|lower }}'
+  # within_wakeup_window: |
+  #   {%- set result = namespace(within_window=false) %}
+  #   {%- set wakeup_entities = ["input_datetime.event_light_wakeup_nerene","input_datetime.event_light_wakeup_brian"] %}
 
-  light_sync_enabled: '{{ states("input_boolean.bedroom_light_sync") }}'
+  #   {%- set current_time = as_timestamp(now()) %}
+  #   {%- set seconds_past_midnight = current_time|timestamp_custom("%I")|int * 3600 %}
+  #   {%- set seconds_past_midnight = seconds_past_midnight + current_time|timestamp_custom("%M")|int * 60 %}
+  #   {%- set seconds_past_midnight = seconds_past_midnight + current_time|timestamp_custom("%S")|int %}
+
+  #   {%- for entity in wakeup_entities %}
+  #     {%- set time = states(entity).split(":") %}
+  #     {%- set wakeup_seconds = time[0]|int * 3600 %}
+  #     {%- set wakeup_seconds = wakeup_seconds + time[1]|int * 60 %}
+  #     {%- set wakeup_seconds = wakeup_seconds + time[0]|int %}
+  #     {%- set seconds_past_wakeup = seconds_past_midnight - wakeup_seconds %}
+  #     {%- set result.within_window = (0 < seconds_past_wakeup <= 600) or result.within_window == true %}
+  #   {%- endfor %}
+  #   {{ result.within_window }}
+
   nerene_battery_charging: '{{ is_state_attr("device_tracker.life360_nerene","battery_charging",True) }}'
 
-  # Determine if now is within 60 minutes of the wakeup time.
+  # Determine if now is within 60 minutes of Nerene's wakeup time.
   now_timestamp: '{{ as_timestamp(now()) }}'
   timezone_offset: '{{ now_timestamp|timestamp_custom("%z") }}'
   wakeup_time: '{{ states("input_datetime.event_light_wakeup_nerene") }}'
@@ -39,39 +51,16 @@ variables:
   near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
 
 action:
-  # - service: script.debug
-  #   data:
-  #     message: |
-  #       old_state: {{ old_state }}
-  #       new_state: {{ new_state }}
-
-  - choose:
-      - conditions:
-          - '{{ trigger.id == "light_off" }}'
-          - '{{ light_sync_enabled == "on" }}'
-        sequence:
-          - service: light.turn_off
-            target:
-              entity_id:
-                - light.bedroom_east
-                - light.bedroom_table_lamp
-
-  - choose:
-      # Try to only turn the fan and sound machine off if Nerene is on her way out the door for work.
-      - conditions:
-          - '{{ trigger.id == "light_off" }}'
-          - '{{ nerene_battery_charging == False }}'
-          - '{{ near_wakeup == True }}'
-        sequence:
-          - service: homeassistant.turn_off
-            entity_id:
-              - fan.bedroom
-              - switch.sound_machine
-
-  - choose:
-      - conditions: '{{ trigger.id == "light_on"
-                        and is_state("script.event_light", "off") }}'
-        sequence:
+  # When outside of the wakeup light fade.
+  - if:
+      - condition: template
+        value_template: '{{ is_state("script.event_light", "off") }}'
+    # Full brightness when a light turns on outside of the wakeup light fade.
+    then:
+      - if:
+          - condition: template
+            value_template: '{{ trigger.id == "light_on" }}'
+        then:
           - service: light.turn_on
             target:
               entity_id:
@@ -81,31 +70,62 @@ action:
             data:
               brightness: 255
 
-      - conditions: '{{ trigger.id == "secondary_light_on"
-                        and is_state("script.event_light", "off") }}'
-        sequence:
+      - if:
+          - condition: template
+            value_template: '{{ trigger.id == "secondary_light_on" }}'
+        then:
           - service: light.turn_on
             target:
               entity_id: '{{ trigger.to_state.entity_id }}'
             data:
               brightness: 255
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
+
+    # Do this while the wakeup light fade script runs?
+    # else:
+    #   - if:
+    #       - condition: template
+    #         value_template: '{{ trigger.id == "light_on" }}'
+    #     then:
+    #       - service: light.turn_on
+    #         target:
+    #           entity_id:
+    #             - light.bedroom
+    #             - light.bedroom_east
+    #             - light.bedroom_table_lamp
+
+    #   - if:
+    #       - condition: template
+    #         value_template: '{{ trigger.id == "secondary_light_on" }}'
+    #     then:
+    #       - service: light.turn_on
+    #         target:
+    #           entity_id: '{{ trigger.to_state.entity_id }}'
+
+  - if:
+      - condition: template
+        value_template: '{{ trigger.id == "light_off" }}'
+    then:
+      # Try to only turn the fan and sound machine off if Nerene is on her way out the door for work.
+      - if:
+          - condition: template
+            value_template: '{{
+              nerene_battery_charging == False and
+              near_wakeup == True
+            }}'
+        then:
+          - service: homeassistant.turn_off
+            entity_id:
+              - fan.bedroom
+              - switch.sound_machine
+
+      # When outside of the wakeup light fade.
+      - if:
+          - condition: template
+            value_template: '{{ is_state("script.event_light", "off") }}'
+        then:
+          # Turn off the secondary lights when the main light is turned off.
+          - service: light.turn_off
+            target:
+              entity_id:
+                - light.bedroom_east
+                - light.bedroom_table_lamp
