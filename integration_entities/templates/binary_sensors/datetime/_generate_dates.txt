@@ -1,0 +1,27 @@
+{%- macro last_dayofmonth(month, year) -%}
+  {%- set daysinmonths = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
+  {%- set month = month|default(0)|int -%}
+  {%- set year = year|default(0)|int -%}
+
+  {# Simplified leap year calculation. See https://www.mathsisfun.com/leap-years.html #}
+  {%- set isleapyear = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) -%}
+
+  {%- set monthindex = month-1 -%}
+  {%- if month == 2 and isleapyear -%}
+    {{ daysinmonths[monthindex]+1 }}
+  {%- else -%}
+    {{ daysinmonths[monthindex] }}
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- set year = now().year %}
+{%- set months = [6,7,8] %}
+{%- set days = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31] %}
+[{%- for month in months %}
+  {%- set lastday = last_dayofmonth(month, year)|int %}
+  {%- for day in days %}
+    {%- if day <= lastday %}
+"{{ year ~"-"~ "%02d"|format(month) ~"-"~ "%02d"|format(day) }}"{{ "," if not loop.last }}
+    {%- endif %}
+  {% endfor %}
+{%- endfor %}]
