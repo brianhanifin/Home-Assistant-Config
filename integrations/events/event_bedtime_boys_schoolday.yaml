@@ -1,6 +1,6 @@
 ---
 script:
-  event_bedtime_weekend:
+  event_bedtime_boys_schoolday:
     sequence:
       - service: light.turn_on
         target:
@@ -11,55 +11,55 @@ script:
       # - service: script.event_light
       #   data:
       #     light: none
-      #     id: bedtime_weekend
+      #     id: bedtime_boys_schoolday
 
-  event_timeout_bedtime_weekend:
+  event_timeout_bedtime_boys_schoolday:
     sequence:
       - service: homeassistant.turn_off
         target:
           entity_id: none
 
 input_boolean:
-  event_enabled_bedtime_weekend:
+  event_enabled_bedtime_boys_schoolday:
     name: Active
     icon: mdi:alarm-check
-  event_skipnext_bedtime_weekend:
+  event_skipnext_bedtime_boys_schoolday:
     name: Skip next event
     icon: mdi:alarm-check
-  event_announcement_bedtime_weekend:
+  event_announcement_bedtime_boys_schoolday:
     name: Announcements?
     icon: mdi:google-home
-  event_light_bedtime_weekend:
+  event_light_bedtime_boys_schoolday:
     name: Wakeup light?
     icon: mdi:lamp
 
 input_datetime:
-  event_1st_bedtime_weekend:
+  event_1st_bedtime_boys_schoolday:
     name: First announcement
     has_date: false
     has_time: true
-  event_2nd_bedtime_weekend:
+  event_2nd_bedtime_boys_schoolday:
     name: Second announcement
     has_date: false
     has_time: true
-  event_light_bedtime_weekend: 
+  event_light_bedtime_boys_schoolday:
     name: Light fade-up start
     has_date: false
     has_time: true
 
 input_select:
-  event_speakers_bedtime_weekend:
+  event_speakers_bedtime_boys_schoolday:
     name: Announce in which areas?
     options: !include tts_rooms.txt
     icon: mdi:google-home
 
-input_text:
-  event_1st_bedtime_weekend:
-    name: First announcement
-  event_2nd_bedtime_weekend:
-    name: Second announcement
+# input_text:
+#   event_1st_bedtime_boys_schoolday:
+#     name: First announcement
+#   event_2nd_bedtime_boys_schoolday:
+#     name: Second announcement
 
 timer:
-  event_timeout_bedtime_weekend:
+  event_timeout_bedtime_boys_schoolday:
     duration: "01:00:00"
     restore: true

@@ -6,10 +6,10 @@ automation:
     trigger:
       - platform: time
         at:
-          - input_datetime.event_1st_bedtime_weekday
-          - input_datetime.event_2nd_bedtime_weekday
-          - input_datetime.event_1st_bedtime_weekend
-          - input_datetime.event_2nd_bedtime_weekend
+          - input_datetime.event_1st_bedtime_boys_schoolday
+          - input_datetime.event_2nd_bedtime_boys_schoolday
+          - input_datetime.event_1st_bedtime_boys_dayoff
+          - input_datetime.event_2nd_bedtime_boys_dayoff
           - input_datetime.event_1st_wakeup_brian
           - input_datetime.event_2nd_wakeup_brian
           - input_datetime.event_1st_wakeup_lucas
@@ -23,12 +23,12 @@ automation:
     variables:
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[25:] }}'
-      is_2nd: '{{ entity_id.startswith("input_datetime.event_2nd") }}'
+      second_announcement: '{{ entity_id.startswith("input_datetime.event_2nd") }}'
       event_enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
       skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
       skipnext: '{{ is_state(skipnext_entity, "on") }}'
       announcement_enabled: '{{ is_state("input_boolean.event_announcement_" + id, "on") }}'
-      announcement: '{{ states("input_text.event_" + entity_id[21:]) }}'
+      #announcement: '{{ states("input_text.event_" + entity_id[21:]) }}'
 
       event_hour: '{{ states(entity_id)[:2]|int }}'
       workday: '{{ is_state("binary_sensor.work_day","on") }}'
@@ -46,13 +46,13 @@ automation:
           {{ middle_school_day or high_school_day }}
         {%- elif id == "wakeup_nerene" %}
           {{ workday }}
-        {%- elif id == "bedtime_weekday" %}
+        {%- elif id == "bedtime_boys_schoolday" %}
           {%- if event_hour < 6 %}
             {{ middle_school_day or high_school_day }}
           {%- else %}
             {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
           {%- endif %}
-        {%- elif id == "bedtime_weekend" %}
+        {%- elif id == "bedtime_boys_daysoff" %}
           {%- if event_hour < 6 %}
             {{ not (middle_school_day or high_school_day) }}
           {%- else %}
@@ -71,7 +71,7 @@ automation:
       #       event_enabled: {{ event_enabled }}
       #       event_today: {{ event_today }}
       #       skipnext: {{ skipnext }}
-      #       is_2nd: {{ is_2nd }}
+      #       second_announcement: {{ second_announcement }}
       #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
       - alias: 'Continue if the announcement is enabled, today is an event day, and the event is not deactivated.'
@@ -85,11 +85,13 @@ automation:
             sequence:
               - service: script.event_announce
                 data:
+                  id: '{{ id }}'
                   media_player: '{{ states("input_select.event_speakers_" + id) }}'
-                  message: '{{ announcement }}'
+                  #message: '{{ announcement }}'
+                  second_announcement: '{{ second_announcement }}'
 
           - alias: Skip the announcement and disable skipnext.
-            conditions: '{{ skipnext and is_2nd }}'
+            conditions: '{{ skipnext and second_announcement }}'
             sequence:
               - delay:
                   seconds: 15
@@ -108,8 +110,8 @@ automation:
           - input_datetime.event_light_wakeup_kyle
           - input_datetime.event_light_wakeup_lucas
           #- input_datetime.event_light_wakeup_lucas_late_start
-          #- input_datetime.event_light_wakeup_bedtime_weekday
-          #- input_datetime.event_light_wakeup_bedtime_weekend
+          #- input_datetime.event_light_wakeup_bedtime_boys_schoolday
+          #- input_datetime.event_light_wakeup_bedtime_boys_dayoff
     variables:
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[27:] }}'
@@ -134,13 +136,13 @@ automation:
           {{ middle_school_day or high_school_day }}
         {%- elif id == "wakeup_nerene" %}
           {{ workday }}
-        {%- elif id == "bedtime_weekday" %}
+        {%- elif id == "bedtime_boys_schoolday" %}
           {%- if event_hour < 6 %}
             {{ middle_school_day or high_school_day }}
           {%- else %}
             {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
           {%- endif %}
-        {%- elif id == "bedtime_weekend" %}
+        {%- elif id == "bedtime_boys_daysoff" %}
           {%- if event_hour < 6 %}
             {{ not (middle_school_day or high_school_day) }}
           {%- else %}
@@ -157,6 +159,8 @@ automation:
       #       id: {{ id }}
       #       light_enabled: {{ light_enabled }}
       #       event_today: {{ event_today }}
+      #       {{ light_enabled and event_today and event_enabled }}
+      #       {{ do_not_skipnext }}
       #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
       - alias: 'Continue if the wakeup light is enabled, today is an event day, and the event is not deactivated.'
@@ -201,7 +205,9 @@ script:
       speaker:
         bedroom: "media_player.google_bedroom"
         kyles_room: "media_player.google_kyles_room"
+        kyle_morning: "media_player.google_kyle_morning"
         lucas_room: "media_player.google_lucas_room"
+        lucas_morning: "media_player.google_lucas_morning"
         lucas_sleep: "media_player.google_lucas_sleep"
         boys_rooms: "media_player.google_boys_rooms"
         downstairs: "media_player.google_downstairs"
@@ -213,10 +219,48 @@ script:
         play_room: "media_player.google_play_room"
         upstairs: "media_player.google_upstairs"
         upstairs_bathroom: "media_player.google_upstairs_bathroom"
+      type: '{{ id.split("_")[0] }}'
+      who: '{{ id.split("_")[1] | title }}'
+      #modifier: '{{ id.split("_")[2] }}'
+      modified_schedule: '{{ iif(who in ["Lucas"], "Today is a " ~ states("sensor.high_school_day_modified_schedule") ~ " schedule.", "") }}'
+      current_time: |
+        {%- set time_suffix = as_timestamp(now())|timestamp_custom("%p", true) %}
+        {%- set current_time = "%01d"|format( iif(now().hour<13, now().hour, now().hour-12) ) %}
+        {%- set current_time = current_time ~ ":%02d"|format(now().minute) if now().minute > 0 %}
+        {%- set current_time = current_time ~" "~ time_suffix[0] ~" "~ time_suffix[1] %}
+        {{- current_time }}
+      time_sentence: '{{ "It is " ~ current_time ~ "." }}'
+      time_of_day: |
+        {%- set hour = now().hour %}
+        {%- if 5 <= hour < 12 -%}
+          morning
+        {%- elif 12 <= hour < 17 -%}
+          afternoon
+        {%- elif 17 <= hour < 19 -%}
+          evening
+        {%- else -%}
+          night
+        {%- endif %}
+      message: |
+        {%- if type == "wakeup" %}
+          {{ time_sentence ~ " Time to start waking up. " if not second_announcement }}
+          Good {{ time_of_day }} {{ who ~ ". " }}
+          {{ time_sentence if second_announcement }}
+          {{ modified_schedule }}
+        {%- elif type == "bedtime" -%}
+          {%- if not second_announcement %}
+            {{- "It's almost bedtime " ~who~ ". Wrap up your activities. " }}
+          {%- else %}
+            {{- "Goodnight " ~who~ ". It is time to go to bed." }}
+          {%- endif %}
+        {%- else %}
+          Good {{ time_of_day }} {{ who }}.
+          {{ time_sentence }}
+        {%- endif %}
     sequence:
       - service: script.notify_speech
         data:
-          message: '{{ message|default("Error! The message was empty.") }}'
+          message: '{{ message }}'
           media_player: '{{ speaker[room] }}'
 
   event_light:
@@ -232,6 +276,15 @@ script:
           False
         {%- endif %}
     sequence:
+      # - service: persistent_notification.create
+      #   data:
+      #     title: script.event_wakeup_brian
+      #     message: |
+      #       light_area: '{{ light_area }}'
+      #       adaptive_lighting_entity: '{{ adaptive_lighting_entity }}'
+      #       adaptive_lighting_on: '{{ adaptive_lighting_on }}'
+      #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
+
       - alias: "Temporarily disable adaptive lighting for this room."
         if: '{{ adaptive_lighting_on }}'
         then:
@@ -295,15 +348,3 @@ script:
       - service: script.notify_web
         data:
           message: '{{ id|replace("_"," ")|title }} complete'
-
-# trigger_variables:
-#   trigger_entities: |
-#     {%- set entities = namespace(all=[],filtered="") %}
-#     {%- set entities.all = states.input_datetime | map(attribute='entity_id') | list %}
-#     {%- for entity in entities.all if entity.startswith("input_datetime.event_1st") or entity.startswith("input_datetime.event_2nd") -%}
-#       {% set entities.filtered = entities.filtered + entity + " " %}
-#     {%- endfor %}
-#     {{- entities.filtered.split() }}
-# trigger:
-#   - platform: time
-#     at: '{{ trigger_entities }}'

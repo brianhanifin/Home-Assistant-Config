@@ -25,16 +25,8 @@ decluttering_templates:
           - type: divider
           - entities:
             - entity: input_select.event_speakers_[[id]]
-            - entities:
-              - entity: input_text.event_1st_[[id]]
-                type: custom:text-input-row
-              head: input_datetime.event_1st_[[id]]
-              type: custom:fold-entity-row
-            - entities:
-              - entity: input_text.event_2nd_[[id]]
-                type: custom:text-input-row
-              head: input_datetime.event_2nd_[[id]]
-              type: custom:fold-entity-row
+            - entity: input_datetime.event_1st_[[id]]
+            - entity: input_datetime.event_2nd_[[id]]
             head: input_boolean.event_announcement_[[id]]
             type: custom:fold-entity-row
           show_header_toggle: false
@@ -2132,15 +2124,20 @@ views:
     - sensors:
       - binary_sensor.middle_school_day
       - binary_sensor.high_school_day
-  - fill_container: false
-    icon: mdi:clock
-    multiline_secondary: true
-    primary: '{{ states("sensor.time") }}'
-    secondary: 'selected: {{ states("input_text.event_light_wakeup_brian") }}
-
-      brightness: {{ (state_attr("light.table_lamp","brightness")|float / 255 * 100)
-      | round }}% '
-    type: custom:mushroom-template-card
+  - cards:
+    - fill_container: false
+      icon: mdi:clock
+      multiline_secondary: true
+      primary: '{{ states("sensor.time") }} '
+      secondary: ''
+      type: custom:mushroom-template-card
+    - collapsible_controls: true
+      entity: light.table_lamp
+      show_brightness_control: true
+      type: custom:mushroom-light-card
+    columns: 2
+    square: false
+    type: grid
   - template: event
     type: custom:decluttering-card
     variables:
@@ -2159,20 +2156,20 @@ views:
     type: custom:decluttering-card
     variables:
     - label: 'Bed time: school day'
-    - id: bedtime_weekday
+    - id: bedtime_boys_schoolday
     - sensors:
       - binary_sensor.middle_school_day_tomorrow
       - binary_sensor.high_school_day_tomorrow
   - template: event
     type: custom:decluttering-card
     variables:
-    - label: 'Bed time: Weekend or vacation'
-    - id: bedtime_weekend
+    - label: 'Bed time: Day off'
+    - id: bedtime_boys_dayoff
     - sensors:
       - binary_sensor.middle_school_day
       - binary_sensor.high_school_day
   - cards:
-    - subtitle: 'Drip system: zone1'
+    - subtitle: Front yard drip system
       title: Irrigation control
       type: custom:mushroom-title-card
     - entity: switch.front_yard_drip

@@ -1,67 +1,18 @@
 ---
-automation:
-  - alias: "Event wakeup Brian: light selected"
-    id: event_wakeup_brian_light selected
-    trigger:
-      - platform: state
-        entity_id: input_select.event_light_wakeup_brian
-    action:
-      - if: '{{ states("input_select.event_light_wakeup_brian") not in ["","unavailable","unknown"] }}'
-        then:
-          - service: input_text.set_value
-            target:
-              entity_id: input_text.event_light_wakeup_brian
-            data:
-              value: '{{ states("input_select.event_light_wakeup_brian") }}'
-
-  - alias: "Event wakeup Brian: fill light choices"
-    id: event_wakeup_brian_fill_light_choices
-    trigger:
-      - id: input_select.reload
-        platform: event
-        event_type: call_service
-        event_data:
-          domain: input_select
-          service: reload
-      - id: automation.reload
-        platform: event
-        event_type: call_service
-        event_data:
-          domain: automation
-          service: reload
-      - id: startup_ended
-        platform: state
-        entity_id: automation.startup
-        from: "on"
-        to: "off"
-    action:
-      - if: '{{ trigger.id != "automation.reload" }}'
-        then:
-          - delay:
-              seconds: 5
-
-          - service: input_select.set_options
-            target:
-              entity_id: input_select.event_light_wakeup_brian
-            data:
-              options: |
-                {%- set area_lights = state_attr("group.family_room_lights", "entity_id") ~ state_attr("group.bedroom_lights", "entity_id") | list %}
-                {{ states.light | selectattr("entity_id", "in", area_lights) | map(attribute="name") | sort | list }}
-
-          - delay:
-              seconds: 5
-
-      - if: '{{ states("input_select.event_light_wakeup_brian") in ["","unavailable","unknown"] }}'
-        then:
-          - service: input_select.select_option
-            target:
-              entity_id: input_select.event_light_wakeup_brian
-            data:
-              option: '{{ states("input_text.event_light_wakeup_brian") }}'
-
 script:
   event_wakeup_brian:
     sequence:
+      # - service: persistent_notification.create
+      #   data:
+      #     title: script.event_wakeup_brian
+      #     message: |
+      #       id: wakeup_brian
+      #       light: |
+      #         {%- set light_name = states("input_select.event_light_wakeup_brian") %}
+      #         {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
+      #         {{ entity_list[0] }}
+      #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
+
       - service: homeassistant.turn_off
         target:
           entity_id:
@@ -117,20 +68,21 @@ input_select:
   event_light_wakeup_brian:
     name: Light fixture
     options:
-      - unknown
+      - Bedroom
+      - Bedroom east
+      - Bedroom table lamp
+      - Table lamp
     icon: mdi:lamp
   event_speakers_wakeup_brian:
     name: Announce in which areas?
     options: !include tts_rooms.txt
     icon: mdi:google-home
 
-input_text:
-  event_light_wakeup_brian:
-    name: Light fixture
-  event_1st_wakeup_brian:
-    name: First announcement
-  event_2nd_wakeup_brian:
-    name: Second announcement
+# input_text:
+#   event_1st_wakeup_brian:
+#     name: First announcement
+#   event_2nd_wakeup_brian:
+#     name: Second announcement
 
 timer:
   event_timeout_wakeup_brian:

@@ -1,62 +1,4 @@
 ---
-automation:
-  - alias: "Event wakeup nerene: light selected"
-    id: event_wakeup_nerene_light selected
-    trigger:
-      - platform: state
-        entity_id: input_select.event_light_wakeup_nerene
-    action:
-      - if: '{{ states("input_select.event_light_wakeup_nerene") not in ["","unavailable","unknown"] }}'
-        then:
-          - service: input_text.set_value
-            target:
-              entity_id: input_text.event_light_wakeup_nerene
-            data:
-              value: '{{ states("input_select.event_light_wakeup_nerene") }}'
-
-  - alias: "Event wakeup nerene: fill light choices"
-    id: event_wakeup_nerene_fill_light_choices
-    trigger:
-      - id: input_select.reload
-        platform: event
-        event_type: call_service
-        event_data:
-          domain: input_select
-          service: reload
-      - id: automation.reload
-        platform: event
-        event_type: call_service
-        event_data:
-          domain: automation
-          service: reload
-      - id: startup_ended
-        platform: state
-        entity_id: automation.startup
-        from: "on"
-        to: "off"
-    action:
-      - delay:
-          seconds: 5
-
-      - service: input_select.set_options
-        target:
-          entity_id: input_select.event_light_wakeup_nerene
-        data:
-          options: |
-            {%- set area_lights = state_attr("group.bedroom_lights", "entity_id") | list %}
-            {{ states.light | selectattr("entity_id", "in", area_lights) | map(attribute="name") | sort | list }}
-
-      - delay:
-          seconds: 5
-
-      - if: '{{ states("input_select.event_light_wakeup_nerene") in ["","unavailable","unknown"] }}'
-        then:
-          - service: input_select.select_option
-            target:
-              entity_id: input_select.event_light_wakeup_nerene
-            data:
-              option: '{{ states("input_text.event_light_wakeup_nerene") }}'
-
 script:
   event_wakeup_nerene:
     sequence:
@@ -115,20 +57,20 @@ input_select:
   event_light_wakeup_nerene:
     name: Light fixture
     options:
-      - unknown
+      - Bedroom
+      - Bedroom east
+      - Bedroom table lamp
     icon: mdi:lamp
   event_speakers_wakeup_nerene:
     name: Announce in which areas?
     options: !include tts_rooms.txt
     icon: mdi:google-home
 
-input_text:
-  event_light_wakeup_nerene:
-    name: Light fixture
-  event_1st_wakeup_nerene:
-    name: First announcement
-  event_2nd_wakeup_nerene:
-    name: Second announcement
+# input_text:
+#   event_1st_wakeup_nerene:
+#     name: First announcement
+#   event_2nd_wakeup_nerene:
+#     name: Second announcement
 
 timer:
   event_timeout_wakeup_nerene:

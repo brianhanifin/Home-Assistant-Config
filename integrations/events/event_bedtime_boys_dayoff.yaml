@@ -1,6 +1,6 @@
 ---
 script:
-  event_bedtime_weekday:
+  event_bedtime_boys_dayoff:
     sequence:
       - service: light.turn_on
         target:
@@ -11,55 +11,55 @@ script:
       # - service: script.event_light
       #   data:
       #     light: none
-      #     id: bedtime_weekday
+      #     id: bedtime_boys_dayoff
 
-  event_timeout_bedtime_weekday:
+  event_timeout_bedtime_boys_dayoff:
     sequence:
       - service: homeassistant.turn_off
         target:
           entity_id: none
 
 input_boolean:
-  event_enabled_bedtime_weekday:
+  event_enabled_bedtime_boys_dayoff:
     name: Active
     icon: mdi:alarm-check
-  event_skipnext_bedtime_weekday:
+  event_skipnext_bedtime_boys_dayoff:
     name: Skip next event
     icon: mdi:alarm-check
-  event_announcement_bedtime_weekday:
+  event_announcement_bedtime_boys_dayoff:
     name: Announcements?
     icon: mdi:google-home
-  event_light_bedtime_weekday:
+  event_light_bedtime_boys_dayoff:
     name: Wakeup light?
     icon: mdi:lamp
 
 input_datetime:
-  event_1st_bedtime_weekday:
+  event_1st_bedtime_boys_dayoff:
     name: First announcement
     has_date: false
     has_time: true
-  event_2nd_bedtime_weekday:
+  event_2nd_bedtime_boys_dayoff:
     name: Second announcement
     has_date: false
     has_time: true
-  event_light_bedtime_weekday: 
+  event_light_bedtime_boys_dayoff:
     name: Light fade-up start
     has_date: false
     has_time: true
 
 input_select:
-  event_speakers_bedtime_weekday:
+  event_speakers_bedtime_boys_dayoff:
     name: Announce in which areas?
     options: !include tts_rooms.txt
     icon: mdi:google-home
 
-input_text:
-  event_1st_bedtime_weekday:
-    name: First announcement
-  event_2nd_bedtime_weekday:
-    name: Second announcement
+# input_text:
+#   event_1st_bedtime_boys_dayoff:
+#     name: First announcement
+#   event_2nd_bedtime_boys_dayoff:
+#     name: Second announcement
 
 timer:
-  event_timeout_bedtime_weekday:
+  event_timeout_bedtime_boys_dayoff:
     duration: "01:00:00"
     restore: true

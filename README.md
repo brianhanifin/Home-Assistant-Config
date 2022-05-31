@@ -169,11 +169,11 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1272 total entities**,
-including **603 sensors**. My YAML
-files contain 41,179 lines of code.
+Our Home Assistant install has approximately **1251 total entities**,
+including **602 sensors**. My YAML
+files contain 41,080 lines of code.
 
-<details><summary>25 Custom integrations</summary>
+<details><summary>24 Custom integrations</summary>
 
 #### [Adaptive Lighting v1.0.14](https://github.com/basnijholt/adaptive-lighting#readme)
 
@@ -185,12 +185,6 @@ Authors: [@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://g
 
 Anniversary Countdown Sensor for Home Assistant
 Authors: [@pinkywafer](https://github.com/pinkywafer).
-
-
-#### [Authenticated v21.9.0](https://github.com/custom-components/authenticated)
-
-
-Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 #### [Battery Simulation v1.0](https://github.com/hif2k1/battery_sim/)
@@ -507,7 +501,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,179-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,080-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
