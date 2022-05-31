@@ -4,10 +4,15 @@ id: family_room_tv_device_sync
 description: Show Apple TV home screen when the TV turns on.
 mode: single
 trigger:
-  - platform: state
-    entity_id: media_player.family_room_tv  # Samsung TV
-    from: "off"
-    to: "on"
+  #- platform: state
+  #  entity_id: media_player.family_room_tv  # Samsung TV
+  #  from: "off"
+  #  to: "on"
+  - platform: numeric_state
+    entity_id: sensor.family_room_power_monitor_power
+    above: 7
+    for:
+      seconds: 15
 variables:
   tv_source: '{{ state_attr("media_player.family_room_tv","source") }}'
   apple_tv_state: '{{ states("media_player.family_room_apple_tv") }}'
