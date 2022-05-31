@@ -2114,7 +2114,7 @@ views:
     type: custom:decluttering-card
     view_layout:
       position: sidebar
-  - subtitle: Scheduled announcements & wakeup lights.
+  - subtitle: ''
     title: Events
     type: custom:mushroom-title-card
   - template: event
@@ -2175,22 +2175,22 @@ views:
     - subtitle: 'Drip system: zone1'
       title: Irrigation control
       type: custom:mushroom-title-card
-    - entity: switch.irrigation_zone1
+    - entity: switch.front_yard_drip
       icon: mdi:sprinkler-variant
       name: Start cycle
       tap_action:
         action: toggle
       type: custom:mushroom-entity-card
-    - entity: switch.irrigation_zone1
+    - entity: switch.front_yard_drip
       states:
         offn:
           bar_background: 'var(--mdc-theme-primary, #6200ee)'
           bar_direction: rtl
           bar_foreground: '#eee'
           duration:
-            entity: number.irrigation_zone1_duration
+            entity: number.front_yard_drip_duration
             units: minutes
-          entity: switch.irrigation_zone1
+          entity: switch.front_yard_drip
           full_row: true
           text_width: 0px
           type: custom:timer-bar-card
@@ -2198,21 +2198,21 @@ views:
     - cards:
       - entities:
         - entities:
-          - entity: sensor.irrigation_zone1_next
+          - entity: sensor.front_yard_drip_next
             name: Next 🕑
-          - entity: sensor.irrigation_zone1_remaining
+          - entity: sensor.front_yard_drip_remaining
             name: Remaining ⏳
             unit: min
-          entity: switch.irrigation_zone1
+          entity: switch.front_yard_drip
           icon: mdi:sprinkler
           name: Status
           state_header: State
           type: custom:multiple-entity-row
-        - entity: input_text.irrigation_zone1_times
+        - entity: input_text.front_yard_drip_times
           type: custom:text-input-row
         - label: Duration in Minutes
           type: section
-        - entity: number.irrigation_zone1_duration
+        - entity: number.front_yard_drip_duration
           full_row: true
           type: custom:slider-entity-row
         show_header_toggle: false
@@ -2780,8 +2780,11 @@ views:
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
-      - entity: automation.temperature_cooler_outside
-        icon: mdi:thermometer
+      - entity: input_boolean.cooler_outside_notification
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.warmer_outside_notification
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card

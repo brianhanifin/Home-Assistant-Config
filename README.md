@@ -169,9 +169,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1269 total entities**,
-including **601 sensors**. My YAML
-files contain 40,578 lines of code.
+Our Home Assistant install has approximately **1273 total entities**,
+including **603 sensors**. My YAML
+files contain 41,163 lines of code.
 
 <details><summary>25 Custom integrations</summary>
 
@@ -197,12 +197,6 @@ Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 Authors: [@hif2k1](https://github.com/hif2k1).
-
-
-#### [Breaking Changes v21.12.0](https://github.com/custom-components/breaking_changes)
-
-
-Authors: [@ludeeus](https://github.com/ludeeus).
 
 
 #### [Browser mod v1.5.3](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
@@ -241,7 +235,7 @@ Home Assistant Google Home custom component
 Authors: [@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 
-#### [Home Assistant Community Store (HACS) v1.25.2](https://hacs.xyz/docs/configuration/start)
+#### [Home Assistant Community Store (HACS) v1.25.5](https://hacs.xyz/docs/configuration/start)
 
 HACS gives you a powerful UI to handle downloads of all your custom needs.
 Authors: [@ludeeus](https://github.com/ludeeus).
@@ -263,6 +257,12 @@ Authors: [@bruxy70](https://github.com/bruxy70).
 
 Lovelace notification / alert component for Home Assistant
 Authors: [@rr326](https://github.com/rr326).
+
+
+#### [NWS Alerts v2.4](https://github.com/finity69x2/nws_alerts/)
+
+
+Authors: [@finity69x2](https://github.com/finity69x2).
 
 
 #### [Rainforest EMU-2 v1.2.0](https://github.com/ryanwinter/hass-rainforest-emu-2)
@@ -339,7 +339,7 @@ Custom calendar card for Home Assistant with Lovelace
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
 
-#### [Card Mod v3.1.4](https://github.com/thomasloven/lovelace-card-mod)
+#### [Card Mod v3.1.5](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 
@@ -415,7 +415,7 @@ A different take on the thermostat card for Home Assistant ♨️
 🛠 group multiple cards into one card without the borders
 
 
-#### [State Switch v1.9.3](https://github.com/thomasloven/lovelace-state-switch)
+#### [State Switch v1.9.5](https://github.com/thomasloven/lovelace-state-switch)
 🔹Dynamically replace lovelace cards depending on occasion
 
 
@@ -432,30 +432,10 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 </details>
 
-<details><summary>8 addons</summary>
-
-#### ESPHome v2022.5.1
-ESPHome add-on for intelligently managing all your ESP8266/ESP32 devices
-
-
-#### File editor v5.3.3
-Simple browser-based file editor for Home Assistant
-
-
-#### HA Scheduler v0.17
-Home Assistant scheduler
-
-
-#### Home Assistant Google Drive Backup v0.107.2
-Automatically manage backups between Home Assistant and Google Drive
-
+<details><summary>3 addons</summary>
 
 #### Portainer v2.0.0
 Manage your Docker environment with ease
-
-
-#### RTSPtoWeb - WebRTC v1.2.2
-RTSP Stream to WebBrowser over WebRTC and other protocols based on Pion
 
 
 #### Samba share v9.6.1
@@ -497,7 +477,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.6.0b3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.6.0b4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -507,7 +487,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,578-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,163-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
