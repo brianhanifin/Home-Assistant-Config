@@ -3,12 +3,11 @@ sequence:
   - variables:
       the_name: "mqtt_list_test"
       the_state: "Testing, 1, 2, 3."
-      the_attributes:
-        "target": "media_player.google_family_room"
-#      attributes: >-
-#        {
-#          target: "media_player.google_family_room"
-#        }
+      the_attributes: |
+        {
+          "target":"media_player.google_family_room",
+          "test": "{{ now() }}"
+        }
 
   - service: mqtt.publish
     data:
@@ -16,17 +15,12 @@ sequence:
       payload: "{{ the_state }}"
       retain: true
 
-  # Only add attributes if they are presence.
-  - choose:
-      - conditions:
-          - '{{ the_attributes != "" }}'
-        sequence:
-          - service: mqtt.publish
-            data:
-              topic: "custom/sensor/{{ the_name }}/attributes"
-              # payload: >-
-              #   {
-              #     target: "{{ media_player }}"
-              #   }
-              payload: '{{ the_attributes }}'
-              retain: true
+  # Only add attributes if they are present.
+  - if: '{{ the_attributes is defined }}'
+    then:
+      - service: mqtt.publish
+        data:
+          topic: "custom/sensor/{{ the_name }}/attributes"
+          payload: |
+            {{ the_attributes }}
+          retain: true

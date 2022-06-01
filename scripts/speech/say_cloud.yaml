@@ -3,8 +3,10 @@ mode: parallel
 variables:
   media_player: '{{ media_player|default("media_player.google_kitchen") }}'
   message: '{{ message|striptags }}'
-  # mqtt_message_attributes:
-  #   target: "{{ media_player }}"
+  mqtt_message_attributes: |
+    {
+      "target": "{{ media_player }}"
+    }
   volume: |
     {%- if volume is number %}
       {%- if volume|float(default=0) > 1.0 %}
@@ -33,7 +35,7 @@ sequence:
             entity_id: '{{ media_player }}'
           data:
             volume_level: '{{ volume }}'
-        
+
         - delay:
             seconds: 2
 
@@ -64,7 +66,8 @@ sequence:
           data:
             name: "last_message"
             state: "{{ message }}"
-            #attributes: '{{ mqtt_message_attributes }}'
+            attributes: |
+              {{ mqtt_message_attributes }}
 
         - alias: Store Last Speaker.
           service: script.store_mqtt_sensor

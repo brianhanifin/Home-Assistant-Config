@@ -2724,18 +2724,6 @@ views:
     title: Speech notifications
     type: custom:mushroom-title-card
   - entities:
-    - entity: sensor.last_speaker
-      icon: mdi:account-voice
-      name: Last announcement from
-      secondary_info: last-changed
-    - entity: sensor.last_google
-      icon: mdi:google-home
-      name: Last active speaker
-      secondary_info: last-changed
-    - entity: sensor.last_message
-      icon: mdi:comment-text
-      name: ' '
-    - type: section
     - entity: input_boolean.audio_notifications
     - entity: input_select.tts_phrase_room
     - entity: input_select.tts_phrases
@@ -2753,6 +2741,28 @@ views:
     show_header_toggle: false
     state_color: false
     type: entities
+    view_layout:
+      position: sidebar
+  - cards:
+    - entities:
+      - entity: sensor.last_message
+        icon: mdi:comment-text
+        name: Last message
+      - attribute: target
+        entity: sensor.last_message
+        icon: mdi:account-voice
+        name: Announced on
+        type: attribute
+      - type: divider
+      - entity: sensor.last_google
+        name: Last active google device
+        secondary_info: last-changed
+      show_header_toggle: false
+      state_color: false
+      type: entities
+    type: vertical-stack
+    view_layout:
+      position: main
   icon: mdi:google-home
   path: smart-speakers
   theme: Backend-selected

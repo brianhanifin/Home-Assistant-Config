@@ -5,8 +5,7 @@ icon: mdi:help-rhombus
 state_class: total
 state: |
   {%- set ignore_list = [
-    "sensor.last_message", "sensor.last_speaker",
-    "sensor.accuweather_ozone_0d"
+    "sensor.last_message", "sensor.accuweather_ozone_0d"
   ] %}
   {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
   {%- set selected = namespace (entities="") %}
@@ -22,8 +21,7 @@ state: |
 attributes:
   entities: |
     {%- set ignore_list = [
-      "sensor.last_message", "sensor.last_speaker",
-      "sensor.accuweather_ozone_0d"
+      "sensor.last_message", "sensor.accuweather_ozone_0d"
     ] %}
     {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
     {%- set selected = namespace (entities="") %}
