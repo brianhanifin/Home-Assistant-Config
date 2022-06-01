@@ -71,6 +71,7 @@ automation:
       #       event_enabled: {{ event_enabled }}
       #       event_today: {{ event_today }}
       #       skipnext: {{ skipnext }}
+      #       announcement_enabled: {{ announcement_enabled }}
       #       second_announcement: {{ second_announcement }}
       #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
@@ -222,13 +223,13 @@ script:
       type: '{{ id.split("_")[0] }}'
       who: '{{ id.split("_")[1] | title }}'
       #modifier: '{{ id.split("_")[2] }}'
-      modified_schedule: '{{ iif(who in ["Lucas"], "Today is a " ~ states("sensor.high_school_day_modified_schedule") ~ " schedule.", "") }}'
+      modified_schedule: '{{ iif(who in ["Brian","Lucas"], "Today is " ~ states("sensor.high_school_day_modified_schedule") ~ " schedule.", "") }}'
       current_time: |
         {%- set time_suffix = as_timestamp(now())|timestamp_custom("%p", true) %}
         {%- set current_time = "%01d"|format( iif(now().hour<13, now().hour, now().hour-12) ) %}
         {%- set current_time = current_time ~ ":%02d"|format(now().minute) if now().minute > 0 %}
         {%- set current_time = current_time ~" "~ time_suffix[0] ~" "~ time_suffix[1] %}
-        {{- current_time }}
+        {{ current_time }}
       time_sentence: '{{ "It is " ~ current_time ~ "." }}'
       time_of_day: |
         {%- set hour = now().hour %}
@@ -245,7 +246,7 @@ script:
         {%- if type == "wakeup" %}
           {{ time_sentence ~ " Time to start waking up. " if not second_announcement }}
           Good {{ time_of_day }} {{ who ~ ". " }}
-          {{ time_sentence if second_announcement }}
+          {{ iif(second_announcement, time_sentence, "") }}
           {{ modified_schedule }}
         {%- elif type == "bedtime" -%}
           {%- if not second_announcement %}
@@ -258,6 +259,26 @@ script:
           {{ time_sentence }}
         {%- endif %}
     sequence:
+      # - service: persistent_notification.create
+      #   data:
+      #     title: '{{ title|default("") }}'
+      #     message: |
+      #       room: {{ room }}
+      #       media_player: {{ speaker[room] }}
+
+      #       type: {{ type }}
+      #       who: {{ who }}
+      #       modified_schedule: {{ modified_schedule }}
+      #       second_announcement: {{ second_announcement }}
+
+      #       current_time: {{ current_time }}
+      #       time_sentence: {{ time_sentence }}
+      #       time_of_day: {{ time_of_day }}
+
+      #       message:
+      #       {{ message }}
+      #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
+
       - service: script.notify_speech
         data:
           message: '{{ message }}'
