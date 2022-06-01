@@ -840,3 +840,23 @@
             message: Timer stopped
       default: []
   mode: single
+- id: '1654047415255'
+  alias: Wireless access point restart
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.alert_wirelessap2_offline
+    to: not_home
+  condition: []
+  action:
+  - type: turn_off
+    device_id: bc23d534656122cd2d15fcbaf69c2dbd
+    entity_id: switch.wirelessap2_power_cycler
+    domain: switch
+  - delay:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
+  mode: single
