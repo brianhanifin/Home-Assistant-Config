@@ -18,7 +18,7 @@ trigger:
     below: 13
 
 variables:
-  type: '{{ trigger.to_state.state|default(0)|int }}'
+  type: '{{ trigger.to_state.state|int(default=0) }}'
   room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace(" type","") }}'
 
   alarm_states:
@@ -55,7 +55,7 @@ action:
       type: alert
       title: '{{ title }}'
       message: '{{ message }}'
-  
+
   - service: script.notify_persistent
     data:
       title: '{{ title }}'

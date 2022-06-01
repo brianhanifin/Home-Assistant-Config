@@ -6,7 +6,7 @@ icon: mdi:autorenew
 state: |
   {%- set outdoor_temp = states("sensor.outdoor_temperature") %}
   {%- set room_temp = states("sensor.lucas_room_temperature") %}
-  {%- if outdoor_temp|default(0)|int < room_temp|default(0)|int %}
+  {%- if outdoor_temp|int(default=0) < room_temp|int(default=0) %}
     fan_only
   {%- else %}
     cool

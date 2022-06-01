@@ -2,4 +2,4 @@
 unique_id: octoprint_time_remaining_friendly
 name: "Time Elapsed"
 state_class: measurement
-state: "{{ states('sensor.octoprint_time_remaining')|default(0)|int|timestamp_custom('%H:%M:%S',false) }}"
+state: "{{ states('sensor.octoprint_time_remaining')|int(default=0)|timestamp_custom('%H:%M:%S',false) }}"

@@ -3,4 +3,4 @@ platform: rest
 name: date_next_labor_day
 resource: !secret wolframalpha_date_labor
 scan_interval: 2592000 # 86400 seconds * 30 days
-value_template: "{{ value|replace(' (Unix time)','')|default(0)|int|timestamp_custom('%Y-%m-%d') }}"
+value_template: "{{ value|replace(' (Unix time)','')|int(default=0)|timestamp_custom('%Y-%m-%d') }}"

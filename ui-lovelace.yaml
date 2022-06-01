@@ -2427,7 +2427,7 @@ views:
         '
       entity_id: sensor.updates
       style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n  display:\
-        \ {{ \"block\" if states(\"sensor.updates\")|default(0)|int > 0 else \"none\"\
+        \ {{ \"block\" if states(\"sensor.updates\")|int(default=0) > 0 else \"none\"\
         \ }}\n}\n"
       type: markdown
     - cards:

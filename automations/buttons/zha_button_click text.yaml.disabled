@@ -42,13 +42,13 @@ variables:
       {%- if count == False or count is not number %}
         {{- 0 }}
       {%- else %}
-        {{ count|default(0)|int }}
+        {{ count|int(default=0) }}
       {%- endif %}
     {%- endif %}
   command: |
     {% set command = trigger.event.data.command %}
     {#- Ignore Xiaomi button release events and Hue long press "step" events. #}
-    {%- if (manufacturer in ["xiaomi"] and click_count|default(0)|int == 0)
+    {%- if (manufacturer in ["xiaomi"] and click_count|int(default=0) == 0)
         or (manufacturer in ["hue"] and command == "step") %}
       {%- set command = "ignore" %}
     {%- endif %}
@@ -89,7 +89,7 @@ action:
         sequence:
           # Ignore Xiaomi button duplicate event.
           - condition: template
-            value_template: '{{ trigger.event.data.args.value|default(0)|int == 1 }}'
+            value_template: '{{ trigger.event.data.args.value|int(default=0) == 1 }}'
 
           # - service: script.debug
           #   data_template:
@@ -105,7 +105,7 @@ action:
         sequence:
           # Ignore Xiaomi button duplicate event.
           # - condition: template
-          #   value_template: '{{ trigger.event.data.args.value|default(0)|int == 1 }}'
+          #   value_template: '{{ trigger.event.data.args.value|int(default=0) == 1 }}'
 
           - choose:
               # Single Click: Left
@@ -160,7 +160,7 @@ action:
 
                   # Retrieve the current click count from storage.
                   - variables:
-                      click_count: '{{ states("input_text.button_click").split(",")[3]|default(0)|int }}'
+                      click_count: '{{ states("input_text.button_click").split(",")[3]|int(default=0) }}'
 
                   # - service: script.notify_web
                   #   data:
@@ -168,7 +168,7 @@ action:
 
                   - choose:
                       # 2 clicks
-                      - conditions: '{{ click_count|default(0)|int == 2 }}'
+                      - conditions: '{{ click_count|int(default=0) == 2 }}'
                         sequence:
                           # Delay 0.5 second to allow for a second click to cancel the second action.
                           - delay:
@@ -178,19 +178,19 @@ action:
                             entity_id: switch.tv_family_room
 
                       # 3 clicks
-                      - conditions: '{{ click_count|default(0)|int == 3 }}'
+                      - conditions: '{{ click_count|int(default=0) == 3 }}'
                         sequence:
                           # Delay 0.5 second to allow for a second click to cancel the third action.
                           - delay:
                               seconds: '{{ delay_seconds|float(default=0) }}'
-                          
+
                           - choose:
                               # The door us locked
                               - conditions: '{{ states("lock.front_door")|lower|trim == "locked" }}'
                                 sequence:
                                   - service: lock.unlock
                                     entity_id: lock.front_door
-                                  
+
                                   - service: input_boolean.turn_on
                                     entity_id: input_boolean.leave_unlocked
 
@@ -198,17 +198,17 @@ action:
                             default:
                               - service: input_boolean.turn_off
                                 entity_id: input_boolean.leave_unlocked
-                              
+
                               - service: lock.lock
                                 entity_id: lock.front_door
 
                       # 4 clicks
-                      - conditions: '{{ click_count|default(0)|int == 4 }}'
+                      - conditions: '{{ click_count|int(default=0) == 4 }}'
                         sequence:
                           # Delay 0.5 second to allow for a second click to cancel the third action.
                           #- delay:
                           #    seconds: '{{ delay_seconds|float(default=0) }}'
-                          
+
                           - service: input_boolean.toggle
                             entity_id: input_boolean.guest_mode
 
@@ -234,11 +234,11 @@ action:
 
                   # Retrieve the current click count from storage.
                   - variables:
-                      click_count: '{{ states("input_text.button_click").split(",")[3]|default(0)|int }}'
+                      click_count: '{{ states("input_text.button_click").split(",")[3]|int(default=0) }}'
 
                   - choose:
                       # Double click
-                      - conditions: '{{ click_count|default(0)|int == 2 }}'
+                      - conditions: '{{ click_count|int(default=0) == 2 }}'
                         sequence:
                           # Delay 0.5 second to allow for a second click to cancel the second action.
                           - delay:
@@ -271,11 +271,11 @@ action:
 
                   # Retrieve the current click count from storage.
                   - variables:
-                      click_count: '{{ states("input_text.button_click").split(",")[3]|default(0)|int }}'
+                      click_count: '{{ states("input_text.button_click").split(",")[3]|int(default=0) }}'
 
                   - choose:
                       # Double click
-                      - conditions: '{{ click_count|default(0)|int == 2}}'
+                      - conditions: '{{ click_count|int(default=0) == 2}}'
                         sequence:
 
                           # Delay 0.5 second to allow for a second click to cancel the second action.
@@ -301,7 +301,7 @@ action:
 
               # Single Click: Arrow left (left)
               - conditions: '{{ command == "press"
-                            and trigger.event.data.args[0]|default(0)|int == 256 }}'
+                            and trigger.event.data.args[0]|int(default=0) == 256 }}'
                 sequence:
                   - service: light.turn_on
                     data:
@@ -309,7 +309,7 @@ action:
                       brightness_pct: 100
               # Single Click: Arrow right (right)
               - conditions: '{{ command == "press"
-                            and trigger.event.data.args[0]|default(0)|int == 257 }}'
+                            and trigger.event.data.args[0]|int(default=0) == 257 }}'
                 sequence:
                   - service: light.turn_off
                     entity_id: light.family_room_floor_lamp
@@ -334,7 +334,7 @@ action:
                       brightness_step_pct: "20"
               # Hold: Arrow left (left)
               - conditions: '{{ command == "hold"
-                            and trigger.event.data.args[0]|default(0)|int == 3329 }}'
+                            and trigger.event.data.args[0]|int(default=0) == 3329 }}'
                 sequence:
                   - service: light.turn_on
                     data:
@@ -342,7 +342,7 @@ action:
                       brightness_step_pct: "-20"
               # Hold: Arrow right (right)
               - conditions: '{{ command == "hold"
-                            and trigger.event.data.args[0]|default(0)|int == 3328 }}'
+                            and trigger.event.data.args[0]|int(default=0) == 3328 }}'
                 sequence:
                   - service: light.turn_on
                     data:

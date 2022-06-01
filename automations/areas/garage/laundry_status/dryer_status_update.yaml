@@ -14,7 +14,7 @@ trigger:
     to: "Dry"
 variables:
   trigger_id: '{{ trigger.id }}'
-  power: '{{ states("sensor.dryer_power_monitor_power")|default(0)|int }}'
+  power: '{{ states("sensor.dryer_power_monitor_power")|int(default=0) }}'
   previous_status: '{{ states("input_select.dryer_status") }}'
   status: |
     {% if power > 150 %}

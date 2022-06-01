@@ -4,4 +4,4 @@ sensors:
   ubuntu_total_updates:
     icon_template: mdi:counter
     value_template: >
-      {{ states("sensor.ubuntu_system_updates")|default(0)|int + states("sensor.ubuntu_security_updates")|default(0)|int }}
+      {{ states("sensor.ubuntu_system_updates")|int(default=0) + states("sensor.ubuntu_security_updates")|int(default=0) }}

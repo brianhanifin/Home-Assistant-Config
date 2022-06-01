@@ -13,7 +13,7 @@ unique_id: lucas_ac_current_state
 name: Lucas AC Current State
 icon: mdi:air-conditioner
 state: |
-  {%- set power = states("sensor.lucas_ac_power")|default(0)|int %}
+  {%- set power = states("sensor.lucas_ac_power")|int(default=0) %}
   {%- if power > 100 %}
     Cooling
   {%- elif power < 100 and power > 10 %}

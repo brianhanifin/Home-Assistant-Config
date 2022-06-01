@@ -13,7 +13,7 @@ unique_id: bedroom_ac_current_state
 name: Bedroom AC Current State
 icon: mdi:air-conditioner
 state: |
-  {%- set power = states("sensor.bedroom_ac_power")|default(0)|int %}
+  {%- set power = states("sensor.bedroom_ac_power")|int(default=0) %}
   {%- if power > 100 %}
     Cooling
   {%- elif power < 100 and power > 10 %}

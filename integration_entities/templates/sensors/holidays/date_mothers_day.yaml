@@ -3,7 +3,7 @@
 # name: date_mothers
 # resource: !secret wolframalpha_date_mothers
 # scan_interval: 2592000 # 86400 seconds * 30 days
-# value_template: "{{ value|replace(' (Unix time)','')|default(0)|int|timestamp_custom('%Y-%m-%d') }}"
+# value_template: "{{ value|replace(' (Unix time)','')|int(default=0)|timestamp_custom('%Y-%m-%d') }}"
 unique_id: date_mothers
 name: "Mother's day"
 icon: mdi:human-female-boy
@@ -13,13 +13,13 @@ state: |
     {%- set event_dayofweek = "Sunday" -%}
     {%- set event_month     = 5 -%}
 
-    {%- set today = as_datetime(states("sensor.date")) -%}        
+    {%- set today = as_datetime(states("sensor.date")) -%}
 
     {# Calculate the event for the current year. #}
     {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, today.year) | replace("00:00:00","") -%}
 
     {# If the event has passed for this year, get next year's event. #}
-    {%- set event_day = event_date.split('-')[2]|default(0)|int -%}
+    {%- set event_day = event_date.split('-')[2]|int(default=0) -%}
     {%- if event_month < today.month -%}
       {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, today.year+1) | replace("00:00:00","")  -%}
     {%- elif event_month == today.month and event_day < today.day %}
@@ -31,8 +31,8 @@ state: |
 
   {%- macro last_dayofmonth(month, year) -%}
     {%- set daysinmonths = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
-    {%- set month = month|default(0)|int -%}
-    {%- set year = year|default(0)|int -%}
+    {%- set month = month|int(default=0) -%}
+    {%- set year = year|int(default=0) -%}
 
     {# Simplified leap year calculation. See https://www.mathsisfun.com/leap-years.html #}
     {%- set isleapyear = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) -%}
@@ -63,16 +63,16 @@ state: |
       "Friday":    5, "Fri": 5,
       "Saturday":  6, "Sat": 6
     } %}
-    {%- set dayofweek = dayofweek_number[dayofweek]|default(0)|int %}
+    {%- set dayofweek = dayofweek_number[dayofweek]|int(default=0) %}
 
     {%- set firstdateofmonth = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") %}
-    {%- set firstdayofmonth = firstdateofmonth.isoweekday()|default(0)|int %}
+    {%- set firstdayofmonth = firstdateofmonth.isoweekday()|int(default=0) %}
 
     {# Determine the first occurrence of the day. #}
     {%- if firstdayofmonth == dayofweek %}
       {%- set firstoccurrence = 1 %}
     {%- elif firstdayofmonth < dayofweek %}
-      {%- set firstoccurrence = (dayofweek - firstdateofmonth.isoweekday()|default(0)|int) %}
+      {%- set firstoccurrence = (dayofweek - firstdateofmonth.isoweekday()|int(default=0)) %}
     {%- else %}
       {%- set firstoccurrence = (7 - firstdayofmonth + dayofweek) + 1 %}
     {%- endif %}
@@ -86,7 +86,7 @@ state: |
 
       Reference: https://cflib.org/udf/GetLastOccOfDayInMonth
       #}
-      {%- set lastdayofmonth = last_dayofmonth(month, year)|default(0)|int %}
+      {%- set lastdayofmonth = last_dayofmonth(month, year)|int(default=0) %}
       {%- set lastdateofmonth = strptime(year ~"-"~ month ~"-"~ lastdayofmonth, "%Y-%m-%d") %}
       {%- set lastdayname = lastdateofmonth.strftime("%A") %}
 

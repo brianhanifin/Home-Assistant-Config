@@ -28,7 +28,7 @@ sequence:
           {%- for entity in entity_list -%}
             {#- Omit light if its brightness is already lower than current setting. -#}
             {%- if "light." in entity
-                and state_attr(entity, "brightness")|default(0)|int >= brightness|default(0)|int -%}
+                and state_attr(entity, "brightness")|int(default=0) >= brightness|int(default=0) -%}
               {{ entity }}{{ " " }}
             {%- endif -%}
           {%- endfor -%}

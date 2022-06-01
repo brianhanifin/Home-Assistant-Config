@@ -20,7 +20,7 @@ sequence:
 
   # Turn on light group before we start.
   - repeat:
-      count: '{{ color_count|default(0)|int }}'
+      count: '{{ color_count|int(default=0) }}'
       sequence:
         - service: script.light_sequence_color
           data:
@@ -32,7 +32,7 @@ sequence:
 
   # Loop through the colors.
   - repeat:
-      count: '{{ color_count|default(0)|int }}'
+      count: '{{ color_count|int(default=0) }}'
       sequence:
         # Change all bulbs to this color one at a time.
         - service: script.light_sequence_color
@@ -51,7 +51,7 @@ sequence:
                   entity_id:
                     - script.light_sequence
                     - script.light_sequence_color
-                
+
                 - service: homeassistant.turn_off
                   data:
                     entity_id: '{{ entity_id }}'

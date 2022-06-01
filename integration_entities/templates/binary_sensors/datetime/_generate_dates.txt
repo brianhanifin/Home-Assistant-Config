@@ -1,7 +1,7 @@
 {%- macro last_dayofmonth(month, year) -%}
   {%- set daysinmonths = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
-  {%- set month = month|default(0)|int -%}
-  {%- set year = year|default(0)|int -%}
+  {%- set month = month|int(default=0) -%}
+  {%- set year = year|int(default=0) -%}
 
   {# Simplified leap year calculation. See https://www.mathsisfun.com/leap-years.html #}
   {%- set isleapyear = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) -%}

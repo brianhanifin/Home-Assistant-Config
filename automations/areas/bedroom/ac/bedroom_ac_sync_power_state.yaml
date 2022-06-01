@@ -30,7 +30,7 @@ variables:
   # hvac_modes: off, cool, fan_only, dry, heat_cool
   assumed_state: '{{ states("climate.bedroom") }}'
 
-  # power: '{{ states("sensor.bedroom_ac_power")|default(0)|int }}'
+  # power: '{{ states("sensor.bedroom_ac_power")|int(default=0) }}'
   # powered_state: |
   #   {% if power < 10 %}
   #     off

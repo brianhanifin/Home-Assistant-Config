@@ -128,11 +128,11 @@ sequence:
                     - switch.lucas_ac_fan
 
   - repeat:
-      count: '{{ command_count|default(0)|int }}'
+      count: '{{ command_count|int(default=0) }}'
       sequence:
         - variables:
             command: '{{ commands.split(",")[repeat.index-1] }}'
-        
+
         - service: remote.send_command
           target:
             entity_id: '{{ remote }}'

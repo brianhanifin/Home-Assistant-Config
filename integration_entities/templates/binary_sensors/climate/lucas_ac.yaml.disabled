@@ -1,4 +1,4 @@
 ---
 unique_id: lucas_ac
 name: "Lucas AC"
-state: '{{ states("sensor.lucas_ac_power")|default(0)|int > 1 }}'
+state: '{{ states("sensor.lucas_ac_power")|int(default=0) > 1 }}'

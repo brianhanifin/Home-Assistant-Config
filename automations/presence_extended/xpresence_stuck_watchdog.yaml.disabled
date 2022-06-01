@@ -31,7 +31,7 @@ variables:
 condition:
   # Are there any stuck timers?
   - condition: template
-    value_template: '{{ stuck_timers_count|default(0)|int > 0 }}'
+    value_template: '{{ stuck_timers_count|int(default=0) > 0 }}'
 
 action:
   # Restart the stuck timers.

@@ -15,7 +15,7 @@ variables:
         {%- set volume = volume|float(default=0) %}
       {%- endif %}
     {%- else %}
-      {{ states("input_number.default_announcement_volume")|default(0)|int / 100 }}
+      {{ states("input_number.default_announcement_volume")|int(default=0) / 100 }}
     {%- endif %}
 sequence:
   # - service: script.debug

@@ -23,7 +23,7 @@ sequence:
       title: "{{ title }}"
       message: "{{ message }}"
       data:
-        duration: '{{ duration|default(0)|int }}'
+        duration: '{{ duration|int(default=0) }}'
         image: '{{ image }}'
 
 fields:
@@ -50,13 +50,13 @@ fields:
   camera:
     description: Camera to pull a still from.
     example: ''
-    default: 
+    default:
     selector:
       text:
   image:
     description: URL to an image.
     example: ''
-    default: 
+    default:
     selector:
       text:
   duration:

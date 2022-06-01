@@ -13,9 +13,9 @@ trigger:
       - person.nerene
       - person.sandy
     #https://rc.home-assistant.io/blog/2021/12/03/release-202112/#triggering-automations-on-any-but-only-state-changes
-    to: ~ 
+    to: ~
     variables:
-      hour: '{{ states("sensor.time").split(":")[0]|default(0)|int }}'
+      hour: '{{ states("sensor.time").split(":")[0]|int(default=0) }}'
       new_state: '{{ trigger.to_state.state }}'
       old_state: '{{ trigger.from_state.state }}'
       option: |
@@ -30,7 +30,7 @@ trigger:
 condition:
   - '{{ old_state != new_state }}'
   - '{{ new_state != "unknown"}}'
-  
+
   # Don't allow status change shortly after startup to avoid phantom changes.
   - '{{ is_state("automation.startup","off") }}'
 
