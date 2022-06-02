@@ -6,4 +6,11 @@ state: |
   {%- set current_hour = now().hour %}
   {%- set hour_start = states("input_number.quiet_hour_start")|int(default=0) %}
   {%- set hour_end = states("input_number.quiet_hour_end")|int(default=0) %}
-  {{ hour_start <= current_hour <= hour_end }}
+  {% if hour_start <= hour_end %}
+    {{ hour_start <= current_hour < hour_end }}
+  {%- else %}
+    {{
+      hour_start <= current_hour or
+      current_hour < hour_end
+    }}
+  {% endif %}
