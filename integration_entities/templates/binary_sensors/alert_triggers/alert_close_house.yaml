@@ -7,8 +7,8 @@ delay_on: "00:02:00"
 state: |
   {%- set outside_temp = states("sensor.outdoor_temperature")|float(default=0) %}
   {%- set inside_temp = states("sensor.home_thermostat_temperature")|float(default=0) %}
-  {%- set home_open = is_state("binary_sensor.house_windows", "on")
-                        and is_state("binary_sensor.sliding_door", "on") %}
+  {%- set home_open = is_state("binary_sensor.house_windows", "on") or
+                      is_state("binary_sensor.sliding_door", "on") %}
   {%- set current_hour = now().hour %}
   {{
     is_state("input_boolean.warmer_outside_notification","on")

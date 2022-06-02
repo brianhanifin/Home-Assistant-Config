@@ -1,39 +1,3 @@
-- id: '1587853788536'
-  alias: Temperature cooler outside
-  description: Notify me to open up the house when the temperature is getting cooler
-    outside and the humidity outside isn't a lot higher.
-  trigger:
-  - platform: time_pattern
-    minutes: /15
-  condition:
-  - condition: template
-    value_template: '{{ states("sensor.outdoor_temperature")|float(default=0) < (states("sensor.home_thermostat_temperature")|float(default=0)
-      - 2) }}'
-  - condition: state
-    entity_id: input_boolean.cooler_outside_notification
-    state: 'off'
-  - condition: template
-    value_template: '{{ (states("sensor.outdoor_humidity")|round(default=0) - states("sensor.home_thermostat_humidity")|round(default=0))
-      <= 25 }}'
-  - after: '15:00'
-    before: '21:00'
-    condition: time
-  action:
-  - data: {}
-    entity_id: input_boolean.cooler_outside_notification
-    service: input_boolean.turn_on
-  - data:
-      message: It is getting cooler outside. Consider using the house fan.
-      title: Cool off!
-      who: brian
-      group: comfort-action
-      url: /lovelace/climate
-    service: script.notify_mobile
-  - data:
-      media_player: media_player.google_welcome
-      message: It is getting cooler outside. Consider using the house fan.
-    service: script.notify_speech
-  mode: single
 - id: '1588556714529'
   alias: Maintenance at midnight
   description: Runs every night at midnight.
@@ -50,7 +14,6 @@
   - service: homeassistant.turn_off
     target:
       entity_id:
-      - input_boolean.cooler_outside_notification
       - input_boolean.guest_mode
       - input_boolean.leave_unlocked
     data: {}
@@ -859,4 +822,30 @@
       minutes: 10
       seconds: 0
       milliseconds: 0
+  mode: single
+- id: '1654123893708'
+  alias: 'Event: skip wakeup when day off found in Nerene''s calendar'
+  description: ''
+  trigger:
+  - platform: calendar
+    event: start
+    offset: 0:0:0
+    entity_id: calendar.nerene
+  condition:
+  - condition: template
+    value_template: '{{ "day off" in trigger.calendar_event.summary }}'
+  - condition: time
+    before: 00:00:00
+  action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.event_skipnext_wakeup_nerene
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: Calendar trigger
+      message: Check to see if the "Skip next event" button has been enabled for today.
+      url: /lovelace/events
+      subtitle: Nerene has day off
   mode: single

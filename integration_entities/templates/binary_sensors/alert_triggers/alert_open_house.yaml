@@ -9,8 +9,8 @@ state: |
   {%- set inside_temp = states("sensor.home_thermostat_temperature")|float(default=0) %}
   {%- set outside_humidity = states("sensor.outdoor_humidity")|round(default=0) %}
   {%- set indoor_humidity = states("sensor.home_thermostat_humidity")|round(default=0) %}
-  {%- set home_closed = is_state("binary_sensor.house_windows", "off")
-                        and is_state("binary_sensor.sliding_door", "off") %}
+  {%- set home_closed = is_state("binary_sensor.house_windows", "off") and
+                        is_state("binary_sensor.sliding_door", "off") %}
   {%- set current_hour = now().hour %}
   {{
     is_state("input_boolean.cooler_outside_notification","on")
