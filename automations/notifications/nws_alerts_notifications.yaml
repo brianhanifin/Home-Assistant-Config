@@ -1,0 +1,33 @@
+---
+alias: National weather service notification
+id: nws_alerts_notification
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.nws_alerts
+    above: 0
+variables:
+  alert_count: '{{ states("sensor.nws_alerts") }}'
+  title: '{{ state_attr("sensor.nws_alerts","title") }}'
+  message: |
+    {%- set nws_alert = states.sensor.nws_alerts.attributes %}
+    {#%- filter replace("  ","")|replace("WHAT...","")|replace("WHERE...","")|replace("WHEN...","")|replace("IMPACTS...","") %#}
+    {{ nws_alert.display_desc }}
+    {#% endfilter %#}
+condition:
+  - '{{ alert_count > 0 }}'
+action:
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: '{{ title }}'
+      message: '{{ message }}'
+      who: brian
+      group: safety
+      tag: weather-alert
+      url: /lovelace/
+
+  - service: script.notify_web
+    data:
+      type: warning
+      title: '{{ title }}'
+      message: '{{ message }}'
