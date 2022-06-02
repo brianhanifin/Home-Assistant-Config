@@ -1,0 +1,22 @@
+---
+unique_id: weather_alerts
+name: Weather Alerts
+icon: mdi:alert-octagram
+state: '{{ states("sensor.nws_alerts")|int(default=0) > 0 }}'
+attributes:
+  alert_count: '{{ states("sensor.nws_alerts") }}'
+  title: |
+    {%- set title = state_attr("sensor.nws_alerts","title")|trim %}
+    {%- if title|lower not in ["","none","unavailable","unknown"] %}
+      {%- if " - " in title %}
+        {%- set title_parts = title.split(" - ") %}
+        {%- if title_parts[0] == title_parts[1] %}
+          {%- set title = title_parts[0] %}
+        {%- endif %}
+      {%- endif %}
+      {%- if "Status: Test" in state_attr("sensor.nws_alerts","display_desc") %}
+        {%- set title = "[TEST] " ~ title %}
+      {%- endif %}
+    {%- endif %}
+    {{ title }}
+  message: '{{ state_attr("sensor.nws_alerts","spoken_desc") }}'

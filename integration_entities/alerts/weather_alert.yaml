@@ -1,0 +1,11 @@
+---
+name: Weather alert
+entity_id: binary_sensor.alert_weather
+state: "on"
+title: NWS Weather alert
+message: '{{ state_attr("binary_sensor.alert_weather","title") }}'
+repeat: 1440
+notifiers:
+  - brian
+data:
+  message: '{{ state_attr("binary_sensor.alert_weather","message") }}'
