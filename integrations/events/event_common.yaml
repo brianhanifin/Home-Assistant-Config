@@ -222,8 +222,12 @@ script:
         upstairs_bathroom: "media_player.google_upstairs_bathroom"
       type: '{{ id.split("_")[0] }}'
       who: '{{ id.split("_")[1] | title }}'
-      #modifier: '{{ id.split("_")[2] }}'
-      modified_schedule: '{{ iif(who in ["Brian","Lucas"], "Today is " ~ states("sensor.high_school_day_modified_schedule") ~ " schedule.", "") }}'
+      #event_modifier: '{{ id.split("_")[2] }}'
+      modified_schedule: |
+        {%- set modified_event = states("sensor.high_school_day_modified_schedule") %}
+        {%- if modified_event != "" and who in ["Brian","Lucas"] %}
+          {{ "Today is " ~ modified_event ~ " schedule." }}
+        {%- endif %}
       current_time: |
         {%- set time_suffix = as_timestamp(now())|timestamp_custom("%p", true) %}
         {%- set current_time = "%01d"|format( iif(now().hour<13, now().hour, now().hour-12) ) %}
