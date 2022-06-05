@@ -89,7 +89,7 @@ decluttering_templates:
           action: fire-dom-event
           browser_mod:
             card:
-              dateSize: 175
+              dateSize: 150
               dimFinishedEvents: true
               disableEventLink: true
               disableLocationLink: true
@@ -116,11 +116,11 @@ decluttering_templates:
                 color: maroon
                 entity: calendar.lucas
                 eventCalName: Lucas
-              eventTitleSize: 125
+              eventTitleSize: 150
               firstDayOfWeek: 1
               hideDuplicates: false
               hideFinishedEvents: false
-              maxDaysToShow: 2
+              maxDaysToShow: 3
               refreshInterval: 3600
               showDate: false
               showDeclined: false
@@ -425,10 +425,8 @@ views:
     columns: 3
     square: false
     type: grid
-  - dateSize: 175
-    dimFinishedEvents: true
-    disableEventLink: true
-    disableLocationLink: true
+  - dateFormat: LL
+    dateSize: 130
     entities:
     - color: teal
       entity: calendar.us_holidays
@@ -452,27 +450,25 @@ views:
       color: maroon
       entity: calendar.lucas
       eventCalName: Lucas
-    eventTitleSize: 125
+    eventTitleSize: 130
     firstDayOfWeek: 1
-    hideDuplicates: false
-    hideFinishedEvents: false
-    maxDaysToShow: 1
-    position: sidebar
-    refreshInterval: 3600
+    hideDuplicates: true
+    maxDaysToShow: 2
+    refreshInterval: 60
+    showCurrentEventLine: false
     showDate: false
-    showDeclined: false
     showDescription: true
-    showEventIcon: false
+    showEventIcon: true
     showFullDayProgress: false
     showHiddenText: false
-    showLoader: false
-    showLocation: false
+    showLocation: true
     showMonth: false
     showNoEventsForToday: false
-    showProgressBar: false
+    showProgressBar: true
     showRelativeTime: true
     showWeekDay: true
     sortByStartTime: true
+    timeSize: 100
     type: custom:atomic-calendar-revive
     view_layout:
       position: sidebar
@@ -1155,6 +1151,7 @@ views:
         type: custom:mushroom-light-card
         use_light_color: true
       - entity: fan.family_room
+        fill_container: false
         hide_state: true
         icon_animation: true
         name: Fan
@@ -1520,8 +1517,10 @@ views:
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
-      - entity: fan.bedroom
+      - collapsible_controls: true
+        entity: fan.bedroom
         fill_container: false
+        hide_state: false
         hold_action:
           action: fire-dom-event
           browser_mod:
@@ -2723,24 +2722,29 @@ views:
   - subtitle: Tap away from message box before tapping announce.
     title: Speech notifications
     type: custom:mushroom-title-card
-  - entities:
-    - entity: input_boolean.audio_notifications
-    - entity: input_select.tts_phrase_room
-    - entity: input_select.tts_phrases
-    - entity: input_text.tts_phrase
-      type: custom:text-input-row
-    footer:
-      entities:
-      - entity: script.tts_phrase_say
-        icon: mdi:account-voice
-        name: Say
-      - entity: script.repeat_last_message
-        icon: mdi:refresh-circle
-        name: Last message
-      type: buttons
-    show_header_toggle: false
-    state_color: false
-    type: entities
+  - cards:
+    - entities:
+      - entity: input_select.tts_phrase_room
+      - entity: input_select.tts_phrases
+      - entity: input_text.tts_phrase
+        type: custom:text-input-row
+      footer:
+        entities:
+        - entity: script.tts_phrase_say
+          icon: mdi:account-voice
+          name: Say
+        - entity: script.repeat_last_message
+          icon: mdi:refresh-circle
+          name: Last message
+        type: buttons
+      show_header_toggle: false
+      type: entities
+    - entities:
+      - entity: input_boolean.audio_notifications
+      - entity: binary_sensor.noncritical_alert_quiet_time
+        secondary_info: last-changed
+      type: entities
+    type: vertical-stack
     view_layout:
       position: sidebar
   - cards:
