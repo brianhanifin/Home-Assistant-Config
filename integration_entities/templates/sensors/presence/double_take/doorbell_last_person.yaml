@@ -1,20 +1,29 @@
 ---
 unique_id: doorbell_last_person
-name: Doorbell Last Person
+name: Doorbell last person
 icon: mdi:face-recognition
 state: |
-  {%- if is_number(states("sensor.double_take_doorbell")) %}
-    {%- if states("sensor.double_take_doorbell")|int(default=0) > 0 %}
-      {%- set match = state_attr("sensor.double_take_doorbell","matches")[0] %}
-      {{ match["name"] if match["confidence"] > 96 }}
+  {%- set name = "none" %}
+  {%- set person_count = states("sensor.double_take_doorbell") %}
+  {%- if is_number(person_count) %}
+    {%- if person_count|int(default=0) > 0 %}
+      {%- set matches = state_attr("sensor.double_take_doorbell","matches") %}
+      {%- if matches|count > 0 %}
+        {%- set match = matches|first %}
+        {%- set name = match["name"] if match["confidence"] > 96 %}
+      {%- endif %}
     {% endif %}
   {% endif %}
 attributes:
   match: |
-    {%- if is_number(states("sensor.double_take_doorbell")) %}
-      {%- if states("sensor.double_take_doorbell")|int(default=0) > 0 %}
-        {%- set match = state_attr("sensor.double_take_doorbell","matches")[0] %}
-        {{ match["name"] if match["confidence"] > 96 }}
+    {%- set person_count = states("sensor.double_take_doorbell") %}
+    {%- if is_number(person_count) %}
+      {%- if person_count|int(default=0) > 0 %}
+        {%- set matches = state_attr("sensor.double_take_doorbell","matches") %}
+        {%- if matches|count > 0 %}
+          {%- set match = matches|first %}
+          {{ match if match["confidence"] > 96 }}
+        {%- endif %}
       {% endif %}
     {% endif %}
 

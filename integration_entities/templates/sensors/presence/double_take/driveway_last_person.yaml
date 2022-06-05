@@ -1,20 +1,29 @@
 ---
 unique_id: driveway_last_person
-name: Driveway Last Person
+name: Driveway last person
 icon: mdi:face-recognition
 state: |
-  {%- if is_number(states("sensor.double_take_driveway")) %}
-    {%- if states("sensor.double_take_driveway")|int(default=0) > 0 %}
-      {%- set match = state_attr("sensor.double_take_driveway","matches")[0] %}
-      {{ match["name"] if match["confidence"] > 96 }}
+  {%- set name = "none" %}
+  {%- set person_count = states("sensor.double_take_driveway") %}
+  {%- if is_number(person_count) %}
+    {%- if person_count|int(default=0) > 0 %}
+      {%- set matches = state_attr("sensor.double_take_driveway","matches") %}
+      {%- if matches|count > 0 %}
+        {%- set match = matches|first %}
+        {%- set name = match["name"] if match["confidence"] > 96 %}
+      {%- endif %}
     {% endif %}
   {% endif %}
 attributes:
   match: |
-    {%- if is_number(states("sensor.double_take_driveway")) %}
-      {%- if states("sensor.double_take_driveway")|int(default=0) > 0 %}
-        {%- set match = state_attr("sensor.double_take_driveway","matches")[0] %}
-        {{ match["name"] if match["confidence"] > 96 }}
+    {%- set person_count = states("sensor.double_take_driveway") %}
+    {%- if is_number(person_count) %}
+      {%- if person_count|int(default=0) > 0 %}
+        {%- set matches = state_attr("sensor.double_take_driveway","matches") %}
+        {%- if matches|count > 0 %}
+          {%- set match = matches|first %}
+          {{ match if match["confidence"] > 96 }}
+        {%- endif %}
       {% endif %}
     {% endif %}
 
