@@ -169,9 +169,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1237 total entities**,
-including **638 sensors**. My YAML
-files contain 40,897 lines of code.
+Our Home Assistant install has approximately **1236 total entities**,
+including **636 sensors**. My YAML
+files contain 40,945 lines of code.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -495,7 +495,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,897-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,945-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

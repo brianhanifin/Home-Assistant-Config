@@ -2636,7 +2636,7 @@ views:
         name: Green PC
       footer:
         entities:
-        - entity: switch.unraid_docker_unifi_controller
+        - entity: switch.docker_unifi
           name: UniFi Controller
         type: buttons
       show_header_toggle: false
@@ -2706,6 +2706,21 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
+  - cards:
+    - title: BlackPC sensors
+      type: custom:mushroom-title-card
+    - card:
+        type: entities
+      filter:
+        exclude: []
+        include:
+        - entity_id: '*.blackpc*'
+      sort:
+        ignore_case: false
+        method: domain
+        reverse: true
+      type: custom:auto-entities
+    type: vertical-stack
   icon: mdi:server
   path: system
   theme: Backend-selected
