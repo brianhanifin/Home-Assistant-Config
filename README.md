@@ -67,7 +67,7 @@ Inovelli z-wave devices are high quality and they really care about our niche co
 *See my article: "[Inovelli red series status LED update](https://brianhanifin.com/posts/inovelli-red-series-status-led-update/)"*
 
 ### Philips hue bulbs
-Device recommendations: [starter Kit](https://amzn.to/37AqeTq) (3 color bulbs, battery button, & hub)
+Device recommendations: [starter Kit](https://amzn.to/37AqeTq) (3 color bulbs, dimmer, & hub)
 
 The Hue ecosystem is easy to get setup with Home Assistant. We primarily use their tunable white bulbs for plug in floor and table lamps, but we do have 9 colored bulbs in our dining room chandelier for holiday fun.
 
@@ -116,16 +116,16 @@ These devices are great for shoving in a box behind a light switch to add smarts
 *2b.* turns the fan on then back off when the humidity is up due to a shower (*note: a battery powered humidity sensor in the bathroom is compared to one in a neighboring room*).
 3. **Garage door controller**: I plan to replace the cloud based chamberlain MyQ controller soon using [the hook up's video for reference ](https://www.youtube.com/watch?v=WEZUxXNiERQ).
 
-### Sonoff S31 plugs
+### SONOFF S31 plugs
 Device recommendations: [S31](https://amzn.to/2OOEilB), [S31 lite](https://amzn.to/2NMhi6i)
 
-The Sonoff S31 is a reliable wi-fi controlled smart switch which can be flashed with Tasmota or ESPHome if you wish. The original S31 has power monitoring built in, while the new S31 lite omits that for a discount.
+The SONOFF S31 is a reliable wi-fi controlled smart switch which can be flashed with Tasmota or ESPHome if you wish. The original S31 has power monitoring built in, while the new S31 lite omits that for a discount.
 
 #### S31 power monitoring project ideas
 *Note: the relay can be left always on to put these in a monitor only mode.*
 1. Monitor your washing machine so Home Assistant can notify you when your wash is ready to be hung up or moved to the dryer! No more stinky clothes!
 2. Monitor your dishwasher or clothes dryer.
-3. Monitor your 3D Printer or Laser Cutter to let you know when it's time to check out that thing you just created!
+3. Monitor your 3D Printer or Laser Cutter to let you know when it is time to check out that thing you just created!
 
 #### S31 lite project ideas
 1. Plug one of these into every floor and table fan you own and just ask your Google or Alexa to *"turn on the bedroom fan!"*.
@@ -169,9 +169,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ## Technical details
 
-Our Home Assistant install has approximately **1236 total entities**,
-including **636 sensors**. My YAML
-files contain 40,945 lines of code.
+Our Home Assistant install has approximately **1238 total entities**,
+including **638 sensors**. My YAML
+files contain 40,986 lines of code.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -495,7 +495,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,945-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,986-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
