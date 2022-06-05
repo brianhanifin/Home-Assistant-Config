@@ -4,7 +4,7 @@ id: restart_zigbee2mqtt
 mode: single
 trigger:
   - platform: state
-    entity_id: switch.unraid_docker_zigbee2mqtt
+    entity_id: switch.docker_zigbee2mqtt
     from: "on"
     to: ~
     for:
@@ -12,9 +12,9 @@ trigger:
 action:
   - service: switch.turn_off
     target:
-      entity_id: switch.unraid_docker_zigbee2mqtt
+      entity_id: switch.docker_zigbee2mqtt
   - delay:
       seconds: 30
   - service: switch.turn_on
     target:
-      entity_id: switch.unraid_docker_zigbee2mqtt
+      entity_id: switch.docker_zigbee2mqtt
