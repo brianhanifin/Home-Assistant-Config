@@ -584,12 +584,6 @@
   - platform: state
     entity_id: sensor.doorbell_action
     to: bell1
-  - platform: device
-    domain: mqtt
-    device_id: 1c60b1f0eccac14e50602aeadaa589ef
-    type: action
-    subtype: bell1
-    discovery_id: 0x0008890001d9f410 action_bell1
   condition: []
   action:
   - parallel:
@@ -598,7 +592,7 @@
       data:
         audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
         speakers:
-        - media_player.google_family_room
+        - media_player.google_family_room_display
     - service: script.cast
       continue_on_error: true
       data:
@@ -606,7 +600,6 @@
         view_path: cameras
         dismiss_after: 120
         display:
-        - 0aae07dda66f42e9b8a67979e34770d0
         - 7d6b52507e25e7eeba10914e56052d1c
     - service: script.notify_mobile
       continue_on_error: true
@@ -620,11 +613,24 @@
       data:
         message: Someone pressed the doorbell!
         duration: 60
-    - delay:
-        hours: 0
-        minutes: 1
-        seconds: 0
-        milliseconds: 0
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - service: script.cast
+    continue_on_error: true
+    data:
+      dashboard_path: dashboard-cast
+      view_path: cameras
+      dismiss_after: 120
+      display:
+      - 0aae07dda66f42e9b8a67979e34770d0
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
   mode: single
 - id: '1643829963937'
   alias: HACS install event - update sensors
