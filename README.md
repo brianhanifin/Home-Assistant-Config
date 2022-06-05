@@ -34,7 +34,7 @@ We can also interact with our devices with Google Nest speakers in all of the ma
 Our Google Nest also make announcements when something needs our immediate attention. For example: when it is time to leave for school, or its time to start cooking dinner because mom's on her way home from work.
 
 ### Tablet reference user interface
-We have a 7-inch Amazon tablet in the Kitchen which displays useful information such as our family calendar and which child's turn is it do the dishes this week.
+We have a 7-inch Amazon tablet in the Kitchen which displays useful information such as our family calendar and which child's turn is it to do the dishes this week.
 
 ### Mobile user interface
 I exclusively Interact with Home Assistant with my phone (or computer when coding). If no one else needs to bother with it, I have done a good job!  :smirk:
@@ -48,10 +48,10 @@ I exclusively Interact with Home Assistant with my phone (or computer when codin
 ### Lutron caseta
 Device recommendations: [dimmer](https://amzn.to/3pHXJth), [pico remote](https://amzn.to/2OYVHZ4), [dimmer and pico remote](https://amzn.to/3unpD0Y), [Lutron caseta pro bridge](https://amzn.to/3aH1pqO)
 
-In-wall dimmer switches and in-wall (or handheld) wireless remotes. Get the [Lutron caseta pro bridge](https://amzn.to/3aH1pqO) so you can us your pico remotes with Home Assistant to control any device in your house! The standard bridge is less expensive but you cannot watch for pico remote button press events.
+In-wall dimmer switches and in-wall (or handheld) wireless remotes. Get the [Lutron caseta pro bridge](https://amzn.to/3aH1pqO) so you can use your pico remotes with Home Assistant to control any device in your house! The standard bridge is less expensive but you cannot watch for pico remote button press events.
 
 #### Project ideas
-1. Add a battery powered pico remote next to a room which doesn't have a wall switch! Control a smart bulb by any manufacturer! My Living Room was lacking a switch, but I cut a little hole in drywall and now it does! :beers:
+1. Add a battery powered pico remote next to a room which doesn't have a wall switch! Control a smart bulb by any manufacturer! My Living Room was lacking a switch, but I cut a little hole in the drywall and now it does! :beers:
 2. Replace a dumb wired light switch or dimmer with a caseta dimmer so Home Assistant can automatically turn the lights on at night when a motion sensor detects you have entered the room!
 3. Use Home Assistant to brighten the lights gradually to help you wake up in the morning.
 
@@ -61,13 +61,13 @@ Device recommendations: [Red series dimmer](https://amzn.to/2ZY73i3), [Red serie
 Inovelli z-wave devices are high quality and they really care about our niche community. The red series switches handle double, triple, quadruple, and event quintuple click events. These even have a led light strip on the right side which we use different color and animations to indicate the state of things around the house.
 
 #### Project ideas
-1. **Multi-click actions!** 2x click to turn on/off the bright floor lamp, 3x click to turn on/off the floor fan, 4x click to activate your "goodnight" scene, 5x click to activate guest mode on your way to answer the door!<br>
+1. **Multi-click actions!** 2x click to turn on/off the bright floor lamp, 3x click to turn on/off the floor fan, 4x click to activate your "good night" scene, 5x click to activate guest mode on your way to answer the door!<br>
 *See my automation: [automations/buttons/zwjs_button_click.yaml](https://github.com/brianhanifin/Home-Assistant-Config/blob/master/automations/buttons/zwjs_button_click.yaml)*
 2. **House status indicator** Use the LED strip to indicate when the garage is open, or the alarm is disarmed.<br>
 *See my article: "[Inovelli red series status LED update](https://brianhanifin.com/posts/inovelli-red-series-status-led-update/)"*
 
 ### Philips hue bulbs
-Device recommendations: [starter Kit](https://amzn.to/37AqeTq) (3 color bulbs, battery dimmer, & hub)
+Device recommendations: [starter Kit](https://amzn.to/37AqeTq) (3 color bulbs, battery button, & hub)
 
 The Hue ecosystem is easy to get setup with Home Assistant. We primarily use their tunable white bulbs for plug in floor and table lamps, but we do have 9 colored bulbs in our dining room chandelier for holiday fun.
 
@@ -116,16 +116,16 @@ These devices are great for shoving in a box behind a light switch to add smarts
 *2b.* turns the fan on then back off when the humidity is up due to a shower (*note: a battery powered humidity sensor in the bathroom is compared to one in a neighboring room*).
 3. **Garage door controller**: I plan to replace the cloud based chamberlain MyQ controller soon using [the hook up's video for reference ](https://www.youtube.com/watch?v=WEZUxXNiERQ).
 
-### SonOff S31 plugs
+### Sonoff S31 plugs
 Device recommendations: [S31](https://amzn.to/2OOEilB), [S31 lite](https://amzn.to/2NMhi6i)
 
-The SonOff S31 is a reliable wi-fi controlled smart switch which can be flashed with Tasmota or ESPHome if you wish. The original S31 has power monitoring built in, while the new S31 lite omits that for a discount.
+The Sonoff S31 is a reliable wi-fi controlled smart switch which can be flashed with Tasmota or ESPHome if you wish. The original S31 has power monitoring built in, while the new S31 lite omits that for a discount.
 
 #### S31 power monitoring project ideas
 *Note: the relay can be left always on to put these in a monitor only mode.*
 1. Monitor your washing machine so Home Assistant can notify you when your wash is ready to be hung up or moved to the dryer! No more stinky clothes!
 2. Monitor your dishwasher or clothes dryer.
-3. Monitor your 3D Printer or Laser Cutter to let you know when it is time to check out that thing you just created!
+3. Monitor your 3D Printer or Laser Cutter to let you know when it's time to check out that thing you just created!
 
 #### S31 lite project ideas
 1. Plug one of these into every floor and table fan you own and just ask your Google or Alexa to *"turn on the bedroom fan!"*.
