@@ -116,8 +116,8 @@ script:
     mode: single
     variables:
       current_speed: '{{ state_attr("fan.bedroom", "percentage") }}'
-      current_speed_step: '{{ (current_speed / 20) | int }}'
-      chosen_speed_step: '{{ (chosen_speed / 20) | int }}'
+      current_speed_step: '{{ (current_speed / 20) | int(default=0) }}'
+      chosen_speed_step: '{{ (chosen_speed / 20) | int(default=0) }}'
       step_difference: '{{ chosen_speed_step - current_speed_step }}'
       command: |
         {{ iif(step_difference > 0, "speed_up", "speed_down") }}
@@ -174,7 +174,7 @@ template:
       - name: Bedroom fan power
         unique_id: bedroom_fan_power
         device_class: power
-        state: '{{ states("sensor.bedroom_fan_power")|int > 10 }}'
+        state: '{{ states("sensor.bedroom_fan_power")|int(default=0) > 10 }}'
 
 input_button:
   bedroom_fan_oscillation:

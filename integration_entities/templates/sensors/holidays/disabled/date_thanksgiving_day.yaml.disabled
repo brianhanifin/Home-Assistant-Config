@@ -106,5 +106,7 @@ attributes:
   type: Holiday
   friendly_date: |
     {%- set event_date = states("sensor.date_thanksgiving_day") %}
-    {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
-    {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int, event_date.split("-")[0]|int) }}
+    {%- if event_date is defined and event_date|lower not in ["","none","unknown","unavailable"] %}
+      {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
+      {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int(default=0), event_date.split("-")[0]|int(default=0)) }}
+    {%- endif %}

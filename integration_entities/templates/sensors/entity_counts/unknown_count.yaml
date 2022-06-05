@@ -9,15 +9,16 @@ state: |
   ] %}
   {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
   {%- set selected = namespace (entities="") %}
-  {%- for entity in entities %}
-    {%- if not is_device_attr(entity, "name", "BLACKPC")
-        and not entity.split(".")[0] in ["button", "group", "person", "scene"]
-        and not "octoprint" in entity %}
+  {%- if entities|count > 0 %}
+    {%- for entity in entities if not is_device_attr(entity, "name", "BLACKPC")
+          and not is_device_attr(entity, "name", "BLACKPC-satellite")
+          and not entity.split(".")[0] in ["button", "group", "person", "scene"]
+          and not "octoprint" in entity %}
       {%- set selected.entities = selected.entities ~ " " if not loop.first %}
       {%- set selected.entities = selected.entities ~ entity %}
-    {%- endif %}
-  {%- endfor %}
-  {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" ")|count, 0) }}
+    {%- endfor %}
+    {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" ")|count, 0) }}
+  {%- endif %}
 attributes:
   entities: |
     {%- set ignore_list = [
@@ -25,12 +26,13 @@ attributes:
     ] %}
     {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
     {%- set selected = namespace (entities="") %}
-    {%- for entity in entities %}
-      {%- if not is_device_attr(entity, "name", "BLACKPC")
-          and not entity.split(".")[0] in ["button", "group", "person", "scene"]
-          and not "octoprint" in entity %}
-        {%- set selected.entities = selected.entities ~ " " if selected.entities|length > 0 and not loop.first %}
+    {%- if entities|count > 0 %}
+      {%- for entity in entities if not is_device_attr(entity, "name", "BLACKPC")
+            and not is_device_attr(entity, "name", "BLACKPC-satellite")
+            and not entity.split(".")[0] in ["button", "group", "person", "scene"]
+            and not "octoprint" in entity %}
+        {%- set selected.entities = selected.entities ~ " " if not loop.first %}
         {%- set selected.entities = selected.entities ~ entity %}
-      {%- endif %}
-    {%- endfor %}
-    {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" "), "") }}
+      {%- endfor %}
+      {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" "), "") }}
+    {%- endif %}

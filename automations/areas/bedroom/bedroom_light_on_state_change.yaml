@@ -26,15 +26,15 @@ variables:
   #   {%- set wakeup_entities = ["input_datetime.event_light_wakeup_nerene","input_datetime.event_light_wakeup_brian"] %}
 
   #   {%- set current_time = as_timestamp(now()) %}
-  #   {%- set seconds_past_midnight = current_time|timestamp_custom("%I")|int * 3600 %}
-  #   {%- set seconds_past_midnight = seconds_past_midnight + current_time|timestamp_custom("%M")|int * 60 %}
-  #   {%- set seconds_past_midnight = seconds_past_midnight + current_time|timestamp_custom("%S")|int %}
+  #   {%- set seconds_past_midnight = current_time|timestamp_custom("%I")|int(default=0) * 3600 %}
+  #   {%- set seconds_past_midnight = seconds_past_midnight + current_time|timestamp_custom("%M")|int(default=0) * 60 %}
+  #   {%- set seconds_past_midnight = seconds_past_midnight + current_time|timestamp_custom("%S")|int(default=0) %}
 
   #   {%- for entity in wakeup_entities %}
   #     {%- set time = states(entity).split(":") %}
-  #     {%- set wakeup_seconds = time[0]|int * 3600 %}
-  #     {%- set wakeup_seconds = wakeup_seconds + time[1]|int * 60 %}
-  #     {%- set wakeup_seconds = wakeup_seconds + time[0]|int %}
+  #     {%- set wakeup_seconds = time[0]|int(default=0) * 3600 %}
+  #     {%- set wakeup_seconds = wakeup_seconds + time[1]|int(default=0) * 60 %}
+  #     {%- set wakeup_seconds = wakeup_seconds + time[0]|int(default=0) %}
   #     {%- set seconds_past_wakeup = seconds_past_midnight - wakeup_seconds %}
   #     {%- set result.within_window = (0 < seconds_past_wakeup <= 600) or result.within_window == true %}
   #   {%- endfor %}
@@ -47,7 +47,7 @@ variables:
   timezone_offset: '{{ now_timestamp|timestamp_custom("%z") }}'
   wakeup_time: '{{ states("input_datetime.event_light_wakeup_nerene") }}'
   wakeup: '{{ now_timestamp | timestamp_custom("%Y-%m-%d "+wakeup_time+timezone_offset, true) }}'
-  wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) | default(0)|int }}'
+  wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) |int(default=0) }}'
   near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
 
 action:

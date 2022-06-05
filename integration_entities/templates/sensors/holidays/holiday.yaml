@@ -25,7 +25,7 @@ state: |
   {%- endfor %}
 
   {# HOLIDAYS2 - custom date sesnors: Do any occur today? #}
-  {%- set holidays2 = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
+  {%- set holidays2 = states.sensor | selectattr('attributes.type','defined') | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
   {%- for holiday in holidays2 -%}
     {%- set holiday_date = states(holiday) %}
     {%- if holiday_date|length > 10 %}
@@ -38,20 +38,33 @@ state: |
   {%- endfor %}
 
   {# BIRTHDAYS/ANNIVERSARIES: Do any occur today? #}
-  {%- set anniversary_entity = states.sensor | selectattr("attributes.attribution","eq","Sensor data calculated by Anniversaries Integration") | selectattr("state","eq","0") | map(attribute="entity_id") | first %}
+  {%- set anniversary_entities = states.sensor | selectattr('attributes.attribution','defined') | selectattr("attributes.attribution","eq","Sensor data calculated by Anniversaries Integration") | selectattr("state","eq","0") | map(attribute="entity_id") | list %}
+  {%- set anniversary_entity = iif(anniversary_entities|count>0, anniversary_entities|first, "") %}
   {%- set calendar.anniversary = state_attr(anniversary_entity,"friendly_name") if anniversary_entity|length > 0 else "" %}
   {{- calendar.anniversary ~ ", " if calendar.anniversary != "" and calendar.holiday != "" }}
 
   {{- calendar.holiday }}
 attributes:
   next_holiday: |
-    {{ (state_attr("sensor.holiday","upcoming_holidays").split("\n")|first).split(": ")[1] }}
+    {%- set upcoming_holidays = state_attr("sensor.holiday","upcoming_holidays") %}
+    {%- if upcoming_holidays is not none %}
+      {%- set next_holiday = upcoming_holidays | first %}
+      {%- if ":" in next_holiday %}
+        {{ next_holiday.split(": ")[1] }}
+      {%- endif %}
+    {%- endif %}
   next_holiday_date: |
-    {%- set date = (state_attr("sensor.holiday","upcoming_holidays").split("\n")|first).split(": ")[0] %}
-    {{ as_datetime(date) }}
+    {%- set upcoming_holidays = state_attr("sensor.holiday","upcoming_holidays") %}
+    {%- if upcoming_holidays is not none %}
+      {%- set next_holiday = upcoming_holidays | first %}
+      {%- if ":" in next_holiday %}
+        {%- set date = next_holiday.split(": ")[0] %}
+        {{ as_datetime(date) }}
+      {%- endif %}
+    {%- endif %}
   upcoming_holidays: |
     {% set calendar = namespace(holidays='') %}
-    {%- set midnight = now().replace(hour=0).replace(minute=0).replace(second=0).replace(microsecond=0) %}
+    {%- set midnight = today_at("0:00") %}
     {%- set midnight_next_year = midnight + timedelta(days=367) %}
 
     {# HOLIDAYS1: Build a list of holidays from the US Holidays calendar. #}
@@ -66,7 +79,7 @@ attributes:
     %}
     {%- for holiday in holidays1 %}
       {%- set holiday = holiday.split(": ") %}
-      {%- set holiday_year = holiday[0].split("-")[0]|int %}
+      {%- set holiday_year = holiday[0].split("-")[0]|int(default=0) %}
       {%- if holiday_year >= midnight.year %}
         {%- set holiday_date = as_datetime(holiday[0]) %}
         {%- if holiday_date|as_timestamp >= midnight|as_timestamp
@@ -77,10 +90,8 @@ attributes:
     {%- endfor %}
 
     {# HOLIDAYS2: Build a list of holidays from sensors I manully created. #}
-    {%- set holidays2 = states.sensor | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
+    {%- set holidays2 = states.sensor | selectattr('attributes.type','defined') | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
     {%- for holiday in holidays2 -%}
-      {#%- set events.holiday = events.holiday ~ ',' if events.holiday != '' %}
-      {%- set events.holiday = events.holiday ~ state_attr(holiday, 'friendly_name') %#}
       {%- set calendar.holidays = calendar.holidays ~ states(holiday) ~": "~ state_attr(holiday, 'friendly_name') ~"," %}
     {%- endfor %}
     {%- set calendar.holidays = calendar.holidays[:(calendar.holidays|length-1)]|replace(",", "\n") %}

@@ -5,10 +5,10 @@ icon: fas:flag-usa
 state: |
   {%- set this_event = "6-14" %}
   {%- set event_date = this_event.split("-") %}
-  {%- set event_month = event_date[0]|int %}
-  {%- set event_day = event_date[1]|int %}
+  {%- set event_month = event_date[0]|int(default=0) %}
+  {%- set event_day = event_date[1]|int(default=0) %}
 
-  {# If the event has passed for this year, get next year's event. #} 
+  {# If the event has passed for this year, get next year's event. #}
   {%- set today = as_datetime(states('sensor.date')) -%}
   {%- if event_month < today.month -%}
     {%- set event_year = today.year + 1 -%}
@@ -22,5 +22,7 @@ attributes:
   type: Holiday
   friendly_date: |
     {%- set event_date = states("sensor.date_flag_day") %}
-    {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
-    {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int, event_date.split("-")[0]|int) }}
+    {%- if event_date is defined and event_date|lower not in ["","none","unknown","unavailable"] %}
+      {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
+      {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int(default=0), event_date.split("-")[0]|int(default=0)) }}
+    {%- endif %}

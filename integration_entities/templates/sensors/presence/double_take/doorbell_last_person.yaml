@@ -4,7 +4,7 @@ name: Doorbell Last Person
 icon: mdi:face-recognition
 state: |
   {%- if is_number(states("sensor.double_take_doorbell")) %}
-    {%- if states("sensor.double_take_doorbell")|int > 0 %}
+    {%- if states("sensor.double_take_doorbell")|int(default=0) > 0 %}
       {%- set match = state_attr("sensor.double_take_doorbell","matches")[0] %}
       {{ match["name"] if match["confidence"] > 96 }}
     {% endif %}
@@ -12,7 +12,7 @@ state: |
 attributes:
   match: |
     {%- if is_number(states("sensor.double_take_doorbell")) %}
-      {%- if states("sensor.double_take_doorbell")|int > 0 %}
+      {%- if states("sensor.double_take_doorbell")|int(default=0) > 0 %}
         {%- set match = state_attr("sensor.double_take_doorbell","matches")[0] %}
         {{ match["name"] if match["confidence"] > 96 }}
       {% endif %}

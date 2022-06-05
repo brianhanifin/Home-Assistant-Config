@@ -178,15 +178,15 @@ mode: parallel
 sequence:
   # Preform the Inovelli math.
   - variables:
-      level: "{{ level|default(4)|int }}"
+      level: "{{ level|default(4)|int(default=0) }}"
       duration: '{{ durations[duration|default("Indefinitely")|title] }}'
       color: |
         {%- if color is not number %}
           {%- set color = color|default("Yellow")|title %}
         {%- else %}
-          {%- set color = color|int %}
+          {%- set color = color|int(default=0) %}
         {% endif %}
-        {{ colors[color|title]|int }}
+        {{ colors[color|title]|int(default=0) }}
 
   # Loop through each entity_id
   - repeat:
@@ -216,7 +216,7 @@ sequence:
               {%- else %}
                 dimmer
               {%- endif %}
-            parameter: "{{ parameters[model_type|lower]|int }}"
+            parameter: "{{ parameters[model_type|lower]|int(default=0) }}"
             effect: |
               {% if model_type == "switch" %}
                 {{- effects_switch[effect|default("Blink")|title] }}
@@ -224,8 +224,8 @@ sequence:
                 {{- effects_dimmer[effect|default("Blink")|title] }}
               {% endif %}
             inovelli_math: |
-              {%- if effect|int > 0 %}
-                {{ color|int + (level|int * 256) + (duration|int * 65536) + (effect|int * 16777216) }}
+              {%- if effect|int(default=0) > 0 %}
+                {{ color|int(default=0) + (level|int(default=0) * 256) + (duration|int(default=0) * 65536) + (effect|int(default=0) * 16777216) }}
               {%- else %}
                 0
               {% endif %}

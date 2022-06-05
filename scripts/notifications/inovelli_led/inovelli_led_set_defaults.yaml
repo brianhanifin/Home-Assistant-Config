@@ -25,8 +25,8 @@ variables:
     {%- endif %}
   node_id: '{{ state_attr(entity_id,"node_id") }}'
   color: '{{ color|default("Blue") }}'
-  level_on: '{{ level_on|default(10)|int }}'
-  level_off: '{{ level_off|default(3)|int }}'
+  level_on: '{{ level_on|default(10)|int(default=0) }}'
+  level_off: '{{ level_off|default(3)|int(default=0) }}'
   parameters:
     dimmer:
       color: 13

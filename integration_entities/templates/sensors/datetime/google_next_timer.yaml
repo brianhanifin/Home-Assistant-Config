@@ -4,61 +4,73 @@ name: Google next timer
 icon: mdi:timer-outline
 state: |
   {% set timers = state_attr("sensor.google_active_timers","timers") %}
-  {%- if timers[0] == null %}
-    {%- set timer = timers %}
-  {%- else %}
-    {%- set timer = timers|first %}
-  {%- endif %}
-  {%- if timer.status not in [null,'','[]','unknown','unavailable','none'] %}
-    {%- if timer.status == 'set' %}
-      active
-    {%- elif timer.status == 'paused' %}
-      paused
-    {%- elif timer.status == 'waiting' %}
-      waiting
+  {%- if timers is not none and timers|count > 0 %}
+    {%- if timers[0] == null %}
+      {%- set timer = timers %}
     {%- else %}
-      idle
+      {%- set timer = timers|first %}
+    {%- endif %}
+    {%- if timer.status not in [null,'','[]','unknown','unavailable','none'] %}
+      {%- if timer.status == 'set' %}
+        active
+      {%- elif timer.status == 'paused' %}
+        paused
+      {%- elif timer.status == 'waiting' %}
+        waiting
+      {%- else %}
+        idle
+      {%- endif %}
     {%- endif %}
   {%- endif %}
 attributes:
   label: |
     {% set timers = state_attr("sensor.google_active_timers","timers") %}
-    {%- if timers.duration == null %}
-      {%- set timer = timers|first %}
-    {%- else %}
-      {%- set timer = timers %}
+    {%- if timers is not none and timers|count > 0 %}
+      {%- if timers.duration == null %}
+        {%- set timer = timers|first %}
+      {%- else %}
+        {%- set timer = timers %}
+      {%- endif %}
+      {{ timer["label"] }}
     {%- endif %}
-    {{ timer["label"] }}
   duration: |
     {% set timers = state_attr("sensor.google_active_timers","timers") %}
-    {%- if timers.duration == null %}
-      {%- set timer = timers|first %}
-    {%- else %}
-      {%- set timer = timers %}
+    {%- if timers is not none and timers|count > 0 %}
+      {%- if timers.duration == null %}
+        {%- set timer = timers|first %}
+      {%- else %}
+        {%- set timer = timers %}
+      {%- endif %}
+      {{ timer["duration"] }}
     {%- endif %}
-    {{ timer["duration"] }}
   end_time: |
     {% set timers = state_attr("sensor.google_active_timers","timers") %}
-    {%- if timers.duration == null %}
-      {%- set timer = timers|first %}
-    {%- else %}
-      {%- set timer = timers %}
+    {%- if timers is not none and timers|count > 0 %}
+      {%- if timers.duration == null %}
+        {%- set timer = timers|first %}
+      {%- else %}
+        {%- set timer = timers %}
+      {%- endif %}
+      {{ timer["end_time"] }}
     {%- endif %}
-    {{ timer["end_time"] }}
   active_sensor: |
     {%- set sensor = state_attr("sensor.google_active_timers","sensors") %}
-    {%- if "," in sensor %}
-      {%- set sensor = sensor.split(", ")|first %}
+    {%- if timers is not none and timers|count > 0 %}
+      {%- if "," in sensor %}
+        {%- set sensor = sensor.split(", ")|first %}
+      {%- endif %}
+      {{ sensor }}
     {%- endif %}
-    {{ sensor }}
   active_sensor_area: |
     {%- set sensor = state_attr("sensor.google_next_timer","active_sensor") %}
-    {{ area_name(sensor) }}
+    {{ area_name(sensor) if sensor is not none }}
   id: |
     {% set timers = state_attr("sensor.google_active_timers","timers") %}
-    {%- if timers.duration == null %}
-      {%- set timer = timers|first %}
-    {%- else %}
-      {%- set timer = timers %}
+    {%- if timers is not none and timers|count > 0 %}
+      {%- if timers.duration == null %}
+        {%- set timer = timers|first %}
+      {%- else %}
+        {%- set timer = timers %}
+      {%- endif %}
+      {{ timer["timer_id"] }}
     {%- endif %}
-    {{ timer["timer_id"] }}

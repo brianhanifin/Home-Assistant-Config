@@ -8,7 +8,7 @@ trigger:
       - sensor.holiday
 variables:
   state: '{{ trigger.to_state.state|trim }}'
-  midnight: '{{ now().replace(hour=0).replace(minute=0).replace(second=0).replace(microsecond=0) | as_timestamp }}'
+  midnight: '{{ today_at("0:00") | as_timestamp }}'
   time_from_midnight: '{{ now()|as_timestamp - midnight }}'
 condition:
   - "{{ state|lower not in ['',none,'unknown','unavailable'] }}"

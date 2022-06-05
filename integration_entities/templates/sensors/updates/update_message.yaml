@@ -4,56 +4,58 @@ name: Update message
 icon: 'mdi:update'
 state: |
   {%- set updates = states("sensor.updates")|int(default=0) %}
-  {%- if updates == 1 %}
-    There is an update available.
-  {% elif updates > 1 %}
-    There are {{ updates }} updates available.
-  {% endif %}
+  {%- if updates > 0 %}
+    {%- if updates == 1 %}
+      There is an update available.
+    {% elif updates > 1 %}
+      There are {{ updates }} updates available.
+    {% endif %}
 
-  {%- if state_attr("sensor.updates","home_assistant_update_count") > 0 %}
-    {%- if state_attr("sensor.updates", "core_update") %}
-    * There is a [Core update](/hassio/update-available/core).
-    {%- endif %}
-
-    {%- if state_attr("sensor.updates", "os_update") %}
-    * There is an OS update.
-    {%- endif %}
-
-    {%- if state_attr("sensor.updates", "supervisor_update") %}
-    * There is a Supervisor update.
-    {%- endif %}
-
-    {%- if state_attr("sensor.updates", "addon_update") %}
-      {%- set addon_updates = states("sensor.addon_updates")|int(default=0) %}
-      {%- if addon_updates == 1 %}
-    * There is one Addon update.
-      {%- else %}
-    * There are {{ addon_updates }} Addon updates.
+    {%- if state_attr("sensor.updates","home_assistant_update_count") > 0 %}
+      {%- if state_attr("sensor.updates", "core_update") %}
+      * There is a [Core update](/hassio/update-available/core).
       {%- endif %}
-    {%- endif %}
 
-    {%- if state_attr("sensor.updates", "hacs_update") %}
-      {%- set hacs_updates = states("sensor.hacs_updates")|int(default=0) %}
-      {%- if hacs_updates == 1 %}
-    * There is one HACS update.
-      {%- else %}
-    * There are {{ hacs_updates }} HACS updates.
+      {%- if state_attr("sensor.updates", "os_update") %}
+      * There is an OS update.
       {%- endif %}
-    {%- endif %}
 
-    {%- if state_attr("sensor.updates", "device_update") %}
-      {%- set hacs_updates = states("sensor.device_updates")|int(default=0) %}
-      {%- if hacs_updates == 1 %}
-    * There is one HACS update.
-      {%- else %}
-    * There are {{ hacs_updates }} HACS updates.
+      {%- if state_attr("sensor.updates", "supervisor_update") %}
+      * There is a Supervisor update.
       {%- endif %}
+
+      {%- if state_attr("sensor.updates", "addon_update") %}
+        {%- set addon_updates = states("sensor.addon_updates")|int(default=0) %}
+        {%- if addon_updates == 1 %}
+      * There is one Addon update.
+        {%- else %}
+      * There are {{ addon_updates }} Addon updates.
+        {%- endif %}
+      {%- endif %}
+
+      {%- if state_attr("sensor.updates", "hacs_update") %}
+        {%- set hacs_updates = states("sensor.hacs_updates")|int(default=0) %}
+        {%- if hacs_updates == 1 %}
+      * There is one HACS update.
+        {%- else %}
+      * There are {{ hacs_updates }} HACS updates.
+        {%- endif %}
+      {%- endif %}
+
+      {%- if state_attr("sensor.updates", "device_update") %}
+        {%- set hacs_updates = states("sensor.device_updates")|int(default=0) %}
+        {%- if hacs_updates == 1 %}
+      * There is one HACS update.
+        {%- else %}
+      * There are {{ hacs_updates }} HACS updates.
+        {%- endif %}
+      {%- endif %}
+
+      [View updates](/config/dashboard)
     {%- endif %}
 
-    [View updates](/config/dashboard)
+    {%- if state_attr("sensor.updates", "unifi_firmware_update") %}
+      {%- set unifi_updates = states("sensor.unifi_gateway_firmware_upgradable")|int(default=0) %}
+      There are {{ unifi_updates }} [Unifi firmware updates](https://unraid.local:8443/manage/default/dashboard).
+    {%- endif %}
   {%- endif %}
-
-  {%- if state_attr("sensor.updates", "unifi_firmware_update") %}
-    {%- set unifi_updates = states("sensor.unifi_gateway_firmware_upgradable")|int(default=0) %}
-    There are {{ unifi_updates }} [Unifi firmware updates](https://unraid.local:8443/manage/default/dashboard).
-  {% endif %}

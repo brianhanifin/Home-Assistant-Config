@@ -202,12 +202,12 @@ action:
     sequence:
     - variables:
         parameter: '{{ parameters[model_type|lower] }}'
-        color: '{{ colors[color|title]|int }}'
+        color: '{{ colors[color|title]|int(default=0) }}'
         duration: '{{ durations[duration|title] }}'
         effect: "{% if model_type == \"switch\" %}\n  {{- effects_switch[effect|title]\
           \ }}\n{%- else %}\n  {{- effects_dimmer[effect|title] }}\n{% endif %}\n"
-        inovelli_math: "{%- if effect|int > 0 %}\n  {{ color|int + (level|int * 256)\
-          \ + (duration|int * 65536) + (effect|int * 16777216) }}\n{%- else %}\n \
+        inovelli_math: "{%- if effect|int(default=0) > 0 %}\n  {{ color|int(default=0) + (level|int(default=0) * 256)\
+          \ + (duration|int(default=0) * 65536) + (effect|int(default=0) * 16777216) }}\n{%- else %}\n \
           \ 0\n{% endif %}\n"
 - choose:
   - conditions:

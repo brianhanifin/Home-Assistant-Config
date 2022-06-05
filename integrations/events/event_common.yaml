@@ -30,7 +30,7 @@ automation:
       announcement_enabled: '{{ is_state("input_boolean.event_announcement_" + id, "on") }}'
       #announcement: '{{ states("input_text.event_" + entity_id[21:]) }}'
 
-      event_hour: '{{ states(entity_id)[:2]|int }}'
+      event_hour: '{{ states(entity_id)[:2]|int(default=0) }}'
       workday: '{{ is_state("binary_sensor.work_day","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
@@ -121,7 +121,7 @@ automation:
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
       light_enabled: '{{ is_state("input_boolean.event_light_" + id, "on") }}'
 
-      event_hour: '{{ states(entity_id)[:2]|int }}'
+      event_hour: '{{ states(entity_id)[:2]|int(default=0) }}'
       workday: '{{ is_state("binary_sensor.work_day","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
