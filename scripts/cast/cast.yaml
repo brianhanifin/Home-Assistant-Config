@@ -1,8 +1,10 @@
 ---
 alias: Cast
-mode: single
+mode: parallel
 icon: 'mdi:cast'
 variables:
+  #debug: true
+
   entities: |
     {%- set data = namespace(displays="") %}
     {%- if displays is defined %}
@@ -18,19 +20,23 @@ variables:
     {%- endif %}
     [{{ data.displays }}]
 sequence:
-  # - service: script.debug
-  #   data:
-  #     message: |
-  #       displays is not string: '{{ displays is not string }}'
-  #       dismiss_after is defined: '{{ dismiss_after is defined }}'
+  - if: '{{ debug is defined and debug == true }}'
+    then:
+      - service: script.debug
+        data:
+          message: |
+            displays is not string: '{{ displays is not string }}'
+            dismiss_after is defined: '{{ dismiss_after is defined }}'
 
-  #       displays: '{{ displays }}'
+            displays: '{{ displays }}'
 
-  #       entities: '{{ entities }}'
-  #       count: {{ entities|count }}
+            entities: '{{ entities }}'
+            count: {{ entities|count }}
 
-  #       dashboard_path: "{{ dashboard_path }}"
-  #       view_path: "{{ view_path }}"
+            dashboard_path: "{{ dashboard_path }}"
+            view_path: "{{ view_path }}"
+
+            dismiss_after: '{{ dismiss_after }}'
 
   - alias: "Turn off the media players before we cast a new page for it to display."
     service: media_player.turn_off
@@ -41,13 +47,12 @@ sequence:
     repeat:
       count: '{{ entities|count }}'
       sequence:
-        - parallel:
-            - alias: "Cast a dashboard to a display."
-              service: cast.show_lovelace_view
-              data:
-                entity_id: '{{ entities[repeat.index-1] }}'
-                dashboard_path: '{{ dashboard_path }}'
-                view_path: '{{ view_path }}'
+        - alias: "Cast a dashboard to a display."
+          service: cast.show_lovelace_view
+          data:
+            entity_id: '{{ entities[repeat.index-1] }}'
+            dashboard_path: '{{ dashboard_path }}'
+            view_path: '{{ view_path }}'
 
   - alias: "If `dismiss_after` is set, then turn off the displays after the specified delay."
     if: '{{ dismiss_after is defined }}'
@@ -59,6 +64,7 @@ sequence:
         service: media_player.turn_off
         target:
           entity_id: '{{ entities }}'
+
 fields:
   displays:
     description: Select the Google cast display(s).
@@ -70,15 +76,15 @@ fields:
           domain: media_player
   dashboard_path:
     description: Path to the desired dashboard.
-    default: lovelace
+    default: dashboard-cast
     example: lovelace
     required: false
     selector:
       text:
   view_path:
     description: Path to the page within the dashboard
-    default: home
-    example: cameras
+    default: cameras
+    example: home
     required: false
     selector:
       text:
