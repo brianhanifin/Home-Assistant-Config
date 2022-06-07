@@ -48,7 +48,7 @@
 ## Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **40,989** | 1,238 | 35 | 96 | 57 |
+| **41,216** | 1,249 | 36 | 99 | 59 |
 
 
 ## Smart home articles
@@ -219,9 +219,9 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 ---## Technical details
 
-Our Home Assistant install has approximately **1238 total entities**,
+Our Home Assistant install has approximately **1249 total entities**,
 including **638 sensors**. My YAML
-files contain 40,989 lines of code.
+files contain 41,216 lines of code.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -317,7 +317,7 @@ Home Assistant custom integration to keep track of missing entities and services
 
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>26 lovelace plugins</summary>
+<details><summary>27 lovelace plugins</summary>
 
 #### [Atomic Calendar Revive v6.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 Custom calendar card for Home Assistant with Lovelace
@@ -394,6 +394,9 @@ Card that allows you to swipe throught multiple cards for Home Assistant Lovelac
 #### [Timer Bar Card v1.18](https://github.com/rianadon/timer-bar-card)
 A progress bar display for Home Assistant timers
 
+#### [Vacuum Card v2.6.3](https://github.com/denysdovhan/vacuum-card)
+Vacuum cleaner card for Home Assistant Lovelace UI
+
 #### [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
 Weather Card with animated icons for Home Assistant Lovelace
 </details>
@@ -459,7 +462,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.6.2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.6.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -469,7 +472,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-40,989-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,216-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
