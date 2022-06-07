@@ -1,0 +1,54 @@
+---
+alias: Vacuum room clean
+icon: mdi:update
+mode: parallel
+variables:
+  rooms: |
+    {%- if rooms is defined %}
+      {{ rooms }}
+    {%- endif %}
+  vacuum: |
+    {%- if vacuum is defined %}
+      {{ vacuum }}
+    {%- else %}
+      ["vacuum.family_room","vacuum.play_room"]
+    {%- endif %}
+sequence:
+  - if: '{{ rooms|upper in ["","ALL"] }}'
+    then:
+      - service: vacuum.send_command
+        data:
+          command: sweep_auto
+        target:
+          entity_id: '{{ vacuum }}'
+
+    else:
+      - service: vacuum.send_command
+        data:
+          command: sweep_rooms
+          params:
+            rooms: ' {{ rooms }} '
+        target:
+          entity_id: '{{ vacuum }}'
+
+fields:
+  rooms:
+    name: Room(s)
+    description: Room or rooms to clean
+    example: Family room
+    selector:
+      select:
+        multiple: true
+        options:
+          - ALL
+          - Family room
+          - Kitchen
+  vacuum:
+    name: Vacuum
+    description: Vacuum to clean.
+    example: vacuum.family_room
+    selector:
+      entity:
+        multiple: true
+        domain:
+          - vacuum

@@ -1,0 +1,28 @@
+---
+alias: Vacuum update
+icon: mdi:update
+mode: parallel
+variables:
+  vacuum: |
+    {%- if vacuum is defined %}
+      {{ vacuum }}
+    {%- else %}
+      ["vacuum.family_room","vacuum.play_room"]
+    {%- endif %}
+sequence:
+  - service: vacuum.send_command
+    data:
+      command: update
+    target:
+      entity_id: '{{ vacuum }}'
+
+fields:
+  vacuum:
+    name: Vacuum
+    description: Vacuum to update.
+    example: vacuum.family_room
+    selector:
+      entity:
+        multiple: true
+        domain:
+          - vacuum

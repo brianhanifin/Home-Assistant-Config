@@ -855,3 +855,167 @@
       url: /lovelace/events
       subtitle: Nerene has day off
   mode: single
+- id: '1654483867439'
+  alias: Vacuum update status periodically
+  description: ''
+  trigger:
+  - platform: time_pattern
+    hours: /2
+    minutes: '0'
+  condition:
+  - condition: device
+    device_id: 8532ec8c935bfb73fc9438d6a98033cb
+    domain: vacuum
+    entity_id: vacuum.family_room
+    type: is_docked
+  - condition: device
+    device_id: 05429a8986c6f325628f5d664519825e
+    domain: vacuum
+    entity_id: vacuum.play_room
+    type: is_docked
+  action:
+  - service: script.vacuum_update
+    data:
+      vacuum:
+      - vacuum.family_room
+      - vacuum.play_room
+  mode: single
+- id: '1654484047176'
+  alias: Vacuum update status while not docked
+  description: ''
+  trigger:
+  - platform: event
+    event_type: call_service
+    id: family_room
+    event_data:
+      domain: vacuum
+      service: start
+      service_data:
+        entity_id: vacuum.family_room
+  - platform: event
+    event_type: call_service
+    id: play_room
+    event_data:
+      domain: vacuum
+      service: start
+      service_data:
+        entity_id: vacuum.play_room
+  condition: []
+  action:
+  - service: script.vacuum_update
+    data: {}
+  - wait_for_trigger:
+    - platform: event
+      event_type: state_changed
+      event_data:
+        entity_id: vacuum.family_room
+    - platform: event
+      event_type: state_changed
+      event_data:
+        entity_id: vacuum.play_room
+    timeout: '60'
+  - if:
+    - condition: trigger
+      id: family_room
+    then:
+    - repeat:
+        until:
+        - condition: device
+          device_id: 8532ec8c935bfb73fc9438d6a98033cb
+          domain: vacuum
+          entity_id: vacuum.family_room
+          type: is_docked
+        sequence:
+        - delay:
+            hours: 0
+            minutes: 2
+            seconds: 30
+            milliseconds: 0
+        - service: script.vacuum_update
+          data:
+            vacuum:
+            - vacuum.family_room
+  - if:
+    - condition: trigger
+      id: play_room
+    then:
+    - repeat:
+        until:
+        - condition: device
+          device_id: 05429a8986c6f325628f5d664519825e
+          domain: vacuum
+          entity_id: vacuum.play_room
+          type: is_docked
+        sequence:
+        - delay:
+            hours: 0
+            minutes: 2
+            seconds: 30
+            milliseconds: 0
+        - service: script.vacuum_update
+          data:
+            vacuum:
+            - vacuum.play_room
+  mode: parallel
+  max: 2
+- id: '1654547714136'
+  alias: Vacuum refresh until charged
+  description: 'Refresh state when docked until 100% charged.
+
+    '
+  trigger:
+  - platform: device
+    device_id: 8532ec8c935bfb73fc9438d6a98033cb
+    domain: vacuum
+    entity_id: vacuum.family_room
+    type: docked
+    id: family_room
+  - platform: device
+    device_id: 05429a8986c6f325628f5d664519825e
+    domain: vacuum
+    entity_id: vacuum.play_room
+    type: docked
+    id: play_room
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: family_room
+    then:
+    - repeat:
+        until:
+        - condition: numeric_state
+          entity_id: vacuum.family_room
+          attribute: battery_level
+          above: '99'
+        sequence:
+        - delay:
+            hours: 0
+            minutes: 10
+            seconds: 0
+            milliseconds: 0
+        - service: script.vacuum_update
+          data:
+            vacuum:
+            - vacuum.family_room
+  - if:
+    - condition: trigger
+      id: play_room
+    then:
+    - repeat:
+        until:
+        - condition: numeric_state
+          entity_id: vacuum.play_room
+          attribute: battery_level
+          above: '99'
+        sequence:
+        - delay:
+            hours: 0
+            minutes: 10
+            seconds: 0
+            milliseconds: 0
+        - service: script.vacuum_update
+          data:
+            vacuum:
+            - vacuum.play_room
+  mode: single
