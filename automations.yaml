@@ -302,6 +302,17 @@
     data:
       media_player: media_player.google_kitchen
       say_dark_outside: 'true'
+  - if:
+    - condition: state
+      entity_id: binary_sensor.work_day
+      state: 'on'
+    then:
+    - service: light.turn_on
+      data: {}
+      target:
+        entity_id:
+        - light.family_room
+        - light.table_lamp
   mode: single
 - id: '1640887750655'
   alias: Wet laundry Family room LED indicator
