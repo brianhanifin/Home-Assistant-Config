@@ -48,11 +48,13 @@ sequence:
             audio_notifications: {{ audio_notifications }}
             quiet_time: {{ quiet_time }}
 
-  # - if: '{{
-  #         (audio_notifications and quiet_time)
-  #         and (family_home or guest_mode)
-  #       }}'
-  - if: '{{ (audio_notifications and quiet_time) }}'
+            audio_notifications and not quiet_time: {{ audio_notifications and not quiet_time }}
+
+  - if: '{{
+          (audio_notifications and not quiet_time)
+          and (family_home or guest_mode)
+        }}'
+  #- if: '{{ audio_notifications and not quiet_time }}'
     then:
       - alias: "Play the audio on all selected speakers."
         repeat:
@@ -60,7 +62,7 @@ sequence:
           sequence:
             - variables:
                 speaker: "{{ entities[repeat.index-1] }}"
-                current_volume: '{{ state_attr(speaker, "volume_level")|float }}'
+                current_volume: '{{ state_attr(speaker, "volume_level")|float(default=states("input_number.default_announcement_volume")|float(default=5) / 100) }}'
 
             - if: '{{ debug is defined and debug == true }}'
               then:
