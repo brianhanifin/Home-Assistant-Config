@@ -1,7 +1,19 @@
 # Hanifin smart home
 
-* [Repository status](#repository-status)
-* [Repository statistics](#repository-statistics)
+## Repository status
+
+[![Home Assistant version][ha-version-shield]][ha-version] [![Github action status][github-build-status-shield]][github-build-status] [![Github linter status][github-linter-status-shield]][github-linter-status]
+
+[![Last commit][github-last-commit]][github-master] [![GitHub activity][commits-shield]][commits]
+
+## Repository statistics
+| Lines of code | Entities | Domains | Automations | Scripts |
+| :--: | :--: | :--: | :--: | :--: |
+| **41,238** | 1,249 | 36 | 99 | 59 |
+
+---
+## Index
+
 * [Smart home articles](#smart-home-articles)
 * [Summary of our smart home](#summary-of-our-smart-home)
 * [How we control our smart home](#how-we-control-our-smart-home)
@@ -36,20 +48,6 @@
   - [Wi-fi: Ubiquiti Unifi](#wi-fi--ubiquiti-unifi)
   - [Zigbee](#zigbee)
   - [Z-wave](#z-wave)
-
----
-
-## Repository status
-
-[![Home Assistant version][ha-version-shield]][ha-version] [![Github action status][github-build-status-shield]][github-build-status] [![Github linter status][github-linter-status-shield]][github-linter-status]
-
-[![Last commit][github-last-commit]][github-master] [![GitHub activity][commits-shield]][commits]
-
-## Repository statistics
-| Lines of code | Entities | Domains | Automations | Scripts |
-| :--: | :--: | :--: | :--: | :--: |
-| **41,216** | 1,249 | 36 | 99 | 59 |
-
 
 ## Smart home articles
 
@@ -221,7 +219,7 @@ As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of 
 
 Our Home Assistant install has approximately **1249 total entities**,
 including **638 sensors**. My YAML
-files contain 41,216 lines of code.
+files contain 41,238 lines of code.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -472,7 +470,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,216-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,238-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
