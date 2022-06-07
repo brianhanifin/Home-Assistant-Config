@@ -1,5 +1,5 @@
 ---
-alias: Open/close house alerts
+alias: Open/close house a/c change
 description: Actions to take when the alert has been cleared.
 mode: single
 trigger:
@@ -13,6 +13,20 @@ trigger:
     entity_id: alert.close_house
     from: "on"
     to: "idle"
+  - id: windows_open
+    platform: state
+    entity_id: binary_sensor.house_windows
+    from: "off"
+    to: "on"
+    for:
+      seconds: 30
+  - id: sliding_door_open
+    platform: state
+    entity_id: binary_sensor.sliding_door
+    from: "off"
+    to: "on"
+    for:
+      minute: 1
 action:
   - service: climate.set_temperature
     target:
