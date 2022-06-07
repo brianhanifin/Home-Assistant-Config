@@ -42,9 +42,10 @@
       + [UniFi integration](#unifi-integration)
       + [Guest mode helper](#guest-mode-helper)
 * [Wireless communications](#wireless-communications)
-  - [Wi-fi: Ubiquiti Unifi](#wi-fi--ubiquiti-unifi)
+  - [Wi-fi: Ubiquiti Unifi](#wi-fi-ubiquiti-unifi)
   - [Zigbee](#zigbee)
   - [Z-wave](#z-wave)
+* [Home Assistant community](#home-assistant-community)
 
 # Smart home articles
 
