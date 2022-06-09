@@ -3,14 +3,22 @@ alias: Open/close house a/c change
 description: Actions to take when the alert has been cleared.
 mode: single
 trigger:
+  # - id: close_house_complete
+  #   platform: state
+  #   entity_id: alert.close_house
+  #   from: "on"
+  #   to: "idle"
+  - id: house_closed
+    platform: template
+    value_template: |
+      {{
+        is_state("binary_sensor.house_windows","off") and
+        is_state("binary_sensor.sliding_door","off")
+      }}
+
   - id: open_house_complete
     platform: state
     entity_id: alert.open_house
-    from: "on"
-    to: "idle"
-  - id: close_house_complete
-    platform: state
-    entity_id: alert.close_house
     from: "on"
     to: "idle"
   - id: windows_open
@@ -28,9 +36,22 @@ trigger:
     for:
       minute: 1
 action:
-  - service: climate.set_temperature
-    target:
-      entity_id: climate.home_thermostat
-    data:
-      hvac_mode: cool
-      temperature: 77
+  - if:
+      - condition: or
+        conditions:
+          - condition: trigger
+            id: house_closed
+          - condition: trigger
+            id: close_house_complete
+    then:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.home_thermostat
+        data:
+          hvac_mode: cool
+          temperature: 77
+
+    else:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.home_thermostat
