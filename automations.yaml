@@ -840,32 +840,6 @@
       seconds: 0
       milliseconds: 0
   mode: single
-- id: '1654123893708'
-  alias: 'Event: skip wakeup when day off found in Nerene''s calendar'
-  description: ''
-  trigger:
-  - platform: calendar
-    event: start
-    offset: 0:0:0
-    entity_id: calendar.nerene
-  condition:
-  - condition: template
-    value_template: '{{ "day off" in trigger.calendar_event.summary }}'
-  - condition: time
-    before: 00:00:00
-  action:
-  - service: input_boolean.turn_off
-    data: {}
-    target:
-      entity_id: input_boolean.event_skipnext_wakeup_nerene
-  - service: script.notify_mobile
-    data:
-      who: brian
-      title: Calendar trigger
-      message: Check to see if the "Skip next event" button has been enabled for today.
-      url: /lovelace/events
-      subtitle: Nerene has day off
-  mode: single
 - id: '1654483867439'
   alias: Vacuum update status periodically
   description: ''
