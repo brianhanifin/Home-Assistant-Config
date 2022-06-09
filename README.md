@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,238** | 1,249 | 36 | 99 | 59 |
+| **41,244** | 1,253 | 36 | 99 | 59 |
 
 # Index
 
@@ -209,9 +209,9 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1249 total entities**,
-including **638 sensors**. My YAML
-files contain 41,238 lines of code.
+Our Home Assistant install has approximately **1253 total entities**,
+including **643 sensors**. My YAML
+files contain 41,244 lines of code.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -233,7 +233,7 @@ Run the CLI config_check from a service call.Authors:[@ludeeus](https://github.c
 ## [Fontawesome icons v2.1.5](https://github.com/thomasloven/hass-fontawesome)
 
 
-## [Frigate v2.3](https://github.com/blakeblackshear/frigate)
+## [Frigate v3.0.0-rc.2](https://github.com/blakeblackshear/frigate)
 Frigate integration for Home AssistantAuthors:[@blakeblackshear](https://github.com/blakeblackshear).
 
 ## [Generate readme v0.5.0](https://github.com/custom-components/readme)
@@ -391,7 +391,7 @@ RTSP Stream to WebBrowser over WebRTC and other protocols based on Pion
 ## Samba share v9.6.1
 Expose Home Assistant folders with SMB/CIFS
 
-## SDR to Home Assistant v0.1.13b
+## SDR to Home Assistant v0.1.14b
 SDR/RTL Sensors to Home Assistant via MQTT with Autodiscovery
 </details>
 
@@ -430,7 +430,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.6.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.6.4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -440,7 +440,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,238-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,244-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

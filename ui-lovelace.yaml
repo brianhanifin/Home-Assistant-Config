@@ -1293,9 +1293,9 @@ views:
         \ ~ \" lights are on\") }}\n{%- endif %}\n{%- set contact_open = is_state(\"\
         binary_sensor.front_door\", \"on\") %}\n{%- if contact_open %}\n  {{- \" ‧\
         \ \" if lights_on }}\n  {{- \"door open\" }}\n{%- endif %}\n{{- iif(is_state(\"\
-        binary_sensor.front_door_person_occupancy\",\"on\"), \" ‧ someone is at the front\
-        \ door\", \"\") }}\n{{- iif(is_state(\"lock.front_door\",\"unlocked\"), \"\
-        \ ‧ front door is unlocked\", \"\") }}"
+        lock.front_door\",\"unlocked\"), \" ‧ front door is unlocked\", \"\") }}\n\
+        {{- iif(is_state(\"binary_sensor.front_door_person_occupancy\",\"on\"), \"\
+        \ ‧ someone is at the front door\", \"\") }}"
       title: Home entry
       type: custom:mushroom-title-card
     - cards:
@@ -1393,96 +1393,100 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: Swipe for more.
-      title: Downstairs temperature
-      type: custom:mushroom-title-card
     - cards:
-      - cards:
-        - animate: true
-          entities:
-          - entity: sensor.downstairs_temperature_average
-          height: 75
-          line_width: 2
-          lower_bound: 60
-          points_per_hour: 4
-          show:
-            extrema: true
-            graph: line
-            icon: false
-            name: false
-          type: custom:mini-graph-card
-        mode: vertical
-        style: "ha-card div {\n  margin-top: -1.5em;\n}\n"
-        title: Temperature Average
-        type: custom:stack-in-card
-      - cards:
-        - entities:
-          - entity: sensor.family_room_temperature
-            name: Family Room
-          - entity: sensor.kitchen_temperature
-            name: Kitchen
-          - entity: sensor.home_thermostat_temperature
-            name: Thermostat
-          show_icon: false
-          type: glance
-        - aggregate_func: max
-          animate: true
-          entities:
-          - entity: sensor.family_room_temperature
-            name: Family Room
-          - entity: sensor.kitchen_temperature
-            name: Kitchen
-          - entity: sensor.home_thermostat_temperature
-            name: Thermostat
-          height: 75
-          hours_to_show: 24
-          line_width: 2
-          points_per_hour: 2
-          show:
-            icon: false
-            name: false
-            state: false
-          type: custom:mini-graph-card
-        mode: vertical
-        title: Room Temperature
-        type: custom:stack-in-card
-      - cards:
-        - entities:
-          - entity: sensor.family_room_humidity
-            name: Family Room
-          - entity: sensor.kitchen_humidity
-            name: Kitchen
-          - entity: sensor.home_thermostat_humidity
-            name: Thermostat
-          show_icon: false
-          type: glance
-        - aggregate_func: max
-          animate: true
-          entities:
-          - entity: sensor.family_room_humidity
-            name: Family Room
-          - entity: sensor.kitchen_humidity
-            name: Kitchen
-          - entity: sensor.home_thermostat_humidity
-            name: Thermostat
-          height: 75
-          hours_to_show: 12
-          line_width: 2
-          points_per_hour: 4
-          show:
-            icon: false
-            name: false
-            state: false
-          type: custom:mini-graph-card
-        mode: vertical
-        title: Room Humidity
-        type: custom:stack-in-card
-      parameters:
-        pagination:
-          type: bullets
-        spaceBetween: 8
-      type: custom:swipe-card
-    type: vertical-stack
+      - subtitle: Temperature average
+        title: Downstairs climate
+        type: custom:mushroom-title-card
+      - entities:
+        - entity: sensor.downstairs_temperature_average
+          name: Downstairs average
+        show_icon: false
+        type: glance
+      - animate: true
+        entities:
+        - entity: sensor.downstairs_temperature_average
+        height: 118
+        hours_to_show: 24
+        line_width: 2
+        lower_bound: 60
+        points_per_hour: 4
+        show:
+          extrema: false
+          graph: line
+          icon: false
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: vertical-stack
+    - cards:
+      - subtitle: Room temperature
+        title: Downstairs climate
+        type: custom:mushroom-title-card
+      - entities:
+        - entity: sensor.family_room_temperature
+          name: Family Room
+        - entity: sensor.kitchen_temperature
+          name: Kitchen
+        - entity: sensor.home_thermostat_temperature
+          name: Thermostat
+        show_icon: false
+        type: glance
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.family_room_temperature
+          name: Family Room
+        - entity: sensor.kitchen_temperature
+          name: Kitchen
+        - entity: sensor.home_thermostat_temperature
+          name: Thermostat
+        height: 75
+        hours_to_show: 24
+        line_width: 2
+        points_per_hour: 2
+        show:
+          icon: false
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: vertical-stack
+    - cards:
+      - subtitle: Room humidity
+        title: Downstairs climate
+        type: custom:mushroom-title-card
+      - entities:
+        - entity: sensor.family_room_humidity
+          name: Family Room
+        - entity: sensor.kitchen_humidity
+          name: Kitchen
+        - entity: sensor.home_thermostat_humidity
+          name: Thermostat
+        show_icon: false
+        type: glance
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.family_room_humidity
+          name: Family Room
+        - entity: sensor.kitchen_humidity
+          name: Kitchen
+        - entity: sensor.home_thermostat_humidity
+          name: Thermostat
+        height: 75
+        hours_to_show: 12
+        line_width: 2
+        points_per_hour: 4
+        show:
+          icon: false
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: vertical-stack
+    parameters:
+      pagination:
+        type: bullets
+      spaceBetween: 8
+    type: custom:swipe-card
     view_layout:
       position: sidebar
   icon: mdi:home-floor-1
@@ -1668,100 +1672,107 @@ views:
     view_layout:
       position: main
   - cards:
-    - subtitle: Swipe for more.
-      title: Climate sensors
-      type: custom:mushroom-title-card
     - cards:
-      - cards:
-        - animate: true
-          entities:
-          - entity: sensor.upstairs_temperature_average
-          height: 75
-          line_width: 2
-          lower_bound: 60
-          points_per_hour: 4
-          show:
-            extrema: true
-            graph: line
-            icon: false
-            name: false
-          type: custom:mini-graph-card
-        mode: vertical
-        style: "ha-card div {\n  margin-top: -1.5em;\n}\n"
-        title: Temperature Average
-        type: custom:stack-in-card
-      - cards:
-        - entities:
-          - entity: sensor.upstairs_bathroom_temperature
-            name: Bath
-          - entity: sensor.guest_room_temperature
-            name: Guest
-          - entity: sensor.lucas_room_temperature
-            name: Lucas
-          - entity: sensor.bedroom_temperature
-            name: Bedroom
-          show_icon: false
-          type: glance
-        - aggregate_func: max
-          animate: true
-          entities:
-          - entity: sensor.upstairs_bathroom_temperature
-            name: Bath
-          - entity: sensor.guest_room_temperature
-            name: Guest
-          - entity: sensor.lucas_room_temperature
-            name: Lucas
-          - entity: sensor.bedroom_temperature
-            name: Bedroom
-          height: 75
-          hours_to_show: 24
-          line_width: 2
-          points_per_hour: 2
-          show:
-            icon: false
-            name: false
-            state: false
-          type: custom:mini-graph-card
-        mode: vertical
-        title: Room Temperature
-        type: custom:stack-in-card
-      - cards:
-        - entities:
-          - entity: sensor.upstairs_bathroom_humidity
-            name: Bath
-          - entity: sensor.guest_room_humidity
-            name: Guest
-          - entity: sensor.lucas_room_humidity
-            name: Lucas
-          show_icon: false
-          type: glance
-        - aggregate_func: max
-          animate: true
-          entities:
-          - entity: sensor.upstairs_bathroom_humidity
-            name: Bath
-          - entity: sensor.guest_room_humidity
-            name: Guest
-          - entity: sensor.lucas_room_humidity
-            name: Lucas
-          height: 75
-          hours_to_show: 12
-          line_width: 2
-          points_per_hour: 4
-          show:
-            icon: false
-            name: false
-            state: false
-          type: custom:mini-graph-card
-        mode: vertical
-        title: Room Humidity
-        type: custom:stack-in-card
-      parameters:
-        pagination:
-          type: bullets
-        spaceBetween: 8
-      type: custom:swipe-card
-    type: vertical-stack
+      - subtitle: Temperature average
+        title: Upstairs climate
+        type: custom:mushroom-title-card
+      - entities:
+        - entity: sensor.upstairs_temperature_average
+          name: Upstairs average
+        show_icon: false
+        type: glance
+      - animate: true
+        entities:
+        - entity: sensor.upstairs_temperature_average
+        height: 118
+        line_width: 2
+        lower_bound: 68
+        points_per_hour: 4
+        show:
+          extrema: false
+          graph: line
+          icon: false
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: vertical-stack
+    - cards:
+      - subtitle: Room temperature
+        title: Upstairs climate
+        type: custom:mushroom-title-card
+      - entities:
+        - entity: sensor.upstairs_bathroom_temperature
+          name: Bath
+        - entity: sensor.bedroom_temperature
+          name: Bedroom
+        - entity: sensor.guest_room_temperature
+          name: Guest
+        - entity: sensor.lucas_room_temperature
+          name: Lucas
+        show_icon: false
+        type: glance
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.upstairs_bathroom_temperature
+          name: Bath
+        - entity: sensor.bedroom_temperature
+          name: Bedroom
+        - entity: sensor.guest_room_temperature
+          name: Guest
+        - entity: sensor.lucas_room_temperature
+          name: Lucas
+        height: 75
+        hours_to_show: 24
+        line_width: 2
+        points_per_hour: 2
+        show:
+          icon: false
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: vertical-stack
+    - cards:
+      - subtitle: Room humidity
+        title: Upstairs climate
+        type: custom:mushroom-title-card
+      - entities:
+        - entity: sensor.upstairs_bathroom_humidity
+          name: Bath
+        - entity: sensor.bedroom_humidity
+          name: Bedroom
+        - entity: sensor.guest_room_humidity
+          name: Guest
+        - entity: sensor.lucas_room_humidity
+          name: Lucas
+        show_icon: false
+        type: glance
+      - aggregate_func: max
+        animate: true
+        entities:
+        - entity: sensor.upstairs_bathroom_humidity
+          name: Bath
+        - entity: sensor.bedroom_humidity
+          name: Bedroom
+        - entity: sensor.guest_room_humidity
+          name: Guest
+        - entity: sensor.lucas_room_humidity
+          name: Lucas
+        height: 75
+        hours_to_show: 12
+        line_width: 2
+        points_per_hour: 4
+        show:
+          icon: false
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: vertical-stack
+    parameters:
+      pagination:
+        type: bullets
+      spaceBetween: 8
+    type: custom:swipe-card
     view_layout:
       position: sidebar
   icon: mdi:home-floor-2
@@ -1783,9 +1794,9 @@ views:
         \ = states(\"lock.front_door\") %}\n{{- iif(lock != \"locked\", \" ‧ front\
         \ door is \" ~ lock, \"\") }}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on\
         \ == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{-\
-        \ iif(is_state(\"binary_sensor.front_door_person_motion\",\"on\"), \" ‧ front\
-        \ door occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\",\"\
-        closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\") }}"
+        \ iif(not is_state(\"cover.garage_door\",\"closed\"), \" ‧ garage door is\
+        \ \" ~ states(\"cover.garage_door\"), \"\") }}\n{{- iif(is_state(\"binary_sensor.front_door_person_occupancy\"\
+        ,\"on\"), \" ‧ someone is at the front door\", \"\") }}"
       title: Outdoors
       type: custom:mushroom-title-card
     - cards:
@@ -1820,12 +1831,24 @@ views:
       square: false
       type: grid
     type: vertical-stack
-  - camera_image: camera.front_door_rtsp
-    camera_view: live
-    entity: camera.front_door_rtsp
-    show_name: false
-    show_state: false
-    type: picture-entity
+  - cards:
+    - camera_image: camera.driveway_rtsp
+      camera_view: live
+      entity: camera.driveway_rtsp
+      show_name: false
+      show_state: false
+      type: picture-entity
+    - camera_image: camera.front_door_rtsp
+      camera_view: live
+      entity: camera.front_door_rtsp
+      show_name: false
+      show_state: false
+      type: picture-entity
+    parameters:
+      pagination:
+        type: bullets
+      spaceBetween: 8
+    type: custom:swipe-card
   - cards:
     - camera_view: auto
       entity: camera.front_door_person
@@ -1849,12 +1872,56 @@ views:
     type: grid
     view_layout:
       position: main
-  - camera_image: camera.driveway_rtsp
-    camera_view: live
-    entity: camera.driveway_rtsp
-    show_name: false
-    show_state: false
-    type: picture-entity
+  - cards:
+    - subtitle: Current conditions + forecast
+      title: Weather
+      type: custom:mushroom-title-card
+    - current: true
+      details: true
+      entity: weather.home
+      forecast: true
+      hourly_forecast: false
+      number_of_forecasts: '4'
+      type: custom:weather-card
+    - entity: binary_sensor.rain_today
+      states:
+        'on':
+          cards:
+          - subtitle: Rain radar
+            type: custom:mushroom-title-card
+          - entity: camera.san_diego
+            show_name: false
+            show_state: false
+            type: picture-entity
+          type: vertical-stack
+      type: custom:state-switch
+    - subtitle: Conditions the past 24 hours
+      type: custom:mushroom-title-card
+    - animate: true
+      entities:
+      - entity: sensor.outdoor_temperature
+        name: Temperature
+        show_fill: false
+      - entity: sensor.outdoor_humidity
+        name: Humidity
+        show_line: false
+        show_points: false
+        y_axis: secondary
+      icon: mdi:weather-sunny
+      line_width: 2
+      name: Outdoor
+      points_per_hour: 4
+      show:
+        extrema: true
+        icon: false
+        labels: true
+        labels_secondary: true
+        name: false
+        state: false
+      type: custom:mini-graph-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
   icon: mdi:flower
   path: outdoor
   theme: Backend-selected
@@ -1867,52 +1934,62 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: Swipe for more.
-      title: House temperature
-      type: custom:mushroom-title-card
     - cards:
-      - cards:
-        - entities:
-          - entity: weather.home
-            name: Outdoor
-          - entity: sensor.attic_temperature
-            icon: hass:home-floor-a
-          - entity: sensor.upstairs_temperature_average
-            icon: hass:home-floor-2
-          - entity: sensor.downstairs_temperature_average
-            icon: hass:home-floor-1
-          type: entities
-        mode: vertical
-        style: "ha-card div {\n  margin-top: -.4em;\n}\n"
-        title: Summary
-        type: custom:stack-in-card
+      - subtitle: Inside and outside
+        title: House temperatures
+        type: custom:mushroom-title-card
+      - entities:
+        - entity: weather.home
+          name: Outdoor
+        - entity: sensor.attic_temperature
+          icon: hass:home-floor-a
+        - entity: sensor.upstairs_temperature_average
+          icon: hass:home-floor-2
+          name: Upstairs average
+        - entity: sensor.downstairs_temperature_average
+          icon: hass:home-floor-1
+          name: Downstairs average
+        type: entities
+      type: vertical-stack
+    - cards:
+      - subtitle: Downstairs
+        title: House temperatures
+        type: custom:mushroom-title-card
       - aggregate_func: max
         animate: true
         entities:
         - entity: sensor.downstairs_temperature_average
-          name: Average
+          name: Avg
         - entity: sensor.family_room_temperature
           name: Family
         - entity: sensor.kitchen_temperature
           name: Kitchen
         - entity: sensor.home_thermostat_temperature
           name: Thermostat
+        height: 88
         icon: mdi:home-floor-1
         line_width: 2
         lower_bound: 60
-        name: Downstairs Temperature
         points_per_hour: 4
         show:
           extrema: true
           graph: line
+          icon: false
+          name: false
+          state: false
         type: custom:mini-graph-card
+      type: vertical-stack
+    - cards:
+      - subtitle: Upstairs
+        title: House temperatures
+        type: custom:mushroom-title-card
       - aggregate_func: max
         animate: true
         entities:
         - entity: sensor.upstairs_temperature_average
-          name: Average
+          name: Avg
         - entity: sensor.bedroom_temperature
-          name: Master
+          name: Bed
         - entity: sensor.kyles_bedroom_temperature
           name: Kyle
         - entity: sensor.lucas_room_temperature
@@ -1921,6 +1998,7 @@ views:
           name: Guest
         - entity: sensor.upstairs_bathroom_temperature
           name: Bath
+        height: 88
         icon: mdi:home-floor-2
         line_width: 2
         lower_bound: 60
@@ -1929,11 +2007,20 @@ views:
         show:
           extrema: true
           graph: line
+          icon: false
+          name: false
+          state: false
         type: custom:mini-graph-card
+      type: vertical-stack
+    - cards:
+      - subtitle: Attic
+        title: House temperatures
+        type: custom:mushroom-title-card
       - aggregate_func: max
         animate: true
         entities:
         - entity: sensor.attic_temperature
+        height: 131
         icon: hass:home-floor-a
         line_width: 2
         lower_bound: 60
@@ -1941,15 +2028,69 @@ views:
         show:
           extrema: true
           graph: line
+          icon: false
+          name: false
+          state: false
         type: custom:mini-graph-card
-      parameters:
-        pagination:
-          type: bullets
-        spaceBetween: 8
-      type: custom:swipe-card
+      type: vertical-stack
+    parameters:
+      pagination:
+        type: bullets
+      spaceBetween: 8
+    type: custom:swipe-card
+    view_layout:
+      position: sidebar
+  - cards:
+    - subtitle: Monitor fridge and freezer temperatures.
+      title: Refridgerators
+      type: custom:mushroom-title-card
+    - cards:
+      - template: graph
+        type: custom:decluttering-card
+        variables:
+        - name: Fridge
+        - icon: mdi:fridge-bottom
+        - hours: 12
+        - entity1: sensor.fridge_temperature
+        - entities:
+          - entity: sensor.fridge_temperature
+            name: Kitchen
+          - entity: sensor.garage_fridge_temperature
+            name: Garage
+      - template: graph
+        type: custom:decluttering-card
+        variables:
+        - name: Freezer
+        - icon: mdi:fridge-top
+        - hours: 12
+        - entity1: sensor.freezer_temperature
+        - entities:
+          - entity: sensor.freezer_temperature
+            name: Kitchen
+          - entity: sensor.garage_freezer_temperature
+            name: Garage
+      columns: 1
+      square: false
+      type: grid
     type: vertical-stack
     view_layout:
       position: sidebar
+  - cards:
+    - subtitle: Alert when temperatures go above the set threshold.
+      title: Fridge alerts
+      type: custom:mushroom-title-card
+    - entity: automation.fridge_freezer_temperature_alert
+      icon_color: orange
+      type: custom:mushroom-entity-card
+    - entities:
+      - entity: input_number.fridge_temperature_threshold
+        name: Fridge threshold
+      - entity: input_number.freezer_temperature_threshold
+        name: Freezer threshold
+      type: entities
+    type: vertical-stack
+    view_layout:
+      position: main
   - cards:
     - subtitle: Pew pew, woo woo.
       title: Glowforge
@@ -2065,57 +2206,6 @@ views:
         type: custom:state-switch
       type: vertical-stack
     type: vertical-stack
-  - cards:
-    - subtitle: Monitor fridge and freezer temperatures.
-      title: Refridgerators
-      type: custom:mushroom-title-card
-    - cards:
-      - template: graph
-        type: custom:decluttering-card
-        variables:
-        - name: Fridge
-        - icon: mdi:fridge-bottom
-        - hours: 12
-        - entity1: sensor.fridge_temperature
-        - entities:
-          - entity: sensor.fridge_temperature
-            name: Kitchen
-          - entity: sensor.garage_fridge_temperature
-            name: Garage
-      - template: graph
-        type: custom:decluttering-card
-        variables:
-        - name: Freezer
-        - icon: mdi:fridge-top
-        - hours: 12
-        - entity1: sensor.freezer_temperature
-        - entities:
-          - entity: sensor.freezer_temperature
-            name: Kitchen
-          - entity: sensor.garage_freezer_temperature
-            name: Garage
-      columns: 1
-      square: false
-      type: grid
-    type: vertical-stack
-    view_layout:
-      position: sidebar
-  - cards:
-    - subtitle: Alert when temperatures go above the set threshold.
-      title: Fridge alerts
-      type: custom:mushroom-title-card
-    - entity: automation.fridge_freezer_temperature_alert
-      icon_color: orange
-      type: custom:mushroom-entity-card
-    - entities:
-      - entity: input_number.fridge_temperature_threshold
-        name: Fridge threshold
-      - entity: input_number.freezer_temperature_threshold
-        name: Freezer threshold
-      type: entities
-    type: vertical-stack
-    view_layout:
-      position: main
   icon: mdi:speedometer-slow
   path: monitor
   theme: Backend-selected
