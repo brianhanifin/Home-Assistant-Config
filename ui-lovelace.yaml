@@ -2097,30 +2097,50 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - cards:
-        - entities:
-          - entity: binary_sensor.glowforge_on
-          type: entities
-        - camera_image: camera.glowforge
-          camera_view: auto
-          entity: camera.glowforge
-          image: https://demo.home-assistant.io/stub_config/bedroom.png
-          show_name: false
-          show_state: false
-          type: picture-entity
+        - entity: input_select.glowforge_status
+          type: custom:mushroom-entity-card
+        - default: 'On'
+          entity: input_select.glowforge_status
+          states:
+            'Off':
+              entity: switch.docker_wyze_bridge
+              type: custom:mushroom-entity-card
+            'On':
+              camera_image: camera.glowforge
+              camera_view: auto
+              entity: camera.glowforge
+              show_name: false
+              show_state: false
+              type: picture-entity
+          type: custom:state-switch
         columns: 2
         square: false
         type: grid
-      - entity: binary_sensor.glowforge_on
+      - default: 'On'
+        entity: input_select.glowforge_status
         states:
-          'on':
+          'Off':
             entities:
-            - entity: input_select.glowforge_status
+            - name: Glowforge App
+              type: weblink
+              url: https://app.glowforge.com
+            - name: Camera UI
+              type: weblink
+              url: http://10.0.20.32
+            type: entities
+          'On':
+            entities:
+            - entity: input_boolean.glowforge_announce_complete
+              name: Announce when complete
+            - entity: switch.docker_wyze_bridge
+              icon: mdi:docker
+            - entity: switch.glowforge_camera
+              icon: mdi:cctv
+            - type: divider
+            - entity: binary_sensor.glowforge_on
             - entity: sensor.glowforge_power_monitor_power
               icon: mdi:power-plug
-            - entity: automation.glowforge_announce_complete
-              icon: mdi:cellphone-message
-              name: Notify When Complete
-              show_state: false
+              name: Power monitor
             - type: divider
             - name: Glowforge App
               type: weblink
