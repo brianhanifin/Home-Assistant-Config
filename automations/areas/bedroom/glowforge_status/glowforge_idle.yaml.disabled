@@ -1,0 +1,28 @@
+---
+alias: Glowforge idle
+id: glowforge_idle
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    above: 10
+    below: 50
+action:
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.glowforge_status
+    data:
+      option: Idle
+
+  - if: '{{ is_state("switch.docker_wyze_bridge","off") }}'
+    then:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.docker_wyze_bridge
+      - delay:
+          seconds: 10
+
+  - if: '{{ is_state("switch.glowforge_camera","off") }}'
+    then:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.glowforge_camera

@@ -1,0 +1,124 @@
+---
+alias: Glowforge status update
+id: glowforge_status_update
+mode: single
+trigger:
+  # - id: status_change
+  #   platform: state
+  #   entity_id: input_select.glowforge_status
+
+  - id: "Off"
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    below: 10
+  - id: Idle
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    above: 10
+    below: 50
+  - id: Running
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    above: 150
+  - id: Complete
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    below: 150
+    above: 50
+variables:
+  debug: true
+
+  status: |
+    {%- if trigger.id == "status_change" %}
+      {{ states("input_select.glowforge_status") }}
+    {%- else %}
+      {{ trigger.id }}
+    {%- endif %}
+  previous_status: |
+    {%- if trigger.id == "status_change" %}
+      {{ "Running" if status == "Complete" }}
+    {%- else %}
+      {{ states("input_select.glowforge_status") }}
+    {%- endif %}
+action:
+  - if: '{{ debug is defined and debug == true }}'
+    then:
+      - service: script.debug
+        data:
+          message: |
+            trigger.id: {{ trigger.id }}
+            status: {{ status }}
+            {{ "previous_status: " ~ previous_status if previous_status|trim != "" }}
+
+  - alias: Do not update the status if this is not true.
+    if: '{{ status == "Complete" and previous_status != "Running" }}'
+    then:
+      - stop: "Stop right here!"
+
+  - if: '{{ trigger.id != "status_change" }}'
+    then:
+      - alias: Update the status.
+        service: input_select.select_option
+        target:
+          entity_id: input_select.glowforge_status
+        data:
+          option: "{{ status }}"
+
+  - choose:
+      - alias: Off actions.
+        conditions: '{{ status == "Off" }}'
+        sequence:
+          - alias: Turn off the camera.
+            service: switch.turn_off
+            target:
+              entity_id:
+                - switch.glowforge_camera
+                - switch.docker_wyze_bridge
+
+      - alias: Idle/Running actions.
+        conditions: '{{ status in ["Idle","Running"] }}'
+        sequence:
+          - alias: Turn on the wyze camera bridge docker container.
+            if: '{{ is_state("switch.docker_wyze_bridge","off") }}'
+            then:
+              - service: switch.turn_on
+                target:
+                  entity_id: switch.docker_wyze_bridge
+              - delay:
+                  seconds: 10
+          - alias: Turn on the camera.
+            if: '{{ is_state("switch.glowforge_camera","off") }}'
+            then:
+              - service: switch.turn_on
+                target:
+                  entity_id: switch.glowforge_camera
+
+      - alias: Complete actions.
+        conditions: '{{ status == "Complete" and previous_status == "Running" }}'
+        sequence:
+          - alias: Speech notification.
+            service: script.notify_speech
+            data:
+              media_player: media_player.google_downstairs
+              message: "Glowforge is complete!"
+          - alias: Mobile app notification.
+            service: script.notify_mobile
+            data:
+              title: "Glowforge"
+              message: "Glowforge is complete!"
+              who: brian
+              group: status
+              tag: glowforge-status
+              url: /lovelace/making
+          # - alias: Dashboard toast notification.
+          #   service: script.notify_web
+          #   data:
+          #     type: success
+          #     title: "Glowforge"
+          #     message: "Glowforge is complete!"
+
+  - if: '{{ trigger.id != "status_change" }}'
+    then:
+      - alias: "Mode single cooldown."
+        delay:
+          seconds: 10
