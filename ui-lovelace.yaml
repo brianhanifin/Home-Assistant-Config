@@ -2105,13 +2105,6 @@ views:
             'Off':
               entity: switch.docker_wyze_bridge
               type: custom:mushroom-entity-card
-            'On':
-              camera_image: camera.glowforge
-              camera_view: auto
-              entity: camera.glowforge
-              show_name: false
-              show_state: false
-              type: picture-entity
           type: custom:state-switch
         columns: 2
         square: false
@@ -2124,31 +2117,33 @@ views:
             - name: Glowforge App
               type: weblink
               url: https://app.glowforge.com
-            - name: Camera UI
-              type: weblink
-              url: http://10.0.20.32
             type: entities
           'On':
-            entities:
-            - entity: input_boolean.glowforge_announce_complete
-              name: Announce when complete
-            - entity: switch.docker_wyze_bridge
-              icon: mdi:docker
-            - entity: switch.glowforge_camera
-              icon: mdi:cctv
-            - type: divider
-            - entity: binary_sensor.glowforge_on
-            - entity: sensor.glowforge_power_monitor_power
-              icon: mdi:power-plug
-              name: Power monitor
-            - type: divider
-            - name: Glowforge App
-              type: weblink
-              url: https://app.glowforge.com
-            - name: Camera UI
-              type: weblink
-              url: http://10.0.20.32
-            type: entities
+            cards:
+            - camera_image: camera.glowforge
+              camera_view: live
+              entity: camera.glowforge
+              show_name: false
+              show_state: false
+              type: picture-entity
+            - entities:
+              - entity: input_boolean.glowforge_announce_complete
+                name: Announce when complete
+              - entity: switch.docker_wyze_bridge
+                icon: mdi:docker
+              - entity: switch.glowforge_camera
+                icon: mdi:cctv
+              - type: divider
+              - entity: binary_sensor.glowforge_on
+              - entity: sensor.glowforge_power_monitor_power
+                icon: mdi:power-plug
+                name: Power monitor
+              - type: divider
+              - name: Glowforge App
+                type: weblink
+                url: https://app.glowforge.com
+              type: entities
+            type: vertical-stack
         type: custom:state-switch
       type: vertical-stack
     type: vertical-stack

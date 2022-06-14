@@ -597,13 +597,13 @@
     to: bell1
   condition: []
   action:
+  - service: script.notify_audio
+    continue_on_error: true
+    data:
+      audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
+      speakers:
+      - media_player.google_family_room_display
   - parallel:
-    - service: script.notify_audio
-      continue_on_error: true
-      data:
-        audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
-        speakers:
-        - media_player.google_family_room_display
     - service: script.cast
       continue_on_error: true
       data:
