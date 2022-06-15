@@ -1,0 +1,32 @@
+---
+#unique_id: day_off
+trigger:
+  - id: calendar
+    platform: calendar
+    entity_id: calendar.nerene
+    event: start
+  - id: end_of_day
+    platform: time
+    at: 23:59:00
+binary_sensor:
+  - name: Day off
+    state: |
+      {%- if trigger.id == "calendar" %}
+        {%- set today = now().date() %}
+        {%- set event = namespace(name="", date="") %}
+        {%- set day_off_events = [
+          "Vacation",
+          "Nerene has day off",
+          "Nerene has days off",
+          "Nerene has training"
+        ] %}
+        {%- set event.name = trigger.calendar_event.summary %}
+        {%- set event.date = trigger.calendar_event.start|as_datetime %}
+        {%- set event.date = event.date.month ~ "-" ~ event.date.day %}
+        {{
+          event.name in day_off_events or
+          is_state("binary_sensor.day_off","on")
+        }}
+      {%- elif trigger.id == "end_of_day" %}
+        {{ false }}
+      {%- endif %}
