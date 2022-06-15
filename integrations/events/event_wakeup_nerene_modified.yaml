@@ -1,0 +1,79 @@
+---
+script:
+  event_wakeup_nerene_modified:
+    sequence:
+      - service: homeassistant.turn_off
+        target:
+          entity_id:
+            - fan.bedroom
+            #- switch.sound_machine
+
+      - service: script.event_light
+        data:
+          id: wakeup_nerene_modified
+          light: |
+            {%- set light_name = states("input_select.event_light_wakeup_nerene_modified") %}
+            {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
+            {{ entity_list[0] }}
+
+  event_timeout_wakeup_nerene_modified:
+    sequence:
+      - service: homeassistant.turn_off
+        target:
+          entity_id: |
+            {%- set light_name = states("input_select.event_light_wakeup_nerene_modified") %}
+            {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
+            {{ entity_list[0] }}
+
+input_boolean:
+  event_enabled_wakeup_nerene_modified:
+    name: Active
+    icon: mdi:alarm-check
+  event_skipnext_wakeup_nerene_modified:
+    name: Skip next event
+    icon: mdi:alarm-check
+  event_announcement_wakeup_nerene_modified:
+    name: Announcements?
+    icon: mdi:google-home
+  event_light_wakeup_nerene_modified:
+    name: Wakeup light?
+    icon: mdi:lamp
+
+input_datetime:
+  event_1st_wakeup_nerene_modified:
+    name: First announcement
+    has_date: false
+    has_time: true
+  event_2nd_wakeup_nerene_modified:
+    name: Second announcement
+    has_date: false
+    has_time: true
+  event_light_wakeup_nerene_modified:
+    name: Light fade-up start
+    has_date: false
+    has_time: true
+
+input_select:
+  event_light_wakeup_nerene_modified:
+    name: Light fixture
+    options:
+      - Bedroom
+      - Bedroom east
+      - Bedroom table lamp
+      - Table lamp
+    icon: mdi:lamp
+  event_speakers_wakeup_nerene_modified:
+    name: Announce in which areas?
+    options: !include tts_rooms.txt
+    icon: mdi:google-home
+
+# input_text:
+#   event_1st_wakeup_nerene_modified:
+#     name: First announcement
+#   event_2nd_wakeup_nerene_modified:
+#     name: Second announcement
+
+timer:
+  event_timeout_wakeup_nerene_modified:
+    duration: "01:00:00"
+    restore: true

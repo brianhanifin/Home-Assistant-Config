@@ -1,0 +1,29 @@
+---
+unique_id: work_day_modified
+name: Work day modified
+icon: mdi:briefcase-search
+state: |
+  {%- set work_day_modified = namespace(value=False) %}
+  {%- set modified_events = [
+    "Nerene has training day",
+    "Nerene has training"
+  ] %}
+  {%- set today = now() %}
+  {%- set today = today.month ~ "-" ~ today.day %}
+  {%- set event_date = state_attr("calendar.nerene","start_time")|as_datetime %}
+  {%- set event_date = event_date.month ~ "-" ~ event_date.day %}
+  {%- set events_today = states("sensor.nerene_events_today") %}
+  {%- if events_today != None %}
+    {%- set events_today = events_today.split(",") %}
+    {%- for event in events_today if work_day_modified.value == False %}
+      {%- if event_date == today %}
+        {%- set work_day_modified.value = state_attr("calendar.nerene","message") in modified_events %}
+      {%- else %}
+        {%- set work_day_modified.value = event in modified_events %}
+      {%- endif %}
+    {%- endfor %}
+  {%- endif %}
+  {{
+    work_day_modified.value or
+    is_state("binary_sensor.work_day_modified","on")
+  }}

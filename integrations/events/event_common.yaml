@@ -20,6 +20,8 @@ automation:
           - input_datetime.event_2nd_wakeup_kyle
           - input_datetime.event_1st_wakeup_nerene
           - input_datetime.event_2nd_wakeup_nerene
+          - input_datetime.event_1st_wakeup_nerene_modified
+          - input_datetime.event_2nd_wakeup_nerene_modified
     variables:
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[25:] }}'
@@ -31,7 +33,8 @@ automation:
       #announcement: '{{ states("input_text.event_" + entity_id[21:]) }}'
 
       event_hour: '{{ states(entity_id)[:2]|int(default=0) }}'
-      workday: '{{ is_state("binary_sensor.work_day","on") }}'
+      work_day: '{{ is_state("binary_sensor.work_day","on") }}'
+      work_day_modified: '{{ is_state("binary_sensor.work_day_modified","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
       high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
@@ -45,7 +48,9 @@ automation:
         {%- elif id == "wakeup_brian" %}
           {{ middle_school_day or high_school_day }}
         {%- elif id == "wakeup_nerene" %}
-          {{ workday }}
+          {{ iif(work_day_modified==False, work_day, False) }}
+        {%- elif id == "wakeup_nerene_modified" %}
+          {{ work_day_modified }}
         {%- elif id == "bedtime_boys_schoolday" %}
           {%- if event_hour < 6 %}
             {{ middle_school_day or high_school_day }}
@@ -107,6 +112,7 @@ automation:
       - platform: time
         at:
           - input_datetime.event_light_wakeup_nerene
+          - input_datetime.event_light_wakeup_nerene_modified
           - input_datetime.event_light_wakeup_brian
           - input_datetime.event_light_wakeup_kyle
           - input_datetime.event_light_wakeup_lucas
@@ -122,7 +128,8 @@ automation:
       light_enabled: '{{ is_state("input_boolean.event_light_" + id, "on") }}'
 
       event_hour: '{{ states(entity_id)[:2]|int(default=0) }}'
-      workday: '{{ is_state("binary_sensor.work_day","on") }}'
+      work_day: '{{ is_state("binary_sensor.work_day","on") }}'
+      work_day_modified: '{{ is_state("binary_sensor.work_day_modified","on") }}'
       middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
       middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
       high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
@@ -136,7 +143,9 @@ automation:
         {%- elif id == "wakeup_brian" %}
           {{ middle_school_day or high_school_day }}
         {%- elif id == "wakeup_nerene" %}
-          {{ workday }}
+          {{ iif(work_day_modified==False, work_day, False) }}
+        {%- elif id == "wakeup_nerene_modified" %}
+          {{ work_day_modified }}
         {%- elif id == "bedtime_boys_schoolday" %}
           {%- if event_hour < 6 %}
             {{ middle_school_day or high_school_day }}

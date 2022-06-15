@@ -3,22 +3,47 @@ unique_id: day_off
 name: Day off
 icon: mdi:beach
 state: |
+  {%- set day_off = namespace(value=False) %}
+  {%- set day_off_events = [
+    "Vacation",
+    "Nerene has day off",
+    "Nerene has days off"
+  ] %}
   {%- set today = now() %}
-  {%- if today.hour == 23 and today.minute == 59 %}
-    {{ false }}
-  {%- else %}
-    {%- set event = namespace(name="", date="") %}
-    {%- set day_off_events = [
-      "Vacation",
-      "Nerene has day off",
-      "Nerene has days off",
-      "Nerene has training"
-    ] %}
-    {%- set event.name = state_attr("calendar.nerene","message") %}
-    {%- set event.date = state_attr("calendar.nerene","start_time")|as_datetime %}
-    {%- set event.date = event.date.month ~ "-" ~ event.date.day %}
-    {{
-      event.name in day_off_events or
-      is_state("binary_sensor.day_off","on")
-    }}
+  {%- set today = today.month ~ "-" ~ today.day %}
+  {%- set event_date = state_attr("calendar.nerene","start_time")|as_datetime %}
+  {%- set event_date = event_date.month ~ "-" ~ event_date.day %}
+  {%- set events_today = states("sensor.nerene_events_today") %}
+  {%- if events_today != None %}
+    {%- set events_today = events_today.split(",") %}
+    {%- for event in events_today if day_off.value == False %}
+      {%- if event_date == today %}
+        {%- set day_off.value = state_attr("calendar.nerene","message") in day_off_events %}
+      {%- else %}
+        {%- set day_off.value = event in day_off_events %}
+      {%- endif %}
+    {%- endfor %}
   {%- endif %}
+  {{
+    day_off.value or
+    is_state("binary_sensor.day_off","on")
+  }}
+# attributes:
+#   events_today: |
+#     {%- set today = now() %}
+#     {%- if today.hour == 23 and today.minute == 59 %}
+
+#     {%- else %}
+#       {%- set event_date = state_attr("calendar.nerene","start_time")|as_datetime %}
+#       {%- set event_date = event_date.month ~ "-" ~ event_date.day %}
+#       {%- set today = today.month ~ "-" ~ today.day %}
+#       {%- if today == event_date %}
+#         {%- set events = state_attr("binary_sensor.days_off","events_today")|trim %}
+#         {%- set events = events ~ "," if events not in ["","None"] %}
+#         {{ events ~ state_attr("calendar.nerene","message") }}
+#       {%- else %}
+#         {%- set events_today = state_attr("binary_sensor.days_off","events_today") %}
+#         {{  iif(events_today is not none, events_today, "") }}
+#       {%- endif %}
+#     {%- endif %}
+

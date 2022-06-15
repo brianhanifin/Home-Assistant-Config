@@ -1005,7 +1005,7 @@
             - vacuum.play_room
   mode: single
 - id: '1655258894395'
-  alias: Update binary_sensor.day_off
+  alias: Update day off sensors
   description: ''
   trigger:
   - id: calendar
@@ -1017,8 +1017,34 @@
     at: '23:59:00'
   condition: []
   action:
+  - if:
+    - condition: trigger
+      id: calendar
+    then:
+    - service: script.store_mqtt_sensor
+      data:
+        name: nerene_events_today
+        state: "{%- set today = now() %} {%- set event_date = state_attr(\"calendar.nerene\"\
+          ,\"start_time\")|as_datetime %} {%- set event_date = event_date.month ~\
+          \ \"-\" ~ event_date.day %} {%- set today = today.month ~ \"-\" ~ today.day\
+          \ %} {%- if today == event_date %}\n  {%- set events = state_attr(\"binary_sensor.days_off\"\
+          ,\"events_today\")|trim %}\n  {%- set events = events ~ \",\" if events\
+          \ not in [\"\",\"None\"] %}\n  {{ events ~ state_attr(\"calendar.nerene\"\
+          ,\"message\") }}\n{%- else %}\n  {%- set events_today = state_attr(\"binary_sensor.days_off\"\
+          ,\"events_today\") %}\n  {{  iif(events_today is not none, events_today,\
+          \ \"\") }}\n{%- endif %}\n"
+    else: []
+  - if:
+    - condition: trigger
+      id: end_of_day
+    then:
+    - service: script.store_mqtt_sensor
+      data:
+        name: nerene_events_today
+        state: ''
   - service: homeassistant.update_entity
     data: {}
     target:
       entity_id: binary_sensor.day_off
+    enabled: false
   mode: single
