@@ -1,0 +1,24 @@
+---
+unique_id: day_off
+name: Day off
+icon: mdi:beach
+state: |
+  {%- set today = now() %}
+  {%- if today.hour == 23 and today.minute == 59 %}
+    {{ false }}
+  {%- else %}
+    {%- set event = namespace(name="", date="") %}
+    {%- set day_off_events = [
+      "Vacation",
+      "Nerene has day off",
+      "Nerene has days off",
+      "Nerene has training"
+    ] %}
+    {%- set event.name = state_attr("calendar.nerene","message") %}
+    {%- set event.date = state_attr("calendar.nerene","start_time")|as_datetime %}
+    {%- set event.date = event.date.month ~ "-" ~ event.date.day %}
+    {{
+      event.name in day_off_events or
+      is_state("binary_sensor.day_off","on")
+    }}
+  {%- endif %}
