@@ -826,8 +826,8 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.alert_wirelessap2_offline
-    to: not_home
+    - alert.wirelessap2_offline
+    to: 'on'
   condition: []
   action:
   - type: turn_off
@@ -1005,16 +1005,22 @@
             - vacuum.play_room
   mode: single
 - id: '1655258894395'
-  alias: Update day off sensors
+  alias: Update day off + work day modified sensors
   description: ''
   trigger:
   - id: calendar
     platform: calendar
     entity_id: calendar.nerene
     event: start
+  - platform: homeassistant
+    event: start
+    id: calendar
   - id: end_of_day
     platform: time
     at: '23:59:00'
+  - platform: time
+    at: 00:01:00
+    id: start_of_day
   condition: []
   action:
   - if:
@@ -1042,9 +1048,17 @@
       data:
         name: nerene_events_today
         state: ''
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 0
   - service: homeassistant.update_entity
     data: {}
     target:
-      entity_id: binary_sensor.day_off
-    enabled: false
-  mode: single
+      entity_id:
+      - binary_sensor.day_off
+      - binary_sensor.work_day_modified
+      - binary_sensor.work_day
+  mode: queued
+  max: 10
