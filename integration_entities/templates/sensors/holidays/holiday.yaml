@@ -24,7 +24,7 @@ state: |
     {%- endif %}
   {%- endfor %}
 
-  {# HOLIDAYS2 - custom date sesnors: Do any occur today? #}
+  {# HOLIDAYS2 - custom date sensors: Do any occur today? #}
   {%- set holidays2 = states.sensor | selectattr('attributes.type','defined') | selectattr('attributes.type','eq','Holiday') | map(attribute='entity_id') | list -%}
   {%- for holiday in holidays2 -%}
     {%- set holiday_date = states(holiday) %}

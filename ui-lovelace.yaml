@@ -431,6 +431,7 @@ views:
     entities:
     - color: teal
       entity: calendar.us_holidays
+      name: Holidays
     - color: black
       entity: calendar.birthdays_anniversary
       name: Milestones
@@ -1077,6 +1078,7 @@ views:
         action: navigate
         navigation_path: /lovelace/family-dates
       type: template
+    - type: menu
     type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
@@ -1124,7 +1126,7 @@ views:
         \ if is_state(\"binary_sensor.family_room_north_window\", \"on\") %}\n  {%-\
         \ set open_count = open_count + 1  %}\n{%- endif %}\n{{- iif(open_count==1,\
         \ \" ‧ 1 window open\", iif(open_count>1, \" ‧ \"~open_count~\" windows open\"\
-        , \"\")) }}\n{{- iif(is_state(\"binary_sensor.family_room_presence\",\"on\"\
+        , \"\")) }}\n{{- iif(is_state(\"binary_sensor.family_room_occupancy\",\"on\"\
         ), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.family_room_tv\"\
         ,\"on\"), \" ‧ tv is on\", \"\") }}"
       title: Family room
@@ -1208,8 +1210,8 @@ views:
         \ %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light\
         \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{- iif(is_state(\"\
         binary_sensor.kitchen_window\", \"on\"), \" ‧ window open\", \"\") }}\n{{-\
-        \ iif(is_state(\"binary_sensor.kitchen_presence\",\"on\"), \" ‧ occupied\"\
-        , \"\") }}\n{{- iif(not is_state(\"input_select.dishwasher_status\",\"-\"\
+        \ iif(is_state(\"binary_sensor.kitchen_motion\",\"on\"), \" ‧ occupied\",\
+        \ \"\") }}\n{{- iif(not is_state(\"input_select.dishwasher_status\",\"-\"\
         ), \" ‧ dishes are \" ~ states(\"input_select.dishwasher_status\")|lower,\
         \ \"\") }}"
       title: Kitchen & dining
@@ -1245,8 +1247,8 @@ views:
         1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- set contact_open\
         \ = is_state(\"binary_sensor.sliding_door\", \"on\") %}\n{%- if contact_open\
         \ %}\n  {{- \" ‧ \" if lights_on }}\n  {{- \"sliding door open\" }}\n{%- endif\
-        \ %}\n{{- iif(is_state(\"binary_sensor.play_room_presence\",\"on\"), \" ‧\
-        \ occupied\", \"\") }}"
+        \ %}\n{{- iif(is_state(\"binary_sensor.play_room_motion\",\"on\"), \" ‧ occupied\"\
+        , \"\") }}"
       title: Play room
       type: custom:mushroom-title-card
     - cards:
@@ -1347,7 +1349,7 @@ views:
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
         {%- endif %}\n{%- set contact_open = is_state(\"cover.garage_door\", \"open\"\
         ) %}\n{%- if contact_open %}\n  {{- \" ‧ \" if lights_on }}\n  {{- \"garage\
-        \ door open\" }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_presence\"\
+        \ door open\" }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_motion\"\
         ,\"on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
         ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\"\
         ) }}\n{%- if not states(\"input_select.laundry_status\") in [\"Off\",\"Unknown\"\
@@ -1512,8 +1514,8 @@ views:
         \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
         \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n\n{{- iif(is_state(\"\
         binary_sensor.bedroom_window\", \"on\"), \" ‧ window open\", \"\") }}\n{{-\
-        \ iif(is_state(\"binary_sensor.bedroom_presence\",\"on\"), \" ‧ occupied\"\
-        , \"\") }}\n{{- iif(not is_state(\"input_select.glowforge_status\",\"Off\"\
+        \ iif(is_state(\"binary_sensor.bedroom_motion\",\"on\"), \" ‧ occupied\",\
+        \ \"\") }}\n{{- iif(not is_state(\"input_select.glowforge_status\",\"Off\"\
         ), \" ‧ glowforge is \" ~ states(\"input_select.glowforge_status\")|lower,\
         \ \"\") }}"
       title: ' Bedroom'
@@ -1600,7 +1602,7 @@ views:
         {{- iif(is_state("binary_sensor.upstairs_bathroom_window", "on"), " ‧ window
         open", "") }}
 
-        {{- iif(is_state("binary_sensor.upstairs_bathroom_presence","on"), " ‧ occupied",
+        {{- iif(is_state("binary_sensor.upstairs_bathroom_motion","on"), " ‧ occupied",
         "") }}'
       title: Upstairs bathroom
       type: custom:mushroom-title-card
@@ -1629,8 +1631,8 @@ views:
         \ }}%\n{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
-        {%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_presence\",\"on\"),\
-        \ \" ‧ occupied\", \"\") }}"
+        {%- endif %}\n{{- iif(is_state(\"binary_sensor.bedroom_motion\",\"on\"), \"\
+        \ ‧ occupied\", \"\") }}"
       title: ' Lucas'' room'
       type: custom:mushroom-title-card
     - cards:
@@ -1656,7 +1658,7 @@ views:
         \ }}° \n{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
-        {%- endif %}\n{{- iif(is_state(\"binary_sensor.kyles_room_presence\",\"on\"\
+        {%- endif %}\n{{- iif(is_state(\"binary_sensor.kyles_room_motion\",\"on\"\
         ), \" ‧ occupied\", \"\") }}"
       title: Kyle's room
       type: custom:mushroom-title-card
@@ -2243,6 +2245,13 @@ views:
     - id: wakeup_nerene
     - sensors:
       - binary_sensor.work_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: 'Wakeup: Nerene work day modified'
+    - id: wakeup_nerene_modified
+    - sensors:
+      - binary_sensor.work_day_modified
   - template: event
     type: custom:decluttering-card
     variables:

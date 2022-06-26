@@ -6,7 +6,7 @@ device_class: energy
 state_class: measurement
 unit_of_measurement: kW
 state: |
-  {%- set grid_transfer = states("sensor.energy_grid_transfer_current")|float(default=0) %}
+  {%- set grid_transfer = states("sensor.rainforest_emu_2_power")|float(default=0) %}
   {%- if grid_transfer < 0 %}
     {{ grid_transfer|abs }}
   {%- else %}
