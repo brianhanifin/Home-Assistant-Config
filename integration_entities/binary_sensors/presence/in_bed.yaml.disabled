@@ -18,7 +18,7 @@ observations:
   - platform: template
     value_template: >-
       {% set hours_until_stale = 1 %}
-      {% set minutes_since = ((as_timestamp(now()) - as_timestamp(states.binary_sensor.bedroom_presence.last_changed)) / 60)|int(default=0)  %}
+      {% set minutes_since = ((as_timestamp(now()) - as_timestamp(states.binary_sensor.bedroom_motion.last_changed)) / 60)|int(default=0)  %}
       {{ minutes_since < (hours_until_stale * 60) }}
     prob_given_true: 0.85
     prob_given_false: 0.25

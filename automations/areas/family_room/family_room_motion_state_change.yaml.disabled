@@ -1,17 +1,17 @@
 ---
-# Family room light presence trigger
-alias: "Family room presence state change"
+# Family room light motion trigger
+alias: "Family room motion state change"
 mode: single
 trigger:
   # Trigger if either motion sensor is on.
   - platform: state
     entity_id:
-      - binary_sensor.family_room_1_presence
-      - binary_sensor.family_room_2_presence
+      - binary_sensor.family_room_1_motion
+      - binary_sensor.family_room_2_motion
     to: "on"
   # If both motion sensors returns to off.
   - platform: state
-    entity_id: binary_sensor.family_room_presence
+    entity_id: binary_sensor.family_room_motion
     to: "off"
 
 variables:
@@ -39,7 +39,7 @@ action:
       - conditions:
           - '{{ new_state == "on" }}'
         sequence:
-          # Family room presence light(s) on
+          # Family room motion light(s) on
           - service: light.turn_on
             data:
               entity_id:

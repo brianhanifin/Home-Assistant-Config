@@ -1,40 +1,40 @@
 ---
-alias: Garage presence change
-id: garage_presence_change
+alias: Garage motion change
+id: garage_motion_change
 mode: restart
 trigger:
-  - id: presence_detected
+  - id: motion_detected
     platform: state
     entity_id:
       - binary_sensor.garage_entry_door
-      - binary_sensor.garage_presence
+      - binary_sensor.garage_motion
     from: "off"
     to: "on"
   - id: timer_finished
     platform: event
     event_type: timer.finished
     event_data:
-      entity_id: timer.garage_presence
+      entity_id: timer.garage_motion
 action:
   - choose:
-      - alias: "Presence detected: turn on the light + start the timer."
-        conditions: '{{ trigger.id == "presence_detected" }}'
+      - alias: "motion detected: turn on the light + start the timer."
+        conditions: '{{ trigger.id == "motion_detected" }}'
         sequence:
           - service: light.turn_on
             entity_id: light.laundry
 
           - alias: "Cancel the existing countdown timer."
             choose:
-              - conditions: '{{ states("timer.garage_presence") != "idle" }}'
+              - conditions: '{{ states("timer.garage_motion") != "idle" }}'
                 sequence:
                   - service: timer.cancel
                     target:
-                      entity_id: timer.garage_presence
+                      entity_id: timer.garage_motion
 
           - alias: "(Re)start the countdown timer."
             service: timer.start
             data:
-              entity_id: timer.garage_presence
+              entity_id: timer.garage_motion
 
       - alias: "Countdown finished: turn off the light."
         conditions: '{{ trigger.id == "timer_finished" }}'

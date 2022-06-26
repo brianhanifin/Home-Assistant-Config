@@ -1,21 +1,21 @@
 ---
-alias: Kitchen presence on state change
-id: kitchen_presence_on_state_change
+alias: Kitchen motion on state change
+id: kitchen_motion_on_state_change
 mode: restart
 trigger:
   - platform: event
     event_type: state_changed
     event_data:
-      entity_id: binary_sensor.kitchen_1_presence
+      entity_id: binary_sensor.kitchen_1_motion
   - platform: event
     event_type: state_changed
     event_data:
-      entity_id: binary_sensor.kitchen_2_presence
+      entity_id: binary_sensor.kitchen_2_motion
 variables:
   old_state: '{{ trigger.event.data.old_state.state }}'
   new_state: '{{ trigger.event.data.new_state.state }}'
 
-  both_presence_off: '{{ states("binary_sensor.kitchen_1_presence") == "off" and states("binary_sensor.kitchen_2_presence") == "off" }}'
+  both_motion_off: '{{ states("binary_sensor.kitchen_1_motion") == "off" and states("binary_sensor.kitchen_2_motion") == "off" }}'
 condition:
   - '{{ (new_state in ["off","on"] and old_state in ["off","on"])
       and old_state != new_state }}'
@@ -26,14 +26,14 @@ action:
   #     message: '{{ trigger.event.data }}'
 
   - choose:
-      # Motion or presence turns lights on.
+      # Motion turns lights on.
       - conditions: '{{ new_state == "on" }}'
         sequence:
           - service: light.turn_on
             entity_id: light.kitchen_cabinet
 
-      # Presence timeout turns lights off.
-      - conditions: '{{ new_state == "off" and both_presence_off|lower == "true" }}'
+      # motion timeout turns lights off.
+      - conditions: '{{ new_state == "off" and both_motion_off|lower == "true" }}'
         sequence:
           - service: light.turn_off
             entity_id: light.kitchen_cabinet

@@ -1,30 +1,30 @@
 ---
-# Update Last Presence variable
+# Update Last motion variable
 #
-alias: update_last_presence
+alias: update_last_motion
 
 mode: queued
 trigger:
   - platform: state
     entity_id:
-      - binary_sensor.bedroom_presence
+      - binary_sensor.bedroom_motion
       - binary_sensor.kyles_bedroom_occupancy
-      - binary_sensor.family_room_presence
+      - binary_sensor.family_room_motion
       - binary_sensor.front_door_person_occupancy
-      - binary_sensor.kitchen_presence
-      - binary_sensor.play_room_presence
+      - binary_sensor.kitchen_motion
+      - binary_sensor.play_room_motion
     to: 'on'
 action:
   - service: variable.set_variable
     data:
-      variable: last_presence
+      variable: last_motion
       attributes_template: >
         {
           "history_1": "{{ variable.state }}",
           "history_2": "{{ variable.attributes.history_1 }}",
           "history_3": "{{ variable.attributes.history_2 }}",
-          "icon":      "mdi:presence-sensor",
+          "icon":      "mdi:motion-sensor",
           "last_updated":   "{{ as_timestamp(now()) | timestamp_custom('%b %d %I:%M %p', true) }}"
         }
     data_template:
-      value: "{{ trigger.to_state.attributes.friendly_name|replace(' Occupancy','')|replace(' Presence #1','')|replace(' Presence #2','')|replace(' Presence','')|replace(' presence','') }}"
+      value: "{{ trigger.to_state.attributes.friendly_name|replace(' Occupancy','')|replace(' motion #1','')|replace(' motion #2','')|replace(' motion','')|replace(' motion','') }}"
