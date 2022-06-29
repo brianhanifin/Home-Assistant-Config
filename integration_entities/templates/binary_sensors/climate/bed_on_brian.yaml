@@ -1,0 +1,9 @@
+---
+unique_id: bed_on_brian
+name: Bed on brian
+device_class: power
+state: |
+  {{
+    state_attr("sensor.bed_state_brian","Target Heating Level") != 0 and
+    state_attr("sensor.bed_state_brian","Heating Time Remaining") != 0
+  }}

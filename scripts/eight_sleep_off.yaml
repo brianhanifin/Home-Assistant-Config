@@ -1,0 +1,13 @@
+---
+variables:
+  who: '{{ entity_id.split("_")|last }}'
+sequence:
+  - if: '{{ states("binary_sensor.bed_on_" ~ who)|bool(none) }}'
+    then:
+      - alias: "Turn it off."
+        service: eight_sleep.heat_set
+        target:
+          entity_id: '{{ entity_id }}'
+        data:
+          target: 0
+          duration: 0

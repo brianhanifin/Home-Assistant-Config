@@ -1,0 +1,31 @@
+---
+variables:
+  who: '{{ entity_id.split("_")|last }}'
+sequence:
+  # - service: script.debug
+  #   data:
+  #     title: "zwjs_event_sniffer"
+  #     message: |
+  #       entity_id: {{ entity_id }}
+  #       who: {{ who }}
+  #       {{"binary_sensor.bed_on_" ~ who}}: {{ states("binary_sensor.bed_on_" ~ who) }}
+
+  - if: '{{ states("binary_sensor.bed_on_" ~ who)|bool(none) }}'
+    then:
+      - alias: "Turn it off."
+        service: eight_sleep.heat_set
+        target:
+          entity_id: '{{ entity_id }}'
+        data:
+          target: 0
+          duration: 0
+
+    else:
+      - alias: "Turn it on."
+        service: eight_sleep.heat_set
+        target:
+          entity_id: '{{ entity_id }}'
+        data:
+          target: -80
+          duration: 28800
+
