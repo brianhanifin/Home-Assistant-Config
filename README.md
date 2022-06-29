@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,432** | 1,279 | 36 | 99 | 61 |
+| **41,492** | 1,316 | 36 | 97 | 63 |
 
 # Index
 
@@ -209,9 +209,9 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1279 total entities**,
-including **649 sensors**. My YAML
-files contain 41,432 lines of code.
+Our Home Assistant install has approximately **1316 total entities**,
+including **674 sensors**. My YAML
+files contain 41,492 lines of code.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -239,7 +239,7 @@ Frigate integration for Home AssistantAuthors:[@blakeblackshear](https://github.
 ## [Generate readme v0.5.0](https://github.com/custom-components/readme)
 Authors:[@ludeeus](https://github.com/ludeeus).
 
-## [Google Home v1.9.12](https://github.com/leikoilja/ha-google-home)
+## [Google Home v1.9.13](https://github.com/leikoilja/ha-google-home)
 Home Assistant Google Home custom componentAuthors:[@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
 ## [Home Assistant Community Store (HACS) v1.25.5](https://hacs.xyz/docs/configuration/start)
@@ -254,7 +254,7 @@ Authors:[@LAB02-Admin](https://github.com/LAB02-Admin).
 ## [Lovelace Notify v1.0.0]()
 Lovelace notification / alert component for Home AssistantAuthors:[@rr326](https://github.com/rr326).
 
-## [Music Assistant v2022.6.6](https://github.com/music-assistant/hass-music-assistant)
+## [Music Assistant v2022.6.8](https://github.com/music-assistant/hass-music-assistant)
 Turn your Home Assistant instance into a jukebox, hassle free streaming of your favorite media to Home Assistant media players.Authors:[@marcelveldt](https://github.com/marcelveldt).
 
 ## [NWS Alerts v2.4](https://github.com/finity69x2/nws_alerts/)
@@ -263,7 +263,7 @@ Authors:[@finity69x2](https://github.com/finity69x2).
 ## [Rainforest EMU-2 v1.2.0](https://github.com/ryanwinter/hass-rainforest-emu-2)
 Authors:[@ryanwinter](https://github.com/ryanwinter).
 
-## [SamsungTV Smart v0.7.2](https://github.com/ollo69/ha-samsungtv-smart)
+## [SamsungTV Smart v0.7.3](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
 ## [Scheduler integration v0.0.0](https://github.com/nielsfaber/scheduler-component)
@@ -272,7 +272,7 @@ Authors:[@nielsfaber](https://github.com/nielsfaber).
 ## [Simple Wyze Vacuum v1.7](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
-## [SmartThinQ LGE Sensors v0.23.0](https://github.com/ollo69/ha-smartthinq-sensors)
+## [SmartThinQ LGE Sensors v0.23.2](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
 ## [Sun2 v2.1.2](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
@@ -289,7 +289,7 @@ Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://gi
 
 <details><summary>27 lovelace plugins</summary>
 
-## [Atomic Calendar Revive v7.0.0](https://github.com/totaldebug/atomic-calendar-revive)
+## [Atomic Calendar Revive v7.0.1](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
 
 ## [Auto Entities v1.11.0](https://github.com/thomasloven/lovelace-auto-entities)
@@ -433,7 +433,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.6.7-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.7.0b0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -443,7 +443,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,432-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,492-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
