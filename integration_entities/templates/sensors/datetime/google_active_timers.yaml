@@ -26,7 +26,7 @@ attributes:
   timers: |
     {%- set unsorted_timers = state_attr("sensor.google_active_timers","unsorted_timers") %}
     {%- if unsorted_timers is not none %}
-      {%- if unsorted_timers|count > 0 %}
+      {%- if unsorted_timers|count > 1 %}
         {{ unsorted_timers | sort(attribute="end_time") }}
       {%- else %}
         {{ unsorted_timers }}
@@ -36,7 +36,7 @@ attributes:
     {%- macro friendly_label(label, duration) %}
       {%- set label = label|trim|title %}
       {%- if duration is not none %}
-        {%- if label in ["","None"] and not time_part in ["","None"] %}
+        {%- if label in ["","None"] %}
           {%- set time_part = duration.split(":") %}
           {%- set label = time_part[0]|int(default=0) ~ " hour " if time_part[0]|int(default=0) > 0 else "" %}
           {%- set label = label ~ iif(time_part[1]|int(default=0) > 0, time_part[1]|int(default=0) ~ " minute ", "") %}
@@ -70,4 +70,9 @@ attributes:
         {%- set storage.timers = storage.timers ~ iif(not loop.last, ",", "") %}
       {%- endfor %}
     {%- endif %}
-    {{ storage.timers }}
+
+    {%- if storage.timers[0] == "{" %}
+      [{{ storage.timers }}]
+    {%- else %}
+      {{ storage.timers }}
+    {%- endif %}
