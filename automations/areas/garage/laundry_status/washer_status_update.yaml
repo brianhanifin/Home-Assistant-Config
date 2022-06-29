@@ -2,7 +2,7 @@
 alias: Washer status update
 id: washer_status_update
 description: Update the current washer status when certain criteria are met.
-mode: single
+mode: queued
 trigger:
   # Update state when the wet laundry status changes.
   - id: wet_laundry_alert_begins
@@ -21,10 +21,11 @@ trigger:
     to: "Drying"
 
   # LG washer running state.
-  - id: washer_run_state_change
-    platform: state
-    entity_id: sensor.washer_run_state
-    to: ~
+  # - id: washer_run_state_change
+  #   platform: state
+  #   entity_id: sensor.washer_run_state
+  #   to: ~
+  #   not_to: null
 
   # Make decisions based on the Washer power usage.
   - id: washer_power_use_high
@@ -68,39 +69,37 @@ trigger:
     from: "off"
     to: "on"
 variables:
-  #trigger_id: '{{ trigger.to_state.entity_id }}'
   trigger_id: '{{ trigger.id }}'
 
   run_state: '{{ states("sensor.washer_run_state") }}'
-  washer_running: '{{ not run_state == "-" }}'
+  washer_running: '{{ run_state not in ["","-","null"] }}'
   previous_status: '{{ states("input_select.washer_status") }}'
 
   # Off, Standby, Washing, Clean, Error
   status: |
-    {% if trigger_id == "wet_laundry_alert_cleared" or previous_status == "Off" %}
-      Off
-    {%- elif trigger_id == "dryer_drying" and previous_status == "Clean"  %}
-      Off
-    {%- elif trigger_id == "washer_from_off_to_on" %}
-      Standby
-    {%- elif trigger_id == "washer_power_use_high" or (trigger_id == "washer_run_state_change" and washer_running) %}
+    {% if trigger_id == "washer_power_use_high" or (trigger_id == "washer_run_state_change" and washer_running) %}
       Washing
-    {%- elif trigger_id == "washer_power_use_low" and previous_status != "Clean" %}
+    {%- elif trigger_id == "wet_laundry_alert_cleared" or
+          (trigger_id == "dryer_drying" and previous_status == "Clean") or
+          trigger_id == "washer_power_use_low" and previous_status != "Clean"
+    %}
       Off
-    {%- elif previous_status == "Washing" %}
+    {%- elif trigger_id == "washer_lg_complete" or previous_status == "Washing" %}
       Clean
-    {%- elif previous_status == "Off" %}
+    {%- elif trigger_id == "washer_from_off_to_on" or previous_status == "Off" %}
       Standby
     {%- elif trigger_id == "washer_error_state" %}
       Error
     {%- endif %}
-  notify_title: 'Error: Washing Machine"'
+  notify_title: 'Error: Washing Machine'
   notify_message: |
     Error. The washing machine has an error. {{ state_attr('sensor.washer','error_message') }}
-condition:
-  - condition: template
-    value_template: '{{ status != previous_status
-                      and status != "Unknown" }}'
+# condition:
+#   - condition: template
+#     value_template: '{{
+#         status not in ["","Unknown"] and
+#         (trigger_id == "washer_run_state_change" and states("sensor.washer_run_state") not in ["","-","null"])
+#       }}'
 action:
   - service: input_select.select_option
     target:
@@ -146,8 +145,10 @@ action:
           who: brian
           url: /lovelace-special/laundry
 
-  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
-  # - In this case it stops the washer from toggling between Clean and back to Washing within 10 seconds.
-  #   This should stop the complete announcement from repeating after 1 minute.
-  - delay:
-      seconds: 300
+  # - if: '{{ status not in ["Standby","Error"] }}'
+  #   then:
+  #     # Cool down timer. When "mode: single" this stops this automation from running more often than this.
+  #     # - In this case it stops the washer from toggling between Clean and back to Washing within 10 seconds.
+  #     #   This should stop the complete announcement from repeating after 1 minute.
+  #     - delay:
+  #         seconds: 300
