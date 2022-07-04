@@ -1,0 +1,38 @@
+default:
+  - cx: 50
+  - cy: 50
+  - area: 'Home'
+  - icon: 'mdi:water-percent'
+
+card:
+  type: 'custom:swiss-army-knife-card'
+
+  entities: 
+    - entity: '[[entity]]'
+      name: '[[name]]'
+      icon: '[[icon]]'
+      area: '[[area]]'
+
+    - entity: '[[entity]]'
+      attribute: brightness
+      unit_of_measurement: "%"
+
+  aspectratio: 1/1
+  dev:
+    debug: false
+    ts: true
+  
+  layout:
+    styles:
+      card:
+      toolsets:
+        filter: url(#nm-1)
+    toolsets:
+      # ==============================================================================
+      # Using Neumorphic light button design
+      - toolset: light-button
+        template:
+          name: toolset_light_button_nm
+        position:
+          cx: '[[cx]]'
+          cy: '[[cy]]'
