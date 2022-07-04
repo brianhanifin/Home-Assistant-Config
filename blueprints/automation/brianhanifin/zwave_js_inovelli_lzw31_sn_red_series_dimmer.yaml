@@ -7,10 +7,10 @@ blueprint:
       name: Inovelli Dimmer
       description: "List of available inovelli LZW31-SN dimmers."
       selector:
-          device:
-            integration: zwave_js
-            manufacturer: Inovelli
-            model: LZW31-SN
+        device:
+          integration: zwave_js
+          manufacturer: Inovelli
+          model: LZW31-SN
     ## Config Press 1 time
     config_button:
       name: Button C - Config press 1x
@@ -103,31 +103,38 @@ trigger:
     event_type: zwave_js_value_notification
 variables:
   device_id: !input inovelli_switch
-  presses: |
-    {% set value = trigger.event.data.value %}
-    {% if value == "KeyPressed" %}
-      1
-    {% else %}
-      {{ value|replace("KeyPressed","")|replace("x","") }}
-    {% endif %}
-  button: |
-    {% if trigger.event.data.property_key_name|int(default=0) == 1 %}
-      down
-    {% elif trigger.event.data.property_key_name|int(default=0) == 2 %}
-      up
-    {% elif trigger.event.data.property_key_name|int(default=0) == 3 %}
-      config
-    {% endif %}
 condition: "{{ trigger.event.data.device_id == device_id }}"
 action:
-  # - service: "logbook.log"
-  #   data:
-  #     name: "Button"
-  #     message: "{{ button }}"
-  # - service: "logbook.log"
-  #   data:
-  #     name: "Presses"
-  #     message: "{{ presses }}"
+  - variables:
+      presses: |
+        {% set value = trigger.event.data.value %}
+        {% if value == "KeyPressed" %}
+          1
+        {% else %}
+          {{ value|replace("KeyPressed","")|replace("x","") }}
+        {% endif %}
+      button: |
+        {% if trigger.event.data.property_key_name|int(default=0) == 1 %}
+          down
+        {% elif trigger.event.data.property_key_name|int(default=0) == 2 %}
+          up
+        {% elif trigger.event.data.property_key_name|int(default=0) == 3 %}
+          config
+        {% endif %}
+  - service: persistent_notification.create
+    data:
+      title: "button_presses"
+      message: |
+        button: {{ button }}
+        presses: {{ presses }}
+  - service: "logbook.log"
+    data:
+      name: "Button"
+      message: "{{ button }}"
+  - service: "logbook.log"
+    data:
+      name: "Presses"
+      message: "{{ presses }}"
   - choose:
     - conditions: '{{ button == "config" }}'
       sequence: !input config_button

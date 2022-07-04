@@ -23,13 +23,26 @@
       keep_days: 10
       repack: true
     service: recorder.purge
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.docker_unifi
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 15
+      milliseconds: 0
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.docker_unifi
   - service: script.notify_web
     data:
       type: success
       message: Daily maintenance complete.
   mode: single
 - id: '1614889037575'
-  alias: 'Multi-click handler: family room'
+  alias: 'Multi-click handler: family room (old)'
   description: Inovelli red series LZW31-SN dimmer (ZWave-JS)
   use_blueprint:
     path: brianhanifin/zwave_js_inovelli_lzw31_sn_red_series_dimmer.yaml
@@ -63,15 +76,16 @@
       button_a_held: []
       button_b_held: []
       button_a2:
-      - type: turn_on
-        device_id: 63789fb09fae954b2c90a2aa98f6b102
-        entity_id: light.family_room_floor_lamp
-        domain: light
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.family_room_floor_lamp
       button_b2:
-      - type: turn_off
-        device_id: 63789fb09fae954b2c90a2aa98f6b102
-        entity_id: light.family_room_floor_lamp
-        domain: light
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.family_room_floor_lamp
       button_a5:
       - service: input_boolean.turn_on
         target:
@@ -83,17 +97,15 @@
           entity_id: input_boolean.guest_mode
         data: {}
       button_a4:
-      - service: homeassistant.turn_on
+      - service: light.turn_on
+        data: {}
         target:
           area_id:
-          - dining_room
           - kitchen
-          device_id:
-          - 63789fb09fae954b2c90a2aa98f6b102
-          - 2d8b03f66fda68a6e0f7b2a506a33b02
-          - 1ad4b3bd16edcc7d4961b3e95ed57f70
-          - 385bbbe37417eec30709aadfd0f37152
-        data: {}
+          - dining_room
+          - family_room
+          - outside
+          device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
       button_b4:
       - type: turn_on
         device_id: 1ad4b3bd16edcc7d4961b3e95ed57f70
@@ -263,11 +275,11 @@
         entity_id: switch.google_bedroom_do_not_disturb
   mode: single
   variables:
-    switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%- for entity\
-      \ in states.switch if 'switch.adaptive_lighting_' in entity.entity_id\n    \
-      \  and entity.entity_id[25:30] not in [\"adapt\",\"sleep\"] %}\n  {%- set adaptive_lighting.switches\
-      \ = adaptive_lighting.switches + [ entity ] %}\n{%- endfor %} {{- adaptive_lighting.switches\
-      \ | map(attribute='entity_id') | list }}\n"
+    switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%- for entity
+      in states.switch if 'switch.adaptive_lighting_' in entity.entity_id\n      and
+      entity.entity_id[25:30] not in [\"adapt\",\"sleep\"] %}\n  {%- set adaptive_lighting.switches
+      = adaptive_lighting.switches + [ entity ] %}\n{%- endfor %} {{- adaptive_lighting.switches
+      | map(attribute='entity_id') | list }}\n"
 - id: '1638910619111'
   alias: 'Maintenace: lights off after sunrise'
   description: Turn the entry and porch lights off after sunrise.
@@ -678,6 +690,24 @@
       message: 'From: {{trigger.from_state.state}}
 
         To: {{trigger.to_state.state}}'
+  - if:
+    - condition: template
+      value_template: '{{ trigger.to_state.state=="unavailable"}}'
+    then:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.docker_unifi
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 15
+        milliseconds: 0
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.docker_unifi
+    else: []
   mode: single
 - id: '1644783738380'
   alias: Google next timer actions
@@ -759,13 +789,11 @@
           enabled: true
         sequence:
         - service: script.cast
-          continue_on_error: true
           data:
+            displays:
+            - 7d6b52507e25e7eeba10914e56052d1c
             dashboard_path: dashboard-cast
             view_path: timers
-            display:
-            - 0aae07dda66f42e9b8a67979e34770d0
-            - 7d6b52507e25e7eeba10914e56052d1c
       - conditions:
         - condition: trigger
           id: timer_finished
@@ -834,6 +862,19 @@
     device_id: bc23d534656122cd2d15fcbaf69c2dbd
     entity_id: switch.wirelessap2_power_cycler
     domain: switch
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.docker_unifi
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 15
+      milliseconds: 0
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.docker_unifi
   - delay:
       hours: 0
       minutes: 10
@@ -1014,7 +1055,8 @@
     event: start
   - platform: homeassistant
     event: start
-    id: calendar
+    id: restart
+    enabled: true
   - id: end_of_day
     platform: time
     at: '23:59:00'
@@ -1024,21 +1066,25 @@
   condition: []
   action:
   - if:
-    - condition: trigger
-      id: calendar
+    - condition: or
+      conditions:
+      - condition: trigger
+        id: calendar
+      - condition: trigger
+        id: start_of_day
+      - condition: trigger
+        id: restart
     then:
     - service: script.store_mqtt_sensor
       data:
         name: nerene_events_today
-        state: "{%- set today = now() %} {%- set event_date = state_attr(\"calendar.nerene\"\
-          ,\"start_time\")|as_datetime %} {%- set event_date = event_date.month ~\
-          \ \"-\" ~ event_date.day %} {%- set today = today.month ~ \"-\" ~ today.day\
-          \ %} {%- if today == event_date %}\n  {%- set events = state_attr(\"binary_sensor.days_off\"\
-          ,\"events_today\")|trim %}\n  {%- set events = events ~ \",\" if events\
-          \ not in [\"\",\"None\"] %}\n  {{ events ~ state_attr(\"calendar.nerene\"\
-          ,\"message\") }}\n{%- else %}\n  {%- set events_today = state_attr(\"binary_sensor.days_off\"\
-          ,\"events_today\") %}\n  {{  iif(events_today is not none, events_today,\
-          \ \"\") }}\n{%- endif %}\n"
+        state: "{%- set today = now()|as_timestamp %} {%- set event_date = state_attr(\"calendar.nerene\",\"start_time\")|as_timestamp
+          %} {%- if today >= event_date %}\n  {%- set events = state_attr(\"binary_sensor.days_off\",\"events_today\")|trim
+          %}\n  {%- set events = events ~ \",\" if events not in [\"\",\"None\"] %}\n
+          \ {{ events ~ state_attr(\"calendar.nerene\",\"message\") }}\n{%- else %}\n
+          \ {%- set events_today = state_attr(\"binary_sensor.days_off\",\"events_today\")
+          %}\n  {{ iif(events_today is not none, events_today, \"\") }}\n{%- endif
+          %}\n"
     else: []
   - if:
     - condition: trigger
@@ -1062,3 +1108,97 @@
       - binary_sensor.work_day
   mode: queued
   max: 10
+- id: '1655493692415'
+  alias: 'Multi-click handler: family room'
+  description: ''
+  use_blueprint:
+    path: brianhanifin/zwave_js_inovelli_lzw31_sn_red_series_dimmer.yaml
+    input:
+      inovelli_switch: 2d8b03f66fda68a6e0f7b2a506a33b02
+      config_button:
+      - service: homeassistant.turn_off
+        data: {}
+        target:
+          area_id: family_room
+      button_a2:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          area_id:
+          - family_room
+      button_b:
+      - service: light.turn_off
+        data: {}
+        target:
+          area_id: family_room
+      button_b2:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.family_room_floor_lamp
+      button_a3:
+      - service: fan.turn_on
+        data: {}
+        target:
+          entity_id: fan.family_room
+      button_b3:
+      - service: fan.turn_off
+        data: {}
+        target:
+          entity_id: fan.family_room
+      button_a4:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          area_id:
+          - family_room
+          - kitchen
+          - dining_room
+          - outside
+          entity_id:
+          - light.home_entry
+      button_b4:
+      - service: light.turn_off
+        data: {}
+        target:
+          area_id:
+          - family_room
+          - kitchen
+          - dining_room
+          entity_id: light.home_entry
+      button_a5:
+      - service: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id: input_boolean.guest_mode
+      button_b5:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.guest_mode
+- id: '1655497827209'
+  alias: 'Multi-click: family room test'
+  description: ''
+  trigger:
+  - platform: event
+    event_type: zwave_js_value_notification
+  action:
+  - variables:
+      presses: "{% set value = trigger.event.data.value %}\n{% if value == \"KeyPressed\"
+        %}\n  1\n{% else %}\n  {{ value|replace(\"KeyPressed\",\"\")|replace(\"x\",\"\")
+        }}\n{% endif %}\n"
+      button: "{% if trigger.event.data.property_key_name|int(default=0) == 1 %}\n
+        \ down\n{% elif trigger.event.data.property_key_name|int(default=0) == 2 %}\n
+        \ up\n{% elif trigger.event.data.property_key_name|int(default=0) == 3 %}\n
+        \ config\n{% endif %}\n"
+  - service: persistent_notification.create
+    data:
+      title: button_presses
+      message: 'button: {{ button }}
+
+        presses: {{ presses }}
+
+        '
+  mode: single

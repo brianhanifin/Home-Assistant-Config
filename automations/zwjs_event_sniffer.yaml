@@ -1,23 +1,26 @@
 ---
 alias: zwjs_event_sniffer
-
 mode: parallel
 trigger:
-  # Does this exist after v2021.04?
-  - platform: event
-    event_type: zwave_js_event
-  
-  # Central Scene Notification
-  - platform: event
+  # Scene events (value notification).
+  - id: scene_event
+    platform: event
     event_type: zwave_js_value_notification
-  
-  # Entry Control Notification
-  - platform: event
+
+  # Node events (notification).
+  - id: node_event
+    platform: event
     event_type: zwave_js_notification
 
+  - id: value_updated_event
+    platform: event
+    event_type: zwave_js_value_updated
+    event_data:
+      entity_id: light.family_room
+
 variables:
-  event_data: '{{ trigger.event.data }}'
   event_type: '{{ trigger.event.event_type }}'
+  event_data: '{{ trigger.event.data }}'
   event_label: '{{ event_data.event_label }}'
   notification_label: '{{ event_data.label }}'
   node_id: '{{ event_data.node_id }}'
@@ -26,17 +29,19 @@ condition:
   # Ignore events I've already identified.
   - condition: template   # Manual deadbolt operation
     value_template: '{{ event_label.endswith("lock operation") == False }}'
-  - condition: template
-    value_template: '{{ node_id in ["2"] == False }}' #,"4","9"
+  # - condition: template
+  #   value_template: '{{ node_id in ["2"] == False }}' #,"4","9"
 
 action:
   - service: script.debug
     data:
       title: "zwjs_event_sniffer"
       message: |
-        event_type: {{ event_type }}
+        trigger.id: {{ trigger.id }}
         node_id: {{ node_id }}
-        label: {{ label }}
+
+        event_type: {{ event_type }}
         event_label: {{ event_label }}
-        
+        notification_label: {{ notification_label }}
+
         event_data: {{ event_data }}
