@@ -126,7 +126,12 @@ sequence:
                 {%- if "LZW31" in model_name %}
                   dimmer
                 {%- elif "LZW36" in model_name %}
-                  combo_light
+                  {%- set domain = repeat.item.split(".")[0] %}
+                  {%- if domain == "fan" %}
+                    combo_fan
+                  {%- else %}
+                    combo_light
+                  {%- endif %}
                 {%- else %}
                   switch
                 {%- endif %}
@@ -195,6 +200,7 @@ fields:
         domain:
           - light
           - switch
+          - fan
         integration: zwave_js
         multiple: true
   color:
