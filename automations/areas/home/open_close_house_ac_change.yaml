@@ -34,15 +34,19 @@ trigger:
     from: "off"
     to: "on"
     for:
-      minute: 1
+      minutes: 1
 action:
   - if:
-      - condition: or
+      - condition: and
         conditions:
-          - condition: trigger
-            id: house_closed
-          - condition: trigger
-            id: close_house_complete
+          - condition: template
+            value_template: '{{ is_state("climate.home_thermostat","off") }}'
+          - condition: or
+            conditions:
+              - condition: trigger
+                id: house_closed
+              - condition: trigger
+                id: close_house_complete
     then:
       - service: climate.set_temperature
         target:

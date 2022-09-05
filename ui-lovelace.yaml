@@ -88,35 +88,37 @@ decluttering_templates:
         tap_action:
           action: fire-dom-event
           browser_mod:
-            card:
+            data:
+              content:
+                entities:
+                - color: teal
+                  entity: calendar.us_holidays
+                - color: black
+                  entity: calendar.birthdays_anniversary
+                  name: Milestones
+                - color: green
+                  entity: calendar.brian
+                  name: Brian
+                - blocklist: creative market
+                  color: purple
+                  entity: calendar.nerene
+                  name: Nerene
+                - color: maroon
+                  entity: calendar.hanifins
+                  name: Hanifin's
+                - blocklist: Math Tutor,Period
+                  color: blue
+                  entity: calendar.kyle
+                  name: Kyle
+                - blocklist: Advisory,Period
+                  color: maroon
+                  entity: calendar.lucas
+                  name: Lucas
+                type: custom:atomic-calendar-revive
               dateSize: 150
               dimFinishedEvents: true
               disableEventLink: true
               disableLocationLink: true
-              entities:
-              - color: teal
-                entity: calendar.us_holidays
-              - color: black
-                entity: calendar.birthdays_anniversary
-                name: Milestones
-              - color: green
-                entity: calendar.brian
-                name: Brian
-              - blocklist: creative market
-                color: purple
-                entity: calendar.nerene
-                name: Nerene
-              - color: maroon
-                entity: calendar.hanifins
-                name: Hanifin's
-              - blocklist: Math Tutor,Period
-                color: blue
-                entity: calendar.kyle
-                name: Kyle
-              - blocklist: Advisory,Period
-                color: maroon
-                entity: calendar.lucas
-                name: Lucas
               eventTitleSize: 150
               firstDayOfWeek: 1
               hideDuplicates: false
@@ -137,109 +139,107 @@ decluttering_templates:
               showRelativeTime: true
               showWeekDay: true
               sortByStartTime: true
-              type: custom:atomic-calendar-revive
-            command: popup
-            deviceID: this
-            title: Calendar
+              title: Calendar
+            service: browser_mod.popup
         type: entity
       - entity: weather.home
         show_temperature: true
         tap_action:
           action: fire-dom-event
           browser_mod:
-            card:
-              cards:
-              - subtitle: Current conditions
-                type: custom:mushroom-title-card
-              - current: true
-                details: true
-                entity: weather.home
-                forecast: true
-                hourly_forecast: false
-                number_of_forecasts: '4'
-                type: custom:weather-card
-              - entity: binary_sensor.rain_today
-                states:
-                  'on':
-                    cards:
-                    - subtitle: Radar
-                      type: custom:mushroom-title-card
-                    - entity: camera.san_diego
-                      show_name: false
-                      show_state: false
-                      type: picture-entity
-                    type: vertical-stack
-                type: custom:state-switch
-              - subtitle: Last 24 hours
-                type: custom:mushroom-title-card
-              - animate: true
-                entities:
-                - entity: sensor.outdoor_temperature
-                  name: Temperature
-                  show_fill: false
-                - entity: sensor.outdoor_humidity
-                  name: Humidity
-                  show_line: false
-                  show_points: false
-                  y_axis: secondary
-                icon: mdi:weather-sunny
-                line_width: 2
-                name: Outdoor
-                points_per_hour: 4
-                show:
-                  extrema: true
-                  icon: false
-                  labels: true
-                  labels_secondary: true
-                  name: false
-                  state: false
-                type: custom:mini-graph-card
-              type: vertical-stack
-            command: popup
-            deviceID: this
-            title: Weather
+            data:
+              content:
+                cards:
+                - subtitle: Current conditions
+                  type: custom:mushroom-title-card
+                - current: true
+                  details: true
+                  entity: weather.home
+                  forecast: true
+                  hourly_forecast: false
+                  number_of_forecasts: '4'
+                  type: custom:weather-card
+                - entity: binary_sensor.rain_today
+                  states:
+                    'on':
+                      cards:
+                      - subtitle: Radar
+                        type: custom:mushroom-title-card
+                      - entity: camera.san_diego
+                        show_name: false
+                        show_state: false
+                        type: picture-entity
+                      type: vertical-stack
+                  type: custom:state-switch
+                - subtitle: Last 24 hours
+                  type: custom:mushroom-title-card
+                - animate: true
+                  entities:
+                  - entity: sensor.outdoor_temperature
+                    name: Temperature
+                    show_fill: false
+                  - entity: sensor.outdoor_humidity
+                    name: Humidity
+                    show_line: false
+                    show_points: false
+                    y_axis: secondary
+                  icon: mdi:weather-sunny
+                  line_width: 2
+                  name: Outdoor
+                  points_per_hour: 4
+                  show:
+                    extrema: true
+                    icon: false
+                    labels: true
+                    labels_secondary: true
+                    name: false
+                    state: false
+                  type: custom:mini-graph-card
+                type: vertical-stack
+              title: Weather
+            service: browser_mod.popup
         type: weather
       - entity: sensor.family_present
         icon_color: teal
         tap_action:
           action: fire-dom-event
           browser_mod:
-            card:
-              cards:
-              - aspect_ratio: '16:9'
-                entities:
-                - entity: device_tracker.life360_brian
-                - entity: device_tracker.life360_lucas
-                - entity: device_tracker.life360_eric_goez
-                - entity: device_tracker.life360_nerene
-                - entity: zone.court
-                - entity: zone.office
-                - entity: zone.high_school
-                - entity: zone.home
-                - entity: zone.range
-                - entity: zone.school
-                hours_to_show: 6
-                type: map
-              - card:
-                  columns: 3
-                  show_header_toggle: false
-                  show_name: false
-                  show_state: false
-                  type: glance
-                entities:
-                - person.brian
-                - person.eric
-                - person.heather
-                - person.lucas
-                - person.nerene
-                - person.sandy
-                state_filter:
-                - home
-                type: entity-filter
-              type: vertical-stack
-            command: popup
-            deviceID: this
-            title: People at home
+            data:
+              content:
+                cards:
+                - aspect_ratio: '16:9'
+                  entities:
+                  - entity: device_tracker.life360_brian
+                  - entity: device_tracker.life360_lucas
+                  - entity: device_tracker.life360_eric_goez
+                  - entity: device_tracker.life360_nerene
+                  - entity: zone.court
+                  - entity: zone.office
+                  - entity: zone.high_school
+                  - entity: zone.home
+                  - entity: zone.range
+                  - entity: zone.school
+                  hours_to_show: 6
+                  type: map
+                - card:
+                    columns: 3
+                    show_header_toggle: false
+                    show_name: false
+                    show_state: false
+                    type: glance
+                  entities:
+                  - person.brian
+                  - person.eric
+                  - person.heather
+                  - person.lucas
+                  - person.nerene
+                  - person.sandy
+                  state_filter:
+                  - home
+                  type: entity-filter
+                type: vertical-stack
+              title: People at home
+            service: browser_mod.popup
         type: entity
       - chip:
           entity: sensor.lights_on
@@ -247,50 +247,50 @@ decluttering_templates:
           tap_action:
             action: fire-dom-event
             browser_mod:
-              card:
-                cards:
-                - subtitle: Downstairs lights
-                  type: custom:mushroom-title-card
-                - card:
-                    columns: 3
-                    show_header_toggle: false
-                    show_name: true
-                    show_state: false
-                    type: entities
-                  filter:
-                    exclude:
-                    - state: 'off'
-                    - state: unknown
-                    - state: unavailable
-                    include:
-                    - group: group.downstairs_lights
-                  show_empty: false
-                  sort:
-                    method: name
-                  type: custom:auto-entities
-                - subtitle: Upstairs lights
-                  type: custom:mushroom-title-card
-                - card:
-                    columns: 3
-                    show_header_toggle: false
-                    show_name: true
-                    show_state: false
-                    type: entities
-                  filter:
-                    exclude:
-                    - state: 'off'
-                    - state: unknown
-                    - state: unavailable
-                    include:
-                    - group: group.upstairs_lights
-                  show_empty: false
-                  sort:
-                    method: name
-                  type: custom:auto-entities
-                type: vertical-stack
-              command: popup
-              deviceID: this
-              title: Lights on
+              data:
+                content:
+                  cards:
+                  - subtitle: Downstairs lights
+                    type: custom:mushroom-title-card
+                  - card:
+                      columns: 3
+                      show_header_toggle: false
+                      show_name: true
+                      show_state: false
+                      type: entities
+                    filter:
+                      exclude:
+                      - state: 'off'
+                      - state: unknown
+                      - state: unavailable
+                      include:
+                      - group: group.downstairs_lights
+                    show_empty: false
+                    sort:
+                      method: name
+                    type: custom:auto-entities
+                  - subtitle: Upstairs lights
+                    type: custom:mushroom-title-card
+                  - card:
+                      columns: 3
+                      show_header_toggle: false
+                      show_name: true
+                      show_state: false
+                      type: entities
+                    filter:
+                      exclude:
+                      - state: 'off'
+                      - state: unknown
+                      - state: unavailable
+                      include:
+                      - group: group.upstairs_lights
+                    show_empty: false
+                    sort:
+                      method: name
+                    type: custom:auto-entities
+                  type: vertical-stack
+                title: Lights on
+              service: browser_mod.popup
           type: entity
         conditions:
         - entity: sensor.lights_on
@@ -302,34 +302,34 @@ decluttering_templates:
           tap_action:
             action: fire-dom-event
             browser_mod:
-              card:
-                cards:
-                - subtitle: Downstairs windows
-                  type: custom:mushroom-title-card
-                - card:
-                    type: entities
-                  filter:
-                    template: '{{ state_attr("sensor.windows_open_downstairs", "open_windows")
-                      }}'
-                  show_empty: false
-                  sort:
-                    method: name
-                  type: custom:auto-entities
-                - subtitle: Upstairs windows
-                  type: custom:mushroom-title-card
-                - card:
-                    type: entities
-                  filter:
-                    template: '{{ state_attr("sensor.windows_open_upstairs", "open_windows")
-                      }}'
-                  show_empty: false
-                  sort:
-                    method: name
-                  type: custom:auto-entities
-                type: vertical-stack
-              command: popup
-              deviceID: this
-              title: Windows open
+              data:
+                content:
+                  cards:
+                  - subtitle: Downstairs windows
+                    type: custom:mushroom-title-card
+                  - card:
+                      type: entities
+                    filter:
+                      template: '{{ state_attr("sensor.windows_open_downstairs", "open_windows")
+                        }}'
+                    show_empty: false
+                    sort:
+                      method: name
+                    type: custom:auto-entities
+                  - subtitle: Upstairs windows
+                    type: custom:mushroom-title-card
+                  - card:
+                      type: entities
+                    filter:
+                      template: '{{ state_attr("sensor.windows_open_upstairs", "open_windows")
+                        }}'
+                    show_empty: false
+                    sort:
+                      method: name
+                    type: custom:auto-entities
+                  type: vertical-stack
+                title: Windows open
+              service: browser_mod.popup
           type: entity
         conditions:
         - entity: sensor.windows_open
@@ -341,29 +341,29 @@ decluttering_templates:
           tap_action:
             action: fire-dom-event
             browser_mod:
-              card:
-                card:
-                  columns: 3
-                  show_header_toggle: false
-                  show_name: true
-                  show_state: false
-                  type: entities
-                filter:
-                  exclude:
-                  - state: closed
-                  - state: locked
-                  - state: 'off'
-                  - state: unknown
-                  - state: unavailable
-                  include:
-                  - group: group.entry_doors
-                show_empty: false
-                sort:
-                  method: name
-                type: custom:auto-entities
-              command: popup
-              deviceID: this
-              title: Doors open or unlocked
+              data:
+                content:
+                  card:
+                    columns: 3
+                    show_header_toggle: false
+                    show_name: true
+                    show_state: false
+                    type: entities
+                  filter:
+                    exclude:
+                    - state: closed
+                    - state: locked
+                    - state: 'off'
+                    - state: unknown
+                    - state: unavailable
+                    include:
+                    - group: group.entry_doors
+                  show_empty: false
+                  sort:
+                    method: name
+                  type: custom:auto-entities
+                title: Doors open or unlocked
+              service: browser_mod.popup
           type: entity
         conditions:
         - entity: sensor.doors_open
@@ -686,75 +686,75 @@ views:
         tap_action:
           action: fire-dom-event
           browser_mod:
-            card:
-              cards:
-              - entity: climate.home_thermostat
-                fallback: 'OFF'
-                header: false
-                layout:
-                  mode:
-                    headings: false
-                    names: false
-                step_size: 1
-                type: custom:simple-thermostat
-                unit: °
-              - entities:
+            data:
+              content:
+                cards:
+                - entity: climate.home_thermostat
+                  fallback: 'OFF'
+                  header: false
+                  layout:
+                    mode:
+                      headings: false
+                      names: false
+                  step_size: 1
+                  type: custom:simple-thermostat
+                  unit: °
                 - entities:
-                  - entity: sensor.outdoor_temperature
-                    format: precision0
-                    name: Outdoor
-                    unit: °
-                  - entity: sensor.outdoor_humidity
-                    format: precision0
-                    name: Outdoor
-                  - entity: sensor.home_thermostat_temperature
-                    format: precision0
-                    name: Thermostat
-                    unit: °
-                  - entity: sensor.home_thermostat_humidity
-                    format: precision0
-                    name: Thermostat
-                  entity: sensor.home_thermostat_temperature
-                  icon: mdi:thermometer
-                  name: Temperature
-                  secondary_info: last-changed
-                  show_state: false
-                  type: custom:multiple-entity-row
-                footer:
-                  animate: true
-                  entities:
-                  - entity: sensor.outdoor_temperature
-                    name: Outdoor °
-                    show_fill: false
-                  - entity: sensor.outdoor_humidity
-                    name: Outdoor %
-                    show_line: false
-                    show_points: false
-                    y_axis: secondary
-                  - entity: sensor.home_thermostat_temperature
-                    name: Thermostat °
-                    show_fill: false
-                  - entity: sensor.home_thermostat_humidity
-                    name: Thermostat %
-                    show_line: false
-                    show_points: false
-                    y_axis: secondary
-                  height: 75
-                  hours_to_show: 24
-                  line_width: 2
-                  show:
-                    icon: false
-                    labels: true
-                    labels_secondary: true
-                    name: false
-                    state: false
-                  type: custom:mini-graph-card
-                state_color: true
-                type: entities
-              type: vertical-stack
-            command: popup
-            deviceID: this
-            title: House thermostat
+                  - entities:
+                    - entity: sensor.outdoor_temperature
+                      format: precision0
+                      name: Outdoor
+                      unit: °
+                    - entity: sensor.outdoor_humidity
+                      format: precision0
+                      name: Outdoor
+                    - entity: sensor.home_thermostat_temperature
+                      format: precision0
+                      name: Thermostat
+                      unit: °
+                    - entity: sensor.home_thermostat_humidity
+                      format: precision0
+                      name: Thermostat
+                    entity: sensor.home_thermostat_temperature
+                    icon: mdi:thermometer
+                    name: Temperature
+                    secondary_info: last-changed
+                    show_state: false
+                    type: custom:multiple-entity-row
+                  footer:
+                    animate: true
+                    entities:
+                    - entity: sensor.outdoor_temperature
+                      name: Outdoor °
+                      show_fill: false
+                    - entity: sensor.outdoor_humidity
+                      name: Outdoor %
+                      show_line: false
+                      show_points: false
+                      y_axis: secondary
+                    - entity: sensor.home_thermostat_temperature
+                      name: Thermostat °
+                      show_fill: false
+                    - entity: sensor.home_thermostat_humidity
+                      name: Thermostat %
+                      show_line: false
+                      show_points: false
+                      y_axis: secondary
+                    height: 75
+                    hours_to_show: 24
+                    line_width: 2
+                    show:
+                      icon: false
+                      labels: true
+                      labels_secondary: true
+                      name: false
+                      state: false
+                    type: custom:mini-graph-card
+                  state_color: true
+                  type: entities
+                type: vertical-stack
+              title: House thermostat
+            service: browser_mod.popup
         type: custom:mushroom-template-card
       - entity: climate.bedroom
         icon: mdi:thermostat
@@ -772,113 +772,113 @@ views:
         tap_action:
           action: fire-dom-event
           browser_mod:
-            card:
-              cards:
-              - control:
-                  hvac:
-                    heat: false
-                    heat_cool: false
-                entity: climate.bedroom
-                fallback: 'OFF'
-                header: false
-                layout:
-                  mode:
-                    headings: false
-                    names: false
-                step_size: 1
-                type: custom:simple-thermostat
-                unit: °
-              - entities:
-                - entities:
-                  - entity: sensor.bedroom_display_temperature
-                    format: precision0
-                    name: Display
-                    unit: °
-                  - entity: sensor.bedroom_temperature
-                    format: precision0
-                    name: Thermostat
-                    unit: °
-                  - entity: sensor.bedroom_humidity
-                    format: precision0
-                    name: Humidity
-                  entity: sensor.bedroom_temperature
-                  icon: mdi:thermometer
-                  name: Temperature
-                  secondary_info: last-changed
-                  show_state: false
-                  type: custom:multiple-entity-row
-                footer:
-                  animate: true
-                  entities:
-                  - entity: sensor.bedroom_display_temperature
-                    name: Display °
-                    show_fill: false
-                  - entity: sensor.bedroom_temperature
-                    name: Thermostat °
-                    show_fill: false
-                  - entity: sensor.bedroom_humidity
-                    name: Humidity %
-                    show_line: false
-                    show_points: false
-                    y_axis: secondary
-                  height: 75
-                  hours_to_show: 24
-                  line_width: 2
-                  show:
-                    icon: false
-                    labels: true
-                    labels_secondary: true
-                    name: false
-                    state: false
-                  style: "ha-card {\n  background: none;\n}\n"
-                  type: custom:mini-graph-card
-                state_color: true
-                type: entities
-              - entities:
-                - entities:
-                  - entity: sensor.bedroom_recommended_climate_mode
-                    name: Recommended
-                  - entity: sensor.bedroom_ac_power
-                    name: Power
-                  - entity: climate.bedroom
-                    name: Status
+            data:
+              content:
+                cards:
+                - control:
+                    hvac:
+                      heat: false
+                      heat_cool: false
                   entity: climate.bedroom
-                  name: Air Conditioner
-                  secondary_info: last-changed
-                  show_state: false
-                  type: custom:multiple-entity-row
-                show_header_toggle: false
-                state_color: false
-                type: entities
-              - alignment: center
-                chips:
-                - content: 'Force state: ON'
-                  icon: mdi:power
-                  icon_color: green
-                  tap_action:
-                    action: call-service
-                    service: sensibo.assume_state
-                    service_data:
-                      state: 'on'
-                    target:
-                      device_id: 90294c771af3341b24b8836b59e002ad
-                  type: template
-                - content: 'Force state: OFF'
-                  icon: mdi:power-off
-                  icon_color: red
-                  tap_action:
-                    action: call-service
-                    service: sensibo.assume_state
-                    service_data:
-                      state: 'off'
-                    target:
-                      device_id: 90294c771af3341b24b8836b59e002ad
-                  type: template
-                type: custom:mushroom-chips-card
-              type: vertical-stack
-            command: popup
-            deviceID: this
-            title: Bedroom thermostat
+                  fallback: 'OFF'
+                  header: false
+                  layout:
+                    mode:
+                      headings: false
+                      names: false
+                  step_size: 1
+                  type: custom:simple-thermostat
+                  unit: °
+                - entities:
+                  - entities:
+                    - entity: sensor.bedroom_display_temperature
+                      format: precision0
+                      name: Display
+                      unit: °
+                    - entity: sensor.bedroom_temperature
+                      format: precision0
+                      name: Thermostat
+                      unit: °
+                    - entity: sensor.bedroom_humidity
+                      format: precision0
+                      name: Humidity
+                    entity: sensor.bedroom_temperature
+                    icon: mdi:thermometer
+                    name: Temperature
+                    secondary_info: last-changed
+                    show_state: false
+                    type: custom:multiple-entity-row
+                  footer:
+                    animate: true
+                    entities:
+                    - entity: sensor.bedroom_display_temperature
+                      name: Display °
+                      show_fill: false
+                    - entity: sensor.bedroom_temperature
+                      name: Thermostat °
+                      show_fill: false
+                    - entity: sensor.bedroom_humidity
+                      name: Humidity %
+                      show_line: false
+                      show_points: false
+                      y_axis: secondary
+                    height: 75
+                    hours_to_show: 24
+                    line_width: 2
+                    show:
+                      icon: false
+                      labels: true
+                      labels_secondary: true
+                      name: false
+                      state: false
+                    style: "ha-card {\n  background: none;\n}\n"
+                    type: custom:mini-graph-card
+                  state_color: true
+                  type: entities
+                - entities:
+                  - entities:
+                    - entity: sensor.bedroom_recommended_climate_mode
+                      name: Recommended
+                    - entity: sensor.bedroom_ac_power
+                      name: Power
+                    - entity: climate.bedroom
+                      name: Status
+                    entity: climate.bedroom
+                    name: Air Conditioner
+                    secondary_info: last-changed
+                    show_state: false
+                    type: custom:multiple-entity-row
+                  show_header_toggle: false
+                  state_color: false
+                  type: entities
+                - alignment: center
+                  chips:
+                  - content: 'Force state: ON'
+                    icon: mdi:power
+                    icon_color: green
+                    tap_action:
+                      action: call-service
+                      service: sensibo.assume_state
+                      service_data:
+                        state: 'on'
+                      target:
+                        device_id: 90294c771af3341b24b8836b59e002ad
+                    type: template
+                  - content: 'Force state: OFF'
+                    icon: mdi:power-off
+                    icon_color: red
+                    tap_action:
+                      action: call-service
+                      service: sensibo.assume_state
+                      service_data:
+                        state: 'off'
+                      target:
+                        device_id: 90294c771af3341b24b8836b59e002ad
+                    type: template
+                  type: custom:mushroom-chips-card
+                type: vertical-stack
+              title: Bedroom thermostat
+            service: browser_mod.popup
         type: custom:mushroom-template-card
       - entity: climate.lucas_room
         icon: mdi:thermostat
@@ -896,129 +896,129 @@ views:
         tap_action:
           action: fire-dom-event
           browser_mod:
-            card:
-              cards:
-              - control:
-                  hvac:
-                    heat: false
-                    heat_cool: false
-                entity: climate.lucas_room
-                fallback: 'OFF'
-                header: false
-                layout:
-                  mode:
-                    headings: false
-                    names: false
-                step_size: 1
-                type: custom:simple-thermostat
-                unit: °
-              - entities:
-                - entities:
-                  - entity: sensor.lucas_room_display_temperature
-                    format: precision0
-                    name: Display
-                    unit: °
-                  - entity: sensor.lucas_room_temperature
-                    format: precision0
-                    name: Thermostat
-                    unit: °
-                  - entity: sensor.lucas_room_humidity
-                    format: precision0
-                    name: Humidity
-                  entity: sensor.lucas_room_temperature
-                  icon: mdi:thermometer
-                  name: Temperature
-                  secondary_info: last-changed
-                  show_state: false
-                  type: custom:multiple-entity-row
-                footer:
-                  animate: true
-                  entities:
-                  - entity: sensor.lucas_room_display_temperature
-                    name: Display °
-                    show_fill: false
-                  - entity: sensor.lucas_room_temperature
-                    name: Thermostat °
-                    show_fill: false
-                  - entity: sensor.lucas_room_humidity
-                    name: Humidity %
-                    show_line: false
-                    show_points: false
-                    y_axis: secondary
-                  height: 75
-                  hours_to_show: 24
-                  line_width: 2
-                  show:
-                    icon: false
-                    labels: true
-                    labels_secondary: true
-                    name: false
-                    state: false
-                  type: custom:mini-graph-card
-                state_color: true
-                type: entities
-              - entities:
-                - entities:
-                  - entity: switch.schedule_lucas_climate_school_nights
-                    name: School
-                    toggle: true
-                  - entity: switch.schedule_lucas_climate_weekend_nights
-                    name: Weekend
-                    toggle: true
-                  - entity: switch.schedule_lucas_climate_break_schedule
-                    name: Break
-                    toggle: true
-                  entity: switch.schedule_lucas_climate_school_nights
-                  name: Schedule
-                  secondary_info: last-changed
-                  show_state: false
-                  state_color: true
-                  type: custom:multiple-entity-row
-                - type: divider
-                - entities:
-                  - entity: sensor.lucas_recommended_climate_mode
-                    name: Recommended
-                  - entity: sensor.lucas_ac_power
-                    name: Power
-                  - entity: climate.lucas_room
-                    name: Status
+            data:
+              content:
+                cards:
+                - control:
+                    hvac:
+                      heat: false
+                      heat_cool: false
                   entity: climate.lucas_room
-                  name: Air Conditioner
-                  secondary_info: last-changed
-                  show_state: false
-                  type: custom:multiple-entity-row
-                show_header_toggle: false
-                state_color: false
-                type: entities
-              - alignment: center
-                chips:
-                - content: 'Force state: ON'
-                  icon: mdi:power
-                  icon_color: green
-                  tap_action:
-                    action: call-service
-                    service: sensibo.assume_state
-                    service_data:
-                      state: 'on'
-                    target:
-                      device_id: 877557b634269a08b5bf0439f9a314b5
-                  type: template
-                - content: 'Force state: OFF'
-                  icon: mdi:power-off
-                  icon_color: red
-                  tap_action:
-                    action: call-service
-                    service: sensibo.assume_state
-                    service_data:
-                      state: 'off'
-                    target:
-                      device_id: 877557b634269a08b5bf0439f9a314b5
-                  type: template
-                type: custom:mushroom-chips-card
-              type: vertical-stack
-            command: popup
-            deviceID: this
-            title: Lucas' thermostat
+                  fallback: 'OFF'
+                  header: false
+                  layout:
+                    mode:
+                      headings: false
+                      names: false
+                  step_size: 1
+                  type: custom:simple-thermostat
+                  unit: °
+                - entities:
+                  - entities:
+                    - entity: sensor.lucas_room_display_temperature
+                      format: precision0
+                      name: Display
+                      unit: °
+                    - entity: sensor.lucas_room_temperature
+                      format: precision0
+                      name: Thermostat
+                      unit: °
+                    - entity: sensor.lucas_room_humidity
+                      format: precision0
+                      name: Humidity
+                    entity: sensor.lucas_room_temperature
+                    icon: mdi:thermometer
+                    name: Temperature
+                    secondary_info: last-changed
+                    show_state: false
+                    type: custom:multiple-entity-row
+                  footer:
+                    animate: true
+                    entities:
+                    - entity: sensor.lucas_room_display_temperature
+                      name: Display °
+                      show_fill: false
+                    - entity: sensor.lucas_room_temperature
+                      name: Thermostat °
+                      show_fill: false
+                    - entity: sensor.lucas_room_humidity
+                      name: Humidity %
+                      show_line: false
+                      show_points: false
+                      y_axis: secondary
+                    height: 75
+                    hours_to_show: 24
+                    line_width: 2
+                    show:
+                      icon: false
+                      labels: true
+                      labels_secondary: true
+                      name: false
+                      state: false
+                    type: custom:mini-graph-card
+                  state_color: true
+                  type: entities
+                - entities:
+                  - entities:
+                    - entity: switch.schedule_lucas_climate_school_nights
+                      name: School
+                      toggle: true
+                    - entity: switch.schedule_lucas_climate_weekend_nights
+                      name: Weekend
+                      toggle: true
+                    - entity: switch.schedule_lucas_climate_break_schedule
+                      name: Break
+                      toggle: true
+                    entity: switch.schedule_lucas_climate_school_nights
+                    name: Schedule
+                    secondary_info: last-changed
+                    show_state: false
+                    state_color: true
+                    type: custom:multiple-entity-row
+                  - type: divider
+                  - entities:
+                    - entity: sensor.lucas_recommended_climate_mode
+                      name: Recommended
+                    - entity: sensor.lucas_ac_power
+                      name: Power
+                    - entity: climate.lucas_room
+                      name: Status
+                    entity: climate.lucas_room
+                    name: Air Conditioner
+                    secondary_info: last-changed
+                    show_state: false
+                    type: custom:multiple-entity-row
+                  show_header_toggle: false
+                  state_color: false
+                  type: entities
+                - alignment: center
+                  chips:
+                  - content: 'Force state: ON'
+                    icon: mdi:power
+                    icon_color: green
+                    tap_action:
+                      action: call-service
+                      service: sensibo.assume_state
+                      service_data:
+                        state: 'on'
+                      target:
+                        device_id: 877557b634269a08b5bf0439f9a314b5
+                    type: template
+                  - content: 'Force state: OFF'
+                    icon: mdi:power-off
+                    icon_color: red
+                    tap_action:
+                      action: call-service
+                      service: sensibo.assume_state
+                      service_data:
+                        state: 'off'
+                      target:
+                        device_id: 877557b634269a08b5bf0439f9a314b5
+                    type: template
+                  type: custom:mushroom-chips-card
+                type: vertical-stack
+              title: Lucas thermostat
+            service: browser_mod.popup
         type: custom:mushroom-template-card
       columns: 3
       square: false
@@ -1554,23 +1554,23 @@ views:
         hold_action:
           action: fire-dom-event
           browser_mod:
-            card:
-              entities:
-              - entity: fan.bedroom
-              - entity: fan.bedroom
-                grow: true
-                hide_state: true
-                name: Speed
-                type: custom:slider-entity-row
-              - entity: sensor.bedroom_fan_power
-              - entity: input_button.bedroom_fan_oscillation
-                name: Oscillation toggle
-              - entity: input_button.bedroom_fan_led_toggle
-                name: LED toggle
-              type: entities
-            command: popup
-            deviceID: this
-            title: Bedroom fan
+            data:
+              content:
+                entities:
+                - entity: fan.bedroom
+                - entity: fan.bedroom
+                  grow: true
+                  hide_state: true
+                  name: Speed
+                  type: custom:slider-entity-row
+                - entity: sensor.bedroom_fan_power
+                - entity: input_button.bedroom_fan_oscillation
+                  name: Oscillation toggle
+                - entity: input_button.bedroom_fan_led_toggle
+                  name: LED toggle
+                type: entities
+              title: Bedroom fan
+            service: browser_mod.popup
         icon_animation: true
         name: Fan
         show_oscillate_control: false
