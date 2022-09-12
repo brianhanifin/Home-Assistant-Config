@@ -384,7 +384,12 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - entity: sensor.downstairs_temperature_average
+    - badge_color: var(--rgb-state-light)
+      badge_icon: '{%- set lights_on = states("sensor.lights_on_downstairs")|int|default(0)
+        %}
+
+        {{- iif(lights_on>0, "mdi:numeric-"~lights_on, "") }}'
+      entity: sensor.downstairs_temperature_average
       icon: mdi:home-floor-1
       icon_color: teal
       layout: vertical
@@ -398,7 +403,12 @@ views:
         action: navigate
         navigation_path: ./downstairs
       type: custom:mushroom-template-card
-    - entity: sensor.upstairs_temperature_average
+    - badge_color: var(--rgb-state-light)
+      badge_icon: '{%- set lights_on = states("sensor.lights_on_upstairs")|int|default(0)
+        %}
+
+        {{- iif(lights_on>0, "mdi:numeric-"~lights_on, "") }}'
+      entity: sensor.upstairs_temperature_average
       icon: mdi:home-floor-2
       icon_color: purple
       layout: vertical
@@ -411,9 +421,11 @@ views:
         action: navigate
         navigation_path: ./upstairs
       type: custom:mushroom-template-card
-    - entity: sensor.backyard_temperature
+    - badge_color: ''
+      badge_icon: ''
+      entity: sensor.backyard_temperature
       icon: mdi:flower
-      icon_color: orange
+      icon_color: blue
       layout: vertical
       primary: Outside
       secondary: '{{ states("weather.home") }} ‧
@@ -667,7 +679,9 @@ views:
     - cards:
       - entity: climate.home_thermostat
         icon: mdi:thermostat
-        icon_color: red
+        icon_color: '{%- set thermostat_on = states("climate.home") != "off" %}
+
+          {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
         layout: vertical
         multiline_secondary: true
         primary: House
@@ -758,7 +772,9 @@ views:
         type: custom:mushroom-template-card
       - entity: climate.bedroom
         icon: mdi:thermostat
-        icon_color: green
+        icon_color: '{%- set thermostat_on = states("climate.bedroom") != "off" %}
+
+          {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
         layout: vertical
         multiline_secondary: true
         primary: Bedroom
@@ -877,12 +893,15 @@ views:
                     type: template
                   type: custom:mushroom-chips-card
                 type: vertical-stack
-              title: Bedroom thermostat
+              title: Bedroom A/C
             service: browser_mod.popup
         type: custom:mushroom-template-card
       - entity: climate.lucas_room
         icon: mdi:thermostat
-        icon_color: blue
+        icon_color: '{%- set thermostat_on = states("climate.lucas_room") != "off"
+          %}
+
+          {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
         layout: vertical
         multiline_secondary: true
         primary: Lucas
@@ -1017,7 +1036,7 @@ views:
                     type: template
                   type: custom:mushroom-chips-card
                 type: vertical-stack
-              title: Lucas thermostat
+              title: Lucas A/C
             service: browser_mod.popup
         type: custom:mushroom-template-card
       columns: 3
@@ -1033,7 +1052,7 @@ views:
         hold_action:
           action: none
         icon: mdi:speedometer-slow
-        icon_color: deep-purple
+        icon_color: red
         layout: vertical
         primary: Monitor
         tap_action:
@@ -1045,7 +1064,7 @@ views:
         hold_action:
           action: none
         icon: mdi:calendar-clock
-        icon_color: indigo
+        icon_color: green
         layout: vertical
         primary: Events
         tap_action:
@@ -1115,13 +1134,13 @@ views:
   - cards:
     - subtitle: "{{- states(\"sensor.family_room_temperature\")|round(default=0) }}°\n\
         {{- \" ‧ \" ~ states(\"sensor.family_room_humidity\")|round(default=0) }}%\n\
-        {%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.family_room\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-        light.table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
-        \ = iif(is_state(\"light.family_room_floor_lamp\",\"on\"), lights_on + 1,\
-        \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on ==\
-        \ 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- set\
-        \ open_count = 0 %}\n{%- if is_state(\"binary_sensor.family_room_south_window\"\
+        {%-\n  set lights_on = expand(area_entities(\"family room\")) \n    | selectattr(\"\
+        domain\",\"eq\",\"light\") \n    | selectattr(\"state\",\"eq\",\"on\")\n \
+        \   | map(attribute=\"entity_id\")\n    | list\n    | count\n    | default(0)\n\
+        %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light\
+        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- if lights_on > 0\
+        \ %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights\
+        \ on\") }}\n{%- endif %}\n{%- set open_count = 0 %}\n{%- if is_state(\"binary_sensor.family_room_south_window\"\
         , \"on\") %}\n  {%- set open_count = open_count + 1  %}\n{%- endif %}\n{%-\
         \ if is_state(\"binary_sensor.family_room_north_window\", \"on\") %}\n  {%-\
         \ set open_count = open_count + 1  %}\n{%- endif %}\n{{- iif(open_count==1,\
@@ -1199,6 +1218,17 @@ views:
       columns: 3
       square: false
       type: grid
+    - collapsible_controls: false
+      entity: climate.home_thermostat
+      fill_container: true
+      hvac_modes:
+      - cool
+      - heat_cool
+      - fan_only
+      - 'off'
+      layout: horizontal
+      show_temperature_control: true
+      type: custom:mushroom-climate-card
     type: vertical-stack
   - cards:
     - subtitle: "{{- states(\"sensor.kitchen_temperature\")|round(default=0) }}°\n\
@@ -1578,12 +1608,6 @@ views:
         tap_action:
           action: toggle
         type: custom:mushroom-fan-card
-      - entity: climate.bedroom
-        name: A/C
-        secondary_info: none
-        tap_action:
-          action: more-info
-        type: custom:mushroom-entity-card
       - entity: switch.google_bedroom_do_not_disturb
         name: DND
         tap_action:
@@ -1592,6 +1616,16 @@ views:
       columns: 3
       square: false
       type: grid
+    - collapsible_controls: false
+      entity: climate.bedroom
+      fill_container: true
+      hvac_modes:
+      - cool
+      - fan_only
+      - 'off'
+      layout: horizontal
+      show_temperature_control: true
+      type: custom:mushroom-climate-card
     type: vertical-stack
   - cards:
     - subtitle: '{{- states("sensor.upstairs_bathroom_temperature")|round(default=0)
@@ -1650,12 +1684,22 @@ views:
       columns: 2
       square: false
       type: grid
+    - collapsible_controls: false
+      entity: climate.lucas_room
+      fill_container: true
+      hvac_modes:
+      - cool
+      - fan_only
+      - 'off'
+      layout: horizontal
+      show_temperature_control: true
+      type: custom:mushroom-climate-card
     type: vertical-stack
     view_layout:
       position: main
   - cards:
     - subtitle: "{{- states(\"sensor.kyles_bedroom_temperature\")|round(default=0)\
-        \ }}° \n{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.lucas_room\"\
+        \ }}° \n{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.kyle_bedside\"\
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
         {%- endif %}\n{{- iif(is_state(\"binary_sensor.kyles_room_motion\",\"on\"\
@@ -2236,26 +2280,12 @@ views:
     view_layout:
       position: sidebar
   - subtitle: ''
-    title: Events
+    title: Wakeup events
     type: custom:mushroom-title-card
   - template: event
     type: custom:decluttering-card
     variables:
-    - label: 'Wakeup: Nerene work day'
-    - id: wakeup_nerene
-    - sensors:
-      - binary_sensor.work_day
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Wakeup: Nerene work day modified'
-    - id: wakeup_nerene_modified
-    - sensors:
-      - binary_sensor.work_day_modified
-  - template: event
-    type: custom:decluttering-card
-    variables:
-    - label: 'Wakeup: Brian school day'
+    - label: Brian
     - id: wakeup_brian
     - sensors:
       - binary_sensor.middle_school_day
@@ -2277,21 +2307,38 @@ views:
   - template: event
     type: custom:decluttering-card
     variables:
-    - label: 'Wakeup: Kyle school day'
+    - label: Nerene (work day)
+    - id: wakeup_nerene
+    - sensors:
+      - binary_sensor.work_day
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Nerene (work day modified)
+    - id: wakeup_nerene_modified
+    - sensors:
+      - binary_sensor.work_day_modified
+  - template: event
+    type: custom:decluttering-card
+    variables:
+    - label: Kyle
     - id: wakeup_kyle
     - sensors:
       - binary_sensor.middle_school_day
   - template: event
     type: custom:decluttering-card
     variables:
-    - label: 'Wakeup: Lucas school day'
+    - label: Lucas
     - id: wakeup_lucas
     - sensors:
       - binary_sensor.high_school_day
+  - subtitle: ''
+    title: Bed time events
+    type: custom:mushroom-title-card
   - template: event
     type: custom:decluttering-card
     variables:
-    - label: 'Bed time: school day'
+    - label: School day tomorrow
     - id: bedtime_boys_schoolday
     - sensors:
       - binary_sensor.middle_school_day_tomorrow
@@ -2299,14 +2346,14 @@ views:
   - template: event
     type: custom:decluttering-card
     variables:
-    - label: 'Bed time: Day off'
+    - label: Day off tomorrow
     - id: bedtime_boys_dayoff
     - sensors:
       - binary_sensor.middle_school_day
       - binary_sensor.high_school_day
   - cards:
     - subtitle: Front yard drip system
-      title: Irrigation control
+      title: Irrigation controller
       type: custom:mushroom-title-card
     - entity: switch.front_yard_drip
       icon: mdi:sprinkler-variant
@@ -2715,6 +2762,49 @@ views:
     view_layout:
       position: sidebar
   - cards:
+    - subtitle: Manual control
+      title: Network Access Control
+      type: custom:mushroom-title-card
+    - entities:
+      - entity: switch.network_blackpc
+        name: Black PC
+      - entity: switch.network_bluepc
+        name: Blue PC
+      - entity: switch.network_redpc
+        name: Red PC
+      - entity: switch.network_greenpc
+        name: Green PC
+      footer:
+        entities:
+        - entity: switch.docker_unifi
+          name: UniFi Controller
+        type: buttons
+      show_header_toggle: false
+      state_color: true
+      title: ''
+      type: entities
+    - subtitle: Scheduler
+      type: custom:mushroom-title-card
+    - entities:
+      - entity: schedule.computer_school
+      - entity: schedule.computer_vacation
+      show_header_toggle: false
+      state_color: true
+      type: entities
+    - am_pm: true
+      discover_existing: false
+      include:
+      - switch.network_blackpc
+      - switch.network_bluepc
+      - switch.network_greenpc
+      - switch.network_nintendo_switch
+      - switch.network_redpc
+      title: false
+      type: custom:scheduler-card
+    type: vertical-stack
+    view_layout:
+      position: sidebar
+  - cards:
     - subtitle: '{{ states("sensor.unknown_count")|default(0) }} unknown entit{{ iif(is_state("sensor.unknown_count","1"),
         "y", "ies") }}'
       title: Problem reports
@@ -2758,43 +2848,6 @@ views:
     type: vertical-stack
     view_layout:
       position: main
-  - cards:
-    - subtitle: Manual control
-      title: Network Access Control
-      type: custom:mushroom-title-card
-    - entities:
-      - entity: switch.network_blackpc
-        name: Black PC
-      - entity: switch.network_bluepc
-        name: Blue PC
-      - entity: switch.network_redpc
-        name: Red PC
-      - entity: switch.network_greenpc
-        name: Green PC
-      footer:
-        entities:
-        - entity: switch.docker_unifi
-          name: UniFi Controller
-        type: buttons
-      show_header_toggle: false
-      state_color: true
-      title: ''
-      type: entities
-    - subtitle: Scheduler
-      type: custom:mushroom-title-card
-    - am_pm: true
-      discover_existing: false
-      include:
-      - switch.network_blackpc
-      - switch.network_bluepc
-      - switch.network_greenpc
-      - switch.network_nintendo_switch
-      - switch.network_redpc
-      title: false
-      type: custom:scheduler-card
-    type: vertical-stack
-    view_layout:
-      position: sidebar
   - cards:
     - subtitle: Entity counts
       title: ''
