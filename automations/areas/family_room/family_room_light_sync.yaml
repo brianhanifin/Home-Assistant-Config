@@ -11,7 +11,7 @@ variables:
   brightness: '{{ trigger.to_state.attributes.brightness }}'
 action:
   - choose:
-      - conditions: '{{ state == "on" }}'
+      - conditions: '{{ state == "on" and brightness > 0 }}'
         sequence:
           - service: light.turn_on
             target:
