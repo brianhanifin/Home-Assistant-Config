@@ -30,7 +30,7 @@ input_text:
 automation:
   # Warn me if the system ever goes offline for more than two hours!
   - alias: Irrigation system offline
-    id: irrigation_system_offline    
+    id: irrigation_system_offline
     trigger:
       - platform: state
         entity_id: binary_sensor.irrigation_controller_status
@@ -43,7 +43,7 @@ automation:
           message: "The Irrigation System has been offline for 2 hours!"
           notification_id: "offline"
 
-      - service: notify.mobile_app_iphone_brian
+      - service: notify.brian
         data:
           title: "Irrigation system offline"
           message: "The Irrigation System has been offline for 2 hours"
