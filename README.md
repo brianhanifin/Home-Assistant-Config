@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **49,381** | 1,355 | 37 | 94 | 63 |
+| **49,806** | 1,348 | 37 | 97 | 63 |
 
 # Index
 
@@ -209,11 +209,11 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1355 total entities**,
-including **698 sensors**. My YAML
-files contain 49,381 lines of code.
+Our Home Assistant install has approximately **1348 total entities**,
+including **692 sensors**. My YAML
+files contain 49,806 lines of code.
 
-<details><summary>24 Custom integrations</summary>
+<details><summary>23 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.1.0](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra).
@@ -233,7 +233,7 @@ Run the CLI config_check from a service call.Authors:[@ludeeus](https://github.c
 ## [Fontawesome icons v2.1.5](https://github.com/thomasloven/hass-fontawesome)
 
 
-## [Frigate v3.0.0-rc.4](https://github.com/blakeblackshear/frigate)
+## [Frigate v3.0.0](https://github.com/blakeblackshear/frigate)
 Frigate integration for Home AssistantAuthors:[@blakeblackshear](https://github.com/blakeblackshear).
 
 ## [Generate readme v0.5.0](https://github.com/custom-components/readme)
@@ -254,16 +254,13 @@ Authors:[@LAB02-Admin](https://github.com/LAB02-Admin).
 ## [Lovelace Notify v1.0.0]()
 Lovelace notification / alert component for Home AssistantAuthors:[@rr326](https://github.com/rr326).
 
-## [Music Assistant v2022.8.4](https://github.com/music-assistant/hass-music-assistant)
-Turn your Home Assistant instance into a jukebox, hassle free streaming of your favorite media to Home Assistant media players.Authors:[@marcelveldt](https://github.com/marcelveldt).
-
 ## [NWS Alerts v2.5](https://github.com/finity69x2/nws_alerts/)
 Authors:[@finity69x2](https://github.com/finity69x2).
 
 ## [Rainforest EMU-2 v1.2.0](https://github.com/ryanwinter/hass-rainforest-emu-2)
 Authors:[@ryanwinter](https://github.com/ryanwinter).
 
-## [SamsungTV Smart v0.7.6](https://github.com/ollo69/ha-samsungtv-smart)
+## [SamsungTV Smart v0.7.7](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
 ## [Scheduler integration v0.0.0](https://github.com/nielsfaber/scheduler-component)
@@ -340,7 +337,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 ## [Restriction Card v1.2.7](https://github.com/iantrich/restriction-card)
 🔒 Apply restrictions to Lovelace cards
 
-## [Scheduler Card v2.3.6](https://github.com/nielsfaber/scheduler-card)
+## [Scheduler Card v2.3.7](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 ## [Simple Thermostat v2.5.0](https://github.com/nervetattoo/simple-thermostat)
@@ -373,7 +370,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>9 addons</summary>
 
-## ESPHome v2022.8.3
+## ESPHome v2022.9.1
 
 
 ## File editor v5.4.1
@@ -388,13 +385,13 @@ Weather Card with animated icons for Home Assistant Lovelace
 ## Portainer v2.0.0
 
 
-## RTSPtoWeb - WebRTC v1.2.2
+## RTSPtoWeb - WebRTC v1.3.0
 
 
 ## Samba share v10.0.0
 
 
-## SDR to Home Assistant v0.1.14b
+## SDR to Home Assistant v0.1.15b
 
 
 ## Shortumation vv0.7.6
@@ -436,7 +433,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.9.4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.9.7-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -446,7 +443,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,381-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,806-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

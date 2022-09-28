@@ -1755,7 +1755,7 @@ views:
           name: Bedroom
         - entity: sensor.guest_room_temperature
           name: Guest
-        - entity: sensor.lucas_room_temperature
+        - entity: sensor.lucas_room_display_temperature
           name: Lucas
         show_icon: false
         type: glance
@@ -1768,7 +1768,7 @@ views:
           name: Bedroom
         - entity: sensor.guest_room_temperature
           name: Guest
-        - entity: sensor.lucas_room_temperature
+        - entity: sensor.lucas_room_display_temperature
           name: Lucas
         height: 75
         hours_to_show: 24
@@ -1791,7 +1791,7 @@ views:
           name: Bedroom
         - entity: sensor.guest_room_humidity
           name: Guest
-        - entity: sensor.lucas_room_humidity
+        - entity: sensor.lucas_room_display_humidity
           name: Lucas
         show_icon: false
         type: glance
@@ -1804,7 +1804,7 @@ views:
           name: Bedroom
         - entity: sensor.guest_room_humidity
           name: Guest
-        - entity: sensor.lucas_room_humidity
+        - entity: sensor.lucas_room_display_humidity
           name: Lucas
         height: 75
         hours_to_show: 12
@@ -2291,19 +2291,14 @@ views:
       - binary_sensor.middle_school_day
       - binary_sensor.high_school_day
   - cards:
-    - fill_container: false
-      icon: mdi:clock
-      multiline_secondary: true
-      primary: '{{ states("sensor.time") }} '
-      secondary: ''
-      type: custom:mushroom-template-card
-    - collapsible_controls: true
-      entity: light.table_lamp
-      show_brightness_control: true
-      type: custom:mushroom-light-card
-    columns: 2
-    square: false
-    type: grid
+    - subtitle: Nerene (manual)
+      title: ''
+      type: custom:mushroom-title-card
+    - entities:
+      - entity: timer.nerene_wakeup_light
+        type: custom:timer-bar-card
+      type: entities
+    type: vertical-stack
   - template: event
     type: custom:decluttering-card
     variables:
