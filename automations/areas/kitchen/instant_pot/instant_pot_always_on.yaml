@@ -1,0 +1,12 @@
+---
+alias: Instant pot always on
+id: instant_pot_always_on
+description: "This plug is for power monitoring only! It should not ever be turned off."
+trigger:
+  - platform: state
+    entity_id: switch.instant_pot_power_monitor
+    to: 'off'
+action:
+  - service: switch.turn_on
+    data:
+      entity_id: switch.instant_pot_power_monitor
