@@ -1097,3 +1097,67 @@
         data: {}
         target:
           entity_id: input_boolean.guest_mode
+- id: '1664133526340'
+  alias: '[Bedroom] Z2M - Nerene wakeup button'
+  description: Sets wakeup light to turn on in 8 hours. Each subsequent push adds
+    one hour to the timer.
+  use_blueprint:
+    path: freakshock/zigbee2mqtt-xiaomi-mijia-round-wireless-remote-switch-wxkg01lm-actions.yaml
+    input:
+      button_sensor: sensor.remote_nerene_wakeup_action
+      remote_button_single_press:
+      - if:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: timer.nerene_wakeup_light
+            state: active
+          alias: If the timer is not active
+        then:
+        - service: timer.cancel
+          data: {}
+          target:
+            entity_id: timer.nerene_wakeup_light
+          alias: Reset the timer
+        - service: timer.start
+          data:
+            duration: '8:00:00'
+          target:
+            entity_id: timer.nerene_wakeup_light
+          alias: Start wakeup light countdown
+        else:
+        - service: timer.pause
+          data: {}
+          target:
+            entity_id: timer.nerene_wakeup_light
+          alias: Pause the timer
+        - service: timer.start
+          data:
+            duration: '{%- set time = state_attr("timer.nerene_wakeup_light", "remaining").split(":")
+              %} {%- set hours_remaining = time[0]|int %} {%- set new_time = (hours_remaining+1)
+              ~":"~ time[1] ~":"~ time[2] %} {{ new_time }}
+
+              '
+          target:
+            entity_id: timer.nerene_wakeup_light
+          alias: Continue timer with added hour
+      remote_button_long_press:
+      - service: timer.cancel
+        data: {}
+        target:
+          entity_id: timer.nerene_wakeup_light
+        alias: Cancel wakeup light
+- id: '1664135234650'
+  alias: '[Bedroom] Nerene wakeup timer complete'
+  description: ''
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.nerene_wakeup_light
+  condition: []
+  action:
+  - service: script.event_wakeup_nerene
+    data: {}
+    alias: Call script.event_wakeup_nerene
+  mode: single
