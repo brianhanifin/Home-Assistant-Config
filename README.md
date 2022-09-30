@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **49,806** | 1,348 | 37 | 97 | 63 |
+| **49,763** | 1,341 | 37 | 97 | 61 |
 
 # Index
 
@@ -209,9 +209,9 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1348 total entities**,
-including **692 sensors**. My YAML
-files contain 49,806 lines of code.
+Our Home Assistant install has approximately **1341 total entities**,
+including **696 sensors**. My YAML
+files contain 49,763 lines of code.
 
 <details><summary>23 Custom integrations</summary>
 
@@ -370,7 +370,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>9 addons</summary>
 
-## ESPHome v2022.9.1
+## ESPHome v2022.9.2
 
 
 ## File editor v5.4.1
@@ -433,7 +433,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.9.7-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.10.0b1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -443,7 +443,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,806-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,763-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
