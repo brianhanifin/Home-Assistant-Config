@@ -13,7 +13,7 @@ state: |
 
     {%- if state_attr("sensor.updates","home_assistant_update_count") > 0 %}
       {%- if state_attr("sensor.updates", "core_update") %}
-      * There is a [Core update](/hassio/update-available/core).
+      * There is a Core update.
       {%- endif %}
 
       {%- if state_attr("sensor.updates", "os_update") %}
@@ -50,12 +50,10 @@ state: |
       * There are {{ hacs_updates }} HACS updates.
         {%- endif %}
       {%- endif %}
-
-      [View updates](/config/dashboard)
     {%- endif %}
 
     {%- if state_attr("sensor.updates", "unifi_firmware_update") %}
       {%- set unifi_updates = states("sensor.unifi_gateway_firmware_upgradable")|int(default=0) %}
-      There are {{ unifi_updates }} [Unifi firmware updates](https://unraid.local:8443/manage/default/dashboard).
+      There are {{ unifi_updates }} Unifi firmware updates.
     {%- endif %}
   {%- endif %}
