@@ -29,7 +29,8 @@ variables:
 
   audio_notifications: '{{ is_state("input_boolean.audio_notifications", "on") }}'
   quiet_time: '{{ is_state("binary_sensor.noncritical_alert_quiet_time", "on") }}'
-  family_home: '{{ is_state("group.family", "home") }}'
+  #family_home: '{{ is_state("group.family", "home") }}'
+  family_home: '{{ states("sensor.family_present")|int > 0 }}'
   guest_mode: '{{ is_state("input_boolean.guest_mode", "on") }}'
 sequence:
   - if: '{{ debug is defined and debug == true }}'
