@@ -1139,16 +1139,15 @@ views:
         domain\",\"eq\",\"light\") \n    | selectattr(\"state\",\"eq\",\"on\")\n \
         \   | map(attribute=\"entity_id\")\n    | list\n    | count\n    | default(0)\n\
         %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light\
-        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- if lights_on > 0\
-        \ %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights\
-        \ on\") }}\n{%- endif %}\n{%- set open_count = 0 %}\n{%- if is_state(\"binary_sensor.family_room_south_window\"\
-        , \"on\") %}\n  {%- set open_count = open_count + 1  %}\n{%- endif %}\n{%-\
-        \ if is_state(\"binary_sensor.family_room_north_window\", \"on\") %}\n  {%-\
-        \ set open_count = open_count + 1  %}\n{%- endif %}\n{{- iif(open_count==1,\
-        \ \" ‧ 1 window open\", iif(open_count>1, \" ‧ \"~open_count~\" windows open\"\
-        , \"\")) }}\n{{- iif(is_state(\"binary_sensor.family_room_occupancy\",\"on\"\
-        ), \" ‧ occupied\", \"\") }}\n{{- iif(is_state(\"media_player.family_room_tv\"\
-        ,\"on\"), \" ‧ tv is on\", \"\") }}"
+        \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- set open_count =\
+        \ 0 %}\n{%- if is_state(\"binary_sensor.family_room_south_window\", \"on\"\
+        ) %}\n  {%- set open_count = open_count + 1  %}\n{%- endif %}\n{%- if is_state(\"\
+        binary_sensor.family_room_north_window\", \"on\") %}\n  {%- set open_count\
+        \ = open_count + 1  %}\n{%- endif %}\n{{- iif(open_count==1, \" ‧ 1 window\
+        \ open\", iif(open_count>1, \" ‧ \"~open_count~\" windows open\", \"\")) }}\n\
+        {{- iif(is_state(\"binary_sensor.family_room_occupancy\",\"on\"), \" ‧ occupied\"\
+        , \"\") }}\n{{- iif(is_state(\"media_player.family_room_tv\",\"on\"), \" ‧\
+        \ tv is on\", \"\") }}"
       title: Family room
       type: custom:mushroom-title-card
     - cards:
@@ -2249,9 +2248,9 @@ views:
               - entities:
                 - entity: sensor.octoprint_job_percentage
                   name: Complete
-                - entity: sensor.octoprint_time_elapsed_friendly
+                - entity: sensor.octoprint_time_elapsed
                   name: Elapsed
-                - entity: sensor.octoprint_time_remaining_friendly
+                - entity: sensor.octoprint_time_remaining
                   name: Remaining
                 entity: sensor.octoprint_job_percentage
                 icon: mdi:timer-outline
