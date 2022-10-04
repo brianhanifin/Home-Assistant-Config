@@ -773,8 +773,13 @@
   trigger:
   - platform: state
     entity_id:
-    - alert.wirelessap2_offline
+    - binary_sensor.alert_wirelessap2_offline
     to: 'on'
+    alias: 'Wireless Access Point #2 stays offline'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 30
   condition: []
   action:
   - type: turn_off
@@ -1221,3 +1226,603 @@
       alias: Turn off the A/C
     alias: Cool the house when closed, otherwise turn it off
   mode: single
+- id: '1664913334700'
+  alias: Away mode
+  description: ''
+  trigger:
+  - id: to_on
+    platform: state
+    entity_id: input_boolean.away_mode
+    from: 'off'
+    to: 'on'
+    alias: Away mode on
+  - id: to_off
+    platform: state
+    entity_id: input_boolean.away_mode
+    from: 'on'
+    to: 'off'
+    alias: Away mode off
+    enabled: false
+  condition: []
+  action:
+  - if:
+    - condition: device
+      device_id: 251811656468e59987a59a49a5018a8e
+      domain: cover
+      entity_id: cover.garage_door
+      type: is_open
+    then:
+    - service: cover.close_cover
+      entity_id: cover.garage_door
+    alias: Close an open garage door
+  - if:
+    - condition: device
+      device_id: f6a7f9561a7a8b48602809e1789385f4
+      domain: lock
+      entity_id: lock.front_door
+      type: is_unlocked
+    then:
+    - service: lock.lock
+      data: {}
+      target:
+        device_id: f6a7f9561a7a8b48602809e1789385f4
+      alias: Lock front door
+    alias: Lock and unlocked front door
+  - if:
+    - condition: not
+      conditions:
+      - condition: device
+        device_id: 90294c771af3341b24b8836b59e002ad
+        domain: climate
+        entity_id: climate.bedroom
+        type: is_hvac_mode
+        hvac_mode: 'off'
+        alias: Is the bedroom A/C off?
+      alias: Bedroom A/C is running
+    then:
+    - device_id: 90294c771af3341b24b8836b59e002ad
+      domain: climate
+      entity_id: climate.bedroom
+      type: set_hvac_mode
+      hvac_mode: 'off'
+      alias: Turn off Bedroom A/C
+    alias: Turn off a running bedroom A/C
+  - if:
+    - condition: not
+      conditions:
+      - condition: device
+        device_id: 877557b634269a08b5bf0439f9a314b5
+        domain: climate
+        entity_id: climate.lucas_room
+        type: is_hvac_mode
+        hvac_mode: 'off'
+        alias: Is Lucas' A/C off?
+      alias: Lucas' A/C is running
+    then:
+    - device_id: 877557b634269a08b5bf0439f9a314b5
+      domain: climate
+      entity_id: climate.lucas_room
+      type: set_hvac_mode
+      hvac_mode: 'off'
+  - service: script.turn_on
+    entity_id: script.shutdown_routine
+  mode: restart
+- id: '1664914391038'
+  alias: Leave unlocked
+  description: ''
+  trigger:
+  - id: to_on
+    platform: state
+    entity_id: input_boolean.leave_unlocked
+    from: 'off'
+    to: 'on'
+    alias: Leave unlocked turns on
+  - id: to_off
+    platform: state
+    entity_id: input_boolean.leave_unlocked
+    from: 'on'
+    to: 'off'
+    alias: Leave unlocked turns off
+  condition: []
+  action:
+  - alias: Cancel the relock countdown timer.
+    service: timer.cancel
+    target:
+      entity_id: timer.front_door_unlocked
+    data: {}
+  - alias: If the mode is turned on AND the door is currently unlocked
+    choose:
+    - conditions: '{{ trigger.id == "to_off" and is_state("lock.front_door","unlocked")
+        }}'
+      sequence:
+      - alias: Restart the timer.
+        service: timer.start
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+  mode: restart
+- id: '1664914465831'
+  alias: Guest mode
+  description: ''
+  trigger:
+  - id: to_on
+    platform: state
+    entity_id: input_boolean.guest_mode
+    from: 'off'
+    to: 'on'
+  - id: to_off
+    platform: state
+    entity_id: input_boolean.guest_mode
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - choose:
+    - conditions: '{{ trigger.id == "to_on" }}'
+      sequence:
+      - alias: Disable the automatic front door lock.
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.leave_unlocked
+        data: {}
+      - alias: Disable Adaptive Lighting automated control.
+        service: switch.turn_off
+        data:
+          entity_id: '{{ adaptive_switches }}'
+      - delay:
+          seconds: 2
+      - alias: 'Kitchen Lights: Turn On'
+        service: switch.turn_on
+        target:
+          area_id:
+          - kitchen
+        data: {}
+      - alias: 'Dining + Family room Lights: Turn On'
+        service: light.turn_on
+        data:
+          entity_id: '{{ lights_on }}'
+          brightness: 255
+          kelvin: 4000
+        target:
+          area_id:
+          - dining_room
+          - family_room
+    default:
+    - alias: Restore the automatic front door lock.
+      service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.leave_unlocked
+      data: {}
+    - alias: Kitchen lights to turn off
+      service: switch.turn_off
+      target:
+        area_id:
+        - kitchen
+      data: {}
+    - alias: Dining + Family room lights to turn off
+      service: light.turn_off
+      target:
+        entity_id: light.family_room_floor_lamp
+        area_id:
+        - dining_room
+      data: {}
+    - delay:
+        seconds: 2
+    - alias: Restore Adaptive Lighting automated control.
+      service: switch.turn_on
+      data:
+        entity_id: '{{ adaptive_switches }}'
+  - service: script.say
+    data:
+      message: '{{ speech }}'
+  mode: restart
+  variables:
+    adaptive_switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%-
+      for entity in states.switch if 'switch.adaptive_lighting_' in entity.entity_id\n
+      \     and entity.entity_id[25:30] not in [\"adapt\",\"sleep\"] %}\n  {%- set
+      adaptive_lighting.switches = adaptive_lighting.switches + [ entity ] %}\n{%-
+      endfor %}\n{{- adaptive_lighting.switches | map(attribute='entity_id') | list
+      }}\n"
+    lights_on: '{% set group_id= ''group.guest_mode_lights'' %}
+
+      {%- set lights_on = expand(group_id) | selectattr(''entity_id'',''in'',state_attr(group_id,''entity_id''))
+      | selectattr(''state'',''eq'',''on'') | map(attribute=''entity_id'') | list
+      %}
+
+      {{- "none" if lights_on|count==0 else lights_on }}
+
+      '
+    speech: "{%- if trigger.id == \"to_on\" %}\n  {{ [\n    \"Guest Mode has been
+      enabled for the rest of the day.\",\n    \"Switching to guest mode! \",\n    \"I
+      have enabled guest mode for the rest of the day. \",\n    \"System Guest Mode
+      has been enabled.\",\n    \"Guest mode enabled.\",\n    \"Awesome! I will take
+      the rest of the day off.  Guest mode has been enabled.\",\n    \"Guest Mode
+      enabled.  In other words, Manual Mode engaged.\",\n    \"Guest mode enabled.
+      \ Have Fun!\",\n    \"Family, Friends and Fun.  Guest mode has been enabled
+      today.\",\n    \"Guest Mode enabled.  I am still doing stuff behind the scenes
+      but probably will not turn off the lights on you.\"\n  ] | random }}\n{%- else
+      %}\n  {{ [\n    \"Guest Mode has been disabled.\",\n    \"Guest Mode disabled.\"\n
+      \   ] | random }}\n{%- endif %}\n"
+- id: '1664914665819'
+  alias: Holiday colors apply
+  description: Apply the light colors assigned to the current holiday.
+  trigger:
+  - platform: state
+    entity_id:
+    - light.porch
+    - light.table_lamp
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: template
+    value_template: '{{ states("sensor.holiday")|lower not in ['''',''unavailable'']
+      }}'
+  action:
+  - service: script.holiday_color_change
+    data: {}
+  mode: single
+- id: '1664914752234'
+  alias: TTS phrase selected
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_select.tts_phrases
+  condition: []
+  action:
+  - service: script.tts_phrase_say
+    data: {}
+  mode: single
+- id: '1664914932708'
+  alias: Event template reload
+  description: ''
+  trigger:
+  - platform: event
+    event_type: event_template_reloaded
+  condition: []
+  action:
+  - service: script.refresh_count_sensors
+    data: {}
+  mode: single
+- id: '1664915034973'
+  alias: 'Restart addon: SDR'
+  description: Restart the SDR addon when a sensor temperature goes unavailable.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.backyard_temperature
+    - sensor.fridge_temperature
+    - sensor.garage_fridge_temperature
+    to: unavailable
+    for:
+      minutes: 5
+  condition: []
+  action:
+  - alias: Check again, and restart the addon to resolve the MQTT connection failure?
+    choose:
+    - conditions: '{{ is_state(''sensor.backyard_temperature'',''unavailable'') or
+        is_state(''sensor.fridge_temperature'',''unavailable'') or is_state(''sensor.garage_fridge_temperature'',''unavailable'')
+        }}'
+      sequence:
+      - service: hassio.addon_restart
+        data:
+          addon: d63406df_sdr2mqtt
+      - service: script.notify_web
+        data:
+          type: warning
+          title: 'Restart addon: SDR to Home Assistant [Automation]'
+          message: The backyard temperature sensor has been unavailable for 5 minutes.
+            An attempt has been made to restart the addon.
+  mode: single
+- id: '1664915086230'
+  alias: Restart Unifi
+  description: When a disabled PC is re-enabled restart the Unifi docker to ensure
+    the change is applied.
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.network_blackpc
+    - switch.network_bluepc
+    - switch.network_greenpc
+    - switch.network_redpc
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.docker_unifi
+    data: {}
+  - delay:
+      seconds: 15
+  - service: switch.turn_on
+    target:
+      entity_id: switch.docker_unifi
+    data: {}
+  mode: single
+- id: '1664915161123'
+  alias: Restart Z-wave_JS 2 mqtt
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: switch.docker_zwavejs2mqtt
+    from: 'on'
+    to:
+    for:
+      minutes: 10
+  condition: []
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.docker_zwavejs2mqtt
+    data: {}
+  - delay:
+      seconds: 30
+  - service: switch.turn_on
+    target:
+      entity_id: switch.docker_zwavejs2mqtt
+    data: {}
+  mode: single
+- id: '1664915191810'
+  alias: Restart Zigbee 2 mqtt
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: switch.docker_zigbee2mqtt
+    from: 'on'
+    to:
+    for:
+      minutes: 10
+  condition: []
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.docker_zigbee2mqtt
+    data: {}
+  - delay:
+      seconds: 30
+  - service: switch.turn_on
+    target:
+      entity_id: switch.docker_zigbee2mqtt
+    data: {}
+  mode: single
+- id: '1664918803941'
+  alias: 'Presence: family all departed'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.family_present
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    above: 0
+  condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  action:
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.away_mode
+    alias: Turn on away mode
+  mode: single
+- id: '1664919499650'
+  alias: 'Presence: family arrival'
+  description: The house will welcome the family member home, after the entry the
+    house via the front or garage entry doors.
+  trigger:
+  - platform: state
+    entity_id:
+    - person.brian
+    - person.eric
+    - person.heather
+    - person.lucas
+    - person.nerene
+    - person.sandy
+    from: not_home
+    to: home
+    variables:
+      old_state: '{{ trigger.from_state.state }}'
+      new_state: '{{ trigger.to_state.state }}'
+      person: '{{ trigger.to_state.object_id }}'
+      source: '{{ trigger.to_state.attributes.source }}'
+    alias: When someone arrives at home
+  condition:
+  - condition: template
+    value_template: '{{ old_state != new_state }}'
+    alias: old_state != new_state
+  - condition: template
+    value_template: '{{ new_state != ''unknown'' }}'
+    alias: new_state != 'unknown'
+  - condition: template
+    value_template: '{{ is_state(''automation.startup'',''off'') }}'
+    alias: Don't allow status change shortly after startup to avoid phantom changes.
+  - condition: and
+    conditions:
+    - condition: time
+      before: 06:00:00
+      alias: Between midnight and 6am
+      after: 00:00:00
+    - condition: template
+      value_template: '{{ is_state_attr(source,''vlan'',''0'') }}'
+      alias: 'Ignore UniFi sourced changes (vlan: 0)'
+    alias: 'Ignore UniFi sourced changes (vlan: 0) overnight to help avoid false "aways"
+      caused by sleepy iPhones.'
+  action:
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.away_mode
+    alias: Turn off away mode
+  - alias: Wait for an entry door to open before making the announcement.
+    wait_for_trigger:
+      platform: state
+      entity_id:
+      - binary_sensor.front_door
+      - binary_sensor.garage_entry_door
+      from: 'off'
+      to: 'on'
+    timeout:
+      minutes: '5'
+    continue_on_timeout: false
+  - service: script.say
+    data:
+      media_player: media_player.google_welcome
+      person_arriving: '{{ trigger.entity_id.split(''.'')[1]|title|replace(''_'',
+        '' '') }}'
+      say_greeting: 'true'
+      say_inside_weather: 'true'
+      say_outside_weather: 'true'
+    alias: Welcome home announcement!
+  mode: single
+- id: '1664922391248'
+  alias: 'Presence: leaving costco'
+  description: Notify when Nerene or Brian leaves Costco.
+  trigger:
+  - platform: zone
+    event: leave
+    zone: zone.costco
+    entity_id:
+    - person.brian
+    - person.nerene
+  condition:
+  - condition: time
+    after: 06:00:00
+    before: '21:00:00'
+  action:
+  - service: script.say
+    data:
+      media_player: media_player.google_downstairs
+      message: "{% set message = [\n  \"Just a head's up, [name1] is done at Costco.\",\n
+        \ \"Your [name2] is on the way home from Costco.\"\n]|random %} {% set name
+        = trigger.to_state.friendly_name %} {% if ['name2'] in message %}\n  {% if
+        name == \"Nerene\" %}\n    {% set name = \"mom\" %}\n  {% elif name == \"Brian\"
+        %}\n    {% set name = \"dad\" %}\n  {% endif %}\n{% endif %} {{ message|replace(\"[name1]\",name)|replace(\"[name2]\",name)
+        }}"
+      say_greeting: 'false'
+  - delay:
+      minutes: 5
+    alias: 'Cool down timer. When "mode: single" this stops this automation from running
+      more often than this.'
+  mode: single
+- id: '1664922577571'
+  alias: 'Presence: Nerene is almost home!'
+  description: Notify when Nerene is almost home!
+  trigger:
+  - platform: numeric_state
+    entity_id: proximity.nerene_home
+    value_template: '{{ states(''proximity.nerene_home'')|float(default=0) }}'
+    below: 1
+    alias: When Nerene is near home
+  condition:
+  - condition: state
+    entity_id: input_select.nerene
+    state: Away
+  action:
+  - service: script.say
+    data:
+      media_player: media_player.google_downstairs
+      message: "{{ [\n  \"Your mom is almost home. Be ready to give her a big hug
+        after her long day! \",\n  \"One of your favorite people is almost here! Mah,
+        ma, mama, mom. \",\n  \"Guess what? ... Chicken butt. ... Your mom is almost
+        home. \"\n]|random }}\n"
+      say_greeting: 'false'
+  - delay:
+      minutes: 60
+    alias: Cool down timer.
+  mode: single
+- id: '1664922676671'
+  alias: 'Presence: Nerene has left court'
+  description: Notify when Nerene leaves court.
+  trigger:
+  - platform: zone
+    event: leave
+    zone: zone.court
+    entity_id: person.nerene
+  condition:
+  - condition: time
+    after: '13:00:00'
+    before: '17:00:00'
+  action:
+  - service: script.say
+    data_template:
+      media_player: media_player.google_downstairs
+      message: "{{ [\n  \"Just a head's up, Nerene is done with court.\",\n  \"Your
+        mom is on her way home from court.\"\n]|random }}\n"
+      say_greeting: 'false'
+  mode: single
+- id: '1664922848999'
+  alias: 'Extended presence: location update'
+  description: When someone's standard presence location updates
+  trigger:
+  - platform: state
+    entity_id:
+    - person.brian
+    - person.eric
+    - person.heather
+    - person.lucas
+    - person.nerene
+    - person.sandy
+    variables:
+      new_state: '{{ trigger.to_state.state }}'
+      old_state: '{{ trigger.from_state.state }}'
+      option: "{%- if new_state == \"home\" -%}\n  Just arrived\n{%- else -%}\n  Just
+        left\n{%- endif -%}\n"
+      person: '{{ trigger.to_state.object_id }}'
+      source: '{{ trigger.to_state.attributes.source }}'
+  condition:
+  - '{{ old_state != new_state }}'
+  - '{{ new_state != "unknown"}}'
+  - '{{ is_state("automation.startup","off") }}'
+  - condition: not
+    conditions:
+    - '{{ now().hour < 6 and state_attr(source,"vlan") == "0" }}'
+  action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.{{ person }}
+      option: '{{ option }}'
+  - service: timer.start
+    data:
+      entity_id: timer.xpresence_{{ person }}
+      duration: 00:10:00
+  mode: queued
+- id: '1664923113559'
+  alias: 'Extended presence: timer expired'
+  description: When a timer finishes it is time to update their extended presence
+    status.
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    variables:
+      person: '{{ trigger.event.data.entity_id[16:] }}'
+      current_option: '{{ states("input_select." + person) }}
+
+        '
+  condition:
+  - condition: template
+    value_template: '{{ trigger.event.data.entity_id[:15] == "timer.xpresence" }}'
+    alias: Continue for Extended Presence timers only.
+  - condition: template
+    value_template: '{{ current_option not in [none,"unknown",""] }}'
+    alias: When current option is valid.
+  action:
+  - variables:
+      next_options:
+        Just arrived: Home
+        Just left: Away
+        Away: Extended away
+      next_option: '{{ next_options[current_option] }}'
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.{{ person }}
+      option: '{{ next_option }}'
+    alias: Update with the status.
+  - if:
+    - condition: template
+      value_template: '{{ next_option == "Away" }}'
+      alias: Status is Away.
+    then:
+    - service: timer.start
+      data:
+        entity_id: timer.xpresence_{{ person }}
+        duration: '23:59:59'
+    alias: Start the timer when the status is Away.
+  mode: queued
