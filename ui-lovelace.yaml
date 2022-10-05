@@ -2143,56 +2143,64 @@ views:
     - subtitle: Pew pew, woo woo.
       title: Glowforge
       type: custom:mushroom-title-card
-    - cards:
-      - cards:
-        - entity: input_select.glowforge_status
-          type: custom:mushroom-entity-card
-        - default: 'On'
-          entity: input_select.glowforge_status
-          states:
-            'Off':
-              entity: switch.docker_wyze_bridge
+    - default: 'On'
+      entity: input_select.glowforge_status
+      states:
+        'Off':
+          cards:
+          - cards:
+            - entity: input_select.glowforge_status
               type: custom:mushroom-entity-card
-          type: custom:state-switch
-        columns: 2
-        square: false
-        type: grid
-      - default: 'On'
-        entity: input_select.glowforge_status
-        states:
-          'Off':
-            entities:
+            - default: 'On'
+              entity: input_select.glowforge_status
+              states:
+                'Off':
+                  entity: switch.docker_wyze_bridge
+                  type: custom:mushroom-entity-card
+              type: custom:state-switch
+            columns: 2
+            square: false
+            type: grid
+          - entities:
             - name: Glowforge App
               type: weblink
               url: https://app.glowforge.com
             type: entities
-          'On':
-            cards:
-            - camera_image: camera.glowforge
-              camera_view: live
-              entity: camera.glowforge
-              show_name: false
-              show_state: false
-              type: picture-entity
-            - entities:
-              - entity: input_boolean.glowforge_announce_complete
-                name: Announce when complete
-              - entity: switch.docker_wyze_bridge
-                icon: mdi:docker
-              - entity: switch.glowforge_camera
-                icon: mdi:cctv
-              - type: divider
-              - entity: sensor.glowforge_power_monitor_power
-                icon: mdi:power-plug
-                name: Power monitor
-              - type: divider
-              - name: Glowforge App
-                type: weblink
-                url: https://app.glowforge.com
-              type: entities
-            type: vertical-stack
-        type: custom:state-switch
-      type: vertical-stack
+          type: vertical-stack
+        'On':
+          cards:
+          - cards:
+            - entity: input_select.glowforge_status
+              type: custom:mushroom-entity-card
+            - entity: switch.glowforge_button
+              type: custom:mushroom-entity-card
+            columns: 2
+            square: false
+            type: grid
+          - camera_image: camera.glowforge
+            camera_view: live
+            entity: camera.glowforge
+            show_name: false
+            show_state: false
+            type: picture-entity
+          - entities:
+            - entity: input_boolean.glowforge_announce_complete
+              name: Announce when complete
+            - entity: switch.docker_wyze_bridge
+              icon: mdi:docker
+            - entity: switch.glowforge_camera
+              icon: mdi:cctv
+            - type: divider
+            - entity: sensor.glowforge_power_monitor_power
+              icon: mdi:power-plug
+              name: Power monitor
+            - type: divider
+            - name: Glowforge App
+              type: weblink
+              url: https://app.glowforge.com
+            type: entities
+          type: vertical-stack
+      type: custom:state-switch
     type: vertical-stack
   - cards:
     - subtitle: Prusa MK2.5s
@@ -2909,6 +2917,7 @@ views:
     type: vertical-stack
   icon: mdi:server
   path: system
+  subview: true
   theme: Backend-selected
   title: System
   type: sidebar
@@ -2970,6 +2979,7 @@ views:
       position: main
   icon: mdi:google-home
   path: smart-speakers
+  subview: true
   theme: Backend-selected
   title: Smart speakers
   type: sidebar
@@ -3107,6 +3117,7 @@ views:
       position: sidebar
   icon: mdi:robot
   path: routines
+  subview: true
   theme: Backend-selected
   title: Routines
   type: sidebar
@@ -3214,6 +3225,7 @@ views:
       position: sidebar
   icon: mdi:cake-variant
   path: family-dates
+  subview: true
   theme: Backend-selected
   title: Family dates
   type: sidebar
