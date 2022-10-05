@@ -1196,13 +1196,34 @@
         hvac_mode: cool
         temperature: 77
       alias: Turn on the A/C
-    else:
-    - service: climate.turn_off
+      enabled: false
+    - service: scene.turn_on
       target:
-        entity_id: climate.home_thermostat
-      data: {}
-      alias: Turn off the A/C
-    alias: Cool the house when closed, otherwise turn it off
+        entity_id: scene.thermostat_snapshot
+      metadata: {}
+    else: []
+    alias: Restore the previous state of the thermostat when the house when closed
+  - if:
+    - condition: or
+      conditions:
+      - condition: trigger
+        id: windows_open
+      - condition: trigger
+        id: sliding_door_open
+      alias: When the windows or sliding door have been opened.
+    then:
+    - service: scene.create
+      data:
+        scene_id: thermostat_snapshot
+        snapshot_entities: climate.home_thermostat
+      alias: Store the previous state of the thermostat.
+    - device_id: 929a128c097a11eb96b349f854291f12
+      domain: climate
+      entity_id: climate.home_thermostat
+      type: set_hvac_mode
+      hvac_mode: 'off'
+      alias: Turn off the A/C.
+    alias: Turn off the thermostat when the house is left open.
   mode: single
 - id: '1664913334700'
   alias: Away mode
@@ -1804,3 +1825,145 @@
         duration: '23:59:59'
     alias: Start the timer when the status is Away.
   mode: queued
+- id: '1664993172895'
+  alias: Computer schedule
+  description: Cut internet when the boys should be in bed, and restore the internet
+    when play is allowed.
+  trigger:
+  - platform: state
+    entity_id:
+    - schedule.computer_school
+    - schedule.computer_vacation
+    alias: When schedule state changes
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ schedule == "school" }}'
+        alias: Triggered by school schedule
+      sequence:
+      - if:
+        - condition: time
+          before: 08:01:00
+          after: 01:01:00
+          alias: Before middle school
+        - condition: template
+          value_template: '{{ middle_school_day }}'
+          alias: Today is a middle school day.
+        then:
+        - service: switch.turn_{{ new_state }}
+          target:
+            entity_id: switch.network_bluepc
+          alias: Turn on/off the network connection.
+        else:
+        - if:
+          - condition: template
+            value_template: '{{ middle_school_day_tomorrow }}'
+            alias: Tomorrow is a middle school day.
+          then:
+          - service: switch.turn_{{ new_state }}
+            target:
+              entity_id: switch.network_bluepc
+            alias: Turn on/off the network connection.
+        alias: Middle school day
+      - if:
+        - condition: time
+          before: 09:31:00
+          after: 01:01:00
+          alias: Before high school
+        - condition: template
+          value_template: '{{ high_school_day }}'
+          alias: Today is a high school day.
+        then:
+        - service: switch.turn_{{ new_state }}
+          target:
+            entity_id:
+            - switch.network_redpc
+            - switch.network_greenpc
+          alias: Turn on/off the network connection.
+        else:
+        - if:
+          - condition: template
+            value_template: '{{ high_school_day_tomorrow }}'
+            alias: Tomorrow is a high school day.
+          then:
+          - service: switch.turn_{{ new_state }}
+            target:
+              entity_id:
+              - switch.network_redpc
+              - switch.network_greenpc
+            alias: Turn on/off the network connection.
+        alias: High school day
+    - conditions:
+      - condition: template
+        value_template: '{{ schedule == "vacation" }}'
+        alias: Triggered by vacation schedule
+      sequence:
+      - if:
+        - condition: time
+          before: 08:01:00
+          after: 01:01:00
+          alias: Vacation day morning
+        - condition: template
+          value_template: '{{ not middle_school_day }}'
+          alias: Today is not a middle school day.
+        then:
+        - service: switch.turn_{{ new_state }}
+          target:
+            entity_id: switch.network_bluepc
+          alias: Turn on/off the network connection.
+        else:
+        - if:
+          - condition: template
+            value_template: '{{ not middle_school_day_tomorrow }}'
+            alias: Tomorrow is not a middle school day.
+          then:
+          - service: switch.turn_{{ new_state }}
+            target:
+              entity_id: switch.network_bluepc
+            alias: Turn on/off the network connection.
+          alias: Tomorrow is not a middle school day
+        alias: Middle school vacation
+      - if:
+        - condition: time
+          before: 09:31:00
+          after: 01:01:00
+          alias: Vacation day morning
+        - condition: template
+          value_template: '{{ not high_school_day }}'
+          alias: Today is not a high school day.
+        then:
+        - service: switch.turn_{{ new_state }}
+          target:
+            entity_id:
+            - switch.network_redpc
+            - switch.network_greenpc
+          alias: Turn on/off the network connection.
+        else:
+        - if:
+          - condition: template
+            value_template: '{{ not high_school_day_tomorrow }}'
+            alias: Tomorrow is not a high school day.
+          then:
+          - service: switch.turn_{{ new_state }}
+            target:
+              entity_id:
+              - switch.network_redpc
+              - switch.network_greenpc
+            alias: Turn on/off the network connection.
+          alias: Tomorrow is not a high school day
+        alias: High school vacation
+    alias: Choose actions based on which schedule triggered.
+  variables:
+    schedule: '{{ trigger.to_state.object_id.split("_")[1]}}'
+    new_state: '{{ trigger.to_state.state }}'
+    middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
+    middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on")
+      }}'
+    high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
+    high_school_day_tomorrow: '{{ is_state("binary_sensor.high_school_day_tomorrow","on")
+      }}'
+  mode: single
