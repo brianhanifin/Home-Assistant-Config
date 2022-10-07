@@ -680,7 +680,8 @@ views:
     - cards:
       - entity: climate.home_thermostat
         icon: mdi:thermostat
-        icon_color: '{%- set thermostat_on = states("climate.home") != "off" %}
+        icon_color: '{%- set thermostat_on = states("climate.home_thermostat") !=
+          "off" %}
 
           {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
         layout: vertical
@@ -2492,29 +2493,6 @@ views:
           target:
             entity_id: script.config_check
         type: template
-      - content: Automation reload
-        icon: mdi:refresh-circle
-        icon_color: blue
-        tap_action:
-          action: call-service
-          service: script.turn_on
-          service_data: {}
-          target:
-            entity_id: script.automation_reload
-        type: template
-      - content: Script reload
-        icon: mdi:refresh-circle
-        icon_color: blue
-        tap_action:
-          action: call-service
-          service: script.script_reload
-          service_data: {}
-          target:
-            entity_id: script.automation_reload
-        type: template
-      type: custom:mushroom-chips-card
-    - alignment: justify
-      chips:
       - content: Reboot VM
         icon: mdi:power-standby
         icon_color: orange
@@ -2528,7 +2506,7 @@ views:
             entity_id: script.config_check_and_reboot_server
         type: template
       - content: Restart HA
-        icon: mdi:recycle
+        icon: mdi:restart-alert
         icon_color: orange
         tap_action:
           action: call-service
@@ -2539,7 +2517,7 @@ views:
           target:
             entity_id: script.config_check_and_restart
         type: template
-      - content: Edit Dashboard
+      - content: Edit
         icon: mdi:pencil
         icon_color: orange
         tap_action:
@@ -2559,7 +2537,7 @@ views:
           target:
             entity_id: script.refresh_count_sensors
         type: template
-      - content: Refresh update sensors
+      - content: Refresh updates
         icon: mdi:cog-refresh
         icon_color: grey
         tap_action:
@@ -2589,7 +2567,7 @@ views:
           service: script.turn_on
           service_data: {}
           target:
-            entity_id: script.ci_generate_readme
+            entity_id: script.generate_readme
         type: template
       - content: Generate secrets
         icon: mdi:thought-bubble
@@ -2599,7 +2577,7 @@ views:
           service: script.turn_on
           service_data: {}
           target:
-            entity_id: script.ci_generate_fake_secrets
+            entity_id: script.generate_fake_secrets
         type: template
       type: custom:mushroom-chips-card
     type: vertical-stack
