@@ -2,18 +2,19 @@
 alias: Vacuum room clean
 icon: mdi:update
 mode: parallel
-variables:
-  rooms: |
-    {%- if rooms is defined %}
-      {{ rooms }}
-    {%- endif %}
-  vacuum: |
-    {%- if vacuum is defined %}
-      {{ vacuum }}
-    {%- else %}
-      ["vacuum.family_room","vacuum.play_room"]
-    {%- endif %}
 sequence:
+  - variables:
+      rooms: |
+        {%- if rooms is defined %}
+          {{ rooms }}
+        {%- endif %}
+      vacuum: |
+        {%- if vacuum is defined %}
+          {{ vacuum }}
+        {%- else %}
+          ["vacuum.family_room","vacuum.play_room"]
+        {%- endif %}
+
   - if: '{{ rooms|upper in ["","ALL"] }}'
     then:
       - service: vacuum.send_command

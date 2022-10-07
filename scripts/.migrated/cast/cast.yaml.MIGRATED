@@ -2,41 +2,39 @@
 alias: Cast
 mode: parallel
 icon: 'mdi:cast'
-variables:
-  #debug: true
-
-  entities: |
-    {%- set data = namespace(displays="") %}
-    {%- if displays is defined %}
-      {%- if displays is not string %}
-        {%- for display in displays %}
-          {%- set data.displays = data.displays ~ '"' ~ device_entities(display)[0] ~ '"' ~ iif(not loop.last, ",", "") %}
-        {%- endfor %}
-      {%- else %}
-        {%- set data.displays = '"' ~ device_entities(displays)[0] ~ '"' %}
-      {%- endif %}
-    {%- else %}
-      {%- set data.displays = '"media_player.google_kitchen"' %}
-    {%- endif %}
-    [{{ data.displays }}]
 sequence:
-  - if: '{{ debug is defined and debug == true }}'
-    then:
-      - service: script.debug
-        data:
-          message: |
-            displays is not string: '{{ displays is not string }}'
-            dismiss_after is defined: '{{ dismiss_after is defined }}'
+  - variables:
+      entities: |
+        {%- set data = namespace(displays="") %}
+        {%- if displays is defined %}
+          {%- if displays is not string %}
+            {%- for display in displays %}
+              {%- set data.displays = data.displays ~ '"' ~ device_entities(display)[0] ~ '"' ~ iif(not loop.last, ",", "") %}
+            {%- endfor %}
+          {%- else %}
+            {%- set data.displays = '"' ~ device_entities(displays)[0] ~ '"' %}
+          {%- endif %}
+        {%- else %}
+          {%- set data.displays = '"media_player.google_kitchen"' %}
+        {%- endif %}
+        [{{ data.displays }}]
 
-            displays: '{{ displays }}'
+  - service: script.debug
+    enabled: false
+    data:
+      message: |
+        displays is not string: '{{ displays is not string }}'
+        dismiss_after is defined: '{{ dismiss_after is defined }}'
 
-            entities: '{{ entities }}'
-            count: {{ entities|count }}
+        displays: '{{ displays }}'
 
-            dashboard_path: "{{ dashboard_path }}"
-            view_path: "{{ view_path }}"
+        entities: '{{ entities }}'
+        count: {{ entities|count }}
 
-            dismiss_after: '{{ dismiss_after }}'
+        dashboard_path: "{{ dashboard_path }}"
+        view_path: "{{ view_path }}"
+
+        dismiss_after: '{{ dismiss_after }}'
 
   - alias: "Turn off the media players before we cast a new page for it to display."
     service: media_player.turn_off

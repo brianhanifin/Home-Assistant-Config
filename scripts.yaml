@@ -1,1 +1,853 @@
-{}
+restart_home_assistant:
+  alias: Restart Home Assistant
+  sequence:
+  - service: script.notify_web
+    data:
+      type: warning
+      message: Restarting Home Assistant
+      duration: 60
+  - service: homeassistant.restart
+    data: {}
+  mode: single
+  icon: mdi:restart-alert
+reboot_server:
+  alias: Reboot Server
+  sequence:
+  - service: script.notify_web
+    data:
+      type: error
+      message: Rebooting the server!
+      duration: 120
+  - service: hassio.host_reboot
+    data: {}
+  mode: single
+  icon: mdi:power-cycle
+config_check:
+  alias: Config check
+  sequence:
+  - service: script.notify_web
+    data:
+      type: warning
+      message: Config ✔️ begins.
+      duration: 15
+  - service: config_check.run
+    data: {}
+  - wait_template: '{{ states(''persistent_notification.1337'') is string }}'
+    timeout: 00:03:00
+  - alias: Dismiss the persistent notification if the check went well.
+    choose:
+    - conditions: '{{ state_attr("persistent_notification.1337", "message")|trim ==
+        "Configuration is OK!" }}'
+      sequence:
+      - service: persistent_notification.dismiss
+        data:
+          notification_id: '1337'
+      - service: script.notify_web
+        data:
+          type: success
+          message: "Config ✔️ = \U0001F44D"
+          duration: 15
+    default:
+    - variables:
+        message: '{% set message = state_attr(''persistent_notification.1337'',''message'')
+          | trim %}
+
+          {% set message = message | replace("config/integrations/homeassistant/../../",
+          "") %}
+
+          {% set message = message | replace("[1m", "") | replace("[1;37m", "") |
+          replace("[1;31m", "") %}
+
+          {% set message = message | replace(":", ": ") %}
+
+          {{ message | trim }}
+
+          '
+    - service: script.notify_web
+      data:
+        type: alert
+        title: Config check error
+        message: '{{ message }}'
+  mode: single
+  icon: mdi:check-decagram
+config_check_and_restart:
+  alias: Config check and restart
+  sequence:
+  - service: script.config_check
+    data: {}
+  - service: script.restart_home_assistant
+    data: {}
+  mode: single
+  icon: mdi:restart
+config_check_and_reboot_server:
+  alias: Config check and reboot server
+  sequence:
+  - service: script.config_check
+    data: {}
+  - service: script.notify_web
+    data:
+      type: error
+      message: Rebooting the server!
+  - service: hassio.host_reboot
+    data: {}
+  mode: single
+  icon: mdi:power
+refresh_count_sensors:
+  alias: Refresh count sensors
+  mode: single
+  icon: mdi:cog-refresh
+  sequence:
+  - service: homeassistant.update_entity
+    target:
+      entity_id: "{%- set storage = namespace(entities=\"\") %}\n{%- set entities
+        = states.sensor | map(attribute=\"entity_id\") | list %}\n{%- for entity in
+        entities if entity[(entity|length-6):] == \"_count\" %}\n  {%- set storage.entities
+        = storage.entities ~ entity %}\n  {%- if not loop.last %}\n    {%- set storage.entities
+        = storage.entities ~ ',' %}\n  {%- endif %}\n{%- endfor %}\n{{ storage.entities.split(\",\")
+        }}\n"
+    alias: Update templated entities
+  - service: script.notify_web
+    data:
+      type: success
+      message: Sensor counts are refreshed.
+      duration: 10
+refresh_update_sensors:
+  alias: Refresh update sensors
+  sequence:
+  - service: homeassistant.update_entity
+    target:
+      entity_id:
+      - sensor.addon_updates
+      - sensor.hacs
+      - sensor.unifi_gateway_firmware_upgradable
+      - sensor.updates
+  - delay:
+      seconds: 2
+  - service: homeassistant.update_entity
+    target:
+      entity_id:
+      - sensor.updates
+      - sensor.update_message
+  - service: script.notify_web
+    data:
+      type: success
+      message: Update sensors are refreshed.
+      duration: 10
+  mode: single
+  icon: mdi:cog-refresh
+generate_readme:
+  alias: Generate readme
+  sequence:
+  - service: readme.generate
+  - service: script.notify_web
+    data:
+      message: README + ui-lovelace generation process complete.
+  mode: single
+  icon: mdi:github
+generate_fake_secrets:
+  alias: Generate fake secrets
+  sequence:
+  - service: shell_command.rebuild_test_secrets
+    data: {}
+  - service: script.notify_web
+    data:
+      message: Fake_secrets.yaml regenerated.
+  mode: single
+  icon: mdi:thought-bubble
+goodbye_routine:
+  alias: Goodbye routine
+  sequence:
+  - service: script.turn_on
+    entity_id: script.shutdown_routine
+  - service: homeassistant.turn_off
+    entity_id: group.bedroom_lights
+  - service: script.say
+    data:
+      media_player: media_player.google_downstairs
+      say_goodbye: 'true'
+  - delay:
+      seconds: 10
+  - wait_template: '{{ is_state(''sensor.front_door'',''closed'') }}'
+    timeout:
+      minutes: 1
+    continue_on_timeout: 'true'
+  - service: lock.lock
+    entity_id: lock.front_door
+  mode: single
+  icon: mdi:exit-run
+goodnight_routine:
+  alias: Goodnight routine
+  sequence:
+  - alias: Make sure the garage door is closed.
+    service: cover.close_cover
+    entity_id: cover.garage_door
+  - alias: Lock the front door right away as well.
+    service: lock.lock
+    entity_id: lock.front_door
+  - alias: Shutdown routine
+    service: script.shutdown_routine
+    data: {}
+  - alias: Say goodnight.
+    service: script.say
+    data:
+      media_player: media_player.google_family_room
+      say_goodnight: 'true'
+  mode: single
+  icon: mdi:lightbulb-night-outline
+shutdown_routine:
+  alias: Shutdown routine
+  sequence:
+  - alias: Turn off everything except for the play room.
+    service: homeassistant.turn_off
+    entity_id:
+    - fan.family_room
+    - media_player.family_room_tv
+    - group.kitchen_lights
+    - group.dining_room_fixture
+    - light.home_entry
+    - light.family_room_floor_lamp
+    - light.table_lamp
+    - switch.hot_water_pump
+  - delay:
+      seconds: 2
+  - alias: Turn off family room light last after a brief delay.
+    service: light.turn_off
+    entity_id: light.family_room
+  mode: single
+  icon: mdi:close-circle
+store_mqtt_sensor:
+  alias: Store MQTT sensor
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: custom/sensor/{{ name }}/state
+      payload: '{{ state }}'
+      retain: true
+  - alias: Only add attributes if they are present.
+    if:
+    - condition: template
+      value_template: '{{ attributes is defined }}'
+    then:
+    - service: mqtt.publish
+      data:
+        topic: custom/sensor/{{ name }}/attributes
+        payload: '{{ attributes }}
+
+          '
+        retain: true
+  mode: queued
+  icon: mdi:motion-sensor
+holiday_sensors_update:
+  alias: Holiday sensors update
+  sequence:
+  - alias: Update upcoming dynamic holiday - easter.
+    service: script.update_next_holiday
+    data:
+      holiday: easter
+  - alias: Update upcoming dynamic holiday - election day.
+    service: script.update_next_holiday
+    data:
+      holiday: election_day
+  - alias: Update the holiday sensor.
+    service: homeassistant.update_entity
+    entity_id: sensor.holiday
+  - delay:
+      seconds: 10
+  - service: script.holiday_color_change
+    data: {}
+  mode: single
+  icon: mdi:calendar-sync
+update_next_holiday:
+  alias: Update next holiday
+  sequence:
+  - variables:
+      today: '{{ states("sensor.date") }}'
+      holiday_sensor: '{{ "sensor.date_" ~ holiday }}'
+      next_holiday_sensor: '{{ "sensor.date_next_" ~ holiday }}'
+      event_date: '{{ states(holiday_sensor) }}'
+      day_after_event: "{%- if event_date != \"unknown\" %}\n  {%- set split_date
+        = event_date.split(\"-\") %}\n  {{ \"{:04}-{:02}-{:02}\".format(split_date[0]|int(default=0),
+        split_date[1]|int(default=0), (split_date[2]|int(default=0)+1)) }}\n{% endif
+        %}\n"
+  - alias: Only update the day after the event (or the event date is unknown).
+    condition: template
+    value_template: '{{ today == day_after_event or event_date == ''unknown'' }}
+
+      '
+  - service: persistent_notification.create
+    data:
+      title: update_next_holiday
+      message: Updating {{ next_holiday_sensor }}.
+  - service: homeassistant.update_entity
+    data:
+      entity_id: '{{ next_holiday_sensor }}'
+  mode: single
+  icon: mdi:calendar-sync
+  fields:
+    holiday:
+      description: Name of the holiday that needs updating. (ex. easter or election_day)
+      default: election_day
+      required: true
+      selector:
+        text:
+lights_flash:
+  alias: Lights flash
+  sequence:
+  - variables:
+      is_hue: '{{ state_attr(entity_id,"effect_list") is sequence }}'
+  - service: script.notify_web
+    data:
+      message: 'entity_id: {{ entity_id }}
+
+        number_of_flashes: {{ number_of_flashes }}
+
+        delay_between_flashes: {{ delay_between_flashes }}
+
+        flash_transition_delay: {{ flash_transition_delay }}
+
+        is_hue: {{ is_hue }}'
+    enabled: false
+    alias: Debug output (notify_web)
+  - alias: Store the current state of the light.
+    service: scene.create
+    data:
+      scene_id: lights_flash_snapshot
+      snapshot_entities: '{{ entity_id }}'
+  - repeat:
+      count: '{{ number_of_flashes }}'
+      sequence:
+      - choose:
+        - alias: Use Hue built in flash when available.
+          conditions:
+          - '{{ is_hue }}'
+          sequence:
+          - service: light.turn_on
+            data_template:
+              entity_id: '{{ entity_id }}'
+              flash: short
+        default:
+        - service: light.turn_on
+          data_template:
+            entity_id: '{{ entity_id }}'
+            transition: 0
+        - alias: Transition time between flashes.
+          delay:
+            seconds: '{{ flash_transition_delay }}'
+        - service: light.turn_off
+          data_template:
+            entity_id: '{{ entity_id }}'
+            transition: 0
+      - alias: Delay between flashes.
+        delay:
+          seconds: '{{ delay_between_flashes }}'
+  - delay:
+      seconds: 2
+  - alias: Restore the previous state of the light.
+    service: scene.turn_on
+    data:
+      entity_id: scene.lights_flash_snapshot
+      transition: 5
+  mode: single
+  icon: mdi:lightbulb-on
+  fields:
+    entity_id:
+      description: Select the light to flash.
+      required: true
+      selector:
+        entity:
+          multiple: false
+          domain: light
+    number_of_flashes:
+      description: Number of flashes.
+      required: true
+      default: 3
+      selector:
+        number:
+          min: 1
+          max: 10
+    delay_between_flashes:
+      description: Seconds delay between flashes.
+      required: true
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 5
+    flash_transition_delay:
+      description: Transition duration.
+      required: true
+      default: 0.5
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+holiday_color_change:
+  alias: Holiday light color set
+  sequence:
+  - variables:
+      holiday_colors:
+        test: Green
+        birthday: Purple
+        christmas: Green
+        easter: Orchid
+        fathers: Orange
+        halloween: OrangeRed
+        marti_gras: Purple
+        new_years: Violet
+        pi: Blue
+        st_patty: DarkGreen
+        starwars: Red
+        thanksgiving: Orange
+        usa: Blue
+        valentine: Crimson
+      holiday: "{% set holiday = states('sensor.holiday') -%}\n{%- if holiday is not
+        none and holiday != \"\" -%}\n  {%- set holiday = holiday|lower|trim|replace(\"'\",\"\")|replace(\"
+        \",\"_\")|replace(\",_eve\",\"\")|replace(\"_day\",\"\") -%}\n  {%- if holiday
+        in [\"constitution\",\"flag\",\"independence\",\"memorial\",\"mlk\",\"presidents\",\"veterans\"]
+        -%}\n    {{ \"usa\" }}\n  {%- else -%}\n    {%- if holiday == \"christmas\"
+        -%}\n      {{ \"christmas\" }}\n    {%- elif holiday.split('_')|last == \"birthday\"
+        -%}\n      {{ \"birthday\" }}\n    {%- else -%}\n      {{ holiday|replace(\"mothers\",\"valentine\")|replace(\"earth\",\"st_patty\")
+        }}\n    {%- endif -%}\n  {%- endif %}\n{%- else -%}\n  {{ \"standard\" }}\n{%-
+        endif %}\n"
+  - choose:
+    - conditions:
+      - '{{ holiday != "standard" }}'
+      sequence:
+      - variables:
+          color: '{{ holiday_colors[holiday] }}'
+      - choose:
+        - conditions:
+          - '{{ is_state("light.porch","on") }}'
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.porch
+            data:
+              color_name: '{{ color }}'
+      - choose:
+        - conditions:
+          - '{{ is_state("light.table_lamp","on") }}'
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.table_lamp
+            data:
+              color_name: '{{ color }}'
+    default:
+    - choose:
+      - conditions:
+        - '{{ is_state("light.porch","on") }}'
+        sequence:
+        - service: light.turn_on
+          target:
+            entity_id: light.porch
+          data:
+            kelvin: 4000
+    - choose:
+      - conditions:
+        - '{{ is_state("light.table_lamp","on") }}'
+        sequence:
+        - service: light.turn_on
+          target:
+            entity_id: light.table_lamp
+          data:
+            kelvin: 4000
+  mode: single
+  icon: mdi:palette
+light_sequence:
+  alias: Light sequence
+  sequence:
+  - variables:
+      color_count: '{{ colors|count }}'
+  - alias: Display debug info (notify_web).
+    enabled: false
+    service: script.notify_web
+    data:
+      message: 'delay: ''{{ delay }}''
+
+        transition: ''{{ transition }}''
+
+        colors: ''{{ colors }}''
+
+        color_count: ''{{ colors_count }}''
+
+        entity_id: ''{{ entity_id }}''
+
+        '
+  - alias: Turn on light group before we start.
+    repeat:
+      count: '{{ color_count|int(default=0) }}'
+      sequence:
+      - service: script.light_sequence_color
+        data:
+          entity_id: '{{ entity_id }}'
+          brightness: 255
+          color: white
+          delay: '0'
+          transition: '0'
+  - alias: Loop through the colors.
+    repeat:
+      count: '{{ color_count|int(default=0) }}'
+      sequence:
+      - alias: Change all bulbs to this color one at a time.
+        service: script.light_sequence_color
+        data:
+          entity_id: '{{ entity_id }}'
+          color: '{{ colors[repeat.index-1] }}'
+          delay: '{{ delay }}'
+          transition: '{{ transition }}'
+      - alias: Stop
+        choose:
+        - conditions:
+          - '{{ is_state(entity_id,"off") }}'
+          sequence:
+          - service: script.turn_off
+            entity_id:
+            - script.light_sequence
+            - script.light_sequence_color
+          - service: homeassistant.turn_off
+            data:
+              entity_id: '{{ entity_id }}'
+  mode: restart
+  max_exceeded: silent
+  icon: mdi:string-lights
+  fields:
+    entity_id:
+      description: Select the light sequence.
+      required: true
+      default: light.dining_room
+      example: light.dining_room
+      selector:
+        entity:
+          multiple: false
+          domain: light
+    delay:
+      description: Duration between flashes.
+      required: true
+      default: 0.5
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+    transition:
+      description: Transition duration.
+      required: true
+      default: 2
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+    colors:
+      description: Choose multiple colors to cycle through. https://www.w3.org/TR/css-color-3/#svg-color
+      required: true
+      selector:
+        select:
+          multiple: true
+          options:
+          - aquamarine
+          - blueviolet
+          - cadetblue
+          - coral
+          - cornflowerblue
+          - crimson
+          - cyan
+          - darkslateblue
+          - darkgoldenrod
+          - darkmagenta
+          - darkslategrey
+          - darkviolet
+          - darkturquoise
+          - deeppink
+          - deepskyblue
+          - firebrick
+          - dodgerblue
+          - forestgreen
+          - gold
+          - indigo
+          - lavenderblush
+          - lawngreen
+          - lemonchiffon
+          - lightblue
+          - darkturquoise
+light_sequence_color:
+  alias: Light sequence color
+  sequence:
+  - variables:
+      light_groups:
+        light.bedroom_east: group.bedroom_east_fixture
+        light.dining_room: group.dining_room_fixture
+        light.play_room_floor_lamp: group.play_room_floor_lamp_fixture
+      entity: '{{ light_groups[entity_id]|default(entity_id) }}'
+      bulb_count: '{{ state_attr(entity,"entity_id")|count if entity.startswith("group")
+        else 1 }}'
+      color: '{{ color|default("cyan") }}
+
+        '
+      delay: '{{ delay|float(default=0.5) }}'
+      transition: '{{ transition|int(default=5) }}'
+  - alias: Show debug info (notify_web).
+    service: script.notify_web
+    enabled: false
+    data:
+      message: 'entity: {{ entity }}
+
+        bulb_count: {{ bulb_count }}
+
+        '
+  - choose:
+    - conditions:
+      - '{{ bulb_count|int(default=0) > 1 }}'
+      sequence:
+      - repeat:
+          count: '{{ bulb_count }}'
+          sequence:
+          - delay:
+              seconds: '{{ delay }}'
+          - service: light.turn_on
+            data:
+              brightness: 255
+              entity_id: '{{ state_attr(entity,"entity_id")[repeat.index-1] }}'
+              color_name: '{{ color }}'
+              transition: '{{ transition }}'
+    default:
+    - delay:
+        seconds: '{{ delay }}'
+    - service: light.turn_on
+      data:
+        brightness: 255
+        entity_id: '{{ entity }}'
+        color_name: '{{ color }}'
+        transition: '{{ transition }}'
+  - delay:
+      seconds: '{{ transition }}'
+  mode: queued
+  max: 10
+  icon: mdi:palette
+  fields:
+    entity_id:
+      description: Select the light sequence.
+      required: true
+      default: light.dining_room
+      example: light.dining_room
+      selector:
+        entity:
+          multiple: false
+          domain: light
+    delay:
+      description: Duration between flashes.
+      required: true
+      default: 0.5
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+    transition:
+      description: Transition duration.
+      required: true
+      default: 2
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+    colors:
+      description: Choose multiple colors to cycle through. https://www.w3.org/TR/css-color-3/#svg-color
+      required: true
+      selector:
+        select:
+          multiple: true
+          options:
+          - aquamarine
+          - blueviolet
+          - cadetblue
+          - coral
+          - cornflowerblue
+          - crimson
+          - cyan
+          - darkslateblue
+          - darkgoldenrod
+          - darkmagenta
+          - darkslategrey
+          - darkviolet
+          - darkturquoise
+          - deeppink
+          - deepskyblue
+          - firebrick
+          - dodgerblue
+          - forestgreen
+          - gold
+          - indigo
+          - lavenderblush
+          - lawngreen
+          - lemonchiffon
+          - lightblue
+vacuum_room_clean:
+  alias: Vacuum room clean
+  sequence:
+  - variables:
+      rooms: "{%- if rooms is defined %}\n  {{ rooms }}\n{%- endif %}\n"
+      vacuum: "{%- if vacuum is defined %}\n  {{ vacuum }}\n{%- else %}\n  [\"vacuum.family_room\",\"vacuum.play_room\"]\n{%-
+        endif %}\n"
+  - if:
+    - condition: template
+      value_template: '{{ rooms|upper in ["","ALL"] }}'
+    then:
+    - service: vacuum.send_command
+      data:
+        command: sweep_auto
+      target:
+        entity_id: '{{ vacuum }}'
+    else:
+    - service: vacuum.send_command
+      data:
+        command: sweep_rooms
+        params:
+          rooms: ' {{ rooms }} '
+      target:
+        entity_id: '{{ vacuum }}'
+  icon: mdi:update
+  mode: parallel
+  fields:
+    rooms:
+      name: Room(s)
+      description: Room or rooms to clean
+      example: Family room
+      selector:
+        select:
+          multiple: true
+          options:
+          - ALL
+          - Family room
+          - Kitchen
+    vacuum:
+      name: Vacuum
+      description: Vacuum to clean.
+      example: vacuum.family_room
+      selector:
+        entity:
+          multiple: true
+          domain:
+          - vacuum
+  max: 10
+vacuum_update:
+  alias: Vacuum update
+  sequence:
+  - variables:
+      vacuum: "{%- if vacuum is defined %}\n  {{ vacuum }}\n{%- else %}\n  [\"vacuum.family_room\",\"vacuum.play_room\"]\n{%-
+        endif %}\n"
+  - service: vacuum.send_command
+    data:
+      command: update
+    target:
+      entity_id: '{{ vacuum }}'
+  icon: mdi:update
+  mode: parallel
+  fields:
+    vacuum:
+      name: Vacuum
+      description: Vacuum to update.
+      example: vacuum.family_room
+      selector:
+        entity:
+          multiple: true
+          domain:
+          - vacuum
+  max: 10
+cast:
+  alias: Cast
+  sequence:
+  - variables:
+      entities: "{%- set data = namespace(displays=\"\") %}\n{%- if displays is defined
+        %}\n  {%- if displays is not string %}\n    {%- for display in displays %}\n
+        \     {%- set data.displays = data.displays ~ '\"' ~ device_entities(display)[0]
+        ~ '\"' ~ iif(not loop.last, \",\", \"\") %}\n    {%- endfor %}\n  {%- else
+        %}\n    {%- set data.displays = '\"' ~ device_entities(displays)[0] ~ '\"'
+        %}\n  {%- endif %}\n{%- else %}\n  {%- set data.displays = '\"media_player.google_kitchen\"'
+        %}\n{%- endif %}\n[{{ data.displays }}]\n"
+  - service: script.debug
+    enabled: false
+    data:
+      message: 'displays is not string: ''{{ displays is not string }}''
+
+        dismiss_after is defined: ''{{ dismiss_after is defined }}''
+
+
+        displays: ''{{ displays }}''
+
+
+        entities: ''{{ entities }}''
+
+        count: {{ entities|count }}
+
+
+        dashboard_path: "{{ dashboard_path }}"
+
+        view_path: "{{ view_path }}"
+
+
+        dismiss_after: ''{{ dismiss_after }}''
+
+        '
+  - alias: Turn off the media players before we cast a new page for it to display.
+    service: media_player.turn_off
+    target:
+      entity_id: '{{ entities }}'
+  - alias: Cast a page to the specified displays.
+    repeat:
+      count: '{{ entities|count }}'
+      sequence:
+      - alias: Cast a dashboard to a display.
+        service: cast.show_lovelace_view
+        data:
+          entity_id: '{{ entities[repeat.index-1] }}'
+          dashboard_path: '{{ dashboard_path }}'
+          view_path: '{{ view_path }}'
+  - alias: If `dismiss_after` is set, then turn off the displays after the specified
+      delay.
+    if:
+    - condition: template
+      value_template: '{{ dismiss_after is defined }}'
+    then:
+    - delay:
+        seconds: '{{ dismiss_after }}'
+    - alias: Stop the displays.
+      service: media_player.turn_off
+      target:
+        entity_id: '{{ entities }}'
+  mode: parallel
+  icon: mdi:cast
+  fields:
+    displays:
+      description: Select the Google cast display(s).
+      selector:
+        device:
+          multiple: true
+          integration: cast
+          entity:
+            domain: media_player
+    dashboard_path:
+      description: Path to the desired dashboard.
+      default: dashboard-cast
+      example: lovelace
+      required: false
+      selector:
+        text:
+    view_path:
+      description: Path to the page within the dashboard
+      default: cameras
+      example: home
+      required: false
+      selector:
+        text:
+    dismiss_after:
+      description: 'Reset the display after # seconds.'
+      required: false
+      selector:
+        number:
+          min: 60
+          max: 300
+  max: 10

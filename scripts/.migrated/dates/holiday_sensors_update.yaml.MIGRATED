@@ -1,0 +1,16 @@
+---
+sequence:
+  - alias: Update upcoming dynamic holiday - easter.
+    service: script.update_next_holiday
+    data:
+      holiday: easter
+  - alias: Update upcoming dynamic holiday - election day.
+    service: script.update_next_holiday
+    data:
+      holiday: election_day
+  - alias: Update the holiday sensor.
+    service: homeassistant.update_entity
+    entity_id: sensor.holiday
+  - delay:
+      seconds: 10
+  - service: script.holiday_color_change

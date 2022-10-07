@@ -1,30 +1,32 @@
 ---
 mode: queued
-variables:
-  light_groups:
-    "light.bedroom_east": "group.bedroom_east_fixture"
-    "light.dining_room": "group.dining_room_fixture"
-    "light.play_room_floor_lamp": "group.play_room_floor_lamp_fixture"
-  entity: '{{ light_groups[entity_id]|default(entity_id) }}'
-
-  bulb_count: '{{ state_attr(entity,"entity_id")|count if entity.startswith("group") else 1 }}'
-
-  color: '{{ color|default("cyan") }}'
-  delay: '{{ delay|float(default=0.5) }}'
-  transition: '{{ transition|int(default=5) }}'
 sequence:
-  # - service: script.notify_web
-  #   data:
-  #     message: |
-  #       entity: {{ entity }}
-  #       bulb_count: {{ bulb_count }}
+  - variables:
+      light_groups:
+        "light.bedroom_east": "group.bedroom_east_fixture"
+        "light.dining_room": "group.dining_room_fixture"
+        "light.play_room_floor_lamp": "group.play_room_floor_lamp_fixture"
+      entity: '{{ light_groups[entity_id]|default(entity_id) }}'
+
+      bulb_count: '{{ state_attr(entity,"entity_id")|count if entity.startswith("group") else 1 }}'
+
+      color: '{{ color|default("cyan") }}'
+      delay: '{{ delay|float(default=0.5) }}'
+      transition: '{{ transition|int(default=5) }}'
+
+  - service: script.notify_web
+    enabled: true
+    data:
+      message: |
+        entity: {{ entity }}
+        bulb_count: {{ bulb_count }}
 
   - choose:
       - conditions:
           - '{{ bulb_count|int(default=0) > 1 }}'
         sequence:
-          # Change each bulb in the group.
-          - repeat:
+          - alias: Change each bulb in the group.
+            repeat:
               count: "{{ bulb_count }}"
               sequence:
                 - delay:

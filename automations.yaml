@@ -42,7 +42,7 @@
       message: Daily maintenance complete.
   mode: single
 - id: '1615053055187'
-  alias: 'Multi-click handler: bedroom dimmer'
+  alias: Bedroom dimmer multi-click handler
   description: ''
   use_blueprint:
     path: kpine/ge_double.yaml
@@ -263,7 +263,7 @@
       effect: Chase
       duration: Indefinitely
 - id: '1642400705340'
-  alias: 'Z2M - Remote: Brian bedside'
+  alias: 'Remote: Brian bedside'
   description: ''
   use_blueprint:
     path: mozartbanging/zigbee2mqtt-aqara-opple-wxcjkg13lm-3-band-switch-all-custom-buttons.yaml
@@ -338,7 +338,7 @@
           data:
             hvac_mode: cool
 - id: '1642402019243'
-  alias: 'Z2M - Remote: Nerene bedside'
+  alias: 'Remote: Nerene bedside'
   description: ''
   use_blueprint:
     path: mozartbanging/zigbee2mqtt-aqara-opple-wxcjkg13lm-3-band-switch-all-custom-buttons.yaml
@@ -1081,7 +1081,7 @@
         target:
           entity_id: input_boolean.guest_mode
 - id: '1664133526340'
-  alias: '[Bedroom] Z2M - Nerene wakeup button'
+  alias: 'Remote: Nerene wakeup button'
   description: Sets wakeup light to turn on in 8 hours. Each subsequent push adds
     one hour to the timer.
   use_blueprint:
@@ -1131,7 +1131,7 @@
           entity_id: timer.nerene_wakeup_light
         alias: Cancel wakeup light
 - id: '1664135234650'
-  alias: '[Bedroom] Nerene wakeup timer complete'
+  alias: Nerene wakeup timer complete
   description: ''
   trigger:
   - platform: event
@@ -1145,21 +1145,9 @@
     alias: Call script.event_wakeup_nerene
   mode: single
 - id: '1664912203010'
-  alias: Open/close house a/c change
+  alias: Open/close house thermostat (a/c) change
   description: Actions to take when the alert has been cleared.
   trigger:
-  - id: house_closed
-    platform: template
-    value_template: "{{\n  is_state(\"binary_sensor.house_windows\",\"off\") and\n
-      \ is_state(\"binary_sensor.sliding_door\",\"off\")\n}}\n"
-    alias: When the windows or sliding door closes
-  - id: open_house_complete
-    platform: state
-    entity_id: alert.open_house
-    from: 'on'
-    to: idle
-    alias: When alert.open_house turns off
-    enabled: false
   - id: windows_open
     platform: state
     entity_id: binary_sensor.house_windows
@@ -1167,7 +1155,7 @@
     to: 'on'
     for:
       seconds: 30
-    alias: When the windows stay open
+    alias: When the windows stay open.
   - id: sliding_door_open
     platform: state
     entity_id: binary_sensor.sliding_door
@@ -1175,34 +1163,23 @@
     to: 'on'
     for:
       minutes: 1
-    alias: When the sliding door stays open
+    alias: When the sliding door stays open.
+  - platform: state
+    entity_id:
+    - binary_sensor.house_windows
+    from: 'on'
+    to: 'off'
+    id: windows_closed
+    alias: When the windows close.
+  - platform: state
+    entity_id:
+    - binary_sensor.sliding_door
+    from: 'on'
+    to: 'off'
+    id: door_closed
+    alias: When the sliding door closes.
   condition: []
   action:
-  - if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id: house_closed
-        alias: Triggered by house_closed
-      - condition: template
-        value_template: '{{ is_state("climate.home_thermostat","off") }}'
-        alias: Thermostat is off
-      alias: When the house is closed
-    then:
-    - service: climate.set_temperature
-      target:
-        entity_id: climate.home_thermostat
-      data:
-        hvac_mode: cool
-        temperature: 77
-      alias: Turn on the A/C
-      enabled: false
-    - service: scene.turn_on
-      target:
-        entity_id: scene.thermostat_snapshot
-      metadata: {}
-    else: []
-    alias: Restore the previous state of the thermostat when the house when closed
   - if:
     - condition: or
       conditions:
@@ -1212,18 +1189,29 @@
         id: sliding_door_open
       alias: When the windows or sliding door have been opened.
     then:
-    - service: scene.create
-      data:
-        scene_id: thermostat_snapshot
-        snapshot_entities: climate.home_thermostat
-      alias: Store the previous state of the thermostat.
-    - device_id: 929a128c097a11eb96b349f854291f12
-      domain: climate
-      entity_id: climate.home_thermostat
-      type: set_hvac_mode
-      hvac_mode: 'off'
-      alias: Turn off the A/C.
+    - service: climate.turn_off
+      data: {}
+      target:
+        entity_id: climate.home_thermostat
     alias: Turn off the thermostat when the house is left open.
+  - if:
+    - condition: and
+      conditions:
+      - condition: template
+        value_template: "{{\n  trigger.id in [\"windows_closed\",\"door_closed\"]\n
+          \ and is_state(\"binary_sensor.house_windows\",\"off\")\n  and is_state(\"binary_sensor.sliding_door\",\"off\")\n}}"
+        alias: When the house has just been closed.
+      - condition: template
+        value_template: '{{ is_state("climate.home_thermostat","off") }}'
+        alias: Thermostat is off
+      alias: When the house is closed and the thermostat is off.
+    then:
+    - service: climate.turn_on
+      data: {}
+      target:
+        entity_id: climate.home_thermostat
+    else: []
+    alias: Turn on the thermostat when the house when closed
   mode: single
 - id: '1664913334700'
   alias: Away mode
@@ -1839,6 +1827,15 @@
     to: 'on'
   condition: []
   action:
+  - variables:
+      schedule: '{{ trigger.to_state.object_id.split("_")[1]}}'
+      new_state: '{{ trigger.to_state.state }}'
+      middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
+      middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on")
+        }}'
+      high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
+      high_school_day_tomorrow: '{{ is_state("binary_sensor.high_school_day_tomorrow","on")
+        }}'
   - choose:
     - conditions:
       - condition: template
@@ -1957,13 +1954,4 @@
           alias: Tomorrow is not a high school day
         alias: High school vacation
     alias: Choose actions based on which schedule triggered.
-  variables:
-    schedule: '{{ trigger.to_state.object_id.split("_")[1]}}'
-    new_state: '{{ trigger.to_state.state }}'
-    middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
-    middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on")
-      }}'
-    high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
-    high_school_day_tomorrow: '{{ is_state("binary_sensor.high_school_day_tomorrow","on")
-      }}'
   mode: single

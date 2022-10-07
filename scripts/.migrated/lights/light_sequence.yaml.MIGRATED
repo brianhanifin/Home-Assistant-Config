@@ -1,0 +1,98 @@
+---
+mode: restart
+max_exceeded: silent
+description: "Example service call data.
+  https://www.w3.org/TR/css-color-3/#svg-color
+  entity_id:   light.table_lamp
+  delay:       0.5
+  transition:  5
+  colors:
+    - aquamarine
+    - blueviolet
+    - cadetblue
+    - coral
+    - cornflowerblue
+    - crimson
+    - cyan
+    - darkslateblue
+    - darkgoldenrod
+    - darkmagenta
+    - darkslategrey
+    - darkviolet
+    - darkturquoise
+    - deeppink
+    - deepskyblue
+    - firebrick
+    - dodgerblue
+    - forestgreen
+    - gold
+    - indigo
+    - lavenderblush
+    - lawngreen
+    - lemonchiffon
+    - lightblue
+    - darkturquoise"
+sequence:
+  - variables:
+      color_count: '{{ colors|count }}'
+      adaptive_lighting: '{{ entity_id | replace("light.","switch.adaptive_lighting_") }}'
+
+  - alias: Display debug info (notify_web).
+    enabled: false
+    service: script.notify_web
+    data:
+      message: |
+        entity_id: '{{ entity_id }}'
+        adaptive_lighting: '{{ adaptive_lighting }}'
+
+  - alias: Disable Adaptive Lighting automated control.
+    enabled: false
+    service: switch.turn_off
+    data:
+      entity_id: '{{ adaptive_lighting }}'
+
+  - alias: Turn on light group before we start.
+    repeat:
+      count: '{{ color_count|int(default=0) }}'
+      sequence:
+        - service: script.light_sequence_color
+          data:
+            entity_id: "{{ entity_id }}"
+            brightness: 255
+            color: "white"
+            delay: "0"
+            transition: "0"
+
+  - alias: Loop through the colors.
+    repeat:
+      count: '{{ color_count|int(default=0) }}'
+      sequence:
+        - alias: Change all bulbs to this color one at a time.
+          service: script.light_sequence_color
+          data:
+            entity_id: "{{ entity_id }}"
+            color: "{{ colors[repeat.index-1] }}"
+            delay: "{{ delay }}"
+            transition: "{{ transition }}"
+
+        - alias: Stop
+          choose:
+            - conditions:
+                - '{{ is_state(entity_id,"off") }}'
+              sequence:
+                - service: script.turn_off
+                  entity_id:
+                    - script.light_sequence
+                    - script.light_sequence_color
+
+                - service: homeassistant.turn_off
+                  data:
+                    entity_id: '{{ entity_id }}'
+
+  - delay:
+      seconds: "{{ transition }}"
+  - alias: Restore Adaptive Lighting automated control.
+    enabled: false
+    service: switch.turn_on
+    data:
+      entity_id: '{{ adaptive_lighting }}'

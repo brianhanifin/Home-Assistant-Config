@@ -1,13 +1,13 @@
 ---
-variables:
-  number_of_flashes: 3
-  delay_between_flashes: 1
-  flash_transition_delay: 0.5
-
-  is_hue: '{{ state_attr(entity_id,"effect_list") is sequence }}'
 sequence:
-  # Store the current state of the light.
-  - service: scene.create
+  - variables:
+      number_of_flashes: 3
+      delay_between_flashes: 1
+      flash_transition_delay: 0.5
+      is_hue: '{{ state_attr(entity_id,"effect_list") is sequence }}'
+
+  - alias: Store the current state of the light.
+    service: scene.create
     data:
       scene_id: lights_flash_snapshot
       snapshot_entities: '{{ entity_id }}'
@@ -15,9 +15,9 @@ sequence:
   - repeat:
       count: '{{ number_of_flashes }}'
       sequence:
-        # Use Hue built in flash when available.
         - choose:
-            - conditions:
+            - alias: Use Hue built in flash when available.
+              conditions:
                 - '{{ is_hue }}'
               sequence:
                 - service: light.turn_on
@@ -31,7 +31,8 @@ sequence:
                 entity_id: "{{ entity_id }}"
                 transition: 0
 
-            - delay:
+            - alias: Transition time between flashes.
+              delay:
                 seconds: '{{ flash_transition_delay }}'
 
             - service: light.turn_off
@@ -39,14 +40,14 @@ sequence:
                 entity_id: "{{ entity_id }}"
                 transition: 0
 
-        # Delay between flashes.
-        - delay:
+        - alias: Delay between flashes.
+          delay:
             seconds: '{{ delay_between_flashes }}'
 
-  # Restore the previous state of the porch light.
   - delay:
       seconds: 2
-  - service: scene.turn_on
+  - alias: Restore the previous state of the light.
+    service: scene.turn_on
     data:
       entity_id: scene.lights_flash_snapshot
       transition: 5
