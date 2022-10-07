@@ -30,15 +30,15 @@ action:
                     entity_id: lock.front_door
 
           - choose:
-              - conditions: '{{ states("climate.bedroom") != "off" }}'
+              - conditions: '{{ states("climate.bedroom_thermostat") != "off" }}'
                 sequence:
                   - service: climate.turn_off
-                    entity_id: climate.bedroom
+                    entity_id: climate.bedroom_thermostat
           - choose:
-              - conditions: '{{ states("climate.lucas_room") != "off" }}'
+              - conditions: '{{ states("climate.lucas_room_thermostat") != "off" }}'
                 sequence:
                   - service: climate.turn_off
-                    entity_id: climate.lucas_room
+                    entity_id: climate.lucas_room_thermostat
 
           # Run the shutdown/goodbye routine (without the verbal confirmation).
           - service: script.turn_on

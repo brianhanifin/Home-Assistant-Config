@@ -28,7 +28,7 @@ trigger:
       powered_state: "off"
 variables:
   # hvac_modes: off, cool, fan_only, dry, heat_cool
-  assumed_state: '{{ states("climate.bedroom") }}'
+  assumed_state: '{{ states("climate.bedroom_thermostat") }}'
 
   # power: '{{ states("sensor.bedroom_ac_power")|int(default=0) }}'
   # powered_state: |
@@ -43,6 +43,6 @@ condition:
 action:
   - service: sensibo.assume_state
     target:
-      entity_id: climate.bedroom
+      entity_id: climate.bedroom_thermostat
     data:
       state: '{{ powered_state }}'

@@ -64,7 +64,7 @@
         target:
           entity_id:
           - switch.sound_machine
-          - climate.bedroom
+          - climate.bedroom_thermostat
           - fan.bedroom
           - switch.sound_machine
           - light.bedroom
@@ -317,24 +317,24 @@
       button_6_single:
       - service: climate.turn_off
         target:
-          entity_id: climate.bedroom
+          entity_id: climate.bedroom_thermostat
         data: {}
       button_5_single:
       - choose:
         - conditions:
           - condition: state
-            entity_id: climate.bedroom
+            entity_id: climate.bedroom_thermostat
             state: cool
           sequence:
           - service: climate.set_hvac_mode
             target:
-              entity_id: climate.bedroom
+              entity_id: climate.bedroom_thermostat
             data:
               hvac_mode: fan_only
         default:
         - service: climate.set_hvac_mode
           target:
-            entity_id: climate.bedroom
+            entity_id: climate.bedroom_thermostat
           data:
             hvac_mode: cool
 - id: '1642402019243'
@@ -392,24 +392,24 @@
       button_6_single:
       - service: climate.turn_off
         target:
-          entity_id: climate.bedroom
+          entity_id: climate.bedroom_thermostat
         data: {}
       button_5_single:
       - choose:
         - conditions:
           - condition: state
-            entity_id: climate.bedroom
+            entity_id: climate.bedroom_thermostat
             state: cool
           sequence:
           - service: climate.set_hvac_mode
             target:
-              entity_id: climate.bedroom
+              entity_id: climate.bedroom_thermostat
             data:
               hvac_mode: fan_only
         default:
         - service: climate.set_hvac_mode
           target:
-            entity_id: climate.bedroom
+            entity_id: climate.bedroom_thermostat
           data:
             hvac_mode: cool
 - id: '1642441568665'
@@ -429,16 +429,16 @@
       - choose:
         - conditions:
           - condition: state
-            entity_id: climate.lucas_room
+            entity_id: climate.lucas_room_thermostat
             state: 'off'
           sequence:
           - service: climate.turn_on
             target:
-              entity_id: climate.lucas_room
+              entity_id: climate.lucas_room_thermostat
         default:
         - service: climate.turn_off
           target:
-            entity_id: climate.lucas_room
+            entity_id: climate.lucas_room_thermostat
 - id: '1642442618846'
   alias: 'Z2M - Remote: Kyle bedside'
   description: ''
@@ -1265,7 +1265,7 @@
       - condition: device
         device_id: 90294c771af3341b24b8836b59e002ad
         domain: climate
-        entity_id: climate.bedroom
+        entity_id: climate.bedroom_thermostat
         type: is_hvac_mode
         hvac_mode: 'off'
         alias: Is the bedroom A/C off?
@@ -1273,7 +1273,7 @@
     then:
     - device_id: 90294c771af3341b24b8836b59e002ad
       domain: climate
-      entity_id: climate.bedroom
+      entity_id: climate.bedroom_thermostat
       type: set_hvac_mode
       hvac_mode: 'off'
       alias: Turn off Bedroom A/C
@@ -1284,7 +1284,7 @@
       - condition: device
         device_id: 877557b634269a08b5bf0439f9a314b5
         domain: climate
-        entity_id: climate.lucas_room
+        entity_id: climate.lucas_room_thermostat
         type: is_hvac_mode
         hvac_mode: 'off'
         alias: Is Lucas' A/C off?
@@ -1292,7 +1292,7 @@
     then:
     - device_id: 877557b634269a08b5bf0439f9a314b5
       domain: climate
-      entity_id: climate.lucas_room
+      entity_id: climate.lucas_room_thermostat
       type: set_hvac_mode
       hvac_mode: 'off'
   - service: script.turn_on
@@ -1580,13 +1580,15 @@
   alias: 'Presence: family all departed'
   description: ''
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.family_present
+  - platform: state
+    entity_id:
+    - sensor.family_present
     for:
       hours: 0
-      minutes: 5
+      minutes: 30
       seconds: 0
-    above: 0
+    enabled: true
+    to: '0'
   condition:
   - condition: state
     entity_id: input_boolean.guest_mode
@@ -1595,6 +1597,10 @@
   - service: input_boolean.turn_on
     entity_id: input_boolean.away_mode
     alias: Turn on away mode
+  - service: notify.brian
+    data:
+      title: Away mode turned on
+      message: Family present is 0.
   mode: single
 - id: '1664919499650'
   alias: 'Presence: family arrival'

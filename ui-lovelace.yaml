@@ -772,20 +772,20 @@ views:
               title: House thermostat
             service: browser_mod.popup
         type: custom:mushroom-template-card
-      - entity: climate.bedroom
+      - entity: climate.bedroom_thermostat
         icon: mdi:thermostat
-        icon_color: '{%- set thermostat_on = states("climate.bedroom") != "off" %}
+        icon_color: '{%- set thermostat_on = states("climate.bedroom_thermostat") != "off" %}
 
           {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
         layout: vertical
         multiline_secondary: true
         primary: Bedroom
         secondary: "  {%- set current_state = states(\"sensor.bedroom_ac_current_state\"\
-          ) %}\n  {%- set target_temperature = state_attr(\"climate.bedroom\",\"temperature\"\
+          ) %}\n  {%- set target_temperature = state_attr(\"climate.bedroom_thermostat\",\"temperature\"\
           ) %}\n  {%- if current_state == \"Idle\" -%}\n    Idle until {{ target_temperature\
           \ }}°\n  {%- elif current_state == \"Cooling\" %}\n    Cooling to {{ target_temperature\
           \ }}°\n  {%- else %}\n    {{ current_state }}\n  {%- endif %}\n  Currently\
-          \ {{ state_attr(\"climate.bedroom\",\"current_temperature\")|round(default=0)\
+          \ {{ state_attr(\"climate.bedroom_thermostat\",\"current_temperature\")|round(default=0)\
           \ ~ \"°\"\n  }}"
         tap_action:
           action: fire-dom-event
@@ -797,7 +797,7 @@ views:
                     hvac:
                       heat: false
                       heat_cool: false
-                  entity: climate.bedroom
+                  entity: climate.bedroom_thermostat
                   fallback: 'OFF'
                   header: false
                   layout:
@@ -859,9 +859,9 @@ views:
                       name: Recommended
                     - entity: sensor.bedroom_ac_power
                       name: Power
-                    - entity: climate.bedroom
+                    - entity: climate.bedroom_thermostat
                       name: Status
-                    entity: climate.bedroom
+                    entity: climate.bedroom_thermostat
                     name: Air Conditioner
                     secondary_info: last-changed
                     show_state: false
@@ -898,9 +898,9 @@ views:
               title: Bedroom A/C
             service: browser_mod.popup
         type: custom:mushroom-template-card
-      - entity: climate.lucas_room
+      - entity: climate.lucas_room_thermostat
         icon: mdi:thermostat
-        icon_color: '{%- set thermostat_on = states("climate.lucas_room") != "off"
+        icon_color: '{%- set thermostat_on = states("climate.lucas_room_thermostat") != "off"
           %}
 
           {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
@@ -908,11 +908,11 @@ views:
         multiline_secondary: true
         primary: Lucas
         secondary: "  {%- set current_state = states(\"sensor.lucas_ac_current_state\"\
-          ) %}\n  {%- set target_temperature = state_attr(\"climate.lucas_room\",\"\
+          ) %}\n  {%- set target_temperature = state_attr(\"climate.lucas_room_thermostat\",\"\
           temperature\") %}\n  {%- if current_state == \"Idle\" -%}\n    Idle until\
           \ {{ target_temperature }}°\n  {%- elif current_state == \"Cooling\" %}\n\
           \    Cooling to {{ target_temperature }}°\n  {%- else %}\n    {{ current_state\
-          \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.lucas_room\",\"\
+          \ }}\n  {%- endif %}\n  Currently {{ state_attr(\"climate.lucas_room_thermostat\",\"\
           current_temperature\")|round(default=0) ~ \"°\"\n  }}"
         tap_action:
           action: fire-dom-event
@@ -924,7 +924,7 @@ views:
                     hvac:
                       heat: false
                       heat_cool: false
-                  entity: climate.lucas_room
+                  entity: climate.lucas_room_thermostat
                   fallback: 'OFF'
                   header: false
                   layout:
@@ -1002,9 +1002,9 @@ views:
                       name: Recommended
                     - entity: sensor.lucas_ac_power
                       name: Power
-                    - entity: climate.lucas_room
+                    - entity: climate.lucas_room_thermostat
                       name: Status
-                    entity: climate.lucas_room
+                    entity: climate.lucas_room_thermostat
                     name: Air Conditioner
                     secondary_info: last-changed
                     show_state: false
@@ -1618,7 +1618,7 @@ views:
       square: false
       type: grid
     - collapsible_controls: false
-      entity: climate.bedroom
+      entity: climate.bedroom_thermostat
       fill_container: true
       hvac_modes:
       - cool
@@ -1677,7 +1677,7 @@ views:
         tap_action:
           action: toggle
         type: custom:mushroom-light-card
-      - entity: climate.lucas_room
+      - entity: climate.lucas_room_thermostat
         name: A/C
         tap_action:
           action: more-info
@@ -1686,7 +1686,7 @@ views:
       square: false
       type: grid
     - collapsible_controls: false
-      entity: climate.lucas_room
+      entity: climate.lucas_room_thermostat
       fill_container: true
       hvac_modes:
       - cool
@@ -2430,7 +2430,7 @@ views:
       - days
     exclude: []
     include:
-    - climate.lucas_room
+    - climate.lucas_room_thermostat
     - fan.bedroom
     - fan.family_room
     - fan.play_room

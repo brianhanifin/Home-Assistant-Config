@@ -8,31 +8,31 @@ switches:
     turn_on:
       - service: climate.turn_on
         target:
-          entity_id: climate.lucas_room
+          entity_id: climate.lucas_room_thermostat
 
       - choose:
           - conditions: '{{ is_state("sensor.lucas_recommended_climate_mode","cool") }}'
             sequence:
               - service: climate.set_temperature
                 target:
-                  entity_id: climate.lucas_room
+                  entity_id: climate.lucas_room_thermostat
                 data:
                   hvac_mode: cool
                   temperature: 65
         default:
           - service: climate.set_hvac_mode
             target:
-              entity_id: climate.lucas_room
+              entity_id: climate.lucas_room_thermostat
             data:
               hvac_mode: '{{ states("sensor.lucas_recommended_climate_mode") }}'
 
     turn_off:
       - service: climate.turn_off
         target:
-          entity_id: climate.lucas_room
+          entity_id: climate.lucas_room_thermostat
 
       - service: climate.set_hvac_mode
         target:
-          entity_id: climate.lucas_room
+          entity_id: climate.lucas_room_thermostat
         data:
           hvac_mode: "off"
