@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **49,857** | 1,337 | 37 | 96 | 59 |
+| **41,835** | 1,355 | 37 | 97 | 59 |
 
 # Index
 
@@ -209,11 +209,11 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1337 total entities**,
-including **696 sensors**. My YAML
-files contain 49,857 lines of code.
+Our Home Assistant install has approximately **1355 total entities**,
+including **712 sensors**. My YAML
+files contain 41,835 lines of code.
 
-<details><summary>23 Custom integrations</summary>
+<details><summary>24 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.1.0](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra).
@@ -242,7 +242,7 @@ Authors:[@ludeeus](https://github.com/ludeeus).
 ## [Google Home v1.9.15](https://github.com/leikoilja/ha-google-home)
 Home Assistant Google Home custom componentAuthors:[@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
-## [Home Assistant Community Store (HACS) v1.27.2](https://hacs.xyz/docs/configuration/start)
+## [Home Assistant Community Store (HACS) v1.28.0](https://hacs.xyz/docs/configuration/start)
 HACS gives you a powerful UI to handle downloads of all your custom needs.Authors:[@ludeeus](https://github.com/ludeeus).
 
 ## [HASS.Agent Notifier v2022.3.15](https://github.com/LAB02-Research/HASS.Agent-Notifier)
@@ -250,6 +250,9 @@ Authors:[@LAB02-Admin](https://github.com/LAB02-Admin).
 
 ## [Holidays v1.8.0](https://github.com/bruxy70/Holidays/)
 📅 Custom Home Assistant integration for public holidays - also used for garbage_collection integration to automatically move scheduled events that fall on a public holiday (by an automation blueprint)Authors:[@bruxy70](https://github.com/bruxy70).
+
+## [LocalTuya integration v4.1.1](https://github.com/rospogrigio/localtuya/)
+Authors:[@rospogrigio](https://github.com/rospogrigio), [@postlund](https://github.com/postlund).
 
 ## [Lovelace Notify v1.0.0]()
 Lovelace notification / alert component for Home AssistantAuthors:[@rr326](https://github.com/rr326).
@@ -284,7 +287,7 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.13](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>27 lovelace plugins</summary>
+<details><summary>26 lovelace plugins</summary>
 
 ## [Atomic Calendar Revive v7.0.1](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
@@ -313,7 +316,7 @@ Flipdown Timer Card for Home Assistant Lovelace
 ## [Kiosk Mode v1.7.3](https://github.com/NemesisRE/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
-## [Layout Card v2.4.2](https://github.com/thomasloven/lovelace-layout-card)
+## [Layout Card v2.4.4](https://github.com/thomasloven/lovelace-layout-card)
 🔹 Get more control over the placement of lovelace cards.
 
 ## [Lovelace Home Feed Card v0.6.3](https://github.com/gadgetchnnel/lovelace-home-feed-card)
@@ -355,9 +358,6 @@ A different take on the thermostat card for Home Assistant ♨️
 ## [Swipe Card v4.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
-## [Swiss Army Knife Custom Card v1.0.0-rc.3](https://github.com/AmoebeLabs/swiss-army-knife-card)
-The versatile custom Swiss Army Knife card for Home Assistant allows you to create your unique visualization using several graphical tools, styling options and animations.
-
 ## [Timer Bar Card v1.20](https://github.com/rianadon/timer-bar-card)
 A progress bar display for Home Assistant timers
 
@@ -385,7 +385,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 ## Portainer v2.0.0
 
 
-## RTSPtoWeb - WebRTC v1.3.0
+## RTSPtoWeb - WebRTC v1.4.0
 
 
 ## Samba share v10.0.0
@@ -430,7 +430,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.10.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.10.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -440,7 +440,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,857-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,835-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
