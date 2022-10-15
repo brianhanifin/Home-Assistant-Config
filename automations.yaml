@@ -231,6 +231,7 @@
       device_id:
       - 1ad4b3bd16edcc7d4961b3e95ed57f70
       - 385bbbe37417eec30709aadfd0f37152
+      - 7adcdd46f1a878bf5d0386dea85e3e06
     data: {}
   - service: script.say
     data:
@@ -1237,66 +1238,73 @@
   condition: []
   action:
   - if:
-    - condition: device
-      device_id: 251811656468e59987a59a49a5018a8e
-      domain: cover
-      entity_id: cover.garage_door
-      type: is_open
+    - condition: trigger
+      id: to_on
     then:
-    - service: cover.close_cover
-      entity_id: cover.garage_door
-    alias: Close an open garage door
-  - if:
-    - condition: device
-      device_id: f6a7f9561a7a8b48602809e1789385f4
-      domain: lock
-      entity_id: lock.front_door
-      type: is_unlocked
-    then:
-    - service: lock.lock
-      data: {}
-      target:
-        device_id: f6a7f9561a7a8b48602809e1789385f4
-      alias: Lock front door
-    alias: Lock and unlocked front door
-  - if:
-    - condition: not
-      conditions:
+    - if:
       - condition: device
-        device_id: 90294c771af3341b24b8836b59e002ad
+        device_id: 251811656468e59987a59a49a5018a8e
+        domain: cover
+        entity_id: cover.garage_door
+        type: is_open
+      then:
+      - service: cover.close_cover
+        entity_id: cover.garage_door
+      alias: Close an open garage door.
+    - if:
+      - condition: device
+        device_id: f6a7f9561a7a8b48602809e1789385f4
+        domain: lock
+        entity_id: lock.front_door
+        type: is_unlocked
+      then:
+      - service: lock.lock
+        data: {}
+        target:
+          device_id: f6a7f9561a7a8b48602809e1789385f4
+        alias: Lock front door
+      alias: Lock an unlocked front door.
+    - if:
+      - condition: not
+        conditions:
+        - condition: device
+          device_id: 90294c771af3341b24b8836b59e002ad
+          domain: climate
+          entity_id: climate.bedroom_thermostat
+          type: is_hvac_mode
+          hvac_mode: 'off'
+          alias: Is the bedroom A/C off?
+        alias: Bedroom A/C is running
+      then:
+      - device_id: 90294c771af3341b24b8836b59e002ad
         domain: climate
         entity_id: climate.bedroom_thermostat
-        type: is_hvac_mode
+        type: set_hvac_mode
         hvac_mode: 'off'
-        alias: Is the bedroom A/C off?
-      alias: Bedroom A/C is running
-    then:
-    - device_id: 90294c771af3341b24b8836b59e002ad
-      domain: climate
-      entity_id: climate.bedroom_thermostat
-      type: set_hvac_mode
-      hvac_mode: 'off'
-      alias: Turn off Bedroom A/C
-    alias: Turn off a running bedroom A/C
-  - if:
-    - condition: not
-      conditions:
-      - condition: device
-        device_id: 877557b634269a08b5bf0439f9a314b5
+        alias: Turn off Bedroom A/C
+      alias: Turn off a running bedroom A/C
+    - if:
+      - condition: not
+        conditions:
+        - condition: device
+          device_id: 877557b634269a08b5bf0439f9a314b5
+          domain: climate
+          entity_id: climate.lucas_room_thermostat
+          type: is_hvac_mode
+          hvac_mode: 'off'
+          alias: Is Lucas' A/C off?
+        alias: Lucas' A/C is running
+      then:
+      - device_id: 877557b634269a08b5bf0439f9a314b5
         domain: climate
         entity_id: climate.lucas_room_thermostat
-        type: is_hvac_mode
+        type: set_hvac_mode
         hvac_mode: 'off'
-        alias: Is Lucas' A/C off?
-      alias: Lucas' A/C is running
-    then:
-    - device_id: 877557b634269a08b5bf0439f9a314b5
-      domain: climate
-      entity_id: climate.lucas_room_thermostat
-      type: set_hvac_mode
-      hvac_mode: 'off'
-  - service: script.turn_on
-    entity_id: script.shutdown_routine
+      alias: Turn off a running Lucas A/C
+    - service: script.turn_on
+      entity_id: script.shutdown_routine
+      alias: Shutdown routine
+    alias: When away mode is activated.
   mode: restart
 - id: '1664914391038'
   alias: Leave unlocked
@@ -1577,7 +1585,7 @@
     data: {}
   mode: single
 - id: '1664918803941'
-  alias: 'Presence: family all departed'
+  alias: 'Presence: activate/deactivate away mode'
   description: ''
   trigger:
   - platform: state
@@ -1589,18 +1597,43 @@
       seconds: 0
     enabled: true
     to: '0'
-  condition:
-  - condition: state
-    entity_id: input_boolean.guest_mode
-    state: 'off'
+    id: away
+  - platform: numeric_state
+    entity_id: sensor.family_present
+    above: 0
+    id: home
+  condition: []
   action:
-  - service: input_boolean.turn_on
-    entity_id: input_boolean.away_mode
-    alias: Turn on away mode
-  - service: notify.brian
-    data:
-      title: Away mode turned on
-      message: Family present is 0.
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: away
+      sequence:
+      - service: notify.brian
+        data:
+          title: Away mode on
+          message: Family present is 0.
+      - service: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id: input_boolean.away_mode
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: trigger
+          id: home
+        - condition: state
+          entity_id: input_boolean.away_mode
+          state: 'on'
+      sequence:
+      - service: notify.brian
+        data:
+          title: Away mode off
+          message: Family present is {{ states("sensor.family_present") }}
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.away_mode
   mode: single
 - id: '1664919499650'
   alias: 'Presence: family arrival'
@@ -1965,3 +1998,72 @@
         alias: High school vacation
     alias: Choose actions based on which schedule triggered.
   mode: single
+- id: '1665190408046'
+  alias: Instant pot status update
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.instant_pot_power_monitor_power
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    above: 0
+    id: 'Off'
+    alias: '[Off] When power below 1 for 5 minutes.'
+    below: 1
+  - platform: numeric_state
+    entity_id: sensor.instant_pot_power_monitor_power
+    alias: '[On] Power above 100 for 30 seconds.'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    id: 'On'
+    above: 100
+  condition:
+  - condition: template
+    value_template: '{{ previous_status != trigger.id }}'
+  action:
+  - variables:
+      status_list:
+        'Off': Preheat
+        Preheat: Cooking
+        Cooking: Warming
+      previous_status: '{{ states("input_select.instant_pot_status") }}
+
+        '
+      status: '{{ iif(trigger.id=="On", status_list[previous_status], "Off") }}
+
+        '
+  - service: input_select.select_option
+    target:
+      entity_id: input_select.instant_pot_status
+    data:
+      option: '{{ status }}'
+    alias: Update status.
+  - if:
+    - condition: state
+      entity_id: input_select.instant_pot_status
+      state: Keep warm
+    then:
+    - service: script.say
+      data:
+        media_player: media_player.google_downstairs
+        message: The instant pot is finished cooking.
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: Instant pot status update
+      message: '{{ status }}
+
+
+        trigger.id: "{{ trigger.id }}"
+
+        previous_status: "{{ previous_status }}"
+
+        status: "{{ status }}"
+
+        '
+  mode: queued
+  max: 10
