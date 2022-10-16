@@ -517,6 +517,7 @@
       speakers:
       - media_player.google_family_room_display
       volume: 75
+    alias: Play the doorbell sound in the Family room.
   - parallel:
     - service: script.cast
       data:
@@ -525,6 +526,7 @@
         dashboard_path: dashboard-cast
         view_path: cameras
         dismiss_after: 120
+      alias: Display the cameras on the Kitchen display.
     - service: script.notify_mobile
       data:
         who: brian
@@ -547,11 +549,13 @@
       dashboard_path: dashboard-cast
       view_path: cameras
       dismiss_after: 120
+    alias: Display the cameras on the Family Room display.
   - delay:
       hours: 0
       minutes: 1
       seconds: 0
       milliseconds: 0
+    alias: Cooldown before allow another ring.
   mode: single
 - id: '1643829963937'
   alias: HACS install event - update sensors
@@ -1211,8 +1215,9 @@
         alias: Thermostat is off
       alias: When the house is closed and the thermostat is off.
     then:
-    - service: climate.turn_on
-      data: {}
+    - service: climate.set_hvac_mode
+      data:
+        hvac_mode: cool
       target:
         entity_id: climate.home_thermostat
     else: []
@@ -2116,4 +2121,458 @@
       - condition: template
         value_template: '{{ is_state(group, ''off'') }}'
         alias: Until the light group is off.
+  mode: single
+- id: '1665947789596'
+  alias: Family room light sync
+  description: Sync the state & brightness of the lights in the family room.
+  trigger:
+  - platform: state
+    entity_id: light.family_room
+  condition: []
+  action:
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: light.family_room
+        state: 'on'
+      - condition: numeric_state
+        entity_id: light.family_room
+        attribute: brightness
+        above: 0
+      alias: If family room is on and brightness is > 0.
+    then:
+    - service: light.turn_on
+      data:
+        brightness: '{{ state_attr("light.family_room","brightness") }}
+
+          '
+      target:
+        entity_id: light.table_lamp
+      alias: Turn on table lamp and match brightness.
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        area_id: family_room
+  - if:
+    - condition: state
+      entity_id: light.family_room_floor_lamp
+      state: 'on'
+    then:
+    - service: light.turn_on
+      target:
+        entity_id: light.family_room_floor_lamp
+      data:
+        brightness: '{{ state_attr("light.family_room","brightness") }}
+
+          '
+      alias: Match brightness of the floor lamp with the family room lamp.
+    alias: Match the brightness if the floor lamp is on.
+  mode: single
+- id: '1665948763862'
+  alias: Front door person detected
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door_person_occupancy
+    from: 'off'
+    to: 'on'
+  action:
+  - condition:
+    - '{{ door_recently_opened == false }}'
+  - if:
+    - condition: numeric_state
+      entity_id: sensor.outdoor_illuminance_educated_guessor
+      below: 2000
+      alias: Confirm Outdoor Illuminance Educated Guessor is below 2,000.
+    then:
+    - service: scene.create
+      data:
+        scene_id: front_door_presence_snapshot
+        snapshot_entities:
+        - light.home_entry
+        - light.path_lights
+        - light.porch
+      alias: Store current light settings.
+    - service: light.turn_on
+      data:
+        brightness: 255
+        kelvin: 3500
+      target:
+        entity_id:
+        - light.home_entry
+        - light.path_lights
+        - light.porch
+  - if:
+    - condition: state
+      entity_id: binary_sensor.front_door_person_occupancy
+      state: 'on'
+    then:
+    - alias: Stream the camera feed to Apple TV.
+      if:
+      - condition: template
+        value_template: '{{ is_state("media_player.family_room_tv", "on") }}'
+      then:
+      - service: remote.turn_on
+        target:
+          entity_id: remote.family_room_apple_tv
+        data: {}
+      - service: remote.send_command
+        target:
+          entity_id: remote.family_room_apple_tv
+        data:
+          command: pause
+      - delay:
+          seconds: 4
+      - service: camera.play_stream
+        continue_on_error: true
+        target:
+          entity_id: camera.front_door_rtsp
+        data:
+          media_player: media_player.family_room_apple_tv
+      enabled: false
+    - delay:
+        seconds: 4
+    - parallel:
+      - service: script.notify_mobile
+        continue_on_error: true
+        data:
+          title: Front Door
+          message: Person Detected
+          camera: camera.front_door
+          who: brian
+          tag: person_detected
+          url: /lovelace/outdoor
+      - service: script.cast
+        data:
+          displays:
+          - 0aae07dda66f42e9b8a67979e34770d0
+          - 7d6b52507e25e7eeba10914e56052d1c
+          dashboard_path: dashboard-cast
+          view_path: cameras
+          dismiss_after: 120
+        alias: Display the cameras on the Google displays.
+      - service: script.notify_pc
+        continue_on_error: true
+        data:
+          title: Front Door
+          message: Person Detected
+          camera: camera.front_door_rtsp
+          pc: blackpc
+    - delay:
+        seconds: 60
+      enabled: false
+    - alias: Is the video still steaming to the TV?
+      if:
+      - condition: template
+        value_template: '{{ is_state_attr("media_player.family_room_apple_tv", "app_name",
+          "Overcast") }}'
+      then:
+      - alias: Go back to the previous app.
+        service: remote.send_command
+        target:
+          entity_id: remote.family_room_apple_tv
+        data:
+          command:
+          - menu
+      enabled: false
+  - delay:
+      minutes: 5
+    alias: Cooldown.
+  mode: single
+- id: '1665949560382'
+  alias: Front door open state
+  description: ''
+  trigger:
+  - id: door_open
+    platform: state
+    entity_id: binary_sensor.front_door
+    from: 'off'
+    to: 'on'
+  - id: door_closed
+    platform: state
+    entity_id: binary_sensor.front_door
+    from: 'on'
+    to: 'off'
+  condition:
+  - alias: Only start the lock countdown when certain modes are disabled.
+    condition: and
+    conditions:
+    - condition: state
+      entity_id:
+      - input_boolean.guest_mode
+      - input_boolean.leave_unlocked
+      state: 'off'
+  action:
+  - choose:
+    - alias: Cancel the unlocked countdown timer when front door is opened.
+      conditions:
+      - condition: trigger
+        id: door_open
+      sequence:
+      - alias: First pause the timer.
+        service: timer.pause
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+      - alias: Now cancel the timer.
+        service: timer.cancel
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+    - alias: Start the unlocked countdown timer when front door is closed.
+      conditions:
+      - condition: trigger
+        id: door_closed
+      sequence:
+      - alias: Restart the timer.
+        service: timer.start
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+  mode: single
+- id: '1665949808088'
+  alias: Front door lock timer
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - lock.front_door
+    to: unlocked
+    id: unlocked
+    alias: When door is unlocked.
+  - platform: state
+    entity_id:
+    - lock.front_door
+    to: locked
+    alias: When door is locked.
+    id: locked
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'on'
+    from: 'off'
+    alias: When door is opened.
+    id: opened
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.front_door_unlocked
+    alias: When door unlocked timer finishes.
+    id: timer_finished
+  condition:
+  - condition: or
+    conditions:
+    - condition: trigger
+      id: locked
+    - condition: and
+      conditions:
+      - condition: trigger
+        id: opened
+      - condition: state
+        entity_id:
+        - input_boolean.guest_mode
+        - input_boolean.leave_unlocked
+        state: 'off'
+        alias: Confirm both leave unlocked + guest mode are off.
+      alias: 'When triggered by opened: leave unlocked + guest mode must be off.'
+    - condition: and
+      conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: timer_finished
+        - condition: trigger
+          id: unlocked
+        alias: When triggered by unlocked or timer_finished
+      - condition: state
+        entity_id:
+        - binary_sensor.front_door
+        - input_boolean.guest_mode
+        - input_boolean.leave_unlocked
+        state: 'off'
+        alias: Confirm the door is closed, and both leave unlocked + guest mode are
+          off.
+      alias: 'When triggered by unlocked or timer_finished: the door must be closed,
+        and leave unlocked + guest mode must be off.'
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: unlocked
+      sequence:
+      - alias: Start a countdown timer to relock the front door.
+        service: timer.start
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+      - service: script.turn_on
+        target:
+          entity_id: script.notify_mobile_clear
+        data:
+          variables:
+            who: brian
+            tag: person_detected
+        alias: Clear the person_detected mobile notification.
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.outdoor_illuminance_educated_guessor
+          below: 2000
+        then:
+        - alias: Store the current state of the path, porch, + entry lights.
+          service: scene.create
+          data:
+            scene_id: front_door_locked_snapshot
+            snapshot_entities:
+            - light.home_entry
+            - light.path_lights
+            - light.porch
+        - alias: Full brightness!
+          service: light.turn_on
+          target:
+            entity_id:
+            - light.home_entry
+            - light.path_lights
+            - light.porch
+          data:
+            brightness: 255
+        alias: Skip turning on the entry lights in the middle of the day.
+      - alias: Update Light Switch LED Status Color.
+        service: script.turn_on
+        target:
+          entity_id: script.inovelli_led_status_start
+        data:
+          variables:
+            color: pink
+            state_entity: lock.front_door
+            state: unlocked
+            entity_id: light.family_room
+    - conditions:
+      - condition: trigger
+        id: locked
+      sequence:
+      - alias: Cancel and reset the unlocked timer.
+        service: timer.cancel
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+      - alias: Disable Leave Unlocked mode.
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.leave_unlocked
+        data: {}
+      - alias: Clear the person_detected mobile notification.
+        service: script.turn_on
+        target:
+          entity_id: script.notify_mobile_clear
+        data:
+          variables:
+            who: brian
+            tag: KEEP_UNLOCKED
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.outdoor_illuminance_educated_guessor
+          below: 2000
+        then:
+        - alias: Restore the previous state of the porch + entry lights.
+          service: scene.turn_on
+          target:
+            entity_id: scene.front_door_locked_snapshot
+          data:
+            transition: 5
+        - delay:
+            seconds: 10
+        alias: Skip turning on the entry lights in the middle of the day.
+      - if:
+        - condition: state
+          entity_id: switch.adaptive_lighting_home_entry
+          state: 'on'
+        then:
+        - service: switch.turn_off
+          target:
+            entity_id: switch.adaptive_lighting_home_entry
+          alias: Turn off adaptive lighting control temporarily.
+          data: {}
+        - delay:
+            seconds: 1
+        - service: switch.turn_on
+          target:
+            entity_id: switch.adaptive_lighting_home_entry
+          alias: Turn adaptive lighting control back on.
+          data: {}
+        alias: Restore adaptive lighting automated control.
+      - alias: Update Light Switch LED Status Color.
+        service: script.turn_on
+        target:
+          entity_id: script.inovelli_led_off
+        data:
+          variables:
+            entity_id: light.family_room
+    alias: When the door locks or unlocks.
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: timer_finished
+        alias: When triggered by the timer finishing.
+      sequence:
+      - alias: Lock the front door.
+        service: lock.lock
+        data: {}
+        target:
+          entity_id: lock.front_door
+    - conditions:
+      - condition: trigger
+        id: opened
+        alias: When triggered by the door opening.
+      sequence:
+      - alias: Cancel the existing lock countdown timer.
+        service: timer.cancel
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+      - alias: Restart the lock countdown timer.
+        service: timer.start
+        target:
+          entity_id: timer.front_door_unlocked
+        data: {}
+    alias: When the door opens or the timer finishes.
+  mode: single
+- id: '1665953966268'
+  alias: Kitchen motion
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion
+    to: 'on'
+    from: 'off'
+    alias: When kitchen motion is detected.
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion
+    to: 'off'
+    from: 'on'
+    alias: When kitchen motion is cleared.
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.kitchen_motion
+      state: 'on'
+      alias: When motion is detected.
+    then:
+    - service: light.turn_on
+      data: {}
+      target:
+        entity_id: light.kitchen_cabinet
+      alias: Turn on cabinet light.
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.kitchen_cabinet
+      alias: 'When motion clears: turn off the cabinet light.'
+    alias: Perform an action based on kitchen motion state.
   mode: single
