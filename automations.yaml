@@ -3065,3 +3065,224 @@
     delay:
       minutes: 5
   mode: single
+- id: '1666214849323'
+  alias: Z-wave JS Event Sniffer
+  description: ''
+  trigger:
+  - alias: Scene events (value notification).
+    id: scene_event
+    platform: event
+    event_type: zwave_js_value_notification
+  - alias: Node events (notification).
+    id: node_event
+    platform: event
+    event_type: zwave_js_notification
+  - alias: Value updated event.
+    id: value_updated_event
+    platform: event
+    event_type: zwave_js_value_updated
+    event_data:
+      entity_id: light.family_room
+  action:
+  - variables:
+      event_type: '{{ trigger.event.event_type }}'
+      event_data: '{{ trigger.event.data }}'
+      event_label: '{{ event_data.event_label }}'
+      notification_label: '{{ event_data.label }}'
+      node_id: '{{ event_data.node_id }}'
+  - condition: and
+    conditions:
+    - alias: Ignore lock operation.
+      condition: template
+      value_template: '{{ event_label.endswith("lock operation") == False }}
+
+        '
+    - alias: Ignore a list of node_ids.
+      condition: template
+      value_template: '{{ node_id in ["2"] == False }}
+
+        '
+      enabled: false
+  - service: script.debug
+    data:
+      title: zwjs_event_sniffer
+      message: 'trigger.id: {{ trigger.id }}
+
+        node_id: {{ node_id }}
+
+
+        event_type: {{ event_type }}
+
+        event_label: {{ event_label }}
+
+        notification_label: {{ notification_label }}
+
+
+        event_data: {{ event_data }}
+
+        '
+  mode: parallel
+- id: '1666215284920'
+  alias: Zigbee2MQTT Button Click
+  description: ''
+  trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: sensor.remote_family_room_action
+  condition: []
+  action:
+  - delay:
+      seconds: 0.01
+  - alias: Increment the counter.
+    service: counter.increment
+    entity_id: counter.z2m_button_click
+  - delay:
+      seconds: 0.49
+  - variables:
+      remote: '{{ trigger.event.data.entity_id }}'
+      command: '{{ trigger.event.data.old_state.state }}'
+      click_count: '{{ states("counter.z2m_button_click") }}
+
+        '
+  - alias: Reset the counter.
+    service: counter.reset
+    entity_id: counter.z2m_button_click
+  - if:
+    - condition: template
+      value_template: '{{ command|trim|lower not in ["", "none", "unknown", "unavailable"]
+        }}
+
+        '
+    then:
+    - alias: Call the script to interpret the requested command.
+      service: script.z2m_button_actions
+      data:
+        remote: '{{ remote }}'
+        command: '{{ command }}'
+        click_count: '{{ click_count }}'
+  mode: restart
+  max_exceeded: silent
+- id: '1666215299157'
+  alias: 'Remote: pico remote click'
+  description: ''
+  trigger:
+  - platform: event
+    event_type: lutron_caseta_button_event
+    event_data:
+      action: press
+  condition: []
+  action:
+  - variables:
+      remote: '{{ trigger.event.data.device_name|lower|replace(" ","_") }}'
+      button_id: '{{ trigger.event.data.button_number }}'
+      action: '{{ trigger.event.data.action }}'
+      buttons:
+        '2': 'on'
+        '3': middle
+        '4': 'off'
+        '5': step_up
+        '6': step_down
+      button: '{{ buttons[button_id] }}'
+      devices:
+        bedroom:
+          'on':
+          - light.bedroom_east
+          - light.bedroom_table_lamp
+          'off':
+          - light.bedroom
+          - light.bedroom_east
+          - light.bedroom_table_lamp
+          - fan.bedroom
+          - climate.bedroom_thermostat
+          - switch.sound_machine
+        dining_room:
+          'on': light.dining_room
+          'off': light.dining_room
+          middle:
+          - light.kitchen
+          - light.kitchen_prep
+          step_up: light.dining_room
+          step_down: light.dining_room
+        entry:
+          'on': light.home_entry
+          'off': light.home_entry
+          middle: ''
+          step_up: light.home_entry
+          step_down: light.home_entry
+        play_room_1:
+          'on':
+          - light.play_room
+          - light.play_room_floor_lamp
+          'off':
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          middle: light.play_room_floor_lamp
+          step_up:
+          - light.play_room
+          - light.play_room_floor_lamp
+          step_down:
+          - light.play_room
+          - light.play_room_floor_lamp
+        play_room_2:
+          'on':
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          'off':
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          middle: light.play_room_entry
+          step_up:
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          step_down:
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+      device: '{{ devices[remote][button] }}'
+  - choose:
+    - conditions:
+        alias: On or off buttons.
+        condition: template
+        value_template: '{{ button in ["on","off"] and device != "" }}
+
+          '
+      sequence:
+      - service: homeassistant.turn_{{ button }}
+        data:
+          entity_id: '{{ device }}'
+        alias: Turn on or off the primary device(s).
+    - conditions:
+        alias: Middle button.
+        condition: template
+        value_template: '{{ button == "middle" and device != "" }}
+
+          '
+      sequence:
+      - variables:
+          button: '{{ "off" if is_state(device,"on") else "on" }}
+
+            '
+      - service: homeassistant.turn_{{ button }}
+        data:
+          entity_id: '{{ device }}'
+        alias: Turn on or off the alternate device(s).
+    - conditions:
+        alias: Up or down buttons.
+        condition: template
+        value_template: '{{ button in ["step_up","step_down"] and device != "" }}
+
+          '
+      sequence:
+      - service: homeassistant.turn_on
+        data:
+          entity_id: '{{ device }}'
+          brightness_step_pct: '{{ "-" if button == "step_down" }}20
+
+            '
+        alias: Increase or decrease brightness by 20%.
+  mode: parallel
