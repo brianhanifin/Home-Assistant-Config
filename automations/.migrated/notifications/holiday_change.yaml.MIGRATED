@@ -1,0 +1,21 @@
+---
+alias: Holiday change
+id: holiday_change
+description: This lets me know the sensor is updating.
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.holiday
+action:
+  - variables:
+      state: '{{ trigger.to_state.state|trim }}'
+      time_from_midnight: '{{ now()|as_timestamp - today_at("0:00")|as_timestamp }}'
+  - condition:
+      - "{{ state|lower not in ['',none,'unknown','unavailable'] }}"
+      - "{{ time_from_midnight < 900 }}" # Stops notification repeating for every template sensor refresh.
+  - service: script.notify_mobile
+    data:
+      title: '{{ state }}'
+      message: 'Today is {{ state }}.'
+      group: holiday
+      url: /lovelace/family-days

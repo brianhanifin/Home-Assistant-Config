@@ -16,15 +16,18 @@ trigger:
       - sensor.freezer_temperature
       - sensor.garage_freezer_temperature
     above: input_number.freezer_temperature_threshold
-variables:
-  entity_id: '{{ trigger.to_state.entity_id }}'
-  entity_name: '{{ state_attr(entity_id, "friendly_name") | replace(" temperature", "") }}'
-  threshold_id: '{{ "input_number." + trigger.id + "_temperature_threshold" }}'
-  title: '{{ entity_name }} is warm'
-  message: |
-    The {{ entity_name }} is {{ states(entity_id)|round(default=0) }}°F.
-    The threshold is currently set to {{ states(threshold_id)|round(default=0) }}°F.
 action:
+  - variables:
+      entity_id: '{{ trigger.to_state.entity_id }}'
+      entity_name: |
+        {{ state_attr(entity_id, "friendly_name") | replace(" temperature", "") }}
+      threshold_id: |
+        {{ "input_number." + trigger.id + "_temperature_threshold" }}
+      title: '{{ entity_name }} is warm'
+      message: |
+        The {{ entity_name }} is {{ states(entity_id)|round(default=0) }}°F.
+        The threshold is currently set to {{ states(threshold_id)|round(default=0) }}°F.
+
   - service: script.notify_mobile
     data:
       critical: true

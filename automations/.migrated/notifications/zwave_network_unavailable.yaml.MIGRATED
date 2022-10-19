@@ -10,19 +10,15 @@ trigger:
     to: "off"
     for:
       minutes: 30
-variables:
-  title: 'Z-Wave JS network unavailable'
-  message: |
-    The USB controller is no longer reporting a status of "alive".
 condition:
   # Don't allow status change shortly after startup to avoid phantom changes.
   - '{{ is_state("automation.startup","off") }}'
 action:
   - service: script.notify_mobile
     data:
-      #critical: true
-      title: '{{ title }}'
-      message: '{{ message }}'
+      title: Z-Wave JS network unavailable
+      message: |
+        The USB controller is no longer reporting a status of "alive".
       who: brian
       group: server-issue
       url: /lovelace/home
@@ -30,5 +26,6 @@ action:
   - service: script.notify_web
     data:
       type: alert
-      title: '{{ title }}'
-      message: '{{ message }}'
+      title: Z-Wave JS network unavailable
+      message: |
+        The USB controller is no longer reporting a status of "alive".

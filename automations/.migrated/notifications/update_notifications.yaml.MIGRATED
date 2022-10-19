@@ -1,0 +1,36 @@
+---
+alias: Update notification
+description: Sends alerts when a new release is available.
+id: update_notification
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.updates
+    above: 0
+action:
+  - service: script.notify_mobile
+    data:
+      title: "Home Assistant update"
+      message: |
+        {% set updates = states("sensor.updates")|int(default=0) %}
+
+        {%- if updates == 1 %}
+          There is an update available.
+        {% else %}
+          There are {{ updates }} updates available.
+        {% endif %}
+      who: brian
+      tag: update-notification
+      url: /config
+
+  - service: script.notify_web
+    data:
+      type: warning
+      message: |
+        {% set updates = states("sensor.updates")|int(default=0) %}
+
+        {%- if updates == 1 %}
+          There is an update available.
+        {% else %}
+          There are {{ updates }} updates available.
+        {% endif %}
+      duration: 0

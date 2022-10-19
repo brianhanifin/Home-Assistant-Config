@@ -1,0 +1,26 @@
+---
+alias: National weather service notification
+id: nws_alerts_notification
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.nws_alerts
+    above: 0
+action:
+  - service: script.notify_mobile
+    data:
+      title: |
+        {{ state_attr("sensor.nws_alerts","title") }}
+      message: |
+        {{ state_attr("sensor.nws_alerts","spoken_desc") }}
+      who: brian
+      group: safety
+      tag: weather-alert
+      url: /lovelace/
+
+  - service: script.notify_web
+    data:
+      type: warning
+      title: |
+        {{ state_attr("sensor.nws_alerts","title") }}
+      message: |
+        {{ state_attr("sensor.nws_alerts","spoken_desc") }}

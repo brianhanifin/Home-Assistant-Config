@@ -2743,3 +2743,199 @@
           - service: cover.close_cover
             entity_id: cover.garage_door
   mode: restart
+- id: nws_alerts_notification
+  alias: National weather service notification
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.nws_alerts
+    above: 0
+  action:
+  - service: script.notify_mobile
+    data:
+      title: '{{ state_attr("sensor.nws_alerts","title") }}
+
+        '
+      message: '{{ state_attr("sensor.nws_alerts","spoken_desc") }}
+
+        '
+      who: brian
+      group: safety
+      tag: weather-alert
+      url: /lovelace/
+  - service: script.notify_web
+    data:
+      type: warning
+      title: '{{ state_attr("sensor.nws_alerts","title") }}
+
+        '
+      message: '{{ state_attr("sensor.nws_alerts","spoken_desc") }}
+
+        '
+- id: '1666207348480'
+  alias: National weather service notification
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.nws_alerts
+    above: 0
+  condition: []
+  action:
+  - service: script.notify_mobile
+    data:
+      title: '{{ state_attr("sensor.nws_alerts","title") }}
+
+        '
+      message: '{{ state_attr("sensor.nws_alerts","spoken_desc") }}
+
+        '
+      who: brian
+      group: safety
+      tag: weather-alert
+      url: /lovelace/
+  - service: script.notify_web
+    data:
+      type: warning
+      title: '{{ state_attr("sensor.nws_alerts","title") }}
+
+        '
+      message: '{{ state_attr("sensor.nws_alerts","spoken_desc") }}
+
+        '
+  mode: single
+- id: '1666207802970'
+  alias: Update notification
+  description: Sends alerts when a new release is available.
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.updates
+    above: 0
+  condition: []
+  action:
+  - service: script.notify_mobile
+    data:
+      title: Home Assistant update
+      message: "{% set updates = states(\"sensor.updates\")|int(default=0) %}\n\n{%-
+        if updates == 1 %}\n  There is an update available.\n{% else %}\n  There are
+        {{ updates }} updates available.\n{% endif %}\n"
+      who: brian
+      tag: update-notification
+      url: /config
+  - service: script.notify_web
+    data:
+      type: warning
+      message: "{% set updates = states(\"sensor.updates\")|int(default=0) %}\n\n{%-
+        if updates == 1 %}\n  There is an update available.\n{% else %}\n  There are
+        {{ updates }} updates available.\n{% endif %}\n"
+      duration: 0
+  mode: single
+- id: '1666207934690'
+  alias: Fridge/freezer temperature alert
+  description: Notify us if the temperature goes above a threshold.
+  trigger:
+  - id: fridge
+    platform: numeric_state
+    entity_id:
+    - sensor.fridge_temperature
+    - sensor.garage_fridge_temperature
+    above: input_number.fridge_temperature_threshold
+  - id: freezer
+    platform: numeric_state
+    entity_id:
+    - sensor.freezer_temperature
+    - sensor.garage_freezer_temperature
+    above: input_number.freezer_temperature_threshold
+  condition: []
+  action:
+  - variables:
+      entity_id: '{{ trigger.to_state.entity_id }}'
+      entity_name: '{{ state_attr(entity_id, "friendly_name") | replace(" temperature",
+        "") }}
+
+        '
+      threshold_id: '{{ "input_number." + trigger.id + "_temperature_threshold" }}
+
+        '
+      title: '{{ entity_name }} is warm'
+      message: 'The {{ entity_name }} is {{ states(entity_id)|round(default=0) }}°F.
+
+        The threshold is currently set to {{ states(threshold_id)|round(default=0)
+        }}°F.
+
+        '
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: '{{ title }}'
+      message: '{{ message }}'
+      who: brian
+      group: safety
+      url: /lovelace/home
+  - service: script.notify_web
+    data:
+      type: alert
+      title: '{{ title }}'
+      message: '{{ message }}'
+  mode: single
+- id: '1666208255624'
+  alias: Holiday change
+  description: This lets me know the sensor is updating.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.holiday
+  condition: []
+  action:
+  - variables:
+      state: '{{ trigger.to_state.state|trim }}'
+      time_from_midnight: '{{ now()|as_timestamp - today_at("0:00")|as_timestamp }}'
+  - if:
+    - condition: and
+      conditions:
+      - condition: template
+        value_template: '{{ state|lower not in ['''',none,''unknown'',''unavailable'']
+          }}'
+        alias: State is a valid holiday.
+      - condition: template
+        value_template: '{{ time_from_midnight < 900 }}'
+        alias: Stops notification repeating for every template sensor refresh.
+    then:
+    - service: script.notify_mobile
+      data:
+        title: '{{ state }}'
+        message: Today is {{ state }}.
+        group: holiday
+        url: /lovelace/family-days
+  mode: single
+- id: '1666208582988'
+  alias: Z-wave network unavailable alert
+  description: Notify me if the Z-wave network goes offline.
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.zwavejs_available
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: 30
+    alias: When Z-wave JS is unavailable for 30 minutes.
+  action:
+  - condition: state
+    entity_id: automation.startup
+    state: 'off'
+  - service: script.notify_mobile
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      who: brian
+      group: server-issue
+      url: /lovelace/home
+  - service: script.notify_web
+    data:
+      type: alert
+      title: '{{ title }}'
+      message: '{{ message }}'
+  mode: single
+  variables:
+    title: Z-Wave JS network unavailable
+    message: 'The USB controller is no longer reporting a status of "alive".
+
+      '
