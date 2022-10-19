@@ -17,25 +17,25 @@ trigger:
     above: 0
     below: 13
 
-variables:
-  type: '{{ trigger.to_state.state|int(default=0) }}'
-  room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace(" type","") }}'
-
-  alarm_states:
-    1: "SMOKE"
-    2: "CARBON MONOXIDE"
-    12: "Test button press"
-  alarm_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "unknown" }}'
-
-  title: '{{ alarm_state }} DETECTED!'
-  message: '{{ alarm_state }} detected in the {{ room|upper }}.'
-
-condition:
-  # Ignore unknown states as these can occur when the Z-wave docker restarts.
-  - condition: template
-    value_template: '{{ type in [1,2,12] }}'
-
 action:
+  - variables:
+      type: '{{ trigger.to_state.state|int(default=0) }}'
+      room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace(" type","") }}'
+
+      alarm_states:
+        1: "SMOKE"
+        2: "CARBON MONOXIDE"
+        12: "Test button press"
+      alarm_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else "unknown" }}'
+
+      title: '{{ alarm_state }} DETECTED!'
+      message: '{{ alarm_state }} detected in the {{ room|upper }}.'
+
+  - condition:
+      - alias: Ignore unknown states as these can occur when the Z-wave docker restarts.
+        condition: template
+        value_template: '{{ type in [1,2,12] }}'
+
   - service: script.notify_mobile
     data:
       critical: true
@@ -62,6 +62,6 @@ action:
       message: '{{ message }}'
       id: '{{ "safety_alert_" ~ as_timestamp(now()) }}'
 
-  # Cool down timer. When "mode: single" this stops this automation from running more often than this.
-  #- delay:
-  #    minutes: 5
+  - alias: Cool down timer.
+    delay:
+      minutes: 5

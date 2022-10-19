@@ -208,7 +208,7 @@
   trigger:
   - platform: sun
     event: sunrise
-    offset: +00:45:00
+    offset: +00:15:00
   action:
   - service: light.turn_off
     data:
@@ -2939,3 +2939,129 @@
     message: 'The USB controller is no longer reporting a status of "alive".
 
       '
+- id: '1666213876915'
+  alias: Safety alert window open
+  description: Warn us if any windows are left open.
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.upstairs_bathroom_window
+    to: 'on'
+    for:
+      minutes: 30
+  condition: []
+  action:
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: WINDOW OPEN
+      message: The upstairs bathroom has been open 30 minutes.
+      who: brian
+      group: safety
+      url: /lovelace/home
+  - service: script.notify_speech
+    data:
+      media_player: media_player.google_welcome
+      message: The upstairs bathroom has been open for a half hour.
+  mode: single
+- id: '1666214168418'
+  alias: Safety alert leak
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.dishwasher_leak
+    - binary_sensor.downstairs_bathroom_leak
+    - binary_sensor.garage_water_heater_leak
+    - binary_sensor.goez_suite_bathroom_1_leak
+    - binary_sensor.goez_suite_bathroom_2_leak
+    - binary_sensor.goez_suite_water_heater_leak
+    - binary_sensor.kitchen_leak
+    - binary_sensor.master_bathroom_1_leak
+    - binary_sensor.master_bathroom_2_leak
+    - binary_sensor.upstairs_bathroom_leak
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: template
+    value_template: '{{ trigger.to_state.name|trim != "" }}'
+  action:
+  - variables:
+      room: '{{ trigger.to_state.name|lower|replace(" leak", "")|replace(" #1", "")|replace("
+        #2", "")|trim }}'
+      title: WATER LEAK DETECTED!
+      message: WATER LEAK detected in the {{ room|upper }}.
+  - service: script.notify_speech
+    data:
+      media_player: media_player.google_speakers
+      message: A leak has been detected in the {{ room }}!
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: '{{ title }}'
+      message: '{{ message }}'
+      who: brian
+      group: safety
+      url: /lovelace/home
+  - service: script.notify_web
+    data:
+      type: alert
+      title: '{{ title }}'
+      message: '{{ message }}'
+  - service: script.notify_persistent
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      id: '{{ "safety_alert_" ~ as_timestamp(now()) }}'
+  - delay:
+      minutes: 5
+  mode: single
+- id: '1666214583383'
+  alias: Safety alert smoke or carbon monoxide
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.safety_alarm_bedroom_type,sensor.safety_alarm_kyles_bedroom_type,sensor.safety_alarm_lucas_bedroom_type,sensor.safety_alarm_garage_type,sensor.safety_alarm_goez_suite_type,sensor.safety_alarm_guest_room_type,sensor.safety_alarm_stairs_type,sensor.safety_alarm_test_type
+    above: 0
+    below: 13
+  action:
+  - variables:
+      type: '{{ trigger.to_state.state|int(default=0) }}'
+      room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace("
+        type","") }}'
+      alarm_states:
+        '1': SMOKE
+        '2': CARBON MONOXIDE
+        '12': Test button press
+      alarm_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else
+        "unknown" }}'
+      title: '{{ alarm_state }} DETECTED!'
+      message: '{{ alarm_state }} detected in the {{ room|upper }}.'
+  - alias: Ignore unknown states as these can occur when the Z-wave docker restarts.
+    condition: template
+    value_template: '{{ type in [1,2,12] }}'
+  - service: script.notify_mobile
+    data:
+      critical: true
+      title: '{{ title }}'
+      message: '{{ message }}'
+      who: brian
+      group: safety
+      url: /lovelace/home
+  - service: script.notify_speech
+    data:
+      media_player: media_player.google_downstairs
+      message: '{{ message }}'
+  - service: script.notify_web
+    data:
+      type: alert
+      title: '{{ title }}'
+      message: '{{ message }}'
+  - service: script.notify_persistent
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      id: '{{ "safety_alert_" ~ as_timestamp(now()) }}'
+  - alias: Cool down timer.
+    delay:
+      minutes: 5
+  mode: single

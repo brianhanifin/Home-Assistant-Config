@@ -20,11 +20,12 @@ trigger:
 condition:
   - condition: template
     value_template: '{{ trigger.to_state.name|trim != "" }}'
-variables:
-  room: '{{ trigger.to_state.name|lower|replace(" leak", "")|replace(" #1", "")|replace(" #2", "")|trim }}'
-  title: 'WATER LEAK DETECTED!'
-  message: 'WATER LEAK detected in the {{ room|upper }}.'
 action:
+  - variables:
+      room: '{{ trigger.to_state.name|lower|replace(" leak", "")|replace(" #1", "")|replace(" #2", "")|trim }}'
+      title: 'WATER LEAK DETECTED!'
+      message: 'WATER LEAK detected in the {{ room|upper }}.'
+
   - service: script.notify_speech
     data:
       media_player: media_player.google_speakers
