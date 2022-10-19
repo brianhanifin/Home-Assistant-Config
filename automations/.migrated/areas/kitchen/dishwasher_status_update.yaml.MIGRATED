@@ -1,0 +1,77 @@
+---
+alias: Dishwasher status update
+id: dishwasher_status_update
+description: Update the current dishwasher status when certain criteria are met.
+mode: single
+trigger:
+  - alias: Washing when motor vibration is detected.
+    id: Washing
+    platform: state
+    entity_id: binary_sensor.dishwasher_moving
+    from: "off"
+    to: "on"
+    for:
+      minutes: 2
+
+  - alias: Drying when temp is greater than 15 degrees above kitchen temperature.
+    id: Drying
+    platform: template
+    value_template: '{{
+        is_state("binary_sensor.dishwasher_moving","off") and
+        states("sensor.kitchen_temperature")|int(default=0) <
+          (states("sensor.dishwasher_temperature")|int(default=0) - 15)
+      }}'
+    for:
+      minutes: 10
+
+  - alias: Clean when status has been Drying for a bit.
+    id: Clean
+    platform: state
+    entity_id: input_select.dishwasher_status
+    to: Drying
+    for:
+      minutes: 60
+
+  - alias: Dirty when door is open for longer than 1 minute.
+    id: Dirty
+    platform: state
+    entity_id: binary_sensor.dishwasher_door
+    from: "off"
+    to: "on"
+    for:
+      minutes: 1
+action:
+  - variables:
+      status: '{{ trigger.id }}'
+      previous_status: '{{ states("input_select.dishwasher_status") }}'
+
+      notify_title: '{{ "Dishwasher: " ~ status|lower if status in ["Clean","Dirty"] }}'
+      notify_message: '{{ "The dishes are " ~ status|lower ~ "." if status in ["Clean","Dirty"] }}'
+  - condition:
+      - condition: template
+        value_template: '{{ status != previous_status
+                      and status != "Unknown" }}'
+
+  - alias: Update dishwasher status.
+    service: input_select.select_option
+    data:
+      entity_id: input_select.dishwasher_status
+      option: '{{ status }}'
+
+  - service: script.notify_web
+    data:
+      message: '{{ "Dishwasher: " ~ status|lower }}'
+
+  - choose:
+      - conditions: '{{ status in ["Clean","Dirty"] }}'
+        sequence:
+          - service: script.notify_mobile
+            data:
+              title: '{{ notify_title }}'
+              message: '{{ notify_message }}'
+              who: brian
+              url: /lovelace-special/dishwasher
+
+  - alias: Cool down timer.
+    delay:
+      minutes: 5

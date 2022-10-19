@@ -1,0 +1,23 @@
+---
+alias: Play room light off
+id: play_room_light_off
+description: Turn the floor lamp off when the main switch is turned off.
+trigger:
+  - alias: When the primary light is turned on.
+    platform: state
+    entity_id: light.play_room
+    from: 'on'
+    to: 'off'
+action:
+  - alias: Turn the secondary lights off.
+    service: light.turn_off
+    target:
+      entity_id:
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+
+  - alias: Turn off VR mode.
+    enabled: false
+    service: switch.turn_off
+    target:
+      entity_id: switch.vr_mode

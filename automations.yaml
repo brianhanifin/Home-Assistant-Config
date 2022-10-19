@@ -3286,3 +3286,644 @@
             '
         alias: Increase or decrease brightness by 20%.
   mode: parallel
+- id: '1666216108903'
+  alias: Play room light off
+  description: Turn the floor lamp off when the main switch is turned off.
+  trigger:
+  - alias: When the primary light is turned on.
+    platform: state
+    entity_id: light.play_room
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - alias: Turn the secondary lights off.
+    service: light.turn_off
+    target:
+      entity_id:
+      - light.play_room_floor_lamp
+      - light.play_room_entry
+    data: {}
+  - alias: Turn off VR mode.
+    enabled: false
+    service: switch.turn_off
+    target:
+      entity_id: switch.vr_mode
+  mode: single
+- id: '1666216858369'
+  alias: Garage door status change
+  description: ''
+  trigger:
+  - id: garage_opening
+    platform: state
+    entity_id:
+    - cover.garage_door
+    - cover.test
+    from:
+    to: opening
+  - id: garage_closed
+    platform: state
+    entity_id:
+    - cover.garage_door
+    - cover.test
+    from:
+    to: closed
+  action:
+  - variables:
+      old_state: '{{ trigger.from_state.state|lower }}'
+      new_state: '{{ trigger.to_state.state|lower }}'
+      alert_flashes: 5
+  - condition: and
+    conditions:
+    - condition: template
+      value_template: '{{ old_state != new_state }}'
+      alias: New state is different from old state.
+    - condition: template
+      value_template: '{{ new_state in ["opening","open","closed"] }}
+
+        '
+      alias: Door new state is opening, open, or closed.
+  - alias: Turn the light for every door state so nobody falls in the dark!
+    service: light.turn_on
+    entity_id: light.laundry
+  - choose:
+    - alias: Garage Door Open
+      conditions:
+      - '{{ trigger.id == "garage_opening" }}'
+      sequence:
+      - alias: Update Light Switch LED Status Color.
+        service: script.turn_on
+        target:
+          entity_id: script.inovelli_led_status_start
+        data:
+          variables:
+            color: purple
+            state_entity: cover.garage_door
+            state: open
+            entity_id: light.family_room
+      - alias: Store current light states.
+        service: scene.create
+        data:
+          scene_id: garage_door_closed_lights_snapshot
+          snapshot_entities:
+          - light.play_room_entry
+          - light.table_lamp
+      - delay:
+          seconds: 1
+      - alias: Turn on the notification lights.
+        service: light.turn_on
+        target:
+          entity_id:
+          - light.play_room_entry
+          - light.table_lamp
+        data:
+          brightness_pct: 100
+      - alias: Flash the bulbs to draw attention.
+        repeat:
+          count: '{{ alert_flashes }}'
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.table_lamp
+            data:
+              flash: short
+          - delay:
+              seconds: 1
+      - alias: Activate colorloop on table lamp.
+        service: light.turn_on
+        target:
+          entity_id: light.table_lamp
+        data:
+          brightness_pct: 100
+          effect: colorloop
+      - delay:
+          minutes: 5
+      - alias: If after 5 minutes the garage is still open, dim the lights.
+        choose:
+        - conditions:
+          - '{{ is_state("cover.garage_door","open") }}'
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id:
+              - light.play_room_entry
+              - light.table_lamp
+            data:
+              brightness_pct: 30
+              transition: 5
+    - alias: Garage door closed.
+      conditions:
+      - '{{ trigger.id == "garage_closed" }}'
+      sequence:
+      - alias: Turn off the LED notification.
+        service: script.turn_on
+        target:
+          entity_id: script.inovelli_led_off
+        data:
+          variables:
+            entity_id: light.family_room
+      - alias: Restore the previous state of the notification lights.
+        service: scene.turn_on
+        target:
+          entity_id: scene.garage_door_closed_lights_snapshot
+        data:
+          transition: 5
+      - service: light.turn_off
+        target:
+          entity_id: light.play_room_entry
+        data: {}
+  mode: restart
+- id: '1666217038936'
+  alias: Garage motion change
+  description: ''
+  trigger:
+  - id: motion_detected
+    platform: state
+    entity_id:
+    - binary_sensor.garage_entry_door
+    - binary_sensor.garage_motion
+    from: 'off'
+    to: 'on'
+  - id: timer_finished
+    platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.garage_motion
+  condition: []
+  action:
+  - choose:
+    - alias: 'motion detected: turn on the light + start the timer.'
+      conditions: '{{ trigger.id == "motion_detected" }}'
+      sequence:
+      - service: light.turn_on
+        entity_id: light.laundry
+      - alias: Cancel the existing countdown timer.
+        choose:
+        - conditions: '{{ states("timer.garage_motion") != "idle" }}'
+          sequence:
+          - service: timer.cancel
+            target:
+              entity_id: timer.garage_motion
+            data: {}
+      - alias: (Re)start the countdown timer.
+        service: timer.start
+        data:
+          entity_id: timer.garage_motion
+    - alias: 'Countdown finished: turn off the light.'
+      conditions: '{{ trigger.id == "timer_finished" }}'
+      sequence:
+      - service: light.turn_off
+        entity_id: light.laundry
+  mode: restart
+- id: '1666217162800'
+  alias: 3D print status update
+  description: Notify me when a 3D print status changes.
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.octoprint_printing
+    from: 'on'
+    to: 'off'
+  condition:
+  - condition: time
+    after: 08:00:00
+    before: '20:00:00'
+  action:
+  - variables:
+      state: '{{ states("sensor.octoprint_current_state") }}
+
+        '
+      message: "{% if is_state(\"binary_sensor.octoprint_printing_error\",\"on\")
+        %}\n  Your 3D print has paused with an error.\n{% elif state in [\"pausing\",\"paused\"]
+        %}\n  Your 3D print has paused.\n{% else %}\n  Your 3D print is complete.\n{%
+        endif %}\n"
+  - service: script.notify_mobile
+    data:
+      title: 3D print status change
+      message: '{{ message }}'
+      who: brian
+      url: /lovelace/making
+  - service: script.notify_speech
+    data:
+      media_player: media_player.google_downstairs
+      message: '{{ message }}'
+  mode: single
+- id: '1666217428873'
+  alias: Dishwasher status update
+  description: Update the current dishwasher status when certain criteria are met.
+  trigger:
+  - alias: Washing when motor vibration is detected.
+    id: Washing
+    platform: state
+    entity_id: binary_sensor.dishwasher_moving
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 2
+  - alias: Drying when temp is greater than 15 degrees above kitchen temperature.
+    id: Drying
+    platform: template
+    value_template: '{{ is_state("binary_sensor.dishwasher_moving","off") and states("sensor.kitchen_temperature")|int(default=0)
+      < (states("sensor.dishwasher_temperature")|int(default=0) - 15) }}'
+    for:
+      minutes: 10
+  - alias: Clean when status has been Drying for a bit.
+    id: Clean
+    platform: state
+    entity_id: input_select.dishwasher_status
+    to: Drying
+    for:
+      minutes: 60
+  - alias: Dirty when door is open for longer than 1 minute.
+    id: Dirty
+    platform: state
+    entity_id: binary_sensor.dishwasher_door
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 1
+  condition: []
+  action:
+  - variables:
+      status: '{{ trigger.id }}'
+      previous_status: '{{ states("input_select.dishwasher_status") }}'
+      notify_title: '{{ "Dishwasher: " ~ status|lower if status in ["Clean","Dirty"]
+        }}'
+      notify_message: '{{ "The dishes are " ~ status|lower ~ "." if status in ["Clean","Dirty"]
+        }}'
+  - condition:
+    - condition: template
+      value_template: '{{ status != previous_status and status != "Unknown" }}'
+  - alias: Update dishwasher status.
+    service: input_select.select_option
+    data:
+      entity_id: input_select.dishwasher_status
+      option: '{{ status }}'
+  - service: script.notify_web
+    data:
+      message: '{{ "Dishwasher: " ~ status|lower }}'
+  - choose:
+    - conditions: '{{ status in ["Clean","Dirty"] }}'
+      sequence:
+      - service: script.notify_mobile
+        data:
+          title: '{{ notify_title }}'
+          message: '{{ notify_message }}'
+          who: brian
+          url: /lovelace-special/dishwasher
+  - alias: Cool down timer.
+    delay:
+      minutes: 5
+  mode: single
+- id: '1666217525653'
+  alias: Smart plugs always on
+  description: These plugs are for power monitoring only! They should not ever be
+    turned off.
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.bedroom_ac_power_monitor
+    - switch.instant_pot_power_monitor
+    - switch.lucas_ac_power_monitor
+    - switch.prusa
+    to: 'off'
+  condition: []
+  action:
+  - service: switch.turn_on
+    data:
+      entity_id: '{{ trigger.to_state.entity_id }}'
+  mode: parallel
+  max: 10
+- id: '1666218601527'
+  alias: Network closet door on state change
+  description: ''
+  trigger:
+  - platform: event
+    event_type: state_changed
+    event_data:
+      entity_id: binary_sensor.network_closet_door
+  action:
+  - variables:
+      old_state: '{{ trigger.event.data.old_state.state }}'
+      new_state: '{{ trigger.event.data.new_state.state }}'
+  - condition: and
+    conditions:
+    - condition: template
+      value_template: '{{ old_state != new_state }}'
+    - condition: template
+      value_template: '{{ (new_state in ["off","on"] and old_state in ["off","on"])
+        }}'
+  - alias: Turn on or off the light.
+    service: light.turn_{{ "on" if new_state == "on" else "off" }}
+    target:
+      entity_id: light.network_closet
+  - alias: Turn the light off after 5 minutes.
+    condition: state
+    entity_id: light.network_closet
+    state: 'on'
+    for:
+      minutes: 5
+  - service: light.turn_off
+    entity_id: light.network_closet
+  mode: restart
+- id: '1666218872839'
+  alias: Printer status update and auto off
+  description: Update the printer status while it is on and turn it off after it has
+    been idle for a while.
+  trigger:
+  - id: update_status
+    platform: state
+    entity_id: switch.printer
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 1
+      seconds: 30
+  - id: idle
+    platform: state
+    entity_id: sensor.hp_colorlaserjet
+    to: idle
+    for:
+      minutes: 15
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: update_status
+    then:
+    - alias: Repeat update every minute until the power is turned off.
+      repeat:
+        sequence:
+        - delay:
+            seconds: 30
+        - service: homeassistant.update_entity
+          target:
+            entity_id:
+            - sensor.hp_colorlaserjet
+          data: {}
+        until:
+        - condition: state
+          entity_id: switch.printer
+          state: 'off'
+    - alias: Update the printer status after the printer switch turns off.
+      service: homeassistant.update_entity
+      target:
+        entity_id: sensor.hp_colorlaserjet
+      data: {}
+      enabled: false
+    - stop: ''
+    alias: When triggered by update_status.
+  - if:
+    - condition: trigger
+      id: idle
+    then:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.printer
+    - stop: Printer was turned off as expected.
+    alias: When triggered by idle.
+  mode: parallel
+  max: 2
+- id: '1666219596992'
+  alias: 'Sensibo thermostats: AC sync power state'
+  description: Using power monitoring to update the Sensibo device when the a/c state
+    is changed at the control panel.
+  trigger:
+  - id: cool
+    platform: numeric_state
+    entity_id:
+    - sensor.bedroom_ac_power
+    - sensor.lucas_ac_power
+    above: 100
+    for:
+      seconds: 10
+    variables:
+      powered_state: 'on'
+  - id: 'off'
+    platform: numeric_state
+    entity_id:
+    - sensor.bedroom_ac_power
+    - sensor.lucas_ac_power
+    below: 10
+    for:
+      minutes: 15
+    variables:
+      powered_state: 'off'
+  condition: []
+  action:
+  - alias: 'Set climate_entity + assumed_state (hvac_modes: off, cool, fan_only, dry,
+      heat_cool).'
+    variables:
+      climate_entity: "{%- if trigger.to_state.entity_id == \"sensor.bedroom_ac_power\"
+        %}\n  climate.bedroom_thermostat\n{%- elif trigger.to_state.entity_id == \"sensor.lucas_ac_power\"
+        %}\n  climate.lucas_room_thermostat\n{%- endif %}\n"
+      assumed_state: '{{ states(climate_entity) }}'
+  - if:
+    - alias: When powered_state does not equal assumed_state.
+      condition:
+      - condition: template
+        value_template: '{{ powered_state != assumed_state }}'
+    then:
+    - service: sensibo.assume_state
+      target:
+        entity_id: '{{ climate_entity }}'
+      data:
+        state: '{{ powered_state }}'
+      alias: Update sensibo assumed state value.
+  mode: restart
+- id: '1666220470470'
+  alias: Glowforge status update
+  description: ''
+  trigger:
+  - id: 'Off'
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    below: 10
+  - id: Idle
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    above: 10
+    below: 50
+  - id: Running
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    above: 150
+  - id: Complete
+    platform: numeric_state
+    entity_id: sensor.glowforge_power_monitor_power
+    below: 150
+    above: 50
+  condition: []
+  action:
+  - variables:
+      debug: false
+      status: "{%- if trigger.id == \"status_change\" %}\n  {{ states(\"input_select.glowforge_status\")
+        }}\n{%- else %}\n  {{ trigger.id }}\n{%- endif %}\n"
+      previous_status: "{%- if trigger.id == \"status_change\" %}\n  {{ \"Running\"
+        if status == \"Complete\" }}\n{%- else %}\n  {{ states(\"input_select.glowforge_status\")
+        }}\n{%- endif %}\n"
+  - if: '{{ debug is defined and debug == true }}'
+    then:
+    - service: script.debug
+      data:
+        message: 'trigger.id: {{ trigger.id }}
+
+          status: {{ status }}
+
+          {{ "previous_status: " ~ previous_status if previous_status|trim != "" }}
+
+          '
+  - alias: Do not update the status if this is not true.
+    if:
+    - condition: template
+      value_template: '{{ status == "Complete" and previous_status != "Running" }}'
+    then:
+    - stop: Stop right here!
+  - if:
+    - condition: template
+      value_template: '{{ trigger.id != "status_change" }}'
+    then:
+    - alias: Update the status.
+      service: input_select.select_option
+      target:
+        entity_id: input_select.glowforge_status
+      data:
+        option: '{{ status }}'
+  - choose:
+    - alias: Off actions.
+      conditions: '{{ status == "Off" }}'
+      sequence:
+      - alias: Turn off the camera.
+        service: switch.turn_off
+        target:
+          entity_id:
+          - switch.glowforge_camera
+          - switch.docker_wyze_bridge
+        data: {}
+    - alias: Idle/Running actions.
+      conditions: '{{ status in ["Idle","Running"] }}'
+      sequence:
+      - alias: Turn on the wyze camera bridge docker container.
+        if:
+        - condition: template
+          value_template: '{{ is_state("switch.docker_wyze_bridge","off") }}'
+        then:
+        - service: switch.turn_on
+          target:
+            entity_id: switch.docker_wyze_bridge
+          data: {}
+        - delay:
+            seconds: 10
+      - alias: Turn on the camera.
+        if:
+        - condition: template
+          value_template: '{{ is_state("switch.glowforge_camera","off") }}'
+        then:
+        - service: switch.turn_on
+          target:
+            entity_id: switch.glowforge_camera
+          data: {}
+    - alias: Complete actions.
+      conditions: '{{ status == "Complete" and previous_status == "Running" }}'
+      sequence:
+      - alias: Speech notification.
+        service: script.notify_speech
+        data:
+          media_player: media_player.google_downstairs
+          message: Glowforge is complete!
+      - alias: Mobile app notification.
+        service: script.notify_mobile
+        data:
+          title: Glowforge
+          message: Glowforge is complete!
+          who: brian
+          group: status
+          tag: glowforge-status
+          url: /lovelace/making
+  - alias: Mode single cooldown.
+    delay:
+      seconds: 10
+  mode: single
+- id: '1666220627171'
+  alias: Bedroom light on state change
+  description: ''
+  trigger:
+  - id: light_on
+    platform: state
+    entity_id: light.bedroom
+    from: 'off'
+    to: 'on'
+  - id: secondary_light_on
+    platform: state
+    entity_id:
+    - light.bedroom_east
+    - light.bedroom_table_lamp
+    from: 'off'
+    to: 'on'
+  - id: light_off
+    platform: state
+    entity_id: light.bedroom
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - variables:
+      nerene_battery_charging: '{{ is_state_attr("device_tracker.life360_nerene","battery_charging",True)
+        }}'
+      now_timestamp: '{{ as_timestamp(now()) }}'
+      timezone_offset: '{{ now_timestamp|timestamp_custom("%z") }}'
+      wakeup_time: '{{ states("input_datetime.event_light_wakeup_nerene") }}'
+      wakeup: '{{ now_timestamp | timestamp_custom("%Y-%m-%d "+wakeup_time+timezone_offset,
+        true) }}'
+      wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) |int(default=0)
+        }}'
+      near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
+  - if:
+    - condition: template
+      value_template: '{{ is_state("script.event_light", "off") }}'
+    then:
+    - if:
+      - condition: template
+        value_template: '{{ trigger.id == "light_on" }}'
+      then:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.bedroom
+          - light.bedroom_east
+          - light.bedroom_table_lamp
+        data:
+          brightness: 255
+    - if:
+      - condition: template
+        value_template: '{{ trigger.id == "secondary_light_on" }}'
+      then:
+      - service: light.turn_on
+        target:
+          entity_id: '{{ trigger.to_state.entity_id }}'
+        data:
+          brightness: 255
+  - if:
+    - condition: template
+      value_template: '{{ trigger.id == "light_off" }}'
+    then:
+    - if:
+      - condition: template
+        value_template: '{{ nerene_battery_charging == False and near_wakeup == True
+          }}'
+      then:
+      - service: homeassistant.turn_off
+        entity_id:
+        - fan.bedroom
+        - switch.sound_machine
+    - if:
+      - condition: template
+        value_template: '{{ is_state("script.event_light", "off") }}'
+      then:
+      - service: light.turn_off
+        target:
+          entity_id:
+          - light.bedroom_east
+          - light.bedroom_table_lamp
+        data: {}
+  mode: single

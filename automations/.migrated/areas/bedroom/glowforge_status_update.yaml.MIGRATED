@@ -3,10 +3,6 @@ alias: Glowforge status update
 id: glowforge_status_update
 mode: single
 trigger:
-  # - id: status_change
-  #   platform: state
-  #   entity_id: input_select.glowforge_status
-
   - id: "Off"
     platform: numeric_state
     entity_id: sensor.glowforge_power_monitor_power
@@ -25,22 +21,21 @@ trigger:
     entity_id: sensor.glowforge_power_monitor_power
     below: 150
     above: 50
-variables:
-  #debug: true
-
-  status: |
-    {%- if trigger.id == "status_change" %}
-      {{ states("input_select.glowforge_status") }}
-    {%- else %}
-      {{ trigger.id }}
-    {%- endif %}
-  previous_status: |
-    {%- if trigger.id == "status_change" %}
-      {{ "Running" if status == "Complete" }}
-    {%- else %}
-      {{ states("input_select.glowforge_status") }}
-    {%- endif %}
 action:
+  - variables:
+      debug: false
+      status: |
+        {%- if trigger.id == "status_change" %}
+          {{ states("input_select.glowforge_status") }}
+        {%- else %}
+          {{ trigger.id }}
+        {%- endif %}
+      previous_status: |
+        {%- if trigger.id == "status_change" %}
+          {{ "Running" if status == "Complete" }}
+        {%- else %}
+          {{ states("input_select.glowforge_status") }}
+        {%- endif %}
   - if: '{{ debug is defined and debug == true }}'
     then:
       - service: script.debug
@@ -110,15 +105,7 @@ action:
               group: status
               tag: glowforge-status
               url: /lovelace/making
-          # - alias: Dashboard toast notification.
-          #   service: script.notify_web
-          #   data:
-          #     type: success
-          #     title: "Glowforge"
-          #     message: "Glowforge is complete!"
 
-  - if: '{{ trigger.id != "status_change" }}'
-    then:
-      - alias: "Mode single cooldown."
-        delay:
-          seconds: 10
+  - alias: Mode single cooldown.
+    delay:
+      seconds: 10
