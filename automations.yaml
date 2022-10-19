@@ -2576,3 +2576,170 @@
       alias: 'When motion clears: turn off the cabinet light.'
     alias: Perform an action based on kitchen motion state.
   mode: single
+- id: '1666205350404'
+  alias: 'Actionable notification: Keep unlocked'
+  description: 'Prompt Brian''s mobile to select a front door lock mode: Lock now,
+    Allow to lock (after a timeout period), or Keep unlocked.'
+  trigger:
+  - alias: Trigger the notification when the door unlocks.
+    id: door_unlocked
+    platform: state
+    entity_id:
+    - lock.front_door
+    - lock.test_door
+    from: locked
+    to: unlocked
+  condition: []
+  action:
+  - alias: Send the actionable notification.
+    service: script.notify_mobile
+    data:
+      who: brian
+      title: Door Unlocked
+      message: Would you like the door to remain unlocked?
+      tag: KEEP_UNLOCKED
+      url: /lovelace/downstairs#entry
+      actions:
+      - action: LOCK_NOW
+        title: Lock now
+      - action: KEEP_UNLOCKED
+        title: Leave unlocked
+        behavior: default
+      - action: ALLOW_TO_LOCK
+        title: Allow to lock
+        destructive: true
+  - alias: Await possible selection.
+    wait_for_trigger:
+    - alias: LOCK NOW
+      platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: LOCK_NOW
+    - alias: KEEP_UNLOCKED
+      platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: KEEP_UNLOCKED
+    - alias: ALLOW_TO_LOCK
+      platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: ALLOW_TO_LOCK
+    timeout:
+      minutes: '10'
+    continue_on_timeout: true
+  - variables:
+      chosen_action: '{{ wait.trigger.event.data.action }}'
+  - alias: Clear the message prompt after the timeout ends.
+    service: script.notify_mobile_clear
+    data:
+      who: brian
+      tag: '{{ tag }}'
+  - alias: Take the requested action!
+    choose:
+    - alias: Lock the front door now.
+      conditions:
+      - '{{ chosen_action == "LOCK_NOW" }}'
+      sequence:
+      - service: lock.lock
+        target:
+          entity_id: lock.front_door
+        data: {}
+    - alias: Keep the front door unlocked.
+      conditions:
+      - '{{ chosen_action == "KEEP_UNLOCKED" }}'
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.leave_unlocked
+        data: {}
+    - alias: Allow the door to lock automatically after the timer expires.
+      conditions:
+      - '{{ chosen_action == "ALLOW_TO_LOCK" or wait.completed == false }}'
+      sequence:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.leave_unlocked
+        data: {}
+  mode: restart
+- id: '1666206586172'
+  alias: 'Actionable notification: Insecure doors at 8pm.'
+  description: Warn us if any doors or windows are open or unlocked.
+  trigger:
+  - alias: Trigger the notification at 8pm.
+    platform: time
+    at: '20:00:00'
+  condition: []
+  action:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: lock.front_door
+      state: unlocked
+      alias: If the front door is unlocked
+    - condition: state
+      entity_id: cover.garage_door
+      state: open
+      alias: or the Garage door is open
+    alias: Continue if the front door is unlocked or the garage door is open.
+  - alias: Send the actionable notification.
+    service: script.notify_mobile
+    data:
+      who: brian
+      title: 'SAFETY ALERT: INSECURE DOOR{% if is_state("lock.front_door","locked")
+        and is_state("cover.garage_door","open") %}S{% endif %}'
+      message: '{{ "The front door is unlocked!" if is_state("lock.front_door","locked")
+        }}
+
+        {{ "The garage door is open!" if is_state("cover.garage_door","open") }}
+
+        '
+      tag: INSECURE_DOOR
+      url: /lovelace/outdoor
+      actions:
+      - action: SECURE_DOORS
+        title: Secure doors
+        behavior: default
+      - action: NO_ACTION
+        title: Leave them be
+        destructive: true
+  - alias: Awaiting action selection.
+    wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: SECURE_DOORS
+      alias: SECURE_DOORS
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: NO_ACTION
+      alias: NO_ACTION
+    timeout:
+      minutes: '15'
+    continue_on_timeout: true
+  - variables:
+      chosen_action: '{{ wait.trigger.event.data.action }}'
+  - choose:
+    - conditions:
+      - '{{ chosen_action == "SECURE_DOORS" or wait.completed == false }}'
+      sequence:
+      - alias: Lock the front door.
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: lock.front_door
+            state: unlocked
+          sequence:
+          - service: lock.lock
+            entity_id: lock.front_door
+      - alias: Close the garage door.
+        choose:
+        - conditions:
+          - condition: state
+            entity_id: cover.garage_door
+            state: open
+          sequence:
+          - service: cover.close_cover
+            entity_id: cover.garage_door
+  mode: restart

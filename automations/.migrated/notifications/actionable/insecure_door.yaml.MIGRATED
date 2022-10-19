@@ -1,21 +1,20 @@
 ---
-# Warn us if any doors or windows are open or unlocked
-#
 alias: "Insecure door: actionable notification"
+description: Warn us if any doors or windows are open or unlocked.
 id: insecure_door_actionable_notification
 mode: restart
 trigger:
-  # Trigger the notification at 8pm.
-  - platform: time
+  - alias: Trigger the notification at 8pm.
+    platform: time
     at: "20:00:00"
-variables:
-  front_door_unlocked: '{{ is_state("lock.front_door","unlocked") }}'
-  garage_door_open: '{{ is_state("cover.garage_door","open") }}'
-condition:
-  - "{{ front_door_unlocked or garage_door_open }}"
 action:
-  # Send the actionable notification.
-  - service: script.notify_mobile
+  - variables:
+      front_door_unlocked: '{{ is_state("lock.front_door","unlocked") }}'
+      garage_door_open: '{{ is_state("cover.garage_door","open") }}'
+  - condition:
+      - "{{ front_door_unlocked or garage_door_open }}"
+  - alias: Send the actionable notification.
+    service: script.notify_mobile
     data:
       who: "brian"
       title: "SAFETY ALERT: INSECURE DOOR{% if front_door_unlocked and garage_door_open %}S{% endif %}"
@@ -34,7 +33,7 @@ action:
           destructive: true
 
   # Wait for the requested response, or secure the doors after the timeout elapses.
-  - alias: Awaiting action selection
+  - alias: Awaiting action selection.
     wait_for_trigger:
       - platform: event
         event_type: mobile_app_notification_action
@@ -49,21 +48,20 @@ action:
     continue_on_timeout: true
 
   - variables:
-      trigger_timed_out: "{{ wait.completed == false }}"
       chosen_action: "{{ wait.trigger.event.data.action }}"
 
   # - service: script.debug
   #   data:
   #     message: |
   #       chosen_action: {{ chosen_action }}
-  #       trigger_timed_out: {{ trigger_timed_out }}
+  #       wait.completed == false: {{ wait.completed == false }}
 
   - choose:
       - conditions:
-          - '{{ chosen_action == "SECURE_DOORS" or trigger_timed_out }}'
+          - '{{ chosen_action == "SECURE_DOORS" or wait.completed == false }}'
         sequence:
-          # Lock the front door.
-          - choose:
+          - alias: Lock the front door.
+            choose:
               - conditions:
                   - condition: state
                     entity_id: lock.front_door
@@ -72,8 +70,8 @@ action:
                   - service: lock.lock
                     entity_id: lock.front_door
 
-          # Close the garage door.
-          - choose:
+          - alias: Close the garage door.
+            choose:
               - conditions:
                   - condition: state
                     entity_id: cover.garage_door
@@ -81,13 +79,3 @@ action:
                 sequence:
                   - service: cover.close_cover
                     entity_id: cover.garage_door
-
-  # Clear the message prompt after the timeout ends.
-  - choose:
-      - conditions:
-          - "{{ trigger_timed_out }}"
-        sequence:
-          - service: script.notify_mobile_clear
-            data:
-              who: "brian"
-              tag: "{{ tag }}"

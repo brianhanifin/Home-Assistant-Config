@@ -1,12 +1,11 @@
 ---
-# Warn us if any doors or windows are open or unlocked
-#
 alias: "Keep unlocked: actionable notification"
 id: keep_unlocked_actionable_notification
+description: Warn us if any doors or windows are open or unlocked
 mode: restart
 trigger:
-  # Trigger the notification when the door unlocks.
-  - id: door_unlocked
+  - alias: Trigger the notification when the door unlocks.
+    id: door_unlocked
     platform: state
     entity_id:
       - lock.front_door
@@ -14,8 +13,8 @@ trigger:
     from: "locked"
     to: "unlocked"
 action:
-  # Send the actionable notification.
-  - service: script.notify_mobile
+  - alias: Send the actionable notification.
+    service: script.notify_mobile
     data:
       who: brian
       title: Door Unlocked
@@ -23,6 +22,8 @@ action:
       tag: KEEP_UNLOCKED
       url: /lovelace/downstairs#entry
       actions:
+        - action: LOCK_NOW
+          title: Lock now
         - action: KEEP_UNLOCKED
           title: Leave unlocked
           behavior: "default"
@@ -30,9 +31,12 @@ action:
           title: Allow to lock
           destructive: true
 
-  # Wait for the requested response.
-  - alias: Awaiting action selection
+  - alias: Awaiting action selection.
     wait_for_trigger:
+      - platform: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "LOCK_NOW"
       - platform: event
         event_type: mobile_app_notification_action
         event_data:
@@ -49,8 +53,8 @@ action:
       trigger_timed_out: "{{ wait.completed == false }}"
       chosen_action: "{{ wait.trigger.event.data.action }}"
 
-  # Clear the message prompt after the timeout ends.
-  - choose:
+  - alias: Clear the message prompt after the timeout ends.
+    choose:
       - conditions:
           - "{{ trigger_timed_out }}"
         sequence:
@@ -59,18 +63,28 @@ action:
               who: "brian"
               tag: "{{ tag }}"
 
-  # Take the requested action!
-  - choose:
-      - conditions:
+  - alias: Take the requested action!
+    choose:
+      - alias: Lock the front door now.
+        conditions:
           - '{{ chosen_action == "KEEP_UNLOCKED" }}'
         sequence:
-          # Keep the front door unlocked.
-          - service: input_boolean.turn_on
-            entity_id: input_boolean.leave_unlocked
+          - service: lock.lock
+            target:
+              entity_id: lock.front_door
 
-      - conditions:
+      - alias: Keep the front door unlocked.
+        conditions:
+          - '{{ chosen_action == "KEEP_UNLOCKED" }}'
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.leave_unlocked
+
+      - alias: Allow the door to lock automatically after the timer expires.
+        conditions:
           - '{{ chosen_action == "ALLOW_TO_LOCK" or trigger_timed_out }}'
         sequence:
-          # Allow the door to lock automatically after the timer expires.
           - service: input_boolean.turn_off
-            entity_id: input_boolean.leave_unlocked
+            target:
+              entity_id: input_boolean.leave_unlocked
