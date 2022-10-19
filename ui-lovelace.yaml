@@ -1,4 +1,39 @@
 decluttering_templates:
+  calendar:
+    card:
+      dateSize: 130
+      entities:
+      - color: teal
+        entity: calendar.us_holidays
+        name: Holidays
+      - color: black
+        entity: calendar.birthdays_anniversary
+        name: Milestones
+      - color: green
+        entity: calendar.brian
+        name: Brian
+      - blocklist: creative market
+        color: purple
+        entity: calendar.nerene
+        name: Nerene
+      - color: maroon
+        entity: calendar.hanifins
+        name: Hanifin's
+      - blocklist: Math Tutor,Period
+        color: blue
+        entity: calendar.kyle
+        name: Kyle
+      - blocklist: Advisory,Period
+        color: maroon
+        entity: calendar.lucas
+        name: Lucas
+      eventTitleSize: 130
+      firstDayOfWeek: 1
+      maxDaysToShow: '[[days]]'
+      timeSize: 100
+      type: custom:atomic-calendar-revive
+    default:
+      days: 2
   event:
     card:
       cards:
@@ -49,6 +84,81 @@ decluttering_templates:
     default:
       label: ''
       name: ''
+  floor_climate:
+    card:
+      cards:
+      - cards:
+        - subtitle: Temperature average
+          title: '[[floor]] climate'
+          type: custom:mushroom-title-card
+        - entities:
+          - entity: '[[average]]'
+            name: '[[floor]] average'
+          show_icon: false
+          type: glance
+        - animate: true
+          entities:
+          - entity: '[[average]]'
+          height: 118
+          hours_to_show: 24
+          line_width: 2
+          lower_bound: 68
+          points_per_hour: 4
+          show:
+            extrema: false
+            graph: line
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        type: vertical-stack
+      - cards:
+        - subtitle: Room temperature
+          title: '[[floor]] climate'
+          type: custom:mushroom-title-card
+        - entities: '[[temperature_entities]]'
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities: '[[temperature_entities]]'
+          height: 75
+          hours_to_show: 24
+          line_width: 2
+          points_per_hour: 2
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        type: vertical-stack
+      - cards:
+        - subtitle: Room humidity
+          title: Downstairs climate
+          type: custom:mushroom-title-card
+        - entities: '[[humidity_entities]]'
+          show_icon: false
+          type: glance
+        - aggregate_func: max
+          animate: true
+          entities: '[[humidity_entities]]'
+          height: 75
+          hours_to_show: 12
+          line_width: 2
+          points_per_hour: 4
+          show:
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+        type: vertical-stack
+      parameters:
+        pagination:
+          type: bullets
+        spaceBetween: 8
+      type: custom:swipe-card
+      view_layout:
+        position: sidebar
   graph:
     card:
       entities:
@@ -90,55 +200,10 @@ decluttering_templates:
           browser_mod:
             data:
               content:
-                entities:
-                - color: teal
-                  entity: calendar.us_holidays
-                - color: black
-                  entity: calendar.birthdays_anniversary
-                  name: Milestones
-                - color: green
-                  entity: calendar.brian
-                  name: Brian
-                - blocklist: creative market
-                  color: purple
-                  entity: calendar.nerene
-                  name: Nerene
-                - color: maroon
-                  entity: calendar.hanifins
-                  name: Hanifin's
-                - blocklist: Math Tutor,Period
-                  color: blue
-                  entity: calendar.kyle
-                  name: Kyle
-                - blocklist: Advisory,Period
-                  color: maroon
-                  entity: calendar.lucas
-                  name: Lucas
-                type: custom:atomic-calendar-revive
-              dateSize: 150
-              dimFinishedEvents: true
-              disableEventLink: true
-              disableLocationLink: true
-              eventTitleSize: 150
-              firstDayOfWeek: 1
-              hideDuplicates: false
-              hideFinishedEvents: false
-              maxDaysToShow: 7
-              refreshInterval: 3600
-              showDate: false
-              showDeclined: false
-              showDescription: true
-              showEventIcon: false
-              showFullDayProgress: false
-              showHiddenText: false
-              showLoader: false
-              showLocation: false
-              showMonth: false
-              showNoEventsForToday: false
-              showProgressBar: false
-              showRelativeTime: true
-              showWeekDay: true
-              sortByStartTime: true
+                template: calendar
+                type: custom:decluttering-card
+                variables:
+                - days: '7'
               title: Calendar
             service: browser_mod.popup
         type: entity
@@ -149,53 +214,8 @@ decluttering_templates:
           browser_mod:
             data:
               content:
-                cards:
-                - subtitle: Current conditions
-                  type: custom:mushroom-title-card
-                - current: true
-                  details: true
-                  entity: weather.home
-                  forecast: true
-                  hourly_forecast: false
-                  number_of_forecasts: '4'
-                  type: custom:weather-card
-                - entity: binary_sensor.rain_today
-                  states:
-                    'on':
-                      cards:
-                      - subtitle: Radar
-                        type: custom:mushroom-title-card
-                      - entity: camera.san_diego
-                        show_name: false
-                        show_state: false
-                        type: picture-entity
-                      type: vertical-stack
-                  type: custom:state-switch
-                - subtitle: Last 24 hours
-                  type: custom:mushroom-title-card
-                - animate: true
-                  entities:
-                  - entity: sensor.outdoor_temperature
-                    name: Temperature
-                    show_fill: false
-                  - entity: sensor.outdoor_humidity
-                    name: Humidity
-                    show_line: false
-                    show_points: false
-                    y_axis: secondary
-                  icon: mdi:weather-sunny
-                  line_width: 2
-                  name: Outdoor
-                  points_per_hour: 4
-                  show:
-                    extrema: true
-                    icon: false
-                    labels: true
-                    labels_secondary: true
-                    name: false
-                    state: false
-                  type: custom:mini-graph-card
-                type: vertical-stack
+                template: weather
+                type: custom:decluttering-card
               title: Weather
             service: browser_mod.popup
         type: weather
@@ -372,6 +392,68 @@ decluttering_templates:
       type: custom:mushroom-chips-card
     default:
       back_button: back
+  weather:
+    card:
+      cards:
+      - subtitle: Current conditions
+        type: custom:mushroom-title-card
+      - card:
+          cards:
+          - entities:
+            - entity: sensor.nws_alerts
+            type: entities
+          - content: '{{ state_attr("sensor.nws_alerts","spoken_desc") }}'
+            type: markdown
+          in_card: true
+          type: vertical-stack
+        conditions:
+        - entity: sensor.nws_alerts
+          state_not: '0'
+        type: conditional
+      - current: true
+        details: true
+        entity: weather.home
+        forecast: true
+        hourly_forecast: false
+        number_of_forecasts: '4'
+        type: custom:weather-card
+      - entity: binary_sensor.rain_today
+        states:
+          'on':
+            cards:
+            - subtitle: Radar
+              type: custom:mushroom-title-card
+            - entity: camera.san_diego
+              show_name: false
+              show_state: false
+              type: picture-entity
+            type: vertical-stack
+        type: custom:state-switch
+      - subtitle: Last 24 hours
+        type: custom:mushroom-title-card
+      - animate: true
+        entities:
+        - entity: sensor.outdoor_temperature
+          name: Temperature
+          show_fill: false
+        - entity: sensor.outdoor_humidity
+          name: Humidity
+          show_line: false
+          show_points: false
+          y_axis: secondary
+        icon: mdi:weather-sunny
+        line_width: 2
+        name: Outdoor
+        points_per_hour: 4
+        show:
+          extrema: true
+          icon: false
+          labels: true
+          labels_secondary: true
+          name: false
+          state: false
+        type: custom:mini-graph-card
+      type: vertical-stack
 kiosk_mode:
   hide_header: true
 views:
@@ -438,53 +520,10 @@ views:
     columns: 3
     square: false
     type: grid
-  - dateFormat: LL
-    dateSize: 130
-    entities:
-    - color: teal
-      entity: calendar.us_holidays
-      name: Holidays
-    - color: black
-      entity: calendar.birthdays_anniversary
-      name: Milestones
-    - color: green
-      entity: calendar.brian
-      name: Brian
-    - blocklist: creative market
-      color: purple
-      entity: calendar.nerene
-      name: Nerene
-    - color: maroon
-      entity: calendar.hanifins
-      name: Hanifin's
-    - blocklist: Math Tutor,Period
-      color: blue
-      entity: calendar.kyle
-      name: Kyle
-    - blocklist: Advisory,Period
-      color: maroon
-      entity: calendar.lucas
-      name: Lucas
-    eventTitleSize: 130
-    firstDayOfWeek: 1
-    hideDuplicates: true
-    maxDaysToShow: 2
-    refreshInterval: 60
-    showCurrentEventLine: false
-    showDate: false
-    showDescription: true
-    showEventIcon: true
-    showFullDayProgress: false
-    showHiddenText: false
-    showLocation: true
-    showMonth: false
-    showNoEventsForToday: false
-    showProgressBar: true
-    showRelativeTime: true
-    showWeekDay: true
-    sortByStartTime: true
-    timeSize: 100
-    type: custom:atomic-calendar-revive
+  - template: calendar
+    type: custom:decluttering-card
+    variables:
+    - days: 2
     view_layout:
       position: sidebar
   - cards:
@@ -1118,6 +1157,8 @@ views:
       state_color: false
       type: glance
     type: custom:stack-in-card
+    view_layout:
+      position: sidebar
   - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
       \ {{ \"none\" if user.is_admin|default(false) else \"block\" }}\n}\n"
     type: shopping-list
@@ -1282,6 +1323,8 @@ views:
         - entity: sensor.stove_temperature
           name: Stove
     type: vertical-stack
+    view_layout:
+      position: main
   - cards:
     - subtitle: "{{- states(\"sensor.play_room_temperature\")|round(default=0) }}°\n\
         {{- \" ‧ \" ~ states(\"sensor.play_room_humidity\")|round(default=0) }}%\n\
@@ -1445,101 +1488,25 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
-  - cards:
-    - cards:
-      - subtitle: Temperature average
-        title: Downstairs climate
-        type: custom:mushroom-title-card
-      - entities:
-        - entity: sensor.downstairs_temperature_average
-          name: Downstairs average
-        show_icon: false
-        type: glance
-      - animate: true
-        entities:
-        - entity: sensor.downstairs_temperature_average
-        height: 118
-        hours_to_show: 24
-        line_width: 2
-        lower_bound: 60
-        points_per_hour: 4
-        show:
-          extrema: false
-          graph: line
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    - cards:
-      - subtitle: Room temperature
-        title: Downstairs climate
-        type: custom:mushroom-title-card
-      - entities:
-        - entity: sensor.family_room_temperature
-          name: Family Room
-        - entity: sensor.kitchen_temperature
-          name: Kitchen
-        - entity: sensor.home_thermostat_temperature
-          name: Thermostat
-        show_icon: false
-        type: glance
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.family_room_temperature
-          name: Family Room
-        - entity: sensor.kitchen_temperature
-          name: Kitchen
-        - entity: sensor.home_thermostat_temperature
-          name: Thermostat
-        height: 75
-        hours_to_show: 24
-        line_width: 2
-        points_per_hour: 2
-        show:
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    - cards:
-      - subtitle: Room humidity
-        title: Downstairs climate
-        type: custom:mushroom-title-card
-      - entities:
-        - entity: sensor.family_room_humidity
-          name: Family Room
-        - entity: sensor.kitchen_humidity
-          name: Kitchen
-        - entity: sensor.home_thermostat_humidity
-          name: Thermostat
-        show_icon: false
-        type: glance
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.family_room_humidity
-          name: Family Room
-        - entity: sensor.kitchen_humidity
-          name: Kitchen
-        - entity: sensor.home_thermostat_humidity
-          name: Thermostat
-        height: 75
-        hours_to_show: 12
-        line_width: 2
-        points_per_hour: 4
-        show:
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    parameters:
-      pagination:
-        type: bullets
-      spaceBetween: 8
-    type: custom:swipe-card
+  - template: floor_climate
+    type: custom:decluttering-card
+    variables:
+    - floor: Downstairs
+    - average: sensor.downstairs_temperature_average
+    - temperature_entities:
+      - entity: sensor.family_room_temperature
+        name: Family room
+      - entity: sensor.kitchen_temperature
+        name: Kitchen
+      - entity: sensor.home_thermostat_temperature
+        name: Thermostat
+    - humidity_entities:
+      - entity: sensor.family_room_humidity
+        name: Family room
+      - entity: sensor.kitchen_humidity
+        name: Kitchen
+      - entity: sensor.home_thermostat_humidity
+        name: Thermostat
     view_layout:
       position: sidebar
   icon: mdi:home-floor-1
@@ -1738,108 +1705,29 @@ views:
     type: vertical-stack
     view_layout:
       position: main
-  - cards:
-    - cards:
-      - subtitle: Temperature average
-        title: Upstairs climate
-        type: custom:mushroom-title-card
-      - entities:
-        - entity: sensor.upstairs_temperature_average
-          name: Upstairs average
-        show_icon: false
-        type: glance
-      - animate: true
-        entities:
-        - entity: sensor.upstairs_temperature_average
-        height: 118
-        line_width: 2
-        lower_bound: 68
-        points_per_hour: 4
-        show:
-          extrema: false
-          graph: line
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    - cards:
-      - subtitle: Room temperature
-        title: Upstairs climate
-        type: custom:mushroom-title-card
-      - entities:
-        - entity: sensor.upstairs_bathroom_temperature
-          name: Bath
-        - entity: sensor.bedroom_temperature
-          name: Bedroom
-        - entity: sensor.guest_room_temperature
-          name: Guest
-        - entity: sensor.lucas_room_thermostat_temperature
-          name: Lucas
-        show_icon: false
-        type: glance
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.upstairs_bathroom_temperature
-          name: Bath
-        - entity: sensor.bedroom_temperature
-          name: Bedroom
-        - entity: sensor.guest_room_temperature
-          name: Guest
-        - entity: sensor.lucas_room_thermostat_temperature
-          name: Lucas
-        height: 75
-        hours_to_show: 24
-        line_width: 2
-        points_per_hour: 2
-        show:
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    - cards:
-      - subtitle: Room humidity
-        title: Upstairs climate
-        type: custom:mushroom-title-card
-      - entities:
-        - entity: sensor.upstairs_bathroom_humidity
-          name: Bath
-        - entity: sensor.bedroom_humidity
-          name: Bedroom
-        - entity: sensor.guest_room_humidity
-          name: Guest
-        - entity: sensor.lucas_room_display_humidity
-          name: Lucas
-        show_icon: false
-        type: glance
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.upstairs_bathroom_humidity
-          name: Bath
-        - entity: sensor.bedroom_humidity
-          name: Bedroom
-        - entity: sensor.guest_room_humidity
-          name: Guest
-        - entity: sensor.lucas_room_display_humidity
-          name: Lucas
-        height: 75
-        hours_to_show: 12
-        line_width: 2
-        points_per_hour: 4
-        show:
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    parameters:
-      pagination:
-        type: bullets
-      spaceBetween: 8
-    type: custom:swipe-card
+  - template: floor_climate
+    type: custom:decluttering-card
+    variables:
+    - floor: Upstairs
+    - average: sensor.upstairs_temperature_average
+    - temperature_entities:
+      - entity: sensor.upstairs_bathroom_temperature
+        name: Bath
+      - entity: sensor.bedroom_temperature
+        name: Bedroom
+      - entity: sensor.kyle_room_temperature
+        name: Kyle
+      - entity: sensor.lucas_room_temperature
+        name: Lucas
+    - humidity_entities:
+      - entity: sensor.upstairs_bathroom_humidity
+        name: Bath
+      - entity: sensor.bedroom_humidity
+        name: Bedroom
+      - entity: sensor.kyle_room_humidity
+        name: Kyle
+      - entity: sensor.lucas_room_humidity
+        name: Lucas
     view_layout:
       position: sidebar
   icon: mdi:home-floor-2
@@ -1975,57 +1863,12 @@ views:
     type: grid
     view_layout:
       position: main
-  - cards:
-    - subtitle: Current conditions + forecast
-      title: Weather
-      type: custom:mushroom-title-card
-    - current: true
-      details: true
-      entity: weather.home
-      forecast: true
-      hourly_forecast: false
-      number_of_forecasts: '4'
-      type: custom:weather-card
-    - entities:
-      - entity: sensor.nws_alerts
-      type: entities
-    - entity: binary_sensor.rain_today
-      states:
-        'on':
-          cards:
-          - subtitle: Rain radar
-            type: custom:mushroom-title-card
-          - entity: camera.san_diego
-            show_name: false
-            show_state: false
-            type: picture-entity
-          type: vertical-stack
-      type: custom:state-switch
-    - subtitle: Conditions the past 24 hours
-      type: custom:mushroom-title-card
-    - animate: true
-      entities:
-      - entity: sensor.outdoor_temperature
-        name: Temperature
-        show_fill: false
-      - entity: sensor.outdoor_humidity
-        name: Humidity
-        show_line: false
-        show_points: false
-        y_axis: secondary
-      icon: mdi:weather-sunny
-      line_width: 2
-      name: Outdoor
-      points_per_hour: 4
-      show:
-        extrema: true
-        icon: false
-        labels: true
-        labels_secondary: true
-        name: false
-        state: false
-      type: custom:mini-graph-card
-    type: vertical-stack
+  - entity: mediaquery
+    states:
+      '(min-width: 500px)':
+        template: weather
+        type: custom:decluttering-card
+    type: custom:state-switch
     view_layout:
       position: sidebar
   icon: mdi:flower
@@ -2309,7 +2152,7 @@ views:
                 name: Progress
                 show_state: false
                 type: custom:multiple-entity-row
-              - entity: sensor.prusa_power
+              - entity: sensor.prusa_power_monitor_power
                 name: Power
               - entity: automation.3d_print_status_update
                 icon: mdi:cellphone-message
