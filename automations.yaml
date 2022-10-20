@@ -3164,7 +3164,7 @@
   mode: restart
   max_exceeded: silent
 - id: '1666215299157'
-  alias: 'Remote: pico remote click'
+  alias: 'Remote: pico click'
   description: ''
   trigger:
   - platform: event
@@ -3173,118 +3173,129 @@
       action: press
   condition: []
   action:
-  - variables:
-      remote: '{{ trigger.event.data.device_name|lower|replace(" ","_") }}'
-      button_id: '{{ trigger.event.data.button_number }}'
-      action: '{{ trigger.event.data.action }}'
-      buttons:
-        '2': 'on'
-        '3': middle
-        '4': 'off'
-        '5': step_up
-        '6': step_down
-      button: '{{ buttons[button_id] }}'
-      devices:
-        bedroom:
-          'on':
-          - light.bedroom_east
-          - light.bedroom_table_lamp
-          'off':
-          - light.bedroom
-          - light.bedroom_east
-          - light.bedroom_table_lamp
-          - fan.bedroom
-          - climate.bedroom_thermostat
-          - switch.sound_machine
-        dining_room:
-          'on': light.dining_room
-          'off': light.dining_room
-          middle:
-          - light.kitchen
-          - light.kitchen_prep
-          step_up: light.dining_room
-          step_down: light.dining_room
-        entry:
-          'on': light.home_entry
-          'off': light.home_entry
-          middle: ''
-          step_up: light.home_entry
-          step_down: light.home_entry
-        play_room_1:
-          'on':
-          - light.play_room
-          - light.play_room_floor_lamp
-          'off':
-          - light.play_room
-          - light.play_room_floor_lamp
-          - light.play_room_entry
-          middle: light.play_room_floor_lamp
-          step_up:
-          - light.play_room
-          - light.play_room_floor_lamp
-          step_down:
-          - light.play_room
-          - light.play_room_floor_lamp
-        play_room_2:
-          'on':
-          - light.play_room
-          - light.play_room_floor_lamp
-          - light.play_room_entry
-          'off':
-          - light.play_room
-          - light.play_room_floor_lamp
-          - light.play_room_entry
-          middle: light.play_room_entry
-          step_up:
-          - light.play_room
-          - light.play_room_floor_lamp
-          - light.play_room_entry
-          step_down:
-          - light.play_room
-          - light.play_room_floor_lamp
-          - light.play_room_entry
-      device: '{{ devices[remote][button] }}'
+  - service: script.debug
+    data:
+      message: "{{ trigger.event.data }}\n\nremote_name: {{ remote_name }}\nbutton_id:
+        {{ button_id }}\nbutton: {{ button }}\nentities: {{ entities }}\n\n{%- set
+        data = namespace(on_state=false) %}\n{%- for entity in entities %}\n  {%-
+        set data.on_state = is_state(entity,\"on\") or data.on_state %}\n{% endfor
+        %}\n{%- set on_state = data.on_state %}\n\nservice: homeassistant.turn_{{
+        iif(on_state,\"off\",\"on\") }}\ndata:\n  entity_id: \"{{ entities }}\"\nalias:
+        Turn on or off the alternate entities.\n"
+    enabled: false
   - choose:
     - conditions:
         alias: On or off buttons.
         condition: template
-        value_template: '{{ button in ["on","off"] and device != "" }}
+        value_template: '{{ button in ["on","off"] and entities != "" }}
 
           '
       sequence:
       - service: homeassistant.turn_{{ button }}
         data:
-          entity_id: '{{ device }}'
-        alias: Turn on or off the primary device(s).
+          entity_id: '{{ entities }}'
+        alias: Turn on or off the primary entities.
     - conditions:
         alias: Middle button.
         condition: template
-        value_template: '{{ button == "middle" and device != "" }}
+        value_template: '{{ button == "middle" and entities != "" }}
 
           '
       sequence:
       - variables:
-          button: '{{ "off" if is_state(device,"on") else "on" }}
-
-            '
-      - service: homeassistant.turn_{{ button }}
+          on_state: "{%- set data = namespace(on_state=false) %}\n{%- for entity in
+            entities %}\n  {%- set data.on_state = is_state(entity,\"on\") or data.on_state
+            %}\n{% endfor %}\n{{ iif(data.on_state,\"off\",\"on\") }}\n"
+      - service: homeassistant.turn_{{ on_state }}
         data:
-          entity_id: '{{ device }}'
-        alias: Turn on or off the alternate device(s).
+          entity_id: '{{ entities }}'
+        alias: Turn on or off the alternate entities.
     - conditions:
         alias: Up or down buttons.
         condition: template
-        value_template: '{{ button in ["step_up","step_down"] and device != "" }}
+        value_template: '{{ button in ["step_up","step_down"] and entities != "" }}
 
           '
       sequence:
       - service: homeassistant.turn_on
         data:
-          entity_id: '{{ device }}'
+          entity_id: '{{ entities }}'
           brightness_step_pct: '{{ "-" if button == "step_down" }}20
 
             '
         alias: Increase or decrease brightness by 20%.
+  variables:
+    remote_name: '{{ trigger.event.data.device_name|lower|replace(" ","_") }}'
+    button_id: '{{ trigger.event.data.button_number }}'
+    buttons:
+    - ''
+    - ''
+    - 'on'
+    - middle
+    - 'off'
+    - step_up
+    - step_down
+    button: '{{ buttons[button_id] }}'
+    remotes:
+      bedroom:
+        'on':
+        - light.bedroom_east
+        - light.bedroom_table_lamp
+        'off':
+        - light.bedroom
+        - light.bedroom_east
+        - light.bedroom_table_lamp
+        - fan.bedroom
+        - climate.bedroom_thermostat
+        - switch.sound_machine
+      dining_room:
+        'on': light.dining_room
+        'off': light.dining_room
+        middle:
+        - light.kitchen
+        - light.kitchen_prep
+        step_up: light.dining_room
+        step_down: light.dining_room
+      entry:
+        'on': light.home_entry
+        'off': light.home_entry
+        middle: ''
+        step_up: light.home_entry
+        step_down: light.home_entry
+      play_room_1:
+        'on':
+        - light.play_room
+        - light.play_room_floor_lamp
+        'off':
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+        middle: light.play_room_floor_lamp
+        step_up:
+        - light.play_room
+        - light.play_room_floor_lamp
+        step_down:
+        - light.play_room
+        - light.play_room_floor_lamp
+      play_room_2:
+        'on':
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+        'off':
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+        middle: light.play_room_entry
+        step_up:
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+        step_down:
+        - light.play_room
+        - light.play_room_floor_lamp
+        - light.play_room_entry
+    entities: '{{ remotes[remote_name][button] }}'
   mode: parallel
 - id: '1666216108903'
   alias: Play room light off
