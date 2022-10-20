@@ -1,0 +1,11 @@
+---
+unique_id: alert_zwavejs_offline
+name: "Alert: Z-wave JS offline"
+icon: mdi:z-wave
+device_class: problem
+delay_on: "00:30:00"
+state: |
+  {{ not is_state("sensor.network_closet_bulb_node_status","alive")
+    and is_state("automation.startup","off") }}
+attributes:
+  node_monitored: 'sensor.network_closet_bulb_node_status'

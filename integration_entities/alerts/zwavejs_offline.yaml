@@ -1,0 +1,19 @@
+---
+name: Z-wave JS offline
+entity_id: binary_sensor.alert_zwavejs_offline
+state: "on"
+title: Z-wave JS status
+message: Offline
+done_message: Online
+repeat: 60
+can_acknowledge: false
+skip_first: true
+notifiers:
+  - brian
+data:
+  title: Z-Wave JS network unavailable
+  message: |
+    The USB controller is no longer reporting a status of "alive".
+  data:
+    group: server-issue
+    url: homeassistant://navigate/lovelace/home

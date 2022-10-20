@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,693** | 1,368 | 37 | 95 | 59 |
+| **41,598** | 1,363 | 37 | 93 | 59 |
 
 # Index
 
@@ -209,9 +209,9 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1368 total entities**,
-including **718 sensors**. My YAML
-files contain 41,693 lines of code.
+Our Home Assistant install has approximately **1363 total entities**,
+including **716 sensors**. My YAML
+files contain 41,598 lines of code.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -284,7 +284,7 @@ Authors:[@jchasey](https://github.com/jchasey).
 ## [Watchman v0.5.1](https://github.com/dummylabs/thewatchman)
 Home Assistant custom integration to keep track of missing entities and services in your config filesAuthors:[@dummylabs](https://github.com/dummylabs).
 
-## [Wyze v0.1.13](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
+## [Wyze v0.1.14](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
 <details><summary>27 lovelace plugins</summary>
@@ -443,7 +443,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,693-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,598-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

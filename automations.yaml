@@ -42,8 +42,8 @@
       message: Daily maintenance complete.
   mode: single
 - id: '1615053055187'
-  alias: Bedroom dimmer multi-click handler
-  description: ''
+  alias: 'Remote: Bedroom switch '
+  description: Bedroom dimmer switch multi-click handler.
   use_blueprint:
     path: kpine/ge_double.yaml
     input:
@@ -414,7 +414,7 @@
           data:
             hvac_mode: cool
 - id: '1642441568665'
-  alias: 'Z2M - Remote: Lucas bedside'
+  alias: 'Remote: Lucas bedside'
   description: ''
   use_blueprint:
     path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
@@ -422,26 +422,32 @@
       switch: sensor.remote_lucas_bedside_action
       press_single:
       - service: light.toggle
-        target:
-          device_id: 759c08b03f409722c65c5fddb29837d1
         data:
           transition: 0
+        target:
+          area_id: lucas_room
       press_double:
       - choose:
         - conditions:
           - condition: state
             entity_id: climate.lucas_room_thermostat
             state: 'off'
+            alias: Confirm Lucas' thermostat is off.
           sequence:
           - service: climate.turn_on
             target:
               entity_id: climate.lucas_room_thermostat
+            data: {}
+            alias: Turn Lucas' thermostat on.
         default:
         - service: climate.turn_off
           target:
             entity_id: climate.lucas_room_thermostat
+          data: {}
+          alias: Otherwise turn off Lucas' thermostat.
+        alias: Toggle Lucas' thermostat.
 - id: '1642442618846'
-  alias: 'Z2M - Remote: Kyle bedside'
+  alias: 'Remote: Kyle bedside'
   description: ''
   use_blueprint:
     path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
@@ -455,7 +461,7 @@
         target:
           entity_id: light.kyle_bedside
 - id: '1642443845360'
-  alias: 'Z2M - Remote: family room 5 button'
+  alias: 'Remote: family room 5 button'
   description: ''
   use_blueprint:
     path: EPMatt/ikea_e1524_e1810.yaml
@@ -492,7 +498,7 @@
         data:
           transition: 1
 - id: '1642448378521'
-  alias: 'Z2M - Remote:  printer'
+  alias: 'Remote: printer toggle'
   description: ''
   use_blueprint:
     path: freakshock/zigbee2mqtt-xiaomi-mijia-round-wireless-remote-switch-wxkg01lm-actions.yaml
@@ -502,6 +508,7 @@
       - service: switch.toggle
         target:
           device_id: b397a55fe03e4571a4cb668d7064b277
+        data: {}
 - id: '1642908642407'
   alias: Doorbell pushed
   description: ''
@@ -761,8 +768,8 @@
     alias: 'Wireless Access Point #2 stays offline'
     for:
       hours: 0
-      minutes: 2
-      seconds: 30
+      minutes: 0
+      seconds: 0
   condition: []
   action:
   - type: turn_off
@@ -1020,8 +1027,8 @@
   mode: queued
   max: 10
 - id: '1662393782118'
-  alias: 'Multi-click handler: family room'
-  description: ''
+  alias: 'Remote: family room switch'
+  description: Family room dimmer switch multi-click handler.
   use_blueprint:
     path: brianhanifin/zwave_js_inovelli_lzw31_sn_red_series_dimmer.yaml
     input:
@@ -2911,12 +2918,11 @@
   description: Notify me if the Z-wave network goes offline.
   trigger:
   - platform: state
-    entity_id: binary_sensor.zwavejs_available
+    entity_id: switch.docker_zwavejs2mqtt
     from: 'on'
-    to: 'off'
+    to:
     for:
       minutes: 30
-    alias: When Z-wave JS is unavailable for 30 minutes.
   action:
   - condition: state
     entity_id: automation.startup
@@ -2984,6 +2990,7 @@
   condition:
   - condition: template
     value_template: '{{ trigger.to_state.name|trim != "" }}'
+    alias: Stop if entity name is empty.
   action:
   - variables:
       room: '{{ trigger.to_state.name|lower|replace(" leak", "")|replace(" #1", "")|replace("
