@@ -3938,3 +3938,24 @@
           - light.bedroom_table_lamp
         data: {}
   mode: single
+- id: '1666279149478'
+  alias: TV power on
+  description: 'Set TV volume to zero. '
+  trigger:
+  - platform: device
+    device_id: 32d18497e45ef4b0b2ced17b5e477538
+    domain: media_player
+    entity_id: media_player.family_room_tv
+    type: turned_on
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  condition: []
+  action:
+  - service: media_player.volume_set
+    data:
+      volume_level: 0
+    target:
+      device_id: 32d18497e45ef4b0b2ced17b5e477538
+  mode: single
