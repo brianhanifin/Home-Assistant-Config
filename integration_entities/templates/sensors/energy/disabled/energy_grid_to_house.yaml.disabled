@@ -1,0 +1,10 @@
+---
+unique_id: energy_grid_to_house
+name: Energy grid to house
+icon: mdi:transmission-tower
+device_class: energy
+state_class: measurement
+unit_of_measurement: kW
+state: >
+  {%- set from_grid = states("sensor.rainforest_emu_2_power")|float(default=0) %}
+  {{ "%0.3f"|format([0, from_grid]|max) }}
