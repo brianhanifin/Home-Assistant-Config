@@ -218,6 +218,7 @@
       - 1ad4b3bd16edcc7d4961b3e95ed57f70
       - 7adcdd46f1a878bf5d0386dea85e3e06
       - 385bbbe37417eec30709aadfd0f37152
+      entity_id: light.porch
 - id: '1640128623256'
   alias: 'Maintenance: lights before sunset'
   description: ''
@@ -2924,6 +2925,11 @@
     for:
       minutes: 30
   action:
+  - variables:
+      title: Z-Wave JS network unavailable
+      message: 'The USB controller is no longer reporting a status of "alive".
+
+        '
   - condition: state
     entity_id: automation.startup
     state: 'off'
@@ -2940,11 +2946,6 @@
       title: '{{ title }}'
       message: '{{ message }}'
   mode: single
-  variables:
-    title: Z-Wave JS network unavailable
-    message: 'The USB controller is no longer reporting a status of "alive".
-
-      '
 - id: '1666213876915'
   alias: Safety alert window open
   description: Warn us if any windows are left open.
