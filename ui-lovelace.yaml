@@ -395,8 +395,6 @@ decluttering_templates:
   weather:
     card:
       cards:
-      - subtitle: Current conditions
-        type: custom:mushroom-title-card
       - card:
           cards:
           - entities:
@@ -410,6 +408,8 @@ decluttering_templates:
         - entity: sensor.nws_alerts
           state_not: '0'
         type: conditional
+      - subtitle: Current conditions
+        type: custom:mushroom-title-card
       - current: true
         details: true
         entity: weather.home
@@ -908,12 +908,6 @@ views:
     columns: 3
     square: false
     type: grid
-  - template: calendar
-    type: custom:decluttering-card
-    variables:
-    - days: 2
-    view_layout:
-      position: main
   - cards:
     - compact_mode: false
       entities:
@@ -1100,6 +1094,12 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
+  - template: calendar
+    type: custom:decluttering-card
+    variables:
+    - days: 2
+    view_layout:
+      position: main
   - alignment: justify
     chips:
     - icon: mdi:server

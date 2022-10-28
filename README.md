@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,598** | 1,363 | 37 | 93 | 59 |
+| **41,423** | 1,336 | 37 | 93 | 59 |
 
 # Index
 
@@ -209,9 +209,9 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1363 total entities**,
-including **716 sensors**. My YAML
-files contain 41,598 lines of code.
+Our Home Assistant install has approximately **1336 total entities**,
+including **692 sensors**. My YAML
+files contain 41,423 lines of code.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -242,10 +242,10 @@ Authors:[@ludeeus](https://github.com/ludeeus).
 ## [Google Home v1.9.15](https://github.com/leikoilja/ha-google-home)
 Home Assistant Google Home custom componentAuthors:[@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
-## [Home Assistant Community Store (HACS) v1.28.2](https://hacs.xyz/docs/configuration/start)
+## [Home Assistant Community Store (HACS) v1.28.3](https://hacs.xyz/docs/configuration/start)
 HACS gives you a powerful UI to handle downloads of all your custom needs.Authors:[@ludeeus](https://github.com/ludeeus).
 
-## [HASS.Agent Notifier v2022.3.15](https://github.com/LAB02-Research/HASS.Agent-Notifier)
+## [HASS.Agent Notifier v2022.10.25.1](https://github.com/LAB02-Research/HASS.Agent-Notifier)
 Authors:[@LAB02-Admin](https://github.com/LAB02-Admin).
 
 ## [Holidays v1.8.0](https://github.com/bruxy70/Holidays/)
@@ -334,7 +334,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 ## [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
-## [Mushroom v2.1.3](https://github.com/piitaya/lovelace-mushroom)
+## [Mushroom v2.2.0](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 ## [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
@@ -373,7 +373,7 @@ Weather Card with animated icons for Home Assistant Lovelace
 
 <details><summary>8 addons</summary>
 
-## ESPHome v2022.10.0
+## ESPHome v2022.10.1
 
 
 ## File editor v5.4.1
@@ -433,7 +433,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.10.4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.11.0b1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -443,7 +443,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,598-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,423-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
