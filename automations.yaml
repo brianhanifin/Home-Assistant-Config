@@ -141,11 +141,15 @@
   description: Alert when the garage door is unable to close due an obstruction.
   trigger:
   - platform: state
-    entity_id: cover.garage_door
+    entity_id:
+    - cover.garage_door
     attribute: obstruction-detected
-    from: 'false'
     to: 'true'
-    for: 0:01:00
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    from: 'false'
   condition: []
   action:
   - service: script.notify_speech
@@ -476,7 +480,7 @@
     data:
       audio_file: media-source://media_source/local/audio/jetsons-doorbell.mp3
       speakers:
-      - media_player.google_family_room_display
+      - media_player.google_family_room
       volume: 75
     alias: Play the doorbell sound in the Family room.
   - parallel:
@@ -2900,14 +2904,17 @@
       message: '{{ message }}'
   mode: single
 - id: '1666213876915'
-  alias: Safety alert window open
-  description: Warn us if any windows are left open.
+  alias: Safety alert bathroom window open
+  description: Warn us if the upstairs bathroom window is left open.
   trigger:
   - platform: state
-    entity_id: binary_sensor.upstairs_bathroom_window
-    to: 'on'
+    entity_id:
+    - binary_sensor.upstairs_bathroom_window
     for:
+      hours: 0
       minutes: 30
+      seconds: 0
+    to: 'on'
   condition: []
   action:
   - service: script.notify_mobile
@@ -2922,6 +2929,7 @@
     data:
       media_player: media_player.google_welcome
       message: The upstairs bathroom has been open for a half hour.
+    enabled: true
   mode: single
 - id: '1666214168418'
   alias: Safety alert leak
@@ -2939,8 +2947,10 @@
     - binary_sensor.master_bathroom_1_leak
     - binary_sensor.master_bathroom_2_leak
     - binary_sensor.upstairs_bathroom_leak
+    - binary_sensor.safety_alarm_test_leak
     from: 'off'
     to: 'on'
+    alias: When any leak sensor detects water
   condition:
   - condition: template
     value_template: '{{ trigger.to_state.name|trim != "" }}'
@@ -2955,6 +2965,7 @@
     data:
       media_player: media_player.google_speakers
       message: A leak has been detected in the {{ room }}!
+    enabled: true
   - service: script.notify_mobile
     data:
       critical: true
@@ -2963,6 +2974,7 @@
       who: brian
       group: safety
       url: /lovelace/home
+    enabled: true
   - service: script.notify_web
     data:
       type: alert
@@ -2973,33 +2985,39 @@
       title: '{{ title }}'
       message: '{{ message }}'
       id: '{{ "safety_alert_" ~ as_timestamp(now()) }}'
+    enabled: true
   - delay:
       minutes: 5
+    enabled: true
   mode: single
 - id: '1666214583383'
   alias: Safety alert smoke or carbon monoxide
   description: ''
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.safety_alarm_bedroom_type,sensor.safety_alarm_kyles_bedroom_type,sensor.safety_alarm_lucas_bedroom_type,sensor.safety_alarm_garage_type,sensor.safety_alarm_goez_suite_type,sensor.safety_alarm_guest_room_type,sensor.safety_alarm_stairs_type,sensor.safety_alarm_test_type
-    above: 0
-    below: 13
+  - platform: state
+    entity_id:
+    - sensor.safety_alarm_bedroom_type
+    - sensor.safety_alarm_kyles_bedroom_type
+    - sensor.safety_alarm_lucas_bedroom_type
+    - sensor.safety_alarm_garage_type
+    - sensor.safety_alarm_goez_suite_type
+    - sensor.safety_alarm_guest_room_type
+    - sensor.safety_alarm_stairs_type
+    - sensor.safety_alarm_test_type
+    alias: When smoke or CO/2 is detected
+  condition:
+  - condition: template
+    value_template: '{{ trigger.to_state.state|int(default=0) in [1,2,12] }}'
+    alias: Ignore unknown states as these can occur when the Z-wave docker restarts.
   action:
   - variables:
       type: '{{ trigger.to_state.state|int(default=0) }}'
-      room: '{{ trigger.to_state.name|replace(":","")|replace("Safety alarm ","")|replace("
-        type","") }}'
-      alarm_states:
-        '1': SMOKE
-        '2': CARBON MONOXIDE
-        '12': Test button press
-      alarm_state: '{{ alarm_states[type]|upper if type in alarm_states.keys() else
-        "unknown" }}'
+      room: '{{ trigger.to_state.name | replace("Safety alarm","") | replace(" type","")
+        | trim }}'
+      alarm_state: "{%- if type == 1 %}\n  SMOKE\n{%- elif type == 2 %}\n  CARBON
+        MONOXIDE\n{%- elif type == 12 %}\n  Test button press\n{%- endif %}\n"
       title: '{{ alarm_state }} DETECTED!'
       message: '{{ alarm_state }} detected in the {{ room|upper }}.'
-  - alias: Ignore unknown states as these can occur when the Z-wave docker restarts.
-    condition: template
-    value_template: '{{ type in [1,2,12] }}'
   - service: script.notify_mobile
     data:
       critical: true
@@ -3008,10 +3026,12 @@
       who: brian
       group: safety
       url: /lovelace/home
+    enabled: true
   - service: script.notify_speech
     data:
       media_player: media_player.google_downstairs
       message: '{{ message }}'
+    enabled: true
   - service: script.notify_web
     data:
       type: alert
@@ -3022,9 +3042,11 @@
       title: '{{ title }}'
       message: '{{ message }}'
       id: '{{ "safety_alert_" ~ as_timestamp(now()) }}'
+    enabled: true
   - alias: Cool down timer.
     delay:
       minutes: 5
+    enabled: true
   mode: single
 - id: '1666214849323'
   alias: Z-wave JS Event Sniffer
