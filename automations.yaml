@@ -414,53 +414,6 @@
             entity_id: climate.bedroom_thermostat
           data:
             hvac_mode: cool
-- id: '1642441568665'
-  alias: 'Remote: Lucas bedside'
-  description: ''
-  use_blueprint:
-    path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
-    input:
-      switch: sensor.remote_lucas_bedside_action
-      press_single:
-      - service: light.toggle
-        data:
-          transition: 0
-        target:
-          area_id: lucas_room
-      press_double:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: climate.lucas_room_thermostat
-            state: 'off'
-            alias: Confirm Lucas' thermostat is off.
-          sequence:
-          - service: climate.turn_on
-            target:
-              entity_id: climate.lucas_room_thermostat
-            data: {}
-            alias: Turn Lucas' thermostat on.
-        default:
-        - service: climate.turn_off
-          target:
-            entity_id: climate.lucas_room_thermostat
-          data: {}
-          alias: Otherwise turn off Lucas' thermostat.
-        alias: Toggle Lucas' thermostat.
-- id: '1642442618846'
-  alias: 'Remote: Kyle bedside'
-  description: ''
-  use_blueprint:
-    path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
-    input:
-      switch: sensor.remote_kyle_bedside_action
-      press_single:
-      - service: light.toggle
-        data:
-          transition: 0
-          brightness_pct: 100
-        target:
-          entity_id: light.kyle_bedside
 - id: '1642443845360'
   alias: 'Remote: family room 5 button'
   description: ''
@@ -3967,3 +3920,67 @@
     target:
       device_id: 32d18497e45ef4b0b2ced17b5e477538
   mode: single
+- id: '1667158538897'
+  alias: 'Remote: Lucas bedside'
+  description: ''
+  use_blueprint:
+    path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
+    input:
+      switch: sensor.remote_lucas_bedside_action
+      press_single:
+      - service: light.toggle
+        data:
+          transition: 0
+        target:
+          entity_id: light.lucas_room
+        enabled: false
+      - if:
+        - condition: device
+          type: is_on
+          device_id: 759c08b03f409722c65c5fddb29837d1
+          entity_id: light.lucas_room
+          domain: light
+        then:
+        - type: turn_off
+          device_id: 759c08b03f409722c65c5fddb29837d1
+          entity_id: light.lucas_room
+          domain: light
+        else:
+        - type: turn_on
+          device_id: 759c08b03f409722c65c5fddb29837d1
+          entity_id: light.lucas_room
+          domain: light
+      press_double:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: climate.lucas_room_thermostat
+            state: 'off'
+            alias: Confirm Lucas' thermostat is off.
+          sequence:
+          - service: climate.turn_on
+            target:
+              entity_id: climate.lucas_room_thermostat
+            data: {}
+            alias: Turn Lucas' thermostat on.
+        default:
+        - service: climate.turn_off
+          target:
+            entity_id: climate.lucas_room_thermostat
+          data: {}
+          alias: Otherwise turn off Lucas' thermostat.
+        alias: Toggle Lucas' thermostat.
+- id: '1667158746192'
+  alias: 'Remote: Kyle bedside'
+  description: ''
+  use_blueprint:
+    path: rhl2401/zigbee2mqtt_aqara_wireless_switch.yaml
+    input:
+      switch: sensor.remote_kyle_bedside_action
+      press_single:
+      - service: light.toggle
+        data:
+          transition: 0
+          brightness_pct: 100
+        target:
+          entity_id: light.kyle_bedside

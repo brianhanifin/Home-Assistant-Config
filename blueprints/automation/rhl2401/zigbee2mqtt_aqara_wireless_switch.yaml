@@ -41,16 +41,19 @@ trigger:
 - platform: state
   entity_id: !input 'switch'
   attribute: action
+condition:
+  - condition: template
+    value_template: '{{ trigger.to_state.attributes.action in ("single","double","hold") }}'
 action:
 - variables:
     command: '{{ trigger.to_state.state }}'
 - choose:
   - conditions:
-    - '{{ command == ''single'' }}'
+    - '{{ command == "single" }}'
     sequence: !input 'press_single'
   - conditions:
-    - '{{ command == ''double'' }}'
+    - '{{ command == "double" }}'
     sequence: !input 'press_double'
   - conditions:
-    - '{{ command == ''hold'' }}'
+    - '{{ command == "hold" }}'
     sequence: !input 'press_hold'
