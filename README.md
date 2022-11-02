@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,423** | 1,336 | 37 | 93 | 59 |
+| **41,556** | 1,347 | 37 | 94 | 59 |
 
 # Index
 
@@ -209,9 +209,9 @@ Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
 As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.# Technical details
 
-Our Home Assistant install has approximately **1336 total entities**,
-including **692 sensors**. My YAML
-files contain 41,423 lines of code.
+Our Home Assistant install has approximately **1347 total entities**,
+including **701 sensors**. My YAML
+files contain 41,556 lines of code.
 
 <details><summary>24 Custom integrations</summary>
 
@@ -263,7 +263,7 @@ Authors:[@finity69x2](https://github.com/finity69x2).
 ## [Rainforest EMU-2 v1.2.0](https://github.com/ryanwinter/hass-rainforest-emu-2)
 Authors:[@ryanwinter](https://github.com/ryanwinter).
 
-## [SamsungTV Smart v0.7.8](https://github.com/ollo69/ha-samsungtv-smart)
+## [SamsungTV Smart v0.8.0](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
 ## [Scheduler integration v0.0.0](https://github.com/nielsfaber/scheduler-component)
@@ -287,7 +287,7 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.14](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>27 lovelace plugins</summary>
+<details><summary>28 lovelace plugins</summary>
 
 ## [Atomic Calendar Revive v7.0.1](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
@@ -361,6 +361,9 @@ A different take on the thermostat card for Home Assistant ♨️
 ## [Swipe Card v4.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
+## [Tabbed Card v0.3.0](https://github.com/kinghat/tabbed-card)
+a custom card for home assistant that utilizes tabs to segregate individual cards.
+
 ## [Timer Bar Card v1.20](https://github.com/rianadon/timer-bar-card)
 A progress bar display for Home Assistant timers
 
@@ -433,7 +436,7 @@ All of my configuration files are tested against the most stable version of home
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.11.0b1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.11.0b6-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -443,7 +446,7 @@ All of my configuration files are tested against the most stable version of home
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,423-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,556-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

@@ -160,79 +160,82 @@ trigger:
 - platform: state
   entity_id: !input 'switch'
   attribute: action
+condition:
+  condition: template
+  value_template: '{{ trigger.to_state.attributes.action in ( "single","double","triple","quadruple","hold","release","shake","single_left","double_left","triple_left","hold_left","release_left","single_right","double_right","triple_right","hold_right","release_right","single_center","double_center","triple_center","hold_center","release_center","single_both","double_both","triple_both","hold_both","release_both") }}'
 action:
 - variables:
     command: '{{ trigger.to_state.state }}'
 - choose:
   - conditions:
-    - '{{ command == ''button_1_single'' }}'
+    - '{{ command == "button_1_single" }}'
     sequence: !input 'button_1_single'
   - conditions:
-    - '{{ command == ''button_2_single'' }}'
+    - '{{ command == "button_2_single" }}'
     sequence: !input 'button_2_single'
   - conditions:
-    - '{{ command == ''button_3_single'' }}'
+    - '{{ command == "button_3_single" }}'
     sequence: !input 'button_3_single'
   - conditions:
-    - '{{ command == ''button_4_single'' }}'
+    - '{{ command == "button_4_single" }}'
     sequence: !input 'button_4_single'
   - conditions:
-    - '{{ command == ''button_5_single'' }}'
+    - '{{ command == "button_5_single" }}'
     sequence: !input 'button_5_single'
   - conditions:
-    - '{{ command == ''button_6_single'' }}'
+    - '{{ command == "button_6_single" }}'
     sequence: !input 'button_6_single'
   - conditions:
-    - '{{ command == ''button_1_double'' }}'
+    - '{{ command == "button_1_double" }}'
     sequence: !input 'button_1_double'
   - conditions:
-    - '{{ command == ''button_2_double'' }}'
+    - '{{ command == "button_2_double" }}'
     sequence: !input 'button_2_double'
   - conditions:
-    - '{{ command == ''button_3_double'' }}'
+    - '{{ command == "button_3_double" }}'
     sequence: !input 'button_3_double'
   - conditions:
-    - '{{ command == ''button_4_double'' }}'
+    - '{{ command == "button_4_double" }}'
     sequence: !input 'button_4_double'
   - conditions:
-    - '{{ command == ''button_5_double'' }}'
+    - '{{ command == "button_5_double" }}'
     sequence: !input 'button_5_double'
   - conditions:
-    - '{{ command == ''button_6_double'' }}'
+    - '{{ command == "button_6_double" }}'
     sequence: !input 'button_6_double'
   - conditions:
-    - '{{ command == ''button_1_hold'' }}'
+    - '{{ command == "button_1_hold" }}'
     sequence: !input 'button_1_hold'
   - conditions:
-    - '{{ command == ''button_2_hold'' }}'
+    - '{{ command == "button_2_hold" }}'
     sequence: !input 'button_2_hold'
   - conditions:
-    - '{{ command == ''button_3_hold'' }}'
+    - '{{ command == "button_3_hold" }}'
     sequence: !input 'button_3_hold'
   - conditions:
-    - '{{ command == ''button_4_hold'' }}'
+    - '{{ command == "button_4_hold" }}'
     sequence: !input 'button_4_hold'
   - conditions:
-    - '{{ command == ''button_5_hold'' }}'
+    - '{{ command == "button_5_hold" }}'
     sequence: !input 'button_5_hold'
   - conditions:
-    - '{{ command == ''button_6_hold'' }}'
+    - '{{ command == "button_6_hold" }}'
     sequence: !input 'button_6_hold'
   - conditions:
-    - '{{ command == ''button_1_triple'' }}'
+    - '{{ command == "button_1_triple" }}'
     sequence: !input 'button_1_triple'
   - conditions:
-    - '{{ command == ''button_2_triple'' }}'
+    - '{{ command == "button_2_triple" }}'
     sequence: !input 'button_2_triple'
   - conditions:
-    - '{{ command == ''button_3_triple'' }}'
+    - '{{ command == "button_3_triple" }}'
     sequence: !input 'button_3_triple'
   - conditions:
-    - '{{ command == ''button_4_triple'' }}'
+    - '{{ command == "button_4_triple" }}'
     sequence: !input 'button_4_triple'
   - conditions:
-    - '{{ command == ''button_5_triple'' }}'
+    - '{{ command == "button_5_triple" }}'
     sequence: !input 'button_5_triple'
   - conditions:
-    - '{{ command == ''button_6_triple'' }}'
+    - '{{ command == "button_6_triple" }}'
     sequence: !input 'button_6_triple'
