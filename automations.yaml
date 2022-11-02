@@ -4006,3 +4006,101 @@
           brightness_pct: 100
         target:
           entity_id: light.kyle_bedside
+- id: '1667248465722'
+  alias: 'Reminder: Lucas Xolaire'
+  description: ''
+  trigger:
+  - platform: calendar
+    event: start
+    entity_id: calendar.lucas
+    alias: When Lucas calendar events start.
+    id: reminder_start
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.reminder_lucas_xolaire
+    alias: When reminder timer finishes.
+    id: timer_complete
+  - platform: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: SHOT_GIVEN
+    id: shot_given
+    alias: When the SHOT_GIVEN actionable notication button is pressed.
+  condition: []
+  action:
+  - if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id: reminder_start
+        alias: When triggered by REMINDER_START.
+      - condition: template
+        value_template: '{{ "Xolaire" in trigger.calendar_event.summary }}'
+        alias: When event contains "Xolaire".
+      alias: When triggered by REMINDER_START and event contains "Xolaire".
+    then:
+    - parallel:
+      - service: script.say
+        data:
+          media_player: media_player.google_family_room
+          message: It is time for Lucas's allergy shot.
+        alias: Announce "It is time for Lucas's allergy shot."
+      - service: timer.start
+        data:
+          duration: '1:00:00'
+        target:
+          entity_id: timer.reminder_lucas_xolaire
+    alias: When triggered by REMINDER_START calendar event.
+  - if:
+    - condition: trigger
+      id: timer_complete
+    then:
+    - parallel:
+      - alias: Send the actionable notification.
+        service: script.notify_mobile
+        data:
+          who: brian
+          title: Xolaire for Lucas
+          message: 'It is time for Lucas'' allergy shot.
+
+            '
+          tag: REMINDER_XOLAIRE
+          url: /lovelace
+          actions:
+          - action: SHOT_GIVEN
+            title: Stop the reminder. The shot has been given.
+            destructive: true
+      - service: script.say
+        data:
+          media_player: media_player.google_downstairs
+          message: It is time for Lucas's allergy shot.
+        alias: Announce "It is time for Lucas's allergy shot."
+        enabled: true
+    - service: timer.cancel
+      data: {}
+      target:
+        entity_id: timer.reminder_lucas_xolaire
+    - service: timer.start
+      data:
+        duration: '1:00:00'
+      target:
+        entity_id: timer.reminder_lucas_xolaire
+    alias: When triggerd by TIMER_COMPLETE event.
+  - if:
+    - condition: trigger
+      id: shot_given
+    then:
+    - parallel:
+      - alias: Clear the message prompt after the timeout ends.
+        service: script.notify_mobile_clear
+        data:
+          who: brian
+          tag: REMINDER_XOLAIRE
+      - service: timer.cancel
+        data: {}
+        target:
+          entity_id: timer.reminder_lucas_xolaire
+        alias: Cancel the reminder timer.
+    alias: When triggered by SHOT_GIVEN button press.
+  mode: single
