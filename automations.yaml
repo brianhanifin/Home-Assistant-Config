@@ -2136,18 +2136,47 @@
     alias: Match the brightness if the floor lamp is on.
   mode: single
 - id: '1665948763862'
-  alias: Front door person detected
+  alias: Front door/driveway person detected
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.front_door_person_occupancy
+    - binary_sensor.driveway_person_occupancy
+    - binary_sensor.driveway_flood_motion
     from: 'off'
     to: 'on'
+    id: driveway
+    alias: When a person is detected in the driveway.
+  - platform: state
+    entity_id: binary_sensor.front_door_person_occupancy
+    from: 'off'
+    to: 'on'
+    id: front_door
+    alias: When a person is detected approaching the front door.
+  - platform: state
+    entity_id:
+    - binary_sensor.driveway_person_occupancy
+    - binary_sensor.driveway_flood_motion
+    - binary_sensor.front_door_person_occupancy
+    to: 'off'
+    from: 'on'
+    id: occupancy_cleared
+    alias: When person occupancy is cleared.
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.driveway_front_door_person_detected
+    id: timer_finished
+    alias: When person detection timer finishes.
   action:
-  - condition:
-    - '{{ door_recently_opened == false }}'
   - if:
+    - condition: or
+      conditions:
+      - condition: trigger
+        id: driveway
+      - condition: trigger
+        id: front_door
+      alias: When a person is detected in the driveway or by the front door.
     - condition: numeric_state
       entity_id: sensor.outdoor_illuminance_educated_guessor
       below: 2000
@@ -2155,25 +2184,49 @@
     then:
     - service: scene.create
       data:
-        scene_id: front_door_presence_snapshot
+        scene_id: driveway_front_door_presence_snapshot
         snapshot_entities:
         - light.home_entry
-        - light.path_lights
         - light.porch
+        - select.driveway_flood_mode
+        - light.driveway_flood_accent
       alias: Store current light settings.
-    - service: light.turn_on
+    - service: select.select_option
       data:
-        brightness: 255
-        kelvin: 3500
+        option: Manual
       target:
-        entity_id:
-        - light.home_entry
-        - light.path_lights
-        - light.porch
+        entity_id: select.driveway_flood_mode
+      alias: Take manual control of the driveway flood light.
+    - parallel:
+      - service: light.turn_on
+        data:
+          brightness: 255
+        target:
+          entity_id:
+          - light.driveway_flood
+          - light.driveway_flood_accent
+        alias: Turn driveway flood light on.
+      - service: light.turn_on
+        data:
+          brightness: 255
+          kelvin: 3500
+        target:
+          entity_id:
+          - light.home_entry
+          - light.porch
+        alias: Turn on the front porch and entry lights.
+      - service: light.turn_on
+        data:
+          color_name: white
+          brightness: 255
+        target:
+          entity_id: light.path_lights
+        alias: Turn on the front door path and entry lights.
+      alias: Set lights to full + start countdown timer.
+    alias: When a person is detected + it is dark outside.
   - if:
-    - condition: state
-      entity_id: binary_sensor.front_door_person_occupancy
-      state: 'on'
+    - condition: trigger
+      id: front_door
     then:
     - alias: Stream the camera feed to Apple TV.
       if:
@@ -2200,6 +2253,7 @@
       enabled: false
     - delay:
         seconds: 4
+      enabled: false
     - parallel:
       - service: script.notify_mobile
         continue_on_error: true
@@ -2210,6 +2264,7 @@
           who: brian
           tag: person_detected
           url: /lovelace/outdoor
+        enabled: false
       - service: script.cast
         data:
           displays:
@@ -2243,10 +2298,42 @@
           command:
           - menu
       enabled: false
-  - delay:
-      minutes: 5
-    alias: Cooldown.
-  mode: single
+    alias: When a person is detected approaching the front door.
+  - if:
+    - condition: trigger
+      id: occupancy_cleared
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.driveway_person_occupancy
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.front_door_person_occupancy
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.driveway_flood_motion
+        state: 'off'
+      alias: All front door/driveway occupancy sensors are clear.
+    then:
+    - service: timer.start
+      data:
+        duration: 00:05:00
+      target:
+        entity_id: timer.driveway_front_door_person_detected
+      alias: Start the light restoration countdown timer.
+    alias: When person occupancy is cleared.
+  - if:
+    - condition: trigger
+      id: timer_finished
+    then:
+    - service: scene.turn_on
+      data: {}
+      target:
+        entity_id: scene.driveway_front_door_presence_snapshot
+      alias: Activate the scene to restore the lights previous states.
+    alias: When person detection timer finishes.
+  mode: queued
+  max: 10
 - id: '1665949560382'
   alias: Front door open state
   description: ''
@@ -4103,4 +4190,48 @@
           entity_id: timer.reminder_lucas_xolaire
         alias: Cancel the reminder timer.
     alias: When triggered by SHOT_GIVEN button press.
+  mode: single
+- id: '1667443521533'
+  alias: Porch light sync
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: light.porch
+    alias: When porch light changes
+  condition: []
+  action:
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: light.porch
+        state: 'on'
+      - condition: numeric_state
+        entity_id: light.porch
+        attribute: brightness
+        above: 0
+      alias: If porch is on and brightness is > 0.
+    then:
+    - service: light.turn_on
+      data:
+        brightness: '{{ state_attr("light.porch","brightness") }}
+
+          '
+      target:
+        entity_id: light.path_lights
+      alias: Turn on table lamp and match brightness.
+    - type: turn_on
+      device_id: cd6cadbf01fe68bb03b91e32332447b3
+      entity_id: light.porch_dimmer
+      domain: light
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.path_lights
+    - type: turn_off
+      device_id: cd6cadbf01fe68bb03b91e32332447b3
+      entity_id: light.porch_dimmer
+      domain: light
+    alias: Sync the path lights with the porch light's current state.
   mode: single
