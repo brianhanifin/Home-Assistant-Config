@@ -216,13 +216,12 @@
   action:
   - service: light.turn_off
     data:
-      transition: 5
+      transition: 10
     target:
-      device_id:
-      - 1ad4b3bd16edcc7d4961b3e95ed57f70
-      - 7adcdd46f1a878bf5d0386dea85e3e06
-      - 385bbbe37417eec30709aadfd0f37152
-      entity_id: light.porch
+      entity_id:
+      - light.home_entry
+      - light.path_lights
+      - light.porch
 - id: '1640128623256'
   alias: 'Maintenance: lights before sunset'
   description: ''
@@ -232,12 +231,13 @@
     offset: -00:30:00
   action:
   - service: light.turn_on
+    data:
+      transition: 10
     target:
-      device_id:
-      - 1ad4b3bd16edcc7d4961b3e95ed57f70
-      - 385bbbe37417eec30709aadfd0f37152
-      - 7adcdd46f1a878bf5d0386dea85e3e06
-    data: {}
+      entity_id:
+      - light.home_entry
+      - light.porch
+      - light.path_lights
   - service: script.say
     data:
       media_player: media_player.google_kitchen
@@ -485,14 +485,6 @@
       volume: 75
     alias: Play the doorbell sound in the Family room.
   - parallel:
-    - service: script.cast
-      data:
-        displays:
-        - 7d6b52507e25e7eeba10914e56052d1c
-        dashboard_path: dashboard-cast
-        view_path: cameras
-        dismiss_after: 120
-      alias: Display the cameras on the Kitchen display.
     - service: script.notify_mobile
       data:
         who: brian
@@ -503,19 +495,6 @@
       data:
         message: Someone pressed the doorbell!
         duration: 60
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 10
-      milliseconds: 0
-  - service: script.cast
-    data:
-      displays:
-      - 0aae07dda66f42e9b8a67979e34770d0
-      dashboard_path: dashboard-cast
-      view_path: cameras
-      dismiss_after: 120
-    alias: Display the cameras on the Family Room display.
   - delay:
       hours: 0
       minutes: 1
@@ -2167,17 +2146,19 @@
       value_template: '{{ seconds_difference|round(default=0) > 120 }}'
     then:
     - if:
-      - condition: or
+      - condition: and
         conditions:
-        - condition: trigger
-          id: driveway
-        - condition: trigger
-          id: front_door
-        alias: When a person is detected in the driveway or by the front door.
-      - condition: numeric_state
-        entity_id: sensor.outdoor_illuminance_educated_guessor
-        below: 2000
-        alias: Confirm Outdoor Illuminance Educated Guessor is below 2,000.
+        - condition: or
+          conditions:
+          - condition: trigger
+            id: driveway
+          - condition: trigger
+            id: front_door
+          alias: When a person is detected in the driveway or by the front door.
+        - condition: numeric_state
+          entity_id: sensor.outdoor_illuminance_educated_guessor
+          below: 2000
+          alias: Confirm Outdoor Illuminance Educated Guessor is below 2,000.
       then:
       - service: scene.create
         data:
@@ -2225,35 +2206,8 @@
       - condition: trigger
         id: front_door
       then:
-      - alias: Stream the camera feed to Apple TV.
-        if:
-        - condition: template
-          value_template: '{{ is_state("media_player.family_room_tv", "on") }}'
-        then:
-        - service: remote.turn_on
-          target:
-            entity_id: remote.family_room_apple_tv
-          data: {}
-        - service: remote.send_command
-          target:
-            entity_id: remote.family_room_apple_tv
-          data:
-            command: pause
-        - delay:
-            seconds: 4
-        - service: camera.play_stream
-          continue_on_error: true
-          target:
-            entity_id: camera.front_door_rtsp
-          data:
-            media_player: media_player.family_room_apple_tv
-        enabled: false
-      - delay:
-          seconds: 4
-        enabled: true
       - parallel:
         - service: script.notify_mobile
-          continue_on_error: true
           data:
             title: Front Door
             message: Person Detected
@@ -2261,7 +2215,8 @@
             who: brian
             tag: person_detected
             url: /lovelace/outdoor
-          enabled: true
+            sound: silent
+          continue_on_error: true
         - service: script.cast
           data:
             displays:
@@ -2279,24 +2234,7 @@
             message: Person Detected
             camera: camera.front_door_rtsp
             pc: blackpc
-      - delay:
-          seconds: 60
-        enabled: false
-      - alias: Is the video still steaming to the TV?
-        if:
-        - condition: template
-          value_template: '{{ is_state_attr("media_player.family_room_apple_tv", "app_name",
-            "Overcast") }}'
-          enabled: false
-        then:
-        - alias: Go back to the previous app.
-          service: remote.send_command
-          target:
-            entity_id: remote.family_room_apple_tv
-          data:
-            command:
-            - menu
-        enabled: false
+        alias: Show notifications on various devices.
       alias: When a person is detected approaching the front door.
     - delay:
         hours: 0
@@ -2460,7 +2398,7 @@
             - light.porch
           data:
             brightness: 255
-        alias: Skip turning on the entry lights in the middle of the day.
+        alias: 'When it is dark outside. '
       - alias: Update Light Switch LED Status Color.
         service: script.turn_on
         target:
@@ -2661,28 +2599,38 @@
     choose:
     - alias: Lock the front door now.
       conditions:
-      - '{{ chosen_action == "LOCK_NOW" }}'
+      - alias: When LOCK_NOW is requested.
+        condition: template
+        value_template: '{{ chosen_action == "LOCK_NOW" }}'
       sequence:
       - service: lock.lock
         target:
           entity_id: lock.front_door
         data: {}
+        alias: Lock the front door.
     - alias: Keep the front door unlocked.
       conditions:
-      - '{{ chosen_action == "KEEP_UNLOCKED" }}'
+      - alias: When KEEP_UNLOCKED is requested.
+        condition: template
+        value_template: '{{ chosen_action == "KEEP_UNLOCKED" }}'
       sequence:
       - service: input_boolean.turn_on
         target:
           entity_id: input_boolean.leave_unlocked
         data: {}
+        alias: Enable LEAVE UNLOCKED mode.
     - alias: Allow the door to lock automatically after the timer expires.
       conditions:
-      - '{{ chosen_action == "ALLOW_TO_LOCK" or wait.completed == false }}'
+      - alias: When ALLOW_TO_LOCK is requested.
+        condition: template
+        value_template: '{{ chosen_action == "ALLOW_TO_LOCK" or wait.completed ==
+          false }}'
       sequence:
       - service: input_boolean.turn_off
         target:
           entity_id: input_boolean.leave_unlocked
         data: {}
+        alias: Disable LEAVE UNLOCKED mode.
   mode: restart
 - id: '1666206586172'
   alias: 'Actionable notification: Insecure doors at 8pm.'
@@ -4284,8 +4232,10 @@
       option: Auto
     target:
       entity_id: select.driveway_flood_mode
+    alias: Restore driveway flood light to “Auto”.
   - service: light.turn_off
     data: {}
     target:
       entity_id: light.driveway_flood_accent
+    alias: Turn off the flood’s accent ring so the camera can have a better view.
   mode: single
