@@ -470,7 +470,7 @@ views:
       badge_icon: '{%- set lights_on = states("sensor.lights_on_downstairs")|int|default(0)
         %}
 
-        {{- iif(lights_on>0, "mdi:numeric-"~lights_on, "") }}'
+        {{- iif(lights_on>0, "mdi:lightbulb", "") }}'
       entity: sensor.downstairs_temperature_average
       icon: mdi:home-floor-1
       icon_color: teal
@@ -489,7 +489,7 @@ views:
       badge_icon: '{%- set lights_on = states("sensor.lights_on_upstairs")|int|default(0)
         %}
 
-        {{- iif(lights_on>0, "mdi:numeric-"~lights_on, "") }}'
+        {{- iif(lights_on>0, "mdi:lightbulb", "") }}'
       entity: sensor.upstairs_temperature_average
       icon: mdi:home-floor-2
       icon_color: purple
@@ -503,8 +503,11 @@ views:
         action: navigate
         navigation_path: ./upstairs
       type: custom:mushroom-template-card
-    - badge_color: ''
-      badge_icon: ''
+    - badge_color: var(--rgb-state-light)
+      badge_icon: '{%- set lights_on = states("sensor.lights_on_outdoors")|int|default(0)
+        %}
+
+        {{- iif(lights_on>0, "mdi:lightbulb", "") }}'
       entity: sensor.backyard_temperature
       icon: mdi:flower
       icon_color: blue
@@ -1188,6 +1191,7 @@ views:
         entity: light.family_room_table_lamp
         fill_container: false
         layout: vertical
+        name: Table lamp
         show_brightness_control: true
         show_color_temp_control: false
         type: custom:mushroom-light-card
@@ -1542,7 +1546,7 @@ views:
       - collapsible_controls: true
         entity: light.bedroom
         layout: vertical
-        name: West lamp
+        name: Bedroom lamp
         show_brightness_control: true
         type: custom:mushroom-light-card
         use_light_color: true
@@ -2371,7 +2375,7 @@ views:
     - light.play_room_entry
     - light.play_room_floor_lamp
     - light.porch
-    - light.family_room_table_lamp
+    - light.table_lamp
     - light.entry_railing
     - switch.front_yard1
     - switch.front_yard2
