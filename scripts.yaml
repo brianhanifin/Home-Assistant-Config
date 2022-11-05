@@ -205,7 +205,7 @@ shutdown_routine:
     - group.dining_room_fixture
     - light.home_entry
     - light.family_room_floor_lamp
-    - light.table_lamp
+    - light.family_room_table_lamp
     - switch.hot_water_pump
   - delay:
       seconds: 2
@@ -426,11 +426,11 @@ holiday_color_change:
               color_name: '{{ color }}'
       - choose:
         - conditions:
-          - '{{ is_state("light.table_lamp","on") }}'
+          - '{{ is_state("light.family_room_table_lamp","on") }}'
           sequence:
           - service: light.turn_on
             target:
-              entity_id: light.table_lamp
+              entity_id: light.family_room_table_lamp
             data:
               color_name: '{{ color }}'
     default:
@@ -445,11 +445,11 @@ holiday_color_change:
             kelvin: 4000
     - choose:
       - conditions:
-        - '{{ is_state("light.table_lamp","on") }}'
+        - '{{ is_state("light.family_room_table_lamp","on") }}'
         sequence:
         - service: light.turn_on
           target:
-            entity_id: light.table_lamp
+            entity_id: light.family_room_table_lamp
           data:
             kelvin: 4000
   mode: single

@@ -66,11 +66,11 @@ sequence:
 
           - choose:
               - conditions:
-                  - '{{ is_state("light.table_lamp","on") }}'
+                  - '{{ is_state("light.family_room_table_lamp","on") }}'
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: light.table_lamp
+                      entity_id: light.family_room_table_lamp
                     data:
                       color_name: "{{ color }}"
 
@@ -87,10 +87,10 @@ sequence:
 
       - choose:
           - conditions:
-              - '{{ is_state("light.table_lamp","on") }}'
+              - '{{ is_state("light.family_room_table_lamp","on") }}'
             sequence:
               - service: light.turn_on
                 target:
-                  entity_id: light.table_lamp
+                  entity_id: light.family_room_table_lamp
                 data:
                   kelvin: 4000

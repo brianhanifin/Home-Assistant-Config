@@ -252,7 +252,7 @@
       target:
         entity_id:
         - light.family_room
-        - light.table_lamp
+        - light.family_room_table_lamp
     enabled: false
   mode: single
 - id: '1640887750655'
@@ -425,7 +425,7 @@
     path: EPMatt/ikea_e1524_e1810.yaml
     input:
       integration: Zigbee2MQTT
-      controller_entity: sensor.remote_family_room_action
+      controller_entity: sensor.family_room_remote_action
       helper_last_controller_event: input_text.z2m_blueprint_helper_last_controller_event
       action_button_up_short:
       - service: light.turn_on
@@ -455,6 +455,7 @@
           device_id: 63789fb09fae954b2c90a2aa98f6b102
         data:
           transition: 1
+      controller_device: a3db4d6aaed8f045600ee8b65fec511d
 - id: '1642448378521'
   alias: 'Remote: printer toggle'
   description: ''
@@ -1419,7 +1420,7 @@
   - platform: state
     entity_id:
     - light.porch
-    - light.table_lamp
+    - light.family_room_table_lamp
     from: 'off'
     to: 'on'
   condition:
@@ -2113,7 +2114,7 @@
 
           '
       target:
-        entity_id: light.table_lamp
+        entity_id: light.family_room_table_lamp
       alias: Turn on table lamp and match brightness.
     else:
     - service: light.turn_off
@@ -2141,199 +2142,168 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.driveway_person_occupancy
+    - binary_sensor.driveway_parking_person_occupancy
+    - binary_sensor.front_yard_person_occupancy
     - binary_sensor.driveway_flood_motion
     from: 'off'
     to: 'on'
     id: driveway
-    alias: When a person is detected in the driveway.
+    alias: When a person is detected in the driveway/front yard.
   - platform: state
     entity_id: binary_sensor.front_door_person_occupancy
     from: 'off'
     to: 'on'
     id: front_door
     alias: When a person is detected approaching the front door.
-  - platform: state
-    entity_id:
-    - binary_sensor.driveway_person_occupancy
-    - binary_sensor.driveway_flood_motion
-    - binary_sensor.front_door_person_occupancy
-    to: 'off'
-    from: 'on'
-    id: occupancy_cleared
-    alias: When person occupancy is cleared.
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: timer.driveway_front_door_person_detected
-    id: timer_finished
-    alias: When person detection timer finishes.
   action:
-  - if:
-    - condition: or
-      conditions:
-      - condition: trigger
-        id: driveway
-      - condition: trigger
-        id: front_door
-      alias: When a person is detected in the driveway or by the front door.
-    - condition: numeric_state
-      entity_id: sensor.outdoor_illuminance_educated_guessor
-      below: 2000
-      alias: Confirm Outdoor Illuminance Educated Guessor is below 2,000.
+  - variables:
+      last_opened: '{{ states.binary_sensor.front_door.last_changed | as_timestamp
+        }}'
+      time_now: '{{ now() | as_timestamp }}'
+      seconds_difference: '{{ time_now - last_opened }}'
+  - alias: When door has not been opened within the past 2 minutes.
+    if:
+    - condition: template
+      value_template: '{{ seconds_difference|round(default=0) > 120 }}'
     then:
-    - service: scene.create
-      data:
-        scene_id: driveway_front_door_presence_snapshot
-        snapshot_entities:
-        - light.home_entry
-        - light.porch
-        - select.driveway_flood_mode
-        - light.driveway_flood_accent
-      alias: Store current light settings.
-    - service: select.select_option
-      data:
-        option: Manual
-      target:
-        entity_id: select.driveway_flood_mode
-      alias: Take manual control of the driveway flood light.
-    - parallel:
-      - service: light.turn_on
+    - if:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: driveway
+        - condition: trigger
+          id: front_door
+        alias: When a person is detected in the driveway or by the front door.
+      - condition: numeric_state
+        entity_id: sensor.outdoor_illuminance_educated_guessor
+        below: 2000
+        alias: Confirm Outdoor Illuminance Educated Guessor is below 2,000.
+      then:
+      - service: scene.create
         data:
-          brightness: 255
-        target:
-          entity_id:
-          - light.driveway_flood
-          - light.driveway_flood_accent
-        alias: Turn driveway flood light on.
-      - service: light.turn_on
-        data:
-          brightness: 255
-          kelvin: 3500
-        target:
-          entity_id:
+          scene_id: driveway_front_door_presence_snapshot
+          snapshot_entities:
           - light.home_entry
           - light.porch
-        alias: Turn on the front porch and entry lights.
-      - service: light.turn_on
+          - select.driveway_flood_mode
+          - light.driveway_flood_accent
+        alias: Store current light settings.
+      - service: select.select_option
         data:
-          color_name: white
-          brightness: 255
+          option: Manual
         target:
-          entity_id: light.path_lights
-        alias: Turn on the front door path and entry lights.
-      alias: Set lights to full + start countdown timer.
-    alias: When a person is detected + it is dark outside.
-  - if:
-    - condition: trigger
-      id: front_door
-    then:
-    - alias: Stream the camera feed to Apple TV.
-      if:
-      - condition: template
-        value_template: '{{ is_state("media_player.family_room_tv", "on") }}'
+          entity_id: select.driveway_flood_mode
+        alias: Take manual control of the driveway flood light.
+      - parallel:
+        - service: light.turn_on
+          data:
+            brightness: 255
+          target:
+            entity_id:
+            - light.driveway_flood
+            - light.driveway_flood_accent
+          alias: Turn driveway flood light on.
+        - service: light.turn_on
+          data:
+            brightness: 255
+            kelvin: 3500
+          target:
+            entity_id:
+            - light.home_entry
+            - light.porch
+          alias: Turn on the front porch and entry lights.
+        - service: light.turn_on
+          data:
+            color_name: white
+            brightness: 255
+          target:
+            entity_id: light.path_lights
+          alias: Turn on the front door path and entry lights.
+        alias: Set lights to full + start countdown timer.
+      alias: When a person is detected + it is dark outside.
+    - if:
+      - condition: trigger
+        id: front_door
       then:
-      - service: remote.turn_on
-        target:
-          entity_id: remote.family_room_apple_tv
-        data: {}
-      - service: remote.send_command
-        target:
-          entity_id: remote.family_room_apple_tv
-        data:
-          command: pause
+      - alias: Stream the camera feed to Apple TV.
+        if:
+        - condition: template
+          value_template: '{{ is_state("media_player.family_room_tv", "on") }}'
+        then:
+        - service: remote.turn_on
+          target:
+            entity_id: remote.family_room_apple_tv
+          data: {}
+        - service: remote.send_command
+          target:
+            entity_id: remote.family_room_apple_tv
+          data:
+            command: pause
+        - delay:
+            seconds: 4
+        - service: camera.play_stream
+          continue_on_error: true
+          target:
+            entity_id: camera.front_door_rtsp
+          data:
+            media_player: media_player.family_room_apple_tv
+        enabled: false
       - delay:
           seconds: 4
-      - service: camera.play_stream
-        continue_on_error: true
-        target:
-          entity_id: camera.front_door_rtsp
-        data:
-          media_player: media_player.family_room_apple_tv
-      enabled: false
-    - delay:
-        seconds: 4
-      enabled: false
-    - parallel:
-      - service: script.notify_mobile
-        continue_on_error: true
-        data:
-          title: Front Door
-          message: Person Detected
-          camera: camera.front_door
-          who: brian
-          tag: person_detected
-          url: /lovelace/outdoor
+        enabled: true
+      - parallel:
+        - service: script.notify_mobile
+          continue_on_error: true
+          data:
+            title: Front Door
+            message: Person Detected
+            camera: camera.front_door
+            who: brian
+            tag: person_detected
+            url: /lovelace/outdoor
+          enabled: true
+        - service: script.cast
+          data:
+            displays:
+            - 0aae07dda66f42e9b8a67979e34770d0
+            - 7d6b52507e25e7eeba10914e56052d1c
+            dashboard_path: dashboard-cast
+            view_path: cameras
+            dismiss_after: 120
+          alias: Display the cameras on the Google displays.
+          enabled: false
+        - service: script.notify_pc
+          continue_on_error: true
+          data:
+            title: Front Door
+            message: Person Detected
+            camera: camera.front_door_rtsp
+            pc: blackpc
+      - delay:
+          seconds: 60
         enabled: false
-      - service: script.cast
-        data:
-          displays:
-          - 0aae07dda66f42e9b8a67979e34770d0
-          - 7d6b52507e25e7eeba10914e56052d1c
-          dashboard_path: dashboard-cast
-          view_path: cameras
-          dismiss_after: 120
-        alias: Display the cameras on the Google displays.
-      - service: script.notify_pc
-        continue_on_error: true
-        data:
-          title: Front Door
-          message: Person Detected
-          camera: camera.front_door_rtsp
-          pc: blackpc
+      - alias: Is the video still steaming to the TV?
+        if:
+        - condition: template
+          value_template: '{{ is_state_attr("media_player.family_room_apple_tv", "app_name",
+            "Overcast") }}'
+          enabled: false
+        then:
+        - alias: Go back to the previous app.
+          service: remote.send_command
+          target:
+            entity_id: remote.family_room_apple_tv
+          data:
+            command:
+            - menu
+        enabled: false
+      alias: When a person is detected approaching the front door.
     - delay:
-        seconds: 60
-      enabled: false
-    - alias: Is the video still steaming to the TV?
-      if:
-      - condition: template
-        value_template: '{{ is_state_attr("media_player.family_room_apple_tv", "app_name",
-          "Overcast") }}'
-      then:
-      - alias: Go back to the previous app.
-        service: remote.send_command
-        target:
-          entity_id: remote.family_room_apple_tv
-        data:
-          command:
-          - menu
-      enabled: false
-    alias: When a person is detected approaching the front door.
-  - if:
-    - condition: trigger
-      id: occupancy_cleared
-    - condition: and
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.driveway_person_occupancy
-        state: 'off'
-      - condition: state
-        entity_id: binary_sensor.front_door_person_occupancy
-        state: 'off'
-      - condition: state
-        entity_id: binary_sensor.driveway_flood_motion
-        state: 'off'
-      alias: All front door/driveway occupancy sensors are clear.
-    then:
-    - service: timer.start
-      data:
-        duration: 00:05:00
-      target:
-        entity_id: timer.driveway_front_door_person_detected
-      alias: Start the light restoration countdown timer.
-    alias: When person occupancy is cleared.
-  - if:
-    - condition: trigger
-      id: timer_finished
-    then:
-    - service: scene.turn_on
-      data: {}
-      target:
-        entity_id: scene.driveway_front_door_presence_snapshot
-      alias: Activate the scene to restore the lights previous states.
-    alias: When person detection timer finishes.
-  mode: queued
-  max: 10
+        hours: 0
+        minutes: 5
+        seconds: 0
+        milliseconds: 0
+  mode: single
 - id: '1665949560382'
   alias: Front door open state
   description: ''
@@ -3448,7 +3418,7 @@
           scene_id: garage_door_closed_lights_snapshot
           snapshot_entities:
           - light.play_room_entry
-          - light.table_lamp
+          - light.family_room_table_lamp
       - delay:
           seconds: 1
       - alias: Turn on the notification lights.
@@ -3456,7 +3426,7 @@
         target:
           entity_id:
           - light.play_room_entry
-          - light.table_lamp
+          - light.family_room_table_lamp
         data:
           brightness_pct: 100
       - alias: Flash the bulbs to draw attention.
@@ -3465,7 +3435,7 @@
           sequence:
           - service: light.turn_on
             target:
-              entity_id: light.table_lamp
+              entity_id: light.family_room_table_lamp
             data:
               flash: short
           - delay:
@@ -3473,7 +3443,7 @@
       - alias: Activate colorloop on table lamp.
         service: light.turn_on
         target:
-          entity_id: light.table_lamp
+          entity_id: light.family_room_table_lamp
         data:
           brightness_pct: 100
           effect: colorloop
@@ -3488,7 +3458,7 @@
             target:
               entity_id:
               - light.play_room_entry
-              - light.table_lamp
+              - light.family_room_table_lamp
             data:
               brightness_pct: 30
               transition: 5
@@ -4219,9 +4189,9 @@
           '
       target:
         entity_id: light.path_lights
-      alias: Turn on table lamp and match brightness.
+      alias: Turn on path lights and match brightness.
     - type: turn_on
-      device_id: cd6cadbf01fe68bb03b91e32332447b3
+      device_id: f4bca7d83e51cfdd4bb3cf5910b1c97a
       entity_id: light.porch_dimmer
       domain: light
     else:
@@ -4234,4 +4204,88 @@
       entity_id: light.porch_dimmer
       domain: light
     alias: Sync the path lights with the porch light's current state.
+  mode: single
+- id: '1667516445872'
+  alias: Front door/driveway person detection clears
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.driveway_person_occupancy
+    - binary_sensor.driveway_flood_motion
+    - binary_sensor.front_door_person_occupancy
+    to: 'off'
+    from: 'on'
+    id: occupancy_cleared
+    alias: When person occupancy is cleared.
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.driveway_front_door_person_detected
+    id: timer_finished
+    alias: When person detection timer finishes.
+  action:
+  - if:
+    - condition: trigger
+      id: occupancy_cleared
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.driveway_person_occupancy
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.front_door_person_occupancy
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.driveway_flood_motion
+        state: 'off'
+      alias: All front door/driveway occupancy sensors are clear.
+    then:
+    - service: timer.start
+      data:
+        duration: 00:05:00
+      target:
+        entity_id: timer.driveway_front_door_person_detected
+      alias: Start the light restoration countdown timer.
+    alias: When person occupancy is cleared.
+  - if:
+    - condition: trigger
+      id: timer_finished
+    then:
+    - service: scene.turn_on
+      data: {}
+      target:
+        entity_id: scene.driveway_front_door_presence_snapshot
+      alias: Activate the scene to restore the lights previous states.
+    - service: select.select_option
+      data:
+        option: Auto
+      target:
+        entity_id: select.driveway_flood_mode
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.driveway_flood_accent
+    alias: When person detection timer finishes.
+  mode: single
+- id: '1667620286387'
+  alias: Front door locked
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - lock.front_door
+    not_from: unavailable
+    to: locked
+  condition: []
+  action:
+  - service: select.select_option
+    data:
+      option: Auto
+    target:
+      entity_id: select.driveway_flood_mode
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.driveway_flood_accent
   mode: single
