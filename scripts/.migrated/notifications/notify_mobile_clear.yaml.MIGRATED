@@ -1,0 +1,22 @@
+---
+sequence:
+  - variables:
+      notification_service: |
+        {%- set who = who|default("brian") %}
+        {%- if who.startswith("notify.") %}
+          {{ who }}
+        {%- else %}
+          notify.{{ who|default("brian") }}
+        {% endif %}
+      tag: '{{ tag }}'
+  - alias: Only continue it mobile notifications are enabled.
+    condition: state
+    entity_id: input_boolean.mobile_notifications
+    state: 'on'
+
+  - alias: Clear the notification.
+    service: '{{ notification_service }}'
+    data:
+      message: 'clear_notification'
+      data:
+        tag: '{{ tag }}'

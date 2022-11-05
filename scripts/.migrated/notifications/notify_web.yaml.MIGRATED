@@ -1,18 +1,10 @@
 ---
-variables:
-  type: |
-    {% set type = type|default("success") %}
-    {{ type }}
-  notification_service: 'll_notify.{{ type }}'
-  title: '{{ title|default("") }}'
-  duration: '{{ duration|default(0) }}'
-
 sequence:
-  - service: "{{ notification_service }}"
+  - service: 'll_notify.{{ type|default("success") }}'
     data:
-      title: "{{ title }}"
-      message: "{{ message }}"
-      wait: "{{ duration }}"
+      title: '{{ title|default("") }}'
+      message: '{{ message|default("") }}'
+      wait: '{{ duration|default(0) }}'
 
 fields:
   type:

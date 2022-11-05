@@ -850,3 +850,487 @@ cast:
           min: 60
           max: 300
   max: 10
+debug:
+  alias: Debug
+  sequence:
+  - service: persistent_notification.create
+    data:
+      title: '{{ title|default(''Debug Message'') }}'
+      message: '{{ message }}'
+      notification_id: '{{ id|default(''debug_'' ~ as_timestamp(now())) }}'
+  variables:
+    title: '{{ title|default("Debug Message") }}'
+  fields:
+    title:
+      description: Bold first line of the message.
+      example: Debug Message
+      selector:
+        text:
+    message:
+      description: Useful information to share.
+      selector:
+        text:
+  mode: queued
+  icon: mdi:bug
+  max: 10
+notify_mobile_clear:
+  alias: Notify mobile clear
+  sequence:
+  - variables:
+      notification_service: "{%- set who = who|default(\"brian\") %}\n{%- if who.startswith(\"notify.\")
+        %}\n  {{ who }}\n{%- else %}\n  notify.{{ who|default(\"brian\") }}\n{% endif
+        %}\n"
+      tag: '{{ tag }}'
+  - alias: Only continue it mobile notifications are enabled.
+    condition: state
+    entity_id: input_boolean.mobile_notifications
+    state: 'on'
+  - alias: Clear the notification.
+    service: '{{ notification_service }}'
+    data:
+      message: clear_notification
+      data:
+        tag: '{{ tag }}'
+  mode: single
+  icon: mdi:cellphone-message-off
+notify_mobile:
+  alias: Notify mobile
+  sequence:
+  - condition: state
+    entity_id: input_boolean.mobile_notifications
+    state: 'on'
+  - variables:
+      notification_service: "{%- set who = who|default(\"brian\") %}\n{%- if who.startswith(\"notify.\")
+        %}\n  {{ who }}\n{%- else %}\n  notify.{{ who|default(\"brian\") }}\n{% endif
+        %}\n"
+      camera: '{{ camera|default("none") }}'
+      critical: '{{ critical|default(false) }}'
+      title: '{{ title|default("") }}'
+      subtitle: '{{ subtitle|default("") }}'
+      url: "{%- if camera != \"none\" %}\n  homeassistant://navigate/lovelace/outdoor\n{%-
+        elif url is string %}\n  {%- if url.startswith(\"/\") %}\n    homeassistant://navigate{{
+        url }}\n  {%- else %}\n    {{ url }}\n  {% endif %}\n{%- else %}\n  {{ default
+        }}\n{% endif %}\n"
+      group: "{%- set group = group|default(\"\") %}\n{%- if camera|default(\"\")
+        != \"\" %}\n  {%- set group = \"camera\" %}\n{%- elif image|default(\"\")
+        != \"\" %}\n  {%- set group = \"image\" %}\n{% endif %}\n{{ group }}\n"
+      tag: '{{ tag }}'
+      push:
+        category: "{%- if camera|default(\"\") != \"\" %}\n  camera\n{%- else %}\n
+          \ {{ default }}\n{%- endif %}\n"
+        sound:
+          name: "{%- if sound is string %}\n  {%- if sound.startswith(\"/\") %}\n
+            \   media-source://media_source{{ sound }}\n  {%- else %}\n    {{ sound
+            }}\n  {%- endif %}\n{%- elif critical %}\n  Update.caf\n{%- elif tag ==
+            \"doorbell\" or category == \"doorbell\" %}\n  media-source://media_source/local/audio/jetsons-doorbell.mp3\n{%-
+            elif tag == \"person_detected\" %}\n  US-EN-Alexa-Motion-At-Front-Door.wav\n{%
+            else %}\n  default\n{%- endif %}\n"
+          '{{ iif(critical, "critical", "disabled_critical") }}': 1
+          '{{ iif(critical, "volume", "disabled_volume") }}': 1
+      actions: '{{ actions|default([]) }}'
+  - service: '{{ notification_service }}'
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      data:
+        subtitle: '{{ subtitle }}'
+        url: '{{ url }}'
+        entity_id: '{{ camera }}'
+        push: '{{ push }}'
+        actions: '{{ actions }}'
+        '{{ iif(group == "", "disabled_", "") }}group': '{{ group }}'
+        '{{ iif(tag == "", "disabled_", "") }}tag': '{{ tag }}'
+  fields:
+    who:
+      description: Who are we sending this message to?
+      example: brian
+      default: brian
+      selector:
+        text:
+    title:
+      description: Bold first line of the message.
+      example: Safety Alert!
+      default: Home Assistant
+      selector:
+        text:
+    subtitle:
+      description: Bold second line of the message.
+      example: Notification
+      selector:
+        text:
+    message:
+      description: Include details here.
+      example: Test message
+      default: Test message
+      selector:
+        text:
+          multiline: true
+    camera:
+      description: Camera entity.
+      example: camera.front_door
+      selector:
+        text:
+    critical:
+      description: Sound a critical alert sound!
+      example: false
+      selector:
+        boolean:
+    group:
+      description: Combine notifications together visually. (iOS does not support
+        grouping critical notifications.)
+      example: person-detected
+      selector:
+        text:
+    tag:
+      description: Replace an existing notification by using a tag for the notification.
+        All subsequent notifications will take the place of a notification with the
+        same tag. (iOS does not support grouping critical notifications.)
+      example: front-door-person-detected
+      selector:
+        text:
+    url:
+      description: Link to open.
+      example: /lovelace/outdoor
+      selector:
+        text:
+    sound:
+      description: Audio to play with notification.
+      example: /local/audio/jetsons-doorbell.mp3
+      selector:
+        text:
+  mode: single
+  icon: mdi:cellphone-message
+notify_audio:
+  alias: Notify audio
+  icon: mdi:cast-audio
+  sequence:
+  - variables:
+      entities: "{%- if speakers is defined %}\n  {%- set entities = speakers %}\n{%-
+        else %}\n  {%- set entities = '[\"media_player.google_family_room\"]' %}\n{%-
+        endif %}\n{{ entities }}\n"
+      audio_file: '{{ audio_file|default("media-source://media_source/local/audio/sfx-pop4.mp3")
+        }}'
+      content_type: '{{ content_type|default("audio") }}'
+      new_volume: "{%- if volume is number %}\n  {%- if volume > 1.0 %}\n    {%- set
+        volume = volume / 100 %}\n  {%- else %}\n    {%- set volume = volume %}\n
+        \ {%- endif %}\n{%- else %}\n  {%- set volume = states(\"input_number.default_audio_volume\")|float(default=0)
+        / 100 %}\n{%- endif %}\n{{ volume }}\n"
+      audio_notifications: '{{ is_state("input_boolean.audio_notifications", "on")
+        }}'
+      quiet_time: '{{ is_state("binary_sensor.noncritical_alert_quiet_time", "on")
+        }}'
+      family_home: '{{ states("sensor.family_present")|int(default=0) > 0 }}'
+      guest_mode: '{{ is_state("input_boolean.guest_mode", "on") }}'
+  - alias: Debug output. (Disable to turn off.)
+    service: script.debug
+    data:
+      message: 'speakers: {{ speakers }}
+
+        entities|count: {{ entities|count }}
+
+        {{ speakers[0] }}
+
+
+        audio_file: {{ audio_file }}
+
+        content_type: {{ content_type }}
+
+        new_volume: {{ new_volume }}
+
+
+        audio_notifications: {{ audio_notifications }}
+
+        quiet_time: {{ quiet_time }}
+
+
+        audio_notifications and not quiet_time: {{ audio_notifications and not quiet_time
+        }}
+
+        '
+    enabled: false
+  - alias: When enabled and not quiet time, and family is home or guest mode is enabled.
+    if:
+    - condition: template
+      value_template: '{{ (audio_notifications and not quiet_time) and (family_home
+        or guest_mode) }}'
+    then:
+    - alias: Play the audio on all selected speakers.
+      repeat:
+        count: '{{ entities|count }}'
+        sequence:
+        - variables:
+            speaker: '{{ entities[repeat.index-1] }}'
+            current_volume: '{{ state_attr(speaker, "volume_level")|float(default=states("input_number.default_announcement_volume")|float(default=5)
+              / 100) }}'
+        - alias: Debug output. (Disable to turn off.)
+          service: script.debug
+          data:
+            message: 'repeat.index: {{ repeat.index-1 }}
+
+              speaker: {{ speaker }}
+
+              current_volume: {{ current_volume }}
+
+              new_volume: {{ new_volume }}
+
+              '
+        - alias: Set player to defined volume.
+          service: media_player.volume_set
+          data:
+            entity_id: '{{ speaker }}'
+            volume_level: '{{ new_volume }}'
+        - delay:
+            seconds: 1
+        - alias: Play the audio.
+          service: media_player.play_media
+          data:
+            entity_id: '{{ speaker }}'
+            media_content_id: '{{ audio_file }}'
+            media_content_type: '{{ content_type }}'
+        - alias: Wait for the audio to finish playing.
+          wait_for_trigger:
+            platform: template
+            value_template: '{{ is_state(speaker, "idle") }}'
+          timeout:
+            minutes: 1
+          continue_on_timeout: true
+        - alias: Restore previous volume.
+          service: media_player.volume_set
+          data:
+            entity_id: '{{ speaker }}'
+            volume_level: '{{ current_volume }}'
+    enabled: true
+  fields:
+    speakers:
+      description: Select the speakers the audio should play on.
+      selector:
+        entity:
+          multiple: true
+          integration: cast
+    audio_file:
+      description: Path to the audio file.
+      default: media-source://media_source/local/audio/jetsons-doorbell.mp3
+      selector:
+        text:
+    volume:
+      description: 'WARNING: this will override your preset "Default audio volume"!'
+      default: 10
+      selector:
+        number:
+          min: 5
+          max: 100
+          step: 5
+  mode: single
+notify_audio_disable_cast_sound:
+  alias: Notify audio disable cast sound
+  mode: parallel
+  sequence:
+  - alias: When the Google speaker is off.
+    if:
+    - condition: template
+      value_template: '{{ is_state(speaker, "off") }}
+
+        '
+    then:
+    - service: media_player.volume_mute
+      target:
+        entity_id: '{{ speaker }}'
+      data:
+        is_volume_muted: true
+      alias: Mute the speaker.
+    - service: media_player.turn_on
+      target:
+        entity_id: '{{ speaker }}'
+      alias: Turn on the speaker.
+    - wait_template: '{{ is_state(speaker, "idle") }}'
+      alias: Wait for the speaker to finish the starting cast sound.
+    - service: media_player.volume_mute
+      target:
+        entity_id: '{{ speaker }}'
+      data:
+        is_volume_muted: false
+      alias: Restore speaker's sound volume.
+  fields:
+    speaker:
+      description: Select the speaker.
+      selector:
+        entity:
+          integration: cast
+  max: 10
+notify_pc:
+  alias: Notify PC
+  sequence:
+  - variables:
+      notification_service: "{%- set pc = pc|default(\"blackpc\") %}\n{%- if pc.startswith(\"notify.\")
+        %}\n  {{ pc }}\n{%- else %}\n  notify.{{ pc|default(\"blackpc\") }}\n{% endif
+        %}\n"
+      title: '{{ title|default("Home Assistant") }}'
+      message: '{{ message|default(" ") }}'
+      duration: '{{ duration }}'
+      image: "{% set camera = camera|default(\"\") %}\n{%- if camera != \"\" %}\n
+        \ {%- set image = \"http://homeassistant.local:8123\" + state_attr(camera,\"entity_picture\")
+        %}\n{% endif %}\n{{ image|default(\"\") }}\n"
+  - service: '{{ notification_service }}'
+    data:
+      title: '{{ title }}'
+      message: '{{ message }}'
+      data:
+        duration: '{{ duration|int(default=0) }}'
+        image: '{{ image }}'
+  fields:
+    pc:
+      description: What PC are we sending this message to?
+      example: blackpc
+      default: blackpc
+      selector:
+        text:
+    title:
+      description: Bold first line of the message.
+      example: Safety Alert!
+      default: Home Assistant
+      selector:
+        text:
+    message:
+      description: Include details here.
+      example: Test message
+      default: Test message
+      selector:
+        text:
+          multiline: true
+    camera:
+      description: Camera to pull a still from.
+      example: ''
+      default:
+      selector:
+        text:
+    image:
+      description: URL to an image.
+      example: ''
+      default:
+      selector:
+        text:
+    duration:
+      description: How many seconds before this message dissapears?
+      example: 3
+      default: 3
+      selector:
+        number:
+  mode: single
+  icon: mdi:desktop-classic
+notify_persistent:
+  alias: Notify persistent
+  sequence:
+  - service: persistent_notification.create
+    data:
+      title: '{{ title|default("") }}'
+      message: '{{ message }}'
+      notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
+  fields:
+    title:
+      description: Bold first line of the message.
+      example: SAFETY ALERT
+      selector:
+        text:
+    message:
+      description: Useful information to share.
+      selector:
+        text:
+    id:
+      description: Unique identifier.
+      selector:
+        text:
+  mode: single
+  icon: mdi:window-maximize
+notify_speech:
+  alias: Notify speech
+  sequence:
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: input_boolean.audio_notifications
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.noncritical_alert_quiet_time
+        state: 'off'
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.family_present
+          above: 0
+        - condition: state
+          entity_id: input_boolean.guest_mode
+          state: 'on'
+    then:
+    - service: script.say_cloud
+      data:
+        media_player: '{{ media_player }}'
+        message: '{{ message }}'
+    alias: When enabled and not quiet time, and family is home or guest mode is enabled.
+  fields:
+    message:
+      description: Message for the voice assistant to say.
+      example: Please close the windows.
+      required: true
+      selector:
+        text:
+          multiline: true
+    media_player:
+      description: Which speakers are we sending this message to?
+      example: media_player.google_kitchen
+      selector:
+        select:
+          options:
+          - media_player.google_bedroom
+          - media_player.google_kyles_room
+          - media_player.google_lucas_room
+          - media_player.google_lucas_sleep
+          - media_player.google_boys_rooms
+          - media_player.google_downstairs
+          - media_player.google_welcome
+          - media_player.google_kitchen
+          - media_player.google_family_room
+          - media_player.google_garage
+          - media_player.google_play_room
+          - media_player.google_upstairs
+          - media_player.google_upstairs_bathroom
+  mode: single
+  icon: mdi:speaker-message
+notify_web:
+  alias: Notify web
+  sequence:
+  - service: ll_notify.{{ type|default("success") }}
+    data:
+      title: '{{ title|default("") }}'
+      message: '{{ message|default("") }}'
+      wait: '{{ duration|default(0) }}'
+  fields:
+    type:
+      description: Which type of notification?
+      example: warning
+      selector:
+        select:
+          options:
+          - alert
+          - error
+          - warning
+          - success
+    title:
+      description: (*optional*) For Alert type messages only.
+      example: Config Check Error
+      selector:
+        text:
+    message:
+      description: Useful information to share.
+      selector:
+        text:
+    duration:
+      description: This notification will disappear after how many seconds? (*Ignored
+        for Alert type messages.*)
+      default: 5
+      selector:
+        number:
+          min: 0
+          max: 3600
+  mode: single
+  icon: mdi:toaster
