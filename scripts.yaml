@@ -321,19 +321,19 @@ lights_flash:
           - '{{ is_hue }}'
           sequence:
           - service: light.turn_on
-            data_template:
+            data:
               entity_id: '{{ entity_id }}'
               flash: short
         default:
         - service: light.turn_on
-          data_template:
+          data:
             entity_id: '{{ entity_id }}'
             transition: 0
         - alias: Transition time between flashes.
           delay:
             seconds: '{{ flash_transition_delay }}'
         - service: light.turn_off
-          data_template:
+          data:
             entity_id: '{{ entity_id }}'
             transition: 0
       - alias: Delay between flashes.
@@ -1544,3 +1544,208 @@ z2m_family_room_remote_action:
           brightness_step_pct: '-20'
     alias: Arrow left.
   icon: mdi:remote-tv
+say_cloud:
+  alias: Say cloud
+  sequence:
+  - variables:
+      media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+      message: '{{ message|striptags }}'
+      mqtt_message_attributes: "{\n  \"target\": \"{{ media_player }}\"\n}\n"
+      volume: "{%- if volume is number %}\n  {%- if volume|float(default=0) > 1.0
+        %}\n    {%- set volume = volume|float(default=0) / 100 %}\n  {%- else %}\n
+        \   {%- set volume = volume|float(default=0) %}\n  {%- endif %}\n{%- else
+        %}\n  {{ states(\"input_number.default_announcement_volume\")|int(default=0)
+        / 100 }}\n{%- endif %}\n"
+  - service: script.debug
+    enabled: false
+    data:
+      message: 'media_player: "{{ media_player }}"
+
+        volume: {{ volume }}
+
+        '
+  - alias: Only speak when there is something to say. ;)
+    if:
+    - condition: template
+      value_template: '{{ message is not undefined }}'
+      alias: When message is set.
+    then:
+    - alias: Set volume so announcement can be heard.
+      service: media_player.volume_set
+      target:
+        entity_id: '{{ media_player }}'
+      data:
+        volume_level: '{{ volume }}'
+    - delay:
+        seconds: 2
+      enabled: false
+    - alias: Say the message out loud.
+      service: tts.cloud_say
+      data:
+        entity_id: '{{ media_player }}'
+        message: '{{ message }}'
+        language: en-US
+        options:
+          gender: female
+    - service: script.notify_web
+      data:
+        message: '{{ message }}'
+        duration: 10
+    - alias: Store Last Message.
+      service: script.store_mqtt_sensor
+      data:
+        name: last_message
+        state: '{{ message }}'
+        attributes: '{{ mqtt_message_attributes }}
+
+          '
+    - wait_for_trigger:
+      - platform: template
+        value_template: '{{ states(media_player) == "idle" }}'
+        alias: Wait for the display to be "idle".
+      continue_on_timeout: false
+      alias: Wait for the media players to be "idle".
+    - service: media_player.turn_off
+      target:
+        entity_id: '{{ media_player }}'
+      alias: Turn off the media players.
+  mode: parallel
+  fields:
+    message:
+      description: Include details here.
+      example: The laundry is ready to be moved to the dryer.
+      required: true
+      selector:
+        text:
+          multiline: true
+    media_player:
+      description: Media Player entity_id.
+      example: media_player.google_kitchen
+      default: media_player.google_family_room
+      selector:
+        text:
+    volume:
+      description: Volume level as a percentage (or a decimal from 0 - 1.0)
+      example: 60
+      selector:
+        number:
+          min: 0
+          max: 100
+  max: 10
+  icon: mdi:cloud-circle
+repeat_last_message:
+  alias: Repeat last message
+  sequence:
+  - alias: Say the previous message on the last Google speaker that was spoken to.
+      Bypass `script.say_cloud` to avoid storing the last message again.
+    service: tts.cloud_say
+    data:
+      entity_id: '{{ states("sensor.last_google") }}'
+      message: This message is from {{ relative_time(states.sensor.last_message.last_updated)
+        }} ago. {{ states("sensor.last_message") }}
+      language: en-US
+      options:
+        gender: female
+  mode: parallel
+  icon: mdi:cast-audio
+  max: 10
+tts_phrase_say:
+  alias: TTS phrase say
+  sequence:
+  - variables:
+      media_player: '{{ media_player if media_player is defined else states("input_select.tts_phrase_room")
+        }}'
+      room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","")
+        }}'
+      smart_speakers:
+        bedroom: media_player.google_bedroom
+        kyles_room: media_player.google_kyles_room
+        kyle_morning: media_player.google_kyle_morning
+        lucas_room: media_player.google_lucas_room
+        lucas_morning: media_player.google_lucas_morning
+        lucas_sleep: media_player.google_lucas_sleep
+        boys_rooms: media_player.google_boys_rooms
+        downstairs: media_player.google_downstairs
+        kitchen-garage: media_player.google_welcome
+        kitchen: media_player.google_kitchen
+        family_room: media_player.google_family_room
+        garage: media_player.google_garage
+        play_room: media_player.google_play_room
+        upstairs: media_player.google_upstairs
+        upstairs_bathroom: media_player.google_upstairs_bathroom
+      smart_speaker: '{{ smart_speakers[room] }}'
+      selected_phrase: "{%- set selection = states(\"input_select.tts_phrases\")|trim
+        %}\n{%- if selection not in [\"Unknown\",\"None\",\"\"] %}\n  {{ selection
+        }}\n{%- endif %}\n"
+      text_phrase: '{%- set text_phrase = states("input_text.tts_phrase")|trim %}
+
+        {{ text_phrase if text_phrase not in ["Unknown","None",""] }}
+
+        '
+      message: "{%- if text_phrase|trim != \"\" %}\n  {{ text_phrase }}\n{%- elif
+        selected_phrase|trim != \"\" %}\n  {{ selected_phrase }}\n{%- endif %}\n"
+  - service: script.debug
+    enabled: false
+    data:
+      message: 'media_player: {{ media_player }}
+
+        room: {{ room }}
+
+
+        selected_phrase: {{ selected_phrase }}
+
+        text_phrase: {{ text_phrase }}
+
+        message: {{ message }}
+
+        '
+  - if:
+    - condition: template
+      value_template: '{{ message|trim != "" }}'
+      alias: When a message is set.
+    then:
+    - service: script.say_cloud
+      data:
+        media_player: '{{ smart_speaker }}'
+        message: '{{ message }}'
+    alias: Speak when a message is set.
+  mode: single
+  icon: mdi:cast-audio-variant
+say:
+  alias: Say
+  sequence:
+  - variables:
+      media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: input_boolean.audio_notifications
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.noncritical_alert_quiet_time
+        state: 'off'
+      alias: When speech is enabled.
+    then:
+    - service: script.say_cloud
+      data:
+        media_player: '{{ media_player }}'
+        message: '{{ message }}'
+    alias: Speak message when enabled.
+  mode: queued
+  fields:
+    media_player:
+      description: Media Player entity_id or group id.
+      example: media_player.google_kitchen or media_player.google_welcome
+      default: media_player.google_family_room
+      selector:
+        text:
+    message:
+      description: Include details here.
+      example: The laundry is ready to be moved to the dryer.
+      required: true
+      selector:
+        text:
+          multiline: true
+  max: 10
+  icon: mdi:cast-audio

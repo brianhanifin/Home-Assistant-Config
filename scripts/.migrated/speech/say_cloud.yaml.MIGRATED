@@ -1,30 +1,32 @@
 ---
 mode: parallel
-variables:
-  media_player: '{{ media_player|default("media_player.google_kitchen") }}'
-  message: '{{ message|striptags }}'
-  mqtt_message_attributes: |
-    {
-      "target": "{{ media_player }}"
-    }
-  volume: |
-    {%- if volume is number %}
-      {%- if volume|float(default=0) > 1.0 %}
-        {%- set volume = volume|float(default=0) / 100 %}
-      {%- else %}
-        {%- set volume = volume|float(default=0) %}
-      {%- endif %}
-    {%- else %}
-      {{ states("input_number.default_announcement_volume")|int(default=0) / 100 }}
-    {%- endif %}
 sequence:
-  # - service: script.debug
-  #   data:
-  #     message: |
-  #       volume: {{ volume }}
+  - variables:
+      media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+      message: '{{ message|striptags }}'
+      mqtt_message_attributes: |
+        {
+          "target": "{{ media_player }}"
+        }
+      volume: |
+        {%- if volume is number %}
+          {%- if volume|float(default=0) > 1.0 %}
+            {%- set volume = volume|float(default=0) / 100 %}
+          {%- else %}
+            {%- set volume = volume|float(default=0) %}
+          {%- endif %}
+        {%- else %}
+          {{ states("input_number.default_announcement_volume")|int(default=0) / 100 }}
+        {%- endif %}
 
-  # Only speak when there is something to say. ;)
-  - choose:
+  - service: script.debug
+    enabled: false
+    data:
+      message: |
+        volume: {{ volume }}
+
+  - alias: Only speak when there is something to say. ;)
+    choose:
       conditions:
         - condition: template
           value_template: '{{ message is not undefined }}'
@@ -48,13 +50,17 @@ sequence:
             options:
               gender: female
 
-        # Remove "speaker" icon from screen by turning the kitchen media player off.
-        # - condition: template
-        #   value_template: '{{ media_player in ["media_player.google_kitchen","media_player.google_downstairs"] }}'
-        # - delay:
-        #     seconds: 10
-        # - service: media_player.turn_off
-        #   entity_id: media_player.google_kitchen
+
+        - alias: Remove "speaker" icon from screen by turning the kitchen media player off.
+          if:
+          - condition: template
+            value_template: '{{ media_player in ["media_player.google_kitchen","media_player.google_downstairs"] }}'
+          then:
+            - delay:
+                seconds: 10
+            - service: media_player.turn_off
+              entity_id: media_player.google_kitchen
+          enabled: false
 
         - service: script.notify_web
           data:

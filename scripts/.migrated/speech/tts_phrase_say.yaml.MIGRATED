@@ -1,0 +1,57 @@
+---
+sequence:
+  - variables:
+      media_player: '{{ media_player if media_player is defined else states("input_select.tts_phrase_room") }}'
+      room: '{{ media_player|lower|replace(" ","_")|replace("[","")|replace("]","") }}'
+      smart_speakers:
+        bedroom: "media_player.google_bedroom"
+        kyles_room: "media_player.google_kyles_room"
+        kyle_morning: "media_player.google_kyle_morning"
+        lucas_room: "media_player.google_lucas_room"
+        lucas_morning: "media_player.google_lucas_morning"
+        lucas_sleep: "media_player.google_lucas_sleep"
+        boys_rooms: "media_player.google_boys_rooms"
+        downstairs: "media_player.google_downstairs"
+        kitchen-garage: "media_player.google_welcome"
+        kitchen: "media_player.google_kitchen"
+        family_room: "media_player.google_family_room"
+        garage: "media_player.google_garage"
+        play_room: "media_player.google_play_room"
+        upstairs: "media_player.google_upstairs"
+        upstairs_bathroom: "media_player.google_upstairs_bathroom"
+
+      smart_speaker: "{{ smart_speakers[room] }}"
+      selected_phrase: |
+        {%- set selection = states("input_select.tts_phrases")|trim %}
+        {%- if selection not in ["Unknown","None",""] %}
+          {{ selection }}
+        {%- endif %}
+      text_phrase: |
+        {%- set text_phrase = states("input_text.tts_phrase")|trim %}
+        {{ text_phrase if text_phrase not in ["Unknown","None",""] }}
+      message: |
+        {%- if text_phrase|trim != "" %}
+          {{ text_phrase }}
+        {%- elif selected_phrase|trim != "" %}
+          {{ selected_phrase }}
+        {%- endif %}
+
+  - service: script.debug
+    enabled: false
+    data:
+      message: |
+        media_player: {{ media_player }}
+        room: {{ room }}
+
+        selected_phrase: {{ selected_phrase }}
+        text_phrase: {{ text_phrase }}
+        message: {{ message }}
+
+  - if:
+      - condition: template
+        value_template: '{{ message|trim != "" }}'
+    then:
+      - service: script.say_cloud
+        data:
+          media_player: "{{ smart_speaker }}"
+          message: "{{ message }}"

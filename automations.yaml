@@ -1603,6 +1603,7 @@
     timeout:
       minutes: '5'
     continue_on_timeout: false
+    enabled: false
   - service: script.say
     data:
       media_player: media_player.google_welcome
@@ -1612,6 +1613,7 @@
       say_inside_weather: 'true'
       say_outside_weather: 'true'
     alias: Welcome home announcement!
+    enabled: false
   mode: single
 - id: '1664922391248'
   alias: 'Presence: leaving costco'
@@ -1637,7 +1639,6 @@
         name == \"Nerene\" %}\n    {% set name = \"mom\" %}\n  {% elif name == \"Brian\"
         %}\n    {% set name = \"dad\" %}\n  {% endif %}\n{% endif %} {{ message|replace(\"[name1]\",name)|replace(\"[name2]\",name)
         }}"
-      say_greeting: 'false'
   - delay:
       minutes: 5
     alias: 'Cool down timer. When "mode: single" this stops this automation from running
@@ -1664,7 +1665,6 @@
         after her long day! \",\n  \"One of your favorite people is almost here! Mah,
         ma, mama, mom. \",\n  \"Guess what? ... Chicken butt. ... Your mom is almost
         home. \"\n]|random }}\n"
-      say_greeting: 'false'
   - delay:
       minutes: 60
     alias: Cool down timer.
@@ -1683,11 +1683,10 @@
     before: '17:00:00'
   action:
   - service: script.say
-    data_template:
+    data:
       media_player: media_player.google_downstairs
       message: "{{ [\n  \"Just a head's up, Nerene is done with court.\",\n  \"Your
         mom is on her way home from court.\"\n]|random }}\n"
-      say_greeting: 'false'
   mode: single
 - id: '1664922848999'
   alias: 'Extended presence: location update'
