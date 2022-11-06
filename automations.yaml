@@ -169,11 +169,11 @@
   alias: Maintenance before sunrise
   description: 'Runs every day 2 hours before sunrise.
 
-    1. Reset Adaptive lighting switches.
+    1. Reset adaptive lighting switches.
 
     2. Update watchman report.
 
-    3. Bedroom Do Not Disturb'
+    3. Ensure bedroom do not disturb is enabled.'
   trigger:
   - platform: sun
     event: sunrise
@@ -2405,25 +2405,25 @@
             transition: 5
         - delay:
             seconds: 10
+        - if:
+          - condition: state
+            entity_id: switch.adaptive_lighting_home_entry
+            state: 'on'
+          then:
+          - service: switch.turn_off
+            target:
+              entity_id: switch.adaptive_lighting_home_entry
+            alias: Turn off adaptive lighting control temporarily.
+            data: {}
+          - delay:
+              seconds: 1
+          - service: switch.turn_on
+            target:
+              entity_id: switch.adaptive_lighting_home_entry
+            alias: Turn adaptive lighting control back on.
+            data: {}
+          alias: Restore adaptive lighting automated control.
         alias: Skip turning on the entry lights in the middle of the day.
-      - if:
-        - condition: state
-          entity_id: switch.adaptive_lighting_home_entry
-          state: 'on'
-        then:
-        - service: switch.turn_off
-          target:
-            entity_id: switch.adaptive_lighting_home_entry
-          alias: Turn off adaptive lighting control temporarily.
-          data: {}
-        - delay:
-            seconds: 1
-        - service: switch.turn_on
-          target:
-            entity_id: switch.adaptive_lighting_home_entry
-          alias: Turn adaptive lighting control back on.
-          data: {}
-        alias: Restore adaptive lighting automated control.
       - alias: Update Light Switch LED Status Color.
         service: script.turn_on
         target:
@@ -4146,22 +4146,28 @@
       entity_id: timer.driveway_front_door_person_detected
     id: timer_finished
     alias: When person detection timer finishes.
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.outdoor_illuminance_educated_guessor
+    below: 2000
+    alias: Only restore the lights when when it is night.
   action:
   - if:
-    - condition: trigger
-      id: occupancy_cleared
     - condition: and
       conditions:
-      - condition: state
-        entity_id: binary_sensor.driveway_person_occupancy
-        state: 'off'
-      - condition: state
-        entity_id: binary_sensor.front_door_person_occupancy
-        state: 'off'
-      - condition: state
-        entity_id: binary_sensor.driveway_flood_motion
-        state: 'off'
-      alias: All front door/driveway occupancy sensors are clear.
+      - condition: trigger
+        id: occupancy_cleared
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.driveway_person_occupancy
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.front_door_person_occupancy
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.driveway_flood_motion
+          state: 'off'
     then:
     - service: timer.start
       data:
@@ -4258,4 +4264,5 @@
       alias: Turn adaptive lighting control back on.
       data: {}
     alias: Restore adaptive lighting automated control.
+    enabled: true
   mode: single
