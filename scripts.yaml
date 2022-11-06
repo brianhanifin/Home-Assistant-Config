@@ -1334,3 +1334,213 @@ notify_web:
           max: 3600
   mode: single
   icon: mdi:toaster
+z2m_family_room_remote_action:
+  alias: 'Remote: family room 5 buttons.'
+  mode: restart
+  sequence:
+  - alias: Debug output. (Disable to turn off.)
+    service: script.debug
+    data:
+      title: family_room_remote_action
+      message: 'command: {{ command }}
+
+        click_count: {{ click_count }}
+
+        '
+    enabled: false
+  - if:
+    - condition: template
+      value_template: '{{ command == "toggle" }}'
+      alias: When the power button is pressed.
+    then:
+    - choose:
+      - conditions:
+        - alias: 'Power button: single click.'
+          condition: template
+          value_template: '{{ click_count == 1 }}'
+        sequence:
+        - alias: Toggle the fan.
+          service: fan.toggle
+          target:
+            entity_id: fan.family_room
+          data: {}
+      - conditions:
+        - alias: 'Power button: double click.'
+          condition: template
+          value_template: '{{ click_count == 2 }}'
+        sequence:
+        - service: homeassistant.toggle
+          target:
+            entity_id: media_player.family_room_tv
+          data: {}
+          alias: Toggle the Family room TV.
+      - conditions:
+        - alias: 'Power button: triple click.'
+          condition: template
+          value_template: '{{ click_count == 3 }}'
+        sequence:
+        - choose:
+          - conditions:
+            - alias: When the door is locked.
+              condition: template
+              value_template: '{{ is_state("lock.front_door","locked") }}'
+            sequence:
+            - alias: Unlock the door.
+              service: lock.unlock
+              target:
+                entity_id: lock.front_door
+              data: {}
+          default:
+          - alias: Lock the door.
+            service: lock.lock
+            target:
+              entity_id: lock.front_door
+            data: {}
+          alias: Toggle the front door lock.
+      - conditions:
+        - alias: 'Power button: quadruple click.'
+          condition: template
+          value_template: '{{ click_count == 4 }}'
+        sequence:
+        - service: input_boolean.toggle
+          target:
+            entity_id: input_boolean.guest_mode
+          data: {}
+          alias: Toggle guest mode.
+      alias: Take action for that matches the number of clicks.
+    alias: 'Power button (middle). .......... Note: no hold event is available for
+      this button.'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ command == "brightness_up_click" }}'
+        alias: When brightness up is pressed.
+      sequence:
+      - alias: Take action for that matches the number of clicks.
+        choose:
+        - alias: 'Brightness up: single click.'
+          conditions:
+          - condition: template
+            value_template: '{{ click_count == 1 }}'
+            alias: Single click.
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.family_room
+            data:
+              brightness_pct: 100
+        - alias: 'Brightness up: double click.'
+          conditions:
+          - condition: template
+            value_template: '{{ click_count == 2 }}'
+            alias: Double click.
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.family_room_table_lamp
+            data:
+              brightness_pct: 100
+    - alias: 'Brightness up: hold.'
+      conditions:
+      - condition: template
+        value_template: '{{ command == "brightness_up_hold" }}'
+        alias: When brightness up is held.
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.family_room
+          - light.family_room_table_lamp
+        data:
+          brightness_step_pct: 20
+    alias: Brightness up (top).
+  - alias: Brightness down (bottom).
+    choose:
+    - alias: Brightness down clicks.
+      conditions:
+      - condition: template
+        value_template: '{{ command == "brightness_down_click" }}'
+        alias: When brightness down is pressed.
+      sequence:
+      - alias: Take action for that matches the number of clicks.
+        choose:
+        - alias: 'Brightness down: single click.'
+          conditions:
+          - condition: template
+            value_template: '{{ click_count == 1 }}'
+            alias: Single click.
+          sequence:
+          - service: light.turn_off
+            target:
+              entity_id: light.family_room
+            data: {}
+        - alias: 'Brightness down: double click.'
+          conditions:
+          - condition: template
+            value_template: '{{ click_count == 2 }}'
+            alias: Double click.
+          sequence:
+          - service: light.turn_off
+            target:
+              entity_id: light.family_room_table_lamp
+            data: {}
+    - alias: 'Brightness down: hold.'
+      conditions:
+      - condition: template
+        value_template: '{{ command == "brightness_down_hold" }}'
+        alias: When brightness down is held.
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.family_room
+          - light.family_room_table_lamp
+        data:
+          brightness_step_pct: -20
+        enabled: true
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ command == "arrow_right_click" }}'
+        alias: When Arrow right is pressed.
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.family_room_floor_lamp
+        data:
+          brightness_pct: 100
+    - alias: 'Arrow right: hold.'
+      conditions:
+      - condition: template
+        value_template: '{{ command == "arrow_right_hold" }}'
+        alias: When Arrow right is held.
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.family_room_floor_lamp
+        data:
+          brightness_step_pct: '20'
+    alias: Arrow right.
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ command == "arrow_left_click" }}'
+        alias: When Arrow left is pressed.
+      sequence:
+      - service: light.turn_off
+        target:
+          entity_id: light.family_room_floor_lamp
+        data: {}
+    - alias: 'Arrow left: hold.'
+      conditions:
+      - condition: template
+        value_template: '{{ command == "arrow_left_hold" }}'
+        alias: When Arrow left is held.
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.family_room_floor_lamp
+        data:
+          brightness_step_pct: '-20'
+    alias: Arrow left.
+  icon: mdi:remote-tv
