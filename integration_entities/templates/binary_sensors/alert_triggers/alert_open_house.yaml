@@ -17,5 +17,5 @@ state: |
     and (outside_temp - inside_temp) <= -2
     and (outside_humidity - indoor_humidity) <= 20
     and home_closed
-    and 14 <= current_hour < 21
+    and 14 <= current_hour < states("input_number.quiet_hour_end")|int(default=21)
   }}

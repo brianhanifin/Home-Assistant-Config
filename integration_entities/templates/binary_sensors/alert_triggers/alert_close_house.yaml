@@ -14,5 +14,5 @@ state: |
     is_state("input_boolean.warmer_outside_notification","on")
     and outside_temp > inside_temp
     and home_open
-    and 7 <= current_hour < 17
+    and states("input_number.quiet_hour_start")|int(default=21) <= current_hour < 17
   }}
