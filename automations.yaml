@@ -235,7 +235,6 @@
       transition: 10
     target:
       entity_id:
-      - light.home_entry
       - light.porch
       - light.path_lights
   - service: script.say
@@ -418,44 +417,6 @@
             entity_id: climate.bedroom_thermostat
           data:
             hvac_mode: cool
-- id: '1642443845360'
-  alias: 'Remote: family room 5 button'
-  description: ''
-  use_blueprint:
-    path: EPMatt/ikea_e1524_e1810.yaml
-    input:
-      integration: Zigbee2MQTT
-      controller_entity: sensor.family_room_remote_action
-      helper_last_controller_event: input_text.z2m_blueprint_helper_last_controller_event
-      action_button_up_short:
-      - service: light.turn_on
-        target:
-          device_id:
-          - 2d8b03f66fda68a6e0f7b2a506a33b02
-          - 42fec827b0c1823c608f8d9a9cdac97e
-        data:
-          transition: 1
-      action_button_down_short:
-      - service: light.turn_off
-        target:
-          device_id:
-          - 2d8b03f66fda68a6e0f7b2a506a33b02
-          - 42fec827b0c1823c608f8d9a9cdac97e
-        data:
-          transition: 1
-      action_button_left_short:
-      - service: light.turn_off
-        data:
-          transition: 1
-        target:
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-      action_button_right_short:
-      - service: light.turn_on
-        target:
-          device_id: 63789fb09fae954b2c90a2aa98f6b102
-        data:
-          transition: 1
-      controller_device: a3db4d6aaed8f045600ee8b65fec511d
 - id: '1642448378521'
   alias: 'Remote: printer toggle'
   description: ''
@@ -2129,7 +2090,8 @@
     id: driveway
     alias: When a person is detected in the driveway/front yard.
   - platform: state
-    entity_id: binary_sensor.front_door_person_occupancy
+    entity_id:
+    - binary_sensor.front_walkway_person_occupancy
     from: 'off'
     to: 'on'
     id: front_door
@@ -2215,7 +2177,6 @@
             who: brian
             tag: person_detected
             url: /lovelace/outdoor
-            sound: silent
           continue_on_error: true
         - service: script.cast
           data:
@@ -3117,7 +3078,7 @@
   - platform: event
     event_type: state_changed
     event_data:
-      entity_id: sensor.remote_family_room_action
+      entity_id: sensor.family_room_remote_action
   condition: []
   action:
   - delay:
@@ -3128,27 +3089,39 @@
   - delay:
       seconds: 0.49
   - variables:
-      remote: '{{ trigger.event.data.entity_id }}'
-      command: '{{ trigger.event.data.old_state.state }}'
+      remote: '{{ trigger.event.data.new_state.object_id }}'
+      remote_script: script.z2m_{{ remote }}
+      command: '{{ trigger.event.data.old_state.state|trim|lower }}'
       click_count: '{{ states("counter.z2m_button_click") }}
 
         '
   - alias: Reset the counter.
     service: counter.reset
     entity_id: counter.z2m_button_click
+  - alias: Debug output. (Disable to turn off.)
+    service: script.debug
+    data:
+      title: '{{ remote }}'
+      message: 'remote_script: "{{ remote_script }}"
+
+        command: {{ command }}
+
+        click_count: {{ click_count }}
+
+        '
+    enabled: false
   - if:
     - condition: template
-      value_template: '{{ command|trim|lower not in ["", "none", "unknown", "unavailable"]
-        }}
+      value_template: '{{ command not in ["", "none", "unknown", "unavailable"] }}
 
         '
     then:
     - alias: Call the script to interpret the requested command.
-      service: script.z2m_button_actions
+      service: '{{ remote_script }}'
       data:
-        remote: '{{ remote }}'
         command: '{{ command }}'
         click_count: '{{ click_count }}'
+    alias: When a valid command is given.
   mode: restart
   max_exceeded: silent
 - id: '1666215299157'
@@ -3440,9 +3413,10 @@
     platform: state
     entity_id:
     - binary_sensor.garage_entry_door
-    - binary_sensor.garage_motion
+    - sensor.garage_motion
     from: 'off'
     to: 'on'
+    alias: When door opens or motion is detected.
   - id: timer_finished
     platform: event
     event_type: timer.finished
@@ -4214,6 +4188,24 @@
       data: {}
       target:
         entity_id: light.driveway_flood_accent
+    - if:
+      - condition: state
+        entity_id: switch.adaptive_lighting_home_entry
+        state: 'on'
+      then:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.adaptive_lighting_home_entry
+        alias: Turn off adaptive lighting control temporarily.
+        data: {}
+      - delay:
+          seconds: 1
+      - service: switch.turn_on
+        target:
+          entity_id: switch.adaptive_lighting_home_entry
+        alias: Turn adaptive lighting control back on.
+        data: {}
+      alias: Restore adaptive lighting automated control.
     alias: When person detection timer finishes.
   mode: single
 - id: '1667620286387'
@@ -4227,6 +4219,11 @@
     to: locked
   condition: []
   action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.leave_unlocked
+    alias: Turn off LEAVE UNLOCKED.
   - service: select.select_option
     data:
       option: Auto
@@ -4238,4 +4235,27 @@
     target:
       entity_id: light.driveway_flood_accent
     alias: Turn off the flood’s accent ring so the camera can have a better view.
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - if:
+    - condition: state
+      entity_id: switch.adaptive_lighting_home_entry
+      state: 'on'
+    then:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.adaptive_lighting_home_entry
+      alias: Turn off adaptive lighting control temporarily.
+      data: {}
+    - delay:
+        seconds: 1
+    - service: switch.turn_on
+      target:
+        entity_id: switch.adaptive_lighting_home_entry
+      alias: Turn adaptive lighting control back on.
+      data: {}
+    alias: Restore adaptive lighting automated control.
   mode: single
