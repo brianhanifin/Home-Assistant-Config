@@ -6,5 +6,5 @@ device_class: energy
 state_class: measurement
 unit_of_measurement: kW
 state: >
-  {%- set to_grid = states("sensor.solar_energy_production_current_kw")|float(default=0) %}
+  {%- set to_grid = states("sensor.solar_energy_production_current")|float(default=0) / 1000 %}
   {{ "%0.3f"|format([0, to_grid]|max) }}

@@ -1,0 +1,18 @@
+---
+unique_id: solar_energy_production_to_house
+name: Solar energy production to house
+icon: mdi:home
+device_class: energy
+state_class: measurement
+unit_of_measurement: kW
+state: |
+  {%- set production = states("sensor.solar_energy_production_current")|float(default=0) / 1000 -%}
+  {%- set excess = states("sensor.sensor.energy_solar_to_grid")|float(default=0) -%}
+  {%- if production > excess %}
+    {{ (production - excess)|round(3,default=0) }}
+  {%- else %}
+    {{ (excess - production)|round(3,default=0) }}
+  {% endif %}
+attributes:
+  solar_production: '{{ states("sensor.solar_energy_production_current")|float(default=0) / 1000 }}'
+  excess_solar: '{{ states("sensor.sensor.energy_solar_to_grid")|float(default=0) }}'

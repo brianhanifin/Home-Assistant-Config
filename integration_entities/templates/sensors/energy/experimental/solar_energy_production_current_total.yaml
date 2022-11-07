@@ -1,0 +1,14 @@
+---
+unique_id: solar_energy_production_current_total
+name: Solar energy production current total (to grid + to house)
+icon: mdi:solar-panel
+device_class: energy
+state_class: measurement
+unit_of_measurement: kW
+state: |
+  {%- set to_grid = states("sensor.sensor.energy_solar_to_grid")|float(default=0) %}
+  {%- set to_house = states("sensor.solar_energy_production_to_house")|float(default=0) %}
+  {{ (to_grid + to_house)|round(3,default=0) }}
+attributes:
+  to_grid: '{{ states("sensor.sensor.energy_solar_to_grid")|float(default=0) }}'
+  to_house: '{{ states("sensor.solar_energy_production_to_house")|float(default=0) }}'
