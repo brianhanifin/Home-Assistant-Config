@@ -42,9 +42,12 @@
       + [UniFi integration](#unifi-integration)
       + [Guest mode helper](#guest-mode-helper)
 * [Wireless communications](#wireless-communications)
+  - [Bluetooth](#bluetooth)
+  - [Software defined radio](#software-defined-radio)
   - [Wi-fi: Ubiquiti Unifi](#wi-fi-ubiquiti-unifi)
   - [Zigbee](#zigbee)
   - [Z-wave](#z-wave)
+* [Technical details](#technical-details)
 * [Home Assistant community](#home-assistant-community)
 
 # Smart home articles
@@ -186,13 +189,33 @@ Finally, I have a "Guest Mode" input_boolean setup as both a trigger and a condi
 
 # Wireless communications
 
+## Bluetooth
+Recommendations: [Long Range USB Bluetooth Adapter](https://amzn.to/3fJ05Jg), [ESP32 boards](https://amzn.to/3WFLdfq), [Switchbox Button Pusher](https://amzn.to/3DU0wc2), [Xiaomi Mijia Thermometer 2](https://www.aliexpress.us/item/3256801169431856.html)
+
+Home Assistant 2022.10 gave us full control of Bluetooth devices. You can even use [Bluetooth Proxies][bluetooth-proxies] to
+extend your bluetooth control range.
+
+## Homekit
+Home assistant supports Homekit natively which opens up many quality devices that would not otherwise be
+available to us. Homekit also allows me to bypass [Ecobee Thermostat](https://amzn.to/3WFxHZh)'s cloud services and control my thermostat locally!
+
+Pros:
+  * **Local control** of every device through Home Assistant (no Apple devices needed)!
+  * Additional quality devices.
+
+Cons:
+  * Devices can be more costly.
+
+## Software defined radio
+Recommendations: [NooElec NESDR Mini 2 SDR](https://amzn.to/3zXc90C), [AcuRite Outdoor Thermometer](https://amzn.to/3fKngmx), [AcuRite Fridge and Freezer Thermometer](https://amzn.to/3FRYMCA)
+
 ## Wi-fi: Ubiquiti Unifi
-Device recommendations: [Unifi 6 lite access point](https://amzn.to/3q1OUut) (wi-fi 6), [Unifi AC-PRO access point](https://amzn.to/2NMc1vW) (802.11ac, I have 3 of these), [Unifi security gateway](https://amzn.to/2NEbooj)
+Recommendations: [Unifi 6 lite access point](https://amzn.to/3q1OUut) (wi-fi 6), [Unifi AC-PRO access point](https://amzn.to/2NMc1vW) (802.11ac, one upstairs and one at the back of the house), [Unifi security gateway](https://amzn.to/2NEbooj)
 
 Eventually you outgrow even the fanciest home wi-fi setup. There were just too many devices for my Netgear orbi mesh networking system to handle, so I had to upgrade to a business grade solution.
 
 Pros:
-* Rock solid wi-fi all throughout the downstairs.
+* Rock solid wi-fi all throughout the house.
 * Household members don't complain about the wi-fi anymore!
 * Long ethernet cable runs make all access points equally fast!
 
@@ -200,26 +223,31 @@ Cons:
 * Requires a long ethernet cable run to each access point. (But also a "pro"... see the last point above.)
 
 ## Zigbee
-Recommendation: [Phoscon conbee II USB gateway](https://amzn.to/2Mz3jk8)
+Recommendation: [Phoscon conbee II USB gateway](https://amzn.to/2Mz3jk8), Aqara Devices: [Leak Sensor](https://amzn.to/3tb8p7W), [Temperature Sensor](https://amzn.to/3ThmefJ), [Door/Window Sensor](https://amzn.to/3G3X4xQ), [Motion Sensor](https://amzn.to/3E8CxqK), [Plug with Energy Monitoring](https://amzn.to/3fNLtsk), [Push Button Remote](https://amzn.to/3TgeTwO)
 
-Home Assistant's ZHA integration directly runs all of my zigbee devices. This includes all of my philips hue bulbs and all of my Xiaomi Aqara sensors!
+[Zigbee2MQTT][zigbee2mqtt] now runs all of my zigbee devices. This includes the new [Inovelli Blue Switch][inovelli-blue-switch],
+all of my philips hue bulbs, and lots of Aqara sensors!
 
 ## Z-wave
 Recommendation: [Aeotec Z-Stick Gen5 Plus](https://amzn.to/3kw7YzO)
 
-As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices. To be precise I am running [Zwavejs2Mqtt](https://zwave-js.github.io/zwavejs2mqtt/#/)) with MQTT disabled so I can make use of the z-wave device management UI built in. This includes several in-wall switches and dimmers, smoke detectors, and a bulb.
+As of February 2021 Home Assistant's Z-Wave JS integration directly runs all of my z-wave devices.
+To be precise I am running [Zwavejs2Mqtt][zwavejs2mqtt]] with MQTT disabled so I can make use of the
+z-wave device management UI built in. This includes several in-wall switches and dimmers,
+smoke detectors, and a bulb.
+
+# Technical details
+
+Our Home Assistant install has approximately **{{ states|count }} total entities**,
+including **{{ states.sensor|count + states.binary_sensor|count }} sensors**. My YAML
+files contain {{ "{0:,.0f}".format( states("sensor.code_line_count")|int(default=0) ) }} lines of code.
+All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].
 
 {%- filter replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|trim %}
 
 {%- if custom_components %}
   {%- set integrations = custom_components | sort(attribute='name') %}
   {%- set plugins = hacs_components | selectattr('category', 'equalto', 'plugin') | rejectattr("installed","equalto",false) | sort(attribute='name') %}
-# Technical details
-
-Our Home Assistant install has approximately **{{ states|count }} total entities**,
-including **{{ states.sensor|count + states.binary_sensor|count }} sensors**. My YAML
-files contain {{ "{0:,.0f}".format( states("sensor.code_line_count")|int(default=0) ) }} lines of code.
-
 <details><summary>{{ integrations|count }} Custom integrations</summary>
 
 {%- for integration in integrations %}
@@ -291,13 +319,11 @@ I wish I could be more like this guy. He is just so darn positive and happy all 
 * YouTube: [DrZzs channel][drzzs-youtube]
 
 ## Frenck
-I just learned of Frenck recently, but he is a long time member of the community. I just refactored my code to be similar to his config ([as discussed in this video][frenck-youtube-config]).
+I refactored my yaml files to be similar to his config ([as discussed in this video][frenck-youtube-config]).
 * Github: [Frenck's Home Assistant configuration][frenck-github]
 * YouTube: [Frenck's channel][frenck-youtube]
 
 ---
-
-All of my configuration files are tested against the most stable version of home-assistant using [Github Actions](https://github.com/brianhanifin/Home-Assistant-Config/actions).
 
 [mobile-ui]: ./README-images/mushroom_home_202206.jpg
 [mobile-ui-full]: ./README-images/mushroom_home_202206_full.jpg
@@ -330,10 +356,12 @@ All of my configuration files are tested against the most stable version of home
 [discourse-shield]: https://img.shields.io/discourse/topics?color=46B4ED&label=community&logo=discourse&logoColor=46B4ED&server=https%3A%2F%2Fcommunity.home-assistant.io
 [discourse]: https://community.home-assistant.io/u/brianhanifin/summary
 
-[esphome-ble-hub]:https://esphome.io/components/esp32_ble_tracker.html
-[esphome-sonoff-basic]:https://esphome.io/devices/sonoff_basic.html
+[bluetooth-proxies]: https://esphome.github.io/bluetooth-proxies/
+[zigbee2mqtt]: https://www.zigbee2mqtt.io
+[zwavejs2mqtt]: https://zwave-js.github.io/zwavejs2mqtt
+[inovelli-blue-switch]: https://inovelli.com/products/blue-series-smart-2-1-switch-on-off-or-dimmer
 
-[hue-strip-guide]:https://char.gd/blog/2018/building-better-cheaper-philips-hue-led-strips
+[github-actions]: ./actions
 
 [carlo-blog]: https://www.vcloudinfo.com
 [carlo-github]: https://github.com/CCOSTAN/Home-AssistantConfig
