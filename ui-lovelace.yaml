@@ -1780,6 +1780,18 @@ views:
           action: toggle
         type: custom:mushroom-entity-card
       - collapsible_controls: true
+        entity: light.porch
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - collapsible_controls: true
+        entity: light.path_lights
+        icon: mdi:light-flood-down
+        show_brightness_control: true
+        show_color_control: false
+        type: custom:mushroom-light-card
+        use_light_color: false
+      - collapsible_controls: true
         entity: light.driveway_flood
         icon: mdi:light-flood-down
         name: Driveway
@@ -1809,18 +1821,6 @@ views:
               title: Driveway flood light
             service: browser_mod.popup
         type: custom:mushroom-light-card
-      - collapsible_controls: true
-        entity: light.path_lights
-        icon: mdi:light-flood-down
-        show_brightness_control: true
-        show_color_control: false
-        type: custom:mushroom-light-card
-        use_light_color: false
-      - collapsible_controls: true
-        entity: light.porch
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
       - entity: switch.adaptive_lighting_home_entry
         tap_action:
           action: toggle
@@ -2863,15 +2863,16 @@ views:
   - cards:
     - entities:
       - entity: sensor.last_message
-        icon: mdi:comment-text
+        icon: ''
         name: Last message
       - attribute: target
         entity: sensor.last_message
-        icon: mdi:account-voice
+        icon: mdi:cast-audio
         name: Announced on
         type: attribute
       - type: divider
       - entity: sensor.last_google
+        icon: ''
         name: Last active google device
         secondary_info: last-changed
       show_header_toggle: false

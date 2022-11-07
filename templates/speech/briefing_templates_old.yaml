@@ -254,11 +254,6 @@
     {{ pause() }}
   {%- endmacro -%}
 
-  {%- macro pepper_warning(person_arriving) -%}
-    Head's up Pepper. {{ person_arriving }} just got home!
-    {{ pause() }}
-  {%- endmacro -%}
-
   {%- macro plant_problems() -%}
     {%- if is_state_attr('sensor.plant_problems','water_number',0) -%}
       No plants need watering.
@@ -272,6 +267,10 @@
     {%- endif %}
     {{ pause() }}
   {%- endmacro -%}
+
+  {%- macro random_pet() %}
+    {{ ["Bailey","Parker"]|random }}
+  {%- endmacro %}
 
   {%- macro responsibilities() -%}
     {%- set trash_to_curb = responsibility_trash_to_curb() -%}
@@ -315,7 +314,7 @@
     "Welcome back home " ~ person,
     "Guess who is home?   " ~ person ~ " is!",
     person ~ " is now in the house.",
-    "Welcome Home " ~ person ~ ".  We have missed you.  I know Pepper sure did.",
+    "Welcome Home " ~ person ~ ".  We have missed you.  I know  " ~ random_pet() ~ "  sure did.",
     "Our home is now complete, Rest your head and relax your feet!   Welcome Back " ~ person,
     "Life is like a song, you’re back where you belong.   Welcome home " ~ person,
     "Hey there " ~ person ~ "   Welcome Home!",
@@ -325,7 +324,7 @@
     person ~ "!  You are home!",
     "I know a secret! "  ~ person ~ " is home!",
     "Hey "  ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
-    "Take note Pepper!   "  ~ person ~ " is home.",
+    "Take note []!   "  ~ person ~ " is home.",
     "I am sensing a disturbance in the force.  "  ~ person ~ " must be home!",
     "And the house becomes a home.   Welcome back " ~ person,
     person ~ " is now here.   Hash tag Welcome Home.",
@@ -348,11 +347,7 @@
     {%- endif -%}
 
     {%- if person_arriving is not undefined -%}
-      {%- if say_pepper_warning == "true" -%}
-        {{ pepper_warning(person_arriving) }}
-      {%- else -%}
-        {{ welcome_home(person_arriving) }}
-      {%- endif -%}
+      {{ welcome_home(person_arriving) }}
     {%- endif -%}
 
     {{ message }}
@@ -420,10 +415,6 @@
     {%- set say_greeting = truthify(say_greeting) -%}
   {%- endif -%}
 
-  {%- if say_greeting == "true" and say_dog_water is undefined -%}
-    {%- set say_dog_water = "true" -%}
-  {%- endif -%}
-
   {%- if say_inside_weather is undefined -%}
     {%- set say_inside_weather = "false" -%}
   {%- else -%}
@@ -448,13 +439,13 @@
     {%- set say_outside_weather = truthify(say_outside_weather) -%}
   {%- endif -%}
 
-  {%- if say_pepper_warning is undefined -%}
-    {%- set say_pepper_warning = "false" -%}
+  {%- if say_ " ~ random_pet() ~ " _warning is undefined -%}
+    {%- set say_ " ~ random_pet() ~ " _warning = "false" -%}
   {%- else -%}
-    {%- set say_pepper_warning = truthify(say_pepper_warning) -%}
+    {%- set say_ " ~ random_pet() ~ " _warning = truthify(say_ " ~ random_pet() ~ " _warning) -%}
   {%- endif -%}
 
-  {%- if say_pepper_warning == "true" -%}
+  {%- if say_ " ~ random_pet() ~ " _warning == "true" -%}
     {%- set say_greeting = "false" -%}
   {%- endif -%}
 

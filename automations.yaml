@@ -240,7 +240,19 @@
   - service: script.say
     data:
       media_player: media_player.google_kitchen
-      say_dark_outside: 'true'
+      message: '{{ [
+
+        ''It is about to get dark outside. I will turn on the lights now.'',
+
+        ''It is almost sunset.  Time to turn on the lights.'',
+
+        ''I will switch on the outdoor lights.'',
+
+        ''Time to turn on the front lights.''
+
+        ]|random }}
+
+        '
   - if:
     - condition: state
       entity_id: binary_sensor.work_day
@@ -1609,11 +1621,7 @@
       media_player: media_player.google_welcome
       person_arriving: '{{ trigger.entity_id.split(''.'')[1]|title|replace(''_'',
         '' '') }}'
-      say_greeting: 'true'
-      say_inside_weather: 'true'
-      say_outside_weather: 'true'
     alias: Welcome home announcement!
-    enabled: false
   mode: single
 - id: '1664922391248'
   alias: 'Presence: leaving costco'
@@ -2460,7 +2468,7 @@
     alias: When the door opens or the timer finishes.
   mode: single
 - id: '1665953966268'
-  alias: Kitchen motion
+  alias: Kitchen cabinet lights
   description: ''
   trigger:
   - platform: state

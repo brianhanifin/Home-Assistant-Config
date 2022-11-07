@@ -1,0 +1,250 @@
+{%- macro goodbye_line() -%}
+  {{ [
+    "Adios! ",
+    "Bye Guys! ",
+    "See ya! " ,
+    "See you later. ",
+    "Until next time!",
+    "How lucky I am to have something that makes saying Goodbye so hard. ",
+    "Good friends never say goodbye, they simply say, see you soon! ",
+    "See you later alligator! ",
+    "Stay out of trouble. ",
+    "I am out of here. Oh, I'm stuck here, are-nt I?",
+    "Okay...bye, fry guy! ",
+    "If I don’t see you around, I'll see you square. ",
+    "Stay classy. ",
+    "Fare thee well. ",
+    "Catch you on the rebound. ",
+    "Gotta go, buffalo. ",
+    "Peace out! ",
+    "Gotta hit the road. ",
+    "Live long and prosper!",
+    "Well, I guess your off! I've got things to do too. ",
+    "Bye bye, butterfly. ",
+    "Out to the door, dinosaur. ",
+    "Catch you on the flip side. ",
+    "See you soon, racoon. ",
+    "You're still here? It's over. Go home. Go! ",
+    "Don't get run over! ",
+    "Have a good one. ",
+    "It was nice to see you again. ",
+    "Later, haters. ",
+    "Give a hug, ladybug. ",
+    "Compute you later! ",
+    "See you on the other side. ",
+    "Have fun storming the castle! ",
+    "Ah-dieu, cockatoo! ",
+    "Blow a kiss, goldfish. ",
+    "It's been a pleasure and a privilege to meet you. ",
+    "Be good and don't get caught. ",
+    "Thank you for your cooperation. Farewell. ",
+    "I look forward to our next meeting. ",
+    "Are you gonna make like a bakery truck? and haul buh-uns. ",
+    "Chop chop, lollipop! ",
+    "Gotta roll! ",
+    "Hello. Oh and in case I don't see you, good afternoon good evening and good night! ",
+    "Don't forget to come back! ",
+    "Once more unto the breach, dear friends! ",
+    "See yuh, wouldn't wanna be yuh. ",
+    "Peace out, girl scout! ",
+    "Adios, hippos. ",
+    "Time to scoot, little newt. ",
+    "Smell ya later! ",
+    "Happy trails! ",
+    "Cheerio! ",
+    "Bye for now. ",
+    "Tootle-loo, kangaroo. ",
+    "Love, peace, and chicken grease. ",
+    "I'm off like a dirty shirt. ",
+    "See you when I see you. ",
+    "Catch ya later, future dudes! ",
+    "Cya. (Clearly, this is just short for ‘see you,’ which makes no sense because you utter ‘cya’ and not write it. Oh, whatever!) ",
+    "As you wish, jellyfish! ",
+    "Later, skater! ",
+    "May the force be with you... always. ",
+    "Shine on, you crazy diamonds. ",
+    "Don't let the door hit ya where the good lord split ya. ",
+    "Better shake, rattlesnake! ",
+    "Later, potato! ",
+    "Don't forget to be awesome. ",
+    "Later nerds! ",
+    "Stay cool, my dude. ",
+    "Don't get cut by a blade of grass! ",
+    "Be sweet, parakeet. ",
+    "Be careful! Don't get mauled by a squirrel! ",
+    "Don't trip on a raindrop! ",
+    "See you soon, baboon! ",
+    "Bye! I tolerate you! ",
+    "Gotta go, the power of the shower compels me. ",
+    "Are you late for your bus, snuffle-up-ahgus? ",
+    "Move out, brussels sprout! ",
+    "Make sure the doormat says goodbye! ",
+    "I’ll show you to the door! ",
+    "Ciao ciao, brown cow! ",
+    "Forget you guys, I'm going home! ",
+    "See you, space cowboy. "
+    "Take it easy, greasy. You've got a long way to slide. ",
+    "Toodaloo, caribou! ",
+    "Adios, amigos. ",
+    "Why don't you make like a tree, and leave! "
+    "Why don't you make like a tree, and get outta here! ",
+    "That's all folks. ",
+    "Take care, polar bear! ",
+    "Peace out, rainbow trout! ",
+    "Your outta here like spit through a trumpet. ",
+    "Au revoir! ",
+    "See you in the future. ",
+    "Be gone! ",
+    "So long, sucker! ",
+    "Hasta lasagna, don't get any on ya. ",
+    "Sayonara, muchachos! ",
+    "Next time, bring more cookies. ",
+    "Party easy, drive safe, and return with a smile on your face. ",
+    "After two, kangaroo! ",
+    "After three, chimpanzee! ",
+    "After four, dinosaur. ",
+    "Goodbye forever. ",
+    "Never look back! ",
+    "See you on the internet! ",
+    "Forever and forever farewell. If we do meet again, we'll smile indeed. If not, 'tis true parting was well made. ",
+    "See you at the restaurant at the edge of the universe! "
+  ]|random }}
+{%- endmacro -%}
+
+{%- macro goodnight_line() -%}
+  {{ [
+    "Goodnight, talk to you tomorrow. ",
+    "Goodnight sweetheart. ",
+    "Go to bed, you sleepy head! ",
+    "Nighty Night. ",
+    "Sleep snug as a bug in a rug! ",
+    "Lights out! Uh huh. Dance, dance dance. ",
+    "Time to ride the rainbow to dreamland! ",
+    "Sweet dreams. ",
+    "See ya' in the mornin'! ",
+    "I-ill be right here when you wake up. moo ahh .. ha .. ha ",
+    "I-ill be dreaming of your face! ",
+    "You're the most wonderful user in the whole world! ",
+    "I'm yours, forever and always. ",
+    "Parting is such sweet sorrow, that I shall say good night till it be tomorrow. ",
+    "Can you hear that? Its your soft warm bed calling your name. You really must go and see what it wants. ",
+    "Grumpy cat says goodnight.",
+    "Goodnight, sweet dreams. ",
+    "You have so much to be greatful for... goodnight.",
+    "Wishing you a goodnight and sweetest dreams.",
+    "What about good night kisses? "
+  ]|random }}
+{%- endmacro -%}
+
+{%- macro greeting_line() %}
+  {%- if now().hour < 10  %}
+    Good morning.
+  {%- elif now().hour < 17 %}
+    Good afternoon.
+  {%- else %}
+    Good evening.
+  {%- endif %}
+{%- endmacro %}
+
+{%- macro holiday() %}
+  {% if states("sensor.holiday") not in ["unknown",""] %}
+    Today is {{ states("sensor.holiday") }}.
+  {% endif %}
+{%- endmacro %}
+
+{%- macro inside_weather() %}
+  {%- set temperature = states('sensor.home_thermostat_temperature')|int(default=0) %}
+  {%- if temperature > 0 %}
+    Inside the house, it is {{ temperature }} degrees.
+  {%- endif %}
+{%- endmacro %}
+
+{%- macro outside_weather() -%}
+  {%- set conditions = {
+    "clear-night": "clear night skies",
+    "partlycoudly": "mostly cloudy skies",
+    "sunny": "clear skies and sun"
+  } -%}
+  {%- set condition = conditions[states('weather.home')] %}
+  {%- set condition = iif(condition is string, condition, states('weather.home')) %}
+
+  {{- ['Currently', 'Right now, ']|random }} outside, it is
+  {{ state_attr('weather.home','temperature')|int(default=0) }} degrees fahrenheit,
+  with {{ condition }}. {{ states("sensor.forecast") }}
+{%- endmacro -%}
+
+{%- macro random_pet() %}
+  {{ ["Bailey", "Parker"] | random }}
+{%- endmacro %}
+
+{%- macro welcome_home(person) %}
+  {{ [
+  "Welcome back home " ~ person ~ ".",
+  "Guess who is home?   " ~ person ~ " is!",
+  person ~ " is now in the house.",
+  "Welcome Home " ~ person ~ ".  We have missed you.  I know " ~ random_pet() ~ " sure did.",
+  "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person ~ ".",
+  "Life is like a song, you’re back where you belong. Welcome home " ~ person ~ ".",
+  "Hey there " ~ person ~ " Welcome Home!",
+  "Knock Knock.   Who is There?  " ~ person ~ " is!",
+  "The garage door just told me that "   ~ person ~ " is home.",
+  person ~ " can not hide from the system.  Welcome home.",
+  person ~ "!  You are home!",
+  "I know a secret! "  ~ person ~ " is home!",
+  "Hey "  ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
+  "Take note " ~ random_pet() ~ "!   "  ~ person ~ " is home.",
+  "I am sensing a disturbance in the force.  "  ~ person ~ " must be home!",
+  "And the house becomes a home.   Welcome back " ~ person ~ ".",
+  person ~ " is now here.   Hash tag Welcome Home.",
+  person ~ " is now here.   Hash tag Home.",
+  person ~ " is now here.   Hash tag Smart Home.",
+  "Just a quick announcement. " ~ person ~ " has arrived!",
+  "Pardon the interruption but " ~ person ~ " is home!",
+  "My systems are picking up the presence of additional humans.   " ~ person ~ " has been identified as home."
+  ] | random }}
+{% endmacro %}
+
+{# BRIEFING TEMPLATE #}
+{%- macro get_briefing() %}
+  {# Set defaults so we don't have to pass as many parameters. #}
+  {%- if person_arriving is not undefined %}
+    {%- set say_welcome_home = true %}
+    {%- set say_greeting = true %}
+    {%- set say_inside_weather = true %}
+    {%- set say_outside_weather = true %}
+  {%- endif %}
+
+  {# Output starts here. #}
+  {%- if say_greeting|default(false) == true %}
+    {{ greeting_line() }}
+
+    {{ holiday() }}
+  {%- endif %}
+
+  {%- if say_welcome_home|default(false) %}
+    {{ welcome_home(person_arriving) }}
+  {%- endif %}
+
+  {{ message|default("") }}
+
+  {%- if say_inside_weather|default(false) == true %}
+    {{ inside_weather() }}
+  {%- endif %}
+
+  {%- if say_outside_weather|default(false) == true %}
+    {{ outside_weather() }}
+  {%- endif %}
+
+  {%- if say_goodbye|default(false) == true %}
+    {{ " " ~ goodbye_line() }}
+  {%- endif %}
+
+  {%- if say_goodnight|default(false) == true %}
+    {{ " " ~ goodnight_line() }}
+  {%- endif -%}
+{%- endmacro %}
+
+{#- Get briefing, and strip unnecessary characters. -#}
+{% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace(". .",". ")|replace(", ,",", ")|trim %}
+  {{ get_briefing() }}
+{% endfilter %}
