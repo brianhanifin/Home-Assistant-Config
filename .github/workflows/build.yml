@@ -19,11 +19,12 @@ jobs:
       - name: 🙈 Ignore integrations + entities which only work on my home network.
         run:
           rm -f ./integration_entities/sensors/datetime/date_next_*.yaml;
+          rm -f ./integration_entities/sensors/weather/sun2.yaml;
+          rm -f ./integration_entities/templates/sensors/weather/outdoor_illuminance.yaml;
           rm -f ./integrations/*.yaml;
           rm -rf ./integration_entities/cameras;
           rm -rf ./integration_entities/notify/platforms;
           rm -rf ./integration_entities/sensors/integrations;
-          rm -f ./integration_entities/templates/sensors/weather/outdoor_illuminance.yaml;
       - name: 🔖 Home Assistant Version.
         uses: "docker://homeassistant/home-assistant:stable"
         with:
