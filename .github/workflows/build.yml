@@ -1,45 +1,40 @@
 ---
 ## Source: https://github.com/frenck/home-assistant-config/tree/master/.github/workflows
 name: build
+
 on:
-  - push
+  push:
+
 jobs:
   home_assistant:
-    name: "Home Assistant Core ${{ matrix.version }} Configuration Check"
+    name: "Home Assistant Core ${{ matrix.version }} configuration check."
     runs-on: ubuntu-latest
     strategy:
       matrix:
         version: ["stable", "beta"]
         #version: ["stable", "beta", "dev"]
     steps:
-      - name: ⤵️ Check out configuration from GitHub
-        uses: actions/checkout@v3
-      # - name: "Disable troublesome default integrations (as they do not run on GitHub)"
-      #   run:  rm -f ./integrations/home_assistant/stream.yaml;
-      - name: "🙈 Ignore custom components (as they do not exist on GitHub)"
-        run: rm -f ./integrations/*.yaml;
-          rm -rf ./integrations/devices;
+      - name: ⤵️ Check out configuration from GitHub.
+        uses: actions/checkout@v3.1.0
+      # - name: 🙈 Ignore custom components (as they do not exist on GitHub).
+      #   run: rm -f ./integrations/*.yaml;
+      - name: 🙈 Ignore entities require only work on my home network.
+        run:
           rm -rf ./integration_entities/cameras;
-          rm -rf ./integration_entities/image_processing;
           rm -rf ./integration_entities/notify/platforms;
-          rm -rf ./integration_entities/sensors/climate;
-          rm -rf ./integration_entities/sensors/integrations/;
-          rm -rf ./integration_entities/sensors/weather;
-          rm -rf ./integration_entities/templates/sensors/climate;
-          rm -f ./integration_entities/templates/sensors/energy/energy_use_current.yaml;
+          rm -rf ./integration_entities/sensors/integrations;
           rm -f ./integration_entities/templates/sensors/weather/outdoor_illuminance.yaml;
-      - name: "🙈 Ignore rest sensors (as their urls are scrambled in secrets)"
-        run: rm -rf ./integration_entities/sensors/updates;
-          rm -rf ./integration_entities/sensors/datetime;
-      #    rm ./integration_entities/sensors/system/tablet_kitchen.yaml;
-      - name: 🔖 Home Assistant Version
+      # - name: "🙈 Ignore rest sensors (as their urls are scrambled in secrets)"
+      #   run: rm -rf ./integration_entities/sensors/updates;
+      #     rm -rf ./integration_entities/sensors/datetime;
+      - name: 🔖 Home Assistant Version.
         uses: "docker://homeassistant/home-assistant:stable"
         with:
           args: |
             python -m homeassistant --version
-      - name: 🚀 Run Home Assistant Configuration Check
+      - name: 🚀 Run Home Assistant configuration check.
         uses: frenck/action-home-assistant@v1.3
         with:
-          path: "./"
+          path: "."
           secrets: ./tests/fake_secrets.yaml
           version: "${{ matrix.version }}"
