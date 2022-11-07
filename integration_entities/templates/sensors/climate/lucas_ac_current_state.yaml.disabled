@@ -1,0 +1,25 @@
+---
+# Extrapolate fan speed and modes using power usage.
+# Max Power Usage: 520W
+# Fan Speeds:
+#   F1      40 - 46W
+#   F2      47 - 52W
+#   F3      53 - 60W
+# Modes:
+#   Off      <  10W
+#   Fan      < 100W
+#   A/C      > 100W
+unique_id: lucas_ac_current_state
+name: Lucas AC Current State
+icon: mdi:air-conditioner
+state: |
+  {%- set power = states("sensor.lucas_ac_power")|int(default=0) %}
+  {%- if power > 100 %}
+    Cooling
+  {%- elif power < 100 and power > 10 %}
+    Fan
+  {%- elif power > 2 %}
+    Idle
+  {%- else %}
+    Off
+  {% endif %}
