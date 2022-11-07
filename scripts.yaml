@@ -813,6 +813,7 @@ cast:
     then:
     - delay:
         seconds: '{{ dismiss_after }}'
+      alias: Delay for the specified number of seconds.
     - alias: Stop the displays.
       service: media_player.turn_off
       target:
@@ -1121,42 +1122,6 @@ notify_audio:
           max: 100
           step: 5
   mode: single
-notify_audio_disable_cast_sound:
-  alias: Notify audio disable cast sound
-  mode: parallel
-  sequence:
-  - alias: When the Google speaker is off.
-    if:
-    - condition: template
-      value_template: '{{ is_state(speaker, "off") }}
-
-        '
-    then:
-    - service: media_player.volume_mute
-      target:
-        entity_id: '{{ speaker }}'
-      data:
-        is_volume_muted: true
-      alias: Mute the speaker.
-    - service: media_player.turn_on
-      target:
-        entity_id: '{{ speaker }}'
-      alias: Turn on the speaker.
-    - wait_template: '{{ is_state(speaker, "idle") }}'
-      alias: Wait for the speaker to finish the starting cast sound.
-    - service: media_player.volume_mute
-      target:
-        entity_id: '{{ speaker }}'
-      data:
-        is_volume_muted: false
-      alias: Restore speaker's sound volume.
-  fields:
-    speaker:
-      description: Select the speaker.
-      selector:
-        entity:
-          integration: cast
-  max: 10
 notify_pc:
   alias: Notify PC
   sequence:
@@ -1826,12 +1791,11 @@ say:
         \ \"Pardon the interruption but \" ~ person ~ \" is home!\",\n  \"My systems
         are picking up the presence of additional humans.   \" ~ person ~ \" has been
         identified as home.\"\n  ] | random }}\n{% endmacro %}\n{%- macro get_briefing()
-        %}\n  {%- if person_arriving is not undefined %}\n    {%- set say_welcome_home
-        = true %}\n    {%- set say_greeting = true %}\n    {%- set say_inside_weather
-        = true %}\n    {%- set say_outside_weather = true %}\n  {%- endif %}\n\n  {#
-        Output starts here. #}\n  {%- if say_greeting|default(false) == true %}\n
-        \   {{ greeting_line() }}\n\n    {{ holiday() }}\n  {%- endif %}\n\n  {%-
-        if say_welcome_home|default(false) %}\n    {{ welcome_home(person_arriving)
+        %}\n  {%- if person_arriving is not undefined %}\n    {%- set say_greeting
+        = true %}\n    {%- set say_inside_weather = true %}\n    {%- set say_outside_weather
+        = true %}\n  {%- endif %}\n\n  {# Output starts here. #}\n  {%- if say_greeting|default(false)
+        == true %}\n    {{ greeting_line() }}\n\n    {{ holiday() }}\n  {%- endif
+        %}\n\n  {%- if person_arriving is not undefined %}\n    {{ welcome_home(person_arriving)
         }}\n  {%- endif %}\n\n  {{ message|default(\"\") }}\n\n  {%- if say_inside_weather|default(false)
         == true %}\n    {{ inside_weather() }}\n  {%- endif %}\n\n  {%- if say_outside_weather|default(false)
         == true %}\n    {{ outside_weather() }}\n  {%- endif %}\n\n  {%- if say_goodbye|default(false)
