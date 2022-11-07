@@ -5,8 +5,8 @@ icon: mdi:home-lock
 device_class: problem
 delay_on: "00:02:00"
 state: |
-  {%- set outside_temp = states("sensor.outdoor_temperature")|float(default=0) %}
-  {%- set inside_temp = states("sensor.home_thermostat_temperature")|float(default=0) %}
+  {%- set outside_temp = states("sensor.outdoor_temperature")|round(1,default=0) %}
+  {%- set inside_temp = states("sensor.home_thermostat_temperature")|round(1,default=0) %}
   {%- set home_open = is_state("binary_sensor.house_windows", "on") or
                       is_state("binary_sensor.sliding_door", "on") %}
   {%- set during_announcement_hours =
@@ -19,6 +19,6 @@ state: |
   }}
 attributes:
   notification_enabled: '{{ is_state("input_boolean.warmer_outside_notification","on") }}'
-  warmer_outside: '{{ states("sensor.outdoor_temperature")|float(default=0) > states("sensor.home_thermostat_temperature")|float(default=0) }}'
+  warmer_outside: '{{ states("sensor.outdoor_temperature")|round(1,default=0) > states("sensor.home_thermostat_temperature")|round(1,default=0) }}'
   home_open: '{{ is_state("binary_sensor.house_windows", "on") or is_state("binary_sensor.sliding_door", "on") }}'
   during_announcement_hours: '{{ states("input_number.quiet_hour_end")|int(default=6) <= now().hour < 17 }}'

@@ -5,8 +5,8 @@ icon: mdi:home-lock-open
 device_class: problem
 delay_on: "00:02:00"
 state: |
-  {%- set outside_temp = states("sensor.outdoor_temperature")|float(default=0) %}
-  {%- set inside_temp = states("sensor.home_thermostat_temperature")|float(default=0) %}
+  {%- set outside_temp = states("sensor.outdoor_temperature")|round(1,default=0) %}
+  {%- set inside_temp = states("sensor.home_thermostat_temperature")|round(1,default=0) %}
   {%- set outside_humidity = states("sensor.outdoor_humidity")|round(default=0) %}
   {%- set indoor_humidity = states("sensor.home_thermostat_humidity")|round(default=0) %}
   {%- set home_closed = is_state("binary_sensor.house_windows", "off") and
@@ -22,7 +22,7 @@ state: |
   }}
 attributes:
   notification_enabled: '{{ is_state("input_boolean.cooler_outside_notification","on") }}'
-  temp_diff: '{{ states("sensor.outdoor_temperature")|float(default=0) - states("sensor.home_thermostat_temperature")|float(default=0) }}'
+  temp_diff: '{{ states("sensor.outdoor_temperature")|round(1,default=0) - states("sensor.home_thermostat_temperature")|round(1,default=0) }}'
   humid_diff: '{{ states("sensor.outdoor_humidity")|round(default=0) - states("sensor.home_thermostat_humidity")|round(default=0) }}'
   home_closed: '{{ is_state("binary_sensor.house_windows", "off") and is_state("binary_sensor.sliding_door", "off") }}'
   during_announcement_hours: '{{ 14 <= now().hour < states("input_number.quiet_hour_start") }}'

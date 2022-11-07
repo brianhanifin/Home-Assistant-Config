@@ -4,4 +4,12 @@ name: Bedroom temperature
 device_class: temperature
 state_class: measurement
 unit_of_measurement: "°F"
-state: '{{ states("sensor.bedroom_temperature_raw")|round(1,default=0) }}'
+state: |
+  {%- set temp = states("sensor.bedroom_temperature_raw")|round(1,default=0) %}
+  {%- if temp == 0 %}
+    {%- set temp = states("sensor.broadlink_bedroom_temperature")|round(1,default=0) %}
+  {%- endif %}
+  {%- if temp == 0 %}
+    {%- set temp = states("sensor.bedroom_thermostat_temperature")|round(1,default=0) %}
+  {%- endif %}
+  {{ temp }}
