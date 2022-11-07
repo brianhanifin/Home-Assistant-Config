@@ -8,4 +8,5 @@ state: |
   {{ not is_state("sensor.network_closet_bulb_node_status","alive")
     and is_state("automation.startup","off") }}
 attributes:
-  node_monitored: 'sensor.network_closet_bulb_node_status'
+  device_monitored: "sensor.network_closet_bulb_node_status"
+  device_status: '{{ states("sensor.network_closet_bulb_node_status") }}'

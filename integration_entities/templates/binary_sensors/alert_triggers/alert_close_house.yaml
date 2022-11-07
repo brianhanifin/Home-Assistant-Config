@@ -9,10 +9,16 @@ state: |
   {%- set inside_temp = states("sensor.home_thermostat_temperature")|float(default=0) %}
   {%- set home_open = is_state("binary_sensor.house_windows", "on") or
                       is_state("binary_sensor.sliding_door", "on") %}
-  {%- set current_hour = now().hour %}
+  {%- set during_announcement_hours =
+        states("input_number.quiet_hour_end")|int(default=6) <= now().hour < 17 %}
   {{
     is_state("input_boolean.warmer_outside_notification","on")
     and outside_temp > inside_temp
     and home_open
-    and states("input_number.quiet_hour_start")|int(default=21) <= current_hour < 17
+    and during_announcement_hours
   }}
+attributes:
+  notification_enabled: '{{ is_state("input_boolean.warmer_outside_notification","on") }}'
+  warmer_outside: '{{ states("sensor.outdoor_temperature")|float(default=0) > states("sensor.home_thermostat_temperature")|float(default=0) }}'
+  home_open: '{{ is_state("binary_sensor.house_windows", "on") or is_state("binary_sensor.sliding_door", "on") }}'
+  during_announcement_hours: '{{ states("input_number.quiet_hour_end")|int(default=6) <= now().hour < 17 }}'

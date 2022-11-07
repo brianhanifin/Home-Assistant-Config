@@ -5,6 +5,14 @@ icon: mdi:washing-machine-alert
 device_class: problem
 state: |
   {{
-    is_state('input_select.laundry_status', 'Please transfer to dryer') or
-    is_state('input_select.laundry_status', 'Waiting for running dryer')
+    is_state("binary_sensor.noncritical_alert_quiet_time", "off") and
+    (
+      is_state("input_select.laundry_status", "Please transfer to dryer") or
+      is_state("input_select.laundry_status", "Waiting for running dryer")
+    )
   }}
+
+attributes:
+  quiet_time: '{{ is_state("binary_sensor.noncritical_alert_quiet_time", "on") }}'
+  "Please transfer to dryer": '{{ is_state("input_select.laundry_status", "Please transfer to dryer") }}'
+  "Waiting for running dryer": '{{ is_state("input_select.laundry_status", "Waiting for running dryer") }}'

@@ -7,3 +7,6 @@ delay_on: "00:05:00"
 state: |
   {{ not is_state("device_tracker.wirelessap2","home")
     and is_state("automation.startup","off") }}
+attributes:
+  device_monitored: "device_tracker.wirelessap2"
+  device_status: '{{ states("device_tracker.wirelessap2") }}'
