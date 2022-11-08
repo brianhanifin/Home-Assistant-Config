@@ -759,6 +759,19 @@ vacuum_update:
 cast:
   alias: Cast
   sequence:
+  - if:
+    - condition: state
+      entity_id: automation.startup
+      state: 'on'
+      alias: When startup is on.
+    then:
+    - wait_for_trigger:
+      - platform: state
+        entity_id:
+        - automation.startup
+        from: 'on'
+        to: 'off'
+    alias: Should this try to run during startup... wait for startup to complete.
   - variables:
       entities: "{%- set data = namespace(displays=\"\") %}\n{%- if displays is defined
         %}\n  {%- if displays is not string %}\n    {%- for display in displays %}\n
@@ -810,6 +823,7 @@ cast:
     if:
     - condition: template
       value_template: '{{ dismiss_after is defined }}'
+      alias: When dismiss_after is set.
     then:
     - delay:
         seconds: '{{ dismiss_after }}'
