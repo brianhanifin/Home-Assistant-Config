@@ -3,4 +3,5 @@ unique_id: last_google
 name: Last Google
 icon: mdi:cast-audio-variant
 state: |
-  {{ expand("media_player.google_speakers") | sort(attribute='last_updated', reverse=true) | map(attribute='entity_id') | list | first }}
+  {%- set recent = expand("media_player.google_speakers") | sort(attribute='last_updated', reverse=true) | map(attribute='entity_id') | list %}
+  {{ iif(recent|count > 0, recent|first, "") }}

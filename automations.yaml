@@ -97,11 +97,19 @@
       color: Teal
   - service: watchman.report
     data: {}
+  - service: logger.set_default_level
+    data:
+      level: warning
   - service: script.notify_web
     data:
       message: Startup automation complete.
       type: success
       duration: 60
+  - service: logbook.log
+    data:
+      message: ' complete'
+      entity_id: automation.startup
+      name: Startup automation
   - service: automation.turn_off
     data: {}
     target:
@@ -127,14 +135,16 @@
     event_type: automation_reloaded
   condition:
   - condition: template
-    value_template: '{%- set uptime_minutes = as_timestamp(now()) - as_timestamp(states("sensor.last_restart"))|float(default=0)
+    value_template: '{%- set uptime_minutes = (now()|as_timestamp - states("sensor.last_restart")|as_timestamp)|round(0,default=0)
       / 60 %}
 
       {{ uptime_minutes > 5 }}'
+    alias: Continue if it has been more than 5 minutes since the last restart.
   action:
   - service: automation.turn_off
     target:
       entity_id: automation.startup
+    data: {}
   mode: single
 - id: '1624556633877'
   alias: Safety alert garage door obstruction detected
@@ -1469,18 +1479,21 @@
   trigger:
   - platform: state
     entity_id:
-    - switch.network_blackpc
-    - switch.network_bluepc
-    - switch.network_greenpc
-    - switch.network_redpc
-    from: 'off'
-    to: 'on'
+    - switch.gaming_pc_blackpc
+    - switch.gaming_pc_bluepc
+    - switch.gaming_pc_greenpc
+    - switch.gaming_pc_redpc
     for:
       hours: 0
       minutes: 0
-      seconds: 30
+      seconds: 0
   condition: []
   action:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
   - service: switch.turn_off
     target:
       entity_id: switch.docker_unifi
@@ -4158,4 +4171,17 @@
       data: {}
     alias: Restore adaptive lighting automated control.
     enabled: true
+  mode: single
+- id: '1667930899408'
+  alias: Startup event testing
+  description: ''
+  trigger:
+  - platform: homeassistant
+    event: start
+  condition: []
+  action:
+  - service: script.notify_web
+    data:
+      type: warning
+      message: homeassistant event:start
   mode: single
