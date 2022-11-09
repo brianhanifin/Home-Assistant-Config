@@ -5,43 +5,33 @@
 # Possible log severity levels, listed in order from most severe
 # to least severe, are:
 #
-# * critical
-# * fatal
-# * error
-# * warning
-# * warn
-# * info
-# * debug
-# * notset
+#   critical, fatal, error, warning, warn, info, debug
 #
-# https://www.home-assistant.io/components/logger/
+# https://www.home-assistant.io/integrations/logger
 #
 logger:
-  #default: error
-  default: warn
-  #default: info
-  filters:
-    homeassistant.components.ipp:
-      - "Config entry 'IPP' for ipp integration not ready yet"
-    homeassistant.components.octoprint:
-      - "Config entry 'Octoprint - Prusa' for octoprint integration not ready yet"
+  # Will be changed to warn in the startup automation. This will minimize
+  # warnings during startup due to unavailable entities.
+  default: critical
+
   logs:
-    #aiohomekit: debug
-
-    custom_components.smartthinq_sensors: critical
-
     #homeassistant.config_entries: critical
     homeassistant.components.ipp: critical
     homeassistant.components.mqtt: critical
     homeassistant.components.octoprint: critical
     homeassistant.components.stream: critical
+    custom_components.smartthinq_sensors: critical
 
-    #custom_components.readme: debug
-    #homeassistant.components.readme: debug
+    #homeassistant.components.unifi: debug
+
+    #aiohomekit: debug
 
     #custom_components.wyzeapi: debug
     #wyzeapy: debug
 
-    # Pyscript debugging
-    # homeassistant.components.pyscript: info
-    # homeassistant.components.pyscript.file: info
+  filters:
+    homeassistant.components.ipp:
+      - "Config entry 'IPP' for ipp integration not ready yet"
+    homeassistant.components.octoprint:
+      - "Config entry 'Octoprint - Prusa' for octoprint integration not ready yet"
+

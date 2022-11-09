@@ -4,11 +4,12 @@ name: Unknown count
 icon: mdi:help-rhombus
 state_class: total
 state: |
-  {%- set ignore_list = [
-    "sensor.last_message", "sensor.accuweather_ozone_0d",
-    "select.family_room_occupancy_reset_nopresence_status"
-  ] %}
-  {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
+  {#%- set ignore_list = [
+
+  ] %#}
+  {#%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %#}
+  {%- set entities = states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list %}
+
   {%- set selected = namespace (entities="") %}
   {%- if entities|count > 0 %}
     {%- for entity in entities if not is_device_attr(entity, "name", "BLACKPC")
@@ -24,11 +25,12 @@ state: |
   {%- endif %}
 attributes:
   entities: |
-    {%- set ignore_list = [
-      "sensor.last_message", "sensor.accuweather_ozone_0d",
-      "select.family_room_occupancy_reset_nopresence_status"
-    ] %}
-    {%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %}
+    {#%- set ignore_list = [
+
+    ] %#}
+    {#%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %#}
+    {%- set entities = states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list %}
+
     {%- set selected = namespace (entities="") %}
     {%- if entities|count > 0 %}
       {%- for entity in entities if not is_device_attr(entity, "name", "BLACKPC")

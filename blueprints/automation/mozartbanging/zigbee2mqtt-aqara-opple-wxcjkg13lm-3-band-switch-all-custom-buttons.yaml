@@ -162,7 +162,32 @@ trigger:
   attribute: action
 condition:
   condition: template
-  value_template: '{{ trigger.to_state.attributes.action in ( "single","double","triple","quadruple","hold","release","shake","single_left","double_left","triple_left","hold_left","release_left","single_right","double_right","triple_right","hold_right","release_right","single_center","double_center","triple_center","hold_center","release_center","single_both","double_both","triple_both","hold_both","release_both") }}'
+  value_template: '{{ trigger.to_state.attributes.action in (
+      "button_1_single",
+      "button_2_single",
+      "button_3_single",
+      "button_4_single",
+      "button_5_single",
+      "button_6_single",
+      "button_1_double",
+      "button_2_double",
+      "button_3_double",
+      "button_4_double",
+      "button_5_double",
+      "button_6_double",
+      "button_1_triple",
+      "button_2_triple",
+      "button_3_triple",
+      "button_4_triple",
+      "button_5_triple",
+      "button_6_triple",
+      "button_1_hold",
+      "button_2_hold",
+      "button_3_hold",
+      "button_4_hold",
+      "button_5_hold",
+      "button_6_hold"
+    ) }}'
 action:
 - variables:
     command: '{{ trigger.to_state.state }}'
