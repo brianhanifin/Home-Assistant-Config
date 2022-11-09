@@ -183,7 +183,9 @@
 
     2. Update watchman report.
 
-    3. Ensure bedroom do not disturb is enabled.'
+    3. Ensure bedroom do not disturb is enabled.
+
+    4. Disable "Keep outdoor lights off" toggle.'
   trigger:
   - platform: sun
     event: sunrise
@@ -209,6 +211,10 @@
       data: {}
       target:
         entity_id: switch.google_bedroom_do_not_disturb
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.keep_outdoor_lights_off
   mode: single
   variables:
     switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%- for entity
@@ -337,16 +343,16 @@
           entity_id: light.bedroom_east
       button_1_double:
       - service: light.toggle
-        target:
-          device_id: ca15d133b0892224f12740ec003bf25c
         data:
           transition: 0
+        target:
+          entity_id: light.bedroom_table_lamp
       button_2_double:
       - service: light.toggle
         data:
           transition: 0
         target:
-          device_id: ca15d133b0892224f12740ec003bf25c
+          entity_id: light.bedroom_table_lamp
       button_3_single:
       - choose:
         - conditions:
@@ -2005,6 +2011,11 @@
     to: 'on'
     id: front_door
     alias: When a person is detected approaching the front door.
+    enabled: false
+  condition:
+  - condition: state
+    entity_id: input_boolean.keep_outdoor_lights_off
+    state: 'off'
   action:
   - variables:
       last_opened: '{{ states.binary_sensor.front_door.last_changed | as_timestamp
@@ -2030,6 +2041,9 @@
           entity_id: sensor.outdoor_illuminance_educated_guessor
           below: 2000
           alias: Confirm Outdoor Illuminance Educated Guessor is below 2,000.
+        - condition: state
+          entity_id: input_boolean.keep_outdoor_lights_off
+          state: 'off'
       then:
       - service: scene.create
         data:
@@ -2037,6 +2051,7 @@
           snapshot_entities:
           - light.porch
         alias: Store current light settings.
+        enabled: false
       - service: select.select_option
         data:
           option: Manual
@@ -2069,7 +2084,8 @@
             entity_id: light.path_lights
           alias: Turn on the front door path and entry lights.
         alias: Set lights to full + start countdown timer.
-      alias: When a person is detected + it is dark outside.
+      alias: When a person is detected, it is dark outside, + "Keep outdoor lights
+        off" is disabled..
     - if:
       - condition: trigger
         id: front_door
@@ -2244,9 +2260,14 @@
             tag: person_detected
         alias: Clear the person_detected mobile notification.
       - if:
-        - condition: numeric_state
-          entity_id: sensor.outdoor_illuminance_educated_guessor
-          below: 2000
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: input_boolean.keep_outdoor_lights_off
+            state: 'off'
+          - condition: numeric_state
+            entity_id: sensor.outdoor_illuminance_educated_guessor
+            below: 2500
         then:
         - alias: Store the current state of the path, porch, + entry lights.
           service: scene.create
@@ -2256,6 +2277,7 @@
             - light.home_entry
             - light.path_lights
             - light.porch
+          enabled: false
         - alias: Full brightness!
           service: light.turn_on
           target:
@@ -2265,7 +2287,7 @@
             - light.porch
           data:
             brightness: 255
-        alias: 'When it is dark outside. '
+        alias: When it is dark outside and "Keep outdoor locked" is disabled.
       - alias: Update Light Switch LED Status Color.
         service: script.turn_on
         target:
@@ -2275,67 +2297,6 @@
             color: pink
             state_entity: lock.front_door
             state: unlocked
-            entity_id: light.family_room
-    - conditions:
-      - condition: trigger
-        id: locked
-      sequence:
-      - alias: Cancel and reset the unlocked timer.
-        service: timer.cancel
-        target:
-          entity_id: timer.front_door_unlocked
-        data: {}
-      - alias: Disable Leave Unlocked mode.
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.leave_unlocked
-        data: {}
-      - alias: Clear the person_detected mobile notification.
-        service: script.turn_on
-        target:
-          entity_id: script.notify_mobile_clear
-        data:
-          variables:
-            who: brian
-            tag: KEEP_UNLOCKED
-      - if:
-        - condition: numeric_state
-          entity_id: sensor.outdoor_illuminance_educated_guessor
-          below: 2000
-        then:
-        - alias: Restore the previous state of the porch + entry lights.
-          service: scene.turn_on
-          target:
-            entity_id: scene.front_door_locked_snapshot
-          data:
-            transition: 5
-        - delay:
-            seconds: 10
-        - if:
-          - condition: state
-            entity_id: switch.adaptive_lighting_home_entry
-            state: 'on'
-          then:
-          - service: switch.turn_off
-            target:
-              entity_id: switch.adaptive_lighting_home_entry
-            alias: Turn off adaptive lighting control temporarily.
-            data: {}
-          - delay:
-              seconds: 1
-          - service: switch.turn_on
-            target:
-              entity_id: switch.adaptive_lighting_home_entry
-            alias: Turn adaptive lighting control back on.
-            data: {}
-          alias: Restore adaptive lighting automated control.
-        alias: Skip turning on the entry lights in the middle of the day.
-      - alias: Update Light Switch LED Status Color.
-        service: script.turn_on
-        target:
-          entity_id: script.inovelli_led_off
-        data:
-          variables:
             entity_id: light.family_room
     alias: When the door locks or unlocks.
   - choose:
@@ -4053,10 +4014,16 @@
     id: timer_finished
     alias: When person detection timer finishes.
   condition:
-  - condition: numeric_state
-    entity_id: sensor.outdoor_illuminance_educated_guessor
-    below: 2000
-    alias: Only restore the lights when when it is night.
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.keep_outdoor_lights_off
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.outdoor_illuminance_educated_guessor
+      below: 2000
+      alias: Only restore the lights when when it is night.
+    alias: When it is dark outside and "Keep outdoor locked" is disabled.
   action:
   - if:
     - condition: and
@@ -4091,15 +4058,18 @@
       target:
         entity_id: scene.front_door_presence_snapshot
       alias: Activate the scene to restore the lights previous states.
+      enabled: false
     - service: select.select_option
       data:
         option: Auto
       target:
         entity_id: select.driveway_flood_mode
+      alias: Set the flood back to Auto.
     - service: light.turn_off
       data: {}
       target:
         entity_id: light.driveway_flood_accent
+      alias: Turn off the flood accent light.
     - if:
       - condition: state
         entity_id: switch.adaptive_lighting_home_entry
@@ -4136,52 +4106,69 @@
     target:
       entity_id: input_boolean.leave_unlocked
     alias: Turn off LEAVE UNLOCKED.
+  - if:
+    - condition: state
+      entity_id: input_boolean.keep_outdoor_lights_off
+      state: 'off'
+    then:
+    - service: select.select_option
+      data:
+        option: Auto
+      target:
+        entity_id: select.driveway_flood_mode
+      alias: Restore driveway flood light to “Auto”.
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.driveway_flood_accent
+      alias: Turn off the flood’s accent ring so the camera can have a better view.
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 10
+        milliseconds: 0
+    - if:
+      - condition: state
+        entity_id: switch.adaptive_lighting_home_entry
+        state: 'on'
+      then:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.adaptive_lighting_home_entry
+        alias: Turn off adaptive lighting control temporarily.
+        data: {}
+      - delay:
+          seconds: 1
+      - service: switch.turn_on
+        target:
+          entity_id: switch.adaptive_lighting_home_entry
+        alias: Turn adaptive lighting control back on.
+        data: {}
+      alias: Restore adaptive lighting automated control.
+      enabled: true
+  mode: single
+- id: '1668022409769'
+  alias: Keep outdoor lights off.
+  description: Immediately turn off all outdoor lights when this is triggered.
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.keep_outdoor_lights_off
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
   - service: select.select_option
     data:
-      option: Auto
+      option: Manual
     target:
       entity_id: select.driveway_flood_mode
-    alias: Restore driveway flood light to “Auto”.
   - service: light.turn_off
     data: {}
     target:
-      entity_id: light.driveway_flood_accent
-    alias: Turn off the flood’s accent ring so the camera can have a better view.
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 10
-      milliseconds: 0
-  - if:
-    - condition: state
-      entity_id: switch.adaptive_lighting_home_entry
-      state: 'on'
-    then:
-    - service: switch.turn_off
-      target:
-        entity_id: switch.adaptive_lighting_home_entry
-      alias: Turn off adaptive lighting control temporarily.
-      data: {}
-    - delay:
-        seconds: 1
-    - service: switch.turn_on
-      target:
-        entity_id: switch.adaptive_lighting_home_entry
-      alias: Turn adaptive lighting control back on.
-      data: {}
-    alias: Restore adaptive lighting automated control.
-    enabled: true
-  mode: single
-- id: '1667930899408'
-  alias: Startup event testing
-  description: ''
-  trigger:
-  - platform: homeassistant
-    event: start
-  condition: []
-  action:
-  - service: script.notify_web
-    data:
-      type: warning
-      message: homeassistant event:start
+      entity_id:
+      - light.porch
+      - light.path_lights
+      - light.driveway_flood_accent
+      - light.driveway_flood
   mode: single
