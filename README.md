@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,437** | 1,261 | 37 | 96 | 58 |
+| **41,338** | 1,257 | 37 | 96 | 58 |
 
 # Index
 
@@ -238,12 +238,12 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1261 total entities**,
-including **610 sensors**. My YAML
-files contain 41,437 lines of code.
+Our Home Assistant install has approximately **1257 total entities**,
+including **609 sensors**. My YAML
+files contain 41,338 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>24 Custom integrations</summary>
 
-## [Adaptive Lighting v1.1.0](https://github.com/basnijholt/adaptive-lighting#readme)
+## [Adaptive Lighting v1.2.0](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra).
 
 ## [Anniversaries v4.5.0](https://github.com/pinkywafer/Anniversaries)
@@ -303,7 +303,7 @@ Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://githu
 ## [SmartThinQ LGE Sensors v0.24.2](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
-## [Sun2 v2.1.2](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
+## [Sun2 v2.1.3](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
 Authors:[@pnbruckner](https://github.com/pnbruckner).
 
 ## [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
@@ -315,7 +315,7 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.15](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>28 lovelace plugins</summary>
+<details><summary>29 lovelace plugins</summary>
 
 ## [Atomic Calendar Revive v7.0.1](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
@@ -362,7 +362,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 ## [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
-## [Mushroom v2.3.4](https://github.com/piitaya/lovelace-mushroom)
+## [Mushroom v2.3.5](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 ## [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
@@ -400,6 +400,9 @@ Vacuum cleaner card for Home Assistant Lovelace UI
 
 ## [Weather Card v1.5.0](https://github.com/bramkragten/weather-card)
 Weather Card with animated icons for Home Assistant Lovelace
+
+## [Weather Radar Card v2.1.0](https://github.com/Makin-Things/weather-radar-card)
+A rain radar card using the tiled images from RainViewer
 </details>
 
 <details><summary>8 addons</summary>
@@ -407,13 +410,13 @@ Weather Card with animated icons for Home Assistant Lovelace
 ## ESPHome v2022.10.2
 
 
-## File editor v5.4.1
+## File editor v5.4.2
 
 
 ## HA Scheduler v0.17
 
 
-## Home Assistant Google Drive Backup v0.108.4
+## Home Assistant Google Drive Backup v0.109.1
 
 
 ## Portainer v2.0.0
@@ -462,7 +465,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.11.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.11.2-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -472,7 +475,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,437-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,338-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

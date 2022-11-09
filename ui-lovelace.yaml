@@ -423,10 +423,17 @@ decluttering_templates:
             cards:
             - subtitle: Radar
               type: custom:mushroom-title-card
-            - entity: camera.san_diego
-              show_name: false
-              show_state: false
-              type: picture-entity
+            - center_latitude: 32.839191
+              center_longitude: -117.1895228
+              data_source: RainViewer-TWC
+              map_style: Voyager
+              marker_latitude: 32.8592997
+              marker_longitude: -117.0232825
+              show_marker: true
+              square_map: true
+              static_map: true
+              type: custom:weather-radar-card
+              zoom_level: 9
             type: vertical-stack
         type: custom:state-switch
       - subtitle: Last 24 hours
@@ -1821,7 +1828,13 @@ views:
               title: Driveway flood light
             service: browser_mod.popup
         type: custom:mushroom-light-card
+      - entity: input_boolean.keep_outdoor_lights_off
+        name: Keep off
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
       - entity: switch.adaptive_lighting_home_entry
+        name: Adaptive lights
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
@@ -2679,6 +2692,7 @@ views:
         name: Blue PC
       - entity: switch.gaming_pc_redpc
         name: Red PC
+      - entity: device_tracker.gaming_pc_redpc
       - entity: switch.gaming_pc_greenpc
         name: Green PC
       footer:
@@ -2701,11 +2715,11 @@ views:
     - am_pm: true
       discover_existing: false
       include:
-      - switch.gaming_pc_blackpc
-      - switch.gaming_pc_bluepc
-      - switch.gaming_pc_greenpc
-      - switch.gaming_pc_nintendo_switch
-      - switch.gaming_pc_redpc
+      - switch.network_blackpc
+      - switch.network_bluepc
+      - switch.network_greenpc
+      - switch.network_nintendo_switch
+      - switch.network_redpc
       title: false
       type: custom:scheduler-card
     type: vertical-stack
