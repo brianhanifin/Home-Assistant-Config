@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,338** | 1,257 | 37 | 96 | 58 |
+| **41,226** | 1,257 | 37 | 94 | 58 |
 
 # Index
 
@@ -239,8 +239,8 @@ smoke detectors, and a bulb.
 # Technical details
 
 Our Home Assistant install has approximately **1257 total entities**,
-including **609 sensors**. My YAML
-files contain 41,338 lines of code.
+including **612 sensors**. My YAML
+files contain 41,226 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>24 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.2.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -362,7 +362,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 ## [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
-## [Mushroom v2.3.5](https://github.com/piitaya/lovelace-mushroom)
+## [Mushroom v2.3.6](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 ## [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
@@ -475,7 +475,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,338-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,226-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

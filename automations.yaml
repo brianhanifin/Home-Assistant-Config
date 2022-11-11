@@ -1991,140 +1991,6 @@
       alias: Match brightness of the floor lamp with the family room lamp.
     alias: Match the brightness if the floor lamp is on.
   mode: single
-- id: '1665948763862'
-  alias: Front door/driveway person detected
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.driveway_parking_person_occupancy
-    - binary_sensor.front_yard_person_occupancy
-    - binary_sensor.driveway_flood_motion
-    from: 'off'
-    to: 'on'
-    id: driveway
-    alias: When a person is detected in the driveway/front yard.
-  - platform: state
-    entity_id:
-    - binary_sensor.front_walkway_person_occupancy
-    from: 'off'
-    to: 'on'
-    id: front_door
-    alias: When a person is detected approaching the front door.
-    enabled: false
-  condition:
-  - condition: state
-    entity_id: input_boolean.keep_outdoor_lights_off
-    state: 'off'
-  action:
-  - variables:
-      last_opened: '{{ states.binary_sensor.front_door.last_changed | as_timestamp
-        }}'
-      time_now: '{{ now() | as_timestamp }}'
-      seconds_difference: '{{ time_now - last_opened }}'
-  - alias: When door has not been opened within the past 2 minutes.
-    if:
-    - condition: template
-      value_template: '{{ seconds_difference|round(default=0) > 120 }}'
-    then:
-    - if:
-      - condition: and
-        conditions:
-        - condition: or
-          conditions:
-          - condition: trigger
-            id: driveway
-          - condition: trigger
-            id: front_door
-          alias: When a person is detected in the driveway or by the front door.
-        - condition: numeric_state
-          entity_id: sensor.outdoor_illuminance_educated_guessor
-          below: 2000
-          alias: Confirm Outdoor Illuminance Educated Guessor is below 2,000.
-        - condition: state
-          entity_id: input_boolean.keep_outdoor_lights_off
-          state: 'off'
-      then:
-      - service: scene.create
-        data:
-          scene_id: front_door_presence_snapshot
-          snapshot_entities:
-          - light.porch
-        alias: Store current light settings.
-        enabled: false
-      - service: select.select_option
-        data:
-          option: Manual
-        target:
-          entity_id: select.driveway_flood_mode
-        alias: Take manual control of the driveway flood light.
-      - parallel:
-        - service: light.turn_on
-          data:
-            brightness: 255
-          target:
-            entity_id:
-            - light.driveway_flood
-            - light.driveway_flood_accent
-          alias: Turn driveway flood light on.
-        - service: light.turn_on
-          data:
-            brightness: 255
-            kelvin: 3500
-          target:
-            entity_id:
-            - light.home_entry
-            - light.porch
-          alias: Turn on the front porch and entry lights.
-        - service: light.turn_on
-          data:
-            color_name: white
-            brightness: 255
-          target:
-            entity_id: light.path_lights
-          alias: Turn on the front door path and entry lights.
-        alias: Set lights to full + start countdown timer.
-      alias: When a person is detected, it is dark outside, + "Keep outdoor lights
-        off" is disabled..
-    - if:
-      - condition: trigger
-        id: front_door
-      then:
-      - parallel:
-        - service: script.notify_mobile
-          data:
-            title: Front Door
-            message: Person Detected
-            camera: camera.front_door
-            who: brian
-            tag: person_detected
-            url: /lovelace/outdoor
-          continue_on_error: true
-        - service: script.cast
-          data:
-            displays:
-            - 0aae07dda66f42e9b8a67979e34770d0
-            - 7d6b52507e25e7eeba10914e56052d1c
-            dashboard_path: dashboard-cast
-            view_path: cameras
-            dismiss_after: 120
-          alias: Display the cameras on the Google displays.
-          enabled: false
-        - service: script.notify_pc
-          continue_on_error: true
-          data:
-            title: Front Door
-            message: Person Detected
-            camera: camera.front_door_rtsp
-            pc: blackpc
-        alias: Show notifications on various devices.
-      alias: When a person is detected approaching the front door.
-    - delay:
-        hours: 0
-        minutes: 5
-        seconds: 0
-        milliseconds: 0
-  mode: single
 - id: '1665949560382'
   alias: Front door open state
   description: ''
@@ -2282,12 +2148,12 @@
           service: light.turn_on
           target:
             entity_id:
-            - light.home_entry
             - light.path_lights
             - light.porch
           data:
             brightness: 255
         alias: When it is dark outside and "Keep outdoor locked" is disabled.
+        enabled: false
       - alias: Update Light Switch LED Status Color.
         service: script.turn_on
         target:
@@ -2298,6 +2164,15 @@
             state_entity: lock.front_door
             state: unlocked
             entity_id: light.family_room
+    - conditions:
+      - condition: trigger
+        id: locked
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.leave_unlocked
+        alias: Turn off LEAVE UNLOCKED.
     alias: When the door locks or unlocks.
   - choose:
     - conditions:
@@ -2305,6 +2180,11 @@
         id: timer_finished
         alias: When triggered by the timer finishing.
       sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.leave_unlocked
+        alias: Turn off LEAVE UNLOCKED.
       - alias: Lock the front door.
         service: lock.lock
         data: {}
@@ -2326,7 +2206,8 @@
           entity_id: timer.front_door_unlocked
         data: {}
     alias: When the door opens or the timer finishes.
-  mode: single
+  mode: queued
+  max: 10
 - id: '1665953966268'
   alias: Kitchen cabinet lights
   description: ''
@@ -3951,7 +3832,7 @@
     alias: When triggered by SHOT_GIVEN button press.
   mode: single
 - id: '1667443521533'
-  alias: Porch light sync
+  alias: Porch/path lights sync
   description: ''
   trigger:
   - platform: state
@@ -3973,6 +3854,7 @@
     then:
     - service: light.turn_on
       data:
+        color_name: white
         brightness: '{{ state_attr("light.porch","brightness") }}
 
           '
@@ -3989,166 +3871,13 @@
       target:
         entity_id: light.path_lights
     - type: turn_off
-      device_id: cd6cadbf01fe68bb03b91e32332447b3
+      device_id: f4bca7d83e51cfdd4bb3cf5910b1c97a
       entity_id: light.porch_dimmer
       domain: light
     alias: Sync the path lights with the porch light's current state.
   mode: single
-- id: '1667516445872'
-  alias: Front door/driveway person detection clears
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.driveway_person_occupancy
-    - binary_sensor.driveway_flood_motion
-    - binary_sensor.front_door_person_occupancy
-    to: 'off'
-    from: 'on'
-    id: occupancy_cleared
-    alias: When person occupancy is cleared.
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: timer.driveway_front_door_person_detected
-    id: timer_finished
-    alias: When person detection timer finishes.
-  condition:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id: input_boolean.keep_outdoor_lights_off
-      state: 'off'
-    - condition: numeric_state
-      entity_id: sensor.outdoor_illuminance_educated_guessor
-      below: 2000
-      alias: Only restore the lights when when it is night.
-    alias: When it is dark outside and "Keep outdoor locked" is disabled.
-  action:
-  - if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id: occupancy_cleared
-      - condition: and
-        conditions:
-        - condition: state
-          entity_id: binary_sensor.driveway_person_occupancy
-          state: 'off'
-        - condition: state
-          entity_id: binary_sensor.front_door_person_occupancy
-          state: 'off'
-        - condition: state
-          entity_id: binary_sensor.driveway_flood_motion
-          state: 'off'
-    then:
-    - service: timer.start
-      data:
-        duration: 00:05:00
-      target:
-        entity_id: timer.driveway_front_door_person_detected
-      alias: Start the light restoration countdown timer.
-    alias: When person occupancy is cleared.
-  - if:
-    - condition: trigger
-      id: timer_finished
-    then:
-    - service: scene.turn_on
-      data: {}
-      target:
-        entity_id: scene.front_door_presence_snapshot
-      alias: Activate the scene to restore the lights previous states.
-      enabled: false
-    - service: select.select_option
-      data:
-        option: Auto
-      target:
-        entity_id: select.driveway_flood_mode
-      alias: Set the flood back to Auto.
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.driveway_flood_accent
-      alias: Turn off the flood accent light.
-    - if:
-      - condition: state
-        entity_id: switch.adaptive_lighting_home_entry
-        state: 'on'
-      then:
-      - service: switch.turn_off
-        target:
-          entity_id: switch.adaptive_lighting_home_entry
-        alias: Turn off adaptive lighting control temporarily.
-        data: {}
-      - delay:
-          seconds: 1
-      - service: switch.turn_on
-        target:
-          entity_id: switch.adaptive_lighting_home_entry
-        alias: Turn adaptive lighting control back on.
-        data: {}
-      alias: Restore adaptive lighting automated control.
-    alias: When person detection timer finishes.
-  mode: single
-- id: '1667620286387'
-  alias: Front door locked
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - lock.front_door
-    not_from: unavailable
-    to: locked
-  condition: []
-  action:
-  - service: input_boolean.turn_off
-    data: {}
-    target:
-      entity_id: input_boolean.leave_unlocked
-    alias: Turn off LEAVE UNLOCKED.
-  - if:
-    - condition: state
-      entity_id: input_boolean.keep_outdoor_lights_off
-      state: 'off'
-    then:
-    - service: select.select_option
-      data:
-        option: Auto
-      target:
-        entity_id: select.driveway_flood_mode
-      alias: Restore driveway flood light to “Auto”.
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.driveway_flood_accent
-      alias: Turn off the flood’s accent ring so the camera can have a better view.
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 10
-        milliseconds: 0
-    - if:
-      - condition: state
-        entity_id: switch.adaptive_lighting_home_entry
-        state: 'on'
-      then:
-      - service: switch.turn_off
-        target:
-          entity_id: switch.adaptive_lighting_home_entry
-        alias: Turn off adaptive lighting control temporarily.
-        data: {}
-      - delay:
-          seconds: 1
-      - service: switch.turn_on
-        target:
-          entity_id: switch.adaptive_lighting_home_entry
-        alias: Turn adaptive lighting control back on.
-        data: {}
-      alias: Restore adaptive lighting automated control.
-      enabled: true
-  mode: single
 - id: '1668022409769'
-  alias: Keep outdoor lights off.
+  alias: Keep outdoor lights off
   description: Immediately turn off all outdoor lights when this is triggered.
   trigger:
   - platform: state
@@ -4156,6 +3885,7 @@
     - input_boolean.keep_outdoor_lights_off
     from: 'off'
     to: 'on'
+    alias: When "Keep outdoor lights off" is enabled.
   condition: []
   action:
   - service: select.select_option
@@ -4163,6 +3893,7 @@
       option: Manual
     target:
       entity_id: select.driveway_flood_mode
+    alias: Change the flood mode to manual.
   - service: light.turn_off
     data: {}
     target:
@@ -4171,4 +3902,157 @@
       - light.path_lights
       - light.driveway_flood_accent
       - light.driveway_flood
+    alias: Turn off the outdoor lights.
   mode: single
+- id: '1668201919612'
+  alias: Illuminate path to the front door
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.front_yard_person_occupancy
+    - binary_sensor.driveway_parking_person_occupancy
+    - binary_sensor.front_door_person_occupancy
+    - binary_sensor.driveway_flood_motion
+    - binary_sensor.front_door
+    - cover.garage_door
+    from: 'off'
+    to: 'on'
+    alias: When a person is detected in front of the house or a door opens.
+    id: turn_lights_up
+  - platform: state
+    entity_id:
+    - binary_sensor.front_yard_person_occupancy
+    - binary_sensor.driveway_parking_person_occupancy
+    - binary_sensor.front_door_person_occupancy
+    - binary_sensor.driveway_flood_motion
+    - binary_sensor.front_door
+    - cover.garage_door
+    id: countdown_starts
+    from: 'on'
+    to: 'off'
+    alias: When presence is no longer detected and the doors are closed.
+  - platform: state
+    entity_id:
+    - timer.front_door_driveway_lights
+    from: active
+    to: idle
+    id: turn_lights_down
+    alias: When the timer ends.
+  condition:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.keep_outdoor_lights_off
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.outdoor_illuminance_educated_guessor
+      below: 2500
+    alias: Confirm "Keep outside lights off" is disabled and it is dark outside.
+  action:
+  - if:
+    - condition: trigger
+      id: turn_lights_up
+      alias: When triggered by "turn_lights_up".
+    then:
+    - service: select.select_option
+      data:
+        option: Manual
+      target:
+        entity_id: select.driveway_flood_mode
+      alias: Take manual control of the driveway flood light.
+    - service: light.turn_on
+      data:
+        brightness: 255
+      target:
+        entity_id:
+        - light.porch
+        - light.driveway_flood
+      alias: Turn on the porch and flood lights.
+    alias: When the lights need to be turned up.
+  - if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id: countdown_starts
+        alias: When triggered by "countdown_starts".
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.front_yard_person_occupancy
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.driveway_parking_person_occupancy
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.driveway_flood_motion
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.front_door
+          state: 'off'
+        - condition: state
+          entity_id: cover.garage_door
+          state: 'off'
+        alias: When presence is cleared and doors are closed.
+      alias: When triggered by "countdown_starts" and presence is clear and doors
+        are closed.
+    then:
+    - if:
+      - condition: state
+        entity_id: timer.front_door_driveway_lights
+        state: active
+      then:
+      - service: timer.cancel
+        data: {}
+        target:
+          entity_id: timer.front_door_driveway_lights
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      alias: When the timer is already active, cancel it so it can be restarted.
+    - service: timer.start
+      data:
+        duration: 00:02:00
+      target:
+        entity_id: timer.front_door_driveway_lights
+      alias: (Re)start the 2 minute light dimmer countdown.
+    alias: When a brief timer needs to be started.
+  - if:
+    - condition: trigger
+      id: turn_lights_down
+    then:
+    - service: select.select_option
+      data:
+        option: Auto
+      target:
+        entity_id: select.driveway_flood_mode
+      alias: Restore automatic control to the Flood lights (in case Home Assistant
+        is down).
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.driveway_flood_accent
+      alias: Turn off flood accent light to improve camera vision.
+    - if:
+      - condition: state
+        entity_id: switch.adaptive_lighting_home_entry
+        state: 'on'
+      then:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.adaptive_lighting_home_entry
+        alias: Turn off adaptive lighting control temporarily.
+        data: {}
+      - delay:
+          seconds: 1
+      - service: switch.turn_on
+        target:
+          entity_id: switch.adaptive_lighting_home_entry
+        alias: Turn adaptive lighting control back on.
+        data: {}
+      alias: Restore adaptive lighting automated control.
+    alias: When the lights need to be turned back down.
+  mode: queued
+  max: 10

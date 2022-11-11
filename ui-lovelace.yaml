@@ -2521,254 +2521,292 @@ views:
     type: vertical-stack
     view_layout:
       position: main
-  - cards:
-    - subtitle: Status
-      title: Home Assistant
-      type: custom:mushroom-title-card
-    - content: '{{ states("sensor.update_message") }}
+  - tabs:
+    - attributes:
+        label: Status
+      card:
+        cards:
+        - subtitle: Status
+          title: Home Assistant
+          type: custom:mushroom-title-card
+        - content: '{{ states("sensor.update_message") }}
 
-        '
-      entity_id: sensor.updates
-      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n  display:\
-        \ {{ \"block\" if states(\"sensor.updates\")|int(default=0) > 0 else \"none\"\
-        \ }}\n}\n"
-      type: markdown
-    - cards:
-      - entities:
+            '
+          entity_id: sensor.updates
+          style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n:host {\n \
+            \ display: {{ \"block\" if states(\"sensor.updates\")|int(default=0) >\
+            \ 0 else \"none\" }}\n}\n"
+          type: markdown
+        - cards:
+          - entities:
+            - entities:
+              - attribute: home_assistant_update_count
+                entity: sensor.updates
+                name: Home Assistant
+              - entity: sensor.hacs_updates
+                name: HACS
+                unit: ' '
+              - entity: sensor.addon_updates
+                name: Addons
+              - entity: sensor.updates
+                name: TOTAL
+              entity: sensor.updates
+              icon: mdi:home-assistant
+              name: Updates
+              show_state: false
+              type: custom:multiple-entity-row
+            - attribute: installed_version
+              entities:
+              - entity: sensor.latest_beta
+                name: Beta
+              - entity: sensor.latest_release
+                name: Stable
+              entity: update.home_assistant_core_update
+              icon: mdi:home-assistant
+              name: Core
+              state_header: Installed
+              type: custom:multiple-entity-row
+            footer:
+              entities:
+              - entity: sensor.latest_release
+                icon: mdi:link
+                name: Release notes
+                tap_action:
+                  action: url
+                  url_path: https://www.home-assistant.io/latest-release-notes/
+              - entity: sensor.latest_beta
+                icon: mdi:link
+                name: Beta notes
+                tap_action:
+                  action: url
+                  url_path: https://rc.home-assistant.io/latest-release-notes/
+              - entity: sensor.current_version
+                icon: mdi:link
+                name: RC blogposts
+                tap_action:
+                  action: url
+                  url_path: https://github.com/home-assistant/home-assistant.io/blob/rc/source/_posts/
+              type: buttons
+            type: entities
+          - entities:
+            - type: divider
+            - attribute: installed_version
+              entities:
+              - attribute: latest_version
+                entity: update.home_assistant_operating_system_update
+                name: Latest
+              entity: update.home_assistant_operating_system_update
+              icon: fab:docker
+              name: OS
+              state_header: Installed
+              type: custom:multiple-entity-row
+            - attribute: installed_version
+              entities:
+              - attribute: latest_version
+                entity: update.home_assistant_supervisor_update
+                name: Latest
+              entity: update.home_assistant_supervisor_update
+              icon: fab:docker
+              name: Supervisor
+              state_header: Installed
+              type: custom:multiple-entity-row
+            type: entities
+          type: custom:stack-in-card
         - entities:
-          - attribute: home_assistant_update_count
-            entity: sensor.updates
-            name: Home Assistant
-          - entity: sensor.hacs_updates
-            name: HACS
-            unit: ' '
-          - entity: sensor.addon_updates
-            name: Addons
-          - entity: sensor.updates
-            name: TOTAL
-          entity: sensor.updates
-          icon: mdi:home-assistant
-          name: Updates
-          show_state: false
-          type: custom:multiple-entity-row
-        - attribute: installed_version
-          entities:
-          - entity: sensor.latest_beta
-            name: Beta
-          - entity: sensor.latest_release
-            name: Stable
-          entity: update.home_assistant_core_update
-          icon: mdi:home-assistant
-          name: Core
-          state_header: Installed
-          type: custom:multiple-entity-row
-        footer:
-          entities:
-          - entity: sensor.latest_release
-            icon: mdi:link
-            name: Release notes
-            tap_action:
-              action: url
-              url_path: https://www.home-assistant.io/latest-release-notes/
-          - entity: sensor.latest_beta
-            icon: mdi:link
-            name: Beta notes
-            tap_action:
-              action: url
-              url_path: https://rc.home-assistant.io/latest-release-notes/
-          - entity: sensor.current_version
-            icon: mdi:link
-            name: RC blogposts
-            tap_action:
-              action: url
-              url_path: https://github.com/home-assistant/home-assistant.io/blob/rc/source/_posts/
-          type: buttons
-        type: entities
-      - entities:
-        - type: divider
-        - attribute: installed_version
-          entities:
-          - attribute: latest_version
-            entity: update.home_assistant_operating_system_update
-            name: Latest
-          entity: update.home_assistant_operating_system_update
-          icon: fab:docker
-          name: OS
-          state_header: Installed
-          type: custom:multiple-entity-row
-        - attribute: installed_version
-          entities:
-          - attribute: latest_version
-            entity: update.home_assistant_supervisor_update
-            name: Latest
-          entity: update.home_assistant_supervisor_update
-          icon: fab:docker
-          name: Supervisor
-          state_header: Installed
-          type: custom:multiple-entity-row
-        type: entities
-      type: custom:stack-in-card
-    - entities:
-      - entities:
-        - entity: sensor.backup_state
-          name: State
-        - entity: binary_sensor.backups_stale
-          name: Current?
-        entity: sensor.backup_state
-        icon: mdi:cloud-upload
-        name: Backups
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: sensor.processor_use
-          name: CPU
-        - entity: sensor.disk_use_percent
-          name: Disk
-        - entity: sensor.memory_use_percent
-          format: precision0
-          name: RAM
-        entity: sensor.processor_use
-        name: VM resources used
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: sensor.last_restart
-          format: total
-          name: Core
-        - entity: sensor.last_boot
-          format: total
-          name: VM
-        entity: sensor.last_boot
-        icon: mdi:power
-        name: Last restart
-        secondary_info: null
-        show_state: false
-        type: custom:multiple-entity-row
-      type: entities
-    type: vertical-stack
-  - cards:
-    - title: Unifi
-      type: custom:mushroom-title-card
-    - entities:
-      - entities:
-        - entity: sensor.unifi_gateway_wan
-          name: WAN
-        - entity: sensor.unifi_gateway_wlan
-          name: WLAN
-        - entity: sensor.unifi_gateway_lan
-          name: LAN
-        entity: sensor.unifi_gateway_www
-        name: Connectivity
-        secondary_info:
-          entity: sensor.unifi_gateway_www
-          name: ''
-        show_state: false
-        type: custom:multiple-entity-row
-      - entities:
-        - entity: sensor.unifi_gateway_firmware_upgradable
-          name: Upgrades
-        - entity: sensor.unifi_gateway_alerts
-          name: Alerts
-        entity: sensor.unifi_gateway_wan
-        name: Status
-        show_state: false
-        type: custom:multiple-entity-row
-      - type: divider
-      - name: UniFi Controller
-        type: weblink
-        url: https://unraid.local:8443
-      type: entities
-    type: vertical-stack
+          - entities:
+            - entity: sensor.backup_state
+              name: State
+            - entity: binary_sensor.backups_stale
+              name: Current?
+            entity: sensor.backup_state
+            icon: mdi:cloud-upload
+            name: Backups
+            show_state: false
+            type: custom:multiple-entity-row
+          - entities:
+            - entity: sensor.processor_use
+              name: CPU
+            - entity: sensor.disk_use_percent
+              name: Disk
+            - entity: sensor.memory_use_percent
+              format: precision0
+              name: RAM
+            entity: sensor.processor_use
+            name: VM resources used
+            show_state: false
+            type: custom:multiple-entity-row
+          - entities:
+            - entity: sensor.last_restart
+              format: total
+              name: Core
+            - entity: sensor.last_boot
+              format: total
+              name: VM
+            entity: sensor.last_boot
+            icon: mdi:power
+            name: Last restart
+            secondary_info: null
+            show_state: false
+            type: custom:multiple-entity-row
+          type: entities
+        type: vertical-stack
+    - attributes:
+        label: Problems
+      card:
+        cards:
+        - subtitle: '{{ states("sensor.unknown_count")|default(0) }} unknown entit{{
+            iif(is_state("sensor.unknown_count","1"), "y", "ies") }}'
+          title: Problem reports
+          type: custom:mushroom-title-card
+        - card:
+            type: entities
+          filter:
+            options:
+              show_empty: false
+              type: custom:multiple-entity-row
+            template: '{{ state_attr("sensor.unknown_count","entities") }}'
+          sort:
+            method: state
+          type: custom:auto-entities
+        - subtitle: '{{ states("sensor.unavailable_count")|default(0) }} unavailable
+            entit{{ iif(is_state("sensor.unavailable_count","1"), "y", "ies") }}'
+          title: ''
+          type: custom:mushroom-title-card
+        - card:
+            type: entities
+          filter:
+            options:
+              show_empty: false
+              type: custom:multiple-entity-row
+            template: '{{ state_attr("sensor.unavailable_count","entities") }}'
+          sort:
+            method: state
+          type: custom:auto-entities
+        - subtitle: ' {{ states("sensor.watchman_missing_entities")|default(0) }}
+            missing entit{{ iif(is_state("sensor.watchman_missing_entities","1"),
+            "y", "ies") }}'
+          title: ''
+          type: custom:mushroom-title-card
+        - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"sensor.watchman_missing_entities\"\
+            , \"entities\") %}\n  <tr>\n    <td><ha-icon icon=\"mdi:cloud-{%- if item.state=='missing'-%}alert{%-\
+            \ elif item.state=='unavail' -%}off-outline{%- else-%}question{%- endif\
+            \ -%}\"></ha-icon> &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a\
+            \ title=\"{{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
+            \  </tr>\n{%- endfor %}\n</table>"
+          type: markdown
+        type: vertical-stack
+    - attributes:
+        label: BlackPC
+      card:
+        cards:
+        - title: BlackPC sensors
+          type: custom:mushroom-title-card
+        - card:
+            type: entities
+          filter:
+            exclude: []
+            include:
+            - entity_id: '*.blackpc*'
+          sort:
+            ignore_case: false
+            method: domain
+            reverse: true
+          type: custom:auto-entities
+        type: vertical-stack
+    type: custom:tabbed-card
+  - tabs:
+    - attributes:
+        label: Unifi
+      card:
+        cards:
+        - title: Unifi
+          type: custom:mushroom-title-card
+        - entities:
+          - entities:
+            - entity: sensor.unifi_gateway_wan
+              name: WAN
+            - entity: sensor.unifi_gateway_wlan
+              name: WLAN
+            - entity: sensor.unifi_gateway_lan
+              name: LAN
+            entity: sensor.unifi_gateway_www
+            name: Connectivity
+            secondary_info:
+              entity: sensor.unifi_gateway_www
+              name: ''
+            show_state: false
+            type: custom:multiple-entity-row
+          - entities:
+            - entity: sensor.unifi_gateway_firmware_upgradable
+              name: Upgrades
+            - entity: sensor.unifi_gateway_alerts
+              name: Alerts
+            entity: sensor.unifi_gateway_wan
+            name: Status
+            show_state: false
+            type: custom:multiple-entity-row
+          - type: divider
+          - name: UniFi Controller
+            type: weblink
+            url: https://unraid.local:8443
+          type: entities
+        type: vertical-stack
+    - attributes:
+        label: Network
+      card:
+        cards:
+        - subtitle: Manual control
+          title: Network Access Control
+          type: custom:mushroom-title-card
+        - entities:
+          - entity: switch.gaming_pc_blackpc
+            name: Black PC
+          - entity: switch.gaming_pc_bluepc
+            name: Blue PC
+          - entity: switch.gaming_pc_redpc
+            name: Red PC
+          - entity: device_tracker.gaming_pc_redpc
+          - entity: switch.gaming_pc_greenpc
+            name: Green PC
+          footer:
+            entities:
+            - entity: switch.docker_unifi
+              name: UniFi Controller
+            type: buttons
+          show_header_toggle: false
+          state_color: true
+          title: ''
+          type: entities
+        type: vertical-stack
+    - attributes:
+        label: Scheduler
+      card:
+        cards:
+        - subtitle: Scheduler
+          type: custom:mushroom-title-card
+        - am_pm: true
+          discover_existing: false
+          include:
+          - switch.network_blackpc
+          - switch.network_bluepc
+          - switch.network_greenpc
+          - switch.network_redpc
+          - switch.gaming_pc_blackpc
+          - switch.gaming_pc_bluepc
+          - switch.gaming_pc_greenpc
+          - switch.gaming_pc_redpc
+          title: false
+          type: custom:scheduler-card
+        - entities:
+          - entity: schedule.computer_school
+          - entity: schedule.computer_vacation
+          show_header_toggle: false
+          state_color: true
+          type: entities
+        type: vertical-stack
+    type: custom:tabbed-card
     view_layout:
       position: sidebar
-  - cards:
-    - subtitle: Manual control
-      title: Network Access Control
-      type: custom:mushroom-title-card
-    - entities:
-      - entity: switch.gaming_pc_blackpc
-        name: Black PC
-      - entity: switch.gaming_pc_bluepc
-        name: Blue PC
-      - entity: switch.gaming_pc_redpc
-        name: Red PC
-      - entity: device_tracker.gaming_pc_redpc
-      - entity: switch.gaming_pc_greenpc
-        name: Green PC
-      footer:
-        entities:
-        - entity: switch.docker_unifi
-          name: UniFi Controller
-        type: buttons
-      show_header_toggle: false
-      state_color: true
-      title: ''
-      type: entities
-    - subtitle: Scheduler
-      type: custom:mushroom-title-card
-    - entities:
-      - entity: schedule.computer_school
-      - entity: schedule.computer_vacation
-      show_header_toggle: false
-      state_color: true
-      type: entities
-    - am_pm: true
-      discover_existing: false
-      include:
-      - switch.network_blackpc
-      - switch.network_bluepc
-      - switch.network_greenpc
-      - switch.network_nintendo_switch
-      - switch.network_redpc
-      title: false
-      type: custom:scheduler-card
-    type: vertical-stack
-    view_layout:
-      position: sidebar
-  - cards:
-    - subtitle: '{{ states("sensor.unknown_count")|default(0) }} unknown entit{{ iif(is_state("sensor.unknown_count","1"),
-        "y", "ies") }}'
-      title: Problem reports
-      type: custom:mushroom-title-card
-    - card:
-        type: entities
-      filter:
-        options:
-          show_empty: false
-          type: custom:multiple-entity-row
-        template: '{{ state_attr("sensor.unknown_count","entities") }}'
-      sort:
-        method: state
-      type: custom:auto-entities
-    - subtitle: '{{ states("sensor.unavailable_count")|default(0) }} unavailable entit{{
-        iif(is_state("sensor.unavailable_count","1"), "y", "ies") }}'
-      title: ''
-      type: custom:mushroom-title-card
-    - card:
-        type: entities
-      filter:
-        options:
-          show_empty: false
-          type: custom:multiple-entity-row
-        template: '{{ state_attr("sensor.unavailable_count","entities") }}'
-      sort:
-        method: state
-      type: custom:auto-entities
-    - subtitle: ' {{ states("sensor.watchman_missing_entities")|default(0) }} missing
-        entit{{ iif(is_state("sensor.watchman_missing_entities","1"), "y", "ies")
-        }}'
-      title: ''
-      type: custom:mushroom-title-card
-    - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"sensor.watchman_missing_entities\"\
-        , \"entities\") %}\n  <tr>\n    <td><ha-icon icon=\"mdi:cloud-{%- if item.state=='missing'-%}alert{%-\
-        \ elif item.state=='unavail' -%}off-outline{%- else-%}question{%- endif -%}\"\
-        ></ha-icon> &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a title=\"\
-        {{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
-        \  </tr>\n{%- endfor %}\n</table>"
-      type: markdown
-    type: vertical-stack
-    view_layout:
-      position: main
   - cards:
     - subtitle: Entity counts
       title: ''
@@ -2817,21 +2855,6 @@ views:
     type: vertical-stack
     view_layout:
       position: sidebar
-  - cards:
-    - title: BlackPC sensors
-      type: custom:mushroom-title-card
-    - card:
-        type: entities
-      filter:
-        exclude: []
-        include:
-        - entity_id: '*.blackpc*'
-      sort:
-        ignore_case: false
-        method: domain
-        reverse: true
-      type: custom:auto-entities
-    type: vertical-stack
   icon: mdi:server
   path: system
   subview: true
