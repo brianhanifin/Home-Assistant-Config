@@ -12,7 +12,7 @@ state: |
   {%- set home_closed = is_state("binary_sensor.house_windows", "off") and
                         is_state("binary_sensor.sliding_door", "off") %}
   {%- set during_announcement_hours =
-        14 <= now().hour < states("input_number.quiet_hour_start") %}
+        14 <= now().hour < states("input_number.quiet_hour_start")|int(default=21) %}
   {{
     is_state("input_boolean.cooler_outside_notification","on")
     and (outside_temp - inside_temp) <= -2
@@ -25,4 +25,4 @@ attributes:
   temp_diff: '{{ states("sensor.outdoor_temperature")|round(1,default=0) - states("sensor.home_thermostat_temperature")|round(1,default=0) }}'
   humid_diff: '{{ states("sensor.outdoor_humidity")|round(default=0) - states("sensor.home_thermostat_humidity")|round(default=0) }}'
   home_closed: '{{ is_state("binary_sensor.house_windows", "off") and is_state("binary_sensor.sliding_door", "off") }}'
-  during_announcement_hours: '{{ 14 <= now().hour < states("input_number.quiet_hour_start") }}'
+  during_announcement_hours: '{{ 14 <= now().hour < states("input_number.quiet_hour_start")|int(default=21) }}'
