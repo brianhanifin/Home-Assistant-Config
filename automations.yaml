@@ -346,13 +346,13 @@
         data:
           transition: 0
         target:
-          entity_id: light.bedroom_table_lamp
+          device_id: fb55d58ca0d8f8285ebe051953b9bdcc
       button_2_double:
       - service: light.toggle
         data:
           transition: 0
         target:
-          entity_id: light.bedroom_table_lamp
+          device_id: fb55d58ca0d8f8285ebe051953b9bdcc
       button_3_single:
       - choose:
         - conditions:
@@ -369,6 +369,7 @@
           data: {}
           target:
             entity_id: fan.bedroom
+        alias: Toggle fan on/off.
       button_4_single:
       - service: switch.toggle
         target:
@@ -397,6 +398,7 @@
             entity_id: climate.bedroom_thermostat
           data:
             hvac_mode: cool
+        alias: Toggle between cool + fan.
 - id: '1642402019243'
   alias: 'Remote: Nerene bedside'
   description: ''
@@ -418,16 +420,16 @@
           entity_id: light.bedroom_east
       button_1_double:
       - service: light.toggle
-        target:
-          device_id: ca15d133b0892224f12740ec003bf25c
         data:
           transition: 0
+        target:
+          entity_id: light.bedroom_table_lamp
       button_2_double:
       - service: light.toggle
         data:
           transition: 0
         target:
-          device_id: ca15d133b0892224f12740ec003bf25c
+          entity_id: light.bedroom_table_lamp
       button_3_single:
       - choose:
         - conditions:
@@ -444,6 +446,7 @@
           data: {}
           target:
             entity_id: fan.bedroom
+        alias: Toogle fan on/off.
       button_4_single:
       - service: switch.toggle
         target:
@@ -472,6 +475,7 @@
             entity_id: climate.bedroom_thermostat
           data:
             hvac_mode: cool
+        alias: Toggle between cool + fan.
 - id: '1642448378521'
   alias: 'Remote: printer toggle'
   description: ''
@@ -3915,10 +3919,9 @@
     - binary_sensor.front_door_person_occupancy
     - binary_sensor.driveway_flood_motion
     - binary_sensor.front_door
-    - cover.garage_door
     from: 'off'
     to: 'on'
-    alias: When a person is detected in front of the house or a door opens.
+    alias: When a person is detected in front of the house or the door opens.
     id: turn_lights_up
   - platform: state
     entity_id:
@@ -3927,11 +3930,10 @@
     - binary_sensor.front_door_person_occupancy
     - binary_sensor.driveway_flood_motion
     - binary_sensor.front_door
-    - cover.garage_door
     id: countdown_starts
     from: 'on'
     to: 'off'
-    alias: When presence is no longer detected and the doors are closed.
+    alias: When presence is no longer detected and the door is closed.
   - platform: state
     entity_id:
     - timer.front_door_driveway_lights
@@ -3985,13 +3987,13 @@
           entity_id: binary_sensor.driveway_parking_person_occupancy
           state: 'off'
         - condition: state
+          entity_id: binary_sensor.front_door_person_occupancy
+          state: 'off'
+        - condition: state
           entity_id: binary_sensor.driveway_flood_motion
           state: 'off'
         - condition: state
           entity_id: binary_sensor.front_door
-          state: 'off'
-        - condition: state
-          entity_id: cover.garage_door
           state: 'off'
         alias: When presence is cleared and doors are closed.
       alias: When triggered by "countdown_starts" and presence is clear and doors
@@ -4015,9 +4017,9 @@
     - service: timer.start
       data:
         duration: 00:02:00
+      alias: (Re)start the 2 minute light dimmer countdown.
       target:
         entity_id: timer.front_door_driveway_lights
-      alias: (Re)start the 2 minute light dimmer countdown.
     alias: When a brief timer needs to be started.
   - if:
     - condition: trigger
