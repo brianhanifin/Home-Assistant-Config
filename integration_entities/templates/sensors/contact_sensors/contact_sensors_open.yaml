@@ -1,0 +1,18 @@
+---
+unique_id: contact_sensors_open
+name: Contact sensors open
+icon: mdi:door-open
+state_class: total
+state: |
+  {%- set open_doors = states("sensor.doors_open")|int(default=0) %}
+  {%- set open_windows = states("sensor.windows_open")|int(default=0) %}
+  {{ open_doors + open_windows }}
+attributes:
+  open_doors: |
+    {%- set doors = state_attr("sensor.doors_open","open_doors") | sort() %}
+    {%- set open_doors = states.binary_sensor | selectattr("entity_id","in",doors) | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
+    {{ open_doors }}
+  open_windows: |
+    {%- set windows = state_attr("sensor.windows_open","open_windows") | sort() %}
+    {%- set open_windows = states.binary_sensor | selectattr("entity_id","in",windows) | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
+    {{ open_windows }}
