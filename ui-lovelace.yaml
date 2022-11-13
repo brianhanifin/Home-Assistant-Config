@@ -308,6 +308,25 @@ decluttering_templates:
                     sort:
                       method: name
                     type: custom:auto-entities
+                  - subtitle: Outdoor lights
+                    type: custom:mushroom-title-card
+                  - card:
+                      columns: 3
+                      show_header_toggle: false
+                      show_name: true
+                      show_state: false
+                      type: entities
+                    filter:
+                      exclude:
+                      - state: 'off'
+                      - state: unknown
+                      - state: unavailable
+                      include:
+                      - group: group.outdoor_lights
+                    show_empty: false
+                    sort:
+                      method: name
+                    type: custom:auto-entities
                   type: vertical-stack
                 title: Lights on
               service: browser_mod.popup
@@ -317,7 +336,7 @@ decluttering_templates:
           state_not: '0'
         type: conditional
       - chip:
-          entity: sensor.windows_open
+          entity: sensor.contact_sensors_open
           icon_color: blue
           tap_action:
             action: fire-dom-event
@@ -325,7 +344,7 @@ decluttering_templates:
               data:
                 content:
                   cards:
-                  - subtitle: Downstairs windows
+                  - subtitle: Downstairs
                     type: custom:mushroom-title-card
                   - card:
                       type: entities
@@ -336,7 +355,26 @@ decluttering_templates:
                     sort:
                       method: name
                     type: custom:auto-entities
-                  - subtitle: Upstairs windows
+                  - card:
+                      columns: 3
+                      show_header_toggle: false
+                      show_name: true
+                      show_state: false
+                      type: entities
+                    filter:
+                      exclude:
+                      - state: closed
+                      - state: locked
+                      - state: 'off'
+                      - state: unknown
+                      - state: unavailable
+                      include:
+                      - group: group.entry_doors
+                    show_empty: false
+                    sort:
+                      method: name
+                    type: custom:auto-entities
+                  - subtitle: Upstairs
                     type: custom:mushroom-title-card
                   - card:
                       type: entities
@@ -348,45 +386,11 @@ decluttering_templates:
                       method: name
                     type: custom:auto-entities
                   type: vertical-stack
-                title: Windows open
+                title: Doors/windows open
               service: browser_mod.popup
           type: entity
         conditions:
-        - entity: sensor.windows_open
-          state_not: '0'
-        type: conditional
-      - chip:
-          entity: sensor.doors_open
-          icon_color: purple
-          tap_action:
-            action: fire-dom-event
-            browser_mod:
-              data:
-                content:
-                  card:
-                    columns: 3
-                    show_header_toggle: false
-                    show_name: true
-                    show_state: false
-                    type: entities
-                  filter:
-                    exclude:
-                    - state: closed
-                    - state: locked
-                    - state: 'off'
-                    - state: unknown
-                    - state: unavailable
-                    include:
-                    - group: group.entry_doors
-                  show_empty: false
-                  sort:
-                    method: name
-                  type: custom:auto-entities
-                title: Doors open or unlocked
-              service: browser_mod.popup
-          type: entity
-        conditions:
-        - entity: sensor.doors_open
+        - entity: sensor.contact_sensors_open
           state_not: '0'
         type: conditional
       type: custom:mushroom-chips-card
@@ -474,7 +478,7 @@ views:
       position: sidebar
   - cards:
     - badge_color: var(--rgb-state-light)
-      badge_icon: '{%- set lights_on = states("sensor.lights_on_downstairs")|int|default(0)
+      badge_icon: '{%- set lights_on = states("sensor.lights_on_downstairs")|int(default=0)
         %}
 
         {{- iif(lights_on>0, "mdi:lightbulb", "") }}'
@@ -484,8 +488,10 @@ views:
       layout: vertical
       multiline_secondary: false
       primary: Downstairs
-      secondary: '{{ states("sensor.lights_on_downstairs")|default(0) ~ " lights on"
-        }} ‧
+      secondary: '{%- set lights_on = states("sensor.lights_on_downstairs")|int(default=0)
+        %}
+
+        {{- iif(lights_on>0, lights_on~" lights on ‧", "") }}
 
         {{ states("sensor.downstairs_temperature_average")|round(default=0) }}°'
       tap_action:
@@ -502,8 +508,10 @@ views:
       icon_color: purple
       layout: vertical
       primary: Upstairs
-      secondary: '{{ states("sensor.lights_on_upstairs")|default(0) ~ " lights on"
-        }} ‧
+      secondary: '{%- set lights_on = states("sensor.lights_on_upstairs")|int(default=0)
+        %}
+
+        {{- iif(lights_on>0, lights_on~" lights on ‧", "") }}
 
         {{ states("sensor.upstairs_temperature_average")|round(default=0) }}°'
       tap_action:
@@ -1547,7 +1555,7 @@ views:
         \ \"\") }}\n{{- iif(not is_state(\"input_select.glowforge_status\",\"Off\"\
         ), \" ‧ glowforge is \" ~ states(\"input_select.glowforge_status\")|lower,\
         \ \"\") }}"
-      title: ' Bedroom'
+      title: Bedroom
       type: custom:mushroom-title-card
     - cards:
       - collapsible_controls: true
@@ -1665,7 +1673,7 @@ views:
         ,\"on\"), lights_on + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \"\
         \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
         {%- endif %}"
-      title: ' Lucas'' room'
+      title: Lucas' room
       type: custom:mushroom-title-card
     - cards:
       - entity: light.lucas_room
@@ -1755,16 +1763,16 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - subtitle: "{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.porch\"\
-        ,\"on\"), lights_on + 1, lights_on) %}\n{{- states(\"weather.home\") }}\n\
-        {{- \" ‧ \" ~ states(\"sensor.backyard_temperature\")|round(default=0) }}°\n\
-        {{- \" ‧ \" ~ state_attr(\"weather.home\",\"humidity\") }}%\n{%- set lock\
-        \ = states(\"lock.front_door\") %}\n{{- iif(lock != \"locked\", \" ‧ front\
-        \ door is \" ~ lock, \"\") }}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on\
-        \ == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{{-\
-        \ iif(not is_state(\"cover.garage_door\",\"closed\"), \" ‧ garage door is\
-        \ \" ~ states(\"cover.garage_door\"), \"\") }}\n{{- iif(is_state(\"binary_sensor.front_door_person_occupancy\"\
-        ,\"on\"), \" ‧ someone is at the front door\", \"\") }}"
+    - subtitle: "{%- set lights_on = states(\"sensor.lights_on_outdoors\")|int(default=0)\
+        \ %}\n{{- states(\"weather.home\") }}\n{{- \" ‧ \" ~ states(\"sensor.backyard_temperature\"\
+        )|round(default=0) }}°\n{{- \" ‧ \" ~ state_attr(\"weather.home\",\"humidity\"\
+        ) }}%\n{%- set lock = states(\"lock.front_door\") %}\n{{- iif(lock != \"locked\"\
+        , \" ‧ front door is \" ~ lock, \"\") }}\n{%- if lights_on > 0 %}\n  {{- \"\
+        \ ‧ \" ~ iif(lights_on == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n\
+        {%- endif %}\n{{- iif(not is_state(\"cover.garage_door\",\"closed\"), \" ‧\
+        \ garage door is \" ~ states(\"cover.garage_door\"), \"\") }}\n{{- iif(is_state(\"\
+        binary_sensor.front_door_person_occupancy\",\"on\"), \" ‧ someone is at the\
+        \ front door\", \"\") }}"
       title: Outdoors
       type: custom:mushroom-title-card
     - cards:
@@ -1924,110 +1932,83 @@ views:
     view_layout:
       position: sidebar
   - cards:
-    - cards:
-      - subtitle: Inside and outside
-        title: House temperatures
-        type: custom:mushroom-title-card
-      - entities:
-        - entity: weather.home
-          name: Outdoor
-        - entity: sensor.attic_temperature
-          icon: hass:home-floor-a
-        - entity: sensor.upstairs_temperature_average
-          icon: hass:home-floor-2
-          name: Upstairs average
-        - entity: sensor.downstairs_temperature_average
-          icon: hass:home-floor-1
-          name: Downstairs average
-        type: entities
-      type: vertical-stack
-    - cards:
-      - subtitle: Downstairs
-        title: House temperatures
-        type: custom:mushroom-title-card
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.downstairs_temperature_average
-          name: Avg
-        - entity: sensor.family_room_temperature
-          name: Family
-        - entity: sensor.kitchen_temperature
-          name: Kitchen
-        - entity: sensor.home_thermostat_temperature
-          name: Thermostat
-        height: 88
-        icon: mdi:home-floor-1
-        line_width: 2
-        lower_bound: 60
-        points_per_hour: 4
-        show:
-          extrema: true
-          graph: line
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    - cards:
-      - subtitle: Upstairs
-        title: House temperatures
-        type: custom:mushroom-title-card
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.upstairs_temperature_average
-          name: Avg
-        - entity: sensor.bedroom_temperature
-          name: Bed
-        - entity: sensor.kyle_room_temperature
-          name: Kyle
-        - entity: sensor.lucas_room_temperature
-          name: Lucas
-        - entity: sensor.guest_room_temperature
-          name: Guest
-        - entity: sensor.upstairs_bathroom_temperature
-          name: Bath
-        height: 88
-        icon: mdi:home-floor-2
-        line_width: 2
-        lower_bound: 60
-        name: Upstairs Temperature
-        points_per_hour: 4
-        show:
-          extrema: true
-          graph: line
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    - cards:
-      - subtitle: Attic
-        title: House temperatures
-        type: custom:mushroom-title-card
-      - aggregate_func: max
-        animate: true
-        entities:
-        - entity: sensor.attic_temperature
-        height: 131
-        icon: hass:home-floor-a
-        line_width: 2
-        lower_bound: 60
-        points_per_hour: 4
-        show:
-          extrema: true
-          graph: line
-          icon: false
-          name: false
-          state: false
-        type: custom:mini-graph-card
-      type: vertical-stack
-    parameters:
-      pagination:
-        type: bullets
-      spaceBetween: 8
-    type: custom:swipe-card
+    - title: House temperatures
+      type: custom:mushroom-title-card
+    - tabs:
+      - attributes:
+          label: All
+        card:
+          entities:
+          - entity: weather.home
+            name: Outdoor
+          - entity: sensor.attic_temperature
+            icon: hass:home-floor-a
+          - entity: sensor.upstairs_temperature_average
+            icon: hass:home-floor-2
+            name: Upstairs average
+          - entity: sensor.downstairs_temperature_average
+            icon: hass:home-floor-1
+            name: Downstairs average
+          type: entities
+      - attributes:
+          label: Downstairs
+        card:
+          aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.downstairs_temperature_average
+            name: Avg
+          - entity: sensor.family_room_temperature
+            name: Family
+          - entity: sensor.kitchen_temperature
+            name: Kitchen
+          - entity: sensor.home_thermostat_temperature
+            name: Thermostat
+          height: 88
+          icon: mdi:home-floor-1
+          line_width: 2
+          lower_bound: 60
+          points_per_hour: 4
+          show:
+            extrema: true
+            graph: line
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+      - attributes:
+          label: Upstairs
+        card:
+          aggregate_func: max
+          animate: true
+          entities:
+          - entity: sensor.upstairs_temperature_average
+            name: Avg
+          - entity: sensor.bedroom_temperature
+            name: Bed
+          - entity: sensor.kyle_room_temperature
+            name: Kyle
+          - entity: sensor.lucas_room_temperature
+            name: Lucas
+          - entity: sensor.guest_room_temperature
+            name: Guest
+          - entity: sensor.upstairs_bathroom_temperature
+            name: Bath
+          height: 88
+          icon: mdi:home-floor-2
+          line_width: 2
+          lower_bound: 60
+          name: Upstairs temperature
+          points_per_hour: 4
+          show:
+            extrema: true
+            graph: line
+            icon: false
+            name: false
+            state: false
+          type: custom:mini-graph-card
+      type: custom:tabbed-card
+    type: vertical-stack
     view_layout:
       position: sidebar
   - cards:

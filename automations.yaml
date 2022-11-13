@@ -985,7 +985,7 @@
   mode: queued
   max: 10
 - id: '1662393782118'
-  alias: 'Remote: family room switch'
+  alias: 'Remote: family room dimmer'
   description: Family room dimmer switch multi-click handler.
   use_blueprint:
     path: brianhanifin/zwave_js_inovelli_lzw31_sn_red_series_dimmer.yaml
@@ -2129,35 +2129,6 @@
             who: brian
             tag: person_detected
         alias: Clear the person_detected mobile notification.
-      - if:
-        - condition: and
-          conditions:
-          - condition: state
-            entity_id: input_boolean.keep_outdoor_lights_off
-            state: 'off'
-          - condition: numeric_state
-            entity_id: sensor.outdoor_illuminance_educated_guessor
-            below: 2500
-        then:
-        - alias: Store the current state of the path, porch, + entry lights.
-          service: scene.create
-          data:
-            scene_id: front_door_locked_snapshot
-            snapshot_entities:
-            - light.home_entry
-            - light.path_lights
-            - light.porch
-          enabled: false
-        - alias: Full brightness!
-          service: light.turn_on
-          target:
-            entity_id:
-            - light.path_lights
-            - light.porch
-          data:
-            brightness: 255
-        alias: When it is dark outside and "Keep outdoor locked" is disabled.
-        enabled: false
       - alias: Update Light Switch LED Status Color.
         service: script.turn_on
         target:
@@ -3909,25 +3880,35 @@
     alias: Turn off the outdoor lights.
   mode: single
 - id: '1668201919612'
-  alias: Illuminate path to the front door
+  alias: Illuminate front entry
   description: ''
   trigger:
   - platform: state
     entity_id:
     - binary_sensor.front_yard_person_occupancy
     - binary_sensor.driveway_parking_person_occupancy
-    - binary_sensor.front_door_person_occupancy
     - binary_sensor.driveway_flood_motion
-    - binary_sensor.front_door
     from: 'off'
     to: 'on'
-    alias: When a person is detected in front of the house or the door opens.
-    id: turn_lights_up
+    alias: When a person is detected in front of the house.
+    id: person_detected
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door
+    alias: When the front door opens.
+    id: front_door_opens
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'off'
+    alias: When the front door closes.
+    id: front_door_closes
+    from: 'on'
   - platform: state
     entity_id:
     - binary_sensor.front_yard_person_occupancy
     - binary_sensor.driveway_parking_person_occupancy
-    - binary_sensor.front_door_person_occupancy
     - binary_sensor.driveway_flood_motion
     - binary_sensor.front_door
     id: countdown_starts
@@ -3953,9 +3934,13 @@
     alias: Confirm "Keep outside lights off" is disabled and it is dark outside.
   action:
   - if:
-    - condition: trigger
-      id: turn_lights_up
-      alias: When triggered by "turn_lights_up".
+    - condition: or
+      conditions:
+      - condition: trigger
+        id: person_detected
+      - condition: trigger
+        id: front_door_opens
+      alias: When a person is detected or the front door opens.
     then:
     - service: select.select_option
       data:
@@ -3972,6 +3957,26 @@
         - light.driveway_flood
       alias: Turn on the porch and flood lights.
     alias: When the lights need to be turned up.
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: front_door_opens
+      sequence:
+      - service: light.turn_on
+        data:
+          brightness: 255
+        target:
+          entity_id: light.home_entry
+    - conditions:
+      - condition: trigger
+        id: front_door_closes
+      sequence:
+      - service: light.turn_off
+        data:
+          transition: 30
+        target:
+          entity_id: light.home_entry
+    alias: Control home entry light for illumination only when the door opens.
   - if:
     - condition: and
       conditions:
@@ -3985,9 +3990,6 @@
           state: 'off'
         - condition: state
           entity_id: binary_sensor.driveway_parking_person_occupancy
-          state: 'off'
-        - condition: state
-          entity_id: binary_sensor.front_door_person_occupancy
           state: 'off'
         - condition: state
           entity_id: binary_sensor.driveway_flood_motion
@@ -4020,7 +4022,7 @@
       alias: (Re)start the 2 minute light dimmer countdown.
       target:
         entity_id: timer.front_door_driveway_lights
-    alias: When a brief timer needs to be started.
+    alias: When the countdown timer needs to be started.
   - if:
     - condition: trigger
       id: turn_lights_down
@@ -4058,3 +4060,18 @@
     alias: When the lights need to be turned back down.
   mode: queued
   max: 10
+- id: '1668229383339'
+  alias: '_Force remote: family room dimmer on'
+  description: Workaround for whatever bullshit turns that automation off.
+  trigger:
+  - platform: state
+    entity_id:
+    - automation.remote_family_room_dimmer
+    to: 'off'
+  condition: []
+  action:
+  - service: automation.turn_on
+    data: {}
+    target:
+      entity_id: automation.remote_family_room_dimmer
+  mode: single
