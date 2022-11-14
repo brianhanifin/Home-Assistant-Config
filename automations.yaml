@@ -4076,3 +4076,23 @@
     target:
       entity_id: automation.remote_family_room_dimmer
   mode: single
+- id: '1668444960496'
+  alias: Restart Authelia docker service
+  description: Restart the Authelia docker service on Unraid when it is offline for
+    5 minutes.
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.docker_authelia
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    alias: When the Authelia service on Unraid is down for 5 minutes.
+  condition: []
+  action:
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.docker_authelia
+  mode: single
