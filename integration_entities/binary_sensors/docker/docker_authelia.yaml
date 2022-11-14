@@ -1,0 +1,8 @@
+---
+unique_id: docker_authelia
+platform: rest
+name: Docker authelia
+icon: mdi:docker
+# scan_interval: 60
+resource: http://10.0.0.4:8126/container/Authelia
+value_template: '{{ value_json is not none and value_json.state == "running" }}'

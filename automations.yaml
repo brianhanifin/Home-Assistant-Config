@@ -735,19 +735,17 @@
     device_id: bc23d534656122cd2d15fcbaf69c2dbd
     entity_id: switch.wirelessap2_power_cycler
     domain: switch
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.docker_unifi
   - delay:
       hours: 0
       minutes: 0
       seconds: 15
       milliseconds: 0
-  - service: switch.turn_on
-    data: {}
-    target:
-      entity_id: switch.docker_unifi
+    enabled: true
+  - service: rest_command.docker
+    data:
+      container: unifi-controller
+      command: restart
+    alias: Restart Unifi controller's docker service.
   - delay:
       hours: 0
       minutes: 10
@@ -1278,7 +1276,7 @@
     alias: When away mode is activated.
   mode: restart
 - id: '1664914391038'
-  alias: Leave unlocked
+  alias: Front door leave unlocked
   description: ''
   trigger:
   - id: to_on
@@ -1484,13 +1482,13 @@
             An attempt has been made to restart the addon.
   mode: single
 - id: '1664915086230'
-  alias: Restart Unifi docker service
+  alias: Restart Unifi for gaming pc network change
   description: When a disabled PC is re-enabled restart the Unifi docker to ensure
     the change is applied.
   trigger:
   - platform: state
     entity_id:
-    - switch.gaming_pc_blackpc
+    - device_tracker.gaming_pc_blackpc
     - switch.gaming_pc_bluepc
     - switch.gaming_pc_greenpc
     - switch.gaming_pc_redpc
@@ -1505,62 +1503,47 @@
       minutes: 0
       seconds: 10
       milliseconds: 0
-  - service: switch.turn_off
-    target:
-      entity_id: switch.docker_unifi
-    data: {}
-  - delay:
-      seconds: 15
-  - service: switch.turn_on
-    target:
-      entity_id: switch.docker_unifi
-    data: {}
+  - service: rest_command.docker
+    data:
+      container: unifi-controller
+      command: restart
+    alias: Restart Unifi controller's docker service.
   mode: restart
 - id: '1664915161123'
   alias: Restart Z-wave_JS 2 mqtt docker service
   description: ''
   trigger:
   - platform: state
-    entity_id: switch.docker_zwavejs2mqtt
-    from: 'on'
-    to:
+    entity_id:
+    - binary_sensor.docker_zwavejs2mqtt
     for:
       minutes: 10
+    to: 'off'
   condition: []
   action:
-  - service: switch.turn_off
-    target:
-      entity_id: switch.docker_zwavejs2mqtt
-    data: {}
-  - delay:
-      seconds: 30
-  - service: switch.turn_on
-    target:
-      entity_id: switch.docker_zwavejs2mqtt
-    data: {}
+  - service: rest_command.docker
+    data:
+      container: zwavejs2mqtt
+      command: restart
+    alias: Restart zwavejs2mqtt's docker service.
   mode: single
 - id: '1664915191810'
   alias: Restart Zigbee 2 mqtt docker service
   description: ''
   trigger:
   - platform: state
-    entity_id: switch.docker_zigbee2mqtt
-    from: 'on'
-    to:
+    entity_id:
+    - binary_sensor.docker_zigbee2mqtt
     for:
       minutes: 10
+    to: 'off'
   condition: []
   action:
-  - service: switch.turn_off
-    target:
-      entity_id: switch.docker_zigbee2mqtt
-    data: {}
-  - delay:
-      seconds: 30
-  - service: switch.turn_on
-    target:
-      entity_id: switch.docker_zigbee2mqtt
-    data: {}
+  - service: rest_command.docker
+    data:
+      container: zigbee2mqtt
+      command: restart
+    alias: Restart zigbee2mqtt's docker service.
   mode: single
 - id: '1664918803941'
   alias: 'Presence: activate/deactivate away mode'
@@ -3459,7 +3442,9 @@
       previous_status: "{%- if trigger.id == \"status_change\" %}\n  {{ \"Running\"
         if status == \"Complete\" }}\n{%- else %}\n  {{ states(\"input_select.glowforge_status\")
         }}\n{%- endif %}\n"
-  - if: '{{ debug is defined and debug == true }}'
+  - if:
+    - condition: template
+      value_template: '{{ debug is defined and debug == true }}'
     then:
     - service: script.debug
       data:
@@ -3479,6 +3464,8 @@
   - if:
     - condition: template
       value_template: '{{ trigger.id != "status_change" }}'
+    - condition: trigger
+      id: ''
     then:
     - alias: Update the status.
       service: input_select.select_option
@@ -3488,27 +3475,37 @@
         option: '{{ status }}'
   - choose:
     - alias: Off actions.
-      conditions: '{{ status == "Off" }}'
+      conditions:
+      - condition: template
+        value_template: '{{ status == "Off" }}'
       sequence:
       - alias: Turn off the camera.
         service: switch.turn_off
         target:
           entity_id:
           - switch.glowforge_camera
-          - switch.docker_wyze_bridge
         data: {}
+      - service: rest_command.docker
+        data:
+          container: docker-wyze-bridge
+          command: stop
+        alias: Stop Wyze bridge's docker service.
     - alias: Idle/Running actions.
-      conditions: '{{ status in ["Idle","Running"] }}'
+      conditions:
+      - condition: template
+        value_template: '{{ status in ["Idle","Running"] }}'
       sequence:
       - alias: Turn on the wyze camera bridge docker container.
         if:
-        - condition: template
-          value_template: '{{ is_state("switch.docker_wyze_bridge","off") }}'
+        - condition: state
+          entity_id: binary_sensor.docker_wyze_bridge
+          state: 'on'
         then:
-        - service: switch.turn_on
-          target:
-            entity_id: switch.docker_wyze_bridge
-          data: {}
+        - service: rest_command.docker
+          data:
+            container: docker-wyze-bridge
+            command: start
+          alias: Start Wyze bridge's docker service.
         - delay:
             seconds: 10
       - alias: Turn on the camera.
@@ -3521,7 +3518,10 @@
             entity_id: switch.glowforge_camera
           data: {}
     - alias: Complete actions.
-      conditions: '{{ status == "Complete" and previous_status == "Running" }}'
+      conditions:
+      - condition: template
+        value_template: '{{ status == "Complete" and previous_status == "Running"
+          }}'
       sequence:
       - alias: Speech notification.
         service: script.notify_speech
@@ -4083,7 +4083,8 @@
   trigger:
   - platform: state
     entity_id:
-    - switch.docker_authelia
+    - binary_sensor.docker_authelia
+    to: 'off'
     for:
       hours: 0
       minutes: 5
@@ -4091,10 +4092,11 @@
     alias: When the Authelia service on Unraid is down for 5 minutes.
   condition: []
   action:
-  - service: switch.turn_on
-    data: {}
-    target:
-      entity_id: switch.docker_authelia
+  - service: rest_command.docker
+    data:
+      container: Authelia
+      command: restart
+    alias: Restart Authelia's docker service.
   mode: single
 - id: '1668445491799'
   alias: Brian or Nerene leave home
@@ -4109,8 +4111,14 @@
     entity_id: person.nerene
     zone: zone.home
     event: leave
-  condition: []
+  condition:
+  - condition: template
+    value_template: '{{ trigger.event == "leave" }}'
+    alias: Stop false triggers for "enter" events.
   action:
+  - service: script.debug
+    data:
+      message: '{{ trigger }}'
   - if:
     - condition: not
       conditions:
