@@ -717,7 +717,7 @@
       default: []
   mode: single
 - id: '1654047415255'
-  alias: Wireless access point restart
+  alias: Restart physical wireless access point
   description: ''
   trigger:
   - platform: state
@@ -1454,7 +1454,7 @@
     data: {}
   mode: single
 - id: '1664915034973'
-  alias: 'Restart addon: SDR'
+  alias: Restart software defined radio addon
   description: Restart the SDR addon when a sensor temperature goes unavailable.
   trigger:
   - platform: state
@@ -1484,7 +1484,7 @@
             An attempt has been made to restart the addon.
   mode: single
 - id: '1664915086230'
-  alias: Restart Unifi
+  alias: Restart Unifi docker service
   description: When a disabled PC is re-enabled restart the Unifi docker to ensure
     the change is applied.
   trigger:
@@ -1517,7 +1517,7 @@
     data: {}
   mode: restart
 - id: '1664915161123'
-  alias: Restart Z-wave_JS 2 mqtt
+  alias: Restart Z-wave_JS 2 mqtt docker service
   description: ''
   trigger:
   - platform: state
@@ -1540,7 +1540,7 @@
     data: {}
   mode: single
 - id: '1664915191810'
-  alias: Restart Zigbee 2 mqtt
+  alias: Restart Zigbee 2 mqtt docker service
   description: ''
   trigger:
   - platform: state
@@ -4095,4 +4095,59 @@
     data: {}
     target:
       entity_id: switch.docker_authelia
+  mode: single
+- id: '1668445491799'
+  alias: Brian or Nerene leave home
+  description: When Brian or Nerene leave the home zone, lock the door and close the
+    garage.
+  trigger:
+  - platform: zone
+    entity_id: person.brian
+    zone: zone.home
+    event: leave
+  - platform: zone
+    entity_id: person.nerene
+    zone: zone.home
+    event: leave
+  condition: []
+  action:
+  - if:
+    - condition: not
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: lock.front_door
+          state: locked
+        - condition: state
+          entity_id: lock.front_door
+          state: locking
+      alias: '[NOT] When the front door is not "locked".'
+    then:
+    - service: lock.lock
+      data: {}
+      target:
+        entity_id: lock.front_door
+      alias: Lock the front door.
+    alias: Make sure the garage door is locked.
+  - if:
+    - condition: not
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: cover.garage_door
+          state: closed
+        - condition: state
+          entity_id: cover.garage_door
+          state: closing
+        alias: '[OR] When garage door is "closed" or "closing".'
+      alias: '[NOT] When garage door is not "closed" or "closing".'
+    then:
+    - service: cover.close_cover
+      data: {}
+      target:
+        entity_id: cover.garage_door
+      alias: Close the garage door.
+    alias: Make sure the garage door is closed.
   mode: single
