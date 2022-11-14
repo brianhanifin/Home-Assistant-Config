@@ -354,22 +354,11 @@
         target:
           device_id: fb55d58ca0d8f8285ebe051953b9bdcc
       button_3_single:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.bedroom_fan_power
-            state: 'on'
-          sequence:
-          - service: fan.turn_off
-            data: {}
-            target:
-              entity_id: fan.bedroom
-        default:
-        - service: fan.turn_on
-          data: {}
-          target:
-            entity_id: fan.bedroom
-        alias: Toggle fan on/off.
+      - service: fan.toggle
+        data: {}
+        target:
+          entity_id: fan.bedroom
+      alias: Toggle fan on/off.
       button_4_single:
       - service: switch.toggle
         target:
@@ -431,21 +420,10 @@
         target:
           entity_id: light.bedroom_table_lamp
       button_3_single:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: binary_sensor.bedroom_fan_power
-            state: 'on'
-          sequence:
-          - service: fan.turn_off
-            data: {}
-            target:
-              entity_id: fan.bedroom
-        default:
-        - service: fan.turn_on
-          data: {}
-          target:
-            entity_id: fan.bedroom
+      - service: fan.toggle
+        data: {}
+        target:
+          entity_id: fan.bedroom
         alias: Toogle fan on/off.
       button_4_single:
       - service: switch.toggle
