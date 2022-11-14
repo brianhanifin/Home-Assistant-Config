@@ -493,7 +493,8 @@
   description: ''
   trigger:
   - platform: state
-    entity_id: sensor.doorbell_action
+    entity_id:
+    - sensor.doorbell_push_action
     to: bell1
   condition: []
   action:
@@ -2857,6 +2858,78 @@
       action: press
   condition: []
   action:
+  - variables:
+      remote_name: '{{ trigger.event.data.device_name|lower|replace(" ","_") }}'
+      button_id: '{{ trigger.event.data.button_number }}'
+      buttons:
+      - ''
+      - ''
+      - 'on'
+      - middle
+      - 'off'
+      - step_up
+      - step_down
+      button: '{{ buttons[button_id] }}'
+      remotes:
+        bedroom:
+          'on':
+          - light.bedroom_east
+          - light.bedroom_table_lamp
+          'off':
+          - light.bedroom
+          - light.bedroom_east
+          - light.bedroom_table_lamp
+          - fan.bedroom
+          - climate.bedroom_thermostat
+          - switch.sound_machine
+        dining_room:
+          'on': light.dining_room
+          'off': light.dining_room
+          middle:
+          - light.kitchen
+          - light.kitchen_prep
+          step_up: light.dining_room
+          step_down: light.dining_room
+        entry:
+          'on': light.home_entry
+          'off': light.home_entry
+          middle: ''
+          step_up: light.home_entry
+          step_down: light.home_entry
+        play_room_1:
+          'on':
+          - light.play_room
+          - light.play_room_floor_lamp
+          'off':
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          middle: light.play_room_floor_lamp
+          step_up:
+          - light.play_room
+          - light.play_room_floor_lamp
+          step_down:
+          - light.play_room
+          - light.play_room_floor_lamp
+        play_room_2:
+          'on':
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          'off':
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          middle: light.play_room_entry
+          step_up:
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+          step_down:
+          - light.play_room
+          - light.play_room_floor_lamp
+          - light.play_room_entry
+      entities: '{{ remotes[remote_name][button] }}'
   - service: script.debug
     data:
       message: "{{ trigger.event.data }}\n\nremote_name: {{ remote_name }}\nbutton_id:
@@ -2908,78 +2981,6 @@
 
             '
         alias: Increase or decrease brightness by 20%.
-  variables:
-    remote_name: '{{ trigger.event.data.device_name|lower|replace(" ","_") }}'
-    button_id: '{{ trigger.event.data.button_number }}'
-    buttons:
-    - ''
-    - ''
-    - 'on'
-    - middle
-    - 'off'
-    - step_up
-    - step_down
-    button: '{{ buttons[button_id] }}'
-    remotes:
-      bedroom:
-        'on':
-        - light.bedroom_east
-        - light.bedroom_table_lamp
-        'off':
-        - light.bedroom
-        - light.bedroom_east
-        - light.bedroom_table_lamp
-        - fan.bedroom
-        - climate.bedroom_thermostat
-        - switch.sound_machine
-      dining_room:
-        'on': light.dining_room
-        'off': light.dining_room
-        middle:
-        - light.kitchen
-        - light.kitchen_prep
-        step_up: light.dining_room
-        step_down: light.dining_room
-      entry:
-        'on': light.home_entry
-        'off': light.home_entry
-        middle: ''
-        step_up: light.home_entry
-        step_down: light.home_entry
-      play_room_1:
-        'on':
-        - light.play_room
-        - light.play_room_floor_lamp
-        'off':
-        - light.play_room
-        - light.play_room_floor_lamp
-        - light.play_room_entry
-        middle: light.play_room_floor_lamp
-        step_up:
-        - light.play_room
-        - light.play_room_floor_lamp
-        step_down:
-        - light.play_room
-        - light.play_room_floor_lamp
-      play_room_2:
-        'on':
-        - light.play_room
-        - light.play_room_floor_lamp
-        - light.play_room_entry
-        'off':
-        - light.play_room
-        - light.play_room_floor_lamp
-        - light.play_room_entry
-        middle: light.play_room_entry
-        step_up:
-        - light.play_room
-        - light.play_room_floor_lamp
-        - light.play_room_entry
-        step_down:
-        - light.play_room
-        - light.play_room_floor_lamp
-        - light.play_room_entry
-    entities: '{{ remotes[remote_name][button] }}'
   mode: parallel
 - id: '1666216108903'
   alias: Play room light off
