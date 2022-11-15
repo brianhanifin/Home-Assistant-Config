@@ -4097,6 +4097,7 @@
   - service: script.debug
     data:
       message: '{{ trigger }}'
+    enabled: false
   - if:
     - condition: not
       conditions:
@@ -4136,4 +4137,9 @@
         entity_id: cover.garage_door
       alias: Close the garage door.
     alias: Make sure the garage door is closed.
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
   mode: single
