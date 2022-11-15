@@ -134,7 +134,7 @@ decluttering_templates:
         type: vertical-stack
       - cards:
         - subtitle: Room humidity
-          title: '[[floor]] climate'
+          title: Downstairs climate
           type: custom:mushroom-title-card
         - entities: '[[humidity_entities]]'
           show_icon: false
@@ -2328,15 +2328,12 @@ views:
           cards:
           - cards:
             - entity: input_select.glowforge_status
-              name: Status
               type: custom:mushroom-entity-card
             - default: 'On'
               entity: input_select.glowforge_status
               states:
                 'Off':
                   entity: switch.docker_wyze_bridge
-                  icon: mdi:docker
-                  name: Wyze bridge
                   type: custom:mushroom-entity-card
               type: custom:state-switch
             columns: 2
@@ -2389,7 +2386,7 @@ views:
       type: custom:mushroom-title-card
     - entity: switch.prusa
       icon_color: red
-      name: Power toggle
+      name: 3D Printer Kill Switch!!!
       tap_action:
         action: toggle
         confirmation:
@@ -3422,15 +3419,17 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entities:
-        - entity: input_datetime.high_school_summer_ends
-          name: High school first day
         - entity: input_datetime.high_school_summer_begin
           name: High school last day
+        - entity: input_datetime.high_school_summer_ends
+          name: High school first day
         show_icon: false
         type: glance
       - entities:
         - entity: input_datetime.school_summer_begin
           name: Middle school last day
+        - entity: input_datetime.school_summer_ends
+          name: Middle school first day
         show_icon: false
         type: glance
       type: custom:stack-in-card
