@@ -1,0 +1,59 @@
+---
+unique_id: high_school_modified_day
+name: High school day modified schedule
+icon: mdi:wrench-clock
+state: |
+  {%- set today = now().strftime("%F") %}
+  {%- set assembly_days = [
+    "2022-10-07",
+    "2022-12-09",
+    "2023-03-24"
+  ] %}
+  {%- set final_exam_days = [
+      "2022-12-19",
+      "2022-12-20",
+      "2022-12-21",
+      "2023-05-05",
+      "2023-06-06",
+      "2023-06-07"
+  ] %}
+  {%- set minimum_days =  [
+      "2022-11-18",
+      "2022-12-16",
+      "2023-01-27",
+      "2023-02-17",
+      "2023-03-03",
+      "2023-03-17",
+      "2023-04-21",
+      "2023-05-19"
+  ] %}
+  {{ iif(today in assembly_days, "Double assembly day @ 9:18 - 3:30", "") }}
+  {{ iif(today in final_exam_days, "Final exam @ 8:30 - 12:16", "") }}
+  {{ iif(today in minimum_days, "Minimum day @ 9:11 - 1:46", "") }}
+attributes:
+  double_assembly_days: |
+    {{ [
+      "2022-10-07",
+      "2022-12-09",
+      "2023-03-24"
+    ] }}
+  final_exam_days: |
+    {{ [
+      "2022-12-19",
+      "2022-12-20",
+      "2022-12-21",
+      "2023-05-05",
+      "2023-06-06",
+      "2023-06-07"
+    ] }}
+  minimum_days: |
+    {{ [
+      "2022-11-18",
+      "2022-12-16",
+      "2023-01-27",
+      "2023-02-17",
+      "2023-03-03",
+      "2023-03-17",
+      "2023-04-21",
+      "2023-05-19"
+    ] }}

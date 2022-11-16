@@ -233,9 +233,14 @@ script:
       who: '{{ id.split("_")[1] | title }}'
       #event_modifier: '{{ id.split("_")[2] }}'
       modified_schedule: |
-        {%- set modified_event = states("sensor.high_school_day_modified_schedule") %}
-        {%- if modified_event != "" and who in ["Brian","Lucas"] %}
-          {{ "Today is " ~ modified_event ~ " schedule." }}
+        {%- set modified_event_text = states("sensor.high_school_day_modified_schedule") %}
+        {%- if modified_event_text != "" %}
+          {%- set modified_event = modified_event_text.split(" @ ")[0] %}
+          {%- set modified_event_times = modified_event_text.split(" @ ")[1].split(" - ") %}
+          {%- if modified_event != "" and who in ["Brian","Lucas"] %}
+            {{ "Attention: Today is " ~ modified_event ~ " schedule." }}
+            {{ "Class starts at " ~ modified_event_times[0] ~ " ands ends at " ~ modified_event_times[1] }}
+          {%- endif %}
         {%- endif %}
       current_time: |
         {%- set time_suffix = as_timestamp(now())|timestamp_custom("%p", true) %}
