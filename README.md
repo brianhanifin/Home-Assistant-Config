@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,625** | 1,262 | 37 | 97 | 58 |
+| **41,609** | 1,274 | 37 | 95 | 58 |
 
 # Index
 
@@ -238,10 +238,10 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1262 total entities**,
-including **618 sensors**. My YAML
-files contain 41,625 lines of code.
-All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>24 Custom integrations</summary>
+Our Home Assistant install has approximately **1274 total entities**,
+including **634 sensors**. My YAML
+files contain 41,609 lines of code.
+All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>25 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.2.0](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra).
@@ -257,6 +257,9 @@ Authors:[@hif2k1](https://github.com/hif2k1).
 
 ## [Config Check v0.1.1](https://github.com/custom-components/config_check)
 Run the CLI config_check from a service call.Authors:[@ludeeus](https://github.com/ludeeus).
+
+## [Eight Sleep Climate v2.0.0](https://github.com/amosyuen/ha-eight-sleep-climate)
+Climate entity for controlling eight sleep bedAuthors:[@amosyuen](https://github.com/amosyuen).
 
 ## [Fontawesome icons v2.1.5](https://github.com/thomasloven/hass-fontawesome)
 
@@ -315,7 +318,7 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.15](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>29 lovelace plugins</summary>
+<details><summary>27 lovelace plugins</summary>
 
 ## [Atomic Calendar Revive v7.0.1](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
@@ -334,9 +337,6 @@ An advanced calendar card for Home Assistant Lovelace.
 
 ## [Decluttering Card v0.6.3](https://github.com/custom-cards/decluttering-card)
 🧹 Declutter your lovelace configuration with the help of this card
-
-## [Flex Table Highly Customizable, Data Visualization v0.7.2](https://github.com/custom-cards/flex-table-card)
-Highly Flexible Lovelace Card - arbitrary contents/columns/rows, regex matched, perfect to show appdaemon created content and anything breaking out of the entity_id + attributes concept
 
 ## [Flipdown Timer Card v0.3](https://github.com/pmongloid/flipdown-timer-card)
 Flipdown Timer Card for Home Assistant Lovelace
@@ -379,9 +379,6 @@ A different take on the thermostat card for Home Assistant ♨️
 
 ## [Slider Entity Row v17.2.1](https://github.com/thomasloven/lovelace-slider-entity-row)
 🔹 Add sliders to entity cards
-
-## [Stack In Card v0.2.0](https://github.com/custom-cards/stack-in-card)
-🛠 group multiple cards into one card without the borders
 
 ## [State Switch v1.9.5](https://github.com/thomasloven/lovelace-state-switch)
 🔹Dynamically replace lovelace cards depending on occasion
@@ -475,7 +472,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,625-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,609-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

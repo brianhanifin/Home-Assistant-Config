@@ -1,6 +1,8 @@
 decluttering_templates:
   calendar:
     card:
+      canary_style:
+        padding-top: 0px;
       dateSize: 130
       entities:
       - color: teal
@@ -53,10 +55,14 @@ decluttering_templates:
         square: false
         type: grid
       - cards:
-        - entities: '[[sensors]]'
+        - canary_style:
+            border: none;
+          entities: '[[sensors]]'
           state_color: true
           type: entities
-        - entities:
+        - canary_style:
+            border: none;
+          entities:
           - type: divider
           - entities:
             - entity: input_select.event_speakers_[[id]]
@@ -67,7 +73,9 @@ decluttering_templates:
           show_header_toggle: false
           state_color: true
           type: entities
-        - entities:
+        - canary_style:
+            border: none;
+          entities:
           - entities:
             - entity: input_select.event_light_[[id]]
             - entity: input_datetime.event_light_[[id]]
@@ -91,12 +99,16 @@ decluttering_templates:
         - subtitle: Temperature average
           title: '[[floor]] climate'
           type: custom:mushroom-title-card
-        - entities:
+        - canary_style:
+            border: none;
+          entities:
           - entity: '[[average]]'
             name: '[[floor]] average'
           show_icon: false
           type: glance
         - animate: true
+          canary_style:
+            border: none;
           entities:
           - entity: '[[average]]'
           height: 118
@@ -111,16 +123,21 @@ decluttering_templates:
             name: false
             state: false
           type: custom:mini-graph-card
+        in_card: true
         type: vertical-stack
       - cards:
         - subtitle: Room temperature
           title: '[[floor]] climate'
           type: custom:mushroom-title-card
-        - entities: '[[temperature_entities]]'
+        - canary_style:
+            border: none;
+          entities: '[[temperature_entities]]'
           show_icon: false
           type: glance
         - aggregate_func: max
           animate: true
+          canary_style:
+            border: none;
           entities: '[[temperature_entities]]'
           height: 75
           hours_to_show: 24
@@ -131,16 +148,21 @@ decluttering_templates:
             name: false
             state: false
           type: custom:mini-graph-card
+        in_card: true
         type: vertical-stack
       - cards:
         - subtitle: Room humidity
           title: '[[floor]] climate'
           type: custom:mushroom-title-card
-        - entities: '[[humidity_entities]]'
+        - canary_style:
+            border: none;
+          entities: '[[humidity_entities]]'
           show_icon: false
           type: glance
         - aggregate_func: max
           animate: true
+          canary_style:
+            border: none;
           entities: '[[humidity_entities]]'
           height: 75
           hours_to_show: 12
@@ -151,6 +173,7 @@ decluttering_templates:
             name: false
             state: false
           type: custom:mini-graph-card
+        in_card: true
         type: vertical-stack
       parameters:
         pagination:
@@ -170,6 +193,8 @@ decluttering_templates:
         type: custom:multiple-entity-row
       footer:
         animate: true
+        canary_style:
+          border: none;
         entities: '[[entities]]'
         height: 75
         hours_to_show: '[[hours]]'
@@ -401,12 +426,15 @@ decluttering_templates:
       cards:
       - card:
           cards:
-          - entities:
-            - entity: sensor.nws_alerts
-            type: entities
-          - content: '{{ state_attr("sensor.nws_alerts","spoken_desc") }}'
+          - subtitle: National Weather Service alerts
+            type: custom:mushroom-title-card
+          - content: "{%- set alerts = state_attr(\"sensor.nws_alerts\",\"spoken_desc\"\
+              ) %} {%- set alerts = alerts.split(\"-\") if \"-\" in alerts %} {%-\
+              \ if alerts is sequence %}\n  {%- for alert in alerts %}\n    {%- if\
+              \ loop.first %}\n      {{ alert }}\n    {%- else %}\n      {{ iif(alert!=alerts[loop.index-1],\
+              \ alert, \"\") }}\n    {%- endif %}\n  {%- endfor %}\n{%- else %}\n\
+              \  {{ alerts }}\n{%- endif %}\n"
             type: markdown
-          in_card: true
           type: vertical-stack
         conditions:
         - entity: sensor.nws_alerts
@@ -916,13 +944,14 @@ views:
         navigation_path: /lovelace/monitor
       type: custom:mushroom-template-card
     - badge_color: ''
+      badge_icon: ''
       double_tap_action:
         action: none
       hold_action:
         action: none
       icon: mdi:calendar-clock
       icon_color: green
-      primary: Events
+      primary: Schedules
       tap_action:
         action: navigate
         navigation_path: /lovelace/events
@@ -951,8 +980,8 @@ views:
       more_info_on_tap: true
       show_empty: false
       show_notification_title: false
-      style: "ha-card {\n  background: rgba(128, 0, 0, 0.1);\n}\nha-markdown {\n \
-        \ font-size: 1.2em;\n  font-weight: bold;\n}\n"
+      style: "/* ha-card {\n   background: rgba(128, 0, 0, 0.1);\n} */\nha-markdown\
+        \ {\n  font-size: 1.2em;\n  font-weight: bold;\n}\n"
       title: Safety notifications
       type: custom:home-feed-card
     - compact_mode: false
@@ -1092,8 +1121,9 @@ views:
           count: 3
           method: state
         type: custom:auto-entities
-      style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n}\n"
-      type: custom:stack-in-card
+      style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n  border-style: none;\n\
+        }\n"
+      type: vertical-stack
     - card:
         card_mod:
           style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n}\n"
@@ -1125,27 +1155,30 @@ views:
       position: main
   - alignment: justify
     chips:
-    - icon: mdi:server
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/system
-      type: template
     - icon: mdi:cast-audio
+      icon_color: blue-grey
       tap_action:
         action: navigate
         navigation_path: /lovelace/smart-speakers
-      type: template
+      type: action
     - icon: mdi:robot
+      icon_color: blue-grey
       tap_action:
         action: navigate
         navigation_path: /lovelace/routines
-      type: template
-    - icon: mdi:cake-variant
+      type: action
+    - icon: fas:birthday-cake
+      icon_color: blue-grey
       tap_action:
         action: navigate
         navigation_path: /lovelace/family-dates
-      type: template
-    - type: menu
+      type: action
+    - icon: mdi:server
+      icon_color: blue-grey
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/system
+      type: action
     type: custom:mushroom-chips-card
     view_layout:
       position: sidebar
@@ -1162,7 +1195,7 @@ views:
       show_state: true
       state_color: false
       type: glance
-    type: custom:stack-in-card
+    type: vertical-stack
     view_layout:
       position: sidebar
   - style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
@@ -2593,7 +2626,9 @@ views:
           type: custom:timer-bar-card
       type: custom:state-switch
     - cards:
-      - entities:
+      - canary_style:
+          border: none;
+        entities:
         - entities:
           - entity: sensor.front_yard_drip_next
             name: Next 🕑
@@ -2613,69 +2648,70 @@ views:
           full_row: true
           type: custom:slider-entity-row
         show_header_toggle: false
-        style: "ha-card {\n  background: none;\n}\n"
         type: entities
-      - content: '*Set Duration to 0 to disable.*'
+      - canary_style:
+          border: none;
+        content: '*Set Duration to 0 to disable.*'
         style: "ha-card {\n  background: none;\n  margin-top: -2em;\n  text-align:\
           \ center;\n}\n"
         type: markdown
-      keep:
-        background: true;
-      style: "ha-card {\n  padding-top: 1em;\n}\n"
-      type: custom:stack-in-card
+      in_card: true
+      type: vertical-stack
     type: vertical-stack
     view_layout:
       position: sidebar
-  - subtitle: Scheduled device on/off times.
-    title: Device scheduler
-    type: custom:mushroom-title-card
-    view_layout:
-      position: sidebar
-  - am_pm: true
-    discover_existing: false
-    display_options:
-      primary_info:
-      - name
-      - '<i>Action: {entity} [{action}]</i>'
-      secondary_info:
-      - relative-time
-      - days
-    exclude: []
-    include:
-    - climate.lucas_room_thermostat
-    - fan.bedroom
-    - fan.family_room
-    - fan.play_room
-    - fan.upstairs_bathroom
-    - light.bedroom
-    - light.brian
-    - light.dining_room
-    - light.entry
-    - light.entry_railing
-    - light.family_room
-    - light.family_room_floor_lamp
-    - light.glowforge
-    - light.home_entry
-    - light.kitchen
-    - light.kitchen_prep
-    - light.play_room
-    - light.play_room_entry
-    - light.play_room_floor_lamp
-    - light.porch
-    - light.table_lamp
-    - light.entry_railing
-    - switch.front_yard1
-    - switch.front_yard2
-    - switch.hot_water_pump
-    - switch.lucas_auto_climate
-    - switch.printers
-    show_header_toggle: false
-    sort_by:
-    - state
-    - title
-    time_step: 10
-    title: false
-    type: custom:scheduler-card
+  - cards:
+    - subtitle: Scheduled device on/off times.
+      title: Device scheduler
+      type: custom:mushroom-title-card
+    - am_pm: true
+      discover_existing: false
+      display_options:
+        primary_info:
+        - name
+        - '<i>Action: {entity} [{action}]</i>'
+        secondary_info:
+        - relative-time
+        - days
+      exclude: []
+      include:
+      - climate.bedroom_thermostat
+      - climate.lucas_room_thermostat
+      - fan.bedroom
+      - fan.family_room
+      - fan.upstairs_bathroom
+      - light.bedroom
+      - light.bedroom_east
+      - light.bedroom_table_lamp
+      - light.dining_room
+      - light.entry_railing
+      - light.entry_railing
+      - light.family_room
+      - light.family_room_floor_lamp
+      - light.family_room_table_lamp
+      - light.home_entry
+      - light.home_entry
+      - light.kitchen
+      - light.kitchen_prep
+      - light.path_lights
+      - light.play_room
+      - light.play_room_entry
+      - light.play_room_floor_lamp
+      - light.porch
+      - switch.front_yard1
+      - switch.front_yard2
+      - switch.hot_water_pump
+      - switch.lucas_auto_climate
+      - switch.printer
+      - vacuum
+      show_header_toggle: false
+      sort_by:
+      - state
+      - title
+      time_step: 10
+      title: false
+      type: custom:scheduler-card
+    type: vertical-stack
     view_layout:
       position: sidebar
   icon: mdi:calendar-clock
@@ -2885,7 +2921,7 @@ views:
                 state_header: Installed
                 type: custom:multiple-entity-row
               type: entities
-            type: custom:stack-in-card
+            type: vertical-stack
           - entities:
             - entities:
               - entity: sensor.backup_state
@@ -3147,52 +3183,52 @@ views:
   - subtitle: Tap away from message box before tapping announce.
     title: Speech notifications
     type: custom:mushroom-title-card
+  - entities:
+    - entity: input_select.tts_phrase_room
+    - entity: input_select.tts_phrases
+    - entity: input_text.tts_phrase
+      type: custom:text-input-row
+    footer:
+      entities:
+      - entity: script.tts_phrase_say
+        icon: mdi:account-voice
+        name: Say
+      - entity: script.repeat_last_message
+        icon: mdi:refresh-circle
+        name: Last message
+      type: buttons
+    show_header_toggle: false
+    type: entities
+    view_layout:
+      position: main
   - cards:
-    - entities:
-      - entity: input_select.tts_phrase_room
-      - entity: input_select.tts_phrases
-      - entity: input_text.tts_phrase
-        type: custom:text-input-row
-      footer:
-        entities:
-        - entity: script.tts_phrase_say
-          icon: mdi:account-voice
-          name: Say
-        - entity: script.repeat_last_message
-          icon: mdi:refresh-circle
+    - cards:
+      - entities:
+        - entity: input_boolean.audio_notifications
+        - entity: binary_sensor.noncritical_alert_quiet_time
+          secondary_info: last-changed
+        type: entities
+      - entities:
+        - entity: sensor.last_message
+          icon: ''
           name: Last message
-        type: buttons
-      show_header_toggle: false
-      type: entities
-    - entities:
-      - entity: input_boolean.audio_notifications
-      - entity: binary_sensor.noncritical_alert_quiet_time
-        secondary_info: last-changed
-      type: entities
+        - attribute: target
+          entity: sensor.last_message
+          icon: mdi:cast-audio
+          name: Announced on
+          type: attribute
+        - type: divider
+        - entity: sensor.last_google
+          icon: ''
+          name: Last active google device
+          secondary_info: last-changed
+        show_header_toggle: false
+        state_color: false
+        type: entities
+      type: vertical-stack
     type: vertical-stack
     view_layout:
       position: sidebar
-  - cards:
-    - entities:
-      - entity: sensor.last_message
-        icon: ''
-        name: Last message
-      - attribute: target
-        entity: sensor.last_message
-        icon: mdi:cast-audio
-        name: Announced on
-        type: attribute
-      - type: divider
-      - entity: sensor.last_google
-        icon: ''
-        name: Last active google device
-        secondary_info: last-changed
-      show_header_toggle: false
-      state_color: false
-      type: entities
-    type: vertical-stack
-    view_layout:
-      position: main
   icon: mdi:cast-audio
   path: smart-speakers
   subview: true
@@ -3411,21 +3447,23 @@ views:
           type: glance
         - entities:
           - entity: sensor.holiday
-          style: ":host {\n  display: {{ \"none\" if states(\"sensor.holiday\") ==\
-            \ \"\" else \"block\" }};\n}\n"
+          - entity: sensor.high_school_day_modified_schedule
+          style: ":host {\n  display: {{ iif(is_state(\"sensor.holiday\",\"\") and\
+            \ is_state(\"sensor.high_school_day_modified_schedule\",\"\"), \"none\"\
+            , \"block\") }};\n}\n"
           type: entities
         style: ''
-        type: custom:stack-in-card
+        type: vertical-stack
       type: vertical-stack
     - subtitle: Manually set.
       title: ''
       type: custom:mushroom-title-card
     - cards:
       - entities:
-        - entity: input_datetime.high_school_summer_ends
-          name: High school first day
         - entity: input_datetime.high_school_summer_begin
           name: High school last day
+        - entity: input_datetime.high_school_summer_ends
+          name: High school first day
         show_icon: false
         type: glance
       - entities:
@@ -3433,7 +3471,7 @@ views:
           name: Middle school last day
         show_icon: false
         type: glance
-      type: custom:stack-in-card
+      type: vertical-stack
     type: vertical-stack
     view_layout:
       position: sidebar
