@@ -31,6 +31,31 @@ state: |
   {{ iif(today in final_exam_days, "Final exam @ 8:30 - 12:16", "") }}
   {{ iif(today in minimum_days, "Minimum day @ 9:11 - 1:46", "") }}
 attributes:
+  next_modified_day: >-
+    {%- macro get_next_date(days, last_next) %}
+      {%- set local = namespace(next="") %}
+      {%- set today = now().date() %}
+
+      {%- for day in days|sort %}
+        {%- if local.next == "" and today|as_timestamp <= day|as_timestamp %}
+          {%- set local.next = day %}
+        {%- endif %}
+      {%- endfor %}
+
+      {%- if last_next == "" %}
+        {{- local.next }}
+      {%- else %}
+        {{- iif(local.next|as_timestamp < last_next|as_timestamp, local.next, last_next) }}
+      {%- endif %}
+    {%- endmacro %}
+
+    {%- set modified_dates = states.sensor.high_school_day_modified_schedule.attributes %}
+    {%- set next_date = "" %}
+
+    {%- set next_date = get_next_date(modified_dates.double_assembly_days, next_date) %}
+    {%- set next_date = get_next_date(modified_dates.final_exam_days, next_date) %}
+    {%- set next_date = get_next_date(modified_dates.minimum_days, next_date) %}
+    {{- next_date }}
   double_assembly_days: |
     {{ [
       "2022-10-07",
