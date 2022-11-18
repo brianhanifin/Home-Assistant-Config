@@ -5,28 +5,28 @@ decluttering_templates:
         padding-top: 0px;
       dateSize: 130
       entities:
-      - color: teal
+      - color: var(--state-home-color)
         entity: calendar.us_holidays
         name: Holidays
-      - color: black
+      - color: var(--state-icon-active-color)
         entity: calendar.birthdays_anniversary
         name: Milestones
-      - color: green
+      - color: var(--label-badge-green)
         entity: calendar.brian
         name: Brian
       - blocklist: creative market
-        color: purple
+        color: var(--secondary-text-color)
         entity: calendar.nerene
         name: Nerene
-      - color: maroon
+      - color: var(--label-badge-yellow)
         entity: calendar.hanifins
         name: Hanifin's
-      - blocklist: Math Tutor,Period
-        color: blue
+      - blocklist: Period
+        color: var(--primary-text-color)
         entity: calendar.kyle
         name: Kyle
       - blocklist: Advisory,Period
-        color: maroon
+        color: var(--label-badge-red)
         entity: calendar.lucas
         name: Lucas
       eventTitleSize: 130
@@ -1017,10 +1017,6 @@ views:
         - locked
         - unavailable
         name: Front Door
-      - content_template: '**Lock countdown** is **active**'
-        entity: timer.front_door_unlocked
-        exclude_states:
-        - idle
       - content_template: '**Leave door unlocked** is **active**'
         entity: input_boolean.leave_unlocked
         exclude_states:
@@ -1066,16 +1062,14 @@ views:
           type: custom:timer-bar-card
         filter:
           exclude:
+          - entity_id: timer.xpresence*
           - state: idle
           - state: ''
           - state: none
           - state: unknown
           - state: unavailable
           include:
-          - entity_id: timer.google_next_timer
-          - entity_id: timer.front_door_unlocked
-          - entity_id: timer.nerene_wakeup_light
-          - entity_id: timer.reminder_lucas_xolaire
+          - domain: timer
         show_empty: false
         sort:
           ignore_case: true
@@ -1155,6 +1149,12 @@ views:
       position: main
   - alignment: justify
     chips:
+    - icon: mdi:server
+      icon_color: blue-grey
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/system
+      type: action
     - icon: mdi:cast-audio
       icon_color: blue-grey
       tap_action:
@@ -1172,12 +1172,6 @@ views:
       tap_action:
         action: navigate
         navigation_path: /lovelace/family-dates
-      type: action
-    - icon: mdi:server
-      icon_color: blue-grey
-      tap_action:
-        action: navigate
-        navigation_path: /lovelace/system
       type: action
     type: custom:mushroom-chips-card
     view_layout:
@@ -2861,7 +2855,7 @@ views:
                 - entity: sensor.updates
                   name: TOTAL
                 entity: sensor.updates
-                icon: mdi:home-assistant
+                icon: mdi:update
                 name: Updates
                 show_state: false
                 type: custom:multiple-entity-row
@@ -2872,8 +2866,28 @@ views:
                 - entity: sensor.latest_release
                   name: Stable
                 entity: update.home_assistant_core_update
-                icon: mdi:home-assistant
+                icon: mdi:cog-box
                 name: Core
+                state_header: Installed
+                type: custom:multiple-entity-row
+              - attribute: installed_version
+                entities:
+                - attribute: latest_version
+                  entity: update.home_assistant_operating_system_update
+                  name: Latest
+                entity: update.home_assistant_operating_system_update
+                icon: mdi:linux
+                name: OS
+                state_header: Installed
+                type: custom:multiple-entity-row
+              - attribute: installed_version
+                entities:
+                - attribute: latest_version
+                  entity: update.home_assistant_supervisor_update
+                  name: Latest
+                entity: update.home_assistant_supervisor_update
+                icon: mdi:docker
+                name: Supervisor
                 state_header: Installed
                 type: custom:multiple-entity-row
               footer:
@@ -2897,29 +2911,6 @@ views:
                     action: url
                     url_path: https://github.com/home-assistant/home-assistant.io/blob/rc/source/_posts/
                 type: buttons
-              type: entities
-            - entities:
-              - type: divider
-              - attribute: installed_version
-                entities:
-                - attribute: latest_version
-                  entity: update.home_assistant_operating_system_update
-                  name: Latest
-                entity: update.home_assistant_operating_system_update
-                icon: fab:docker
-                name: OS
-                state_header: Installed
-                type: custom:multiple-entity-row
-              - attribute: installed_version
-                entities:
-                - attribute: latest_version
-                  entity: update.home_assistant_supervisor_update
-                  name: Latest
-                entity: update.home_assistant_supervisor_update
-                icon: fab:docker
-                name: Supervisor
-                state_header: Installed
-                type: custom:multiple-entity-row
               type: entities
             type: vertical-stack
           - entities:
@@ -3445,17 +3436,18 @@ views:
             name: Public holiday
           show_state: false
           type: glance
-        - entities:
-          - entity: sensor.holiday
-          - entity: sensor.high_school_day_modified_schedule
-          style: ":host {\n  display: {{ iif(is_state(\"sensor.holiday\",\"\") and\
-            \ is_state(\"sensor.high_school_day_modified_schedule\",\"\"), \"none\"\
-            , \"block\") }};\n}\n"
-          type: entities
-        style: ''
         type: vertical-stack
       type: vertical-stack
-    - subtitle: Manually set.
+    - subtitle: Edit file in /integration_entities/template/sensors/datetime.
+      title: ''
+      type: custom:mushroom-title-card
+    - entities:
+      - attribute: next_modified_day
+        entity: sensor.high_school_day_modified_schedule
+        name: Next high school modified day
+        type: custom:multiple-entity-row
+      type: entities
+    - subtitle: Manually set
       title: ''
       type: custom:mushroom-title-card
     - cards:

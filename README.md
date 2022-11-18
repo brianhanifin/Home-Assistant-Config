@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,609** | 1,274 | 37 | 95 | 58 |
+| **41,677** | 1,277 | 37 | 95 | 58 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1274 total entities**,
-including **634 sensors**. My YAML
-files contain 41,609 lines of code.
+Our Home Assistant install has approximately **1277 total entities**,
+including **637 sensors**. My YAML
+files contain 41,677 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>25 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.2.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -371,7 +371,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 ## [Restriction Card v1.2.7](https://github.com/iantrich/restriction-card)
 🔒 Apply restrictions to Lovelace cards
 
-## [Scheduler Card v2.3.7](https://github.com/nielsfaber/scheduler-card)
+## [Scheduler Card v2.3.8](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 ## [Simple Thermostat v2.5.0](https://github.com/nervetattoo/simple-thermostat)
@@ -383,7 +383,7 @@ A different take on the thermostat card for Home Assistant ♨️
 ## [State Switch v1.9.5](https://github.com/thomasloven/lovelace-state-switch)
 🔹Dynamically replace lovelace cards depending on occasion
 
-## [Swipe Card v4.0.0](https://github.com/bramkragten/swipe-card)
+## [Swipe Card v5.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
 ## [Tabbed Card v0.3.0](https://github.com/kinghat/tabbed-card)
@@ -404,7 +404,7 @@ A rain radar card using the tiled images from RainViewer
 
 <details><summary>8 addons</summary>
 
-## ESPHome v2022.10.2
+## ESPHome v2022.11.1
 
 
 ## File editor v5.4.2
@@ -413,7 +413,7 @@ A rain radar card using the tiled images from RainViewer
 ## HA Scheduler v0.17
 
 
-## Home Assistant Google Drive Backup v0.109.1
+## Home Assistant Google Drive Backup v0.109.2
 
 
 ## Portainer v2.0.0
@@ -462,7 +462,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.11.2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.11.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -472,7 +472,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,609-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,677-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
