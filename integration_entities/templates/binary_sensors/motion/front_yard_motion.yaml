@@ -1,0 +1,10 @@
+---
+unique_id: front_yard_motion
+name: Front yard motion
+device_class: motion
+delay_off: "00:00:30"
+state: |
+  {%- set yard = states("binary_sensor.front_yard_person_occupancy") %}
+  {%- set parking = states("binary_sensor.driveway_parking_person_occupancy") %}
+  {%- set flood = states("binary_sensor.driveway_flood_motion") %}
+  {{- iif(yard=="off" and parking=="off" and flood=="off", "off", "on") }}

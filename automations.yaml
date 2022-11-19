@@ -3788,9 +3788,7 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.front_yard_person_occupancy
-    - binary_sensor.driveway_parking_person_occupancy
-    - binary_sensor.driveway_flood_motion
+    - binary_sensor.front_yard_motion
     from: 'off'
     to: 'on'
     alias: When a person is detected in front of the house.
@@ -3810,14 +3808,11 @@
     from: 'on'
   - platform: state
     entity_id:
-    - binary_sensor.front_yard_person_occupancy
-    - binary_sensor.driveway_parking_person_occupancy
-    - binary_sensor.driveway_flood_motion
-    - binary_sensor.front_door
+    - binary_sensor.front_yard_motion
     id: countdown_starts
     from: 'on'
     to: 'off'
-    alias: When presence is no longer detected and the door is closed.
+    alias: When presence is no longer detected.
   - platform: state
     entity_id:
     - timer.front_door_driveway_lights
@@ -3930,6 +3925,11 @@
     - condition: trigger
       id: turn_lights_down
     then:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.driveway_flood_accent
+      alias: Turn off flood accent light to improve camera vision.
     - service: select.select_option
       data:
         option: Auto
@@ -3937,11 +3937,6 @@
         entity_id: select.driveway_flood_mode
       alias: Restore automatic control to the Flood lights (in case Home Assistant
         is down).
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.driveway_flood_accent
-      alias: Turn off flood accent light to improve camera vision.
     - if:
       - condition: state
         entity_id: switch.adaptive_lighting_home_entry
@@ -4086,7 +4081,7 @@
   description: ''
   trigger:
   - platform: time
-    at: 08:00:00
+    at: 07:00:00
     alias: At 8am
   condition:
   - condition: not
