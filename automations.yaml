@@ -3967,17 +3967,30 @@
     entity_id:
     - binary_sensor.docker_authelia
     to: 'off'
+    alias: When the Authelia service on Unraid is down.
     for:
       hours: 0
       minutes: 5
       seconds: 0
-    alias: When the Authelia service on Unraid is down for 5 minutes.
   condition: []
   action:
-  - service: rest_command.docker
-    data:
-      container: Authelia
-      command: restart
+  - repeat:
+      until:
+      - condition: state
+        entity_id: binary_sensor.docker_authelia
+        state: 'on'
+        alias: Repeat until Authelia is running.
+      sequence:
+      - service: rest_command.docker
+        data:
+          container: Authelia
+          command: restart
+        alias: Restart Authelia's docker service.
+      - delay:
+          hours: 0
+          minutes: 2
+          seconds: 0
+          milliseconds: 0
     alias: Restart Authelia's docker service.
   mode: single
 - id: '1668445491799'
