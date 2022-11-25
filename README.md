@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,677** | 1,277 | 37 | 95 | 58 |
+| **41,735** | 1,280 | 37 | 95 | 58 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1277 total entities**,
+Our Home Assistant install has approximately **1280 total entities**,
 including **637 sensors**. My YAML
-files contain 41,677 lines of code.
+files contain 41,735 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>25 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.2.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -329,7 +329,7 @@ An advanced calendar card for Home Assistant Lovelace.
 ## [Canary v0.3.4](https://github.com/jcwillox/lovelace-canary)
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
-## [Card Mod v3.1.5](https://github.com/thomasloven/lovelace-card-mod)
+## [Card Mod v3.2.0](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 ## [Card Tools v11](https://github.com/thomasloven/lovelace-card-tools)
@@ -338,7 +338,7 @@ An advanced calendar card for Home Assistant Lovelace.
 ## [Decluttering Card v0.6.3](https://github.com/custom-cards/decluttering-card)
 🧹 Declutter your lovelace configuration with the help of this card
 
-## [Flipdown Timer Card v0.3](https://github.com/pmongloid/flipdown-timer-card)
+## [Flipdown Timer Card v0.4](https://github.com/pmongloid/flipdown-timer-card)
 Flipdown Timer Card for Home Assistant Lovelace
 
 ## [Fold Entity Row v20.0.4](https://github.com/thomasloven/lovelace-fold-entity-row)
@@ -362,7 +362,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 ## [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
-## [Mushroom v2.3.6](https://github.com/piitaya/lovelace-mushroom)
+## [Mushroom v2.4.1](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 ## [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
@@ -371,7 +371,7 @@ An intuitive way to represent the power and energy that your home is consuming o
 ## [Restriction Card v1.2.7](https://github.com/iantrich/restriction-card)
 🔒 Apply restrictions to Lovelace cards
 
-## [Scheduler Card v2.3.8](https://github.com/nielsfaber/scheduler-card)
+## [Scheduler Card v2.3.9](https://github.com/nielsfaber/scheduler-card)
 HA Lovelace card for control of scheduler entities
 
 ## [Simple Thermostat v2.5.0](https://github.com/nervetattoo/simple-thermostat)
@@ -386,7 +386,7 @@ A different take on the thermostat card for Home Assistant ♨️
 ## [Swipe Card v5.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
-## [Tabbed Card v0.3.0](https://github.com/kinghat/tabbed-card)
+## [Tabbed Card v0.3.1](https://github.com/kinghat/tabbed-card)
 a custom card for home assistant that utilizes tabs to segregate individual cards.
 
 ## [Timer Bar Card v1.20](https://github.com/rianadon/timer-bar-card)
@@ -404,7 +404,7 @@ A rain radar card using the tiled images from RainViewer
 
 <details><summary>8 addons</summary>
 
-## ESPHome v2022.11.1
+## ESPHome v2022.11.3
 
 
 ## File editor v5.4.2
@@ -462,7 +462,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.11.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.11.4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -472,7 +472,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,677-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,735-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg

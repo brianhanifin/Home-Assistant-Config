@@ -2208,6 +2208,34 @@ views:
     type: grid
     view_layout:
       position: main
+  - cards:
+    - entities:
+      - entity: binary_sensor.front_yard_motion
+      - entity: binary_sensor.front_yard_person_occupancy
+        secondary_info: last-changed
+      - entity: binary_sensor.driveway_parking_person_occupancy
+        secondary_info: last-changed
+      - entity: binary_sensor.driveway_flood_motion
+        secondary_info: last-changed
+      - type: divider
+      - entity: timer.front_door_driveway_lights
+      - entity: automation.illuminate_front_entry
+        secondary_info: last-triggered
+      type: entities
+    - entities:
+      - entity: binary_sensor.front_yard_motion
+        name: Template
+      - entity: binary_sensor.front_yard_person_occupancy
+        name: Yard
+      - entity: binary_sensor.driveway_parking_person_occupancy
+        name: Parking
+      - entity: binary_sensor.driveway_flood_motion
+        name: Flood
+      hours_to_show: 0.25
+      type: history-graph
+    type: vertical-stack
+    view_layout:
+      position: sidebar
   - entity: mediaquery
     states:
       '(min-width: 500px)':
