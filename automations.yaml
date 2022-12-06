@@ -680,14 +680,14 @@
       seconds: 0
   condition: []
   action:
-  - type: turn_off
-    device_id: bc23d534656122cd2d15fcbaf69c2dbd
-    entity_id: switch.wirelessap2_power_cycler
-    domain: switch
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.wirelessap2_power_cycler
   - delay:
       hours: 0
       minutes: 0
-      seconds: 15
+      seconds: 30
       milliseconds: 0
     enabled: true
   - service: rest_command.docker
@@ -2908,8 +2908,8 @@
     entity_id:
     - cover.garage_door
     - cover.test
-    from:
     to: closed
+    not_from: unavailable
   action:
   - variables:
       old_state: '{{ trigger.from_state.state|lower }}'
@@ -3808,13 +3808,6 @@
     from: 'on'
   - platform: state
     entity_id:
-    - binary_sensor.front_yard_motion
-    id: countdown_starts
-    from: 'on'
-    to: 'off'
-    alias: When presence is no longer detected.
-  - platform: state
-    entity_id:
     - timer.front_door_driveway_lights
     from: active
     to: idle
@@ -3854,6 +3847,27 @@
         - light.porch
         - light.driveway_flood
       alias: Turn on the porch and flood lights.
+    - if:
+      - condition: state
+        entity_id: timer.front_door_driveway_lights
+        state: active
+      then:
+      - service: timer.cancel
+        data: {}
+        target:
+          entity_id: timer.front_door_driveway_lights
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      alias: When the timer is already active, cancel it so it can be restarted.
+    - service: timer.start
+      data:
+        duration: 00:02:00
+      alias: (Re)start the light dimmer countdown.
+      target:
+        entity_id: timer.front_door_driveway_lights
     alias: When the lights need to be turned up.
   - choose:
     - conditions:
@@ -3875,52 +3889,6 @@
         target:
           entity_id: light.home_entry
     alias: Control home entry light for illumination only when the door opens.
-  - if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id: countdown_starts
-        alias: When triggered by "countdown_starts".
-      - condition: and
-        conditions:
-        - condition: state
-          entity_id: binary_sensor.front_yard_person_occupancy
-          state: 'off'
-        - condition: state
-          entity_id: binary_sensor.driveway_parking_person_occupancy
-          state: 'off'
-        - condition: state
-          entity_id: binary_sensor.driveway_flood_motion
-          state: 'off'
-        - condition: state
-          entity_id: binary_sensor.front_door
-          state: 'off'
-        alias: When presence is cleared and doors are closed.
-      alias: When triggered by "countdown_starts" and presence is clear and doors
-        are closed.
-    then:
-    - if:
-      - condition: state
-        entity_id: timer.front_door_driveway_lights
-        state: active
-      then:
-      - service: timer.cancel
-        data: {}
-        target:
-          entity_id: timer.front_door_driveway_lights
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-      alias: When the timer is already active, cancel it so it can be restarted.
-    - service: timer.start
-      data:
-        duration: 00:00:30
-      alias: (Re)start the light dimmer countdown.
-      target:
-        entity_id: timer.front_door_driveway_lights
-    alias: When the countdown timer needs to be started.
   - if:
     - condition: trigger
       id: turn_lights_down
