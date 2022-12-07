@@ -1628,10 +1628,7 @@ views:
           action: toggle
         type: custom:mushroom-entity-card
       - collapsible_controls: true
-        entity: fan.bedroom
-        fill_container: false
-        hide_state: false
-        hold_action:
+        double_tap_action:
           action: fire-dom-event
           browser_mod:
             data:
@@ -1651,6 +1648,9 @@ views:
                 type: entities
               title: Bedroom fan
             service: browser_mod.popup
+        entity: fan.bedroom
+        fill_container: false
+        hide_state: false
         icon_animation: true
         name: Fan
         show_oscillate_control: false
@@ -2133,8 +2133,6 @@ views:
                   name: Motion sensitivity
                 - entity: number.driveway_flood_motion_delay
                   name: Delay
-                - entity: number.driveway_flood_countdown
-                  name: Countdown
                 type: entities
               title: Driveway flood light
             service: browser_mod.popup
@@ -2211,6 +2209,7 @@ views:
   - cards:
     - entities:
       - entity: binary_sensor.front_yard_motion
+        secondary_info: last-changed
       - entity: binary_sensor.front_yard_person_occupancy
         secondary_info: last-changed
       - entity: binary_sensor.driveway_parking_person_occupancy
@@ -3124,7 +3123,6 @@ views:
               name: Blue PC
             - entity: switch.gaming_pc_redpc
               name: Red PC
-            - entity: device_tracker.gaming_pc_redpc
             - entity: switch.gaming_pc_greenpc
               name: Green PC
             footer:
@@ -3372,17 +3370,6 @@ views:
       columns: 2
       square: false
       type: grid
-    - entities:
-      - entity: sensor.hp_colorlaserjet
-        secondary_info: last-changed
-      - entity: automation.printer_status_update_when_on
-        secondary_info: last-triggered
-      - entity: automation.printer_turn_off_when_idle
-        secondary_info: last-triggered
-      show_header_toggle: false
-      type: entities
-      view_layout:
-        position: sidebar
     type: vertical-stack
     view_layout:
       position: sidebar

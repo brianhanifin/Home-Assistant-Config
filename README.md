@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **41,735** | 1,280 | 37 | 95 | 58 |
+| **41,734** | 1,317 | 37 | 95 | 58 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1280 total entities**,
-including **637 sensors**. My YAML
-files contain 41,735 lines of code.
+Our Home Assistant install has approximately **1317 total entities**,
+including **636 sensors**. My YAML
+files contain 41,734 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>25 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.2.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -273,7 +273,7 @@ Authors:[@ludeeus](https://github.com/ludeeus).
 ## [Google Home v1.9.15](https://github.com/leikoilja/ha-google-home)
 Home Assistant Google Home custom componentAuthors:[@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
-## [Home Assistant Community Store (HACS) v1.28.3](https://hacs.xyz/docs/configuration/start)
+## [Home Assistant Community Store (HACS) v1.28.4](https://hacs.xyz/docs/configuration/start)
 HACS gives you a powerful UI to handle downloads of all your custom needs.Authors:[@ludeeus](https://github.com/ludeeus).
 
 ## [HASS.Agent Notifier v2022.10.25.1](https://github.com/LAB02-Research/HASS.Agent-Notifier)
@@ -404,7 +404,7 @@ A rain radar card using the tiled images from RainViewer
 
 <details><summary>8 addons</summary>
 
-## ESPHome v2022.11.3
+## ESPHome (beta) v2022.12.0b1
 
 
 ## File editor v5.4.2
@@ -462,7 +462,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2022.11.4-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2022.12.0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -472,7 +472,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,735-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-41,734-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2022.svg
