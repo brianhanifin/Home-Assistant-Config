@@ -431,12 +431,12 @@
   use_blueprint:
     path: freakshock/zigbee2mqtt-xiaomi-mijia-round-wireless-remote-switch-wxkg01lm-actions.yaml
     input:
-      button_sensor: sensor.remote_printer_action
+      button_sensor: sensor.button_printer_action
       remote_button_single_press:
       - service: switch.toggle
-        target:
-          device_id: b397a55fe03e4571a4cb668d7064b277
         data: {}
+        target:
+          entity_id: switch.printer
 - id: '1642908642407'
   alias: Doorbell pushed
   description: ''
@@ -1139,7 +1139,7 @@
     then:
     - service: climate.set_hvac_mode
       data:
-        hvac_mode: cool
+        hvac_mode: heat_cool
       target:
         entity_id: climate.home_thermostat
     else: []
@@ -3799,6 +3799,7 @@
     alias: When the front door opens.
     id: front_door_opens
     to: 'on'
+    enabled: true
   - platform: state
     entity_id:
     - binary_sensor.front_door
@@ -3806,6 +3807,7 @@
     alias: When the front door closes.
     id: front_door_closes
     from: 'on'
+    enabled: true
   - platform: state
     entity_id:
     - timer.front_door_driveway_lights
@@ -3829,8 +3831,6 @@
       conditions:
       - condition: trigger
         id: person_detected
-      - condition: trigger
-        id: front_door_opens
       alias: When a person is detected or the front door opens.
     then:
     - service: select.select_option
@@ -3934,6 +3934,7 @@
   - platform: state
     entity_id:
     - binary_sensor.docker_authelia
+    - binary_sensor.uptimekuma_authelia
     to: 'off'
     alias: When the Authelia service on Unraid is down.
     for:

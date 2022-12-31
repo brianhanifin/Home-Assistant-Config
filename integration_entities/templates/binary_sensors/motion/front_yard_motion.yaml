@@ -7,4 +7,5 @@ state: |
   {%- set yard = is_state("binary_sensor.front_yard_person_occupancy","on") %}
   {%- set parking = is_state("binary_sensor.driveway_parking_person_occupancy","on") %}
   {%- set flood = is_state("binary_sensor.driveway_flood_motion","on") %}
-  {{ iif(yard==false and parking==false and flood==false, "off", "on") }}
+  {%- set front_door = is_state("binary_sensor.front_door","on") %}
+  {{ iif(yard==false and parking==false and flood==false and front_door==false, "off", "on") }}
