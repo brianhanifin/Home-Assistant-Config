@@ -5,8 +5,11 @@ icon: mdi:wifi-alert
 device_class: problem
 delay_on: "00:05:00"
 state: |
-  {{ not is_state("device_tracker.wirelessap2","home")
+  {{ (
+    not is_state("device_tracker.wirelessap2","home")
+    or is_state("binary_sensor.uptimekuma_wirelessap2","off")
+    )
     and is_state("automation.startup","off") }}
 attributes:
-  device_monitored: "device_tracker.wirelessap2"
-  device_status: '{{ states("device_tracker.wirelessap2") }}'
+  device_tracker: '{{ states("device_tracker.wirelessap2") }}'
+  uptime_kuma_status: '{{ states("binary_sensor.uptimekuma_wirelessap2") }}'
