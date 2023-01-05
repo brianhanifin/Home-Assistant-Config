@@ -1875,3 +1875,35 @@ say:
         boolean:
   max: 10
   icon: mdi:cast-audio
+docker:
+  alias: Docker
+  sequence:
+  - alias: Debug output. (Disable to turn off.)
+    service: script.debug
+    data:
+      title: '{{ command }} {{ container }}'
+      message: 'update entity: {{ update }}
+
+        '
+    enabled: false
+  - service: rest_command.docker
+    data:
+      container: '{{container}}'
+      command: '{{command}}'
+    alias: Make the API call to the server.
+  - if:
+    - condition: template
+      value_template: '{{ update|default("")|length > 0 }}'
+      alias: If a sensor entity_id is present update it.
+    then:
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 10
+        milliseconds: 0
+    - service: homeassistant.update_entity
+      target:
+        entity_id: '{{ update }}'
+      alias: Update the passed sensor.
+  mode: queued
+  max: 10

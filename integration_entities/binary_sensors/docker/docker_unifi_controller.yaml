@@ -4,5 +4,9 @@ platform: rest
 name: Docker unifi controller
 icon: mdi:docker
 resource: http://10.0.0.4:8126/container/unifi-controller
-value_template: '{{ value_json is not none and value_json.state == "running" }}'
-
+#value_template: '{{ value_json is not none and value_json.state == "running" }}'
+value_template: |
+  {{
+    value_json is not none
+    and not "seconds" in value_json.status
+  }}
