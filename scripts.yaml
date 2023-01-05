@@ -1528,9 +1528,12 @@ say_cloud:
   alias: Say cloud
   sequence:
   - variables:
-      media_player: '{{ media_player|default("media_player.google_kitchen") }}'
       message: '{{ message|striptags }}'
-      mqtt_message_attributes: "{\n  \"target\": \"{{ media_player }}\"\n}\n"
+      media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+      targets: '{{ expand(media_player) | sort(attribute=''name'', reverse=false)
+        | map(attribute=''entity_id'') | list }}'
+      mqtt_message_attributes: "{\n  \"target\": \"{{ media_player }}\",\n  \"targets\":
+        \"{{ targets }}\"\n}\n"
       volume: "{%- if volume is number %}\n  {%- if volume|float(default=0) > 1.0
         %}\n    {%- set volume = volume|float(default=0) / 100 %}\n  {%- else %}\n
         \   {%- set volume = volume|float(default=0) %}\n  {%- endif %}\n{%- else
@@ -1589,6 +1592,7 @@ say_cloud:
       target:
         entity_id: '{{ media_player }}'
       alias: Turn off the media players.
+    enabled: true
   mode: parallel
   fields:
     message:
