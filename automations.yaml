@@ -3082,6 +3082,15 @@
       data:
         entity_id: timer.garage_motion
     alias: When motion is no longer detected, (re)start the light turn off timer.
+  - if:
+    - condition: trigger
+      id: timer_finished
+    then:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.laundry
+    alias: When the timer finishes turn off the light.
   mode: restart
 - id: '1666217162800'
   alias: 3D print status update
