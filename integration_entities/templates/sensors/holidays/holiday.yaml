@@ -41,14 +41,15 @@ state: |
   {%- set anniversary_entities = states.sensor | selectattr('attributes.attribution','defined') | selectattr("attributes.attribution","eq","Sensor data calculated by Anniversaries Integration") | selectattr("state","eq","0") | map(attribute="entity_id") | list %}
   {%- set anniversary_entity = iif(anniversary_entities|count>0, anniversary_entities|first, "") %}
   {%- set calendar.anniversary = state_attr(anniversary_entity,"friendly_name") if anniversary_entity|length > 0 else "" %}
-  {{- calendar.anniversary ~ ", " if calendar.anniversary != "" and calendar.holiday != "" }}
 
+  {{- calendar.anniversary ~ ", " if calendar.anniversary != "" and calendar.holiday != "" }}
+  {{- iif(calendar.anniversary|length>0 and calendar.holiday|length>0, "and ", "") }}
   {{- calendar.holiday }}
 attributes:
   next_holiday: |
     {%- set upcoming_holidays = state_attr("sensor.holiday","upcoming_holidays") %}
     {%- if upcoming_holidays is not none %}
-      {%- set next_holiday = upcoming_holidays | first %}
+      {%- set next_holiday = upcoming_holidays[1] %}
       {%- if ":" in next_holiday %}
         {{ next_holiday.split(": ")[1] }}
       {%- endif %}
@@ -56,7 +57,7 @@ attributes:
   next_holiday_date: |
     {%- set upcoming_holidays = state_attr("sensor.holiday","upcoming_holidays") %}
     {%- if upcoming_holidays is not none %}
-      {%- set next_holiday = upcoming_holidays | first %}
+      {%- set next_holiday = upcoming_holidays[1] %}
       {%- if ":" in next_holiday %}
         {%- set date = next_holiday.split(": ")[0] %}
         {{ as_datetime(date) }}
