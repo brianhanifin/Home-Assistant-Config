@@ -2877,7 +2877,6 @@
     entity_id:
     - cover.garage_door
     - cover.test
-    from:
     to: opening
   - id: garage_closed
     platform: state
@@ -2992,17 +2991,30 @@
         data: {}
   mode: restart
 - id: '1666217038936'
-  alias: Garage motion change
-  description: ''
+  alias: Garage laundry light
+  description: Turn the laundry light with the entry door and motion detection.
   trigger:
-  - id: motion_detected
+  - id: door_opens
     platform: state
     entity_id:
     - binary_sensor.garage_entry_door
-    - sensor.garage_motion
+    alias: When door opens.
     from: 'off'
     to: 'on'
-    alias: When door opens or motion is detected.
+  - platform: state
+    entity_id:
+    - binary_sensor.garage_motion
+    id: motion_detected
+    alias: When garage motion detected.
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.garage_motion
+    from: 'on'
+    to: 'off'
+    alias: When garage motion clears.
+    id: motion_clears
   - id: timer_finished
     platform: event
     event_type: timer.finished
@@ -3010,29 +3022,66 @@
       entity_id: timer.garage_motion
   condition: []
   action:
-  - choose:
-    - alias: 'motion detected: turn on the light + start the timer.'
-      conditions: '{{ trigger.id == "motion_detected" }}'
-      sequence:
+  - if:
+    - condition: trigger
+      id: door_opens
+    then:
+    - service: light.turn_on
+      data:
+        brightness: 255
+      target:
+        entity_id: light.laundry
+      alias: Turn on the laundry light.
+    alias: Turn on the laundry light.
+  - if:
+    - condition: trigger
+      id: motion_detected
+    then:
+    - alias: Turn on the laundry light if it is not already on.
+      if:
+      - alias: Turn the laundry light on if it is not already.
+        condition: state
+        entity_id: light.laundry
+        state: 'off'
+      then:
       - service: light.turn_on
-        entity_id: light.laundry
-      - alias: Cancel the existing countdown timer.
-        choose:
-        - conditions: '{{ states("timer.garage_motion") != "idle" }}'
-          sequence:
-          - service: timer.cancel
-            target:
-              entity_id: timer.garage_motion
-            data: {}
-      - alias: (Re)start the countdown timer.
-        service: timer.start
         data:
-          entity_id: timer.garage_motion
-    - alias: 'Countdown finished: turn off the light.'
-      conditions: '{{ trigger.id == "timer_finished" }}'
-      sequence:
-      - service: light.turn_off
-        entity_id: light.laundry
+          brightness: 255
+        target:
+          entity_id: light.laundry
+        alias: Turn on the laundry light.
+    - alias: Cancel the existing countdown timer.
+      service: timer.cancel
+      target:
+        entity_id: timer.garage_motion
+      data: {}
+    - alias: (Re)start the countdown timer.
+      service: timer.start
+      data:
+        entity_id: timer.garage_motion
+    alias: When motion is detected.
+  - if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id: motion_clears
+        alias: When triggered by motion clearning.
+      - condition: state
+        entity_id: binary_sensor.garage_entry_door
+        state: 'off'
+        alias: Verify the garage entry door is closed.
+      alias: When motion is no longer detected and the door is closed.
+    then:
+    - alias: Cancel the existing countdown timer.
+      service: timer.cancel
+      target:
+        entity_id: timer.garage_motion
+      data: {}
+    - alias: (Re)start the countdown timer.
+      service: timer.start
+      data:
+        entity_id: timer.garage_motion
+    alias: When motion is no longer detected, (re)start the light turn off timer.
   mode: restart
 - id: '1666217162800'
   alias: 3D print status update
