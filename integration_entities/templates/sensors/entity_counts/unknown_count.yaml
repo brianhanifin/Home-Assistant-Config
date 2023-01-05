@@ -17,7 +17,7 @@ state: |
             and not is_device_attr(entity, "name", "BLACKPC-satellite")
             and not is_device_attr(entity, "manufacturer", "Sensibo")
             and not is_device_attr(entity, "name", "Watchman")
-            and not entity.split(".")[0] in ["button", "group", "person", "scene"]
+            and not entity.split(".")[0] in ["button", "group", "person", "scene", "update"]
             and not "octoprint" in entity %}
         {%- set selected.entities = selected.entities ~ " " if not loop.first %}
         {%- set selected.entities = selected.entities ~ entity %}
@@ -40,7 +40,7 @@ attributes:
               and not is_device_attr(entity, "name", "BLACKPC-satellite")
               and not is_device_attr(entity, "manufacturer", "Sensibo")
               and not is_device_attr(entity, "name", "Watchman")
-              and not entity.split(".")[0] in ["button", "group", "person", "scene"]
+              and not entity.split(".")[0] in ["button", "group", "person", "scene", "update"]
               and not "octoprint" in entity %}
           {%- set selected.entities = selected.entities ~ " " if not loop.first %}
           {%- set selected.entities = selected.entities ~ entity %}

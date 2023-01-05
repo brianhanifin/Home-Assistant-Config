@@ -12,10 +12,9 @@ state: |
       {%- set object_id = entity.split(".")[1] %}
       {%- set device = device_id(entity) if device_id(entity) is not none else "" %}
       {%- set manufacturer = device_attr(device, "manufacturer") %}
-      {%- if manufacturer not in ["brian","browser_mod","espressif","Google Home","HP","iOS","iPadOS","iPhoneOS","OctoPrint","tvOS","WLED"]
-            and not domain in ["camera","media_player"]
-            and not object_id.startswith("double_take")
-            and not object_id.startswith("glowforge")  %}
+      {%- if manufacturer not in ["brian", "browser_mod", "espressif", "Google Home", "HP", "iOS", "iPadOS", "iPhoneOS", "LAB02 Research", "OctoPrint", "tvOS", "WLED"]
+            and not domain in ["camera", "media_player", "update"]
+            and not object_id in ["double_take", "glowforge"] %}
         {%- set storage.entities = storage.entities ~ entity %}
         {% if not loop.last %}
           {%- set storage.entities = storage.entities ~ " " %}
@@ -34,10 +33,9 @@ attributes:
         {%- set object_id = entity.split(".")[1] %}
         {%- set device = device_id(entity) if device_id(entity) is not none else "" %}
         {%- set manufacturer = device_attr(device, "manufacturer") %}
-        {%- if manufacturer not in ["brian","browser_mod","espressif","Google Home","HP","iOS","iPadOS","iPhoneOS","OctoPrint","tvOS","WLED"]
-              and not domain in ["camera","media_player"]
-              and not object_id.startswith("double_take")
-              and not object_id.startswith("glowforge")  %}
+        {%- if manufacturer not in ["brian", "browser_mod", "espressif", "Google Home", "HP", "iOS", "iPadOS", "iPhoneOS", "LAB02 Research", "OctoPrint", "tvOS", "WLED"]
+              and not domain in ["camera", "media_player", "update"]
+              and not object_id in ["double_take", "glowforge"] %}
           {%- set storage.entities = storage.entities ~ entity %}
           {% if not loop.last %}
             {%- set storage.entities = storage.entities ~ " " %}
