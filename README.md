@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **46,430** | 1,333 | 37 | 95 | 58 |
+| **42,119** | 1,328 | 37 | 95 | 59 |
 
 # Index
 
@@ -238,10 +238,10 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1333 total entities**,
-including **654 sensors**. My YAML
-files contain 46,430 lines of code.
-All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>27 Custom integrations</summary>
+Our Home Assistant install has approximately **1328 total entities**,
+including **652 sensors**. My YAML
+files contain 42,119 lines of code.
+All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.4.1](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra).
@@ -303,14 +303,11 @@ Authors:[@nielsfaber](https://github.com/nielsfaber).
 ## [Simple Wyze Vacuum v1.7.2](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
-## [SmartThinQ LGE Sensors v0.28.2](https://github.com/ollo69/ha-smartthinq-sensors)
+## [SmartThinQ LGE Sensors v0.28.4](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
 ## [Sun2 v2.1.3](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
 Authors:[@pnbruckner](https://github.com/pnbruckner).
-
-## [Switch Manager v0.3.3](https://github.com/Sian-Lee-SA/switch_manager)
-Switch manager is a centralised component to handle button pushes for your wireless switches. This includes anything passed through the event bus. The component relies on switch blueprints which is easily made to allow GUI configuration of your switches and their button pushes. This helps remove clutter from the automations.Authors:[@Sian-Lee-SA](https://github.com/Sian-Lee-SA).
 
 ## [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
 Authors:[@jchasey](https://github.com/jchasey).
@@ -484,7 +481,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-46,430-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,119-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

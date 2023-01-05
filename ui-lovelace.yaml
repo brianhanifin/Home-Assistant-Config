@@ -1163,17 +1163,17 @@ views:
             action: navigate
             navigation_path: /lovelace/system
           type: action
-        - icon: mdi:cast-audio
-          icon_color: blue-grey
-          tap_action:
-            action: navigate
-            navigation_path: /lovelace/smart-speakers
-          type: action
         - icon: mdi:robot
           icon_color: blue-grey
           tap_action:
             action: navigate
             navigation_path: /lovelace/routines
+          type: action
+        - icon: mdi:cast-audio
+          icon_color: blue-grey
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace/smart-speakers
           type: action
         - icon: fas:birthday-cake
           icon_color: blue-grey
@@ -3103,17 +3103,10 @@ views:
             target:
               entity_id: script.config_check_and_restart
           type: template
-        - content: Edit
-          icon: mdi:pencil
-          icon_color: orange
-          tap_action:
-            action: navigate
-            navigation_path: ./home?disable_km&edit=1
-          type: template
         type: custom:mushroom-chips-card
       - alignment: justify
         chips:
-        - content: Refresh counts
+        - content: Count sensors
           icon: mdi:cog-refresh
           icon_color: grey
           tap_action:
@@ -3123,7 +3116,7 @@ views:
             target:
               entity_id: script.refresh_count_sensors
           type: template
-        - content: Refresh updates
+        - content: Update counts
           icon: mdi:cog-refresh
           icon_color: grey
           tap_action:
@@ -3133,7 +3126,7 @@ views:
             target:
               entity_id: script.refresh_update_sensors
           type: template
-        - content: Refresh watchman
+        - content: Watchman
           icon: mdi:shield-refresh
           icon_color: grey
           tap_action:
@@ -3164,6 +3157,13 @@ views:
             service_data: {}
             target:
               entity_id: script.generate_fake_secrets
+          type: template
+        - content: Edit
+          icon: mdi:pencil
+          icon_color: orange
+          tap_action:
+            action: navigate
+            navigation_path: ./home?disable_km&edit=1
           type: template
         type: custom:mushroom-chips-card
       type: vertical-stack
@@ -3407,21 +3407,23 @@ views:
                 name: Red PC
               - entity: switch.gaming_pc_greenpc
                 name: Green PC
-              footer:
-                entities:
-                - entity: switch.docker_unifi
-                  name: UniFi Controller
-                  tap_action:
-                    action: call-service
-                    data:
-                      command: restart
-                      container: unifi-controller
-                    service: rest_command.docker
-                type: buttons
               show_header_toggle: false
               state_color: true
               title: ''
               type: entities
+            - cards:
+              - entity: binary_sensor.docker_unifi_controller
+                name: Unifi controller status
+                tap_action:
+                  action: call-service
+                  data:
+                    command: restart
+                    container: unifi-controller
+                    update: binary_sensor.docker_unifi_controller
+                  service: script.docker
+                type: custom:mushroom-entity-card
+              columns: 2
+              type: grid
             type: vertical-stack
         - attributes:
             label: 📆
@@ -3535,6 +3537,11 @@ views:
         - entity: input_boolean.audio_notifications
         - entity: binary_sensor.noncritical_alert_quiet_time
           secondary_info: last-changed
+        - card:
+            entity: input_number.default_announcement_volume
+            name: Default Annc. Vol.
+          row: true
+          type: custom:restriction-card
         type: entities
       - entities:
         - entity: sensor.last_message
@@ -3542,14 +3549,9 @@ views:
           name: Last message
         - attribute: target
           entity: sensor.last_message
-          icon: mdi:cast-audio
+          icon: mdi:cast-audio-variant
           name: Announced on
           type: attribute
-        - type: divider
-        - entity: sensor.last_google
-          icon: ''
-          name: Last active google device
-          secondary_info: last-changed
         show_header_toggle: false
         state_color: false
         type: entities
