@@ -93,7 +93,7 @@ config_check_and_reboot_server:
   mode: single
   icon: mdi:power
 refresh_count_sensors:
-  alias: Refresh count sensors
+  alias: Refresh entity count sensors
   mode: single
   icon: mdi:cog-refresh
   sequence:
@@ -112,7 +112,7 @@ refresh_count_sensors:
       message: Sensor counts are refreshed.
       duration: 10
 refresh_update_sensors:
-  alias: Refresh update sensors
+  alias: Refresh version sensors
   sequence:
   - service: homeassistant.update_entity
     target:
@@ -120,6 +120,7 @@ refresh_update_sensors:
       - sensor.addon_updates
       - sensor.unifi_gateway_firmware_upgradable
       - sensor.updates
+    data: {}
   - delay:
       seconds: 2
   - service: homeassistant.update_entity
@@ -127,6 +128,7 @@ refresh_update_sensors:
       entity_id:
       - sensor.updates
       - sensor.update_message
+    data: {}
   - service: script.notify_web
     data:
       type: success

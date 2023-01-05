@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **42,119** | 1,328 | 37 | 95 | 59 |
+| **42,123** | 1,328 | 37 | 95 | 59 |
 
 # Index
 
@@ -240,7 +240,7 @@ smoke detectors, and a bulb.
 
 Our Home Assistant install has approximately **1328 total entities**,
 including **652 sensors**. My YAML
-files contain 42,119 lines of code.
+files contain 42,123 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.4.1](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -481,7 +481,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,119-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,123-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg
