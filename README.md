@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **42,123** | 1,328 | 37 | 95 | 59 |
+| **42,303** | 1,330 | 37 | 96 | 59 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1328 total entities**,
+Our Home Assistant install has approximately **1330 total entities**,
 including **652 sensors**. My YAML
-files contain 42,123 lines of code.
+files contain 42,303 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.4.1](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -273,7 +273,7 @@ Authors:[@ludeeus](https://github.com/ludeeus).
 ## [Google Home v1.9.15](https://github.com/leikoilja/ha-google-home)
 Home Assistant Google Home custom componentAuthors:[@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
-## [Home Assistant Community Store (HACS) v1.29.0](https://hacs.xyz/docs/configuration/start)
+## [Home Assistant Community Store (HACS) v1.29.1](https://hacs.xyz/docs/configuration/start)
 HACS gives you a powerful UI to handle downloads of all your custom needs.Authors:[@ludeeus](https://github.com/ludeeus).
 
 ## [HASS.Agent Notifier v2022.10.25.1](https://github.com/LAB02-Research/HASS.Agent-Notifier)
@@ -294,7 +294,7 @@ Authors:[@finity69x2](https://github.com/finity69x2).
 ## [Rainforest EMU-2 v1.2.0](https://github.com/ryanwinter/hass-rainforest-emu-2)
 Authors:[@ryanwinter](https://github.com/ryanwinter).
 
-## [SamsungTV Smart v0.9.3](https://github.com/ollo69/ha-samsungtv-smart)
+## [SamsungTV Smart v0.9.4](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
 ## [Scheduler v0.0.0](https://github.com/nielsfaber/scheduler-component)
@@ -303,7 +303,7 @@ Authors:[@nielsfaber](https://github.com/nielsfaber).
 ## [Simple Wyze Vacuum v1.7.2](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
-## [SmartThinQ LGE Sensors v0.28.4](https://github.com/ollo69/ha-smartthinq-sensors)
+## [SmartThinQ LGE Sensors v0.29.0](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
 ## [Sun2 v2.1.3](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
@@ -471,7 +471,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.1.0-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.1.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -481,7 +481,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,123-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,303-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

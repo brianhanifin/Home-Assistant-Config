@@ -3126,7 +3126,7 @@ views:
             target:
               entity_id: script.refresh_version_sensors
           type: template
-        - content: Watchman
+        - content: Missing
           icon: mdi:shield-refresh
           icon_color: grey
           tap_action:
@@ -3509,195 +3509,242 @@ views:
   - template: top_chips
     type: custom:decluttering-card
     view_layout:
-      position: sidebar
-  - subtitle: Tap away from message box before tapping announce.
-    title: Speech notifications
-    type: custom:mushroom-title-card
-  - entities:
-    - entity: input_select.tts_phrase_room
-    - entity: input_select.tts_phrases
-    - entity: input_text.tts_phrase
-      type: custom:text-input-row
-    footer:
-      entities:
-      - entity: script.tts_phrase_say
-        icon: mdi:account-voice
-        name: Say
-      - entity: script.repeat_last_message
-        icon: mdi:refresh-circle
-        name: Last message
-      type: buttons
-    show_header_toggle: false
-    type: entities
-    view_layout:
-      position: main
+      grid-area: header
   - cards:
     - cards:
-      - entities:
+      - subtitle: Default volume.
+        title: Notification settings
+        type: custom:mushroom-title-card
+      - cards:
+        - entity: input_boolean.mobile_notifications
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
         - entity: input_boolean.audio_notifications
-        - entity: binary_sensor.noncritical_alert_quiet_time
-          secondary_info: last-changed
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        - entity: input_boolean.cooler_outside_notification
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        - entity: input_boolean.warmer_outside_notification
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        columns: 2
+        square: false
+        type: grid
+      - entities:
         - card:
             entity: input_number.default_announcement_volume
-            name: Default Annc. Vol.
+            name: Announcements
+          row: true
+          type: custom:restriction-card
+        - card:
+            entity: input_number.default_audio_volume
+            name: Sound only
+          row: true
+          type: custom:restriction-card
+        type: custom:hui-entities-card
+      type: vertical-stack
+    - cards:
+      - subtitle: Critical alerts excluded.
+        title: Quiet time
+        type: custom:mushroom-title-card
+      - entity: binary_sensor.noncritical_alert_quiet_time
+        type: custom:mushroom-entity-card
+      - entities:
+        - card:
+            entity: input_number.quiet_hour_start
+            name: Start
+          row: true
+          type: custom:restriction-card
+        - card:
+            entity: input_number.quiet_hour_end
+            name: End
           row: true
           type: custom:restriction-card
         type: entities
-      - entities:
-        - entity: sensor.last_message
-          icon: ''
-          name: Last message
-        - attribute: target
-          entity: sensor.last_message
-          icon: mdi:cast-audio-variant
-          name: Announced on
-          type: attribute
-        show_header_toggle: false
-        state_color: false
-        type: entities
+      type: vertical-stack
+    type: vertical-stack
+    view_layout: grid-area:sidebar
+  - cards:
+    - cards:
+      - subtitle: Enable & disable automated features.
+        title: Mode overrides
+        type: custom:mushroom-title-card
+      - cards:
+        - entity: input_boolean.guest_mode
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        - entity: input_boolean.leave_unlocked
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        - entity: input_boolean.away_mode
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        columns: 2
+        square: false
+        type: grid
+      type: vertical-stack
+    - cards:
+      - subtitle: One time actions.
+        title: Routines
+        type: custom:mushroom-title-card
+      - cards:
+        - entity: switch.hot_water_pump
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        - entity: switch.printer
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        columns: 2
+        square: false
+        type: grid
+      type: vertical-stack
+    - cards:
+      - subtitle: Toggle miscellaneous devices.
+        title: Other devices
+        type: custom:mushroom-title-card
+      - cards:
+        - entity: script.goodbye_routine
+          icon: mdi:exit-run
+          name: Goodbye
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        - entity: script.goodnight_routine
+          icon: mdi:weather-night
+          name: Goodnight
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        columns: 2
+        square: false
+        type: grid
       type: vertical-stack
     type: vertical-stack
     view_layout:
-      position: sidebar
-  icon: mdi:cast-audio
-  path: smart-speakers
-  subview: true
-  theme: Backend-selected
-  title: Smart speakers
-  type: sidebar
-- badges: []
-  cards:
-  - template: top_chips
-    type: custom:decluttering-card
-    view_layout:
-      position: sidebar
-  - cards:
-    - subtitle: Default volume.
-      title: Notification settings
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: input_boolean.mobile_notifications
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.audio_notifications
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.cooler_outside_notification
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.warmer_outside_notification
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      columns: 2
-      square: false
-      type: grid
-    - entities:
-      - card:
-          entity: input_number.default_announcement_volume
-          name: Announcements
-        row: true
-        type: custom:restriction-card
-      - card:
-          entity: input_number.default_audio_volume
-          name: Sound only
-        row: true
-        type: custom:restriction-card
-      type: custom:hui-entities-card
-    - subtitle: Critical alerts excluded.
-      title: Quiet time
-      type: custom:mushroom-title-card
-    - entity: binary_sensor.noncritical_alert_quiet_time
-      type: custom:mushroom-entity-card
-    - entities:
-      - card:
-          entity: input_number.quiet_hour_start
-          name: Start
-        row: true
-        type: custom:restriction-card
-      - card:
-          entity: input_number.quiet_hour_end
-          name: End
-        row: true
-        type: custom:restriction-card
-      type: entities
-    type: vertical-stack
-  - cards:
-    - subtitle: Enable & disable automated features.
-      title: Mode overrides
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: input_boolean.guest_mode
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.leave_unlocked
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.away_mode
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      columns: 2
-      square: false
-      type: grid
-    type: vertical-stack
-    view_layout:
-      position: sidebar
-  - cards:
-    - subtitle: One time actions.
-      title: Routines
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: script.goodbye_routine
-        icon: mdi:exit-run
-        name: Goodbye
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: script.goodnight_routine
-        icon: mdi:weather-night
-        name: Goodnight
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      columns: 2
-      square: false
-      type: grid
-    - subtitle: Toggle miscellaneous devices.
-      title: Other devices
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: switch.hot_water_pump
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: switch.printer
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      columns: 2
-      square: false
-      type: grid
-    type: vertical-stack
-    view_layout:
-      position: sidebar
+      grid-area: main
   icon: mdi:robot
+  layout:
+    grid-template-areas: '"header header"
+
+      "main sidebar"
+
+      "main sidebar"
+
+      '
+    grid-template-columns: auto 40%
+    grid-template-rows: auto
+    mediaquery:
+      '(max-width: 700px)':
+        grid-template-areas: '"header"
+
+          "main"
+
+          "sidebar"
+
+          '
+        grid-template-columns: 100%
   path: routines
   subview: true
   theme: Backend-selected
   title: Routines
-  type: sidebar
+  type: custom:grid-layout
 - badges: []
   cards:
   - template: top_chips
     type: custom:decluttering-card
     view_layout:
-      position: sidebar
+      grid-area: header
+  - cards:
+    - subtitle: Tap away from message box before tapping announce.
+      title: Speech notifications
+      type: custom:mushroom-title-card
+    - entities:
+      - entity: input_select.tts_phrase_room
+      - entity: input_select.tts_phrases
+      - entity: input_text.tts_phrase
+        type: custom:text-input-row
+      footer:
+        entities:
+        - entity: script.tts_phrase_say
+          icon: mdi:account-voice
+          name: Say
+        - entity: script.repeat_last_message
+          icon: mdi:refresh-circle
+          name: Last message
+        type: buttons
+      show_header_toggle: false
+      type: entities
+    type: vertical-stack
+    view_layout:
+      grid-area: main
+  - cards:
+    - entities:
+      - entity: input_boolean.audio_notifications
+      - entity: binary_sensor.noncritical_alert_quiet_time
+        secondary_info: last-changed
+      - card:
+          entity: input_number.default_announcement_volume
+          name: Default Annc. Vol.
+        row: true
+        type: custom:restriction-card
+      type: entities
+    - entities:
+      - entity: sensor.last_message
+        icon: ''
+        name: Last message
+      - attribute: target
+        entity: sensor.last_message
+        icon: mdi:cast-audio-variant
+        name: Announced on
+        type: attribute
+      show_header_toggle: false
+      state_color: false
+      type: entities
+    type: vertical-stack
+    view_layout:
+      grid-area: sidebar
+  icon: mdi:cast-audio
+  layout:
+    grid-template-areas: '"header header"
+
+      "main sidebar"
+
+      "main sidebar"
+
+      '
+    grid-template-columns: auto 40%
+    grid-template-rows: auto
+    mediaquery:
+      '(max-width: 700px)':
+        grid-template-areas: '"header"
+
+          "main"
+
+          "sidebar"
+
+          '
+        grid-template-columns: 100%
+  path: smart-speakers
+  subview: true
+  theme: Backend-selected
+  title: Smart speakers
+  type: custom:grid-layout
+- badges: []
+  cards:
+  - template: top_chips
+    type: custom:decluttering-card
+    view_layout:
+      grid-area: header
   - cards:
     - subtitle: ''
       title: Family birthdays and anniversaries
@@ -3726,78 +3773,100 @@ views:
         numeric: true
       type: custom:auto-entities
     type: vertical-stack
-  - cards:
-    - title: Holidays
-      type: custom:mushroom-title-card
-    - card:
-        type: entities
-      filter:
-        include:
-        - attributes:
-            type: Holiday
-          domain: sensor
-          options:
-            entities:
-            - attribute: friendly_date
-            show_state: false
-            type: custom:multiple-entity-row
-      sort:
-        method: state
-      type: custom:auto-entities
-    type: vertical-stack
     view_layout:
-      position: sidebar
+      grid-area: main
   - cards:
     - cards:
-      - subtitle: Edit files in /integration_entities/binary_sensors/datetime.
-        title: School dates
+      - title: Holidays
         type: custom:mushroom-title-card
-      type: horizontal-stack
+      - card:
+          type: entities
+        filter:
+          include:
+          - attributes:
+              type: Holiday
+            domain: sensor
+            options:
+              entities:
+              - attribute: friendly_date
+              show_state: false
+              type: custom:multiple-entity-row
+        sort:
+          method: state
+        type: custom:auto-entities
+      type: vertical-stack
     - cards:
       - cards:
+        - subtitle: Edit files in /integration_entities/binary_sensors/datetime.
+          title: School dates
+          type: custom:mushroom-title-card
+        type: horizontal-stack
+      - cards:
+        - cards:
+          - entities:
+            - entity: binary_sensor.middle_school_day
+              name: Middle school
+            - entity: binary_sensor.high_school_day
+              name: High school
+            - entity: binary_sensor.holiday
+              name: Public holiday
+            show_state: false
+            type: glance
+          type: vertical-stack
+        type: vertical-stack
+      - subtitle: Edit file in /integration_entities/template/sensors/datetime.
+        title: ''
+        type: custom:mushroom-title-card
+      - entities:
+        - attribute: next_modified_day
+          entity: sensor.high_school_day_modified_schedule
+          name: Next high school modified day
+          type: custom:multiple-entity-row
+        type: entities
+      - subtitle: Manually set
+        title: ''
+        type: custom:mushroom-title-card
+      - cards:
         - entities:
-          - entity: binary_sensor.middle_school_day
-            name: Middle school
-          - entity: binary_sensor.high_school_day
-            name: High school
-          - entity: binary_sensor.holiday
-            name: Public holiday
-          show_state: false
+          - entity: input_datetime.high_school_summer_begin
+            name: High school last day
+          - entity: input_datetime.high_school_summer_ends
+            name: High school first day
+          show_icon: false
+          type: glance
+        - entities:
+          - entity: input_datetime.school_summer_begin
+            name: Middle school last day
+          show_icon: false
           type: glance
         type: vertical-stack
       type: vertical-stack
-    - subtitle: Edit file in /integration_entities/template/sensors/datetime.
-      title: ''
-      type: custom:mushroom-title-card
-    - entities:
-      - attribute: next_modified_day
-        entity: sensor.high_school_day_modified_schedule
-        name: Next high school modified day
-        type: custom:multiple-entity-row
-      type: entities
-    - subtitle: Manually set
-      title: ''
-      type: custom:mushroom-title-card
-    - cards:
-      - entities:
-        - entity: input_datetime.high_school_summer_begin
-          name: High school last day
-        - entity: input_datetime.high_school_summer_ends
-          name: High school first day
-        show_icon: false
-        type: glance
-      - entities:
-        - entity: input_datetime.school_summer_begin
-          name: Middle school last day
-        show_icon: false
-        type: glance
-      type: vertical-stack
     type: vertical-stack
     view_layout:
-      position: sidebar
+      grid-area: sidebar
   icon: mdi:cake-variant
+  layout:
+    grid-template-areas: '"header header"
+
+      "main sidebar"
+
+      "main sidebar"
+
+      '
+    grid-template-columns: auto 40%
+    grid-template-rows: auto
+    mediaquery:
+      '(max-width: 700px)':
+        grid-template-areas: '"header"
+
+          "main"
+
+          "sidebar"
+
+          '
+        grid-template-columns: 100%
   path: family-dates
   subview: true
   theme: Backend-selected
   title: Family dates
-  type: sidebar
+  type: custom:grid-layout
