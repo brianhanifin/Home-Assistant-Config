@@ -2032,7 +2032,7 @@
         - input_boolean.leave_unlocked
         state: 'off'
         alias: Confirm both leave unlocked + guest mode are off.
-      alias: 'When triggered by opened: leave unlocked + guest mode must be off.'
+      alias: 'When triggered by opened: leave unlocked + guest mode are off.'
     - condition: and
       conditions:
       - condition: or
@@ -2051,7 +2051,7 @@
         alias: Confirm the door is closed, and both leave unlocked + guest mode are
           off.
       alias: 'When triggered by unlocked or timer_finished: the door must be closed,
-        and leave unlocked + guest mode must be off.'
+        and leave unlocked + guest mode are off.'
   action:
   - choose:
     - conditions:
@@ -2085,15 +2085,8 @@
       - condition: trigger
         id: locked
       sequence:
-      - service: input_boolean.turn_off
+      - service: timer.finish
         data: {}
-        target:
-          entity_id: input_boolean.leave_unlocked
-        alias: Turn off LEAVE UNLOCKED.
-      - service: timer.cancel
-        data: {}
-        target:
-          entity_id: timer.front_door_unlocked
     alias: When the door locks or unlocks.
   - choose:
     - conditions:
@@ -2111,6 +2104,11 @@
         data: {}
         target:
           entity_id: lock.front_door
+      - alias: Clear the KEEP_UNLOCKED actionable notification.
+        service: script.notify_mobile_clear
+        data:
+          who: brian
+          tag: KEEP_UNLOCKED
     - conditions:
       - condition: trigger
         id: opened
@@ -2188,7 +2186,7 @@
       title: Door Unlocked
       message: Would you like the door to remain unlocked?
       tag: KEEP_UNLOCKED
-      url: /lovelace/downstairs#entry
+      url: /lovelace/outdoor
       actions:
       - action: LOCK_NOW
         title: Lock now
@@ -2224,7 +2222,7 @@
     service: script.notify_mobile_clear
     data:
       who: brian
-      tag: '{{ tag }}'
+      tag: KEEP_UNLOCKED
   - alias: Take the requested action!
     choose:
     - alias: Lock the front door now.
@@ -3864,15 +3862,24 @@
     id: turn_lights_down
     alias: When the timer ends.
   condition:
-  - condition: and
+  - condition: or
     conditions:
-    - condition: state
-      entity_id: input_boolean.keep_outdoor_lights_off
-      state: 'off'
-    - condition: numeric_state
-      entity_id: sensor.outdoor_illuminance_educated_guessor
-      below: 2500
-    alias: Confirm "Keep outside lights off" is disabled and it is dark outside.
+    - condition: or
+      conditions:
+      - condition: trigger
+        id: front_door_closes
+      - condition: trigger
+        id: turn_lights_down
+      alias: Confirm triggered by "turn_lights_down" or "front_door_closes".
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: input_boolean.keep_outdoor_lights_off
+        state: 'off'
+      - condition: numeric_state
+        entity_id: sensor.outdoor_illuminance_educated_guessor
+        below: 1000
+      alias: Confirm "Keep outside lights off" is disabled and it is dark outside.
   action:
   - if:
     - condition: or
