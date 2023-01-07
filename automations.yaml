@@ -4173,3 +4173,101 @@
       target:
         area_id: play_room
   mode: single
+- id: '1673028618364'
+  alias: 'Schedule: PC network control'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - schedule.computer_school
+    - schedule.computer_vacation
+    alias: When schedule state changes.
+    id: schedule_changed
+  - platform: state
+    entity_id:
+    - timer.network_off
+    to: idle
+    from: active
+    id: turn_network_off
+    alias: When network off timer ends.
+  condition: []
+  action:
+  - variables:
+      state: '{{ trigger.to_state.state }}
+
+        '
+      triggered_by: '{{ trigger.entity_id.split(".")[1] }}
+
+        '
+      vacation_today: '{{ is_state("binary_sensor.school_day_today","on") }}
+
+        '
+      vacation_tomorrow: '{{ is_state("binary_sensor.school_day_tomorrow","on") }}
+
+        '
+      action: "{%- if state == \"on\" %}\n  {%- if (not vacation_today and triggered_by
+        == \"computer_school\")\n        or (vacation_today and triggered_by == \"computer_vacation\")
+        %}\n    {{ state }}\n  {%- endif %}\n{%- else %}\n  {%- if (not vacation_tomorrow
+        and triggered_by == \"computer_school\")\n        or (vacation_tomorrow and
+        triggered_by == \"computer_vacation\")  %}\n    {{ state }}\n  {%- endif %}\n{%-
+        endif %}\n"
+  - alias: Debug output. (Disable to turn off.)
+    service: script.debug
+    data:
+      title: 'Schedule: {{ triggered_by }} {{ state }}'
+      message: 'state: {{ state }}
+
+        triggered_by: {{ triggered_by }}
+
+        vacation_today: {{ vacation_today }}
+
+        vacation_tomorrow: {{ vacation_tomorrow }}
+
+
+        action: {{ action }}
+
+        '
+  - if:
+    - condition: trigger
+      id: schedule_changed
+    then:
+    - if:
+      - condition: template
+        alias: Confirm the action is "on".
+        value_template: '{{ action == "on" }}'
+      then:
+      - service: switch.turn_on
+        target:
+          entity_id:
+          - switch.gaming_pc_bluepc
+          - switch.gaming_pc_greenpc
+          - switch.gaming_pc_redpc
+        data: {}
+      alias: Turn on the boys network access.
+    - if:
+      - condition: template
+        value_template: '{{ action == "off" }}'
+        alias: Confirm the action is "off".
+      then:
+      - service: timer.start
+        data: {}
+        target:
+          entity_id: timer.network_off
+        alias: Start the network off timer.
+      alias: Start the network turn off timer.
+    enabled: true
+    else: []
+    alias: Take "schedule_changed" actions.
+  - if:
+    - condition: trigger
+      id: turn_network_off
+    then:
+    - service: switch.turn_off
+      target:
+        entity_id:
+        - switch.gaming_pc_bluepc
+        - switch.gaming_pc_greenpc
+        - switch.gaming_pc_redpc
+      data: {}
+    alias: Take "turn_network_off" actions.
+  mode: single
