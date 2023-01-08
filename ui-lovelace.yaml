@@ -1,39 +1,51 @@
 decluttering_templates:
   calendar:
     card:
-      canary_style:
-        padding-top: 0px;
-      dateSize: 130
-      entities:
-      - color: var(--state-home-color)
-        entity: calendar.us_holidays
-        name: Holidays
-      - color: var(--state-icon-active-color)
-        entity: calendar.birthdays_anniversary
-        name: Milestones
-      - color: var(--label-badge-green)
-        entity: calendar.brian
-        name: Brian
-      - blocklist: creative market
-        color: var(--secondary-text-color)
-        entity: calendar.nerene
-        name: Nerene
-      - color: var(--label-badge-yellow)
-        entity: calendar.hanifins
-        name: Hanifin's
-      - blocklist: Period
-        color: var(--primary-text-color)
-        entity: calendar.kyle
-        name: Kyle
-      - blocklist: Advisory,Period
-        color: var(--label-badge-red)
-        entity: calendar.lucas
-        name: Lucas
-      eventTitleSize: 130
-      firstDayOfWeek: 1
-      maxDaysToShow: '[[days]]'
-      timeSize: 100
-      type: custom:atomic-calendar-revive
+      cards:
+      - subtitle: '{{- now().strftime("%A") ~ ", " }}
+
+          {{- now().strftime("%B") ~ " " }}
+
+          {{- now().day ~ ", " }}
+
+          {{- now().year }}
+
+          '
+        type: custom:mushroom-title-card
+      - canary_style:
+          padding-top: 0px;
+        dateSize: 130
+        entities:
+        - color: var(--state-home-color)
+          entity: calendar.us_holidays
+          name: Holidays
+        - color: var(--state-icon-active-color)
+          entity: calendar.birthdays_anniversary
+          name: Milestones
+        - color: var(--label-badge-green)
+          entity: calendar.brian
+          name: Brian
+        - blocklist: creative market
+          color: var(--secondary-text-color)
+          entity: calendar.nerene
+          name: Nerene
+        - color: var(--label-badge-yellow)
+          entity: calendar.hanifins
+          name: Hanifin's
+        - blocklist: Period
+          color: var(--primary-text-color)
+          entity: calendar.kyle
+          name: Kyle
+        - blocklist: Advisory,Period
+          color: var(--label-badge-red)
+          entity: calendar.lucas
+          name: Lucas
+        eventTitleSize: 130
+        firstDayOfWeek: 1
+        maxDaysToShow: '[[days]]'
+        timeSize: 100
+        type: custom:atomic-calendar-revive
+      type: vertical-stack
     default:
       days: 2
   event:
@@ -95,93 +107,92 @@ decluttering_templates:
   floor_climate:
     card:
       cards:
+      - title: '[[floor]] climate'
+        type: custom:mushroom-title-card
       - cards:
-        - subtitle: Temperature average
-          title: '[[floor]] climate'
-          type: custom:mushroom-title-card
-        - canary_style:
-            border: none;
-          entities:
-          - entity: '[[average]]'
-            name: '[[floor]] average'
-          show_icon: false
-          type: glance
-        - animate: true
-          canary_style:
-            border: none;
-          entities:
-          - entity: '[[average]]'
-          height: 118
-          hours_to_show: 24
-          line_width: 2
-          lower_bound: 60
-          points_per_hour: 4
-          show:
-            extrema: false
-            graph: line
-            icon: false
-            name: false
-            state: false
-          type: custom:mini-graph-card
-        in_card: true
-        type: vertical-stack
-      - cards:
-        - subtitle: Room temperature
-          title: '[[floor]] climate'
-          type: custom:mushroom-title-card
-        - canary_style:
-            border: none;
-          entities: '[[temperature_entities]]'
-          show_icon: false
-          type: glance
-        - aggregate_func: max
-          animate: true
-          canary_style:
-            border: none;
-          entities: '[[temperature_entities]]'
-          height: 75
-          hours_to_show: 24
-          line_width: 2
-          points_per_hour: 2
-          show:
-            icon: false
-            name: false
-            state: false
-          type: custom:mini-graph-card
-        in_card: true
-        type: vertical-stack
-      - cards:
-        - subtitle: Room humidity
-          title: '[[floor]] climate'
-          type: custom:mushroom-title-card
-        - canary_style:
-            border: none;
-          entities: '[[humidity_entities]]'
-          show_icon: false
-          type: glance
-        - aggregate_func: max
-          animate: true
-          canary_style:
-            border: none;
-          entities: '[[humidity_entities]]'
-          height: 75
-          hours_to_show: 12
-          line_width: 2
-          points_per_hour: 4
-          show:
-            icon: false
-            name: false
-            state: false
-          type: custom:mini-graph-card
-        in_card: true
-        type: vertical-stack
-      parameters:
-        pagination:
-          type: bullets
-        spaceBetween: 8
-      type: custom:swipe-card
-      view_layout:
-        position: sidebar
+        - cards:
+          - subtitle: Temperature average
+            type: custom:mushroom-title-card
+          - canary_style:
+              border: none;
+            entities:
+            - entity: '[[average]]'
+              name: '[[floor]] average'
+            show_icon: false
+            type: glance
+          - animate: true
+            canary_style:
+              border: none;
+            entities:
+            - entity: '[[average]]'
+            height: 118
+            hours_to_show: 24
+            line_width: 2
+            lower_bound: 60
+            points_per_hour: 4
+            show:
+              extrema: false
+              graph: line
+              icon: false
+              name: false
+              state: false
+            type: custom:mini-graph-card
+          in_card: true
+          type: vertical-stack
+        - cards:
+          - subtitle: Room temperature
+            type: custom:mushroom-title-card
+          - canary_style:
+              border: none;
+            entities: '[[temperature_entities]]'
+            show_icon: false
+            type: glance
+          - aggregate_func: max
+            animate: true
+            canary_style:
+              border: none;
+            entities: '[[temperature_entities]]'
+            height: 75
+            hours_to_show: 24
+            line_width: 2
+            points_per_hour: 2
+            show:
+              icon: false
+              name: false
+              state: false
+            type: custom:mini-graph-card
+          in_card: true
+          type: vertical-stack
+        - cards:
+          - subtitle: Room humidity
+            type: custom:mushroom-title-card
+          - canary_style:
+              border: none;
+            entities: '[[humidity_entities]]'
+            show_icon: false
+            type: glance
+          - aggregate_func: max
+            animate: true
+            canary_style:
+              border: none;
+            entities: '[[humidity_entities]]'
+            height: 75
+            hours_to_show: 12
+            line_width: 2
+            points_per_hour: 4
+            show:
+              icon: false
+              name: false
+              state: false
+            type: custom:mini-graph-card
+          in_card: true
+          type: vertical-stack
+        parameters:
+          pagination:
+            type: bullets
+          spaceBetween: 8
+        type: custom:swipe-card
+      type: vertical-stack
   graph:
     card:
       entities:
@@ -1722,6 +1733,7 @@ views:
                 content:
                   entities:
                   - entity: fan.bedroom
+                  - entity: input_number.bedroom_fan_speed
                   - entity: fan.bedroom
                     grow: true
                     hide_state: true
@@ -2313,20 +2325,28 @@ views:
       - cards:
         - subtitle: Cameras
           type: custom:mushroom-title-card
-        - cards:
-          - camera_image: camera.driveway_restream
-            camera_view: live
-            entity: camera.driveway_restream
-            show_name: false
-            show_state: false
-            type: picture-entity
-          - camera_image: camera.front_door_restream
-            camera_view: live
-            entity: camera.front_door_restream
-            show_name: false
-            show_state: false
-            type: picture-entity
-          type: custom:swipe-card
+        - tabs:
+          - attributes:
+              icon: mdi:car
+              label: Driveway
+            card:
+              camera_image: camera.driveway_restream
+              camera_view: live
+              entity: camera.driveway_restream
+              show_name: false
+              show_state: false
+              type: picture-entity
+          - attributes:
+              icon: mdi:door
+              label: Front door
+            card:
+              camera_image: camera.front_door_restream
+              camera_view: live
+              entity: camera.front_door_restream
+              show_name: false
+              show_state: false
+              type: picture-entity
+          type: custom:tabbed-card
         type: vertical-stack
       - cards:
         - camera_view: auto
@@ -2391,8 +2411,6 @@ views:
           type: custom:decluttering-card
       type: custom:state-switch
     type: vertical-stack
-    view_layout:
-      grid-area: sidebar
   icon: mdi:flower
   layout:
     grid-template-areas: '"header header"
@@ -2443,141 +2461,147 @@ views:
       - subtitle: Pew pew, woo woo.
         title: Glowforge
         type: custom:mushroom-title-card
-      - default: 'On'
-        entity: input_select.glowforge_status
-        states:
-          'Off':
-            cards:
-            - cards:
-              - entity: input_select.glowforge_status
-                name: Status
-                type: custom:mushroom-entity-card
-              - default: 'On'
-                entity: input_select.glowforge_status
-                states:
-                  'Off':
-                    entity: switch.docker_wyze_bridge
-                    icon: mdi:docker
-                    name: Wyze bridge
-                    type: custom:mushroom-entity-card
-                type: custom:state-switch
-              columns: 2
-              square: false
-              type: grid
-            - entities:
-              - name: Glowforge App
-                type: weblink
-                url: https://app.glowforge.com
-              type: entities
-            type: vertical-stack
-          'On':
-            cards:
-            - cards:
-              - entity: input_select.glowforge_status
-                type: custom:mushroom-entity-card
-              - entity: switch.glowforge_button
-                type: custom:mushroom-entity-card
-              columns: 2
-              square: false
-              type: grid
-            - camera_image: camera.glowforge
-              camera_view: live
-              entity: camera.glowforge
-              show_name: false
-              show_state: false
-              type: picture-entity
-            - entities:
-              - entity: input_boolean.glowforge_announce_complete
-                name: Announce when complete
-              - entity: switch.docker_wyze_bridge
-                icon: mdi:docker
-              - entity: switch.glowforge_camera
-                icon: mdi:cctv
-              - type: divider
-              - entity: sensor.glowforge_power_monitor_power
-                icon: mdi:power-plug
-                name: Power monitor
-              - type: divider
-              - name: Glowforge App
-                type: weblink
-                url: https://app.glowforge.com
-              type: entities
-            type: vertical-stack
-        type: custom:state-switch
+      - card:
+          cards:
+          - cards:
+            - entity: input_select.glowforge_status
+              type: custom:mushroom-entity-card
+            - entity: switch.glowforge_button
+              type: custom:mushroom-entity-card
+            columns: 2
+            square: false
+            type: grid
+          - camera_image: camera.glowforge
+            camera_view: live
+            entity: camera.glowforge
+            show_name: false
+            show_state: false
+            type: picture-entity
+          - entities:
+            - entity: input_boolean.glowforge_announce_complete
+              name: Announce when complete
+            - entity: switch.docker_wyze_bridge
+              icon: mdi:docker
+            - entity: switch.glowforge_camera
+              icon: mdi:cctv
+            - type: divider
+            - entity: sensor.glowforge_power_monitor_power
+              icon: mdi:power-plug
+              name: Power monitor
+            - type: divider
+            - name: Glowforge App
+              type: weblink
+              url: https://app.glowforge.com
+            type: entities
+          type: vertical-stack
+        conditions:
+        - entity: input_select.glowforge_status
+          state: 'On'
+        type: conditional
+      - card:
+          cards:
+          - cards:
+            - entity: input_select.glowforge_status
+              name: Status
+              type: custom:mushroom-entity-card
+            columns: 2
+            square: false
+            type: grid
+          - alignment: center
+            chips:
+            - content: Glowforge App
+              icon: mdi:link
+              tap_action:
+                action: url
+                url_path: https://app.glowforge.com
+              type: template
+            type: custom:mushroom-chips-card
+          type: vertical-stack
+        conditions:
+        - entity: input_select.glowforge_status
+          state: 'Off'
+        type: conditional
       type: vertical-stack
     - cards:
       - subtitle: Prusa MK2.5s
         title: 3D printer
         type: custom:mushroom-title-card
-      - entity: switch.prusa
-        icon_color: red
-        name: Power toggle
-        tap_action:
-          action: toggle
-          confirmation:
-            text: Are you sure you want to change the power state of the 3D Printer?
-        type: custom:mushroom-entity-card
       - cards:
-        - entities:
-          - name: Octoprint UI
-            type: weblink
-            url: http://octopi.local
-          type: entities
         - entity: switch.prusa
-          states:
-            'on':
-              cards:
-              - camera_image: camera.prusa
-                camera_view: camera.prusa
-                entities:
-                - sensor.octoprint_current_state
-                - camera.prusa
-                entity: sensor.octoprint_current_state
-                state_filter:
-                  Operational: grayscale(100%)
-                  Printing: brightness(110%) saturate(1.2)
-                tap_action:
-                  action: call-service
-                  service: browser_mod.more_info
-                  service_data:
-                    deviceID:
-                    - this
-                    entity_id: camera.prusa
-                title: Prusa Mk2.5s
-                type: picture-glance
-              - entities:
-                - entities:
-                  - entity: sensor.octoprint_current_state
-                    name: Run State
-                  - entity: binary_sensor.octoprint_printing_error
-                    name: Error State
-                  entity: sensor.octoprint_current_state
-                  icon: mdi:printer-3d
-                  name: Status
-                  show_state: false
-                  type: custom:multiple-entity-row
-                - entities:
-                  - entity: sensor.octoprint_job_percentage
-                    name: Complete
-                  - entity: sensor.octoprint_time_elapsed
-                    name: Elapsed
-                  - entity: sensor.octoprint_time_remaining
-                    name: Remaining
-                  entity: sensor.octoprint_job_percentage
-                  icon: mdi:timer-outline
-                  name: Progress
-                  show_state: false
-                  type: custom:multiple-entity-row
-                - entity: sensor.prusa_power_monitor_power
-                  name: Power
-                - entity: automation.3d_print_status_update
-                  icon: mdi:cellphone-message
-                  name: Notify On Status Change
-                  show_state: false
-                type: custom:hui-entities-card
-              type: vertical-stack
-          type: custom:state-switch
-        type: vertical-stack
+          icon_color: red
+          tap_action:
+            action: toggle
+            confirmation:
+              text: Are you sure you want to change the power state of the 3D Printer?
+          type: custom:mushroom-entity-card
+        columns: 2
+        name: Power toggle
+        square: false
+        type: grid
+      - card:
+          cards:
+          - camera_image: camera.prusa
+            camera_view: camera.prusa
+            entities:
+            - sensor.octoprint_current_state
+            - camera.prusa
+            entity: sensor.octoprint_current_state
+            state_filter:
+              Operational: grayscale(100%)
+              Printing: brightness(110%) saturate(1.2)
+            tap_action:
+              action: call-service
+              service: browser_mod.more_info
+              service_data:
+                deviceID:
+                - this
+                entity_id: camera.prusa
+            title: Prusa Mk2.5s
+            type: picture-glance
+          - entities:
+            - entities:
+              - entity: sensor.octoprint_current_state
+                name: Run State
+              - entity: binary_sensor.octoprint_printing_error
+                name: Error State
+              entity: sensor.octoprint_current_state
+              icon: mdi:printer-3d
+              name: Status
+              show_state: false
+              type: custom:multiple-entity-row
+            - entities:
+              - entity: sensor.octoprint_job_percentage
+                name: Complete
+              - entity: sensor.octoprint_time_elapsed
+                name: Elapsed
+              - entity: sensor.octoprint_time_remaining
+                name: Remaining
+              entity: sensor.octoprint_job_percentage
+              icon: mdi:timer-outline
+              name: Progress
+              show_state: false
+              type: custom:multiple-entity-row
+            - entity: sensor.prusa_power_monitor_power
+              name: Power
+            - entity: automation.3d_print_status_update
+              icon: mdi:cellphone-message
+              name: Notify On Status Change
+              show_state: false
+            type: custom:hui-entities-card
+          type: vertical-stack
+        conditions:
+        - entity: input_select.glowforge_status
+          state_not: 'Off'
+        type: conditional
+      - alignment: center
+        chips:
+        - content: Octoprint UI
+          icon: mdi:link
+          tap_action:
+            action: url
+            url_path: http://octopi.local
+          type: template
+        type: custom:mushroom-chips-card
       type: vertical-stack
     type: vertical-stack
     view_layout:
@@ -2603,11 +2627,12 @@ views:
             name: Family room
       type: vertical-stack
     - cards:
-      - title: House temperatures
+      - subtitle: ''
+        title: House temperatures
         type: custom:mushroom-title-card
       - tabs:
         - attributes:
-            label: All
+            icon: hass:home-thermometer
           card:
             entities:
             - entity: weather.home
@@ -2622,7 +2647,7 @@ views:
               name: Downstairs average
             type: entities
         - attributes:
-            label: Downstairs
+            icon: hass:home-floor-1
           card:
             aggregate_func: max
             animate: true
@@ -2636,7 +2661,7 @@ views:
             - entity: sensor.home_thermostat_temperature
               name: Thermostat
             height: 88
-            icon: mdi:home-floor-1
+            icon: hass:home-floor-1
             line_width: 2
             lower_bound: 60
             points_per_hour: 4
@@ -2648,7 +2673,7 @@ views:
               state: false
             type: custom:mini-graph-card
         - attributes:
-            label: Upstairs
+            icon: hass:home-floor-2
           card:
             aggregate_func: max
             animate: true
@@ -2749,70 +2774,81 @@ views:
       grid-area: header
   - cards:
     - subtitle: ''
-      title: Wakeup events
+      title: Events
       type: custom:mushroom-title-card
-    - template: event
-      type: custom:decluttering-card
-      variables:
-      - label: Brian
-      - id: wakeup_brian
-      - sensors:
-        - binary_sensor.middle_school_day
-        - binary_sensor.high_school_day
-    - cards:
-      - subtitle: Nerene (manual)
-        title: ''
-        type: custom:mushroom-title-card
-      - entity: timer.nerene_wakeup_light
-        type: tile
-      type: vertical-stack
-    - template: event
-      type: custom:decluttering-card
-      variables:
-      - label: Nerene (work day)
-      - id: wakeup_nerene
-      - sensors:
-        - binary_sensor.work_day
-    - template: event
-      type: custom:decluttering-card
-      variables:
-      - label: Nerene (work day modified)
-      - id: wakeup_nerene_modified
-      - sensors:
-        - binary_sensor.work_day_modified
-    - template: event
-      type: custom:decluttering-card
-      variables:
-      - label: Kyle
-      - id: wakeup_kyle
-      - sensors:
-        - binary_sensor.middle_school_day
-    - template: event
-      type: custom:decluttering-card
-      variables:
-      - label: Lucas
-      - id: wakeup_lucas
-      - sensors:
-        - binary_sensor.high_school_day
-    - subtitle: ''
-      title: Bed time events
-      type: custom:mushroom-title-card
-    - template: event
-      type: custom:decluttering-card
-      variables:
-      - label: School day tomorrow
-      - id: bedtime_boys_schoolday
-      - sensors:
-        - binary_sensor.middle_school_day_tomorrow
-        - binary_sensor.high_school_day_tomorrow
-    - template: event
-      type: custom:decluttering-card
-      variables:
-      - label: Day off tomorrow
-      - id: bedtime_boys_dayoff
-      - sensors:
-        - binary_sensor.middle_school_day
-        - binary_sensor.high_school_day
+    - tabs:
+      - attributes:
+          icon: mdi:weather-sunset-up
+          label: Wakeup
+        card:
+          cards:
+          - template: event
+            type: custom:decluttering-card
+            variables:
+            - label: Brian
+            - id: wakeup_brian
+            - sensors:
+              - binary_sensor.middle_school_day
+              - binary_sensor.high_school_day
+          - cards:
+            - subtitle: Nerene (manual)
+              title: ''
+              type: custom:mushroom-title-card
+            - entity: timer.nerene_wakeup_light
+              type: tile
+            type: vertical-stack
+          - template: event
+            type: custom:decluttering-card
+            variables:
+            - label: Nerene (work day)
+            - id: wakeup_nerene
+            - sensors:
+              - binary_sensor.work_day
+          - template: event
+            type: custom:decluttering-card
+            variables:
+            - label: Nerene (work day modified)
+            - id: wakeup_nerene_modified
+            - sensors:
+              - binary_sensor.work_day_modified
+          - template: event
+            type: custom:decluttering-card
+            variables:
+            - label: Kyle
+            - id: wakeup_kyle
+            - sensors:
+              - binary_sensor.middle_school_day
+          - template: event
+            type: custom:decluttering-card
+            variables:
+            - label: Lucas
+            - id: wakeup_lucas
+            - sensors:
+              - binary_sensor.high_school_day
+          type: vertical-stack
+      - attributes:
+          icon: mdi:bed
+          label: Bedtime
+        card:
+          cards:
+          - template: event
+            type: custom:decluttering-card
+            variables:
+            - label: School day tomorrow
+            - id: bedtime_boys_schoolday
+            - sensors:
+              - binary_sensor.middle_school_day_tomorrow
+              - binary_sensor.high_school_day_tomorrow
+          - template: event
+            type: custom:decluttering-card
+            variables:
+            - label: Day off tomorrow
+            - id: bedtime_boys_dayoff
+            - sensors:
+              - binary_sensor.middle_school_day
+              - binary_sensor.high_school_day
+          type: vertical-stack
+      type: custom:tabbed-card
     type: vertical-stack
     view_layout:
       grid-area: main
@@ -2821,110 +2857,53 @@ views:
       - subtitle: Front yard drip system
         title: Irrigation controller
         type: custom:mushroom-title-card
-      - entity: switch.front_yard_drip
-        icon: mdi:sprinkler-variant
-        name: Start cycle
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: switch.front_yard_drip
-        states:
-          offn:
-            bar_background: 'var(--mdc-theme-primary, #6200ee)'
-            bar_direction: rtl
-            bar_foreground: '#eee'
-            duration:
-              entity: number.front_yard_drip_duration
-              units: minutes
-            entity: switch.front_yard_drip
-            full_row: true
-            text_width: 0px
-            type: custom:timer-bar-card
-        type: custom:state-switch
       - cards:
-        - canary_style:
-            border: none;
-          entities:
-          - entities:
-            - entity: sensor.front_yard_drip_next
-              name: Next 🕑
-            - entity: sensor.front_yard_drip_remaining
-              name: Remaining ⏳
-              unit: min
-            entity: switch.front_yard_drip
-            icon: mdi:sprinkler
-            name: Status
-            state_header: State
-            type: custom:multiple-entity-row
-          - entity: input_text.front_yard_drip_times
-            type: custom:text-input-row
-          - label: Duration in Minutes
-            type: section
-          - entity: number.front_yard_drip_duration
-            full_row: true
-            type: custom:slider-entity-row
-          show_header_toggle: false
-          type: entities
-        - canary_style:
-            border: none;
-          content: '*Set Duration to 0 to disable.*'
-          style: "ha-card {\n  background: none;\n  margin-top: -2em;\n  text-align:\
-            \ center;\n}\n"
-          type: markdown
-        in_card: true
-        type: vertical-stack
-      type: vertical-stack
-    - cards:
-      - subtitle: Scheduled device on/off times.
-        title: Device scheduler
-        type: custom:mushroom-title-card
-      - am_pm: true
-        discover_existing: false
-        display_options:
-          primary_info:
-          - name
-          - '<i>Action: {entity} [{action}]</i>'
-          secondary_info:
-          - relative-time
-          - days
-        exclude: []
-        include:
-        - climate.bedroom_thermostat
-        - climate.lucas_room_thermostat
-        - fan.bedroom
-        - fan.family_room
-        - fan.upstairs_bathroom
-        - light.bedroom
-        - light.bedroom_east
-        - light.bedroom_table_lamp
-        - light.dining_room
-        - light.entry_railing
-        - light.entry_railing
-        - light.family_room
-        - light.family_room_floor_lamp
-        - light.family_room_table_lamp
-        - light.home_entry
-        - light.home_entry
-        - light.kitchen
-        - light.kitchen_prep
-        - light.path_lights
-        - light.play_room
-        - light.play_room_entry
-        - light.play_room_floor_lamp
-        - light.porch
-        - switch.front_yard1
-        - switch.front_yard2
-        - switch.hot_water_pump
-        - switch.lucas_auto_climate
-        - switch.printer
-        - vacuum
+        - entity: switch.front_yard_drip
+          icon: mdi:sprinkler-variant
+          name: Start cycle
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
+        columns: 2
+        square: false
+        type: grid
+      - card:
+          bar_background: 'var(--mdc-theme-primary, #6200ee)'
+          bar_direction: rtl
+          bar_foreground: '#eee'
+          duration:
+            entity: number.front_yard_drip_duration
+            units: minutes
+          entity: switch.front_yard_drip
+          full_row: true
+          text_width: 0px
+          type: custom:timer-bar-card
+        conditions:
+        - entity: switch.front_yard_drip
+          state: 'on'
+        type: conditional
+      - entities:
+        - entities:
+          - entity: sensor.front_yard_drip_next
+            name: Next 🕑
+          - entity: sensor.front_yard_drip_remaining
+            name: Remaining ⏳
+            unit: min
+          entity: switch.front_yard_drip
+          icon: mdi:sprinkler
+          name: Status
+          state_header: State
+          type: custom:multiple-entity-row
+        - entity: number.front_yard_drip_duration
+          max: 10
+          min: 0
+          secondary_info: <i>Set Duration to 0 to disable.</i>
+          service: number.set_value
+          step: 1
+          type: custom:numberbox-card
+        - entity: input_text.front_yard_drip_times
         show_header_toggle: false
-        sort_by:
-        - state
-        - title
-        time_step: 10
-        title: false
-        type: custom:scheduler-card
+        type: entities
       type: vertical-stack
     type: vertical-stack
     view_layout:
@@ -2992,6 +2971,7 @@ views:
       type: vertical-stack
     - tabs:
       - attributes:
+          icon: mdi:folder-question
           label: Problems
         card:
           cards:
@@ -3027,6 +3007,7 @@ views:
             type: custom:auto-entities
           type: vertical-stack
       - attributes:
+          icon: mdi:folder-hidden
           label: Missing
         card:
           cards:
@@ -3175,7 +3156,8 @@ views:
         type: markdown
       - tabs:
         - attributes:
-            label: ✨
+            icon: mdi:update
+            label: Updates
           card:
             cards:
             - subtitle: Versions
@@ -3291,7 +3273,8 @@ views:
               type: entities
             type: vertical-stack
         - attributes:
-            label: 💤
+            icon: mdi:counter
+            label: Counts
           card:
             cards:
             - subtitle: Totals
@@ -3347,11 +3330,10 @@ views:
         type: custom:mushroom-title-card
       - tabs:
         - attributes:
-            label: 🌐
+            icon: mdi:wifi
+            label: Unifi
           card:
             cards:
-            - subtitle: Unifi status
-              type: custom:mushroom-title-card
             - entities:
               - entities:
                 - entity: sensor.unifi_gateway_wan
@@ -3388,99 +3370,70 @@ views:
               type: custom:mushroom-chips-card
             type: vertical-stack
         - attributes:
-            label: ⚡
+            icon: mdi:ethernet
+            label: Access
           card:
             cards:
-            - subtitle: Network access control
-              type: custom:mushroom-title-card
             - entities:
-              - entity: switch.gaming_pc_redpc
-                name: Red PC
-              - entity: switch.gaming_pc_bluepc
-                name: Blue PC
-              - entity: switch.gaming_pc_greenpc
-                name: Green PC
+              - entities:
+                - entity: switch.gaming_pc_redpc
+                  name: Red PC
+                  toggle: true
+                - entity: switch.gaming_pc_bluepc
+                  name: Blue PC
+                  toggle: true
+                - entity: switch.gaming_pc_greenpc
+                  name: Green PC
+                  toggle: true
+                - entity: switch.gaming_pc_blackpc
+                  name: Black PC
+                  toggle: true
+                entity: schedule.computer_school
+                icon: mdi:ethernet
+                name: Network access
+                show_state: false
+                type: custom:multiple-entity-row
               - type: divider
-              - entity: switch.gaming_pc_blackpc
-                name: Black PC
+              - entities:
+                - entity: schedule.computer_school
+                  name: School
+                - entity: schedule.computer_vacation
+                  name: Vacation
+                entity: schedule.computer_school
+                name: Schedules
+                show_state: false
+                type: custom:multiple-entity-row
+              - entities:
+                - entity: binary_sensor.school_vacation_today
+                  name: Today
+                - entity: binary_sensor.school_vacation_tomorrow
+                  name: Tomorrow
+                entity: binary_sensor.school_vacation_today
+                name: Vacation
+                show_state: false
+                type: custom:multiple-entity-row
               - entity: timer.network_off
+                name: Network off timer
               show_header_toggle: false
               state_color: true
               title: ''
               type: entities
-            - cards:
-              - entity: automation.schedule_school_pc
-                name: Schedule
-                tap_action:
-                  action: toggle
-                type: custom:mushroom-entity-card
-              - entity: binary_sensor.docker_unifi_controller
-                name: Unifi controller status
-                tap_action:
-                  action: call-service
-                  data:
-                    command: restart
-                    container: unifi-controller
-                    update: binary_sensor.docker_unifi_controller
-                  service: script.docker
-                type: custom:mushroom-entity-card
-              columns: 2
-              type: grid
-            type: vertical-stack
-        - attributes:
-            label: 📆
-          card:
-            cards:
-            - subtitle: Computer schedule
-              type: custom:mushroom-title-card
-            - entities:
-              - entity: schedule.computer_school
-                name: School
-              - entity: schedule.computer_vacation
-                name: Vacation
-              state_color: true
-              type: entities
-            - subtitle: School vacation
-              type: custom:mushroom-title-card
-            - entities:
-              - entity: binary_sensor.school_vacation_today
-                name: Today
-              - entity: binary_sensor.school_vacation_tomorrow
-                name: Tomorrow
-              type: entities
-            - subtitle: Scheduler
-              type: custom:mushroom-title-card
-            - am_pm: true
-              discover_existing: false
-              include:
-              - switch.network_blackpc
-              - switch.network_bluepc
-              - switch.network_greenpc
-              - switch.network_redpc
-              - switch.gaming_pc_blackpc
-              - switch.gaming_pc_bluepc
-              - switch.gaming_pc_greenpc
-              - switch.gaming_pc_redpc
-              title: false
-              type: custom:scheduler-card
-            type: vertical-stack
-        - attributes:
-            label: 🖥️
-          card:
-            cards:
-            - subtitle: BlackPC sensors
-              type: custom:mushroom-title-card
-            - card:
-                type: entities
-              filter:
-                exclude: []
-                include:
-                - entity_id: '*.blackpc*'
-              sort:
-                ignore_case: false
-                method: domain
-                reverse: true
-              type: custom:auto-entities
+            - alignment: justify
+              chips:
+              - content: Smart schedule
+                entity: automation.schedule_school_pc
+                icon: mdi:toggle-switch{{ iif(is_state("automation.schedule_school_pc","off"),
+                  "-off", "") }}
+                icon_color: '{{ iif(is_state("automation.schedule_school_pc","on"),
+                  "blue", "grey") }}'
+                type: template
+              - content: Restart unifi controller
+                entity: binary_sensor.docker_unifi_controller
+                icon: mdi:docker
+                icon_color: '{{ iif(is_state("binary_sensor.docker_unifi_controller","on"),
+                  "blue", "grey") }}'
+                type: template
+              type: custom:mushroom-chips-card
             type: vertical-stack
         type: custom:tabbed-card
       style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
@@ -3685,7 +3638,6 @@ views:
       - entity: input_select.tts_phrase_room
       - entity: input_select.tts_phrases
       - entity: input_text.tts_phrase
-        type: custom:text-input-row
       footer:
         entities:
         - entity: script.tts_phrase_say

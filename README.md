@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **42,353** | 1,337 | 37 | 96 | 59 |
+| **42,203** | 1,323 | 37 | 97 | 59 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1337 total entities**,
+Our Home Assistant install has approximately **1323 total entities**,
 including **657 sensors**. My YAML
-files contain 42,353 lines of code.
+files contain 42,203 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.4.1](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -321,7 +321,7 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.16](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>28 lovelace plugins</summary>
+<details><summary>27 lovelace plugins</summary>
 
 ## [Atomic Calendar Revive v7.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
@@ -344,7 +344,7 @@ An advanced calendar card for Home Assistant Lovelace.
 ## [Flipdown Timer Card v0.4](https://github.com/pmongloid/flipdown-timer-card)
 Flipdown Timer Card for Home Assistant Lovelace
 
-## [Fold Entity Row v20.0.4](https://github.com/thomasloven/lovelace-fold-entity-row)
+## [Fold Entity Row v2.2.0](https://github.com/thomasloven/lovelace-fold-entity-row)
 🔹 A foldable row for entities card, containing other rows
 
 ## [Frigate Card v4.0.0](https://github.com/dermotduffy/frigate-hass-card)
@@ -362,9 +362,6 @@ Companion card for Irrigation-V5
 ## [Lovelace Home Feed Card v0.6.3](https://github.com/gadgetchnnel/lovelace-home-feed-card)
 A custom Lovelace card for displaying a combination of persistent notifications, calendar events, and entities in the style of a feed.
 
-## [Lovelace Text Input Row v0.0.8](https://github.com/gadgetchnnel/lovelace-text-input-row)
-A custom Lovelace text input row for use in entities cards
-
 ## [Mini Graph Card v0.11.0](https://github.com/kalkih/mini-graph-card)
 Minimalistic graph card for Home Assistant Lovelace UI
 
@@ -374,20 +371,20 @@ Show multiple entity states and attributes on entity rows in Home Assistant's Lo
 ## [Mushroom v2.4.1](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
+## [Number Box v4.1](https://github.com/htmltiger/numberbox-card)
+Replace input_number sliders with plus and minus buttons
+
 ## [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
 An intuitive way to represent the power and energy that your home is consuming or producing. (A custom card for the Lovelace UI of Home Assistant.)
 
 ## [Restriction Card v1.2.7](https://github.com/iantrich/restriction-card)
 🔒 Apply restrictions to Lovelace cards
 
-## [Scheduler Card v2.4.1](https://github.com/nielsfaber/scheduler-card)
-HA Lovelace card for control of scheduler entities
-
 ## [Simple Thermostat v2.5.0](https://github.com/nervetattoo/simple-thermostat)
 A different take on the thermostat card for Home Assistant ♨️
 
-## [Slider Entity Row v17.3.0](https://github.com/thomasloven/lovelace-slider-entity-row)
-🔹 Add sliders to entity cards
+## [State Switch v1.9.5](https://github.com/thomasloven/lovelace-state-switch)
+🔹Dynamically replace lovelace cards depending on occasion
 
 ## [Swipe Card v5.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
@@ -478,7 +475,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,353-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,203-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg
