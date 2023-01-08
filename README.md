@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **42,303** | 1,330 | 37 | 96 | 59 |
+| **42,353** | 1,337 | 37 | 96 | 59 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1330 total entities**,
-including **652 sensors**. My YAML
-files contain 42,303 lines of code.
+Our Home Assistant install has approximately **1337 total entities**,
+including **657 sensors**. My YAML
+files contain 42,353 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.4.1](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -303,7 +303,7 @@ Authors:[@nielsfaber](https://github.com/nielsfaber).
 ## [Simple Wyze Vacuum v1.7.2](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
-## [SmartThinQ LGE Sensors v0.29.0](https://github.com/ollo69/ha-smartthinq-sensors)
+## [SmartThinQ LGE Sensors v0.29.1](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
 ## [Sun2 v2.1.3](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
@@ -321,7 +321,7 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.16](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>29 lovelace plugins</summary>
+<details><summary>28 lovelace plugins</summary>
 
 ## [Atomic Calendar Revive v7.2.0](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
@@ -388,9 +388,6 @@ A different take on the thermostat card for Home Assistant ♨️
 
 ## [Slider Entity Row v17.3.0](https://github.com/thomasloven/lovelace-slider-entity-row)
 🔹 Add sliders to entity cards
-
-## [State Switch v1.9.5](https://github.com/thomasloven/lovelace-state-switch)
-🔹Dynamically replace lovelace cards depending on occasion
 
 ## [Swipe Card v5.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
@@ -481,7 +478,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,303-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-42,353-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

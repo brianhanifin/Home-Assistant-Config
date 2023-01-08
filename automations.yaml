@@ -1446,14 +1446,16 @@
   trigger:
   - platform: state
     entity_id:
-    - device_tracker.gaming_pc_blackpc
     - switch.gaming_pc_bluepc
     - switch.gaming_pc_greenpc
     - switch.gaming_pc_redpc
+    - switch.gaming_pc_blackpc
     for:
       hours: 0
       minutes: 0
       seconds: 0
+    from: 'off'
+    to: 'on'
   condition: []
   action:
   - delay:
@@ -1461,10 +1463,11 @@
       minutes: 0
       seconds: 10
       milliseconds: 0
-  - service: rest_command.docker
+  - service: script.docker
     data:
       container: unifi-controller
       command: restart
+      update: binary_sensor.docker_unifi_controller
     alias: Restart Unifi controller's docker service.
   mode: restart
 - id: '1664915161123'
@@ -4180,44 +4183,59 @@
   - platform: state
     entity_id:
     - schedule.computer_school
-    - schedule.computer_vacation
-    alias: When schedule state changes.
-    id: schedule_changed
+    - schedule.test1
+    - schedule.test2
+    - schedule.test3
+    from: 'off'
+    to: 'on'
+    id: school_on
   - platform: state
     entity_id:
-    - timer.network_off
-    to: idle
-    from: active
+    - schedule.computer_vacation
+    from: 'off'
+    to: 'on'
+    id: vacation_on
+  - platform: state
+    entity_id:
+    - schedule.computer_school
+    - schedule.test1
+    - schedule.test2
+    - schedule.test3
+    from: 'on'
+    to: 'off'
+    id: school_off
+  - platform: state
+    entity_id:
+    - schedule.computer_vacation
+    id: vacation_off
+    from: 'on'
+    to: 'off'
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.network_off
     id: turn_network_off
     alias: When network off timer ends.
   condition: []
   action:
   - variables:
-      state: '{{ trigger.to_state.state }}
-
-        '
-      triggered_by: '{{ trigger.entity_id.split(".")[1] }}
-
-        '
-      vacation_today: '{{ is_state("binary_sensor.school_day_today","on") }}
-
-        '
-      vacation_tomorrow: '{{ is_state("binary_sensor.school_day_tomorrow","on") }}
-
-        '
-      action: "{%- if state == \"on\" %}\n  {%- if (not vacation_today and triggered_by
-        == \"computer_school\")\n        or (vacation_today and triggered_by == \"computer_vacation\")
-        %}\n    {{ state }}\n  {%- endif %}\n{%- else %}\n  {%- if (not vacation_tomorrow
-        and triggered_by == \"computer_school\")\n        or (vacation_tomorrow and
-        triggered_by == \"computer_vacation\")  %}\n    {{ state }}\n  {%- endif %}\n{%-
-        endif %}\n"
+      schedule: '{{ trigger.id.split("_")[0] }}'
+      state: '{{ trigger.id.split("_")[1] }}'
+      vacation_today: '{{ is_state("binary_sensor.school_day_today","on") }}'
+      vacation_tomorrow: '{{ is_state("binary_sensor.school_day_tomorrow","on") }}'
+      action: "{%- if state == \"on\" %}\n  {%- if (schedule == \"school\" and not
+        vacation_today)\n        or (schedule == \"vacation\" and vacation_today)
+        %}\n    on\n  {%- endif %}\n{%- else %}\n  {%- if (schedule == \"school\"
+        and not vacation_tomorrow)\n        or (schedule == \"vacation\" and vacation_today)
+        \ %}\n    off\n  {%- endif %}\n{%- endif %}\n"
   - alias: Debug output. (Disable to turn off.)
     service: script.debug
     data:
-      title: 'Schedule: {{ triggered_by }} {{ state }}'
-      message: 'state: {{ state }}
+      title: Schedule {{ schedule }} {{ state }}
+      message: 'schedule: {{ schedule }}
 
-        triggered_by: {{ triggered_by }}
+        state: {{ state }}
+
 
         vacation_today: {{ vacation_today }}
 
@@ -4228,36 +4246,33 @@
 
         '
   - if:
-    - condition: trigger
-      id: schedule_changed
+    - condition: template
+      alias: Confirm the action is "on".
+      value_template: '{{ action == "on" }}'
     then:
-    - if:
-      - condition: template
-        alias: Confirm the action is "on".
-        value_template: '{{ action == "on" }}'
-      then:
-      - service: switch.turn_on
-        target:
-          entity_id:
-          - switch.gaming_pc_bluepc
-          - switch.gaming_pc_greenpc
-          - switch.gaming_pc_redpc
-        data: {}
-      alias: Turn on the boys network access.
-    - if:
-      - condition: template
-        value_template: '{{ action == "off" }}'
-        alias: Confirm the action is "off".
-      then:
-      - service: timer.start
-        data: {}
-        target:
-          entity_id: timer.network_off
-        alias: Start the network off timer.
-      alias: Start the network turn off timer.
-    enabled: true
-    else: []
-    alias: Take "schedule_changed" actions.
+    - service: switch.turn_on
+      target:
+        entity_id:
+        - switch.gaming_pc_bluepc
+        - switch.gaming_pc_greenpc
+        - switch.gaming_pc_redpc
+      data: {}
+    - service: timer.cancel
+      data: {}
+      target:
+        entity_id: timer.network_off
+    alias: Turn on the boys network access.
+  - if:
+    - condition: template
+      value_template: '{{ action == "off" }}'
+      alias: Confirm the action is "off".
+    then:
+    - service: timer.start
+      data: {}
+      target:
+        entity_id: timer.network_off
+      alias: Start the network off timer.
+    alias: Start the network turn off timer.
   - if:
     - condition: trigger
       id: turn_network_off
@@ -4270,4 +4285,5 @@
         - switch.gaming_pc_redpc
       data: {}
     alias: Take "turn_network_off" actions.
-  mode: single
+  mode: queued
+  max: 10

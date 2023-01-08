@@ -114,7 +114,7 @@ decluttering_templates:
           height: 118
           hours_to_show: 24
           line_width: 2
-          lower_bound: 68
+          lower_bound: 60
           points_per_hour: 4
           show:
             extrema: false
@@ -441,36 +441,37 @@ decluttering_templates:
           - subtitle: National Weather Service alerts
             type: custom:mushroom-title-card
           - content: "{%- set alerts = state_attr(\"sensor.nws_alerts\",\"spoken_desc\"\
-              ) %} {%- set alerts = alerts.split(\"-\") if \"-\" in alerts %} {%-\
-              \ if alerts is sequence %}\n  {%- for alert in alerts %}\n    {%- if\
-              \ loop.first %}\n      {{ alert }}\n    {%- else %}\n      {{ iif(alert!=alerts[loop.index-1],\
+              ) %} {%- if \"-\" in alerts %}\n  {%- set alerts = alerts.split(\"-\"\
+              ) %}\n  {%- for alert in alerts %}\n    {%- if loop.first %}\n     \
+              \ {{ alert }}\n    {%- else %}\n      {{ iif(alert!=alerts[loop.index-1],\
               \ alert, \"\") }}\n    {%- endif %}\n  {%- endfor %}\n{%- else %}\n\
-              \  {{ alerts }}\n{%- endif %}\n"
+              \ {{ alerts }}\n{%- endif %}\n"
             type: markdown
           type: vertical-stack
         conditions:
         - entity: sensor.nws_alerts
           state_not: '0'
         type: conditional
-      - entity: binary_sensor.rain_today
-        states:
-          'on':
-            cards:
-            - subtitle: Radar
-              type: custom:mushroom-title-card
-            - center_latitude: 32.839191
-              center_longitude: -117.1895228
-              data_source: RainViewer-TWC
-              map_style: Voyager
-              marker_latitude: 32.8592997
-              marker_longitude: -117.0232825
-              show_marker: true
-              square_map: true
-              static_map: true
-              type: custom:weather-radar-card
-              zoom_level: 9
-            type: vertical-stack
-        type: custom:state-switch
+      - card:
+          cards:
+          - subtitle: Radar
+            type: custom:mushroom-title-card
+          - center_latitude: 32.839191
+            center_longitude: -117.1895228
+            data_source: RainViewer-TWC
+            map_style: Voyager
+            marker_latitude: 32.8592997
+            marker_longitude: -117.0232825
+            show_marker: true
+            square_map: true
+            static_map: true
+            type: custom:weather-radar-card
+            zoom_level: 9
+          type: vertical-stack
+        conditions:
+        - entity: binary_sensor.rain_today
+          state: 'on'
+        type: conditional
       - subtitle: Last 24 hours
         type: custom:mushroom-title-card
       - animate: true
@@ -2312,26 +2313,20 @@ views:
       - cards:
         - subtitle: Cameras
           type: custom:mushroom-title-card
-        - tabs:
-          - attributes:
-              label: Driveway
-            card:
-              camera_image: camera.driveway_restream
-              camera_view: live
-              entity: camera.driveway_restream
-              show_name: false
-              show_state: false
-              type: picture-entity
-          - attributes:
-              label: Door
-            card:
-              camera_image: camera.front_door_restream
-              camera_view: live
-              entity: camera.front_door_restream
-              show_name: false
-              show_state: false
-              type: picture-entity
-          type: custom:tabbed-card
+        - cards:
+          - camera_image: camera.driveway_restream
+            camera_view: live
+            entity: camera.driveway_restream
+            show_name: false
+            show_state: false
+            type: picture-entity
+          - camera_image: camera.front_door_restream
+            camera_view: live
+            entity: camera.front_door_restream
+            show_name: false
+            show_state: false
+            type: picture-entity
+          type: custom:swipe-card
         type: vertical-stack
       - cards:
         - camera_view: auto
@@ -3399,19 +3394,26 @@ views:
             - subtitle: Network access control
               type: custom:mushroom-title-card
             - entities:
-              - entity: switch.gaming_pc_blackpc
-                name: Black PC
-              - entity: switch.gaming_pc_bluepc
-                name: Blue PC
               - entity: switch.gaming_pc_redpc
                 name: Red PC
+              - entity: switch.gaming_pc_bluepc
+                name: Blue PC
               - entity: switch.gaming_pc_greenpc
                 name: Green PC
+              - type: divider
+              - entity: switch.gaming_pc_blackpc
+                name: Black PC
+              - entity: timer.network_off
               show_header_toggle: false
               state_color: true
               title: ''
               type: entities
             - cards:
+              - entity: automation.schedule_school_pc
+                name: Schedule
+                tap_action:
+                  action: toggle
+                type: custom:mushroom-entity-card
               - entity: binary_sensor.docker_unifi_controller
                 name: Unifi controller status
                 tap_action:
@@ -3429,7 +3431,24 @@ views:
             label: 📆
           card:
             cards:
-            - subtitle: Schedule
+            - subtitle: Computer schedule
+              type: custom:mushroom-title-card
+            - entities:
+              - entity: schedule.computer_school
+                name: School
+              - entity: schedule.computer_vacation
+                name: Vacation
+              state_color: true
+              type: entities
+            - subtitle: School vacation
+              type: custom:mushroom-title-card
+            - entities:
+              - entity: binary_sensor.school_vacation_today
+                name: Today
+              - entity: binary_sensor.school_vacation_tomorrow
+                name: Tomorrow
+              type: entities
+            - subtitle: Scheduler
               type: custom:mushroom-title-card
             - am_pm: true
               discover_existing: false
@@ -3444,12 +3463,6 @@ views:
               - switch.gaming_pc_redpc
               title: false
               type: custom:scheduler-card
-            - entities:
-              - entity: schedule.computer_school
-              - entity: schedule.computer_vacation
-              show_header_toggle: false
-              state_color: true
-              type: entities
             type: vertical-stack
         - attributes:
             label: 🖥️
@@ -3471,7 +3484,7 @@ views:
             type: vertical-stack
         type: custom:tabbed-card
       style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
-        \ {{ \"kcolbnone\" if user.is_admin|default(false) else \"block\" }}\n}\n"
+        \ {{ \"block\" if user.is_admin|default(false) else \"none\" }}\n}\n"
       type: vertical-stack
     type: vertical-stack
     view_layout:
