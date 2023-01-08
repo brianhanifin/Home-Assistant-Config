@@ -4287,3 +4287,17 @@
     alias: Take "turn_network_off" actions.
   mode: queued
   max: 10
+- id: '1673195831028'
+  alias: 'Schedule: family room fan off at midnight'
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+    alias: When midnight
+  condition: []
+  action:
+  - service: fan.turn_off
+    data: {}
+    target:
+      entity_id: fan.family_room
+  mode: single
