@@ -449,7 +449,7 @@ decluttering_templates:
         type: custom:weather-card
       - card:
           cards:
-          - subtitle: National Weather Service alerts
+          - subtitle: National weather service alerts
             type: custom:mushroom-title-card
           - content: "{%- set alerts = state_attr(\"sensor.nws_alerts\",\"spoken_desc\"\
               ) %} {%- if \"-\" in alerts %}\n  {%- set alerts = alerts.split(\"-\"\
@@ -1610,22 +1610,27 @@ views:
     - cards:
       - title: Robot vacuums
         type: custom:mushroom-title-card
-      - commands:
-        - start_pause
-        - locate
-        - return_home
-        - stop
-        entity: vacuum.family_room
-        layout: horizontal
-        type: custom:mushroom-vacuum-card
-      - commands:
-        - start_pause
-        - locate
-        - return_home
-        - stop
-        entity: vacuum.play_room
-        layout: horizontal
-        type: custom:mushroom-vacuum-card
+      - cards:
+        - commands:
+          - start_pause
+          - locate
+          - return_home
+          - stop
+          entity: vacuum.family_room
+          name: Family room
+          type: custom:mushroom-vacuum-card
+        - commands:
+          - start_pause
+          - locate
+          - return_home
+          - stop
+          entity: vacuum.play_room
+          icon_animation: true
+          name: Play room
+          type: custom:mushroom-vacuum-card
+        columns: 2
+        square: false
+        type: grid
       type: vertical-stack
     - template: floor_climate
       type: custom:decluttering-card
@@ -2447,14 +2452,28 @@ views:
       - subtitle: Alert when temperatures go above the set threshold.
         title: Fridge alerts
         type: custom:mushroom-title-card
-      - entity: automation.fridge_freezer_temperature_alert
-        icon_color: orange
-        type: custom:mushroom-entity-card
+      - cards:
+        - entity: automation.fridge_freezer_temperature_alert
+          icon_color: orange
+          type: custom:mushroom-entity-card
+        columns: 2
+        square: false
+        type: grid
       - entities:
         - entity: input_number.fridge_temperature_threshold
+          max: 65
+          min: 50
           name: Fridge threshold
+          service: input_number.set_value
+          step: 1
+          type: custom:numberbox-card
         - entity: input_number.freezer_temperature_threshold
+          max: 25
+          min: 10
           name: Freezer threshold
+          service: input_number.set_value
+          step: 1
+          type: custom:numberbox-card
         type: entities
       type: vertical-stack
     - cards:
@@ -2897,7 +2916,7 @@ views:
         - entity: number.front_yard_drip_duration
           max: 10
           min: 0
-          secondary_info: <i>Set Duration to 0 to disable.</i>
+          secondary_info: <i>Set to 0 to disable.</i>
           service: number.set_value
           step: 1
           type: custom:numberbox-card
@@ -3040,8 +3059,7 @@ views:
       grid-area: main
   - cards:
     - cards:
-      - subtitle: null
-        title: Actions
+      - title: Actions
         type: custom:mushroom-title-card
       - alignment: justify
         chips:
@@ -3144,7 +3162,8 @@ views:
         type: custom:mushroom-chips-card
       type: vertical-stack
     - cards:
-      - title: Home Assistant
+      - subtitle: ''
+        title: Home Assistant
         type: custom:mushroom-title-card
       - content: '{{ states("sensor.update_message") }}
 
@@ -3156,62 +3175,155 @@ views:
         type: markdown
       - tabs:
         - attributes:
-            icon: mdi:update
-            label: Updates
+            icon: mdi:information
+            label: Information
           card:
             cards:
-            - subtitle: Versions
-              type: custom:mushroom-title-card
             - entities:
               - entities:
-                - attribute: home_assistant_update_count
-                  entity: sensor.updates
+                - attribute: installed_version
+                  entities:
+                  - entity: sensor.latest_beta
+                    name: Beta
+                  - entity: sensor.latest_release
+                    name: Stable
+                  entity: update.home_assistant_core_update
+                  icon: mdi:cog-box
                   name: Core
-                - entity: sensor.hacs_updates
-                  name: HACS
-                  unit: ' '
-                - entity: sensor.addon_updates
-                  name: Addons
-                - entity: sensor.updates
-                  name: TOTAL
-                entity: sensor.updates
-                icon: mdi:update
-                name: Updates
-                show_state: false
-                type: custom:multiple-entity-row
-              - attribute: installed_version
-                entities:
-                - entity: sensor.latest_beta
-                  name: Beta
-                - entity: sensor.latest_release
-                  name: Stable
-                entity: update.home_assistant_core_update
-                icon: mdi:cog-box
-                name: Core
-                state_header: Installed
-                type: custom:multiple-entity-row
-              - attribute: installed_version
-                entities:
-                - attribute: latest_version
+                  state_header: Installed
+                  type: custom:multiple-entity-row
+                - attribute: installed_version
+                  entities:
+                  - attribute: latest_version
+                    entity: update.home_assistant_operating_system_update
+                    name: Latest
                   entity: update.home_assistant_operating_system_update
-                  name: Latest
-                entity: update.home_assistant_operating_system_update
-                icon: mdi:linux
-                name: OS
-                state_header: Installed
-                type: custom:multiple-entity-row
-              - attribute: installed_version
-                entities:
-                - attribute: latest_version
+                  icon: mdi:linux
+                  name: OS
+                  state_header: Installed
+                  type: custom:multiple-entity-row
+                - attribute: installed_version
+                  entities:
+                  - attribute: latest_version
+                    entity: update.home_assistant_supervisor_update
+                    name: Latest
                   entity: update.home_assistant_supervisor_update
-                  name: Latest
-                entity: update.home_assistant_supervisor_update
-                icon: mdi:docker
-                name: Supervisor
-                state_header: Installed
-                type: custom:multiple-entity-row
+                  icon: mdi:docker
+                  name: Supervisor
+                  state_header: Installed
+                  type: custom:multiple-entity-row
+                head:
+                  entities:
+                  - attribute: home_assistant_update_count
+                    entity: sensor.updates
+                    name: Core
+                  - entity: sensor.hacs_updates
+                    name: HACS
+                    unit: ' '
+                  - entity: sensor.addon_updates
+                    name: Addons
+                  - entity: sensor.updates
+                    name: TOTAL
+                  entity: sensor.updates
+                  icon: mdi:update
+                  name: Updates
+                  show_state: false
+                  type: custom:multiple-entity-row
+                type: custom:fold-entity-row
+              - entities:
+                - entities:
+                  - entity: sensor.last_restart
+                    format: total
+                    name: Core
+                  - entity: sensor.last_boot
+                    format: total
+                    name: VM
+                  entity: sensor.last_boot
+                  icon: mdi:power
+                  name: Last restart
+                  secondary_info: null
+                  show_state: false
+                  type: custom:multiple-entity-row
+                - entities:
+                  - entity: sensor.processor_use
+                    name: CPU
+                  - entity: sensor.disk_use_percent
+                    name: Disk
+                  - entity: sensor.memory_use_percent
+                    format: precision0
+                    name: RAM
+                  entity: sensor.processor_use
+                  name: VM resources used
+                  show_state: false
+                  type: custom:multiple-entity-row
+                - entities:
+                  - entity: sensor.backup_state
+                    name: State
+                  - entity: binary_sensor.backups_stale
+                    name: Current?
+                  entity: sensor.backup_state
+                  icon: mdi:cloud-upload
+                  name: Backups
+                  show_state: false
+                  type: custom:multiple-entity-row
+                head:
+                  entities:
+                  - entity: sensor.backup_state
+                    name: Backup
+                  - entity: sensor.disk_use_percent
+                    name: Disk
+                  - entity: sensor.last_restart
+                    format: total
+                    name: Last_restart
+                  entity: sensor.updates
+                  icon: mdi:information
+                  name: Status
+                  show_state: false
+                  type: custom:multiple-entity-row
+                type: custom:fold-entity-row
+              - entities:
+                - card:
+                    canary_style:
+                      border: 0
+                    columns: 6
+                    show_name: false
+                    type: glance
+                  filter:
+                    exclude:
+                    - entity_id: sensor.automation_count
+                    - entity_id: sensor.code_line_count
+                    - entity_id: sensor.domain_count
+                    - entity_id: sensor.entity_count
+                    - entity_id: sensor.script_count
+                    - entity_id: sensor.unavailable_count
+                    - entity_id: sensor.unknown_count
+                    - integration: frigate
+                    include:
+                    - entity_id: sensor.*_count
+                  no_card: true
+                  sort:
+                    method: state
+                    numeric: true
+                    reverse: true
+                  type: custom:auto-entities
+                head:
+                  entities:
+                  - entity: sensor.entity_count
+                    name: Entities
+                  - entity: sensor.domain_count
+                    name: Domains
+                  - entity: sensor.automation_count
+                    name: Automations
+                  - entity: sensor.script_count
+                    name: Scripts
+                  entity: sensor.entity_count
+                  name: Entity counts
+                  show_state: false
+                  type: custom:multiple-entity-row
+                padding: 0
+                type: custom:fold-entity-row
               type: entities
-            - alignment: justify
+            - alignment: center
               chips:
               - content: Release notes
                 icon: mdi:link
@@ -3225,116 +3337,62 @@ views:
                   action: url
                   url_path: https://rc.home-assistant.io/latest-release-notes/
                 type: template
-              - content: Release candidate
+              - content: RC notes
                 icon: mdi:link
                 tap_action:
                   action: url
                   url_path: https://github.com/home-assistant/home-assistant.io/blob/rc/source/_posts/
                 type: template
               type: custom:mushroom-chips-card
-            - subtitle: Status
-              type: custom:mushroom-title-card
-            - entities:
-              - entities:
-                - entity: sensor.last_restart
-                  format: total
-                  name: Core
-                - entity: sensor.last_boot
-                  format: total
-                  name: VM
-                entity: sensor.last_boot
-                icon: mdi:power
-                name: Last restart
-                secondary_info: null
-                show_state: false
-                type: custom:multiple-entity-row
-              - entities:
-                - entity: sensor.backup_state
-                  name: State
-                - entity: binary_sensor.backups_stale
-                  name: Current?
-                entity: sensor.backup_state
-                icon: mdi:cloud-upload
-                name: Backups
-                show_state: false
-                type: custom:multiple-entity-row
-              - entities:
-                - entity: sensor.processor_use
-                  name: CPU
-                - entity: sensor.disk_use_percent
-                  name: Disk
-                - entity: sensor.memory_use_percent
-                  format: precision0
-                  name: RAM
-                entity: sensor.processor_use
-                name: VM resources used
-                show_state: false
-                type: custom:multiple-entity-row
-              type: entities
             type: vertical-stack
         - attributes:
-            icon: mdi:counter
-            label: Counts
-          card:
-            cards:
-            - subtitle: Totals
-              type: custom:mushroom-title-card
-            - columns: 4
-              entities:
-              - entity: sensor.entity_count
-              - entity: sensor.domain_count
-              - entity: sensor.automation_count
-              - entity: sensor.script_count
-              show_icon: true
-              show_name: false
-              show_state: true
-              state_color: false
-              type: glance
-            - subtitle: Individual counts
-              type: custom:mushroom-title-card
-            - columns: 6
-              entities:
-              - entity: sensor.alert_count
-              - entity: sensor.binary_sensor_count
-              - entity: sensor.button_count
-              - entity: sensor.calendar_count
-              - entity: sensor.camera_count
-              - entity: sensor.climate_count
-              - entity: sensor.counter_count
-              - entity: sensor.cover_lock_count
-              - entity: sensor.fan_count
-              - entity: sensor.group_count
-              - entity: sensor.light_count
-              - entity: sensor.media_player_count
-              - entity: sensor.input_boolean_count
-              - entity: sensor.input_datetime_count
-              - entity: sensor.input_text_count
-              - entity: sensor.number_count
-              - entity: sensor.select_count
-              - entity: sensor.switch_count
-              - entity: sensor.timer_count
-              - entity: sensor.sensor_count
-              - entity: sensor.update_count
-              - entity: sensor.weather_count
-              - entity: sensor.zone_count
-              show_icon: true
-              show_name: false
-              show_state: true
-              state_color: false
-              type: glance
-            type: vertical-stack
-        type: custom:tabbed-card
-      type: vertical-stack
-    - cards:
-      - title: Network
-        type: custom:mushroom-title-card
-      - tabs:
-        - attributes:
-            icon: mdi:wifi
-            label: Unifi
+            icon: mdi:ethernet
+            label: Network
           card:
             cards:
             - entities:
+              - entities:
+                - entities:
+                  - entity: schedule.computer_school
+                    name: School
+                  - entity: schedule.computer_vacation
+                    name: Vacation
+                  entity: schedule.computer_school
+                  name: Schedules
+                  show_state: false
+                  type: custom:multiple-entity-row
+                - entities:
+                  - entity: binary_sensor.school_vacation_today
+                    name: Today
+                  - entity: binary_sensor.school_vacation_tomorrow
+                    name: Tomorrow
+                  entity: binary_sensor.school_vacation_today
+                  name: Vacation
+                  show_state: false
+                  type: custom:multiple-entity-row
+                - entity: timer.network_off
+                  name: Network off timer
+                head:
+                  entities:
+                  - entity: switch.gaming_pc_redpc
+                    name: Red PC
+                    toggle: true
+                  - entity: switch.gaming_pc_bluepc
+                    name: Blue PC
+                    toggle: true
+                  - entity: switch.gaming_pc_greenpc
+                    name: Green PC
+                    toggle: true
+                  - entity: switch.gaming_pc_blackpc
+                    name: Black PC
+                    toggle: true
+                  entity: schedule.computer_school
+                  icon: mdi:ethernet
+                  name: Network access
+                  show_state: false
+                  type: custom:multiple-entity-row
+                type: custom:fold-entity-row
+              - type: divider
               - entities:
                 - entity: sensor.unifi_gateway_wan
                   name: WAN
@@ -3361,65 +3419,6 @@ views:
               type: entities
             - alignment: center
               chips:
-              - content: UniFi Controller
-                icon: mdi:link
-                tap_action:
-                  action: url
-                  url_path: https://unraid.local:8443
-                type: template
-              type: custom:mushroom-chips-card
-            type: vertical-stack
-        - attributes:
-            icon: mdi:ethernet
-            label: Access
-          card:
-            cards:
-            - entities:
-              - entities:
-                - entity: switch.gaming_pc_redpc
-                  name: Red PC
-                  toggle: true
-                - entity: switch.gaming_pc_bluepc
-                  name: Blue PC
-                  toggle: true
-                - entity: switch.gaming_pc_greenpc
-                  name: Green PC
-                  toggle: true
-                - entity: switch.gaming_pc_blackpc
-                  name: Black PC
-                  toggle: true
-                entity: schedule.computer_school
-                icon: mdi:ethernet
-                name: Network access
-                show_state: false
-                type: custom:multiple-entity-row
-              - type: divider
-              - entities:
-                - entity: schedule.computer_school
-                  name: School
-                - entity: schedule.computer_vacation
-                  name: Vacation
-                entity: schedule.computer_school
-                name: Schedules
-                show_state: false
-                type: custom:multiple-entity-row
-              - entities:
-                - entity: binary_sensor.school_vacation_today
-                  name: Today
-                - entity: binary_sensor.school_vacation_tomorrow
-                  name: Tomorrow
-                entity: binary_sensor.school_vacation_today
-                name: Vacation
-                show_state: false
-                type: custom:multiple-entity-row
-              - entity: timer.network_off
-                name: Network off timer
-              show_header_toggle: false
-              state_color: true
-              title: ''
-              type: entities
-            - alignment: justify
-              chips:
               - content: Smart schedule
                 entity: automation.schedule_school_pc
                 icon: mdi:toggle-switch{{ iif(is_state("automation.schedule_school_pc","off"),
@@ -3427,17 +3426,21 @@ views:
                 icon_color: '{{ iif(is_state("automation.schedule_school_pc","on"),
                   "blue", "grey") }}'
                 type: template
-              - content: Restart unifi controller
+              - content: Restart unifi
                 entity: binary_sensor.docker_unifi_controller
                 icon: mdi:docker
                 icon_color: '{{ iif(is_state("binary_sensor.docker_unifi_controller","on"),
                   "blue", "grey") }}'
                 type: template
+              - content: UniFi
+                icon: mdi:link
+                tap_action:
+                  action: url
+                  url_path: https://unraid.local:8443
+                type: template
               type: custom:mushroom-chips-card
             type: vertical-stack
         type: custom:tabbed-card
-      style: "ha-card {\n  background: rgba(128, 128, 128, 0.1);\n}\n:host {\n  display:\
-        \ {{ \"block\" if user.is_admin|default(false) else \"none\" }}\n}\n"
       type: vertical-stack
     type: vertical-stack
     view_layout:
