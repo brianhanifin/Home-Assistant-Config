@@ -22,76 +22,6 @@ reboot_server:
     data: {}
   mode: single
   icon: mdi:power-cycle
-config_check:
-  alias: Config check
-  sequence:
-  - service: script.notify_web
-    data:
-      type: warning
-      message: Config ✔️ begins.
-      duration: 15
-  - service: config_check.run
-    data: {}
-  - wait_template: '{{ states(''persistent_notification.1337'') is string }}'
-    timeout: 00:03:00
-  - alias: Dismiss the persistent notification if the check went well.
-    choose:
-    - conditions: '{{ state_attr("persistent_notification.1337", "message")|trim ==
-        "Configuration is OK!" }}'
-      sequence:
-      - service: persistent_notification.dismiss
-        data:
-          notification_id: '1337'
-      - service: script.notify_web
-        data:
-          type: success
-          message: "Config ✔️ = \U0001F44D"
-          duration: 15
-    default:
-    - variables:
-        message: '{% set message = state_attr(''persistent_notification.1337'',''message'')
-          | trim %}
-
-          {% set message = message | replace("config/integrations/homeassistant/../../",
-          "") %}
-
-          {% set message = message | replace("[1m", "") | replace("[1;37m", "") |
-          replace("[1;31m", "") %}
-
-          {% set message = message | replace(":", ": ") %}
-
-          {{ message | trim }}
-
-          '
-    - service: script.notify_web
-      data:
-        type: alert
-        title: Config check error
-        message: '{{ message }}'
-  mode: single
-  icon: mdi:check-decagram
-config_check_and_restart:
-  alias: Config check and restart
-  sequence:
-  - service: script.config_check
-    data: {}
-  - service: script.restart_home_assistant
-    data: {}
-  mode: single
-  icon: mdi:restart
-config_check_and_reboot_server:
-  alias: Config check and reboot server
-  sequence:
-  - service: script.config_check
-    data: {}
-  - service: script.notify_web
-    data:
-      type: error
-      message: Rebooting the server!
-  - service: hassio.host_reboot
-    data: {}
-  mode: single
-  icon: mdi:power
 refresh_count_sensors:
   alias: Refresh entity count sensors
   mode: single
@@ -168,10 +98,18 @@ goodbye_routine:
       say_goodbye: 'true'
   - delay:
       seconds: 10
-  - wait_template: '{{ is_state(''sensor.front_door'',''closed'') }}'
+  - wait_for_trigger:
+    - platform: state
+      entity_id:
+      - binary_sensor.front_door
+      from: 'on'
+      to: 'off'
     timeout:
+      hours: 0
       minutes: 1
-    continue_on_timeout: 'true'
+      seconds: 0
+      milliseconds: 0
+    alias: Wait for front door to close.
   - service: lock.lock
     entity_id: lock.front_door
   mode: single
@@ -921,6 +859,7 @@ notify_mobile:
         %}\n  {{ who }}\n{%- else %}\n  notify.{{ who|default(\"brian\") }}\n{% endif
         %}\n"
       camera: '{{ camera|default("none") }}'
+      image: '{{ ''/api/camera_proxy/'' ~ camera }}'
       critical: '{{ critical|default(false) }}'
       title: '{{ title|default("") }}'
       subtitle: '{{ subtitle|default("") }}'
@@ -984,7 +923,7 @@ notify_mobile:
           multiline: true
     camera:
       description: Camera entity.
-      example: camera.front_door
+      example: camera.front_door_restream
       selector:
         text:
     critical:
@@ -1562,8 +1501,11 @@ say_cloud:
       data:
         volume_level: '{{ volume }}'
     - delay:
-        seconds: 2
-      enabled: false
+        hours: 0
+        minutes: 0
+        seconds: 1
+        milliseconds: 0
+      enabled: true
     - alias: Say the message out loud.
       service: tts.cloud_say
       data:
