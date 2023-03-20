@@ -1,6 +1,43 @@
 decluttering_templates:
   calendar:
     card:
+      dateSize: 130
+      entities:
+      - entity: calendar.local
+        name: Local
+      - color: var(--state-home-color)
+        entity: calendar.us_holidays
+        name: Holidays
+      - color: var(--state-icon-active-color)
+        entity: calendar.birthdays_anniversary
+        name: Milestones
+      - color: var(--label-badge-green)
+        entity: calendar.brian
+        name: Brian
+      - blocklist: creative market
+        color: var(--secondary-text-color)
+        entity: calendar.nerene
+        name: Nerene
+      - color: var(--label-badge-yellow)
+        entity: calendar.hanifins
+        name: Hanifin's
+      - blocklist: Period
+        color: var(--primary-text-color)
+        entity: calendar.kyle
+        name: Kyle
+      - blocklist: Advisory,Period
+        color: var(--label-badge-red)
+        entity: calendar.lucas
+        name: Lucas
+      eventTitleSize: 130
+      firstDayOfWeek: 1
+      maxDaysToShow: '[[days]]'
+      timeSize: 100
+      type: custom:atomic-calendar-revive
+    default:
+      days: 2
+  calendar_popup:
+    card:
       cards:
       - subtitle: '{{- now().strftime("%A") ~ ", " }}
 
@@ -12,42 +49,13 @@ decluttering_templates:
 
           '
         type: custom:mushroom-title-card
-      - canary_style:
-          padding-top: 0px;
-        dateSize: 130
-        entities:
-        - color: var(--state-home-color)
-          entity: calendar.us_holidays
-          name: Holidays
-        - color: var(--state-icon-active-color)
-          entity: calendar.birthdays_anniversary
-          name: Milestones
-        - color: var(--label-badge-green)
-          entity: calendar.brian
-          name: Brian
-        - blocklist: creative market
-          color: var(--secondary-text-color)
-          entity: calendar.nerene
-          name: Nerene
-        - color: var(--label-badge-yellow)
-          entity: calendar.hanifins
-          name: Hanifin's
-        - blocklist: Period
-          color: var(--primary-text-color)
-          entity: calendar.kyle
-          name: Kyle
-        - blocklist: Advisory,Period
-          color: var(--label-badge-red)
-          entity: calendar.lucas
-          name: Lucas
-        eventTitleSize: 130
-        firstDayOfWeek: 1
-        maxDaysToShow: '[[days]]'
-        timeSize: 100
-        type: custom:atomic-calendar-revive
+      - template: calendar
+        type: custom:decluttering-card
+        variables:
+        - days: '[[days]]'
       type: vertical-stack
     default:
-      days: 2
+      days: 7
   event:
     card:
       cards:
@@ -236,7 +244,7 @@ decluttering_templates:
           browser_mod:
             data:
               content:
-                template: calendar
+                template: calendar_popup
                 type: custom:decluttering-card
                 variables:
                 - days: '7'
@@ -1169,6 +1177,7 @@ views:
         type: glance
       - alignment: justify
         chips:
+        - type: menu
         - icon: mdi:server
           icon_color: blue-grey
           tap_action:
@@ -2333,7 +2342,6 @@ views:
         - tabs:
           - attributes:
               icon: mdi:car
-              label: Driveway
             card:
               camera_image: camera.driveway_restream
               camera_view: live
@@ -2343,11 +2351,19 @@ views:
               type: picture-entity
           - attributes:
               icon: mdi:door
-              label: Front door
             card:
               camera_image: camera.front_door_restream
               camera_view: live
               entity: camera.front_door_restream
+              show_name: false
+              show_state: false
+              type: picture-entity
+          - attributes:
+              icon: mdi:bell-circle
+            card:
+              camera_image: camera.doorbell_restream
+              camera_view: live
+              entity: camera.doorbell_restream
               show_name: false
               show_state: false
               type: picture-entity
@@ -3035,10 +3051,9 @@ views:
             name: Missing entities
             type: custom:mushroom-entity-card
           - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"sensor.watchman_missing_entities\"\
-              , \"entities\") %}\n  <tr>\n    <td><ha-icon icon=\"mdi:cloud-{%- if\
-              \ item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
-              \ else-%}question{%- endif -%}\"></ha-icon> &nbsp;{{ item.id }}</td>\n\
-              \    <td align=\"right\"><a title=\"{{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
+              , \"entities\") %}\n  <tr>\n    <td><ha-icon icon=\"mdi:folder-hidden\"\
+              ></ha-icon> &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a title=\"\
+              {{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
               \  </tr>\n{%- endfor %}\n</table>"
             type: markdown
           - entity: sensor.watchman_missing_services
@@ -3054,6 +3069,22 @@ views:
             type: markdown
           type: vertical-stack
       type: custom:tabbed-card
+    - card:
+        show_header_toggle: false
+        title: Running scripts/automations
+        type: entities
+      filter:
+        include:
+        - attributes:
+            current: '! 0'
+          domain: automation
+        - attributes:
+            current: '! 0'
+          domain: script
+      show_empty: false
+      sort:
+        method: last_triggered
+      type: custom:auto-entities
     type: vertical-stack
     view_layout:
       grid-area: main
@@ -3063,16 +3094,6 @@ views:
         type: custom:mushroom-title-card
       - alignment: justify
         chips:
-        - content: Config check
-          icon: mdi:check-bold
-          icon_color: blue
-          tap_action:
-            action: call-service
-            service: script.turn_on
-            service_data: {}
-            target:
-              entity_id: script.config_check
-          type: template
         - content: Reboot VM
           icon: mdi:power-standby
           icon_color: orange
@@ -3080,10 +3101,8 @@ views:
             action: call-service
             confirmation:
               text: Are you sure you want to Reboot the Virtual Machine?
-            service: script.turn_on
-            service_data: {}
-            target:
-              entity_id: script.config_check_and_reboot_server
+            service: script.reboot_server
+            target: {}
           type: template
         - content: Restart HA
           icon: mdi:restart-alert
@@ -3092,10 +3111,8 @@ views:
             action: call-service
             confirmation:
               text: Are you sure you want to Restart Home Assistant?
-            service: script.turn_on
-            service_data: {}
-            target:
-              entity_id: script.config_check_and_restart
+            service: script.restart_home_assistant
+            target: {}
           type: template
         type: custom:mushroom-chips-card
       - alignment: justify
