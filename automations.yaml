@@ -460,11 +460,18 @@
         who: brian
         title: Doorbell
         message: Someone pushed the doorbell.
-        camera: camera.front_door
+        camera: camera.front_door_restream
     - service: script.notify_web
       data:
         message: Someone pressed the doorbell!
         duration: 60
+      enabled: false
+    - service: script.notify_mobile
+      data:
+        who: blackpc
+        title: Doorbell
+        message: Someone pushed the doorbell.
+        camera: camera.front_door_restream
   - delay:
       hours: 0
       minutes: 1
@@ -2065,7 +2072,8 @@
         service: timer.start
         target:
           entity_id: timer.front_door_unlocked
-        data: {}
+        data:
+          duration: 0
       - service: script.turn_on
         target:
           entity_id: script.notify_mobile_clear
@@ -2090,6 +2098,8 @@
       sequence:
       - service: timer.finish
         data: {}
+        target:
+          entity_id: timer.front_door_unlocked
     alias: When the door locks or unlocks.
   - choose:
     - conditions:
@@ -2102,16 +2112,21 @@
         target:
           entity_id: input_boolean.leave_unlocked
         alias: Turn off LEAVE UNLOCKED.
-      - alias: Lock the front door.
-        service: lock.lock
-        data: {}
-        target:
-          entity_id: lock.front_door
       - alias: Clear the KEEP_UNLOCKED actionable notification.
         service: script.notify_mobile_clear
         data:
           who: brian
           tag: KEEP_UNLOCKED
+      - if:
+        - condition: state
+          entity_id: lock.front_door
+          state: unlocked
+        then:
+        - service: lock.lock
+          data: {}
+          target:
+            entity_id: lock.front_door
+        alias: Lock the door when unlocked.
     - conditions:
       - condition: trigger
         id: opened
@@ -2126,7 +2141,8 @@
         service: timer.start
         target:
           entity_id: timer.front_door_unlocked
-        data: {}
+        data:
+          duration: 0
     alias: When the door opens or the timer finishes.
   mode: queued
   max: 10
@@ -3255,12 +3271,16 @@
     for:
       minutes: 1
       seconds: 30
+    enabled: false
   - id: idle
     platform: state
-    entity_id: sensor.hp_colorlaserjet
+    entity_id:
+    - sensor.hp_colorlaserjet
     to: idle
     for:
-      minutes: 15
+      hours: 0
+      minutes: 30
+      seconds: 0
   condition: []
   action:
   - if:
@@ -3342,9 +3362,8 @@
         value_template: '{{ powered_state != assumed_state }}'
     then:
     - service: sensibo.assume_state
-      target:
-        entity_id: '{{ climate_entity }}'
       data:
+        entity_id: '{{ climate_entity }}'
         state: '{{ powered_state }}'
       alias: Update sensibo assumed state value.
   mode: restart
@@ -3574,13 +3593,17 @@
       hours: 0
       minutes: 0
       seconds: 0
+  - platform: numeric_state
+    entity_id: media_player.family_room_tv
+    attribute: volume_level
+    above: 0
   condition: []
   action:
   - service: media_player.volume_set
     data:
       volume_level: 0
     target:
-      device_id: 32d18497e45ef4b0b2ced17b5e477538
+      entity_id: media_player.family_room_tv
   mode: single
 - id: '1667158538897'
   alias: 'Remote: Lucas bedside'
@@ -4221,8 +4244,9 @@
   - variables:
       schedule: '{{ trigger.id.split("_")[0] }}'
       state: '{{ trigger.id.split("_")[1] }}'
-      vacation_today: '{{ is_state("binary_sensor.school_day_today","on") }}'
-      vacation_tomorrow: '{{ is_state("binary_sensor.school_day_tomorrow","on") }}'
+      vacation_today: '{{ is_state("binary_sensor.school_vacation_today","on") }}'
+      vacation_tomorrow: '{{ is_state("binary_sensor.school_vacation_tomorrow","on")
+        }}'
       action: "{%- if state == \"on\" %}\n  {%- if (schedule == \"school\" and not
         vacation_today)\n        or (schedule == \"vacation\" and vacation_today)
         %}\n    on\n  {%- endif %}\n{%- else %}\n  {%- if (schedule == \"school\"
@@ -4245,6 +4269,7 @@
         action: {{ action }}
 
         '
+    enabled: false
   - if:
     - condition: template
       alias: Confirm the action is "on".
@@ -4268,7 +4293,8 @@
       alias: Confirm the action is "off".
     then:
     - service: timer.start
-      data: {}
+      data:
+        duration: 0
       target:
         entity_id: timer.network_off
       alias: Start the network off timer.
@@ -4300,4 +4326,23 @@
     data: {}
     target:
       entity_id: fan.family_room
+  mode: single
+- id: '1676392029614'
+  alias: Trash to curb calendar update
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.trash_pickup_date
+  condition: []
+  action:
+  - service: calendar.create_event
+    data:
+      summary: Trash to curb
+      start_date_time: '{{ as_datetime(states("sensor.trash_pickup_date"))|as_local
+        - timedelta(days=1) }}'
+      end_date_time: '{{ as_datetime(states("sensor.trash_pickup_date"))|as_local
+        + timedelta(days=-1,hours=23,minutes=59,seconds=59) }}'
+    target:
+      entity_id: calendar.local
   mode: single
