@@ -14,8 +14,6 @@ automation:
           - input_datetime.event_2nd_wakeup_brian
           - input_datetime.event_1st_wakeup_lucas
           - input_datetime.event_2nd_wakeup_lucas
-          #- input_datetime.event_1st_wakeup_lucas_late_start
-          #- input_datetime.event_2nd_wakeup_lucas_late_start
           - input_datetime.event_1st_wakeup_kyle
           - input_datetime.event_2nd_wakeup_kyle
           - input_datetime.event_1st_wakeup_nerene
@@ -43,7 +41,7 @@ automation:
       event_today: |
         {%- if id == "wakeup_kyle" %}
           {{ middle_school_day }}
-        {%- elif id in ["wakeup_lucas", "wakeup_lucas_late_start"] %}
+        {%- elif id == "wakeup_lucas" %}
           {{ high_school_day }}
         {%- elif id == "wakeup_brian" %}
           {{ middle_school_day or high_school_day }}
@@ -116,9 +114,6 @@ automation:
           - input_datetime.event_light_wakeup_brian
           - input_datetime.event_light_wakeup_kyle
           - input_datetime.event_light_wakeup_lucas
-          #- input_datetime.event_light_wakeup_lucas_late_start
-          #- input_datetime.event_light_wakeup_bedtime_boys_schoolday
-          #- input_datetime.event_light_wakeup_bedtime_boys_dayoff
     variables:
       entity_id: '{{ trigger.entity_id }}'
       id: '{{ entity_id[27:] }}'
@@ -231,7 +226,6 @@ script:
         upstairs_bathroom: "media_player.google_upstairs_bathroom"
       type: '{{ id.split("_")[0] }}'
       who: '{{ id.split("_")[1] | title }}'
-      #event_modifier: '{{ id.split("_")[2] }}'
       modified_schedule: |
         {%- set modified_event_text = states("sensor.high_school_day_modified_schedule") %}
         {%- if modified_event_text != "" %}
@@ -301,10 +295,31 @@ script:
       #       {{ message }}
       #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
-      - service: script.notify_speech
-        data:
-          message: '{{ message }}'
-          media_player: '{{ speaker[room] }}'
+      # - service: script.notify_speech
+      #   data:
+      #     message: '{{ message }}'
+      #     media_player: '{{ speaker[room] }}'
+
+      - alias: "When enabled and family is home or guest mode is enabled. (Note: ignore quiet time.)"
+        if:
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: input_boolean.audio_notifications
+                state: "on"
+              - condition: or
+                conditions:
+                  - condition: numeric_state
+                    entity_id: sensor.family_present
+                    above: 0
+                  - condition: state
+                    entity_id: input_boolean.guest_mode
+                    state: "on"
+        then:
+          - service: script.say_cloud
+            data:
+              media_player: "{{ speaker[room] }}"
+              message: "{{ message }}"
 
   event_light:
     alias: Event light fade-up
