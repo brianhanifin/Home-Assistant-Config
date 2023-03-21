@@ -859,7 +859,7 @@ notify_mobile:
         %}\n  {{ who }}\n{%- else %}\n  notify.{{ who|default(\"brian\") }}\n{% endif
         %}\n"
       camera: '{{ camera|default("none") }}'
-      image: '{{ ''/api/camera_proxy/'' ~ camera }}'
+      image: '{{ iif(who.endswith("pc"), camera, "") }}'
       critical: '{{ critical|default(false) }}'
       title: '{{ title|default("") }}'
       subtitle: '{{ subtitle|default("") }}'
@@ -894,6 +894,7 @@ notify_mobile:
         entity_id: '{{ camera }}'
         push: '{{ push }}'
         actions: '{{ actions }}'
+        '{{ iif(image == "", "disabled_", "") }}image': '{{ image }}'
         '{{ iif(group == "", "disabled_", "") }}group': '{{ group }}'
         '{{ iif(tag == "", "disabled_", "") }}tag': '{{ tag }}'
   fields:
