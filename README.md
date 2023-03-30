@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **36,547** | 1,345 | 37 | 98 | 56 |
+| **36,789** | 1,417 | 37 | 98 | 56 |
 
 # Index
 
@@ -238,13 +238,13 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1345 total entities**,
-including **666 sensors**. My YAML
-files contain 36,547 lines of code.
+Our Home Assistant install has approximately **1417 total entities**,
+including **751 sensors**. My YAML
+files contain 36,789 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>27 Custom integrations</summary>
 
-## [Adaptive Lighting v1.4.1](https://github.com/basnijholt/adaptive-lighting#readme)
-Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra).
+## [Adaptive Lighting v1.7.0](https://github.com/basnijholt/adaptive-lighting#readme)
+Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra), [@th3w1zard1](https://github.com/th3w1zard1).
 
 ## [Anniversaries v5.2.0](https://github.com/pinkywafer/Anniversaries)
 Anniversary Countdown Sensor for Home AssistantAuthors:[@pinkywafer](https://github.com/pinkywafer).
@@ -297,7 +297,7 @@ Authors:[@ryanwinter](https://github.com/ryanwinter).
 ## [SamsungTV Smart v0.11.6](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
-## [Simple Wyze Vacuum v1.8](https://github.com/romedtino/simple-wyze-vac)
+## [Simple Wyze Vacuum v1.8.1](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
 ## [SmartThinQ LGE Sensors v0.31.4](https://github.com/ollo69/ha-smartthinq-sensors)
@@ -335,7 +335,7 @@ An advanced calendar card for Home Assistant Lovelace.
 ## [Canary v0.4.0](https://github.com/jcwillox/lovelace-canary)
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
-## [Card Mod v3.2.0](https://github.com/thomasloven/lovelace-card-mod)
+## [Card Mod v3.2.1](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 ## [Card Tools v11](https://github.com/thomasloven/lovelace-card-tools)
@@ -368,7 +368,7 @@ Minimalistic graph card for Home Assistant Lovelace UI
 ## [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
-## [Mushroom v2.6.1](https://github.com/piitaya/lovelace-mushroom)
+## [Mushroom v2.6.2](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
 ## [Number Box v4.7](https://github.com/htmltiger/numberbox-card)
@@ -438,7 +438,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.3.5-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.4.0b0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -448,7 +448,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,547-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,789-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

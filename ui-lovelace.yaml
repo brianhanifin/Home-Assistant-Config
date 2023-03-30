@@ -586,28 +586,7 @@ views:
         action: navigate
         navigation_path: ./outdoor
       type: custom:mushroom-template-card
-    - badge_color: ''
-      entity: climate.home_thermostat
-      fill_container: true
-      icon: mdi:thermostat
-      icon_color: '{%- set thermostat_on = states("climate.home_thermostat") != "off"
-        %}
-
-        {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
-      multiline_secondary: true
-      primary: House
-      secondary: "{%- set current_state = state_attr(\"climate.home_thermostat\",\"\
-        hvac_action\")|title %}\n{%- if states(\"climate.home_thermostat\") == \"\
-        heat_cool\" %}\n  {%- set target_temperature = state_attr(\"climate.home_thermostat\"\
-        ,\"target_temp_low\") ~ \"-\" ~ state_attr(\"climate.home_thermostat\",\"\
-        target_temp_high\") %}\n{%- else %}\n  {%- set target_temperature = state_attr(\"\
-        climate.home_thermostat\",\"temperature\") %}\n{%- endif %}\n{%- if is_state(\"\
-        climate.home_thermostat\",\"off\") %}\n\n{%- elif current_state == \"Idle\"\
-        \ -%}\n  Idle until {{ target_temperature }}°\n{%- elif current_state in [\"\
-        Cooling\",\"Heating\"] %}\n  {{ current_state}}  to {{ target_temperature\
-        \ }}°\n{%- else %}\n  {{ current_state }}\n{%- endif %}\nCurrently {{ state_attr(\"\
-        climate.home_thermostat\",\"current_temperature\")|default(0)|round ~ \"°\"\
-        \n}}"
+    - entity: climate.home_thermostat
       tap_action:
         action: fire-dom-event
         browser_mod:
@@ -680,25 +659,8 @@ views:
               type: vertical-stack
             title: House thermostat
           service: browser_mod.popup
-      type: custom:mushroom-template-card
-    - badge_color: ''
-      badge_icon: ''
-      entity: climate.bedroom_thermostat
-      fill_container: true
-      icon: mdi:thermostat
-      icon_color: '{%- set thermostat_on = states("climate.bedroom_thermostat") !=
-        "off" %}
-
-        {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
-      multiline_secondary: true
-      primary: Bedroom
-      secondary: "{%- set current_state = states(\"sensor.bedroom_ac_current_state\"\
-        ) %}\n{%- set target_temperature = state_attr(\"climate.bedroom_thermostat\"\
-        ,\"temperature\") %}\n{%- if current_state == \"Idle\" -%}\n  Idle until {{\
-        \ target_temperature }}°\n{%- elif current_state == \"Cooling\" %}\n  Cooling\
-        \ to {{ target_temperature }}°\n{%- elif current_state != \"Off\" %}\n  {{\
-        \ current_state }}\n{%- endif %}\nCurrently {{ state_attr(\"climate.bedroom_thermostat\"\
-        ,\"current_temperature\")|round(default=0) ~ \"°\"\n}}"
+      type: custom:mushroom-climate-card
+    - entity: climate.bedroom_thermostat
       tap_action:
         action: fire-dom-event
         browser_mod:
@@ -807,26 +769,10 @@ views:
                   type: template
                 type: custom:mushroom-chips-card
               type: vertical-stack
-            title: Bedroom A/C
+            title: Bedroom thermostat
           service: browser_mod.popup
-      type: custom:mushroom-template-card
-    - badge_color: ''
-      entity: climate.lucas_room_thermostat
-      fill_container: true
-      icon: mdi:thermostat
-      icon_color: '{%- set thermostat_on = states("climate.lucas_room_thermostat")
-        != "off" %}
-
-        {{- iif(thermostat_on>0, "var(--rgb-state-light)", "") }}'
-      multiline_secondary: true
-      primary: Lucas
-      secondary: "{%- set current_state = states(\"climate.lucas_room_thermostat\"\
-        ) %}\n{%- set target_temperature = state_attr(\"climate.lucas_room_thermostat\"\
-        ,\"temperature\") %}\n{%- if current_state == \"Idle\" -%}\n  Idle until {{\
-        \ target_temperature }}°\n{%- elif current_state == \"Cooling\" %}\n  Cooling\
-        \ to {{ target_temperature }}°\n{%- elif current_state != \"off\" %}\n  {{\
-        \ current_state }}\n{%- endif %}\nCurrently {{ states(\"sensor.lucas_room_temperature\"\
-        )|round(default=0) ~ \"°\"\n}}"
+      type: custom:mushroom-climate-card
+    - entity: climate.lucas_room_thermostat
       tap_action:
         action: fire-dom-event
         browser_mod:
@@ -951,9 +897,9 @@ views:
                   type: template
                 type: custom:mushroom-chips-card
               type: vertical-stack
-            title: Lucas A/C
+            title: Lucas thermostat
           service: browser_mod.popup
-      type: custom:mushroom-template-card
+      type: custom:mushroom-climate-card
     - double_tap_action:
         action: none
       hold_action:
@@ -1762,7 +1708,7 @@ views:
                 title: Bedroom fan
               service: browser_mod.popup
           entity: fan.bedroom
-          fill_container: false
+          fill_container: true
           hide_state: false
           icon_animation: true
           name: Fan
@@ -2808,8 +2754,8 @@ views:
     view_layout:
       grid-area: header
   - cards:
-    - subtitle: ''
-      title: Events
+    - subtitle: Events
+      title: Schedules
       type: custom:mushroom-title-card
     - tabs:
       - attributes:
@@ -2966,7 +2912,7 @@ views:
         grid-template-columns: 100%
   path: events
   theme: Backend-selected
-  title: Events
+  title: Schedules
   type: custom:grid-layout
 - badges: []
   cards:
