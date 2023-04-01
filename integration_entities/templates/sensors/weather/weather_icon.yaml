@@ -1,0 +1,41 @@
+---
+unique_id: weather_icon
+name: Weather icon
+state: |
+  {%- set weather = namespace(icon="cloud-question-outline") %}
+  {%- set current_condition = states("weather.home") %}
+  {%- set weather_icons = {
+    "weather-sunny": ("clear", "sunny"),
+    "weather-cloudy": ("cloudy"),
+    "weather-partly-cloudy": ("partlycloudy", "partlysunny", "mostlysunny", "mostlyclear"),
+    "weather-windy-variant": ("windy"),
+    "weather-fog": ("fog", "hazy", "drearyovercast"),
+    "weather-night": ("clearnight"),
+    "weather-rainy": ("rainy", "chancerain"),
+    "weather-pouring": ("pouring", "showers"),
+    "weather-lightning": ("lightning", "tstorms"),
+    "weather-hail": ("hail"),
+    "weather-snowy": ("snowy"),
+    "weather-snowy-heavy": ("flurries", "snowyheavy", "chanceflurries"),
+    "weather-snowy-rainy": ("sleet", "snowyrainy", "chancesleet")
+  } %}
+  {%- for icon in weather_icons if current_condition in weather_icons[icon] %}
+    {%- set weather.icon = "mdi:" ~ icon %}
+    {%- break %}
+  {%- endfor %}
+  {{ weather.icon }}
+icon: |
+  {{ this.state }}
+attributes:
+  color: |
+    {% set weather = namespace(color="black") %}
+    {%- set icon = this.state|replace("mdi:","") %}
+    {%- set weather_colors = {
+      "amber": ("weather-sunny", "weather-lightning"),
+      "blue": ("weather-night", "weather-rainy", "weather-pouring", "weather-hail")
+    } %}
+    {%- for color in weather_colors if icon in weather_colors[color] %}
+      {%- set weather.color = color %}
+      {%- break %}
+    {%- endfor %}
+    {{ weather.color }}
