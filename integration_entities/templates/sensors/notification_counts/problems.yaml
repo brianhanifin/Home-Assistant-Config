@@ -1,0 +1,12 @@
+---
+unique_id: problems
+name: Problems
+icon: mdi:folder-question
+state_class: total
+state: |
+  {{
+    states("sensor.unknown_count")|int(default=0)
+    + states("sensor.unavailable_count")|int(default=0)
+    + states("sensor.watchman_missing_entities")|int(default=0)
+    + states("sensor.watchman_missing_services")|int(default=0)
+  }}

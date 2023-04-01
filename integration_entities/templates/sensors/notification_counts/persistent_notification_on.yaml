@@ -1,0 +1,10 @@
+---
+unique_id: persistent_notifications_on
+name: Persistent notifications on
+icon: mdi:bell
+state_class: total
+state: |
+  {{ states.persistent_notification | map(attribute="entity_id") | list | count }}
+attributes:
+  entities: |
+    {{ states.persistent_notification | map(attribute="entity_id") | sort | list }}
