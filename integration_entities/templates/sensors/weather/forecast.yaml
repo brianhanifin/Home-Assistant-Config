@@ -2,8 +2,7 @@
 unique_id: forecast
 name: Forecast
 icon: |
-  {%- set icon = states('weather.home') %}
-  {{ 'mdi:weather-' ~ icon|replace('clear-','')|replace('partly','partly-') if icon is defined }}
+  {{ states("sensor.weather_icon") }}
 state: |
   {% set forecast = state_attr("weather.home", "forecast") %}
   {%- if forecast[0] is defined %}
