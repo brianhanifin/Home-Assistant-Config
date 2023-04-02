@@ -251,8 +251,10 @@ decluttering_templates:
               title: Calendar
             service: browser_mod.popup
         type: entity
-      - entity: weather.home
-        show_temperature: true
+      - content: '{{ state_attr("weather.home","temperature") }}'
+        entity: weather.home
+        icon: '{{ states("sensor.weather_icon") }}'
+        icon_color: '{{ state_attr("sensor.weather_icon","color") }}'
         tap_action:
           action: fire-dom-event
           browser_mod:
@@ -262,7 +264,7 @@ decluttering_templates:
                 type: custom:decluttering-card
               title: Weather
             service: browser_mod.popup
-        type: weather
+        type: template
       - entity: sensor.family_present
         icon_color: teal
         tap_action:
@@ -271,20 +273,6 @@ decluttering_templates:
             data:
               content:
                 cards:
-                - aspect_ratio: '16:9'
-                  entities:
-                  - entity: device_tracker.life360_brian
-                  - entity: device_tracker.life360_lucas
-                  - entity: device_tracker.life360_eric
-                  - entity: device_tracker.life360_nerene
-                  - entity: zone.court
-                  - entity: zone.office
-                  - entity: zone.high_school
-                  - entity: zone.home
-                  - entity: zone.range
-                  - entity: zone.school
-                  hours_to_show: 6
-                  type: map
                 - card:
                     columns: 3
                     show_header_toggle: false
@@ -301,6 +289,20 @@ decluttering_templates:
                   state_filter:
                   - home
                   type: entity-filter
+                - aspect_ratio: '16:9'
+                  entities:
+                  - entity: device_tracker.life360_brian
+                  - entity: device_tracker.life360_lucas
+                  - entity: device_tracker.life360_eric
+                  - entity: device_tracker.life360_nerene
+                  - entity: zone.court
+                  - entity: zone.office
+                  - entity: zone.high_school
+                  - entity: zone.home
+                  - entity: zone.range
+                  - entity: zone.school
+                  hours_to_show: 6
+                  type: map
                 type: vertical-stack
               title: People at home
             service: browser_mod.popup
@@ -931,6 +933,271 @@ views:
     view_layout:
       grid-area: middle
   - cards:
+    - alignment: center
+      chips:
+      - chip:
+          entity: sensor.updates_available
+          icon: mdi:update
+          icon_color: deep-orange
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Updates
+                    type: custom:mushroom-title-card
+                  - card:
+                      type: entities
+                    filter:
+                      template: '{{ state_attr("sensor.updates_available","entities")
+                        }}'
+                    show_empty: false
+                    sort:
+                      method: state
+                    type: custom:auto-entities
+                  - alignment: center
+                    chips:
+                    - content: Go to updates
+                      icon: mdi:link
+                      tap_action:
+                        action: url
+                        url_path: /config/updates
+                      type: template
+                    type: custom:mushroom-chips-card
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: entity
+        conditions:
+        - entity: sensor.updates_available
+          state_not: '0'
+        type: conditional
+      - chip:
+          entity: sensor.persistent_notifications_on
+          icon_color: orange
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Notifications
+                    type: custom:mushroom-title-card
+                  - card:
+                      type: entities
+                    filter:
+                      template: '{{ state_attr("sensor.persistent_notifications_on","entities")
+                        }}'
+                    show_empty: false
+                    sort:
+                      method: state
+                    type: custom:auto-entities
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: entity
+        conditions:
+        - entity: sensor.persistent_notifications_on
+          state_not: '0'
+        type: conditional
+      - chip:
+          entity: sensor.low_batteries
+          icon_color: amber
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Low batteries
+                    type: custom:mushroom-title-card
+                  - card:
+                      type: entities
+                    filter:
+                      template: '{{ state_attr("sensor.low_batteries","entities")
+                        }}'
+                    show_empty: false
+                    sort:
+                      method: state
+                    type: custom:auto-entities
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: entity
+        conditions:
+        - entity: sensor.low_batteries
+          state_not: '0'
+        type: conditional
+      - chip:
+          entity: sensor.alerts_automations_and_scripts_running
+          icon_color: green
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Automations and scripts running
+                    type: custom:mushroom-title-card
+                  - card:
+                      type: entities
+                    filter:
+                      template: '{{ state_attr("sensor.alerts_automations_and_scripts_running","entities")
+                        }}'
+                    show_empty: false
+                    sort:
+                      method: state
+                    type: custom:auto-entities
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: entity
+        conditions:
+        - entity: sensor.alerts_automations_and_scripts_running
+          state_not: '0'
+        type: conditional
+      - chip:
+          entity: sensor.timers_on
+          icon_color: indigo
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Timers on
+                    type: custom:mushroom-title-card
+                  - card:
+                      type: entities
+                    filter:
+                      template: '{{ state_attr("sensor.timers_on","entities") }}'
+                    show_empty: false
+                    sort:
+                      method: state
+                    type: custom:auto-entities
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: entity
+        conditions:
+        - entity: sensor.timers_on
+          state_not: '0'
+        type: conditional
+      - chip:
+          content: '{{ states("sensor.plex_watchers") }}'
+          entity: sensor.plex_watchers
+          icon: mdi:plex
+          icon_color: disabled
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Plex watchers
+                    type: custom:mushroom-title-card
+                  - content: "<table width=\"100%\"> {%- set records = state_attr(\"\
+                      sensor.plex_watchers\",\"watchers\") %} {%- for record in records\
+                      \ %}\n  {%- set record = (record|replace(\"\\'\",\"\")|replace(\"\
+                      [\",\"\")|replace(\"]\",\"\")).split(\",\") %}\n  <tr>\n   \
+                      \ <td><ha-icon icon=\"mdi:plex\"></ha-icon> &nbsp;{{ record[0]|trim\
+                      \ }}</td>\n    <td align=\"right\">{{ record[1]|trim }}</td>\n\
+                      \  </tr>\n{%- endfor %} </table>"
+                    type: markdown
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: template
+        conditions:
+        - entity: sensor.plex
+          state_not: '0'
+        type: conditional
+      - chip:
+          content: '{{ states("sensor.problems") }}'
+          entity: sensor.problems
+          icon: mdi:folder-question
+          icon_color: disabled
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Problems
+                    type: custom:mushroom-title-card
+                  - tabs:
+                    - attributes:
+                        icon: mdi:folder-question
+                        label: Problems
+                      card:
+                        cards:
+                        - entity: sensor.unknown_count
+                          icon: mdi:folder-question
+                          name: Unknown entities
+                          type: custom:mushroom-entity-card
+                        - card:
+                            type: entities
+                          filter:
+                            options:
+                              show_empty: false
+                              type: custom:multiple-entity-row
+                            template: '{{ state_attr("sensor.unknown_count","entities")
+                              }}'
+                          show_empty: false
+                          sort:
+                            method: state
+                          type: custom:auto-entities
+                        - entity: sensor.unavailable_count
+                          icon: mdi:folder-question
+                          name: Unavailable entities
+                          type: custom:mushroom-entity-card
+                        - card:
+                            type: entities
+                          filter:
+                            options:
+                              show_empty: false
+                              type: custom:multiple-entity-row
+                            template: '{{ state_attr("sensor.unavailable_count","entities")
+                              }}'
+                          show_empty: false
+                          sort:
+                            method: state
+                          type: custom:auto-entities
+                        type: vertical-stack
+                    - attributes:
+                        icon: mdi:folder-hidden
+                        label: Missing
+                      card:
+                        cards:
+                        - entity: sensor.watchman_missing_entities
+                          icon: mdi:folder-hidden
+                          name: Missing entities
+                          type: custom:mushroom-entity-card
+                        - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"\
+                            sensor.watchman_missing_entities\", \"entities\") %}\n\
+                            \  <tr>\n    <td><ha-icon icon=\"mdi:folder-hidden\"></ha-icon>\
+                            \ &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a\
+                            \ title=\"{{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
+                            \  </tr>\n{%- endfor %}\n</table>"
+                          type: markdown
+                        - entity: sensor.watchman_missing_services
+                          icon: mdi:folder-hidden
+                          name: Missing services
+                          type: custom:mushroom-entity-card
+                        - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"\
+                            sensor.watchman_missing_services\", \"entities\") %}\n\
+                            \  <tr>\n    <td><ha-icon icon=\"mdi:cloud-{%- if item.state=='missing'-%}alert{%-\
+                            \ elif item.state=='unavail' -%}off-outline{%- else-%}question{%-\
+                            \ endif -%}\"></ha-icon> &nbsp;{{ item.id }}</td>\n  \
+                            \  <td align=\"right\"><a title=\"{{item.occurrences}}\"\
+                            > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
+                            \  </tr>\n{%- endfor %}\n</table>"
+                          type: markdown
+                        type: vertical-stack
+                    type: custom:tabbed-card
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: template
+        conditions:
+        - entity: sensor.problems
+          state_not: '0'
+        type: conditional
+      type: custom:mushroom-chips-card
     - compact_mode: false
       entities:
       - content_template: '**{{display_name}}** is **{{state}}**'
@@ -948,7 +1215,7 @@ views:
         - unavailable
       id_filter: safety_alert
       max_item_count: 5
-      more_info_on_tap: true
+      more_info_on_tap: false
       show_empty: false
       show_notification_title: false
       style: "ha-markdown {\n  font-size: 1.2em;\n  font-weight: bold;\n}\n"
@@ -963,12 +1230,6 @@ views:
         - none
         - unavailable
         name: Holiday
-      - content_template: '{{state}}'
-        entity: sensor.update_message
-        exclude_states:
-        - ''
-        - none
-        - unavailable
       - content_template: '**Glowforge** is **{{state}}**'
         entity: input_select.glowforge_status
         exclude_states:
@@ -991,16 +1252,6 @@ views:
         entity: input_boolean.leave_unlocked
         exclude_states:
         - 'off'
-      - content_template: '**{{display_name}}** is **open**'
-        entity: binary_sensor.network_closet_door
-        exclude_states:
-        - 'off'
-        - unavailable
-      - content_template: '**{{display_name}}** is **open**'
-        entity: binary_sensor.upstairs_bathroom_window
-        exclude_states:
-        - 'off'
-        - unavailable
       - content_template: '**{{display_name}}** is **active**'
         entity: input_boolean.guest_mode
         exclude_states:
@@ -1009,18 +1260,9 @@ views:
         entity: input_boolean.away_mode
         exclude_states:
         - 'off'
-      - content_template: '**{{display_name}}** is **offline**'
-        entity: binary_sensor.alert_zwavejs_offline
-        exclude_states:
-        - 'off'
-      - content_template: '**{{display_name}}** is **offline**'
-        entity: binary_sensor.irrigation_controller_status
-        exclude_states:
-        - 'on'
-        - unavailable
       id_filter: ^(?!.*safety_alert).*
       max_item_count: 5
-      more_info_on_tap: true
+      more_info_on_tap: false
       show_empty: false
       show_notification_title: false
       style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n  padding-top: 16px\
@@ -1029,85 +1271,29 @@ views:
       type: custom:home-feed-card
     - cards:
       - card:
-          type: custom:timer-bar-card
-        filter:
-          exclude:
-          - entity_id: timer.xpresence*
-          - state: idle
-          - state: ''
-          - state: none
-          - state: unknown
-          - state: unavailable
-          include:
-          - domain: timer
-        show_empty: false
-        sort:
-          ignore_case: true
-          method: name
-        type: custom:auto-entities
-      - card:
           type: entities
         filter:
           exclude:
           - state: ''
           - state: none
           - state: unknown
-          - state: 'off'
           - state: home
           include:
           - entity_id: sensor.high_school_day_modified_schedule
           - entity_id: input_boolean.leave_unlocked
+            state: 'on'
           - entity_id: device_tracker.wirelessap1
           - entity_id: device_tracker.wirelessap2
           - entity_id: device_tracker.wirelessap3
+          - entity_id: binary_sensor.alert_zwavejs_offline
+            state: 'on'
+          - entity_id: binary_sensor.irrigation_controller_status
+            state: 'off'
         show_empty: false
-        type: custom:auto-entities
-      - card:
-          card_mod:
-            style: ":host {\n  display: {{ \"none\" if user.is_admin|default(false)\
-              \ else \"block\" }}\n}\n"
-          type: entities
-        filter:
-          exclude:
-          - state: '>30'
-          - entity_id: '*ipad*'
-          - entity_id: '*iphone*'
-          - entity_id: '*life360*'
-          - entity_id: '*macbook*'
-          - entity_id: '*watch*'
-          - entity_id: sensor.family_room_remote_battery
-          - entity_id: sensor.*simulated*_battery
-          include:
-          - entity_id: sensor.*_battery
-        numeric: true
-        show_empty: false
-        sort:
-          count: 3
-          method: state
         type: custom:auto-entities
       style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n  border-style: none;\n\
         }\n"
       type: vertical-stack
-    - card:
-        card_mod:
-          style: "ha-card {\n  background: rgba(0, 0, 128, 0.1);\n}\n"
-        type: entities
-      filter:
-        exclude:
-        - state: ''
-        - state: '0'
-        - state: 'off'
-        - state: 'Off'
-        - state: idle
-        - state: unavailable
-        - state: unknown
-        include:
-        - domain: alert
-        - entity_id: sensor.plex
-      show_empty: false
-      sort:
-        method: none
-      type: custom:auto-entities
     - cards:
       - entities:
         - entity: sensor.downstairs_temperature_average
@@ -2921,120 +3107,6 @@ views:
     view_layout:
       grid-area: header
   - cards:
-    - title: Problems
-      type: custom:mushroom-title-card
-    - cards:
-      - entities:
-        - entities:
-          - entity: sensor.unknown_count
-            name: Unknown
-          - entity: sensor.unavailable_count
-            name: Unavailable
-            unit: ' '
-          entity: sensor.unavailable_count
-          icon: mdi:folder-question
-          name: Problems
-          show_state: false
-          type: custom:multiple-entity-row
-        - entities:
-          - entity: sensor.watchman_missing_entities
-            name: Entities
-            unit: ' '
-          - entity: sensor.watchman_missing_services
-            name: Services
-            unit: ' '
-          entity: sensor.unavailable_count
-          icon: mdi:folder-hidden
-          name: Missing
-          show_state: false
-          type: custom:multiple-entity-row
-        type: entities
-      type: vertical-stack
-    - tabs:
-      - attributes:
-          icon: mdi:folder-question
-          label: Problems
-        card:
-          cards:
-          - entity: sensor.unknown_count
-            icon: mdi:folder-question
-            name: Unknown entities
-            type: custom:mushroom-entity-card
-          - card:
-              type: entities
-            filter:
-              options:
-                show_empty: false
-                type: custom:multiple-entity-row
-              template: '{{ state_attr("sensor.unknown_count","entities") }}'
-            show_empty: false
-            sort:
-              method: state
-            type: custom:auto-entities
-          - entity: sensor.unavailable_count
-            icon: mdi:folder-question
-            name: Unavailable entities
-            type: custom:mushroom-entity-card
-          - card:
-              type: entities
-            filter:
-              options:
-                show_empty: false
-                type: custom:multiple-entity-row
-              template: '{{ state_attr("sensor.unavailable_count","entities") }}'
-            show_empty: false
-            sort:
-              method: state
-            type: custom:auto-entities
-          type: vertical-stack
-      - attributes:
-          icon: mdi:folder-hidden
-          label: Missing
-        card:
-          cards:
-          - entity: sensor.watchman_missing_entities
-            icon: mdi:folder-hidden
-            name: Missing entities
-            type: custom:mushroom-entity-card
-          - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"sensor.watchman_missing_entities\"\
-              , \"entities\") %}\n  <tr>\n    <td><ha-icon icon=\"mdi:folder-hidden\"\
-              ></ha-icon> &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a title=\"\
-              {{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
-              \  </tr>\n{%- endfor %}\n</table>"
-            type: markdown
-          - entity: sensor.watchman_missing_services
-            icon: mdi:folder-hidden
-            name: Missing services
-            type: custom:mushroom-entity-card
-          - content: "<table width=\"100%\">\n  {%- for item in state_attr(\"sensor.watchman_missing_services\"\
-              , \"entities\") %}\n  <tr>\n    <td><ha-icon icon=\"mdi:cloud-{%- if\
-              \ item.state=='missing'-%}alert{%- elif item.state=='unavail' -%}off-outline{%-\
-              \ else-%}question{%- endif -%}\"></ha-icon> &nbsp;{{ item.id }}</td>\n\
-              \    <td align=\"right\"><a title=\"{{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
-              \  </tr>\n{%- endfor %}\n</table>"
-            type: markdown
-          type: vertical-stack
-      type: custom:tabbed-card
-    - card:
-        show_header_toggle: false
-        title: Running scripts/automations
-        type: entities
-      filter:
-        include:
-        - attributes:
-            current: '! 0'
-          domain: automation
-        - attributes:
-            current: '! 0'
-          domain: script
-      show_empty: false
-      sort:
-        method: last_triggered
-      type: custom:auto-entities
-    type: vertical-stack
-    view_layout:
-      grid-area: main
-  - cards:
     - cards:
       - title: Actions
         type: custom:mushroom-title-card
@@ -3124,6 +3196,39 @@ views:
           type: template
         type: custom:mushroom-chips-card
       type: vertical-stack
+    - cards:
+      - title: Problems
+        type: custom:mushroom-title-card
+      - entities:
+        - entities:
+          - entity: sensor.unknown_count
+            name: Unknown
+          - entity: sensor.unavailable_count
+            name: Unavailable
+            unit: ' '
+          entity: sensor.unavailable_count
+          icon: mdi:folder-question
+          name: Problems
+          show_state: false
+          type: custom:multiple-entity-row
+        - entities:
+          - entity: sensor.watchman_missing_entities
+            name: Entities
+            unit: ' '
+          - entity: sensor.watchman_missing_services
+            name: Services
+            unit: ' '
+          entity: sensor.unavailable_count
+          icon: mdi:folder-hidden
+          name: Missing
+          show_state: false
+          type: custom:multiple-entity-row
+        type: entities
+      type: vertical-stack
+    type: vertical-stack
+    view_layout:
+      grid-area: main
+  - cards:
     - cards:
       - subtitle: ''
         title: Home Assistant

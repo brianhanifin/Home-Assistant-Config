@@ -286,7 +286,7 @@ All of my configuration files are tested against the most stable version of home
 </details>
 {%- endif %}
 
-{%- set addons = states.sensor.addons.attributes.addons | selectattr("state","eq","started") | list | sort(attribute='name') %}
+{#%- set addons = states.sensor.addons.attributes.addons | selectattr("state","eq","started") | list | sort(attribute='name') %}
 {%- if addons|count > 0 %}
 
 <details><summary>{{ addons|count }} addons</summary>
@@ -296,7 +296,7 @@ All of my configuration files are tested against the most stable version of home
 {{ addon.description|trim if addon.description not in ["",none] }}
 {%- endfor %}
 </details>
-{%- endif %}
+{%- endif %#}
 {%- endfilter %}
 
 
