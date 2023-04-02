@@ -251,7 +251,7 @@ decluttering_templates:
               title: Calendar
             service: browser_mod.popup
         type: entity
-      - content: '{{ state_attr("weather.home","temperature") }}'
+      - content: '{{ state_attr("weather.home","temperature") }}°'
         entity: weather.home
         icon: '{{ states("sensor.weather_icon") }}'
         icon_color: '{{ state_attr("sensor.weather_icon","color") }}'
@@ -589,6 +589,7 @@ views:
         navigation_path: ./outdoor
       type: custom:mushroom-template-card
     - entity: climate.home_thermostat
+      name: Home
       tap_action:
         action: fire-dom-event
         browser_mod:
@@ -663,6 +664,7 @@ views:
           service: browser_mod.popup
       type: custom:mushroom-climate-card
     - entity: climate.bedroom_thermostat
+      name: Bedroom
       tap_action:
         action: fire-dom-event
         browser_mod:
@@ -775,6 +777,7 @@ views:
           service: browser_mod.popup
       type: custom:mushroom-climate-card
     - entity: climate.lucas_room_thermostat
+      name: Lucas
       tap_action:
         action: fire-dom-event
         browser_mod:
@@ -983,15 +986,13 @@ views:
                   cards:
                   - title: Notifications
                     type: custom:mushroom-title-card
-                  - card:
-                      type: entities
-                    filter:
-                      template: '{{ state_attr("sensor.persistent_notifications_on","entities")
-                        }}'
+                  - compact_mode: false
+                    max_item_count: 5
+                    more_info_on_tap: true
                     show_empty: false
-                    sort:
-                      method: state
-                    type: custom:auto-entities
+                    show_notification_title: true
+                    style: "ha-card {\n    border: none;\n}\n"
+                    type: custom:home-feed-card
                   type: vertical-stack
               service: browser_mod.popup
           type: entity
@@ -1011,6 +1012,7 @@ views:
                   - title: Low batteries
                     type: custom:mushroom-title-card
                   - card:
+                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.low_batteries","entities")
@@ -1038,6 +1040,7 @@ views:
                   - title: Automations and scripts running
                     type: custom:mushroom-title-card
                   - card:
+                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.alerts_automations_and_scripts_running","entities")
@@ -1065,6 +1068,7 @@ views:
                   - title: Timers on
                     type: custom:mushroom-title-card
                   - card:
+                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.timers_on","entities") }}'
@@ -1099,6 +1103,7 @@ views:
                       \ <td><ha-icon icon=\"mdi:plex\"></ha-icon> &nbsp;{{ record[0]|trim\
                       \ }}</td>\n    <td align=\"right\">{{ record[1]|trim }}</td>\n\
                       \  </tr>\n{%- endfor %} </table>"
+                    style: "ha-card {\n  border: none;\n}\n"
                     type: markdown
                   type: vertical-stack
               service: browser_mod.popup
@@ -1131,6 +1136,7 @@ views:
                           name: Unknown entities
                           type: custom:mushroom-entity-card
                         - card:
+                            style: "ha-card {\n  border: none;\n}\n"
                             type: entities
                           filter:
                             options:
@@ -1147,6 +1153,7 @@ views:
                           name: Unavailable entities
                           type: custom:mushroom-entity-card
                         - card:
+                            style: "ha-card {\n  border: none;\n}\n"
                             type: entities
                           filter:
                             options:
@@ -1174,6 +1181,7 @@ views:
                             \ &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a\
                             \ title=\"{{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
                             \  </tr>\n{%- endfor %}\n</table>"
+                          style: "ha-card {\n  border: none;\n}\n"
                           type: markdown
                         - entity: sensor.watchman_missing_services
                           icon: mdi:folder-hidden
@@ -1187,6 +1195,7 @@ views:
                             \  <td align=\"right\"><a title=\"{{item.occurrences}}\"\
                             > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
                             \  </tr>\n{%- endfor %}\n</table>"
+                          style: "ha-card {\n  border: none;\n}\n"
                           type: markdown
                         type: vertical-stack
                     type: custom:tabbed-card
@@ -1198,102 +1207,63 @@ views:
           state_not: '0'
         type: conditional
       type: custom:mushroom-chips-card
-    - compact_mode: false
-      entities:
-      - content_template: '**{{display_name}}** is **{{state}}**'
-        entity: binary_sensor.front_door
-        exclude_states:
-        - 'off'
-        - unavailable
-        name: Front Door
-        state_map:
-          'on': Open
-      - content_template: '**{{display_name}}** is **{{state}}**'
-        entity: cover.garage_door
-        exclude_states:
-        - closed
-        - unavailable
-      id_filter: safety_alert
-      max_item_count: 5
-      more_info_on_tap: false
+    - card:
+        style: "ha-card {\n  background: rgba(165, 0, 0, 0.1);\n  font-size: 1.2em;\n\
+          \  font-weight: bold;\n}\n"
+        type: entities
+      filter:
+        exclude:
+        - state: ''
+        - state: none
+        - state: unknown
+        - state: 'off'
+        - state: closed
+        include:
+        - entity_id: binary_sensor.front_door
+        - entity_id: cover.garage_door
       show_empty: false
-      show_notification_title: false
-      style: "ha-markdown {\n  font-size: 1.2em;\n  font-weight: bold;\n}\n"
-      title: Safety notifications
-      type: custom:home-feed-card
-    - compact_mode: false
-      entities:
-      - content_template: Today is **{{state}}**
-        entity: sensor.holiday
-        exclude_states:
-        - ''
-        - none
-        - unavailable
-        name: Holiday
-      - content_template: '**Glowforge** is **{{state}}**'
-        entity: input_select.glowforge_status
-        exclude_states:
-        - 'off'
-        - 'Off'
-        - unavailable
-      - content_template: '**3D Printer** is **{{state}}**'
-        entity: sensor.octoprint_current_state
-        exclude_states:
-        - unavailable
-        include_states:
-        - Printing
-      - content_template: '**{{display_name}}** is **unlocked**'
-        entity: lock.front_door
-        exclude_states:
-        - locked
-        - unavailable
-        name: Front Door
-      - content_template: '**Leave door unlocked** is **active**'
-        entity: input_boolean.leave_unlocked
-        exclude_states:
-        - 'off'
-      - content_template: '**{{display_name}}** is **active**'
-        entity: input_boolean.guest_mode
-        exclude_states:
-        - 'off'
-      - content_template: '**{{display_name}}** is **active**'
-        entity: input_boolean.away_mode
-        exclude_states:
-        - 'off'
-      id_filter: ^(?!.*safety_alert).*
-      max_item_count: 5
-      more_info_on_tap: false
+      type: custom:auto-entities
+    - card:
+        style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n}\n"
+        type: entities
+      filter:
+        exclude:
+        - state: ''
+        - state: none
+        - state: unknown
+        - state: home
+        - state: locked
+        include:
+        - entity_id: sensor.holiday
+        - entity_id: input_select.glowforge_status
+          state_not: 'Off'
+        - entity_id: sensor.octoprint_current_state
+          state_not: 'Off'
+        - entity_id: lock.front_door
       show_empty: false
-      show_notification_title: false
-      style: "ha-card {\n  background: rgba(255, 165, 0, 0.1);\n  padding-top: 16px\
-        \ !important;\n}\n#header { display: none; }\n"
-      title: Informational notifications
-      type: custom:home-feed-card
-    - cards:
-      - card:
-          type: entities
-        filter:
-          exclude:
-          - state: ''
-          - state: none
-          - state: unknown
-          - state: home
-          include:
-          - entity_id: sensor.high_school_day_modified_schedule
-          - entity_id: input_boolean.leave_unlocked
-            state: 'on'
-          - entity_id: device_tracker.wirelessap1
-          - entity_id: device_tracker.wirelessap2
-          - entity_id: device_tracker.wirelessap3
-          - entity_id: binary_sensor.alert_zwavejs_offline
-            state: 'on'
-          - entity_id: binary_sensor.irrigation_controller_status
-            state: 'off'
-        show_empty: false
-        type: custom:auto-entities
-      style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n  border-style: none;\n\
-        }\n"
-      type: vertical-stack
+      type: custom:auto-entities
+    - card:
+        style: "ha-card {\n  background: rgba(0, 128, 128, 0.1);\n}\n"
+        type: entities
+      filter:
+        exclude:
+        - state: ''
+        - state: none
+        - state: unknown
+        - state: home
+        include:
+        - entity_id: sensor.high_school_day_modified_schedule
+        - entity_id: input_boolean.leave_unlocked
+          state: 'on'
+        - entity_id: device_tracker.wirelessap1
+        - entity_id: device_tracker.wirelessap2
+        - entity_id: device_tracker.wirelessap3
+        - entity_id: binary_sensor.alert_zwavejs_offline
+          state: 'on'
+        - entity_id: binary_sensor.irrigation_controller_status
+          state: 'off'
+      show_empty: false
+      type: custom:auto-entities
     - cards:
       - entities:
         - entity: sensor.downstairs_temperature_average
