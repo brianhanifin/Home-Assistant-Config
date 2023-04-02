@@ -1,0 +1,17 @@
+---
+unique_id: addon_count
+name: Addon count
+icon: mdi:puzzle
+#state: |
+#  {{ states.update | selectattr("attributes.supported_features","defined") | selectattr("attributes.supported_features","eq",25) | map(attribute="entity_id") | list | count }}
+state: |
+  {{ this.attributes.addons | count }}
+attributes:
+  addons: |
+    {%- set data = namespace(addons="") %}
+    {%- set entities = states.update | selectattr("attributes.supported_features","defined") | selectattr("attributes.supported_features","eq",25) | list %}
+    {%- for entity in entities %}
+      {%- set addon = entity.name|replace(" Update","") ~ "\t" ~ entity.entity_id %}
+      {%- set data.addons = data.addons ~ addon.split("\t") ~ iif(not loop.last, "\n", "")  %}
+    {%- endfor %}
+    {{ data.addons.split("\n") }}

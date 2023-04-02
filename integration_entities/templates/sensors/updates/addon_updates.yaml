@@ -4,19 +4,8 @@ name: Addon updates
 icon: mdi:counter
 state_class: total
 state: |
-  {%- set ignored_entities = [
-    "update.home_assistant_core_update",
-    "update.home_assistant_operating_system_update",
-    "update.home_assistant_supervisor_update"
-  ] %}
-  {%- set entities = expand(integration_entities("Home Assistant Supervisor")) | rejectattr("entity_id","in",ignored_entities) | map(attribute="entity_id") | list %}
-  {{ states.update | selectattr("entity_id","in",entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="entity_id") | list | count }}
+  {{ this.attributes.updates_available | count }}
 attributes:
   updates_available: |
-    {%- set ignored_entities = [
-      "update.home_assistant_core_update",
-      "update.home_assistant_operating_system_update",
-      "update.home_assistant_supervisor_update"
-    ] %}
-    {%- set entities = expand(integration_entities("Home Assistant Supervisor")) | rejectattr("entity_id","in",ignored_entities) | map(attribute="entity_id") | list %}
-    {{ states.update | selectattr("entity_id","in",entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="attributes.title") | list }}
+    {%- set addons = states.update | selectattr("attributes.supported_features","defined") | selectattr("attributes.supported_features","eq",25) | map(attribute="entity_id") | list %}
+    {{ states.update | selectattr("entity_id","in",addons) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","eq",none) | map(attribute="attributes.title") | list }}
