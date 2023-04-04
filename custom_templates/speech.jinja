@@ -11,7 +11,7 @@
     "Stay out of trouble. ",
     "I am out of here. Oh, I'm stuck here, are-nt I?",
     "Okay...bye, fry guy! ",
-    "If I don’t see you around, I'll see you square. ",
+    "If I don't see you around, I'll see you square. ",
     "Stay classy. ",
     "Fare thee well. ",
     "Catch you on the rebound. ",
@@ -28,7 +28,7 @@
     "Don't get run over! ",
     "Have a good one. ",
     "It was nice to see you again. ",
-    "Later, haters. ",
+    "Laters, gaters. ",
     "Give a hug, ladybug. ",
     "Compute you later! ",
     "See you on the other side. ",
@@ -58,7 +58,7 @@
     "I'm off like a dirty shirt. ",
     "See you when I see you. ",
     "Catch ya later, future dudes! ",
-    "Cya. (Clearly, this is just short for ‘see you,’ which makes no sense because you utter ‘cya’ and not write it. Oh, whatever!) ",
+    "Cya. (Clearly, this is just short for 'see you,' which makes no sense because you utter 'cya' and not write it. Oh, whatever!) ",
     "As you wish, jellyfish! ",
     "Later, skater! ",
     "May the force be with you... always. ",
@@ -79,7 +79,7 @@
     "Are you late for your bus, snuffle-up-ahgus? ",
     "Move out, brussels sprout! ",
     "Make sure the doormat says goodbye! ",
-    "I’ll show you to the door! ",
+    "I'll show you to the door! ",
     "Ciao ciao, brown cow! ",
     "Forget you guys, I'm going home! ",
     "See you, space cowboy. "
@@ -178,73 +178,81 @@
 {%- endmacro %}
 
 {%- macro welcome_home(person) %}
-  {{ [
-  "Welcome back home " ~ person ~ ".",
-  "Guess who is home?   " ~ person ~ " is!",
-  person ~ " is now in the house.",
-  "Welcome Home " ~ person ~ ".  We have missed you.  I know " ~ random_pet() ~ " sure did.",
-  "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person ~ ".",
-  "Life is like a song, you’re back where you belong. Welcome home " ~ person ~ ".",
-  "Hey there " ~ person ~ " Welcome Home!",
-  "Knock Knock.   Who is There?  " ~ person ~ " is!",
-  "The garage door just told me that "   ~ person ~ " is home.",
-  person ~ " can not hide from the system.  Welcome home.",
-  person ~ "!  You are home!",
-  "I know a secret! "  ~ person ~ " is home!",
-  "Hey "  ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
-  "Take note " ~ random_pet() ~ "!   "  ~ person ~ " is home.",
-  "I am sensing a disturbance in the force.  "  ~ person ~ " must be home!",
-  "And the house becomes a home.   Welcome back " ~ person ~ ".",
-  person ~ " is now here.   Hash tag Welcome Home.",
-  person ~ " is now here.   Hash tag Home.",
-  person ~ " is now here.   Hash tag Smart Home.",
-  "Just a quick announcement. " ~ person ~ " has arrived!",
-  "Pardon the interruption but " ~ person ~ " is home!",
-  "My systems are picking up the presence of additional humans.   " ~ person ~ " has been identified as home."
-  ] | random }}
+  {%- if person is defined and person != "" %}
+    {{ [
+    "Welcome back home " ~ person ~ ".",
+    "Guess who is home?   " ~ person ~ " is!",
+    person ~ " is now in the house.",
+    "Welcome Home " ~ person ~ ".  We have missed you.  I know " ~ random_pet() ~ " sure did.",
+    "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person ~ ".",
+    "Life is like a song, you're back where you belong. Welcome home " ~ person ~ ".",
+    "Hey there " ~ person ~ " Welcome Home!",
+    "Knock Knock.   Who is There?  " ~ person ~ " is!",
+    "The garage door just told me that "   ~ person ~ " is home.",
+    person ~ " can not hide from the system.  Welcome home.",
+    person ~ "!  You are home!",
+    "I know a secret! "  ~ person ~ " is home!",
+    "Hey "  ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
+    "Take note " ~ random_pet() ~ "!   "  ~ person ~ " is home.",
+    "I am sensing a disturbance in the force.  "  ~ person ~ " must be home!",
+    "And the house becomes a home.   Welcome back " ~ person ~ ".",
+    person ~ " is now here.   Hash tag Welcome Home.",
+    person ~ " is now here.   Hash tag Home.",
+    person ~ " is now here.   Hash tag Smart Home.",
+    "Just a quick announcement. " ~ person ~ " has arrived!",
+    "Pardon the interruption but " ~ person ~ " is home!",
+    "My systems are picking up the presence of additional humans.   " ~ person ~ " has been identified as home."
+    ] | random }}
+  {%- endif %}
 {% endmacro %}
 
 {# BRIEFING TEMPLATE #}
-{%- macro get_briefing() %}
-  {# Set defaults so we don't have to pass as many parameters. #}
-  {%- if person_arriving is defined %}
-    {%- set say_welcome_home = true %}
-    {%- set say_greeting = true %}
-    {%- set say_inside_weather = true %}
-    {%- set say_outside_weather = true %}
-  {%- endif %}
+{%- macro get_briefing(
+      message,
+      person_arriving,
+      say_welcome_home,
+      say_greeting,
+      say_inside_weather,
+      say_outside_weather,
+      say_goodbye,
+      say_goodnight
+    ) %}
+  {% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace(". .",". ")|replace(", ,",", ")|trim %}
+    {# Set defaults so we don't have to pass as many parameters. #}
+    {%- if person_arriving is defined %}
+      {%- set say_welcome_home = true %}
+      {%- set say_greeting = true %}
+      {%- set say_inside_weather = true %}
+      {%- set say_outside_weather = true %}
+    {%- endif %}
 
-  {# Output starts here. #}
-  {%- if say_greeting|default(false) == true %}
-    {{ greeting_line() }}
+    {# Output starts here. #}
+    {%- if say_greeting|default(false) == true %}
+      {{ greeting_line() }}
 
-    {{ holiday() }}
-  {%- endif %}
+      {{ holiday() }}
+    {%- endif %}
 
-  {%- if say_welcome_home|default(false) %}
-    {{ welcome_home(person_arriving) }}
-  {%- endif %}
+    {%- if say_welcome_home|default(false) %}
+      {{ welcome_home(person_arriving) }}
+    {%- endif %}
 
-  {{ message|default("") }}
+    {{ message|default("") }}
 
-  {%- if say_inside_weather|default(false) == true %}
-    {{ inside_weather() }}
-  {%- endif %}
+    {%- if say_inside_weather|default(false) == true %}
+      {{ inside_weather() }}
+    {%- endif %}
 
-  {%- if say_outside_weather|default(false) == true %}
-    {{ outside_weather() }}
-  {%- endif %}
+    {%- if say_outside_weather|default(false) == true %}
+      {{ outside_weather() }}
+    {%- endif %}
 
-  {%- if say_goodbye|default(false) == true %}
-    {{ " " ~ goodbye_line() }}
-  {%- endif %}
+    {%- if say_goodbye|default(false) == true %}
+      {{ " " ~ goodbye_line() }}
+    {%- endif %}
 
-  {%- if say_goodnight|default(false) == true %}
-    {{ " " ~ goodnight_line() }}
-  {%- endif -%}
+    {%- if say_goodnight|default(false) == true %}
+      {{ " " ~ goodnight_line() }}
+    {%- endif -%}
+  {% endfilter %}
 {%- endmacro %}
-
-{#- Get briefing, and strip unnecessary characters. -#}
-{% filter replace("\n", "")|replace("\t", " ")|replace("    ", " ")|replace("   ", " ")|replace("  ", " ")|replace("  ", " ")|replace(". .",". ")|replace(", ,",", ")|trim %}
-  {{ get_briefing() }}
-{% endfilter %}
