@@ -3,4 +3,6 @@ unique_id: light_count
 name: Light count
 icon: mdi:lightbulb-multiple
 state_class: total
-state: '{{ states.light|count }}'
+state: '{{ states.light|map(attribute="entity_id")|reject("is_hidden_entity")|list|count }}'
+attributes:
+  entities_include_hidden: '{{ states.light|count }}'

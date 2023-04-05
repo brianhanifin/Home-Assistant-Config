@@ -4,37 +4,21 @@ name: Lights on
 icon: mdi:lightbulb-on
 state_class: total
 state: |
-  {%- set lights = namespace(entities="") %}
-  {%- set entities = expand("group.house_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
-  {%- for entity in entities %}
-    {%- if not entity.endswith("2")
-          and not entity.endswith("3")
-          and not entity.endswith("4")
-          and not entity.endswith("5")
-          and not entity.endswith("6")
-          and not entity.endswith("7")
-          and not entity.endswith("8")
-          and not entity.endswith("9")
-    %}
-      {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
-    {%- endif %}
-  {%- endfor %}
-  {{ iif(lights.entities|trim|length > 0, (lights.entities|trim).split("\t")|count, 0) }}
+  {{
+    states("sensor.lights_on_downstairs") | int |default(0)
+    + states("sensor.lights_on_upstairs") | int | default(0)
+  }}
 attributes:
-  lights: |
-    {%- set lights = namespace(entities="") %}
-    {%- set entities = expand("group.house_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
-    {%- for entity in entities %}
-      {%- if not entity.endswith("2")
-            and not entity.endswith("3")
-            and not entity.endswith("4")
-            and not entity.endswith("5")
-            and not entity.endswith("6")
-            and not entity.endswith("7")
-            and not entity.endswith("8")
-            and not entity.endswith("9")
-      %}
-        {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
-      {%- endif %}
-    {%- endfor %}
-    {{ (lights.entities|trim|replace("bedroom_east1","Bedroom east")|replace("Dining1","Dining room")|replace("Play room floor lamp 1","Play room floor lamp")).split("\t") }}
+  lights_on: |
+    {%- set downstairs_lights = state_attr("sensor.lights_on_downstairs","lights_on") | sort | join("\t") %}
+    {%- set upstairs_lights = state_attr("sensor.lights_on_upstairs","lights_on") | sort | join("\t")%}
+
+    {%- if downstairs_lights|count > 0 and upstairs_lights|count > 0 %}
+      {%- set lights_on = downstairs_lights ~ "\t" ~ upstairs_lights %}
+    {%- elif downstairs_lights|count > 0 %}
+      {%- set lights_on = downstairs_lights %}
+    {%- elif upstairs_lights|count > 0 %}
+      {%- set lights_on = upstairs_lights %}
+    {%- endif %}
+
+    {{- lights_on.split("\t") }}

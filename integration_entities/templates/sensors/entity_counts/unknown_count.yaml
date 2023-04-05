@@ -4,34 +4,10 @@ name: Unknown count
 icon: mdi:help-rhombus
 state_class: total
 state: |
-  {%- if is_state("automation.startup","off") %}
-    {#%- set ignore_list = [
-
-    ] %#}
-    {#%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %#}
-    {%- set entities = states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list %}
-
-    {%- set selected = namespace (entities="") %}
-    {%- if entities|count > 0 %}
-      {%- for entity in entities if not is_device_attr(entity, "name", "BLACKPC")
-            and not is_device_attr(entity, "name", "BLACKPC-satellite")
-            and not is_device_attr(entity, "manufacturer", "Sensibo")
-            and not is_device_attr(entity, "name", "Watchman")
-            and not entity.split(".")[0] in ["button", "group", "person", "scene", "update"]
-            and not "octoprint" in entity %}
-        {%- set selected.entities = selected.entities ~ " " if not loop.first %}
-        {%- set selected.entities = selected.entities ~ entity %}
-      {%- endfor %}
-      {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" ")|count, 0) }}
-    {%- endif %}
-  {%- endif %}
+  {{ this.attributes.entities|default("")|count }}
 attributes:
   entities: |
     {%- if is_state("automation.startup","off") %}
-      {#%- set ignore_list = [
-
-      ] %#}
-      {#%- set entities = states | selectattr("state","eq","unknown") | rejectattr('entity_id','in',ignore_list) | map(attribute="entity_id") | list %#}
       {%- set entities = states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list %}
 
       {%- set selected = namespace (entities="") %}

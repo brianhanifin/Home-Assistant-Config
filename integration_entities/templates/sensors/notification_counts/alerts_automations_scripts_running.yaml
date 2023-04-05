@@ -4,7 +4,7 @@ name: Alerts, automations, and scripts running
 icon: mdi:robot
 state_class: total
 state: |
-  {{ expand(states.alert, states.automation, states.script) | selectattr("attributes.current","defined") | selectattr("attributes.current","gt",0) | map(attribute="entity_id") | list | count }}
+  {{ this.attributes.entities | count }}
 attributes:
   names: |
     {{ expand(states.alert, states.automation, states.script) | selectattr("attributes.current","defined") | selectattr("attributes.current","gt",0) | map(attribute="name") | sort | list }}

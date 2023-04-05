@@ -4,7 +4,7 @@ name: Updates available
 icon: mdi:update
 state_class: total
 state: |
-  {{ states.update | selectattr("state","eq","on") | sort(attribute="name") | map(attribute="entity_id") | list | count }}
+  {{ this.attributes.entities | count }}
 attributes:
   names: |
     {{ states.update | selectattr("state","eq","on") | sort(attribute="name") | map(attribute="name") | sort | list | replace(" Update", "") }}

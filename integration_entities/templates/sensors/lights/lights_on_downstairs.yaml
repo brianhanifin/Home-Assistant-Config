@@ -4,37 +4,8 @@ name: Lights on downstairs
 icon: mdi:lightbulb-on
 state_class: total
 state: |
-  {%- set lights = namespace(entities="") %}
-  {%- set entities = expand("group.downstairs_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
-  {%- for entity in entities %}
-    {%- if not entity.endswith("2")
-          and not entity.endswith("3")
-          and not entity.endswith("4")
-          and not entity.endswith("5")
-          and not entity.endswith("6")
-          and not entity.endswith("7")
-          and not entity.endswith("8")
-          and not entity.endswith("9")
-    %}
-      {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
-    {%- endif %}
-  {%- endfor %}
-  {{ iif(lights.entities|trim|length > 0, (lights.entities|trim).split("\t")|count, 0) }}
+  {{ this.attributes.lights_on | count | default(0) }}
 attributes:
-  lights: |
-    {%- set lights = namespace(entities="") %}
-    {%- set entities = expand("group.downstairs_lights") | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
-    {%- for entity in entities %}
-      {%- if not entity.endswith("2")
-            and not entity.endswith("3")
-            and not entity.endswith("4")
-            and not entity.endswith("5")
-            and not entity.endswith("6")
-            and not entity.endswith("7")
-            and not entity.endswith("8")
-            and not entity.endswith("9")
-      %}
-        {%- set lights.entities = lights.entities ~ "\t" ~ state_attr(entity,"friendly_name") %}
-      {%- endif %}
-    {%- endfor %}
-    {{ iif(lights.entities|trim|length > 0, (lights.entities|trim|replace("Dining1","Dining room")|replace("Play room floor lamp 1","Play room floor lamp")).split("\t"), "") }}
+  lights_on: |
+    {%- set downstairs_lights = state_attr("group.downstairs_lights","entity_id") %}
+    {{ states.light | selectattr("entity_id","in",downstairs_lights) | selectattr("state","eq","on") | map(attribute="entity_id") | reject('is_hidden_entity') | sort | list }}

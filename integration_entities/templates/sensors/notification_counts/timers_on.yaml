@@ -4,7 +4,7 @@ name: Timers on
 icon: mdi:timer
 state_class: total
 state: |
-  {{ states.timer | selectattr("state","eq","active") | sort(attribute="name") | map(attribute="entity_id") | reject('is_hidden_entity') | list | count }}
+  {{ this.attributes.entities | count }}
 attributes:
   names: |
     {{ states.timer | selectattr("state","eq","active") | sort(attribute="name") | map(attribute="name") | reject('is_hidden_entity') | list }}

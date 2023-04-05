@@ -2,8 +2,6 @@
 unique_id: addon_count
 name: Addon count
 icon: mdi:puzzle
-#state: |
-#  {{ states.update | selectattr("attributes.supported_features","defined") | selectattr("attributes.supported_features","eq",25) | map(attribute="entity_id") | list | count }}
 state: |
   {{ this.attributes.addons | count }}
 attributes:

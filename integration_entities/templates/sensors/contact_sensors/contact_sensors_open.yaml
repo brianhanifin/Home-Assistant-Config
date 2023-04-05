@@ -4,9 +4,10 @@ name: Contact sensors open
 icon: mdi:door-open
 state_class: total
 state: |
-  {%- set open_doors = states("sensor.doors_open")|int(default=0) %}
-  {%- set open_windows = states("sensor.windows_open")|int(default=0) %}
-  {{ open_doors + open_windows }}
+  {{
+    this.attributes.open_doors | count | default(0)
+    + this.attributes.open_windows | count | default(0)
+  }}
 attributes:
   open_doors: |
     {%- set doors = state_attr("sensor.doors_open","open_doors") | sort() %}

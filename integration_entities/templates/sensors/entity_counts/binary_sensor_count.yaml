@@ -3,4 +3,6 @@ unique_id: binary_sensor_count
 name: Binary sensor count
 icon: mdi:motion-sensor
 state_class: total
-state: '{{ states.binary_sensor|count }}'
+state: '{{ states.binary_sensor|map(attribute="entity_id")|reject("is_hidden_entity")|list|count }}'
+attributes:
+  entities_include_hidden: '{{ states.binary_sensor|count }}'
