@@ -3114,9 +3114,8 @@
   description: Notify me when a 3D print status changes.
   trigger:
   - platform: state
-    entity_id: binary_sensor.octoprint_printing
-    from: 'on'
-    to: 'off'
+    entity_id:
+    - sensor.octoprint_current_state
   condition:
   - condition: time
     after: 08:00:00
@@ -3140,6 +3139,7 @@
     data:
       media_player: media_player.google_downstairs
       message: '{{ message }}'
+    enabled: false
   mode: single
 - id: '1666217428873'
   alias: Dishwasher status update
