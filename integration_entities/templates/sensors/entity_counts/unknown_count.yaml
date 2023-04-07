@@ -7,20 +7,19 @@ state: |
   {{ this.attributes.entities|default("")|count }}
 attributes:
   entities: |
-    {%- if is_state("automation.startup","off") %}
-      {%- set entities = states | selectattr("state","eq","unknown") | map(attribute="entity_id") | list %}
-
-      {%- set selected = namespace (entities="") %}
-      {%- if entities|count > 0 %}
-        {%- for entity in entities if not is_device_attr(entity, "name", "BLACKPC")
-              and not is_device_attr(entity, "name", "BLACKPC-satellite")
-              and not is_device_attr(entity, "manufacturer", "Sensibo")
-              and not is_device_attr(entity, "name", "Watchman")
-              and not entity.split(".")[0] in ["button", "group", "person", "scene", "update"]
-              and not "octoprint" in entity %}
-          {%- set selected.entities = selected.entities ~ " " if not loop.first %}
-          {%- set selected.entities = selected.entities ~ entity %}
-        {%- endfor %}
-        {{ iif(selected.entities|trim|length > 0, (selected.entities|trim).split(" "), "") }}
-      {%- endif %}
-    {%- endif %}
+    {%- set excluded_domains = ["button"] %}
+    {%- set excluded_entities = ["group.safety_alarms","sensor.blackpc_lastboot","sensor.blackpc_volume"] %}
+    {%- set entities = states | selectattr("state","eq","unknown")
+      | rejectattr("domain","in",excluded_domains)
+      | rejectattr("entity_id","in",excluded_entities)
+      | map(attribute="entity_id")
+      | reject("is_hidden_entity")
+      | reject("in",integration_entities("HASS Agent"))
+      | reject("in",integration_entities("Octoprint"))
+      | reject("in",integration_entities("person"))
+      | reject("in",integration_entities("Sensibo"))
+      | reject("in",integration_entities("upnp_availability"))
+      | reject("in",integration_entities("Watchman"))
+      | reject("in",integration_entities("Z-Wave JS"))
+      | list %}
+    {{ entities }}
