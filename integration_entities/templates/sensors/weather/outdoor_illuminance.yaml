@@ -14,7 +14,7 @@ attributes:
     {#- Retrieve the current condition and normalize the value #}
     {%- set weather_sensors = [
       "weather.accuweather",
-      "sensor.openweathermap_condition"
+      "weather.openweathermap"
     ] %}
     {%- for sensor in weather_sensors if states(sensor) not in ["unknown","unavailable"] and factors.current_condition == "" %}
       {%- set factors.current_condition = states(sensor) %}

@@ -906,6 +906,53 @@
       - condition: trigger
         id: restart
     then:
+    - variables:
+        today: '{{ now() }}
+
+          '
+        event_date: '{{ as_datetime(state_attr("calendar.nerene","start_time")) }}
+
+          '
+        event_midnight: '{%- set event_date = as_datetime(state_attr("calendar.nerene","start_time"))
+          %}
+
+          {%- set seconds_from_midnight = (event_date.hour*3600) + (event_date.minute*60)
+          %}
+
+          {{ (event_date - timedelta(seconds=seconds_from_midnight)) }}
+
+          '
+        event_message: '{{ state_attr("calendar.nerene","message") }}
+
+          '
+        message: "{%- set today = today|as_timestamp %}\n{%- set event_date = as_datetime(state_attr(\"calendar.nerene\",\"start_time\"))
+          %}\n{%- set seconds_from_midnight = (event_date.hour*3600) + (event_date.minute*60)
+          %}\n{%- set event_midnight =  (event_date - timedelta(seconds=seconds_from_midnight))
+          %}\n{%- set event_midnight = event_midnight|as_timestamp %}\n{%- if today
+          >= event_midnight %}\n  {%- set events = events ~ \",\" if events not in
+          [\"\",\"None\"] %}\n  {{ events ~ event_message }}\n{%- endif %}\n"
+        mqtt_message_attributes:
+          today: '{{ today }}'
+          next_event_date: '{{ event_date }}'
+          next_event_midnight: '{{ event_midnight }}'
+          next_event_message: '{{ event_message }}'
+    - alias: Debug output. (Disable to turn off.)
+      service: script.debug
+      data:
+        message: 'today: "{{ now() }}"
+
+          event_date: "{{ event_date }}"
+
+          event_midnight: "{{ event_midnight }}"
+
+          event_message: "{{ event_message }}"
+
+          message: "{{ message }}"
+
+          mqtt_message_attributes: "{{ mqtt_message_attributes }}
+
+          '
+      enabled: false
     - service: script.store_mqtt_sensor
       data:
         name: nerene_events_today

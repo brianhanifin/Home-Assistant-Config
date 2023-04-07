@@ -4,7 +4,7 @@ name: Family Present
 icon: mdi:cellphone
 state_class: total
 state: |
-  {{ this.attributes.who | count }}
+  {{ (this.attributes.who|default("")).split(", ") | count }}
 attributes:
   who: |
     {{ states.person | selectattr('state','eq','home') | map(attribute='name') | join(", ")  }}
