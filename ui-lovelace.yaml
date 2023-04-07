@@ -278,6 +278,7 @@ decluttering_templates:
                     show_header_toggle: false
                     show_name: false
                     show_state: false
+                    style: "ha-card {\n  border: none;\n}\n"
                     type: glance
                   entities:
                   - person.brian
@@ -302,6 +303,7 @@ decluttering_templates:
                   - entity: zone.range
                   - entity: zone.school
                   hours_to_show: 6
+                  style: "ha-card {\n  border: none;\n}\n"
                   type: map
                 type: vertical-stack
               title: People at home
@@ -323,6 +325,7 @@ decluttering_templates:
                       show_header_toggle: false
                       show_name: true
                       show_state: false
+                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       exclude:
@@ -342,6 +345,7 @@ decluttering_templates:
                       show_header_toggle: false
                       show_name: true
                       show_state: false
+                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       exclude:
@@ -361,6 +365,7 @@ decluttering_templates:
                       show_header_toggle: false
                       show_name: true
                       show_state: false
+                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       exclude:
@@ -393,6 +398,7 @@ decluttering_templates:
                   - subtitle: Downstairs
                     type: custom:mushroom-title-card
                   - card:
+                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.windows_open_downstairs", "open_windows")
@@ -406,6 +412,7 @@ decluttering_templates:
                       show_header_toggle: false
                       show_name: true
                       show_state: false
+                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       exclude:
@@ -423,6 +430,7 @@ decluttering_templates:
                   - subtitle: Upstairs
                     type: custom:mushroom-title-card
                   - card:
+                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.windows_open_upstairs", "open_windows")
@@ -456,6 +464,7 @@ decluttering_templates:
         forecast: true
         hourly_forecast: false
         number_of_forecasts: '4'
+        style: "ha-card {\n    border: none;\n}\n"
         type: custom:weather-card
       - card:
           cards:
@@ -467,6 +476,7 @@ decluttering_templates:
               \ {{ alert }}\n    {%- else %}\n      {{ iif(alert!=alerts[loop.index-1],\
               \ alert, \"\") }}\n    {%- endif %}\n  {%- endfor %}\n{%- else %}\n\
               \ {{ alerts }}\n{%- endif %}\n"
+            style: "ha-card {\n    border: none;\n}\n"
             type: markdown
           type: vertical-stack
         conditions:
@@ -486,6 +496,7 @@ decluttering_templates:
             show_marker: true
             square_map: true
             static_map: true
+            style: "ha-card {\n    border: none;\n}\n"
             type: custom:weather-radar-card
             zoom_level: 9
           type: vertical-stack
@@ -516,6 +527,7 @@ decluttering_templates:
           labels_secondary: true
           name: false
           state: false
+        style: "ha-card {\n    border: none;\n}\n"
         type: custom:mini-graph-card
       type: vertical-stack
 kiosk_mode:
@@ -951,6 +963,7 @@ views:
                   - title: Updates
                     type: custom:mushroom-title-card
                   - card:
+                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.updates_available","entities")
@@ -1098,11 +1111,14 @@ views:
                     type: custom:mushroom-title-card
                   - content: "<table width=\"100%\"> {%- set records = state_attr(\"\
                       sensor.plex_watchers\",\"watchers\") %} {%- for record in records\
-                      \ %}\n  {%- set record = (record|replace(\"\\'\",\"\")|replace(\"\
-                      [\",\"\")|replace(\"]\",\"\")).split(\",\") %}\n  <tr>\n   \
-                      \ <td><ha-icon icon=\"mdi:plex\"></ha-icon> &nbsp;{{ record[0]|trim\
-                      \ }}</td>\n    <td align=\"right\">{{ record[1]|trim }}</td>\n\
-                      \  </tr>\n{%- endfor %} </table>"
+                      \ %}\n  {%- set record = (record|replace(\"&\",\"and\")|replace(\"\
+                      \\'\",\"\")|replace(\"[\",\"\")|replace(\"]\",\"\")).split(\"\
+                      ,\") %}\n  {%- set device = record[0]|trim %}\n  {%- set content\
+                      \ = record[1]|trim %}\n  {%- if record|count > 2 %}\n    {%-\
+                      \ set content = content ~ \", \" ~ record[2]|trim %}\n  {%-\
+                      \ endif %}\n  <tr>\n    <td><ha-icon icon=\"mdi:plex\"></ha-icon>\
+                      \ &nbsp;{{ device }}</td>\n    <td align=\"right\">{{ content\
+                      \ }}</td>\n  </tr>\n{%- endfor %} </table>"
                     style: "ha-card {\n  border: none;\n}\n"
                     type: markdown
                   type: vertical-stack
@@ -1131,8 +1147,21 @@ views:
                         label: Problems
                       card:
                         cards:
+                        - alignment: center
+                          chips:
+                          - content: Problem entities
+                            icon: mdi:cog-refresh
+                            icon_color: grey
+                            tap_action:
+                              action: call-service
+                              data: {}
+                              service: script.turn_on
+                              target:
+                                entity_id: script.refresh_entity_count_sensors
+                            type: template
+                          type: custom:mushroom-chips-card
                         - entity: sensor.unknown_count
-                          icon: mdi:folder-question
+                          icon: mdi:folder-
                           name: Unknown entities
                           type: custom:mushroom-entity-card
                         - card:
@@ -1171,6 +1200,18 @@ views:
                         label: Missing
                       card:
                         cards:
+                        - alignment: center
+                          chips:
+                          - content: Missing YAML
+                            icon: mdi:shield-refresh
+                            icon_color: grey
+                            tap_action:
+                              action: call-service
+                              service: watchman.report
+                              service_data: {}
+                              target: {}
+                            type: template
+                          type: custom:mushroom-chips-card
                         - entity: sensor.watchman_missing_entities
                           icon: mdi:folder-hidden
                           name: Missing entities
@@ -1205,6 +1246,111 @@ views:
         conditions:
         - entity: sensor.problems
           state_not: '0'
+        type: conditional
+      - chip:
+          content: "{%- if is_state(\"sensor.octoprint_current_state\", \"Printing\"\
+            ) %}\n  {{ states(\"sensor.octoprint_job_percentage\")|round(0) ~ \"%\"\
+            \ }}\n{%- else %}\n  {{ states(\"sensor.octoprint_current_state\") }}\n\
+            {%- endif %}\n"
+          entity: sensor.octoprint_current_state
+          icon: mdi:printer-3d
+          icon_color: "{%- if is_state(\"sensor.octoprint_current_state\", \"Printing\"\
+            ) %}\n  green\n{%- else %}\n  red\n{%- endif %}\n"
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - title: Octoprint
+                    type: custom:mushroom-title-card
+                  - entities:
+                    - entities:
+                      - entity: sensor.prusa_power_monitor_power
+                        name: Power
+                      - entity: sensor.octoprint_current_state
+                        name: Run State
+                      - entity: sensor.octoprint_job_percentage
+                        name: Complete
+                      entity: sensor.octoprint_current_state
+                      icon: mdi:printer-3d
+                      name: Status
+                      show_state: false
+                      type: custom:multiple-entity-row
+                    - entities:
+                      - entity: sensor.octoprint_start_time
+                        format: relative
+                        name: Start
+                      - entity: sensor.octoprint_estimated_finish_time
+                        format: relative
+                        name: Estimated end
+                      entity: sensor.octoprint_current_state
+                      icon: mdi:progress-clock
+                      name: Progress
+                      show_state: false
+                      type: custom:multiple-entity-row
+                    type: entities
+                  - alignment: center
+                    chips:
+                    - content: Octoprint
+                      icon: mdi:link
+                      tap_action:
+                        action: url
+                        url_path: http://octopi.local
+                      type: template
+                    - content: Notify
+                      entity: automation.3d_print_status_update
+                      icon: mdi:toggle-switch{{ iif(is_state("automation.3d_print_status_update","off"),
+                        "-off", "") }}
+                      icon_color: '{{ iif(is_state("automation.3d_print_status_update","on"),
+                        "blue", "grey") }}'
+                      type: template
+                    - chip:
+                        content_info: name
+                        entity: button.octoprint_pause_job
+                        icon: mdi:pause
+                        icon_color: amber
+                        name: Pause
+                        tap_action:
+                          action: toggle
+                          confirmation:
+                            text: Are you sure you want to pause the print?
+                        type: entity
+                      conditions:
+                      - entity: switch.prusa
+                        state: 'on'
+                      type: conditional
+                    - chip:
+                        content_info: name
+                        entity: button.octoprint_resume_job
+                        icon: mdi:play-pause
+                        icon_color: green
+                        name: Resume
+                        tap_action:
+                          action: toggle
+                        type: entity
+                      conditions:
+                      - entity: sensor.octoprint_current_state
+                        state: Paused
+                      type: conditional
+                    type: custom:mushroom-chips-card
+                  - card:
+                      camera_image: camera.octoprint_camera
+                      camera_view: live
+                      entity: camera.octoprint_camera
+                      show_name: false
+                      show_state: false
+                      type: picture-entity
+                    conditions:
+                    - entity: sensor.octoprint_current_state
+                      state_not: 'Off'
+                    type: conditional
+                  type: vertical-stack
+              service: browser_mod.popup
+          type: template
+        conditions:
+        - entity: switch.prusa
+          state: 'on'
         type: conditional
       type: custom:mushroom-chips-card
     - card:
@@ -1279,7 +1425,6 @@ views:
         type: glance
       - alignment: justify
         chips:
-        - type: menu
         - icon: mdi:server
           icon_color: blue-grey
           tap_action:
@@ -1543,8 +1688,6 @@ views:
         - entities:
           - entity: sensor.kitchen_temperature
             name: Kitchen
-          - entity: sensor.stove_temperature
-            name: Stove
       type: vertical-stack
     - cards:
       - subtitle: "{{- states(\"sensor.play_room_temperature\")|round(default=0) }}°\n\
@@ -1850,11 +1993,6 @@ views:
                   entities:
                   - entity: fan.bedroom
                   - entity: input_number.bedroom_fan_speed
-                  - entity: fan.bedroom
-                    grow: true
-                    hide_state: true
-                    name: Speed
-                    type: custom:slider-entity-row
                   - entity: sensor.bedroom_fan_power
                   - entity: input_button.bedroom_fan_oscillation
                     name: Oscillation toggle
@@ -2677,58 +2815,36 @@ views:
         type: grid
       - card:
           cards:
-          - camera_image: camera.prusa
-            camera_view: camera.prusa
-            entities:
-            - sensor.octoprint_current_state
-            - camera.prusa
-            entity: sensor.octoprint_current_state
-            state_filter:
-              Operational: grayscale(100%)
-              Printing: brightness(110%) saturate(1.2)
-            tap_action:
-              action: call-service
-              service: browser_mod.more_info
-              service_data:
-                deviceID:
-                - this
-                entity_id: camera.prusa
-            title: Prusa Mk2.5s
-            type: picture-glance
           - entities:
             - entities:
+              - entity: sensor.prusa_power_monitor_power
+                name: Power
               - entity: sensor.octoprint_current_state
                 name: Run State
-              - entity: binary_sensor.octoprint_printing_error
-                name: Error State
+              - entity: sensor.octoprint_job_percentage
+                name: Complete
               entity: sensor.octoprint_current_state
               icon: mdi:printer-3d
               name: Status
               show_state: false
               type: custom:multiple-entity-row
             - entities:
-              - entity: sensor.octoprint_job_percentage
-                name: Complete
-              - entity: sensor.octoprint_time_elapsed
-                name: Elapsed
-              - entity: sensor.octoprint_time_remaining
-                name: Remaining
-              entity: sensor.octoprint_job_percentage
-              icon: mdi:timer-outline
+              - entity: sensor.octoprint_start_time
+                format: relative
+                name: Start
+              - entity: sensor.octoprint_estimated_finish_time
+                format: relative
+                name: Estimated end
+              entity: sensor.octoprint_current_state
+              icon: mdi:progress-clock
               name: Progress
               show_state: false
               type: custom:multiple-entity-row
-            - entity: sensor.prusa_power_monitor_power
-              name: Power
-            - entity: automation.3d_print_status_update
-              icon: mdi:cellphone-message
-              name: Notify On Status Change
-              show_state: false
-            type: custom:hui-entities-card
+            type: entities
           type: vertical-stack
         conditions:
-        - entity: input_select.glowforge_status
-          state_not: 'Off'
+        - entity: switch.prusa
+          state: 'on'
         type: conditional
       - alignment: center
         chips:
@@ -2738,7 +2854,53 @@ views:
             action: url
             url_path: http://octopi.local
           type: template
+        - content: Notify
+          entity: automation.3d_print_status_update
+          icon: mdi:toggle-switch{{ iif(is_state("automation.3d_print_status_update","off"),
+            "-off", "") }}
+          icon_color: '{{ iif(is_state("automation.3d_print_status_update","on"),
+            "blue", "grey") }}'
+          type: template
+        - chip:
+            content_info: name
+            entity: button.octoprint_pause_job
+            icon: mdi:pause
+            icon_color: amber
+            name: Pause
+            tap_action:
+              action: toggle
+              confirmation:
+                text: Are you sure you want to pause the print?
+            type: entity
+          conditions:
+          - entity: sensor.octoprint_current_state
+            state: Printing
+          type: conditional
+        - chip:
+            content_info: name
+            entity: button.octoprint_resume_job
+            icon: mdi:play-pause
+            icon_color: green
+            name: Resume
+            tap_action:
+              action: toggle
+            type: entity
+          conditions:
+          - entity: sensor.octoprint_current_state
+            state: Paused
+          type: conditional
         type: custom:mushroom-chips-card
+      - card:
+          camera_image: camera.octoprint_camera
+          camera_view: live
+          entity: camera.octoprint_camera
+          show_name: false
+          show_state: false
+          type: picture-entity
+        conditions:
+        - entity: switch.prusa
+          state: 'on'
+        type: conditional
       type: vertical-stack
     type: vertical-stack
     view_layout:

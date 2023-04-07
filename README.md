@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **36,929** | 1,353 | 37 | 98 | 56 |
+| **36,814** | 1,312 | 37 | 97 | 56 |
 
 # Index
 
@@ -238,19 +238,16 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1353 total entities**,
-including **686 sensors**. My YAML
-files contain 36,929 lines of code.
-All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>27 Custom integrations</summary>
+Our Home Assistant install has approximately **1312 total entities**,
+including **670 sensors**. My YAML
+files contain 36,814 lines of code.
+All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
-## [Adaptive Lighting v1.7.0](https://github.com/basnijholt/adaptive-lighting#readme)
+## [Adaptive Lighting v1.10.1](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra), [@th3w1zard1](https://github.com/th3w1zard1).
 
 ## [Anniversaries v5.2.0](https://github.com/pinkywafer/Anniversaries)
 Anniversary Countdown Sensor for Home AssistantAuthors:[@pinkywafer](https://github.com/pinkywafer).
-
-## [Battery Simulation v1.0](https://github.com/hif2k1/battery_sim/)
-Authors:[@hif2k1](https://github.com/hif2k1).
 
 ## [Browser mod v2.2.0](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
 
@@ -326,7 +323,7 @@ Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://gi
 
 <details><summary>26 lovelace plugins</summary>
 
-## [Atomic Calendar Revive v7.2.0](https://github.com/totaldebug/atomic-calendar-revive)
+## [Atomic Calendar Revive v7.3.0](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
 
 ## [Auto Entities v1.12.1](https://github.com/thomasloven/lovelace-auto-entities)
@@ -335,13 +332,13 @@ An advanced calendar card for Home Assistant Lovelace.
 ## [Canary v0.4.0](https://github.com/jcwillox/lovelace-canary)
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
-## [Card Mod v3.2.1](https://github.com/thomasloven/lovelace-card-mod)
+## [Card Mod v3.2.2](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 ## [Card Tools v11](https://github.com/thomasloven/lovelace-card-tools)
 🔹A collection of tools for other lovelace plugins to use
 
-## [Decluttering Card v0.6.3](https://github.com/custom-cards/decluttering-card)
+## [Decluttering Card v1.0.0](https://github.com/custom-cards/decluttering-card)
 🧹 Declutter your lovelace configuration with the help of this card
 
 ## [Flipdown Timer Card v0.4](https://github.com/pmongloid/flipdown-timer-card)
@@ -353,7 +350,7 @@ Flipdown Timer Card for Home Assistant Lovelace
 ## [Frigate Card v4.0.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
-## [Kiosk Mode v1.7.8](https://github.com/NemesisRE/kiosk-mode)
+## [Kiosk Mode v1.8.1](https://github.com/NemesisRE/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 ## [Layout Card v2.4.4](https://github.com/thomasloven/lovelace-layout-card)
@@ -438,7 +435,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.4.0b3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.4.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -448,7 +445,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,929-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,814-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg
