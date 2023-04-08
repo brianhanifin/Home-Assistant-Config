@@ -15,18 +15,6 @@ automation:
         target:
           entity_id: input_button.bedroom_fan_led_toggle
 
-  # - alias: Bedroom fan plug always on
-  #   id: bedroom_fan_plug_always_on
-  #   description: This plug is for power monitoring only! It should not ever be turned off.
-  #   trigger:
-  #     - platform: state
-  #       entity_id: switch.bedroom_fan_power
-  #       to: 'off'
-  #   action:
-  #     - service: switch.turn_on
-  #       data:
-  #         entity_id: switch.bedroom_fan_power
-
   - alias: Bedroom fan plug power change
     id: bedroom_fan_plug_power_change
     mode: restart
@@ -34,35 +22,35 @@ automation:
       - id: high
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
-        above: 47
+        above: 56
         for:
           seconds: 2
       - id: medium_high
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
-        above: 42
-        below: 47
+        above: 52
+        below: 56
         for:
           seconds: 2
       - id: medium
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
-        above: 35
-        below: 42
+        above: 47
+        below: 52
         for:
           seconds: 2
       - id: medium_low
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
-        above: 30
-        below: 35
+        above: 39
+        below: 47
         for:
           seconds: 2
       - id: low
         platform: numeric_state
         entity_id: sensor.bedroom_fan_power
-        above: 15
-        below: 30
+        above: 30
+        below: 39
         for:
           seconds: 2
     variables:
@@ -174,7 +162,7 @@ template:
       - name: Bedroom fan power
         unique_id: bedroom_fan_power
         device_class: power
-        state: '{{ states("sensor.bedroom_fan_power")|int(default=0) > 10 }}'
+        state: '{{ states("sensor.bedroom_fan_power")|int(default=0) >= 30 }}'
 
 input_button:
   bedroom_fan_oscillation:
