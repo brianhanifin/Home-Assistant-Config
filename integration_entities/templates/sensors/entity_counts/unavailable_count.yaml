@@ -7,17 +7,20 @@ state: |
   {{ this.attributes.entities|count }}
 attributes:
   entities: |
-    {%- set excluded_entities = ["camera.glowforge"] %}
-    {%- set entities = states | selectattr("state","eq","unavailable")
-      | rejectattr("entity_id","in",excluded_entities)
+    {{
+      states | selectattr("state","eq","unavailable")
+      | rejectattr("entity_id","in",
+          ["camera.glowforge"]
+          +integration_entities("google_home")
+          +integration_entities("hass_agent")
+          +integration_entities("Octoprint")
+          +integration_entities("sensibo")
+          +integration_entities("upnp_availability")
+          +integration_entities("uptime_kuma")
+          +integration_entities("watchman")
+        )
       | map(attribute="entity_id")
       | reject("is_hidden_entity")
-      | reject("in",integration_entities("google_home"))
-      | reject("in",integration_entities("HASS Agent"))
-      | reject("in",integration_entities("Octoprint"))
-      | reject("in",integration_entities("Sensibo"))
-      | reject("in",integration_entities("UPnP Availability"))
-      | reject("in",integration_entities("uptime_kuma"))
-      | reject("in",integration_entities("Watchman"))
-      | list %}
-    {{ entities }}
+      | reject("search","blackpc")
+      | list
+    }}

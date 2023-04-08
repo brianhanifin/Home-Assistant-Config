@@ -7,5 +7,12 @@ state: |
   {{ this.attributes.updates_available | count }}
 attributes:
   updates_available: |
-    {%- set addons = states.update | selectattr("attributes.supported_features","defined") | selectattr("attributes.supported_features","eq",25) | map(attribute="entity_id") | list %}
-    {{ states.update | selectattr("entity_id","in",addons) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","eq",none) | map(attribute="attributes.title") | list }}
+    {{
+      states.update
+        | selectattr("attributes.supported_features","defined")
+        | selectattr("attributes.supported_features","eq",25)
+        | selectattr("state","eq","on")
+        | selectattr("attributes.skipped_version","eq",none)
+        | map(attribute="attributes.title")
+        | list
+    }}

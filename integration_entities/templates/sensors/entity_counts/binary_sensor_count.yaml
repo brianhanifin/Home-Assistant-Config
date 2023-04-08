@@ -5,3 +5,7 @@ icon: mdi:motion-sensor
 state_class: total
 state: |
   {{ states.binary_sensor|map(attribute="entity_id")|reject("is_hidden_entity")|list|count }}
+attributes:
+  attribution: State excludes hidden sensors.
+  hidden: |
+    {{ states.binary_sensor|map(attribute="entity_id")|select("is_hidden_entity")|list|count }}
