@@ -1,4 +1,4 @@
-{%- macro goodbye_line() -%}
+{%- macro _goodbye_line() -%}
   {{ [
     "Adios! ",
     "Bye Guys! ",
@@ -111,7 +111,7 @@
   ]|random }}
 {%- endmacro -%}
 
-{%- macro goodnight_line() -%}
+{%- macro _goodnight_line() -%}
   {{ [
     "Goodnight, talk to you tomorrow. ",
     "Goodnight sweetheart. ",
@@ -136,7 +136,7 @@
   ]|random }}
 {%- endmacro -%}
 
-{%- macro greeting_line() %}
+{%- macro _greeting_line() %}
   {%- if now().hour < 10  %}
     Good morning.
   {%- elif now().hour < 17 %}
@@ -146,20 +146,20 @@
   {%- endif %}
 {%- endmacro %}
 
-{%- macro holiday() %}
+{%- macro _holiday() %}
   {% if states("sensor.holiday") not in ["unknown",""] %}
     Today is {{ states("sensor.holiday") }}.
   {% endif %}
 {%- endmacro %}
 
-{%- macro inside_weather() %}
+{%- macro _inside_weather() %}
   {%- set temperature = states('sensor.home_thermostat_temperature')|int(default=0) %}
   {%- if temperature > 0 %}
     Inside the house, it is {{ temperature }} degrees.
   {%- endif %}
 {%- endmacro %}
 
-{%- macro outside_weather() -%}
+{%- macro _outside_weather() -%}
   {%- set conditions = {
     "clear-night": "clear night skies",
     "partlycoudly": "mostly cloudy skies",
@@ -173,35 +173,35 @@
   with {{ condition }}. {{ states("sensor.forecast") }}
 {%- endmacro -%}
 
-{%- macro random_pet() %}
+{%- macro _random_pet() %}
   {{ ["Bailey", "Parker"] | random }}
 {%- endmacro %}
 
-{%- macro welcome_home(person) %}
+{%- macro _welcome_home(person) %}
   {%- if person is defined and person != "" %}
     {{ [
     "Welcome back home " ~ person ~ ".",
-    "Guess who is home?   " ~ person ~ " is!",
+    "Guess who is home? " ~ person ~ " is!",
     person ~ " is now in the house.",
-    "Welcome Home " ~ person ~ ".  We have missed you.  I know " ~ random_pet() ~ " sure did.",
+    "Welcome Home " ~ person ~ ".  We have missed you.  I know " ~ _random_pet() ~ " sure did.",
     "Our home is now complete, Rest your head and relax your feet! Welcome Back " ~ person ~ ".",
     "Life is like a song, you're back where you belong. Welcome home " ~ person ~ ".",
     "Hey there " ~ person ~ " Welcome Home!",
-    "Knock Knock.   Who is There?  " ~ person ~ " is!",
+    "Knock Knock. Who is There? " ~ person ~ " is!",
     "The garage door just told me that "   ~ person ~ " is home.",
     person ~ " can not hide from the system.  Welcome home.",
-    person ~ "!  You are home!",
-    "I know a secret! "  ~ person ~ " is home!",
-    "Hey "  ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
-    "Take note " ~ random_pet() ~ "!   "  ~ person ~ " is home.",
-    "I am sensing a disturbance in the force.  "  ~ person ~ " must be home!",
-    "And the house becomes a home.   Welcome back " ~ person ~ ".",
-    person ~ " is now here.   Hash tag Welcome Home.",
-    person ~ " is now here.   Hash tag Home.",
-    person ~ " is now here.   Hash tag Smart Home.",
+    person ~ "! You are home!",
+    "I know a secret! " ~ person ~ " is home!",
+    "Hey " ~ person ~ ". Your arrival has been recorded by the Smartest house on the block.",
+    "Take note " ~ _random_pet() ~ "!   " ~ person ~ " is home.",
+    "I am sensing a disturbance in the force. " ~ person ~ " must be home!",
+    "And the house becomes a home. Welcome back " ~ person ~ ".",
+    person ~ " is now here. Hash tag Welcome Home.",
+    person ~ " is now here. Hash tag Home.",
+    person ~ " is now here. Hash tag Smart Home.",
     "Just a quick announcement. " ~ person ~ " has arrived!",
     "Pardon the interruption but " ~ person ~ " is home!",
-    "My systems are picking up the presence of additional humans.   " ~ person ~ " has been identified as home."
+    "My systems are picking up the presence of additional humans. " ~ person ~ " has been identified as home."
     ] | random }}
   {%- endif %}
 {% endmacro %}
@@ -228,31 +228,31 @@
 
     {# Output starts here. #}
     {%- if say_greeting|default(false) == true %}
-      {{ greeting_line() }}
+      {{ _greeting_line() }}
 
-      {{ holiday() }}
+      {{ _holiday() }}
     {%- endif %}
 
     {%- if say_welcome_home|default(false) %}
-      {{ welcome_home(person_arriving) }}
+      {{ _welcome_home(person_arriving) }}
     {%- endif %}
 
     {{ message|default("") }}
 
     {%- if say_inside_weather|default(false) == true %}
-      {{ inside_weather() }}
+      {{ _inside_weather() }}
     {%- endif %}
 
     {%- if say_outside_weather|default(false) == true %}
-      {{ outside_weather() }}
+      {{ _outside_weather() }}
     {%- endif %}
 
     {%- if say_goodbye|default(false) == true %}
-      {{ " " ~ goodbye_line() }}
+      {{ " " ~ _goodbye_line() }}
     {%- endif %}
 
     {%- if say_goodnight|default(false) == true %}
-      {{ " " ~ goodnight_line() }}
+      {{ " " ~ _goodnight_line() }}
     {%- endif -%}
   {% endfilter %}
 {%- endmacro %}
