@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **36,814** | 1,312 | 37 | 97 | 56 |
+| **36,681** | 1,307 | 37 | 97 | 56 |
 
 # Index
 
@@ -238,18 +238,18 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1312 total entities**,
-including **670 sensors**. My YAML
-files contain 36,814 lines of code.
+Our Home Assistant install has approximately **1307 total entities**,
+including **665 sensors**. My YAML
+files contain 36,681 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
-## [Adaptive Lighting v1.10.1](https://github.com/basnijholt/adaptive-lighting#readme)
+## [Adaptive Lighting v1.11.0](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra), [@th3w1zard1](https://github.com/th3w1zard1).
 
 ## [Anniversaries v5.2.0](https://github.com/pinkywafer/Anniversaries)
 Anniversary Countdown Sensor for Home AssistantAuthors:[@pinkywafer](https://github.com/pinkywafer).
 
-## [Browser mod v2.2.0](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
+## [Browser mod v2.2.1](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
 
 
 ## [Eight Sleep Climate v2.0.0](https://github.com/amosyuen/ha-eight-sleep-climate)
@@ -270,7 +270,7 @@ Authors:[@ludeeus](https://github.com/ludeeus).
 ## [Google Home v1.9.17](https://github.com/leikoilja/ha-google-home)
 Home Assistant Google Home custom componentAuthors:[@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
-## [Home Assistant Community Store (HACS) v1.31.0](https://hacs.xyz/docs/configuration/start)
+## [Home Assistant Community Store (HACS) v1.32.1](https://hacs.xyz/docs/configuration/start)
 HACS gives you a powerful UI to handle downloads of all your custom needs.Authors:[@ludeeus](https://github.com/ludeeus).
 
 ## [HASS.Agent v2022.11.9](https://github.com/LAB02-Research/HASS.Agent-Integration)
@@ -297,7 +297,7 @@ Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo6
 ## [Simple Wyze Vacuum v1.8.1](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
-## [SmartThinQ LGE Sensors v0.31.4](https://github.com/ollo69/ha-smartthinq-sensors)
+## [SmartThinQ LGE Sensors v0.31.5](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
 ## [Sun2 v2.2.1](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
@@ -350,7 +350,7 @@ Flipdown Timer Card for Home Assistant Lovelace
 ## [Frigate Card v4.0.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
-## [Kiosk Mode v1.8.1](https://github.com/NemesisRE/kiosk-mode)
+## [Kiosk Mode v1.8.2](https://github.com/NemesisRE/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 ## [Layout Card v2.4.4](https://github.com/thomasloven/lovelace-layout-card)
@@ -435,7 +435,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.4.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.4.2-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -445,7 +445,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,814-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,681-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg
