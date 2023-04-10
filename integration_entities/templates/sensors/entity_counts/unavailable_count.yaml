@@ -13,7 +13,6 @@ attributes:
           ["camera.glowforge"]
           +integration_entities("google_home")
           +integration_entities("hass_agent")
-          +integration_entities("Octoprint")
           +integration_entities("sensibo")
           +integration_entities("upnp_availability")
           +integration_entities("uptime_kuma")
@@ -22,5 +21,6 @@ attributes:
       | map(attribute="entity_id")
       | reject("is_hidden_entity")
       | reject("search","blackpc")
+      | reject("search","octoprint")
       | list
     }}

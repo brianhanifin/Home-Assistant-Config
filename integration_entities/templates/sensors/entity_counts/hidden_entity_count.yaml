@@ -4,7 +4,13 @@ name: Hidden entity count
 icon: mdi:eye-off
 state_class: total
 state:  |
-  {{ this.attributes.entities|count }}
+  {{ this.attributes.entities | count | default(0) }}
 attributes:
   entities: |
-    {{ states | map(attribute="entity_id") | select("is_hidden_entity") | sort | list }}
+    {{
+      states
+      | map(attribute="entity_id")
+      | select("is_hidden_entity")
+      | list
+      | sort
+    }}

@@ -4,9 +4,16 @@ name: Doors open
 icon: mdi:door-open
 state_class: total
 state: |
-  {{ this.attributes.open_doors | count | default(0) }}
+  {{ this.attributes.entities | count | default(0) }}
 attributes:
-  open_doors: |
-    {%- set doors = state_attr("binary_sensor.house_doors","entity_id") | sort() %}
-    {%- set open_doors = states.binary_sensor | selectattr("entity_id","in",doors) | selectattr("state","eq","on") | map(attribute="entity_id") | list %}
-    {{ open_doors }}
+  entities: |
+    {{
+      states.binary_sensor
+      | selectattr(
+          "entity_id","in",state_attr("binary_sensor.house_doors","entity_id")
+        )
+      | selectattr("state","eq","on")
+      | map(attribute="entity_id")
+      | list
+      | sort
+    }}

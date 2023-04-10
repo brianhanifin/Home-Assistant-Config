@@ -9,10 +9,10 @@ attributes:
   updates_available: |
     {{
       states.update
-        | selectattr("attributes.supported_features","defined")
-        | selectattr("attributes.supported_features","eq",25)
-        | selectattr("state","eq","on")
-        | selectattr("attributes.skipped_version","eq",none)
-        | map(attribute="attributes.title")
-        | list
+      | selectattr("attributes.supported_features","defined")
+      | selectattr("attributes.supported_features","eq",25)
+      | selectattr("state","eq","on")
+      | selectattr("attributes.skipped_version","eq",none)
+      | map(attribute="entity_id")
+      | list
     }}

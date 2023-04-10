@@ -6,7 +6,19 @@ state_class: total
 state: |
   {{ this.attributes.entities | count }}
 attributes:
-  names: |
-    {{ states.timer | selectattr("state","eq","active") | sort(attribute="name") | map(attribute="name") | reject('is_hidden_entity') | list }}
   entities: |
-    {{ states.timer | selectattr("state","eq","active") | sort(attribute="name") | map(attribute="entity_id") | reject('is_hidden_entity') | list }}
+    {{
+      states.timer
+      | selectattr("state","eq","active")
+      | sort(attribute="name")
+      | map(attribute="entity_id")
+      | reject('is_hidden_entity')
+      | list
+    }}
+  names: |
+    {{
+      expand(this.attributes.entities)
+      | map(attribute="name")
+      | list
+      | sort
+    }}

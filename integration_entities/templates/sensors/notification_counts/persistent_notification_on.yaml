@@ -7,4 +7,9 @@ state: |
   {{ this.attributes.entities | count }}
 attributes:
   entities: |
-    {{ states.persistent_notification | map(attribute="entity_id") | sort | list }}
+    {{
+      states.persistent_notification
+      | map(attribute="entity_id")
+      | list
+      | sort
+    }}

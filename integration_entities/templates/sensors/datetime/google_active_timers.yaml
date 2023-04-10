@@ -4,7 +4,7 @@ name: Google active timers
 icon: mdi:timer-settings-outline
 state: |
   {%- set timers = namespace(sensors="") %}
-  {%- set sensors = states.sensor | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
+  {%- set sensors = states.sensor | selectattr("state","ne","unavailable") | map(attribute="object_id") | list %}
   {%- if sensors is not none %}
     {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") and sensor != "google_active_timers" %}
       {%- set timers.sensors = timers.sensors ~" "~ sensor|replace("google_","")|replace("_timers","") %}
@@ -15,7 +15,7 @@ state: |
 attributes:
   sensors: |
     {%- set timers = namespace(sensors="") %}
-    {%- set sensors = states.sensor | selectattr("state","ne","unavailable") | map(attribute='object_id') | list %}
+    {%- set sensors = states.sensor | selectattr("state","ne","unavailable") | map(attribute="object_id") | list %}
     {%- if sensors is not none %}
       {%- for sensor in sensors if sensor.endswith("timers") and sensor.startswith("google") and sensor != "google_active_timers" %}
         {%- set timers.sensors = timers.sensors ~" sensor."~ sensor %}
@@ -52,10 +52,10 @@ attributes:
     {%- if sensors is not none %}
       {%- set active_sensors = sensors.split(", ") %}
       {%- for sensor in active_sensors %}
-        {%- set active_timers = states.sensor | selectattr('entity_id','eq',sensor) | map(attribute="attributes.timers") | list %}
+        {%- set active_timers = states.sensor | selectattr("entity_id","eq",sensor) | map(attribute="attributes.timers") | list %}
         {%- if active_timers|count > 0 %}
           {%- for timer in active_timers[0] %}
-            {%- set storage.timers = storage.timers ~ '{' %}
+            {%- set storage.timers = storage.timers ~ "{" %}
             {%- set storage.timers = storage.timers ~ '"end_time":"' ~ timer.local_time_iso ~'",' %}
             {%- set storage.timers = storage.timers ~ '"duration":"' ~ timer.duration ~'",' %}
             {%- set storage.timers = storage.timers ~ '"label":"' ~ friendly_label(timer.label, timer.duration) ~'",' %}

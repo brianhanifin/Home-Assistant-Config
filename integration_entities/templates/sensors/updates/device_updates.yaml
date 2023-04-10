@@ -7,7 +7,12 @@ state: |
   {{ this.attributes.updates_available | count }}
 attributes:
   updates_available: |
-    {%- set addon_entities = integration_entities("Home Assistant Supervisor") %}
-    {%- set hacs_entities = integration_entities("hacs") %}
-    {%- set already_counted_entities = expand(addon_entities, hacs_entities) | join(",","entity_id") %}
-    {{ states.update | rejectattr("entity_id","in",already_counted_entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="entity_id") | list }}
+    {{
+      states.update
+      | selectattr("attributes.supported_features","defined")
+      | selectattr("attributes.supported_features","eq",1)
+      | selectattr("state","eq","on")
+      | selectattr("attributes.skipped_version","eq",none)
+      | map(attribute="entity_id")
+      | list
+    }}

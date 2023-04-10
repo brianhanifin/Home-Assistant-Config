@@ -8,7 +8,12 @@ state: |
 attributes:
   watchers: |
     {%- set plex = namespace(output="") %}
-    {%- set watchers = states.sensor.plex.attributes | list | reject("in",["friendly_name","icon","unit_of_measurement"]) | list %}
+    {%-
+      set watchers = states.sensor.plex.attributes
+          | list
+          | reject("in",["friendly_name","icon","unit_of_measurement"])
+          | list
+    %}
     {%- for watcher in watchers %}
       {%- set content = states.sensor.plex.attributes[watcher] %}
       {%- set content = content.split(" - ")[1] | default(content) %}

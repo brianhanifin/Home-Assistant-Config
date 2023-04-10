@@ -201,6 +201,11 @@
     event: sunrise
     offset: +00:15:00
   action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.adaptive_lighting_home_entry
+    alias: Turn off adaptive lighting control temporarily.
+    data: {}
   - service: light.turn_off
     data:
       transition: 10
@@ -218,24 +223,11 @@
     data: {}
     target:
       entity_id: light.driveway_flood_accent
-  - if:
-    - condition: state
+  - service: switch.turn_on
+    target:
       entity_id: switch.adaptive_lighting_home_entry
-      state: 'on'
-    then:
-    - service: switch.turn_off
-      target:
-        entity_id: switch.adaptive_lighting_home_entry
-      alias: Turn off adaptive lighting control temporarily.
-      data: {}
-    - delay:
-        seconds: 1
-    - service: switch.turn_on
-      target:
-        entity_id: switch.adaptive_lighting_home_entry
-      alias: Turn adaptive lighting control back on.
-      data: {}
-    alias: Restore adaptive lighting automated control.
+    alias: Turn adaptive lighting control back on.
+    data: {}
 - id: '1640128623256'
   alias: 'Maintenance: lights before sunset'
   description: ''
@@ -317,13 +309,12 @@
         data:
           transition: 0
         target:
-          device_id: fb55d58ca0d8f8285ebe051953b9bdcc
+          entity_id: light.bedroom_table_lamp
       button_2_double:
       - service: light.toggle
-        data:
-          transition: 0
+        data: {}
         target:
-          device_id: fb55d58ca0d8f8285ebe051953b9bdcc
+          entity_id: light.bedroom_table_lamp
       button_3_single:
       - service: fan.toggle
         data: {}
@@ -395,7 +386,7 @@
         data: {}
         target:
           entity_id: fan.bedroom
-        alias: Toogle fan on/off.
+        alias: Toggle fan on/off.
       button_4_single:
       - service: switch.toggle
         target:
@@ -3164,9 +3155,9 @@
     entity_id:
     - sensor.octoprint_current_state
   condition:
-  - condition: time
-    after: 08:00:00
-    before: '20:00:00'
+  - condition: state
+    entity_id: binary_sensor.noncritical_alert_quiet_time
+    state: 'off'
   action:
   - variables:
       state: '{{ states("sensor.octoprint_current_state") }}
@@ -3174,8 +3165,8 @@
         '
       message: "{% if is_state(\"binary_sensor.octoprint_printing_error\",\"on\")
         %}\n  Your 3D print has paused with an error.\n{% elif state in [\"pausing\",\"paused\"]
-        %}\n  Your 3D print has paused.\n{% else %}\n  Your 3D print is complete.\n{%
-        endif %}\n"
+        %}\n  Your 3D print has paused.\n{% else %}\n  3D printer state: {{ state
+        }}.\n{% endif %}\n"
   - service: script.notify_mobile
     data:
       title: 3D print status change

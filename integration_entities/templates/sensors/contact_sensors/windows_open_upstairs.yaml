@@ -4,9 +4,16 @@ name: Windows open upstairs
 icon: mdi:window-open
 state_class: total
 state: |
-  {{ this.attributes.open_windows | count | default(0) }}
+  {{ this.attributes.entities | count | default(0) }}
 attributes:
-  open_windows: |
-    {%- set windows = state_attr("binary_sensor.upstairs_windows","entity_id") %}
-    {%- set open_windows = states.binary_sensor | selectattr("entity_id","in",windows) | selectattr("state","eq","on") | map(attribute="entity_id") | sort() | list %}
-    {{ open_windows }}
+  entities: |
+    {{
+      states.binary_sensor
+      | selectattr(
+          "entity_id","in",state_attr("binary_sensor.upstairs_windows","entity_id")
+        )
+      | selectattr("state","eq","on")
+      | map(attribute="entity_id")
+      | list
+      | sort
+    }}

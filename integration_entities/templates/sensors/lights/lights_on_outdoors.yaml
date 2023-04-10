@@ -6,6 +6,12 @@ state_class: total
 state: |
   {{ this.attributes.lights_on | count | default(0) }}
 attributes:
-  lights_on: |
-    {%- set outdoor_lights = state_attr("group.outdoor_lights","entity_id") %}
-    {{ states.light | selectattr("entity_id","in",outdoor_lights) | selectattr("state","eq","on") | map(attribute="entity_id") | reject('is_hidden_entity') | sort | list }}
+  entities: |
+    {{
+      expand(state_attr("group.outdoor_lights","entity_id"))
+      | selectattr("state","eq","on")
+      | map(attribute="entity_id")
+      | reject('is_hidden_entity')
+      | list
+      | sort
+    }}

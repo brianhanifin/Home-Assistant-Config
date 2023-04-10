@@ -4,21 +4,17 @@ name: Lights on
 icon: mdi:lightbulb-on
 state_class: total
 state: |
-  {{
-    states("sensor.lights_on_downstairs") | int |default(0)
-    + states("sensor.lights_on_upstairs") | int | default(0)
-  }}
+  {{ this.attributes.entities | count | default(0) }}
 attributes:
-  lights_on: |
-    {%- set downstairs_lights = state_attr("sensor.lights_on_downstairs","lights_on") | sort | join("\t") %}
-    {%- set upstairs_lights = state_attr("sensor.lights_on_upstairs","lights_on") | sort | join("\t")%}
-
-    {%- if downstairs_lights|count > 0 and upstairs_lights|count > 0 %}
-      {%- set lights_on = downstairs_lights ~ "\t" ~ upstairs_lights %}
-    {%- elif downstairs_lights|count > 0 %}
-      {%- set lights_on = downstairs_lights %}
-    {%- elif upstairs_lights|count > 0 %}
-      {%- set lights_on = upstairs_lights %}
-    {%- endif %}
-
-    {{- lights_on.split("\t") }}
+  entities: |
+    {{
+      expand(
+        state_attr("group.downstairs_lights","entity_id"),
+        state_attr("group.upstairs_lights","entity_id")
+      )
+      | selectattr("state","eq","on")
+      | map(attribute="entity_id")
+      | reject('is_hidden_entity')
+      | list
+      | sort
+    }}

@@ -6,12 +6,12 @@ state: |
   {% set timers = state_attr("sensor.google_active_timers","timers") %}
   {%- if timers is not none and timers|count > 0 %}
     {%- set timer = timers|first %}
-    {%- if timer.status not in [null,'','[]','unknown','unavailable','none'] %}
-      {%- if timer.status == 'set' %}
+    {%- if timer.status not in [null,"","[]","unknown","unavailable","none"] %}
+      {%- if timer.status == "set" %}
         active
-      {%- elif timer.status == 'paused' %}
+      {%- elif timer.status == "paused" %}
         paused
-      {%- elif timer.status == 'waiting' %}
+      {%- elif timer.status == "waiting" %}
         waiting
       {%- else %}
         idle

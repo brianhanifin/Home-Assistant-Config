@@ -7,5 +7,13 @@ state: |
   {{ this.attributes.updates_available | count }}
 attributes:
   updates_available: |
-    {%- set entities = integration_entities("hacs") %}
-    {{ states.update | selectattr("entity_id","in",entities) | selectattr("state","eq","on") | selectattr("attributes.skipped_version","==",none) | map(attribute="attributes.title") | list }}
+    {{
+      states.update
+      | selectattr("attributes.supported_features","defined")
+      | selectattr("attributes.supported_features","eq",21)
+      | selectattr("state","eq","on")
+      | selectattr("attributes.skipped_version","==",none)
+      | map(attribute="entity_id")
+      | list
+      | sort
+    }}

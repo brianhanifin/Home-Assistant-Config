@@ -6,9 +6,12 @@ state: |
   {{ this.attributes.addons | count }}
 attributes:
   addons: |
-    {%- set data = namespace(addons=[]) %}
-    {%- set entities = states.update | selectattr("attributes.supported_features","defined") | selectattr("attributes.supported_features","eq",25) | list %}
-    {%- for entity in entities %}
-      {%- set data.addons = data.addons + [[entity.name|replace(" Update",""), entity.entity_id]] %}
-    {%- endfor %}
-    {{ data.addons }}
+    {{
+      states.update
+      | selectattr("attributes.supported_features","defined")
+      | selectattr("attributes.supported_features","eq",25)
+      | selectattr("attributes.skipped_version","eq",none)
+      | map(attribute="attributes.friendly_name")
+      | list
+      | replace(" Update","")
+    }}

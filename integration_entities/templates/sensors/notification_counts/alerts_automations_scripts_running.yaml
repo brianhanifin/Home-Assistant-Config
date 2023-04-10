@@ -6,7 +6,19 @@ state_class: total
 state: |
   {{ this.attributes.entities | count }}
 attributes:
-  names: |
-    {{ expand(states.alert, states.automation, states.script) | selectattr("attributes.current","defined") | selectattr("attributes.current","gt",0) | map(attribute="name") | sort | list }}
   entities: |
-    {{ expand(states.alert, states.automation, states.script) | selectattr("attributes.current","defined") | selectattr("attributes.current","gt",0) | map(attribute="entity_id") | sort | list }}
+    {{
+      expand(states.alert, states.automation, states.script)
+      | selectattr("attributes.current","defined")
+      | selectattr("attributes.current","gt",0)
+      | map(attribute="entity_id")
+      | list
+      | sort
+    }}
+  names: |
+    {{
+      expand(this.attributes.entities)
+      | map(attribute="name")
+      | list
+      | sort
+    }}

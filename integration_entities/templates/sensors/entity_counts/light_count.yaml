@@ -4,8 +4,22 @@ name: Light count
 icon: mdi:lightbulb-multiple
 state_class: total
 state: |
-  {{ states.light|map(attribute="entity_id")|reject("is_hidden_entity")|list|count }}
+  {{ this.attributes.entities | count | default(0) }}
 attributes:
   attribution: State excludes hidden bulbs.
-  hidden: |
-    {{ states.light|map(attribute="entity_id")|select("is_hidden_entity")|list|count }}
+  entities: |
+    {{
+      states.light
+      | map(attribute="entity_id")
+      | reject("is_hidden_entity")
+      | list
+      | sort
+    }}
+  hidden_entities: |
+    {{
+      states.light
+      | map(attribute="entity_id")
+      | select("is_hidden_entity")
+      | list
+      | sort
+    }}
