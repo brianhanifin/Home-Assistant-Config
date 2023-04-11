@@ -2,7 +2,7 @@
 unique_id: weather_icon
 name: Weather icon
 state: |
-  {%- set weather = namespace(icon="cloud-question-outline") %}
+  {% set weather = namespace(icon="cloud-question-outline") %}
   {%- set current_condition = states("weather.home") %}
   {%- set weather_icons = {
     "weather-sunny": ("clear", "sunny"),
@@ -23,19 +23,21 @@ state: |
     {%- set weather.icon = "mdi:" ~ icon %}
     {%- break %}
   {%- endfor %}
-  {{ weather.icon }}
+  {{- weather.icon }}
 icon: |
   {{ this.state }}
 attributes:
   color: |
-    {% set weather = namespace(color="black") %}
-    {%- set icon = this.state|replace("mdi:","") %}
-    {%- set weather_colors = {
-      "amber": ("weather-sunny", "weather-lightning"),
-      "blue": ("weather-night", "weather-rainy", "weather-pouring", "weather-hail")
-    } %}
+    {% set weather = namespace(color="disabled") %}
+    {%- set icon = this.state | replace("mdi:","") %}
+    {%-
+      set weather_colors = {
+        "amber": ("weather-sunny", "weather-lightning"),
+        "blue": ("weather-night", "weather-rainy", "weather-pouring", "weather-hail")
+      }
+    %}
     {%- for color in weather_colors if icon in weather_colors[color] %}
       {%- set weather.color = color %}
       {%- break %}
     {%- endfor %}
-    {{ weather.color }}
+    {{- weather.color }}
