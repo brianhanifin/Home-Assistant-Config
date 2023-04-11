@@ -1,96 +1,76 @@
 {#-
-day_name_to_number(name)
-  ex. Get the number which represents Thursday.
-  {{ day_name_to_number("Thursday") }}
--#}
-{%- macro day_name_to_number(name=None) -%}
-  {%-
-    set days = {
-      "0": ["Sunday","Sun"],
-      "1": ["Monday","Mon"],
-      "2": ["Tuesday","Tue"],
-      "3": ["Wednesday","Wed"],
-      "4": ["Thursday","Thu"],
-      "5": ["Friday","Fri"],
-      "6": ["Saturday","Sat"]
-    }
-  %}
-  {%- for day_number in days %}
-    {#- When day name is matched, return the day number. #}
-    {%- if name in days[day_number] %}
-      {{ day_number }}
-      {%- break %}
-    {#- When no match is made, return "Unknown" value. #}
-    {%- elif loop.last %}
-      {{- "Unknown" }}
-    {%- endif %}
-  {%- endfor %}
-{%- endmacro -%}
-
-{#-
 last_day_of_month(month, year)
   ex. Get the last day of February 2024.
   {{ last_day_of_month(2, 2024) }}
 -#}
 {%- macro last_day_of_month(month=None,year=now().year) -%}
-  {%- set days_in_months = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
+  {%- if month != None %}
+    {%- set days_in_months = [31,28,31,30,31,30,31,31,30,31,30,31] -%}
 
-  {#- Simplified leap year calculation. See https://www.mathsisfun.com/leap-years.html #}
-  {%- set is_leap_year = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) -%}
+    {#- Simplified leap year calculation. See https://www.mathsisfun.com/leap-years.html #}
+    {%- set is_leap_year = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) -%}
 
-  {%- set month_index = month-1 -%}
-  {%- if month == 2 and is_leap_year -%}
-    {{- days_in_months[month_index]+1 }}
-  {%- else -%}
-    {{- days_in_months[month_index] }}
+    {%- set month_index = month-1 -%}
+    {%- if month == 2 and is_leap_year -%}
+      {{- days_in_months[month_index]+1 }}
+    {%- else -%}
+      {{- days_in_months[month_index] }}
+    {%- endif -%}
   {%- endif -%}
 {%- endmacro -%}
 
 {#-
-nth_day_of_month(nth, day_of_week, month, year)
+nth_day_of_month(nth, day_name, month, year)
   ex. Get the nth Monday of May.
   1st: {{ nth_day_of_month(1, "Monday", 5) }}
   2nd: {{ nth_day_of_month(2, "Monday", 5, 2020) }}
   Last: {{ nth_day_of_month("last", "Monday", 5) }}
 Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
 -#}
-{%- macro nth_day_of_month(nth=None,day_of_week=None,month=None,year=now().year) -%}
-  {%- set day_of_week = day_name_to_number(day_of_week)|int -%}
-  {%- set firstdateofmonth = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") -%}
-  {%- set first_day_of_month = day_name_to_number(firstdateofmonth.strftime("%A"))|int -%}
+{%- macro nth_day_of_month(nth=None,day_name=None,month=None,year=now().year) -%}
+  {%- if nth!=None and day_name!=None and month!=None%}
+    {%- set day_of_week = _day_name_to_weekday_number(day_name)|int -%}
+    {%- set first_date_of_month = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") -%}
+    {%- set first_day_of_month = _day_name_to_weekday_number(first_date_of_month.strftime("%A"))|int -%}
 
-  {#- Determine the first occurrence of the day. #}
-  {%- if first_day_of_month == 1 -%}
-    {%- set first_occurrence = day_of_week -%}
-  {%- elif first_day_of_month < day_of_week -%}
-    {%- set first_occurrence = (day_of_week - day_name_to_number(first_day_of_month)) -%}
-  {%- else -%}
-    {%- set first_occurrence = (7 - first_day_of_month + day_of_week) + 1 -%}
-  {%- endif -%}
+    {%- if day_of_week is defined and day_of_week != "Unknown" %}
+      {%- set day_of_week = day_of_week|int %}
+      {%- set first_day_of_month = first_day_of_month|int %}
 
-  {%- if nth is number -%}
-    {#- Determine the nth occurrence of the day_of_week. #}
-    {%- set nth_occurrence = first_occurrence + 7 * (nth-1) -%}
-  {%- else -%}
-    {#-
-    Determine the LAST occurrence of the day_of_week.
-    Reference: https://cflib.org/udf/GetLastOccOfDayInMonth
-    #}
-    {%- set last_day_of_month = last_day_of_month(month, year)|int -%}
-    {%- set last_day_name = strptime(year ~"-"~ month ~"-"~ last_day_of_month, "%Y-%m-%d").strftime("%A") -%}
-    {%- set last_day_number = day_name_to_number(last_day_name)|int -%}
-    {%- set day_difference = last_day_number - day_of_week -%}
+      {#- Determine the first occurrence of the day. #}
+      {%- if first_day_of_month == 1 -%}
+        {%- set first_occurrence = day_of_week -%}
+      {%- elif first_day_of_month < day_of_week -%}
+        {%- set first_occurrence = (day_of_week - _day_name_to_weekday_number(first_day_of_month)) -%}
+      {%- else -%}
+        {%- set first_occurrence = (7 - first_day_of_month + day_of_week) + 1 -%}
+      {%- endif -%}
 
-    {#- Add a week if the result is negative. #}
-    {%- if day_difference < 0 -%}
-      {%- set day_difference = day_difference + 7 -%}
-    {%- endif -%}
+      {%- if nth is number -%}
+        {#- Determine the nth occurrence of the day_of_week. #}
+        {%- set nth_occurrence = first_occurrence + 7 * (nth-1) -%}
+      {%- else -%}
+        {#-
+        Determine the LAST occurrence of the day_of_week.
+        Reference: https://cflib.org/udf/GetLastOccOfDayInMonth
+        #}
+        {%- set last_day_of_month = last_day_of_month(month, year)|int -%}
+        {%- set last_day_name = strptime(year ~"-"~ month ~"-"~ last_day_of_month, "%Y-%m-%d").strftime("%A") -%}
+        {%- set last_day_number = _day_name_to_weekday_number(last_day_name)|int -%}
+        {%- set day_difference = last_day_number - day_of_week -%}
 
-    {%- set nth_occurrence = last_day_of_month - day_difference -%}
-  {%- endif -%}
+        {#- Add a week if the result is negative. #}
+        {%- if day_difference < 0 -%}
+          {%- set day_difference = day_difference + 7 -%}
+        {%- endif -%}
 
-  {#- Return the day with the month and year so it can be useful. #}
-  {{- strptime(month ~"/"~ nth_occurrence ~"/"~ year, "%m/%d/%Y") }}
+        {%- set nth_occurrence = last_day_of_month - day_difference -%}
+      {%- endif -%}
+
+      {#- Return the day with the month and year so it can be useful. #}
+      {{- strptime(month ~"/"~ nth_occurrence ~"/"~ year, "%m/%d/%Y") }}
+    {%- endif %}
+  {%- endif %}
 {%- endmacro -%}
 
 {#-
@@ -118,3 +98,37 @@ list_of_dates(months, year)
 
   {{- loop_storage.list }}
 {%- endmacro %}
+
+{#-
+_day_name_to_weekday_number(name)
+  ex. Get the number which represents Thursday.
+  {{ _day_name_to_weekday_number("Thursday") }}
+
+INTERNAL USE ONLY. Use date.weekday() to get local day of week numbers.
+-#}
+{%- macro _day_name_to_weekday_number(day_name=None) -%}
+  {%- if day_name != None %}
+    {%- set day_name = day_name | title %}
+    {%-
+      set days = {
+        "0": ["Monday","Mon"],
+        "1": ["Tuesday","Tue"],
+        "2": ["Wednesday","Wed"],
+        "3": ["Thursday","Thu"],
+        "4": ["Friday","Fri"],
+        "5": ["Saturday","Sat"],
+        "6": ["Sunday","Sun"]
+      }
+    %}
+    {%- for day_number in days %}
+      {#- When day name is matched, return the day number. #}
+      {%- if day_name in days[day_number] %}
+        {{ day_number }}
+        {%- break %}
+      {#- When no match is made, return "Unknown" value. #}
+      {%- elif loop.last %}
+        {{- "Unknown" }}
+      {%- endif %}
+    {%- endfor %}
+  {%- endif %}
+{%- endmacro -%}
