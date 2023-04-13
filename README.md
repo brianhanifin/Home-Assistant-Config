@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **36,681** | 1,307 | 37 | 97 | 56 |
+| **36,692** | 1,310 | 37 | 97 | 57 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1307 total entities**,
-including **665 sensors**. My YAML
-files contain 36,681 lines of code.
+Our Home Assistant install has approximately **1310 total entities**,
+including **667 sensors**. My YAML
+files contain 36,692 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.11.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -258,7 +258,7 @@ Climate entity for controlling eight sleep bedAuthors:[@amosyuen](https://github
 ## [Fontawesome icons v2.1.5](https://github.com/thomasloven/hass-fontawesome)
 
 
-## [Frigate v4.0.0-beta4](https://github.com/blakeblackshear/frigate)
+## [Frigate v4.0.0](https://github.com/blakeblackshear/frigate)
 Frigate integration for Home AssistantAuthors:[@blakeblackshear](https://github.com/blakeblackshear).
 
 ## [GE Home (SmartHQ) v0.6.6](https://github.com/simbaja/ha_gehome)
@@ -294,10 +294,10 @@ Authors:[@ryanwinter](https://github.com/ryanwinter).
 ## [SamsungTV Smart v0.11.6](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
-## [Simple Wyze Vacuum v1.8.1](https://github.com/romedtino/simple-wyze-vac)
+## [Simple Wyze Vacuum v1.8.2](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
-## [SmartThinQ LGE Sensors v0.31.5](https://github.com/ollo69/ha-smartthinq-sensors)
+## [SmartThinQ LGE Sensors v0.31.6](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
 ## [Sun2 v2.2.1](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
@@ -350,7 +350,7 @@ Flipdown Timer Card for Home Assistant Lovelace
 ## [Frigate Card v4.0.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
-## [Kiosk Mode v1.8.2](https://github.com/NemesisRE/kiosk-mode)
+## [Kiosk Mode v1.8.3](https://github.com/NemesisRE/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 ## [Layout Card v2.4.4](https://github.com/thomasloven/lovelace-layout-card)
@@ -435,7 +435,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.4.2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.4.3-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -445,7 +445,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,681-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,692-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

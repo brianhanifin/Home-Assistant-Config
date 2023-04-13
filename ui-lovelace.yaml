@@ -401,28 +401,17 @@ decluttering_templates:
                       style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
-                      template: '{{ state_attr("sensor.windows_open_downstairs", "open_windows")
+                      template: '{{ state_attr("sensor.windows_open_downstairs", "entities")
                         }}'
                     show_empty: false
                     sort:
                       method: name
                     type: custom:auto-entities
                   - card:
-                      columns: 3
-                      show_header_toggle: false
-                      show_name: true
-                      show_state: false
                       style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
-                      exclude:
-                      - state: closed
-                      - state: locked
-                      - state: 'off'
-                      - state: unknown
-                      - state: unavailable
-                      include:
-                      - group: group.entry_doors
+                      template: '{{ state_attr("sensor.doors_open", "entities") }}'
                     show_empty: false
                     sort:
                       method: name
@@ -433,7 +422,7 @@ decluttering_templates:
                       style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
-                      template: '{{ state_attr("sensor.windows_open_upstairs", "open_windows")
+                      template: '{{ state_attr("sensor.windows_open_upstairs", "entities")
                         }}'
                     show_empty: false
                     sort:
@@ -1157,7 +1146,7 @@ views:
                               data: {}
                               service: script.turn_on
                               target:
-                                entity_id: script.refresh_entity_count_sensors
+                                entity_id: script.refresh_entity_problem_sensors
                             type: template
                           type: custom:mushroom-chips-card
                         - entity: sensor.unknown_count
@@ -1584,8 +1573,9 @@ views:
           fill_container: true
           media_controls:
           - play_pause_stop
+          - on_off
           name: Apple TV
-          show_volume_level: true
+          show_volume_level: false
           tap_action:
             action: call-service
             service: media_player.toggle
@@ -1594,9 +1584,7 @@ views:
               entity_id: media_player.family_room_tv
           type: custom:mushroom-media-player-card
           use_media_info: true
-          volume_controls:
-          - volume_buttons
-          - volume_mute
+          volume_controls: []
         columns: 2
         square: false
         type: grid
@@ -2579,35 +2567,30 @@ views:
       - cards:
         - subtitle: Cameras
           type: custom:mushroom-title-card
-        - tabs:
-          - attributes:
-              icon: mdi:car
-            card:
-              camera_image: camera.driveway_restream
-              camera_view: live
-              entity: camera.driveway_restream
-              show_name: false
-              show_state: false
-              type: picture-entity
-          - attributes:
-              icon: mdi:door
-            card:
-              camera_image: camera.front_door_restream
-              camera_view: live
-              entity: camera.front_door_restream
-              show_name: false
-              show_state: false
-              type: picture-entity
-          - attributes:
-              icon: mdi:bell-circle
-            card:
-              camera_image: camera.doorbell_restream
-              camera_view: live
-              entity: camera.doorbell_restream
-              show_name: false
-              show_state: false
-              type: picture-entity
-          type: custom:tabbed-card
+        - cameras:
+          - camera_entity: camera.driveway_restream
+            id: driveway
+            live_provider: auto
+          - camera_entity: camera.front_door_restream
+            id: frontdoor
+            live_provider: auto
+          - camera_entity: camera.doorbell_restream
+            id: doorbell
+            live_provider: auto
+          dimensions:
+            aspect_ratio_mode: static
+          live:
+            auto_play: all
+            draggable: false
+            preload: true
+            show_image_during_load: false
+            transition_effect: slide
+          type: custom:frigate-card
+          view:
+            dark_mode: 'off'
+            default: live
+            update_cycle_camera: false
+            update_force: false
         type: vertical-stack
       - cards:
         - camera_view: auto
