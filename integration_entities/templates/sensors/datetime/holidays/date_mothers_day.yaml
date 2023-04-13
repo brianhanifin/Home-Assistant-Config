@@ -1,14 +1,9 @@
 ---
-# platform: rest
-# name: date_mothers
-# resource: !secret wolframalpha_date_mothers
-# scan_interval: 2592000 # 86400 seconds * 30 days
-# value_template: "{{ value|replace(' (Unix time)','')|int(default=0)|timestamp_custom('%Y-%m-%d') }}"
 unique_id: date_mothers
 name: "Mother's day"
 icon: mdi:human-female-boy
 state: |
-  {%- from "date_helpers.jinja" import nth_day_of_month %}
+  {%- from "brianhanifin_date_helpers.jinja" import nth_day_of_month %}
 
   {%- set event_nth_day = 2 -%}
   {%- set event_day_of_week = "Sunday" -%}

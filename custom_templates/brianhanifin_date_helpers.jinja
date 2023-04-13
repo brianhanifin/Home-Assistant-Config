@@ -20,6 +20,32 @@ last_day_of_month(month, year)
 {%- endmacro -%}
 
 {#-
+list_of_dates(months, year)
+  ex. Get dates off during summer months.
+  This summer: {{ list_of_dates([6,7,8]) }}
+  Summer of 2024: {{ list_of_dates([6,7,8, 2024]) }}
+
+  ex. Get dates off during winter break spanning this year and next.
+  End/beginning of next year: {{ list_of_dates([12,1]) }}
+-#}
+{%- macro list_of_dates(months=[],year=now().year) %}
+  {%- set days = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31] %}
+  {%- set loop_storage = namespace(year=year) %}
+
+  {%- for month in months %}
+    {%- if not loop.first and months[loop.index-2]==12 %}
+      {%- set loop_storage.year = loop_storage.year + 1 %}
+    {%- endif %}
+    {%- set last_day = last_day_of_month(month, loop_storage.year)|int %}
+    {%- for day in days if day <= last_day %}
+      {%- set loop_storage.list = loop_storage.list + ["%04d-%02d-%02d"|format(loop_storage.year, month, day)] %}
+    {%- endfor %}
+  {%- endfor %}
+
+  {{- loop_storage.list }}
+{%- endmacro %}
+
+{#-
 nth_day_of_month(nth, day_name, month, year)
   ex. Get the nth Monday of May.
   1st: {{ nth_day_of_month(1, "Monday", 5) }}
@@ -28,10 +54,10 @@ nth_day_of_month(nth, day_name, month, year)
 Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-day-of-the-week-for-a-given-month.htm
 -#}
 {%- macro nth_day_of_month(nth=None,day_name=None,month=None,year=now().year) -%}
-  {%- if nth!=None and day_name!=None and month!=None%}
-    {%- set day_of_week = _day_name_to_weekday_number(day_name)|int -%}
+  {%- if nth!=None and day_name!=None and month!=None %}
+    {%- set day_of_week = _day_name_to_weekday_number(day_name) -%}
     {%- set first_date_of_month = strptime(year ~"-"~ month ~"-1", "%Y-%m-%d") -%}
-    {%- set first_day_of_month = _day_name_to_weekday_number(first_date_of_month.strftime("%A"))|int -%}
+    {%- set first_day_of_month = _day_name_to_weekday_number(first_date_of_month.strftime("%A")) -%}
 
     {%- if day_of_week is defined and day_of_week != "Unknown" %}
       {%- set day_of_week = day_of_week|int %}
@@ -41,7 +67,8 @@ Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-da
       {%- if first_day_of_month == 1 -%}
         {%- set first_occurrence = day_of_week -%}
       {%- elif first_day_of_month < day_of_week -%}
-        {%- set first_occurrence = (day_of_week - _day_name_to_weekday_number(first_day_of_month)) -%}
+        {#%- set first_occurrence = (day_of_week - _day_name_to_weekday_number(first_day_of_month)) -%#}
+        {%- set first_occurrence = day_of_week - first_day_of_month %}
       {%- else -%}
         {%- set first_occurrence = (7 - first_day_of_month + day_of_week) + 1 -%}
       {%- endif -%}
@@ -73,62 +100,47 @@ Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-da
   {%- endif %}
 {%- endmacro -%}
 
-{#-
-list_of_dates(months, year)
-  ex. Get dates off during summer months.
-  This summer: {{ list_of_dates([6,7,8]) }}
-  Summer of 2024: {{ list_of_dates([6,7,8, 2024]) }}
-
-  ex. Get dates off during winter break spanning this year and next.
-  End/beginning of next year: {{ list_of_dates([12,1]) }}
--#}
-{%- macro list_of_dates(months=[],year=now().year) %}
-  {%- set days = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31] %}
-  {%- set loop_storage = namespace(year=year) %}
-
-  {%- for month in months %}
-    {%- if not loop.first and months[loop.index-2]==12 %}
-      {%- set loop_storage.year = loop_storage.year + 1 %}
-    {%- endif %}
-    {%- set last_day = last_day_of_month(month, loop_storage.year)|int %}
-    {%- for day in days if day <= last_day %}
-      {%- set loop_storage.list = loop_storage.list + ["%04d-%02d-%02d"|format(loop_storage.year, month, day)] %}
-    {%- endfor %}
-  {%- endfor %}
-
-  {{- loop_storage.list }}
-{%- endmacro %}
-
+{#################
+INTERNAL USE ONLY.
+##################}
+{%-
+  set _days = {
+    0: ["Sunday","Sun"],
+    1: ["Monday","Mon"],
+    2: ["Tuesday","Tue"],
+    3: ["Wednesday","Wed"],
+    4: ["Thursday","Thu"],
+    5: ["Friday","Fri"],
+    6: ["Saturday","Sat"]
+  }
+%}
 {#-
 _day_name_to_weekday_number(name)
   ex. Get the number which represents Thursday.
   {{ _day_name_to_weekday_number("Thursday") }}
-
-INTERNAL USE ONLY. Use date.weekday() to get local day of week numbers.
 -#}
 {%- macro _day_name_to_weekday_number(day_name=None) -%}
+  {%- set days = _days %}
+
   {%- if day_name != None %}
     {%- set day_name = day_name | title %}
-    {%-
-      set days = {
-        "0": ["Monday","Mon"],
-        "1": ["Tuesday","Tue"],
-        "2": ["Wednesday","Wed"],
-        "3": ["Thursday","Thu"],
-        "4": ["Friday","Fri"],
-        "5": ["Saturday","Sat"],
-        "6": ["Sunday","Sun"]
-      }
-    %}
+
     {%- for day_number in days %}
       {#- When day name is matched, return the day number. #}
       {%- if day_name in days[day_number] %}
-        {{ day_number }}
+        {{ day_number|int }}
         {%- break %}
       {#- When no match is made, return "Unknown" value. #}
       {%- elif loop.last %}
-        {{- "Unknown" }}
+        {#{- "Unknown" }#}
+        {{ -1 }}
       {%- endif %}
     {%- endfor %}
   {%- endif %}
 {%- endmacro -%}
+
+{%- macro _weekday_number_to_day_name(weekday_number=None) %}
+  {%- if weekday_number is numeric %}
+    {{ _days.get(weekday_number)[0] }}
+  {%- endif %}
+{%- endmacro %}
