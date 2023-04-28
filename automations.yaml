@@ -1424,10 +1424,7 @@
     - light.family_room_table_lamp
     from: 'off'
     to: 'on'
-  condition:
-  - condition: template
-    value_template: '{{ states("sensor.holiday")|lower not in ['''',''unavailable'']
-      }}'
+  condition: []
   action:
   - service: script.holiday_color_change
     data: {}
@@ -3160,13 +3157,16 @@
     state: 'off'
   action:
   - variables:
-      state: '{{ states("sensor.octoprint_current_state") }}
-
-        '
-      message: "{% if is_state(\"binary_sensor.octoprint_printing_error\",\"on\")
-        %}\n  Your 3D print has paused with an error.\n{% elif state in [\"pausing\",\"paused\"]
-        %}\n  Your 3D print has paused.\n{% else %}\n  3D printer state: {{ state
-        }}.\n{% endif %}\n"
+      state: "{%- set from_state = trigger.from_state.state|lower %}\n{%- set state
+        = trigger.to_state.state|lower %}\n{%- if is_state(\"binary_sensor.octoprint_printing_error\",\"on\")
+        %}\n  error\n{%- elif state == \"unavailable\" and from_state == \"operational\"
+        %}\n  online\n{%- elif state == \"operational\" and from_state == \"unavailable\"
+        %}\n  offline\n{%- elif state == \"operational\" and from_state == \"printing\"
+        %}\n  complete\n{%- elif state in [\"pausing\",\"paused\"] %}\n  paused\n{%-
+        else %}\n  {{ state }}\n{%- endif %}\n"
+      message: "{%- if state == \"error\" %}\n  Your 3D print has paused with an error.\n{%-
+        elif state in [\"paused\",\"complete\"] %}\n  Your 3D print has {{ state }}.\n{%-
+        else %}\n  3D printer is {{ state }}.\n{%- endif %}\n"
   - service: script.notify_mobile
     data:
       title: 3D print status change

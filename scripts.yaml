@@ -348,49 +348,59 @@ holiday_color_change:
         -%}\n      {{ \"birthday\" }}\n    {%- else -%}\n      {{ holiday|replace(\"mothers\",\"valentine\")|replace(\"earth\",\"st_patty\")
         }}\n    {%- endif -%}\n  {%- endif %}\n{%- else -%}\n  {{ \"standard\" }}\n{%-
         endif %}\n"
-  - choose:
-    - conditions:
-      - '{{ holiday != "standard" }}'
-      sequence:
-      - variables:
-          color: '{{ holiday_colors[holiday] }}'
-      - choose:
-        - conditions:
-          - '{{ is_state("light.porch","on") }}'
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id: light.porch
-            data:
-              color_name: '{{ color }}'
-      - choose:
-        - conditions:
-          - '{{ is_state("light.family_room_table_lamp","on") }}'
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id: light.family_room_table_lamp
-            data:
-              color_name: '{{ color }}'
-    default:
-    - choose:
-      - conditions:
-        - '{{ is_state("light.porch","on") }}'
-        sequence:
-        - service: light.turn_on
-          target:
-            entity_id: light.porch
-          data:
-            kelvin: 4000
-    - choose:
-      - conditions:
-        - '{{ is_state("light.family_room_table_lamp","on") }}'
-        sequence:
-        - service: light.turn_on
-          target:
-            entity_id: light.family_room_table_lamp
-          data:
-            kelvin: 4000
+  - if:
+    - alias: When today is a holiday/birthday/anniversary.
+      condition: template
+      value_template: '''{{ holiday != "standard" }}'''
+    then:
+    - variables:
+        color: '{{ holiday_colors[holiday] }}'
+      alias: Retrieve the holiday color.
+    - if:
+      - alias: When the porch light is on.
+        condition: template
+        value_template: '{{ is_state("light.porch","on") }}'
+      then:
+      - alias: Set the porch light color.
+        service: light.turn_on
+        target:
+          entity_id: light.porch
+        data:
+          color_name: '{{ color }}'
+    - if:
+      - alias: When the family room table lamp is on.
+        condition: template
+        value_template: '{{ is_state("light.family_room_table_lamp","on") }}'
+      then:
+      - alias: Set the family room light color.
+        service: light.turn_on
+        target:
+          entity_id: light.family_room_table_lamp
+        data:
+          color_name: '{{ color }}'
+    else:
+    - if:
+      - alias: When the porch light is on.
+        condition: template
+        value_template: '{{ is_state("light.porch","on") }}'
+      then:
+      - alias: Set the porch light color temperature to the default.
+        service: light.turn_on
+        target:
+          entity_id: light.porch
+        data:
+          kelvin: 4000
+    - if:
+      - alias: When the family room table lamp is on.
+        condition: template
+        value_template: '{{ is_state("light.family_room_table_lamp","on") }}'
+      then:
+      - alias: Set the family room table lamp color temperature to the default.
+        service: light.turn_on
+        target:
+          entity_id: light.family_room_table_lamp
+        data:
+          kelvin: 4000
   mode: single
   icon: mdi:palette
 light_sequence:
@@ -1183,7 +1193,7 @@ notify_speech:
           entity_id: input_boolean.guest_mode
           state: 'on'
     then:
-    - service: script.say_cloud
+    - service: script.say_local
       data:
         media_player: '{{ media_player }}'
         message: '{{ message }}'
@@ -1643,7 +1653,7 @@ tts_phrase_say:
       value_template: '{{ message|trim != "" }}'
       alias: When a message is set.
     then:
-    - service: script.say_cloud
+    - service: script.say_local
       data:
         media_player: '{{ smart_speaker }}'
         message: '{{ message }}'
@@ -1674,7 +1684,7 @@ say:
         state: 'off'
       alias: When speech is enabled.
     then:
-    - service: script.say_cloud
+    - service: script.say_local
       data:
         media_player: '{{ media_player }}'
         message: "{%- from \"speech.jinja\" import get_briefing %}\n{{ get_briefing(\n
@@ -1749,7 +1759,7 @@ docker:
   mode: queued
   max: 10
 refresh_entry_problem_sensors:
-  alias: Refresh entry problem sensors
+  alias: Refresh entity problem sensors
   sequence:
   - service: homeassistant.update_entity
     data: {}
@@ -1758,4 +1768,110 @@ refresh_entry_problem_sensors:
       - sensor.unknown_count
       - sensor.unavailable_count
   mode: single
-  icon: mdi:refresh
+  icon: mdi:cog-refresh
+say_local:
+  alias: Say local
+  sequence:
+  - variables:
+      message: '{{ message|striptags }}'
+      media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+      targets: '{{ expand(media_player) | sort(attribute=''name'', reverse=false)
+        | map(attribute=''entity_id'') | list }}'
+      mqtt_message_attributes: "{\n  \"target\": \"{{ media_player }}\",\n  \"targets\":
+        \"{{ targets }}\"\n}\n"
+      volume: "{%- if volume is number %}\n  {%- if volume|float(default=0) > 1.0
+        %}\n    {%- set volume = volume|float(default=0) / 100 %}\n  {%- else %}\n
+        \   {%- set volume = volume|float(default=0) %}\n  {%- endif %}\n{%- else
+        %}\n  {{ states(\"input_number.default_announcement_volume\")|int(default=0)
+        / 100 }}\n{%- endif %}\n"
+  - service: script.debug
+    enabled: false
+    data:
+      message: 'media_player: "{{ media_player }}"
+
+        volume: {{ volume }}
+
+        '
+  - alias: Only speak when there is something to say. ;)
+    if:
+    - condition: template
+      value_template: '{{ message is defined }}'
+      alias: When message is set.
+    then:
+    - if:
+      - condition: template
+        value_template: '{{ not media_player.endswith("pc") }}'
+      then:
+      - alias: Set volume so announcement can be heard.
+        service: media_player.volume_set
+        target:
+          entity_id: '{{ media_player }}'
+        data:
+          volume_level: '{{ volume }}'
+      alias: If not PC set volume so announcement can be heard.
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 1
+        milliseconds: 0
+      enabled: true
+    - service: tts.speak
+      target:
+        entity_id: tts.piper
+      data:
+        cache: true
+        media_player_entity_id: '{{ media_player }}'
+        message: '{{ message }}'
+    - service: script.notify_web
+      data:
+        message: '{{ message }}'
+        duration: 10
+    - alias: Store Last Message.
+      service: script.store_mqtt_sensor
+      data:
+        name: last_message
+        state: '{{ message }}'
+        attributes: '{{ mqtt_message_attributes }}
+
+          '
+    - wait_for_trigger:
+      - platform: template
+        value_template: '{{ states(media_player) == "idle" }}'
+        alias: Wait for the display to be "idle".
+      continue_on_timeout: false
+      alias: Wait for the media players to be "idle".
+      timeout:
+        hours: 0
+        minutes: 1
+        seconds: 0
+        milliseconds: 0
+      enabled: true
+    - service: media_player.turn_off
+      target:
+        entity_id: '{{ media_player }}'
+      alias: Turn off the media players.
+    enabled: true
+  mode: parallel
+  fields:
+    message:
+      description: Include details here.
+      example: The laundry is ready to be moved to the dryer.
+      required: true
+      selector:
+        text:
+          multiline: true
+    media_player:
+      description: Media Player entity_id.
+      example: media_player.google_kitchen
+      default: media_player.google_family_room
+      selector:
+        text:
+    volume:
+      description: Volume level as a percentage (or a decimal from 0 - 1.0)
+      example: 60
+      selector:
+        number:
+          min: 0
+          max: 100
+  max: 10
+  icon: mdi:cloud-cancel-outline
