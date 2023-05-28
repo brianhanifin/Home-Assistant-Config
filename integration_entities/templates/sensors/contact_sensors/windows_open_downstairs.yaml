@@ -4,7 +4,8 @@ name: Windows open downstairs
 icon: mdi:window-open
 state_class: total
 state: |
-  {{ this.attributes.entities | count | default(0) }}
+  {%- set entities = this.attributes.entities|default([]) %}
+  {{ entities | count | default(0) }}
 attributes:
   entities: |
     {{

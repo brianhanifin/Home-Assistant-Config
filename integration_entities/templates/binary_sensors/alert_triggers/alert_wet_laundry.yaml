@@ -4,8 +4,7 @@ name: "Alert: wet laundry"
 icon: mdi:washing-machine-alert
 device_class: problem
 state: |
-  {{
-    this.attributes.quiet_time == "off"
+  {{ this.attributes.quiet_time|default("") == "off"
     and (
       is_state("input_select.laundry_status", "Please transfer to dryer") or
       is_state("input_select.laundry_status", "Waiting for running dryer")

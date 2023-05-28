@@ -55,7 +55,7 @@ attributes:
     {%- set calendar.holidays = calendar.holidays[:(calendar.holidays|length-2)] %}
     {{ calendar.holidays.split("\n")|sort }}
   next_holiday: |
-    {%- set upcoming_holidays = this.attributes.upcoming_holidays %}
+    {%- set upcoming_holidays = this.attributes.upcoming_holidays|default([]) %}
     {%- if upcoming_holidays is not none %}
       {%- set next_holiday = upcoming_holidays[1] %}
       {%- if ":" in next_holiday %}
@@ -63,7 +63,7 @@ attributes:
       {%- endif %}
     {%- endif %}
   next_holiday_date: |
-    {%- set upcoming_holidays = this.attributes.upcoming_holidays %}
+    {%- set upcoming_holidays = this.attributes.upcoming_holidays|default([]) %}
     {%- if upcoming_holidays is not none %}
       {%- set next_holiday = upcoming_holidays[1] %}
       {%- if ":" in next_holiday %}

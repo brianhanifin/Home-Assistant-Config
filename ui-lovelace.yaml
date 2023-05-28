@@ -1675,6 +1675,7 @@ views:
         - entity1: sensor.kitchen_temperature
         - entities:
           - entity: sensor.kitchen_temperature
+            format: precision0
             name: Kitchen
       type: vertical-stack
     - cards:
@@ -1831,19 +1832,32 @@ views:
         title: Garage
         type: custom:mushroom-title-card
       - cards:
+        - collapsible_controls: false
+          entity: fan.workbench_fan
+          type: custom:mushroom-fan-card
+        - entity: cover.garage_door
+          fill_container: true
+          show_buttons_control: false
+          type: custom:mushroom-cover-card
         - collapsible_controls: true
           entity: light.laundry
           fill_container: true
           show_brightness_control: true
           type: custom:mushroom-light-card
           use_light_color: true
-        - entity: cover.garage_door
-          fill_container: true
-          show_buttons_control: false
-          type: custom:mushroom-cover-card
         columns: 2
         square: false
         type: grid
+      - alignment: center
+        chips:
+        - content: Do not disturb
+          entity: switch.google_garage_do_not_disturb
+          icon: mdi:toggle-switch{{ iif(is_state("switch.google_garage_do_not_disturb","off"),
+            "-off", "") }}
+          icon_color: '{{ iif(is_state("switch.google_garage_do_not_disturb","on"),
+            "blue", "grey") }}'
+          type: template
+        type: custom:mushroom-chips-card
       type: vertical-stack
     type: vertical-stack
     view_layout:
@@ -2569,15 +2583,20 @@ views:
           type: custom:mushroom-title-card
         - cameras:
           - camera_entity: camera.driveway_restream
+            hide: false
+            icon: mdi:car
             id: driveway
-            live_provider: auto
+            live_provider: ha
           - camera_entity: camera.front_door_restream
+            icon: mdi:walk
             id: frontdoor
-            live_provider: auto
+            live_provider: ha
           - camera_entity: camera.doorbell_restream
+            icon: mdi:doorbell-video
             id: doorbell
-            live_provider: auto
+            live_provider: ha
           dimensions:
+            aspect_ratio: '19:10'
             aspect_ratio_mode: static
           live:
             auto_play: all
@@ -2585,10 +2604,16 @@ views:
             preload: true
             show_image_during_load: false
             transition_effect: slide
+          menu: {}
+          performance:
+            profile: high
           type: custom:frigate-card
           view:
-            dark_mode: 'off'
+            camera_select: live
+            dark_mode: auto
             default: live
+            scan:
+              enabled: false
             update_cycle_camera: false
             update_force: false
         type: vertical-stack
@@ -3001,8 +3026,10 @@ views:
           - entity1: sensor.fridge_temperature
           - entities:
             - entity: sensor.fridge_temperature
+              format: precision0
               name: Kitchen
             - entity: sensor.garage_fridge_temperature
+              format: precision0
               name: Garage
         - template: graph
           type: custom:decluttering-card
@@ -3013,8 +3040,10 @@ views:
           - entity1: sensor.freezer_temperature
           - entities:
             - entity: sensor.freezer_temperature
+              format: precision0
               name: Kitchen
             - entity: sensor.garage_freezer_temperature
+              format: precision0
               name: Garage
         columns: 1
         square: false
@@ -3227,29 +3256,13 @@ views:
         type: custom:mushroom-title-card
       - alignment: justify
         chips:
-        - content: Reboot VM
-          icon: mdi:power-standby
+        - content: Edit
+          icon: mdi:pencil
           icon_color: orange
           tap_action:
-            action: call-service
-            confirmation:
-              text: Are you sure you want to Reboot the Virtual Machine?
-            service: script.reboot_server
-            target: {}
+            action: navigate
+            navigation_path: ./home?disable_km&edit=1
           type: template
-        - content: Restart HA
-          icon: mdi:restart-alert
-          icon_color: orange
-          tap_action:
-            action: call-service
-            confirmation:
-              text: Are you sure you want to Restart Home Assistant?
-            service: script.restart_home_assistant
-            target: {}
-          type: template
-        type: custom:mushroom-chips-card
-      - alignment: justify
-        chips:
         - content: Entity counts
           icon: mdi:cog-refresh
           icon_color: grey
@@ -3269,15 +3282,6 @@ views:
             service: script.turn_on
             target:
               entity_id: script.refresh_version_sensors
-          type: template
-        - content: Missing
-          icon: mdi:shield-refresh
-          icon_color: grey
-          tap_action:
-            action: call-service
-            service: watchman.report
-            service_data: {}
-            target: {}
           type: template
         type: custom:mushroom-chips-card
       - alignment: justify
@@ -3301,13 +3305,6 @@ views:
             service_data: {}
             target:
               entity_id: script.generate_fake_secrets
-          type: template
-        - content: Edit
-          icon: mdi:pencil
-          icon_color: orange
-          tap_action:
-            action: navigate
-            navigation_path: ./home?disable_km&edit=1
           type: template
         type: custom:mushroom-chips-card
       type: vertical-stack
@@ -3552,11 +3549,11 @@ views:
                   - entity: switch.gaming_pc_redpc
                     name: Red PC
                     toggle: true
-                  - entity: switch.gaming_pc_bluepc
-                    name: Blue PC
-                    toggle: true
                   - entity: switch.gaming_pc_greenpc
                     name: Green PC
+                    toggle: true
+                  - entity: switch.gaming_pc_bluepc
+                    name: Blue PC
                     toggle: true
                   - entity: switch.gaming_pc_blackpc
                     name: Black PC
@@ -3594,12 +3591,36 @@ views:
               type: entities
             - alignment: center
               chips:
-              - content: Smart schedule
-                entity: automation.schedule_school_pc
-                icon: mdi:toggle-switch{{ iif(is_state("automation.schedule_school_pc","off"),
+              - content: RedPC
+                entity: automation.schedule_redpc
+                icon: mdi:toggle-switch{{ iif(is_state("automation.schedule_redpc","off"),
                   "-off", "") }}
-                icon_color: '{{ iif(is_state("automation.schedule_school_pc","on"),
-                  "blue", "grey") }}'
+                icon_color: '{{ iif(is_state("automation.schedule_redpc","on"), "red",
+                  "grey") }}'
+                type: template
+              - content: GreenPC
+                entity: automation.schedule_greenpc
+                icon: mdi:toggle-switch{{ iif(is_state("automation.schedule_greenpc","off"),
+                  "-off", "") }}
+                icon_color: '{{ iif(is_state("automation.schedule_greenpc","on"),
+                  "green", "grey") }}'
+                type: template
+              - content: BluePC
+                entity: automation.schedule_bluepc
+                icon: mdi:toggle-switch{{ iif(is_state("automation.schedule_bluepc","off"),
+                  "-off", "") }}
+                icon_color: '{{ iif(is_state("automation.schedule_bluepc","on"), "blue",
+                  "grey") }}'
+                type: template
+              type: custom:mushroom-chips-card
+            - alignment: center
+              chips:
+              - content: Disable schedule - M-Th
+                entity: automation.schedule_disable_pc_during_school_week
+                icon: mdi:toggle-switch{{ iif(is_state("automation.schedule_disable_pc_during_school_week","off"),
+                  "-off", "") }}
+                icon_color: '{{ iif(is_state("automation.schedule_disable_pc_during_school_week","on"),
+                  "#900", "grey") }}'
                 type: template
               - content: Restart unifi
                 entity: binary_sensor.docker_unifi_controller
@@ -3607,7 +3628,7 @@ views:
                 icon_color: '{{ iif(is_state("binary_sensor.docker_unifi_controller","on"),
                   "blue", "grey") }}'
                 type: template
-              - content: UniFi
+              - content: UniFi UI
                 icon: mdi:link
                 tap_action:
                   action: url

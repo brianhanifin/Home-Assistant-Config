@@ -25,11 +25,11 @@ state: |
   {%- endfor %}
   {{- weather.icon }}
 icon: |
-  {{ this.state }}
+  {{ this.state|default("") }}
 attributes:
   color: |
     {% set weather = namespace(color="disabled") %}
-    {%- set icon = this.state | replace("mdi:","") %}
+    {%- set icon = this.state|default("") | replace("mdi:","") %}
     {%-
       set weather_colors = {
         "amber": ("weather-sunny", "weather-lightning"),

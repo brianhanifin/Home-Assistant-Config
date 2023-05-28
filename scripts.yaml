@@ -1657,6 +1657,11 @@ tts_phrase_say:
       data:
         media_player: '{{ smart_speaker }}'
         message: '{{ message }}'
+      enabled: false
+    - service: script.say_cloud
+      data:
+        media_player: '{{ smart_speaker }}'
+        message: '{{ message }}'
     alias: Speak when a message is set.
   mode: single
   icon: mdi:cast-audio-variant
@@ -1690,6 +1695,14 @@ say:
         message: "{%- from \"speech.jinja\" import get_briefing %}\n{{ get_briefing(\n
           \ message,\n  person_arriving,\n  say_welcome_home,\n  say_greeting,\n  say_inside_weather,\n
           \ say_outside_weather,\n  say_goodbye,\n  say_goodnight\n) }}\n"
+      enabled: false
+    - service: script.say_cloud
+      data:
+        media_player: '{{ media_player }}'
+        message: "{%- from \"speech.jinja\" import get_briefing %}\n{{ get_briefing(\n
+          \ message,\n  person_arriving,\n  say_welcome_home,\n  say_greeting,\n  say_inside_weather,\n
+          \ say_outside_weather,\n  say_goodbye,\n  say_goodnight\n) }}\n"
+      enabled: true
     alias: Speak message when enabled.
     enabled: true
   mode: parallel
@@ -1875,3 +1888,68 @@ say_local:
           max: 100
   max: 10
   icon: mdi:cloud-cancel-outline
+notify_pixel_clock:
+  alias: Notify pixel clock
+  sequence:
+  - variables:
+      pixel_clock: '{{ pixel_clock|default("pixel_clock1") }}
+
+        '
+      add_screen: "{%- set pixel_clock = pixel_clock|default(\"pixel_clock1\") ~ \"_screen\"
+        %}\n{%- if pixel_clock.startswith(\"esphome.\") %}\n  {{ pixel_clock }}\n{%-
+        else %}\n  esphome.{{ pixel_clock|default(\"pixel_clock1\") }}\n{% endif %}\n"
+      remove_screen: "{%- set pixel_clock = pixel_clock|default(\"pixel_clock1\")
+        ~ \"_del_screen\" %}\n{%- if pixel_clock.startswith(\"esphome.\") %}\n  {{
+        pixel_clock }}\n{%- else %}\n  esphome.{{ pixel_clock|default(\"pixel_clock1\")
+        }}\n{% endif %}\n"
+      icon: '{{ icon|default("info") }}
+
+        '
+      message: '{{ message|default(" ") }}
+
+        '
+      duration: '{{ duration|default(3) }}'
+  - service: '{{ add_screen }}'
+    data:
+      icon_name: '{{ icon }}'
+      text: '{{ message }}'
+  - delay:
+      minutes: '{{ duration }}'
+    alias: Delay for x minutes.
+  - service: '{{ remove_screen }}'
+    data:
+      icon_name: '{{ icon }}'
+  fields:
+    pixel_clock:
+      description: What pixel clock are we sending this message to?
+      example: pixel_clock1
+      default: pixel_clock1
+      selector:
+        text:
+    icon:
+      description: What icon do you want to appear?
+      example: info
+      default: info
+      selector:
+        text:
+    message:
+      description: What text do you want to display?
+      example: Test message
+      default: Test message
+      selector:
+        text:
+          multiline: true
+    duration:
+      description: How many minutes before this message dissapears?
+      example: 3
+      default: 3
+      selector:
+        number:
+          min: 1
+          max: 15
+          step: 1
+          unit_of_measurement: minutes
+          mode: slider
+  mode: queued
+  icon: mdi:clock-digital
+  max: 10

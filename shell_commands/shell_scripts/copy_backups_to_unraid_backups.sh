@@ -1,0 +1,1 @@
+cp -ru /backup/* /mnt/unraid-backup/home-assistant

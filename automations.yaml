@@ -66,11 +66,18 @@
     data:
       entity_id: light.family_room
       color: Teal
-  - service: watchman.report
-    data: {}
   - service: logger.set_default_level
     data:
       level: warning
+  - service: shell_command.mount_unraid_backup
+    data: {}
+    alias: Mount unraid backup share
+    enabled: false
+  - service: shell_command.mount_unraid_media
+    data: {}
+    alias: Mount unraid media share
+  - service: watchman.report
+    data: {}
   - service: script.notify_web
     data:
       message: Startup automation complete.
@@ -434,7 +441,7 @@
   trigger:
   - platform: state
     entity_id:
-    - sensor.doorbell_push_action
+    - sensor.doorbell_action
     to: bell1
   condition: []
   action:
@@ -3055,23 +3062,23 @@
     to: 'on'
   - platform: state
     entity_id:
-    - binary_sensor.garage_motion
+    - binary_sensor.laundry_motion
     id: motion_detected
-    alias: When garage motion detected.
+    alias: When laundry motion detected.
     from: 'off'
     to: 'on'
   - platform: state
     entity_id:
-    - binary_sensor.garage_motion
+    - binary_sensor.laundry_motion
     from: 'on'
     to: 'off'
-    alias: When garage motion clears.
+    alias: When laundry motion clears.
     id: motion_clears
   - id: timer_finished
     platform: event
     event_type: timer.finished
     event_data:
-      entity_id: timer.garage_motion
+      entity_id: timer.laundry_motion
   condition: []
   action:
   - if:
@@ -3105,12 +3112,12 @@
     - alias: Cancel the existing countdown timer.
       service: timer.cancel
       target:
-        entity_id: timer.garage_motion
+        entity_id: timer.laundry_motion
       data: {}
     - alias: (Re)start the countdown timer.
       service: timer.start
       data:
-        entity_id: timer.garage_motion
+        entity_id: timer.laundry_motion
     alias: When motion is detected.
   - if:
     - condition: and
@@ -3127,12 +3134,12 @@
     - alias: Cancel the existing countdown timer.
       service: timer.cancel
       target:
-        entity_id: timer.garage_motion
+        entity_id: timer.laundry_motion
       data: {}
     - alias: (Re)start the countdown timer.
       service: timer.start
       data:
-        entity_id: timer.garage_motion
+        entity_id: timer.laundry_motion
     alias: When motion is no longer detected, (re)start the light turn off timer.
   - if:
     - condition: trigger
@@ -3825,7 +3832,7 @@
   trigger:
   - platform: state
     entity_id: light.porch
-    alias: When porch light changes
+    alias: When porch light on/off state changes.
   condition: []
   action:
   - if:
@@ -3849,19 +3856,11 @@
       target:
         entity_id: light.path_lights
       alias: Turn on path lights and match brightness.
-    - type: turn_on
-      device_id: f4bca7d83e51cfdd4bb3cf5910b1c97a
-      entity_id: light.porch_dimmer
-      domain: light
     else:
     - service: light.turn_off
       data: {}
       target:
         entity_id: light.path_lights
-    - type: turn_off
-      device_id: f4bca7d83e51cfdd4bb3cf5910b1c97a
-      entity_id: light.porch_dimmer
-      domain: light
     alias: Sync the path lights with the porch light's current state.
   mode: single
 - id: '1668022409769'
@@ -4238,7 +4237,7 @@
         area_id: play_room
   mode: single
 - id: '1673028618364'
-  alias: 'Schedule: PC network control'
+  alias: 'Schedule: BluePC'
   description: ''
   trigger:
   - platform: state
@@ -4317,8 +4316,6 @@
       target:
         entity_id:
         - switch.gaming_pc_bluepc
-        - switch.gaming_pc_greenpc
-        - switch.gaming_pc_redpc
       data: {}
     - service: timer.cancel
       data: {}
@@ -4345,8 +4342,6 @@
       target:
         entity_id:
         - switch.gaming_pc_bluepc
-        - switch.gaming_pc_greenpc
-        - switch.gaming_pc_redpc
       data: {}
     alias: Take "turn_network_off" actions.
   mode: queued
@@ -4383,4 +4378,404 @@
         + timedelta(days=-1,hours=23,minutes=59,seconds=59) }}'
     target:
       entity_id: calendar.local
+  mode: single
+- id: '1682803674117'
+  alias: 'Pixel clock: update weather screens'
+  description: ''
+  trigger:
+  - platform: time_pattern
+    minutes: /5
+  condition: []
+  action:
+  - variables:
+      lifetime: '5'
+      screen_time: '15'
+      weather_icon: "{% set weather = namespace(icon=\"weather_unknown\") %}\n{%-
+        set current_condition = states(\"weather.home\") %}\n{%- set weather_icons
+        = {\n  \"weather_sunny\": (\"clear\", \"sunny\"),\n  \"weather_cloudy\": (\"cloudy\"),\n
+        \ \"weather_partly_cloudy\": (\"partlycloudy\", \"partlysunny\", \"mostlysunny\",
+        \"mostlyclear\"),\n  \"weather_windy\": (\"windy\"),\n  \"weather_fog\": (\"fog\",
+        \"hazy\", \"drearyovercast\"),\n  \"weather_night\": (\"clearnight\"),\n  \"weather_rainy\":
+        (\"rainy\", \"chancerain\"),\n  \"weather_pouring\": (\"pouring\", \"showers\"),\n
+        \ \"weather_lightning\": (\"lightning\", \"tstorms\"),\n  \"weather_hail\":
+        (\"hail\"),\n  \"weather_snowy\": (\"snowy\", \"flurries\", \"snowyheavy\",
+        \"chanceflurries\"),\n  \"weather_snowy_rainy\": (\"sleet\", \"snowyrainy\",
+        \"chancesleet\")\n} %}\n{%- for icon in weather_icons if current_condition
+        in weather_icons[icon] %}\n  {%- set weather.icon = icon %}\n  {%- break %}\n{%-
+        endfor %}\n{{- weather.icon }}\n"
+      chance_of_rain: "{%- if weather_icon == \"weather_rainy\" %}\n  {{ state_attr(\"weather.home\",\"forecast\")[0].precipitation_probability
+        ~ \"%\" }}\n{%- endif %}\n"
+  - service: esphome.pixel_clock1_del_screen
+    data:
+      icon_name: temperature_inside
+    alias: 'Remove screen: Indoor temperature.'
+  - service: esphome.pixel_clock1_del_screen
+    data:
+      icon_name: weather_*
+    alias: Remove "weather_*" screens.
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - if:
+    - condition: template
+      alias: Weather icon is "weather_rainy".
+      value_template: '{{ weather_icon == "weather_rainy" }}
+
+        '
+    then:
+    - service: esphome.pixel_clock1_add_screen
+      data:
+        alarm: false
+        lifetime: 5
+        screen_time: 30
+        icon_name: weather_chance_of_rain
+        text: '{{ chance_of_rain }}'
+      alias: Restore chance of rain screen with new data.
+    enabled: true
+    alias: 'Add screen: Chance of rain (if needed).'
+  - service: esphome.pixel_clock1_add_screen
+    data:
+      alarm: false
+      lifetime: '{{ lifetime }}'
+      screen_time: '{{ screen_time }}'
+      icon_name: '{{ weather_icon }}'
+      text: '{{ states("sensor.backyard_temperature")|round ~ "°" }}
+
+        '
+    alias: 'Add screen: Weather.'
+  - service: esphome.pixel_clock1_add_screen
+    data:
+      alarm: false
+      lifetime: '{{ lifetime }}'
+      screen_time: '{{ screen_time }}'
+      icon_name: temperature_inside
+      text: '{{ states("sensor.home_temperature_average")|round ~ "°" }}
+
+        '
+    alias: 'Add screen: Indoor temperature.'
+  mode: single
+- id: '1683339650818'
+  alias: 'Schedule: RedPC'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - schedule.computer_school
+    - schedule.test1
+    - schedule.test2
+    - schedule.test3
+    from: 'off'
+    to: 'on'
+    id: school_on
+  - platform: state
+    entity_id:
+    - schedule.computer_vacation
+    from: 'off'
+    to: 'on'
+    id: vacation_on
+  - platform: state
+    entity_id:
+    - schedule.computer_school
+    - schedule.test1
+    - schedule.test2
+    - schedule.test3
+    from: 'on'
+    to: 'off'
+    id: school_off
+  - platform: state
+    entity_id:
+    - schedule.computer_vacation
+    id: vacation_off
+    from: 'on'
+    to: 'off'
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.network_off
+    id: turn_network_off
+    alias: When network off timer ends.
+  condition: []
+  action:
+  - variables:
+      schedule: '{{ trigger.id.split("_")[0] }}'
+      state: '{{ trigger.id.split("_")[1] }}'
+      vacation_today: '{{ is_state("binary_sensor.school_vacation_today","on") }}'
+      vacation_tomorrow: '{{ is_state("binary_sensor.school_vacation_tomorrow","on")
+        }}'
+      action: "{%- if state == \"on\" %}\n  {%- if (schedule == \"school\" and not
+        vacation_today)\n        or (schedule == \"vacation\" and vacation_today)
+        %}\n    on\n  {%- endif %}\n{%- else %}\n  {%- if (schedule == \"school\"
+        and not vacation_tomorrow)\n        or (schedule == \"vacation\" and vacation_today)
+        \ %}\n    off\n  {%- endif %}\n{%- endif %}\n"
+  - alias: Debug output. (Disable to turn off.)
+    service: script.debug
+    data:
+      title: Schedule {{ schedule }} {{ state }}
+      message: 'schedule: {{ schedule }}
+
+        state: {{ state }}
+
+
+        vacation_today: {{ vacation_today }}
+
+        vacation_tomorrow: {{ vacation_tomorrow }}
+
+
+        action: {{ action }}
+
+        '
+    enabled: false
+  - if:
+    - condition: template
+      alias: Confirm the action is "on".
+      value_template: '{{ action == "on" }}'
+    then:
+    - service: switch.turn_on
+      target:
+        entity_id:
+        - switch.gaming_pc_redpc
+      data: {}
+    - service: timer.cancel
+      data: {}
+      target:
+        entity_id: timer.network_off
+    alias: Turn on the boys network access.
+  - if:
+    - condition: template
+      value_template: '{{ action == "off" }}'
+      alias: Confirm the action is "off".
+    then:
+    - service: timer.start
+      data:
+        duration: 0
+      target:
+        entity_id: timer.network_off
+      alias: Start the network off timer.
+    alias: Start the network turn off timer.
+  - if:
+    - condition: trigger
+      id: turn_network_off
+    then:
+    - service: switch.turn_off
+      target:
+        entity_id:
+        - switch.gaming_pc_redpc
+      data: {}
+    alias: Take "turn_network_off" actions.
+  mode: queued
+  max: 10
+- id: '1683352121464'
+  alias: 'Schedule: GreenPC'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - schedule.computer_school
+    - schedule.test1
+    - schedule.test2
+    - schedule.test3
+    from: 'off'
+    to: 'on'
+    id: school_on
+  - platform: state
+    entity_id:
+    - schedule.computer_vacation
+    from: 'off'
+    to: 'on'
+    id: vacation_on
+  - platform: state
+    entity_id:
+    - schedule.computer_school
+    - schedule.test1
+    - schedule.test2
+    - schedule.test3
+    from: 'on'
+    to: 'off'
+    id: school_off
+  - platform: state
+    entity_id:
+    - schedule.computer_vacation
+    id: vacation_off
+    from: 'on'
+    to: 'off'
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.network_off
+    id: turn_network_off
+    alias: When network off timer ends.
+  condition: []
+  action:
+  - variables:
+      schedule: '{{ trigger.id.split("_")[0] }}'
+      state: '{{ trigger.id.split("_")[1] }}'
+      vacation_today: '{{ is_state("binary_sensor.school_vacation_today","on") }}'
+      vacation_tomorrow: '{{ is_state("binary_sensor.school_vacation_tomorrow","on")
+        }}'
+      action: "{%- if state == \"on\" %}\n  {%- if (schedule == \"school\" and not
+        vacation_today)\n        or (schedule == \"vacation\" and vacation_today)
+        %}\n    on\n  {%- endif %}\n{%- else %}\n  {%- if (schedule == \"school\"
+        and not vacation_tomorrow)\n        or (schedule == \"vacation\" and vacation_today)
+        \ %}\n    off\n  {%- endif %}\n{%- endif %}\n"
+  - alias: Debug output. (Disable to turn off.)
+    service: script.debug
+    data:
+      title: Schedule {{ schedule }} {{ state }}
+      message: 'schedule: {{ schedule }}
+
+        state: {{ state }}
+
+
+        vacation_today: {{ vacation_today }}
+
+        vacation_tomorrow: {{ vacation_tomorrow }}
+
+
+        action: {{ action }}
+
+        '
+    enabled: false
+  - if:
+    - condition: template
+      alias: Confirm the action is "on".
+      value_template: '{{ action == "on" }}'
+    then:
+    - service: switch.turn_on
+      target:
+        entity_id:
+        - switch.gaming_pc_greenpc
+      data: {}
+    - service: timer.cancel
+      data: {}
+      target:
+        entity_id: timer.network_off
+    alias: Turn on the boys network access.
+  - if:
+    - condition: template
+      value_template: '{{ action == "off" }}'
+      alias: Confirm the action is "off".
+    then:
+    - service: timer.start
+      data:
+        duration: 0
+      target:
+        entity_id: timer.network_off
+      alias: Start the network off timer.
+    alias: Start the network turn off timer.
+  - if:
+    - condition: trigger
+      id: turn_network_off
+    then:
+    - service: switch.turn_off
+      target:
+        entity_id:
+        - switch.gaming_pc_greenpc
+      data: {}
+    alias: Take "turn_network_off" actions.
+  mode: queued
+  max: 10
+- id: '1684463378152'
+  alias: 'Schedule: Disable PC during school week'
+  description: Choose schedules to disable manually.
+  trigger:
+  - platform: time
+    at: 06:00:00
+    alias: Every day at 6:00am
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.high_school_day
+      state: 'on'
+      alias: Today is a school day.
+    then:
+    - if:
+      - condition: time
+        weekday:
+        - fri
+        alias: Today is Friday
+      then:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id:
+          - automation.schedule_bluepc
+          - automation.schedule_redpc
+          - automation.schedule_greenpc
+        alias: Restore boys PC schedules
+      else:
+      - service: automation.turn_off
+        target:
+          entity_id:
+          - automation.schedule_redpc
+          - automation.schedule_greenpc
+        data:
+          stop_actions: true
+  mode: single
+- id: '1684991083535'
+  alias: Garage workbench presence
+  description: Turn off fan after 15 minutes of absence.
+  trigger:
+  - type: present
+    platform: device
+    device_id: 61e154393572da4b675e2d58c8b4eba2
+    entity_id: binary_sensor.garage_workbench_presence
+    domain: binary_sensor
+    id: present
+    alias: '[present] When someone is around the workbench.'
+  - type: not_present
+    platform: device
+    device_id: 61e154393572da4b675e2d58c8b4eba2
+    entity_id: binary_sensor.garage_workbench_presence
+    domain: binary_sensor
+    id: away
+    alias: '[away] When noone is around the workbench.'
+  - platform: event
+    event_type: timer.finished
+    id: timer_finished
+    event_data:
+      entity_id: timer.workbench_presence
+    alias: '[timer_finished] When timeout ends.'
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: present
+    then:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.google_garage_do_not_disturb
+    - service: timer.cancel
+      data: {}
+      target:
+        entity_id: timer.workbench_presence
+    alias: '[present] When presence is detected.'
+  - if:
+    - condition: trigger
+      id: away
+    then:
+    - service: timer.start
+      data:
+        duration: 00:15:00
+      target:
+        entity_id: timer.workbench_presence
+      alias: Start workbench presence timeout timer.
+    alias: '[away] When presence is no longer detected.'
+  - if:
+    - condition: trigger
+      id: timer_finished
+    then:
+    - service: fan.turn_off
+      data: {}
+      target:
+        entity_id: fan.workbench_fan
+      alias: Turn off the workbench fan.
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.google_garage_do_not_disturb
+    alias: '[timer_finished] When presence timeout ends.'
   mode: single

@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **36,692** | 1,310 | 37 | 97 | 57 |
+| **38,593** | 1,500 | 39 | 102 | 59 |
 
 # Index
 
@@ -238,9 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1310 total entities**,
-including **667 sensors**. My YAML
-files contain 36,692 lines of code.
+Our Home Assistant install has approximately **1500 total entities**,
+including **699 sensors**. My YAML
+files contain 38,593 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>26 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.11.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -249,7 +249,7 @@ Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https
 ## [Anniversaries v5.2.0](https://github.com/pinkywafer/Anniversaries)
 Anniversary Countdown Sensor for Home AssistantAuthors:[@pinkywafer](https://github.com/pinkywafer).
 
-## [Browser mod v2.2.1](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
+## [Browser mod v2.2.2](https://github.com/thomasloven/hass-browser_mod/blob/master/README.md)
 
 
 ## [Eight Sleep Climate v2.0.0](https://github.com/amosyuen/ha-eight-sleep-climate)
@@ -261,7 +261,7 @@ Climate entity for controlling eight sleep bedAuthors:[@amosyuen](https://github
 ## [Frigate v4.0.0](https://github.com/blakeblackshear/frigate)
 Frigate integration for Home AssistantAuthors:[@blakeblackshear](https://github.com/blakeblackshear).
 
-## [GE Home (SmartHQ) v0.6.6](https://github.com/simbaja/ha_gehome)
+## [GE Home (SmartHQ) v0.6.7](https://github.com/simbaja/ha_gehome)
 Authors:[@simbaja](https://github.com/simbaja).
 
 ## [Generate readme v0.5.0](https://github.com/custom-components/readme)
@@ -285,7 +285,10 @@ Authors:[@rospogrigio](https://github.com/rospogrigio), [@postlund](https://gith
 ## [Lovelace Notify v1.0.0]()
 Lovelace notification / alert component for Home AssistantAuthors:[@rr326](https://github.com/rr326).
 
-## [NWS Alerts v2.8](https://github.com/finity69x2/nws_alerts/)
+## [Moonraker v0.9.0](https://moonraker-home-assistant.readthedocs.io/en/latest/)
+Home Assistant integration for Moonraker, Klipper and MainsailAuthors:[@marcolivierarsenault](https://github.com/marcolivierarsenault), [@cashew22](https://github.com/cashew22).
+
+## [NWS Alerts v4.1](https://github.com/finity69x2/nws_alerts/)
 Authors:[@finity69x2](https://github.com/finity69x2).
 
 ## [Rainforest EMU-2 v1.3.2](https://github.com/ryanwinter/hass-rainforest-emu-2)
@@ -294,10 +297,10 @@ Authors:[@ryanwinter](https://github.com/ryanwinter).
 ## [SamsungTV Smart v0.11.6](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
-## [Simple Wyze Vacuum v1.8.2](https://github.com/romedtino/simple-wyze-vac)
+## [Simple Wyze Vacuum v1.8.4](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
-## [SmartThinQ LGE Sensors v0.31.6](https://github.com/ollo69/ha-smartthinq-sensors)
+## [SmartThinQ LGE Sensors v0.31.8](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
 ## [Sun2 v2.2.1](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
@@ -305,9 +308,6 @@ Home Assistant Sun2 SensorAuthors:[@pnbruckner](https://github.com/pnbruckner).
 
 ## [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
 Authors:[@jchasey](https://github.com/jchasey).
-
-## [UPnP Availability Sensor v0.0.3](https://github.com/rytilahti/homeassistant-upnp-availability/)
-Authors:[@rytilahti](https://github.com/rytilahti).
 
 ## [Uptime Kuma v2.1.0](https://github.com/meichthys/uptime_kuma/blob/main/README.md)
 Uptime Kuma HACS integrationAuthors:[@meichthys](https://github.com/meichthys), [@jayakornk](https://github.com/jayakornk).
@@ -321,13 +321,16 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.19](https://github.com/JoshuaMulliken/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@JoshuaMulliken](https://github.com/JoshuaMulliken).</details>
 
-<details><summary>26 lovelace plugins</summary>
+<details><summary>28 lovelace plugins</summary>
 
 ## [Atomic Calendar Revive v7.3.0](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
 
 ## [Auto Entities v1.12.1](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
+
+## [Auto Generating Mushroom Dashboard Strategy v0.15](https://github.com/AalianKhan/mushroom-strategy)
+A strategy to automatically generate a dashboard using mushroom cards
 
 ## [Canary v0.4.0](https://github.com/jcwillox/lovelace-canary)
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
@@ -347,10 +350,10 @@ Flipdown Timer Card for Home Assistant Lovelace
 ## [Fold Entity Row v2.2.0](https://github.com/thomasloven/lovelace-fold-entity-row)
 🔹 A foldable row for entities card, containing other rows
 
-## [Frigate Card v4.0.0](https://github.com/dermotduffy/frigate-hass-card)
+## [Frigate Card v5.1.1](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
-## [Kiosk Mode v1.8.3](https://github.com/NemesisRE/kiosk-mode)
+## [Kiosk Mode v1.9.0](https://github.com/NemesisRE/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 ## [Layout Card v2.4.4](https://github.com/thomasloven/lovelace-layout-card)
@@ -365,10 +368,10 @@ Minimalistic graph card for Home Assistant Lovelace UI
 ## [Multiple Entity Row v4.4.1](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
-## [Mushroom v2.6.3](https://github.com/piitaya/lovelace-mushroom)
+## [Mushroom v2.7.1](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
-## [Number Box v4.7](https://github.com/htmltiger/numberbox-card)
+## [Number Box v4.8](https://github.com/htmltiger/numberbox-card)
 Replace input_number sliders with plus and minus buttons
 
 ## [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
@@ -388,6 +391,9 @@ Card that allows you to swipe throught multiple cards for Home Assistant Lovelac
 
 ## [Tabbed Card v0.3.1](https://github.com/kinghat/tabbed-card)
 a custom card for home assistant that utilizes tabs to segregate individual cards.
+
+## [Threedy v2.0.0](https://github.com/e11en/ha-threedy-card)
+Home Assistant card to display 3D printer status and progress
 
 ## [Timer Bar Card v1.26](https://github.com/rianadon/timer-bar-card)
 A progress bar display for Home Assistant timers
@@ -435,7 +441,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.4.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.5.4-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -445,7 +451,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-36,692-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38,593-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

@@ -4,4 +4,4 @@ name: Outdoor Temperature
 device_class: temperature
 state_class: measurement
 unit_of_measurement: "°F"
-state: '{{ states("sensor.backyard_temperature") }}'
+state: '{{ states("sensor.backyard_temperature")|default(199) }}'

@@ -4,16 +4,17 @@ name: Low batteries
 icon: mdi:battery-alert
 state_class: total
 state: |
-  {{ this.attributes.entities | count }}
+  {%- set entities = this.attributes.entities|default([]) %}
+  {{ entities | count }}
 attributes:
   entities: |
     {{
-      expand(this.attributes.entities)
+      states.sensor
       | selectattr("attributes.device_class","defined")
       | selectattr("attributes.device_class","eq","battery")
       | selectattr("state","lt","100")
       | selectattr("state","lt","40")
-      | map(attribute="entities")
+      | map(attribute="entity_id")
       | reject('is_hidden_entity')
       | list
       | sort

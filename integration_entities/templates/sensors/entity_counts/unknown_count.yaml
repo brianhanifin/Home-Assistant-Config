@@ -4,7 +4,8 @@ name: Unknown count
 icon: mdi:help-rhombus
 state_class: total
 state: |
-  {{ this.attributes.entities|count }}
+  {%- set entities = this.attributes.entities|default([]) %}
+  {{ entities|count }}
 attributes:
   entities: |
     {{
@@ -12,11 +13,14 @@ attributes:
       | rejectattr("domain","in",["button","group"])
       | rejectattr("entity_id","in",
           integration_entities("HASS Agent")
+          +integration_entities("Moonraker: Troodon")
+          +integration_entities("MQTT")
           +integration_entities("Octoprint")
           +integration_entities("person")
           +integration_entities("Sensibo")
           +integration_entities("upnp_availability")
           +integration_entities("Watchman")
+          +integration_entities("wyoming")
           +integration_entities("Z-Wave JS")
         )
       | rejectattr("entity_id","search","blackpc")

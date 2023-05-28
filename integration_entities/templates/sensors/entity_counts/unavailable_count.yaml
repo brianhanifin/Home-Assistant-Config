@@ -4,7 +4,8 @@ name: Unavailable count
 icon: mdi:alert
 state_class: total
 state: |
-  {{ this.attributes.entities|count }}
+  {%- set entities = this.attributes.entities|default([]) %}
+  {{ entities|count }}
 attributes:
   entities: |
     {{
@@ -13,7 +14,7 @@ attributes:
           ["camera.glowforge"]
           +integration_entities("google_home")
           +integration_entities("hass_agent")
-          +integration_entities("moonraker")
+          +integration_entities("Moonraker: Troodon")
           +integration_entities("sensibo")
           +integration_entities("upnp_availability")
           +integration_entities("uptime_kuma")

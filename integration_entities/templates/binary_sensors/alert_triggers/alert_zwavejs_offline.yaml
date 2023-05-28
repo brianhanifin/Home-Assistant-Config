@@ -6,9 +6,9 @@ device_class: problem
 delay_on: "00:30:00"
 state: |
   {{
-    this.attributes.device_status != "alive"
+    this.attributes.device_status|default("") != "alive"
     and is_state("automation.startup","off")
   }}
 attributes:
-  device_monitored: "sensor.network_closet_bulb_node_status"
-  device_status: '{{ states("sensor.network_closet_bulb_node_status") }}'
+  device_monitored: "sensor.kitchen_node_status"
+  device_status: '{{ states("sensor.kitchen_node_status") }}'

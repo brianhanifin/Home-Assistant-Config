@@ -3,6 +3,6 @@ unique_id: domain_count
 name: Domain count
 icon: mdi:package-variant-closed
 state_class: total
-state: '{{ this.attributes.domains | count }}'
+state: '{{ this.attributes.domains|default([]) | count }}'
 attributes:
   domains: '{{ states | map(attribute="domain") | unique | list }}'

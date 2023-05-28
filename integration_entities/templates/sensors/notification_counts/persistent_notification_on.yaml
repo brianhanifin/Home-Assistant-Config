@@ -4,7 +4,8 @@ name: Persistent notifications on
 icon: mdi:bell
 state_class: total
 state: |
-  {{ this.attributes.entities | count }}
+  {%- set entities = this.attributes.entities|default([]) %}
+  {{ entities | count }}
 attributes:
   entities: |
     {{

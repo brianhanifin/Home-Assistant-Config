@@ -4,7 +4,7 @@ name: Device updates
 icon: mdi:counter
 state_class: total
 state: |
-  {{ this.attributes.updates_available | count }}
+  {{ this.attributes.updates_available|default([]) | count }}
 attributes:
   updates_available: |
     {{

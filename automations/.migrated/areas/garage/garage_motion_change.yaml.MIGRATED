@@ -14,7 +14,7 @@ trigger:
     platform: event
     event_type: timer.finished
     event_data:
-      entity_id: timer.garage_motion
+      entity_id: timer.laundry_motion
 action:
   - choose:
       - alias: "motion detected: turn on the light + start the timer."
@@ -25,16 +25,16 @@ action:
 
           - alias: "Cancel the existing countdown timer."
             choose:
-              - conditions: '{{ states("timer.garage_motion") != "idle" }}'
+              - conditions: '{{ states("timer.laundry_motion") != "idle" }}'
                 sequence:
                   - service: timer.cancel
                     target:
-                      entity_id: timer.garage_motion
+                      entity_id: timer.laundry_motion
 
           - alias: "(Re)start the countdown timer."
             service: timer.start
             data:
-              entity_id: timer.garage_motion
+              entity_id: timer.laundry_motion
 
       - alias: "Countdown finished: turn off the light."
         conditions: '{{ trigger.id == "timer_finished" }}'

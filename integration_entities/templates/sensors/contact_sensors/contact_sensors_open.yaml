@@ -5,8 +5,8 @@ icon: mdi:door-open
 state_class: total
 state: |
   {{
-    this.attributes.open_doors | count | default(0)
-    + this.attributes.open_windows | count | default(0)
+    this.attributes.open_doors|default([]) | count | default(0)
+    + this.attributes.open_windows|default([]) | count | default(0)
   }}
 attributes:
   open_doors: |
