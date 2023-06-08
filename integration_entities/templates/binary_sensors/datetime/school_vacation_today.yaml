@@ -3,8 +3,7 @@ unique_id: school_vacation_today
 name: School vacation today
 icon: fas:umbrella-beach
 state: |
-  {%- set school_day_today = is_state("binary_sensor.high_school_day","on")
-        and is_state("binary_sensor.middle_school_day","on") %}
+  {%- set school_day_today = is_state("binary_sensor.high_school_day","on") %}
   {%- set weekday_today = is_state("binary_sensor.weekday","on") %}
   {{ weekday_today and not school_day_today }}
 attributes:
@@ -12,5 +11,4 @@ attributes:
   school_day_today: |
     {{
       is_state("binary_sensor.high_school_day","on")
-      and is_state("binary_sensor.middle_school_day","on")
     }}

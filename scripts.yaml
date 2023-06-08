@@ -68,7 +68,17 @@ refresh_update_sensors:
 generate_readme:
   alias: Generate readme
   sequence:
+  - service: homeassistant.update_entity
+    data: {}
+    target:
+      entity_id: sensor.code_line_count
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
   - service: readme.generate
+    data: {}
   - service: script.notify_web
     data:
       message: README + ui-lovelace generation process complete.
@@ -1657,11 +1667,12 @@ tts_phrase_say:
       data:
         media_player: '{{ smart_speaker }}'
         message: '{{ message }}'
-      enabled: false
+      enabled: true
     - service: script.say_cloud
       data:
         media_player: '{{ smart_speaker }}'
         message: '{{ message }}'
+      enabled: false
     alias: Speak when a message is set.
   mode: single
   icon: mdi:cast-audio-variant
@@ -1748,9 +1759,11 @@ docker:
       title: '{{ command }} {{ container }}'
       message: 'update entity: {{ update }}
 
+        service: ''rest_command.docker_{{ server|default("unraid") }}''
+
         '
     enabled: false
-  - service: rest_command.docker
+  - service: rest_command.docker_{{ server|default("unraid") }}
     data:
       container: '{{container}}'
       command: '{{command}}'
@@ -1780,6 +1793,8 @@ refresh_entry_problem_sensors:
       entity_id:
       - sensor.unknown_count
       - sensor.unavailable_count
+  - service: template.reload
+    data: {}
   mode: single
   icon: mdi:cog-refresh
 say_local:

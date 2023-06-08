@@ -3,8 +3,7 @@ unique_id: school_vacation_tomorrow
 name: School vacation tomorrow
 icon: fas:umbrella-beach
 state: |
-  {%- set school_day_tomorrow = is_state("binary_sensor.high_school_day_tomorrow","on")
-        and is_state("binary_sensor.middle_school_day_tomorrow","on") %}
+  {%- set school_day_tomorrow = is_state("binary_sensor.high_school_day_tomorrow","on") %}
   {%- set weekday_tomorrow = is_state("binary_sensor.weekday_tomorrow","on") %}
   {{ weekday_tomorrow and not school_day_tomorrow }}
 attributes:
@@ -12,5 +11,4 @@ attributes:
   school_day_tomorrow: |
     {{
       is_state("binary_sensor.high_school_day_tomorrow","on")
-      and is_state("binary_sensor.middle_school_day_tomorrow","on")
     }}

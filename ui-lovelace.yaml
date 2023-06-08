@@ -1980,12 +1980,6 @@ views:
           show_brightness_control: true
           type: custom:mushroom-light-card
           use_light_color: true
-        - entity: switch.sound_machine
-          fill_container: true
-          secondary_info: none
-          tap_action:
-            action: toggle
-          type: custom:mushroom-entity-card
         - collapsible_controls: true
           double_tap_action:
             action: fire-dom-event
@@ -2013,6 +2007,12 @@ views:
           tap_action:
             action: toggle
           type: custom:mushroom-fan-card
+        - entity: switch.sound_machine
+          fill_container: true
+          secondary_info: none
+          tap_action:
+            action: toggle
+          type: custom:mushroom-entity-card
         - badge_color: ''
           entity: climate.bedroom_thermostat
           fill_container: true
@@ -2188,7 +2188,12 @@ views:
           tap_action:
             action: toggle
           type: custom:mushroom-fan-card
-        - entity: number.upstairs_bathroom_exhaust_humidity_delta_trigger
+        - entity: number.upstairs_bathroom_exhaust_humidity_delta_lower_trigger
+          name: Humidity trigger
+          tap_action:
+            action: more-info
+          type: custom:mushroom-entity-card
+        - entity: number.upstairs_bathroom_exhaust_humidity_delta_upper_trigger
           name: Humidity trigger
           tap_action:
             action: more-info
@@ -3099,7 +3104,6 @@ views:
             - label: Brian
             - id: wakeup_brian
             - sensors:
-              - binary_sensor.middle_school_day
               - binary_sensor.high_school_day
           - cards:
             - subtitle: Nerene (manual)
@@ -3128,7 +3132,7 @@ views:
             - label: Kyle
             - id: wakeup_kyle
             - sensors:
-              - binary_sensor.middle_school_day
+              - binary_sensor.high_school_day
           - template: event
             type: custom:decluttering-card
             variables:
@@ -3148,7 +3152,6 @@ views:
             - label: School day tomorrow
             - id: bedtime_boys_schoolday
             - sensors:
-              - binary_sensor.middle_school_day_tomorrow
               - binary_sensor.high_school_day_tomorrow
           - template: event
             type: custom:decluttering-card
@@ -3156,7 +3159,6 @@ views:
             - label: Day off tomorrow
             - id: bedtime_boys_dayoff
             - sensors:
-              - binary_sensor.middle_school_day
               - binary_sensor.high_school_day
           type: vertical-stack
       type: custom:tabbed-card
@@ -3286,6 +3288,16 @@ views:
         type: custom:mushroom-chips-card
       - alignment: justify
         chips:
+        - content: Check config
+          icon: mdi:check-decagram
+          icon_color: grey
+          tap_action:
+            action: call-service
+            service: homeassistant.update_entity
+            service_data: {}
+            target:
+              entity_id: sensor.check_config_result
+          type: template
         - content: Generate readme
           icon: mdi:github
           icon_color: grey

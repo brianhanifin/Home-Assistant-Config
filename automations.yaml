@@ -69,13 +69,6 @@
   - service: logger.set_default_level
     data:
       level: warning
-  - service: shell_command.mount_unraid_backup
-    data: {}
-    alias: Mount unraid backup share
-    enabled: false
-  - service: shell_command.mount_unraid_media
-    data: {}
-    alias: Mount unraid media share
   - service: watchman.report
     data: {}
   - service: script.notify_web
@@ -695,7 +688,7 @@
       seconds: 30
       milliseconds: 0
     enabled: true
-  - service: rest_command.docker
+  - service: rest_command.docker_unraid
     data:
       container: unifi-controller
       command: restart
@@ -1457,6 +1450,10 @@
   action:
   - service: script.refresh_count_sensors
     data: {}
+  - service: input_select.set_options
+    data: {}
+    target:
+      entity_id: input_select.announcement_choices
   mode: single
 - id: '1664915034973'
   alias: Restart software defined radio addon
@@ -1531,7 +1528,7 @@
     to: 'off'
   condition: []
   action:
-  - service: rest_command.docker
+  - service: rest_command.docker_unraid
     data:
       container: zwavejs2mqtt
       command: restart
@@ -1549,7 +1546,7 @@
     to: 'off'
   condition: []
   action:
-  - service: rest_command.docker
+  - service: rest_command.docker_unraid
     data:
       container: zigbee2mqtt
       command: restart
@@ -3486,7 +3483,7 @@
           entity_id:
           - switch.glowforge_camera
         data: {}
-      - service: rest_command.docker
+      - service: rest_command.docker_unraid
         data:
           container: docker-wyze-bridge
           command: stop
@@ -3502,7 +3499,7 @@
           entity_id: binary_sensor.docker_wyze_bridge
           state: 'on'
         then:
-        - service: rest_command.docker
+        - service: rest_command.docker_unraid
           data:
             container: docker-wyze-bridge
             command: start
@@ -4068,7 +4065,7 @@
         state: 'on'
         alias: Repeat until Authelia is running.
       sequence:
-      - service: rest_command.docker
+      - service: rest_command.docker_unraid
         data:
           container: Authelia
           command: restart
@@ -4718,20 +4715,18 @@
   alias: Garage workbench presence
   description: Turn off fan after 15 minutes of absence.
   trigger:
-  - type: present
+  - type: occupied
     platform: device
     device_id: 61e154393572da4b675e2d58c8b4eba2
     entity_id: binary_sensor.garage_workbench_presence
     domain: binary_sensor
     id: present
-    alias: '[present] When someone is around the workbench.'
-  - type: not_present
+  - type: not_occupied
     platform: device
     device_id: 61e154393572da4b675e2d58c8b4eba2
     entity_id: binary_sensor.garage_workbench_presence
     domain: binary_sensor
     id: away
-    alias: '[away] When noone is around the workbench.'
   - platform: event
     event_type: timer.finished
     id: timer_finished

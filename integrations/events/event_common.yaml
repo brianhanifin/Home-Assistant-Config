@@ -33,33 +33,31 @@ automation:
       event_hour: '{{ states(entity_id)[:2]|int(default=0) }}'
       work_day: '{{ is_state("binary_sensor.work_day","on") }}'
       work_day_modified: '{{ is_state("binary_sensor.work_day_modified","on") }}'
-      middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
-      middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
       high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
       high_school_day_tomorrow: '{{ is_state("binary_sensor.high_school_day_tomorrow","on") }}'
 
       event_today: |
         {%- if id == "wakeup_kyle" %}
-          {{ middle_school_day }}
+          {{ high_school_day }}
         {%- elif id == "wakeup_lucas" %}
           {{ high_school_day }}
         {%- elif id == "wakeup_brian" %}
-          {{ middle_school_day or high_school_day }}
+          {{ high_school_day }}
         {%- elif id == "wakeup_nerene" %}
           {{ iif(work_day_modified==False, work_day, False) }}
         {%- elif id == "wakeup_nerene_modified" %}
           {{ work_day_modified }}
         {%- elif id == "bedtime_boys_schoolday" %}
           {%- if event_hour < 6 %}
-            {{ middle_school_day or high_school_day }}
+            {{ high_school_day }}
           {%- else %}
-            {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
+            {{ high_school_day_tomorrow or high_school_day_tomorrow }}
           {%- endif %}
         {%- elif id == "bedtime_boys_daysoff" %}
           {%- if event_hour < 6 %}
-            {{ not (middle_school_day or high_school_day) }}
+            {{ not high_school_day }}
           {%- else %}
-            {{ not (middle_school_day_tomorrow or high_school_day_tomorrow) }}
+            {{ not high_school_day_tomorrow }}
           {%- endif %}
         {%- else %}
           False
@@ -125,33 +123,31 @@ automation:
       event_hour: '{{ states(entity_id)[:2]|int(default=0) }}'
       work_day: '{{ is_state("binary_sensor.work_day","on") }}'
       work_day_modified: '{{ is_state("binary_sensor.work_day_modified","on") }}'
-      middle_school_day: '{{ is_state("binary_sensor.middle_school_day","on") }}'
-      middle_school_day_tomorrow: '{{ is_state("binary_sensor.middle_school_day_tomorrow","on") }}'
       high_school_day: '{{ is_state("binary_sensor.high_school_day","on") }}'
       high_school_day_tomorrow: '{{ is_state("binary_sensor.high_school_day_tomorrow","on") }}'
 
       event_today: |
         {%- if id == "wakeup_kyle" %}
-          {{ middle_school_day }}
+          {{ high_school_day }}
         {%- elif id in ["wakeup_lucas", "wakeup_lucas_late_start"] %}
           {{ high_school_day }}
         {%- elif id == "wakeup_brian" %}
-          {{ middle_school_day or high_school_day }}
+          {{ high_school_day }}
         {%- elif id == "wakeup_nerene" %}
           {{ iif(work_day_modified==False, work_day, False) }}
         {%- elif id == "wakeup_nerene_modified" %}
           {{ work_day_modified }}
         {%- elif id == "bedtime_boys_schoolday" %}
           {%- if event_hour < 6 %}
-            {{ middle_school_day or high_school_day }}
+            {{ high_school_day }}
           {%- else %}
-            {{ middle_school_day_tomorrow or high_school_day_tomorrow }}
+            {{ high_school_day_tomorrow or high_school_day_tomorrow }}
           {%- endif %}
         {%- elif id == "bedtime_boys_daysoff" %}
           {%- if event_hour < 6 %}
-            {{ not (middle_school_day or high_school_day) }}
+            {{ not high_school_day }}
           {%- else %}
-            {{ not (middle_school_day_tomorrow or high_school_day_tomorrow) }}
+            {{ not high_school_day_tomorrow }}
           {%- endif %}
         {%- else %}
           False

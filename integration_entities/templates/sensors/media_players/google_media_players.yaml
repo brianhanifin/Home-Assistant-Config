@@ -1,0 +1,45 @@
+---
+unique_id: google_media_players
+name: Google media players
+icon: mdi:speaker-wireless
+state: |
+  {{ this.attributes.combined|default([]) | count }}
+attributes:
+  combined: |
+    {%- set groups = this.attributes.groups|default([]) %}
+    {%- set devices = this.attributes.devices|default([]) %}
+    {{ groups + devices }}
+  devices: |
+    {% set media_players = namespace(devices="") %}
+    {%-
+      set group_entities =
+        states.media_player
+          | selectattr("attributes.supported_features","defined")
+          | selectattr("attributes.supported_features","eq",152461)
+          | map(attribute="entity_id")
+          | list
+          | sort
+    %}
+    {%- for entity in group_entities %}
+      {%- set name = states[entity].name|replace("Google ","")|capitalize %}
+      {%- set media_players.devices = media_players.devices ~ name ~ "," ~ entity %}
+      {%- set media_players.devices = media_players.devices ~ iif(not loop.last, "\t", "") %}
+    {%- endfor %}
+    {{ media_players.devices.split("\t") }}
+  groups: |
+    {% set media_players = namespace(groups="") %}
+    {%-
+      set group_entities =
+        states.media_player
+          | selectattr("attributes.supported_features","defined")
+          | selectattr("attributes.supported_features","eq",152461)
+          | map(attribute="entity_id")
+          | list
+          | sort
+    %}
+    {%- for entity in group_entities %}
+      {%- set name = states[entity].name|replace("Google ","")|capitalize %}
+      {%- set media_players.groups = media_players.groups ~ "[" ~ name ~ "]," ~ entity %}
+      {%- set media_players.groups = media_players.groups ~ iif(not loop.last, "\t", "") %}
+    {%- endfor %}
+    {{ media_players.groups.split("\t") }}

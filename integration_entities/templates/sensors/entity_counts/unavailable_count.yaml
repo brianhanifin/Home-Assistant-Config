@@ -23,6 +23,7 @@ attributes:
       | map(attribute="entity_id")
       | reject("is_hidden_entity")
       | reject("search","blackpc")
+      | reject("search","double_take")
       | reject("search","octoprint")
       | list
     }}
