@@ -1,9 +1,10 @@
 ---
-unique_id: check_config_result
-name: Check config result
-command: "ha core check --raw-json"
-command_timeout: 180
-json_attributes:
-  - result
-  - data
-value_template: '{{ value_json.result }}'
+sensor:
+  unique_id: check_config_result
+  name: Check config result
+  command: "ha core check --raw-json"
+  command_timeout: 180
+  json_attributes:
+    - result
+    - data
+  value_template: "{{ value_json.result }}"
