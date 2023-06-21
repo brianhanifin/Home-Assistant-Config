@@ -1,0 +1,14 @@
+---
+unique_id: workbench_air_quality_rating
+name: Workbench air quality rating
+icon: mdi:air-filter
+state: |
+  {%- set quality = "index_" ~ states("sensor.workbench_air_quality")|int(default=0) %}
+  {%- set ratings = {
+    "index_0": "Excellent",
+    "index_1": "Good",
+    "index_2": "Fair",
+    "index_3": "Inferior",
+    "index_4": "Poor"
+  } %}
+  {{ ratings[quality]|default("unknown") }}
