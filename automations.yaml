@@ -271,6 +271,13 @@
         - light.family_room
         - light.family_room_table_lamp
     enabled: false
+  - service: script.cast
+    data:
+      dashboard_path: dashboard-cast
+      view_path: night
+      displays:
+      - 47e1a1a35bb2d1e827ccdeb761f5721b
+      - 7d6b52507e25e7eeba10914e56052d1c
   mode: single
 - id: '1640887750655'
   alias: Wet laundry Family room LED indicator
@@ -4117,7 +4124,7 @@
       target:
         entity_id: lock.front_door
       alias: Lock the front door.
-    alias: Make sure the garage door is locked.
+    alias: Make sure the front door is locked.
   - if:
     - condition: not
       conditions:
@@ -4773,4 +4780,84 @@
       target:
         entity_id: switch.google_garage_do_not_disturb
     alias: '[timer_finished] When presence timeout ends.'
+  mode: single
+- id: '1686585700125'
+  alias: After sunset keep night dashboard on displays
+  description: ''
+  trigger:
+  - platform: time_pattern
+    minutes: /5
+  condition:
+  - condition: or
+    conditions:
+    - condition: sun
+      after: sunset
+    - condition: sun
+      before: sunrise
+    alias: Only after sunset or before sunrise.
+  action:
+  - if:
+    - condition: state
+      entity_id: media_player.google_kitchen
+      attribute: media_title
+      state: 'dashboard-cast: Night'
+    then:
+    - service: script.cast
+      data:
+        dashboard_path: dashboard-cast
+        displays:
+        - 47e1a1a35bb2d1e827ccdeb761f5721b
+        - 7d6b52507e25e7eeba10914e56052d1c
+        view_path: night
+      alias: 'Display the night dashboard. '
+    alias: When the night dashboard is not displayed.
+  mode: single
+- id: '1686694412234'
+  alias: Summer school wakeup
+  description: ''
+  trigger:
+  - platform: calendar
+    event: start
+    offset: -0:35:0
+    entity_id: calendar.lucas
+    id: 35m_before
+    alias: 35 minutes before
+    enabled: false
+  - platform: calendar
+    event: start
+    offset: -0:30:0
+    entity_id: calendar.lucas
+    alias: 30 minutes before
+    id: 30m_before
+  - platform: calendar
+    event: start
+    offset: -0:20:0
+    entity_id: calendar.lucas
+    id: 20m_before
+    alias: 20 minutes before
+  condition:
+  - condition: template
+    value_template: '{{ "summer school" in trigger.calendar_event.summary|lower }}'
+    alias: Continue when “Summer school” is the event trigger?
+  action:
+  - if:
+    - condition: trigger
+      id: 30m_before
+    then:
+    - service: script.event_wakeup_lucas
+      data: {}
+    - service: script.event_announce
+      data:
+        id: wakeup_lucas
+        media_player: '{{ states("input_select.event_speakers_wakeup_lucas") }}'
+        second_announcement: false
+  - if:
+    - condition: trigger
+      id: 20m_before
+    then:
+    - service: script.event_announce
+      data:
+        id: wakeup_lucas
+        media_player: '{{ states("input_select.event_speakers_wakeup_lucas") }}'
+        second_announcement: true
   mode: single
