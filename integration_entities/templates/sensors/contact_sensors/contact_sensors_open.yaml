@@ -4,24 +4,17 @@ name: Contact sensors open
 icon: mdi:door-open
 state_class: total
 state: |
-  {{
-    this.attributes.open_doors|default([]) | count | default(0)
-    + this.attributes.open_windows|default([]) | count | default(0)
-  }}
+  {{ this.attributes.entities|default([]) | count | default(0) }}
 attributes:
-  open_doors: |
+  entities: |
     {{
-      states.binary_sensor
-      | selectattr("entity_id","in",state_attr("sensor.doors_open","entities"))
-      | selectattr("state","eq","on")
-      | map(attribute="entity_id")
-      | list
+      this.attributes.open_doors|default([])
+      + this.attributes.open_windows|default([])
     }}
+  open_doors: |
+    {{ state_attr("sensor.doors_open","entities") }}
   open_windows: |
     {{
-      states.binary_sensor
-      | selectattr("entity_id","in",state_attr("sensor.windows_open","entities"))
-      | selectattr("state","eq","on")
-      | map(attribute="entity_id")
-      | list
+      state_attr("sensor.windows_open_downstairs","entities")|default([])
+      + state_attr("sensor.windows_open_upstairs","entities")|default([])
     }}
