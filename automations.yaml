@@ -3268,6 +3268,12 @@
     - switch.instant_pot_power_monitor
     - switch.lucas_ac_power_monitor
     to: 'off'
+  - platform: state
+    entity_id:
+    - switch.bedroom_ac_power
+    - switch.lucas_ac_power_monitor
+    from:
+    to: 'off'
   condition: []
   action:
   - service: switch.turn_on
@@ -3375,21 +3381,29 @@
   description: Using power monitoring to update the Sensibo device when the a/c state
     is changed at the control panel.
   trigger:
-  - id: cool
-    platform: numeric_state
-    entity_id:
-    - sensor.bedroom_ac_power
-    - sensor.lucas_ac_power
+  - platform: numeric_state
+    entity_id: switch.bedroom_ac_power
     above: 100
     for:
       seconds: 10
     variables:
       powered_state: 'on'
-  - id: 'off'
-    platform: numeric_state
-    entity_id:
-    - sensor.bedroom_ac_power
-    - sensor.lucas_ac_power
+  - platform: numeric_state
+    entity_id: sensor.lucas_ac_power
+    above: 100
+    for:
+      seconds: 10
+    variables:
+      powered_state: 'on'
+  - platform: numeric_state
+    entity_id: sensor.bedroom_ac_power
+    below: 10
+    for:
+      minutes: 15
+    variables:
+      powered_state: 'off'
+  - platform: numeric_state
+    entity_id: sensor.lucas_ac_power
     below: 10
     for:
       minutes: 15
