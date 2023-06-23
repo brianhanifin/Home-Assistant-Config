@@ -8,13 +8,17 @@ state: |
 attributes:
   entities: |
     {{
-      this.attributes.open_doors|default([])
-      + this.attributes.open_windows|default([])
+      state_attr("sensor.doors_open","entities")|default([])
+      + state_attr("sensor.windows_open","entities")|default([])
     }}
-  open_doors: |
-    {{ state_attr("sensor.doors_open","entities") }}
-  open_windows: |
-    {{
-      state_attr("sensor.windows_open_downstairs","entities")|default([])
-      + state_attr("sensor.windows_open_upstairs","entities")|default([])
-    }}
+  # entities: |
+  #   {{
+  #     this.attributes.open_doors|default([])
+  #     + this.attributes.open_windows|default([])
+  #   }}
+  # open_doors: |
+  #   {{ state_attr("sensor.doors_open","entities")|default([]) }}
+  # open_windows: |
+  #   {{
+  #     state_attr("sensor.windows_open","entities")|default([])
+  #   }}
