@@ -253,8 +253,7 @@ decluttering_templates:
         type: entity
       - content: '{{ state_attr("weather.home","temperature") }}°'
         entity: weather.home
-        icon: '{{ states("sensor.weather_icon") }}'
-        icon_color: '{{ state_attr("sensor.weather_icon","color") }}'
+        icon: weather-{{ states("weather.home") }}
         tap_action:
           action: fire-dom-event
           browser_mod:
@@ -398,20 +397,12 @@ decluttering_templates:
                   - subtitle: Downstairs
                     type: custom:mushroom-title-card
                   - card:
-                      style: "ha-card {\n    border: none;\n}\n"
+                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
-                      template: '{{ state_attr("sensor.windows_open_downstairs", "entities")
-                        }}'
-                    show_empty: false
-                    sort:
-                      method: name
-                    type: custom:auto-entities
-                  - card:
-                      style: "ha-card {\n    border: none;\n}\n"
-                      type: entities
-                    filter:
-                      template: '{{ state_attr("sensor.doors_open", "entities") }}'
+                      template: "{{\n  state_attr(\"sensor.windows_open_downstairs\"\
+                        ,\"entities\")\n  + state_attr(\"sensor.doors_open\",\"entities\"\
+                        )\n}}"
                     show_empty: false
                     sort:
                       method: name
@@ -422,7 +413,7 @@ decluttering_templates:
                       style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
-                      template: '{{ state_attr("sensor.windows_open_upstairs", "entities")
+                      template: '{{ state_attr("sensor.windows_open_upstairs","entities")
                         }}'
                     show_empty: false
                     sort:
@@ -1688,9 +1679,9 @@ views:
           \ + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on\
           \ == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%-\
           \ set contact_open = is_state(\"binary_sensor.sliding_door\", \"on\") %}\n\
-          {%- if contact_open %}\n  {{- \" ‧ \" if lights_on }}\n  {{- \"sliding door\
-          \ open\" }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.play_room_motion\"\
-          ,\"on\"), \" ‧ occupied\", \"\") }}"
+          {%- if contact_open %}\n  {{- \" ‧ \" ~ \"sliding door open\" }}\n{%- endif\
+          \ %}\n{{- iif(is_state(\"binary_sensor.play_room_motion\",\"on\"), \" ‧\
+          \ occupied\", \"\") }}"
         title: Play room
         type: custom:mushroom-title-card
       - cards:
@@ -1813,21 +1804,22 @@ views:
         type: custom:mushroom-chips-card
       type: vertical-stack
     - cards:
-      - subtitle: "{{- states(\"sensor.garage_temperature\")|round(default=0) }}°\n\
-          {{- \" ‧ \" ~ states(\"sensor.garage_humidity\")|round(default=0) }}%\n\
-          {%-\n  set lights_on = expand(area_entities(\"garage\")) \n    | selectattr(\"\
-          domain\",\"eq\",\"light\") \n    | selectattr(\"state\",\"eq\",\"on\")\n\
-          \    | map(attribute=\"entity_id\")\n    | list\n    | count\n    | default(0)\n\
-          %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on == 1, \"1 light\
-          \ on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%- set contact_open\
-          \ = is_state(\"cover.garage_door\", \"open\") %}\n{%- if contact_open %}\n\
-          \  {{- \" ‧ \" if lights_on }}\n  {{- \"garage door open\" }}\n{%- endif\
-          \ %}\n{{- iif(is_state(\"binary_sensor.garage_motion\",\"on\"), \" ‧ occupied\"\
-          , \"\") }}\n{{- iif(not is_state(\"cover.garage_door\",\"closed\"), \" ‧\
-          \ garage door is \" ~ states(\"cover.garage_door\"), \"\") }}\n{%- if not\
-          \ states(\"input_select.laundry_status\") in [\"Off\",\"Unknown\"] %}\n\
-          \  {{- \" ‧ \" ~ iif(states(\"input_select.laundry_status\") != \"Please\
-          \ transfer to dryer\", \"laundry is \", \"\") ~ states(\"input_select.laundry_status\"\
+      - subtitle: "{{- states(\"sensor.workbench_temperature\")|round(default=0) }}°\n\
+          {{- \" ‧ \" ~ states(\"sensor.workbench_humidity\")|round(default=0) }}%\n\
+          {{- ' ‧ Air quality: \"' ~ states(\"sensor.workbench_air_quality_rating\"\
+          ) ~ '\"' }}\n{%-\n  set lights_on = expand(area_entities(\"garage\")) \n\
+          \    | selectattr(\"domain\",\"eq\",\"light\") \n    | selectattr(\"state\"\
+          ,\"eq\",\"on\")\n    | map(attribute=\"entity_id\")\n    | list\n    | count\n\
+          \    | default(0)\n%}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on\
+          \ == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n{%-\
+          \ set contact_open = is_state(\"cover.garage_door\", \"open\") %}\n{%- if\
+          \ contact_open %}\n  {{- \" ‧ \" if lights_on }}\n  {{- \"garage door open\"\
+          \ }}\n{%- endif %}\n{{- iif(is_state(\"binary_sensor.garage_motion\",\"\
+          on\"), \" ‧ occupied\", \"\") }}\n{{- iif(not is_state(\"cover.garage_door\"\
+          ,\"closed\"), \" ‧ garage door is \" ~ states(\"cover.garage_door\"), \"\
+          \") }}\n{%- if not states(\"input_select.laundry_status\") in [\"Off\",\"\
+          Unknown\"] %}\n  {{- \" ‧ \" ~ iif(states(\"input_select.laundry_status\"\
+          ) != \"Please transfer to dryer\", \"laundry is \", \"\") ~ states(\"input_select.laundry_status\"\
           )|lower }}\n{%- endif %}"
         title: Garage
         type: custom:mushroom-title-card
@@ -1945,11 +1937,12 @@ views:
     - cards:
       - subtitle: "{{- states(\"sensor.bedroom_temperature\")|round(default=0) }}°\n\
           {{- \" ‧ \" ~ states(\"sensor.bedroom_humidity\")|round(default=0) }}%\n\
-          {%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"light.bedroom\"\
-          ,\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on = iif(is_state(\"\
-          light.bedroom_table_lamp\",\"on\"), lights_on + 1, lights_on) %}\n{%- set\
-          \ lights_on = iif(is_state(\"light.bedroom_east\",\"on\"), lights_on + 1,\
-          \ lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on\
+          {{- ' ‧ Air quality: \"' ~ states(\"sensor.glowforge_air_quality_rating\"\
+          ) ~ '\"' }}\n{%- set lights_on = 0 %}\n{%- set lights_on = iif(is_state(\"\
+          light.bedroom\",\"on\"), lights_on + 1, lights_on) %}\n{%- set lights_on\
+          \ = iif(is_state(\"light.bedroom_table_lamp\",\"on\"), lights_on + 1, lights_on)\
+          \ %}\n{%- set lights_on = iif(is_state(\"light.bedroom_east\",\"on\"), lights_on\
+          \ + 1, lights_on) %}\n{%- if lights_on > 0 %}\n  {{- \" ‧ \" ~ iif(lights_on\
           \ == 1, \"1 light on\", lights_on ~ \" lights on\") }}\n{%- endif %}\n\n\
           {{- iif(is_state(\"binary_sensor.bedroom_window\", \"on\"), \" ‧ window\
           \ open\", \"\") }}\n{{- iif(is_state(\"binary_sensor.bedroom_motion\",\"\
@@ -3098,6 +3091,10 @@ views:
           label: Wakeup
         card:
           cards:
+          - entities:
+            - entity: automation.summer_school_wakeup
+              secondary_info: last-triggered
+            type: entities
           - template: event
             type: custom:decluttering-card
             variables:
@@ -3159,7 +3156,7 @@ views:
             - label: Day off tomorrow
             - id: bedtime_boys_dayoff
             - sensors:
-              - binary_sensor.high_school_day
+              - binary_sensor.high_school_day_tomorrow
           type: vertical-stack
       type: custom:tabbed-card
     type: vertical-stack
@@ -3170,31 +3167,18 @@ views:
       - subtitle: Front yard drip system
         title: Irrigation controller
         type: custom:mushroom-title-card
-      - cards:
-        - entity: switch.front_yard_drip
-          icon: mdi:sprinkler-variant
-          name: Start cycle
-          tap_action:
-            action: toggle
-          type: custom:mushroom-entity-card
-        columns: 2
-        square: false
-        type: grid
-      - card:
-          bar_background: 'var(--mdc-theme-primary, #6200ee)'
-          bar_direction: rtl
-          bar_foreground: '#eee'
-          duration:
-            entity: number.front_yard_drip_duration
-            units: minutes
-          entity: switch.front_yard_drip
-          full_row: true
-          text_width: 0px
-          type: custom:timer-bar-card
-        conditions:
-        - entity: switch.front_yard_drip
-          state: 'on'
-        type: conditional
+      - duration:
+          entity: number.front_yard_drip_duration
+          units: minutes
+        entity: switch.front_yard_drip
+        icon: mdi:sprinkler-variant
+        invert: true
+        mushroom:
+          layout: horizontal
+          secondary_info: last-updated
+        tap_action:
+          action: toggle
+        type: custom:timer-bar-card
       - entities:
         - entities:
           - entity: sensor.front_yard_drip_next
@@ -3980,10 +3964,10 @@ views:
       - cards:
         - cards:
           - entities:
-            - entity: binary_sensor.middle_school_day
-              name: Middle school
             - entity: binary_sensor.high_school_day
-              name: High school
+              name: School today
+            - entity: binary_sensor.high_school_day_tomorrow
+              name: School tomorrow
             - entity: binary_sensor.holiday
               name: Public holiday
             show_state: false
@@ -4002,20 +3986,13 @@ views:
       - subtitle: Manually set
         title: ''
         type: custom:mushroom-title-card
-      - cards:
-        - entities:
-          - entity: input_datetime.high_school_summer_begin
-            name: High school last day
-          - entity: input_datetime.high_school_summer_ends
-            name: High school first day
-          show_icon: false
-          type: glance
-        - entities:
-          - entity: input_datetime.school_summer_begin
-            name: Middle school last day
-          show_icon: false
-          type: glance
-        type: vertical-stack
+      - entities:
+        - entity: input_datetime.high_school_summer_begin
+          name: High school last day
+        - entity: input_datetime.high_school_summer_ends
+          name: High school first day
+        show_icon: false
+        type: glance
       type: vertical-stack
     type: vertical-stack
     view_layout:
