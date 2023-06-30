@@ -4875,3 +4875,25 @@
         media_player: '{{ states("input_select.event_speakers_wakeup_lucas") }}'
         second_announcement: true
   mode: single
+- id: '1687492024059'
+  alias: Notify Brian at bedtime how many contact sensors are open
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.iphone_brian_battery_state
+    to: Charging
+    from: Not Charging
+  condition:
+  - condition: time
+    after: '20:00:00'
+  - condition: numeric_state
+    entity_id: sensor.contact_sensors_open
+    above: 0
+  action:
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: '{{ states("sensor.contact_sensors_open") }} contacts sensors are open'
+      message: test
+  mode: single
