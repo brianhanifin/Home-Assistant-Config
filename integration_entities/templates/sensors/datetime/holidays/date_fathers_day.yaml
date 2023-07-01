@@ -20,7 +20,7 @@ state: |
     if event_month < today.month
       or (event_month == today.month and event_day < today.day)
   -%}
-    {%- set event_date = nth_day_of_month(event_nth_day, event_day_name, event_month, this_year+1) | replace(" 00:00:00","")  -%}
+    {%- set event_date = nth_day_of_month(event_nth_day, event_day_name, event_month, today.year+1) | replace(" 00:00:00","")  -%}
   {%- endif -%}
 
   {{- event_date }}
