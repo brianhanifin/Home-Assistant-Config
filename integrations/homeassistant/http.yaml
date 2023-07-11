@@ -8,6 +8,7 @@ http:
   cors_allowed_origins:
     - https://cast.home-assistant.io
     - https://home.mybox.run
+    - https://home.internal.mybox.run
 
   # These are for Nginx proxy manager.
   use_x_forwarded_for: true
@@ -16,6 +17,8 @@ http:
     - 10.0.0.0/8
     # Nginx docker network
     - 172.0.0.0/8
+    # Tailscale network block
+    - 100.0.0.0/8
     # My Cox ip range ..170.0 - ..171.254
     - 72.197.170.0/23
     # Cloudflare IPs
