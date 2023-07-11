@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: |
-| **38,886** | 1,422 | 39 | 105 | 59 |
+| **38,882** | 1,365 | 39 | 106 | 59 |
 
 # Index
 
@@ -238,10 +238,10 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **1422 total entities**,
-including **670 sensors**. My YAML
-files contain 38,886 lines of code.
-All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>25 Custom integrations</summary>
+Our Home Assistant install has approximately **1365 total entities**,
+including **607 sensors**. My YAML
+files contain 38,882 lines of code.
+All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>24 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.14.0](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra), [@th3w1zard1](https://github.com/th3w1zard1).
@@ -306,9 +306,6 @@ Home Assistant Sun2 SensorAuthors:[@pnbruckner](https://github.com/pnbruckner).
 ## [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
 Authors:[@jchasey](https://github.com/jchasey).
 
-## [Uptime Kuma v2.1.0](https://github.com/meichthys/uptime_kuma/blob/main/README.md)
-Uptime Kuma HACS integrationAuthors:[@meichthys](https://github.com/meichthys), [@jayakornk](https://github.com/jayakornk).
-
 ## [Waste Management v0.1.6](https://github.com/dcmeglio/homeassistant-waste_management/blob/master/README.md)
 Determines your next Waste Management (https://www.wm.com) pickup times for use in Home Assistant.Authors:[@dcmeglio](https://github.com/dcmeglio).
 
@@ -371,16 +368,16 @@ Minimalistic graph card for Home Assistant Lovelace UI
 ## [Multiple Entity Row v4.5.0](https://github.com/benct/lovelace-multiple-entity-row)
 Show multiple entity states and attributes on entity rows in Home Assistant's Lovelace UI
 
-## [Mushroom v2.8.1](https://github.com/piitaya/lovelace-mushroom)
+## [Mushroom v3.0.1](https://github.com/piitaya/lovelace-mushroom)
 Mushroom Cards - Build a beautiful dashboard easily 🍄
 
-## [Number Box v4.10](https://github.com/htmltiger/numberbox-card)
+## [Number Box v4.11](https://github.com/htmltiger/numberbox-card)
 Replace input_number sliders with plus and minus buttons
 
 ## [Power Wheel Card v0.1.5](https://github.com/gurbyz/power-wheel-card)
 An intuitive way to represent the power and energy that your home is consuming or producing. (A custom card for the Lovelace UI of Home Assistant.)
 
-## [Restriction Card v1.2.8](https://github.com/iantrich/restriction-card)
+## [Restriction Card v1.2.9](https://github.com/iantrich/restriction-card)
 🔒 Apply restrictions to Lovelace cards
 
 ## [Simple Thermostat v2.5.0](https://github.com/nervetattoo/simple-thermostat)
@@ -444,7 +441,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.7.0b2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.7.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -454,7 +451,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38,886-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38,882-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

@@ -1332,6 +1332,11 @@ views:
         - entity: switch.prusa
           state: 'on'
         type: conditional
+      - icon: mdi:microphone
+        tap_action:
+          action: assist
+          start_listening: true
+        type: action
       type: custom:mushroom-chips-card
     - card:
         style: "ha-card {\n  background: rgba(165, 0, 0, 0.1);\n  font-size: 1.2em;\n\
@@ -3091,10 +3096,6 @@ views:
           label: Wakeup
         card:
           cards:
-          - entities:
-            - entity: automation.summer_school_wakeup
-              secondary_info: last-triggered
-            type: entities
           - template: event
             type: custom:decluttering-card
             variables:
@@ -3103,11 +3104,18 @@ views:
             - sensors:
               - binary_sensor.high_school_day
           - cards:
-            - subtitle: Nerene (manual)
+            - subtitle: Nerene (special)
               title: ''
               type: custom:mushroom-title-card
-            - entity: timer.nerene_wakeup_light
-              type: tile
+            - cards:
+              - entity: automation.nerene_rigid_wakeup
+                name: Rigid wakeup
+                type: tile
+              - entity: timer.nerene_wakeup_light
+                name: Timer button
+                secondary_info: last-triggered
+                type: tile
+              type: horizontal-stack
             type: vertical-stack
           - template: event
             type: custom:decluttering-card
@@ -3458,6 +3466,7 @@ views:
                     type: glance
                   filter:
                     exclude:
+                    - state: '0'
                     - entity_id: sensor.automation_count
                     - entity_id: sensor.code_line_count
                     - entity_id: sensor.domain_count
