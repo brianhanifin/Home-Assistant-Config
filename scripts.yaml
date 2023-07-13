@@ -1968,3 +1968,31 @@ notify_pixel_clock:
   mode: queued
   icon: mdi:clock-digital
   max: 10
+get_nerene_active_wakeup_time:
+  alias: Get active wakeup time for Nerene.
+  sequence:
+  - alias: Determine active wakeup time.
+    variables:
+      active_wakeup_time: "{%- if is_state(\"automation.nerene_rigid_wakeup\", \"on\")
+        %}\n  {%- set wakeup_time = states(\"input_datetime.nerene_rigid_wakeup\")
+        %}\n{%- elif is_state(\"timer.nerene_wakeup_light\",\"active\") %}\n  {%-
+        set wakeup_time = state_attr(\"timer.nerene_wakeup_light\",\"finishes_at\")
+        | as_timestamp | timestamp_custom(\"%I:%M:%S\") %}\n{%- elif is_state(\"binary_sensor.work_day_modified\",
+        \"on\") and is_state(\"input_boolean.event_enabled_wakeup_nerene_modified\",
+        \"on\") %}\n  {%- set wakeup_time = states(\"input_datetime.event_light_wakeup_nerene_modified\")
+        %}\n{%- elif is_state(\"binary_sensor.work_day\", \"on\") and is_state(\"event_enabled_wakeup_nerene\",\"on\")
+        %}\n  {%- set wakeup_time = states(\"input_datetime.event_light_wakeup_nerene\")
+        %}\n{%- endif %} {{ wakeup_time | default(none) }}"
+      result:
+        time: '{{active_wakeup_time}}'
+  - service: persistent_notification.create
+    data:
+      title: result
+      message: '{{ result }}'
+    alias: Debug
+    enabled: true
+  - stop: Return active wakeup time.
+    response_variable: result
+    alias: Return active wakeup time. [{{result.time}}]
+  mode: single
+  icon: mdi:family-tree

@@ -3564,11 +3564,12 @@
   alias: Bedroom light on state change
   description: ''
   trigger:
-  - id: light_on
+  - id: primary_light_on
     platform: state
     entity_id: light.bedroom
     from: 'off'
     to: 'on'
+    alias: When the primary bedroom light turns on.
   - id: secondary_light_on
     platform: state
     entity_id:
@@ -3576,31 +3577,41 @@
     - light.bedroom_table_lamp
     from: 'off'
     to: 'on'
-  - id: light_off
+    alias: When the EAST or TABLE LAMPS turn on.
+  - id: primary_light_off
     platform: state
     entity_id: light.bedroom
     from: 'on'
     to: 'off'
+    alias: When the primary bedroom light turns off.
   condition: []
   action:
+  - alias: Get Nerene's active wakeup time. [Returns {{result.time}}]
+    service: script.get_nerene_active_wakeup_time
+    response_variable: result
+    data: {}
+    enabled: true
   - variables:
       nerene_battery_charging: '{{ is_state_attr("device_tracker.life360_nerene","battery_charging",True)
         }}'
       now_timestamp: '{{ as_timestamp(now()) }}'
       timezone_offset: '{{ now_timestamp|timestamp_custom("%z") }}'
-      wakeup_time: '{{ states("input_datetime.event_light_wakeup_nerene") }}'
+      wakeup_time: '{{ result.time | default() }}'
       wakeup: '{{ now_timestamp | timestamp_custom("%Y-%m-%d "+wakeup_time+timezone_offset,
         true) }}'
-      wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) |int(default=0)
-        }}'
+      wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) |
+        int(default=0) }}'
       near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
+      alias: Define variables.
   - if:
     - condition: template
       value_template: '{{ is_state("script.event_light", "off") }}'
+      alias: When the script.wakeup_light is not running.
     then:
     - if:
       - condition: template
-        value_template: '{{ trigger.id == "light_on" }}'
+        value_template: '{{ trigger.id == "primary_light_on" }}'
+        alias: When triggered by primary_light_on.
       then:
       - service: light.turn_on
         target:
@@ -3610,31 +3621,43 @@
           - light.bedroom_table_lamp
         data:
           brightness: 255
+        alias: Turn on the EAST and TABLE LAMPS on to 100%.
+      alias: Turn on the EAST and TABLE LAMPS when triggered by primary_light_on.
     - if:
       - condition: template
         value_template: '{{ trigger.id == "secondary_light_on" }}'
+        alias: When triggered by secondary_light_on.
       then:
       - service: light.turn_on
         target:
           entity_id: '{{ trigger.to_state.entity_id }}'
         data:
           brightness: 255
+        alias: Set the light's brightness to 100%.
+      alias: Force the secondary light's brightness to 100% when it is turned on.
+    alias: Force different sets of lights to 100%, but only outside of Nerene's wakeup
+      light window.
   - if:
     - condition: template
-      value_template: '{{ trigger.id == "light_off" }}'
+      value_template: '{{ trigger.id == "primary_light_off" }}'
+      alias: 'Triggered by primary_light_off. '
     then:
     - if:
       - condition: template
-        value_template: '{{ nerene_battery_charging == False and near_wakeup == True
+        value_template: '{{ near_wakeup == True and nerene_battery_charging == False
           }}'
+        alias: When it is near Nerene's wakeup time and her phone is already off the
+          charger.
       then:
       - service: homeassistant.turn_off
         entity_id:
         - fan.bedroom
         - switch.sound_machine
+        alias: Turn off the fan and sound machine.
     - if:
       - condition: template
         value_template: '{{ is_state("script.event_light", "off") }}'
+        alias: ' When the script.wakeup_light is not running.'
       then:
       - service: light.turn_off
         target:
@@ -3642,6 +3665,10 @@
           - light.bedroom_east
           - light.bedroom_table_lamp
         data: {}
+        alias: Turn off the EAST and TABLE LAMPS.
+      alias: Turn off the EAST and TABLELAMPS when script.wakeup_light script is not
+        running.
+    alias: Turn off devices and lights when triggered by primary_light_off.
   mode: single
 - id: '1666279149478'
   alias: TV power on
@@ -4902,9 +4929,47 @@
   description: Sleep therapy strict wakeup schedule.
   trigger:
   - platform: time
-    at: 07:30:00
+    at: input_datetime.nerene_rigid_wakeup_time
   condition: []
   action:
   - service: script.event_wakeup_nerene
     data: {}
+  mode: single
+- id: '1689193392004'
+  alias: 'Notification: docker watchtower'
+  description: ''
+  trigger:
+  - platform: webhook
+    allowed_methods:
+    - POST
+    - PUT
+    local_only: true
+    webhook_id: -qHFv2LxbKNRdnHL1jwwd2P2m
+  condition: []
+  action:
+  - service: script.notify_mobile
+    data:
+      who: brian
+      message:
+        '[object Object]':
+      title: Watchtower - {{trigger.data.title}}
+    enabled: true
+  - service: notify.persistent_notification
+    data:
+      message: '[trigger.json]
+
+        {{trigger.json}}
+
+
+        [trigger.data]
+
+        {{trigger.data}}
+
+
+        [trigger.query]
+
+        {{trigger.query}}
+
+        '
+    enabled: false
   mode: single
