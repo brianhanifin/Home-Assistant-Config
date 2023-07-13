@@ -3671,8 +3671,8 @@
     alias: Turn off devices and lights when triggered by primary_light_off.
   mode: single
 - id: '1666279149478'
-  alias: TV power on
-  description: 'Set TV volume to zero. '
+  alias: TV power ON/OFF
+  description: ''
   trigger:
   - platform: device
     device_id: 32d18497e45ef4b0b2ced17b5e477538
@@ -3683,17 +3683,59 @@
       hours: 0
       minutes: 0
       seconds: 0
+    id: tv_on
   - platform: numeric_state
     entity_id: media_player.family_room_tv
     attribute: volume_level
     above: 0
+    alias: volume_above_zero
+    id: tv_volume_not_zero
+  - platform: device
+    device_id: 32d18497e45ef4b0b2ced17b5e477538
+    domain: media_player
+    entity_id: 3bba059b7efe678cee758d15ee396557
+    type: turned_off
+    id: tv_off
   condition: []
   action:
-  - service: media_player.volume_set
-    data:
-      volume_level: 0
-    target:
-      entity_id: media_player.family_room_tv
+  - if:
+    - condition: trigger
+      id:
+      - tv_on
+      - tv_volume_not_zero
+    then:
+    - service: media_player.volume_set
+      data:
+        volume_level: 0
+      target:
+        entity_id: media_player.family_room_tv
+      alias: 'Set TV volume to zero. '
+    - if:
+      - condition: time
+        after: '20:00:00'
+      then:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.home_entry
+        alias: Turn off the home entry light.
+      alias: Turn off the home entry light when the tv is turned on close bedtime.
+    alias: Lower TV volume when triggered by `tv_on` or `tv_volume_not_zero`.
+  - if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id: tv_off
+      - condition: time
+        after: '20:00:00'
+      alias: When the tv is turned off close to bedtime.
+    then:
+    - service: light.turn_on
+      data: {}
+      target:
+        entity_id: light.home_entry
+      alias: Turn on the home entry light.
+    alias: Turn on the home entry light when the tv is turned off close bedtime.
   mode: single
 - id: '1667158538897'
   alias: 'Remote: Lucas bedside'
@@ -4935,8 +4977,8 @@
   - service: script.event_wakeup_nerene
     data: {}
   mode: single
-- id: '1689193392004'
-  alias: 'Notification: docker watchtower'
+- id: '1689217472508'
+  alias: Watchtower notification
   description: ''
   trigger:
   - platform: webhook
@@ -4944,32 +4986,21 @@
     - POST
     - PUT
     local_only: true
-    webhook_id: -qHFv2LxbKNRdnHL1jwwd2P2m
+    webhook_id: watchtower-notification-20LAk41wM8YTGDGFXCuLhhV2
   condition: []
   action:
+  - alias: Retrieve the notification title and message from the webhook trigger.
+    variables:
+      title: 'Watchtower - {{ trigger.json.title }}
+
+        '
+      message: '{{ trigger.json.message }}
+
+        '
   - service: script.notify_mobile
     data:
       who: brian
-      message:
-        '[object Object]':
-      title: Watchtower - {{trigger.data.title}}
-    enabled: true
-  - service: notify.persistent_notification
-    data:
-      message: '[trigger.json]
-
-        {{trigger.json}}
-
-
-        [trigger.data]
-
-        {{trigger.data}}
-
-
-        [trigger.query]
-
-        {{trigger.query}}
-
-        '
-    enabled: false
+      title: '{{ title }}'
+      message: '{{ message }}'
+    alias: Send the notification to my phone.
   mode: single
