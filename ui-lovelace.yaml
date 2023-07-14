@@ -1403,6 +1403,8 @@ views:
           icon: hass:home-floor-2
         - entity: sensor.attic_temperature
           icon: hass:home-floor-a
+        - entity: sensor.outdoor_temperature
+          icon: hass:sun-thermometer-outline
         show_icon: true
         show_name: false
         show_state: true
@@ -2594,7 +2596,7 @@ views:
             icon: mdi:walk
             id: frontdoor
             live_provider: ha
-          - camera_entity: camera.doorbell
+          - camera_entity: camera.doorbell_restream
             icon: mdi:doorbell-video
             id: doorbell
             live_provider: ha
@@ -3109,13 +3111,16 @@ views:
               type: custom:mushroom-title-card
             - cards:
               - entity: automation.nerene_rigid_wakeup
-                name: Rigid wakeup
-                type: tile
+                tap_action:
+                  action: toggle
+                type: custom:mushroom-entity-card
+              - entity: input_datetime.nerene_rigid_wakeup
+                type: custom:mushroom-entity-card
               - entity: timer.nerene_wakeup_light
-                name: Timer button
-                secondary_info: last-triggered
-                type: tile
-              type: horizontal-stack
+                type: custom:mushroom-entity-card
+              columns: 2
+              square: false
+              type: grid
             type: vertical-stack
           - template: event
             type: custom:decluttering-card
