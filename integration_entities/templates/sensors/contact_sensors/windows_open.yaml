@@ -19,6 +19,8 @@ attributes:
       states.binary_sensor
       | selectattr("entity_id","in", all_windows)
       | selectattr("state","eq","on")
+      | rejectattr("state","eq","unavailable")
+      | rejectattr("state","eq","unknown")
       | map(attribute="entity_id")
       | list
       | sort
