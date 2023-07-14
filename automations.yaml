@@ -458,7 +458,7 @@
         who: brian
         title: Doorbell
         message: Someone pushed the doorbell.
-        camera: camera.front_door_restream
+        camera: camera.front_door
     - service: script.notify_web
       data:
         message: Someone pressed the doorbell!
@@ -469,7 +469,7 @@
         who: blackpc
         title: Doorbell
         message: Someone pushed the doorbell.
-        camera: camera.front_door_restream
+        camera: camera.front_door
   - delay:
       hours: 0
       minutes: 1
@@ -3561,114 +3561,119 @@
       seconds: 10
   mode: single
 - id: '1666220627171'
-  alias: Bedroom light on state change
+  alias: Bedroom light switch on state changes
   description: ''
   trigger:
-  - id: primary_light_on
-    platform: state
-    entity_id: light.bedroom
-    from: 'off'
-    to: 'on'
-    alias: When the primary bedroom light turns on.
-  - id: secondary_light_on
-    platform: state
+  - platform: state
     entity_id:
-    - light.bedroom_east
-    - light.bedroom_table_lamp
-    from: 'off'
-    to: 'on'
-    alias: When the EAST or TABLE LAMPS turn on.
-  - id: primary_light_off
-    platform: state
-    entity_id: light.bedroom
-    from: 'on'
-    to: 'off'
-    alias: When the primary bedroom light turns off.
-  condition: []
+    - sensor.bedroom_light_switch_action
+    alias: When button press action is detected.
+    to:
+    id: button_press_detected
+    from:
+  condition:
+  - condition: template
+    value_template: '{{ trigger.to_state.state in ["single_top","double_top","single_bottom","double_bottom","single_both","double_both"]
+      }}'
   action:
-  - alias: Get Nerene's active wakeup time. [Returns {{result.time}}]
-    service: script.get_nerene_active_wakeup_time
-    response_variable: result
-    data: {}
-    enabled: true
   - variables:
-      nerene_battery_charging: '{{ is_state_attr("device_tracker.life360_nerene","battery_charging",True)
-        }}'
-      now_timestamp: '{{ as_timestamp(now()) }}'
-      timezone_offset: '{{ now_timestamp|timestamp_custom("%z") }}'
-      wakeup_time: '{{ result.time | default() }}'
-      wakeup: '{{ now_timestamp | timestamp_custom("%Y-%m-%d "+wakeup_time+timezone_offset,
-        true) }}'
-      wakeup_time_difference: '{{ ((now_timestamp - as_timestamp(wakeup)) / 60) |
-        int(default=0) }}'
-      near_wakeup: '{{ wakeup_time_difference|abs <= 60 }}'
-      alias: Define variables.
+      action: "{%- set action = trigger.to_state.state %}\n{%- if action|length >=
+        10 %}\n  {%- set action = {\n    \"button\": action[7:],\n    \"tap_count\":
+        action[0:6]\n  } %}\n{%- endif %} {{ action }}\n"
+  - service: script.debug
+    data:
+      message: 'trigger.to_state.state: {{ trigger.to_state.state }}
+
+        action: {{ action }}'
   - if:
     - condition: template
-      value_template: '{{ is_state("script.event_light", "off") }}'
-      alias: When the script.wakeup_light is not running.
+      value_template: '{{ action.button == "top" }}'
+      alias: Top button was tapped.
     then:
     - if:
       - condition: template
-        value_template: '{{ trigger.id == "primary_light_on" }}'
-        alias: When triggered by primary_light_on.
+        value_template: '{{ action.tap_count == "single" }}'
+        alias: Single tap.
       then:
-      - service: light.turn_on
-        target:
-          entity_id:
-          - light.bedroom
-          - light.bedroom_east
-          - light.bedroom_table_lamp
-        data:
-          brightness: 255
-        alias: Turn on the EAST and TABLE LAMPS on to 100%.
-      alias: Turn on the EAST and TABLE LAMPS when triggered by primary_light_on.
+      - if:
+        - condition: state
+          entity_id: light.bedroom
+          state: 'off'
+          alias: When the light is off.
+        then:
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id:
+            - light.bedroom
+            - light.bedroom_east
+            - light.bedroom_table_lamp
+          alias: Turn off the lights.
+        alias: Toggle the bedroom lights.
+        else:
+        - service: light.turn_on
+          data: {}
+          target:
+            entity_id:
+            - light.bedroom
+            - light.bedroom_east
+            - light.bedroom_table_lamp
+          alias: Turn on the lights.
+      alias: Toggle the lights on a single tap of the top button.
     - if:
       - condition: template
-        value_template: '{{ trigger.id == "secondary_light_on" }}'
-        alias: When triggered by secondary_light_on.
+        value_template: '{{ action.tap_count == "double" }}'
+        alias: Double tap.
       then:
-      - service: light.turn_on
-        target:
-          entity_id: '{{ trigger.to_state.entity_id }}'
-        data:
-          brightness: 255
-        alias: Set the light's brightness to 100%.
-      alias: Force the secondary light's brightness to 100% when it is turned on.
-    alias: Force different sets of lights to 100%, but only outside of Nerene's wakeup
-      light window.
+      - if:
+        - condition: state
+          entity_id: climate.bedroom_thermostat
+          state: 'on'
+          alias: When the AC is on.
+        then:
+        - service: climate.turn_off
+          data: {}
+          target:
+            entity_id: climate.bedroom_thermostat
+          alias: Turn off the AC.
+        alias: Toggle the AC.
+        else:
+        - service: climate.turn_on
+          data: {}
+          target:
+            entity_id: climate.bedroom_thermostat
+          alias: Turn on the thermostat.
+      alias: Toggle the AC on a douple tap of the top button.
+    alias: Top button tap actions.
   - if:
     - condition: template
-      value_template: '{{ trigger.id == "primary_light_off" }}'
-      alias: 'Triggered by primary_light_off. '
+      value_template: '{{ action.button == "bottom" }}'
+      alias: Bottom button was tapped.
     then:
     - if:
       - condition: template
-        value_template: '{{ near_wakeup == True and nerene_battery_charging == False
-          }}'
-        alias: When it is near Nerene's wakeup time and her phone is already off the
-          charger.
+        value_template: '{{ action.tap_count == "single" }}'
+        alias: Single tap.
       then:
       - service: homeassistant.turn_off
-        entity_id:
-        - fan.bedroom
-        - switch.sound_machine
-        alias: Turn off the fan and sound machine.
+        data: {}
+        target:
+          area_id: bedroom
+        alias: 'Turn off all bedroom devices: lights, ac, bed, fan, sound machine.'
+      alias: Toggle the lights on a single tap of the top button.
     - if:
       - condition: template
-        value_template: '{{ is_state("script.event_light", "off") }}'
-        alias: ' When the script.wakeup_light is not running.'
-      then:
-      - service: light.turn_off
-        target:
-          entity_id:
-          - light.bedroom_east
-          - light.bedroom_table_lamp
-        data: {}
-        alias: Turn off the EAST and TABLE LAMPS.
-      alias: Turn off the EAST and TABLELAMPS when script.wakeup_light script is not
-        running.
-    alias: Turn off devices and lights when triggered by primary_light_off.
+        value_template: '{{ action.tap_count == "double" }}'
+        alias: Double tap.
+      then: []
+      alias: Toggle ?????? on a douple tap of the bottom button.
+      enabled: false
+    alias: Bottom button tap actions.
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
   mode: single
 - id: '1666279149478'
   alias: TV power ON/OFF
