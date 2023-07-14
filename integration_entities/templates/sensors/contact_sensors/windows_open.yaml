@@ -4,7 +4,11 @@ name: Windows open
 icon: mdi:window-open
 state_class: total
 state: |
-  {{ this.attributes.entities|default([]) | count | default(0) }}
+  {%- if this is not defined or this.attributes is not defined or this.attributes.entities is not defined %}
+    0
+  {%- else %}
+    {{ this.attributes.entities | default([]) | count | default(0) }}
+  {%- endif %}
 attributes:
   entities: |
     {%-
