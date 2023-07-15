@@ -81,6 +81,14 @@
       message: ' complete'
       entity_id: automation.startup
       name: Startup automation
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: template.reload
+    data: {}
+    alias: Reload template sensors.
   - service: automation.turn_off
     data: {}
     target:
@@ -3585,6 +3593,7 @@
       message: 'trigger.to_state.state: {{ trigger.to_state.state }}
 
         action: {{ action }}'
+    enabled: false
   - if:
     - condition: template
       value_template: '{{ action.button == "top" }}'
@@ -3645,6 +3654,7 @@
           alias: Turn on the thermostat.
       alias: Toggle the AC on a douple tap of the top button.
     alias: Top button tap actions.
+    enabled: true
   - if:
     - condition: template
       value_template: '{{ action.button == "bottom" }}'

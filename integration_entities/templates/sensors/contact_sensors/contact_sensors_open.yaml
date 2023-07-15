@@ -4,11 +4,7 @@ name: Contact sensors open
 icon: mdi:door-open
 state_class: total
 state: |
-  {%- if this is not defined or this.attributes is not defined or this.attributes.entities is not defined %}
-    0
-  {%- else %}
-    {{ this.attributes.entities | default([]) | count | default(0) }}
-  {%- endif %}
+  {{ this.attributes.entities | default([]) | count | default(0) }}
 attributes:
   entities: |
     {%- set doors_open = state_attr("sensor.doors_open","entities")|default([]) %}
