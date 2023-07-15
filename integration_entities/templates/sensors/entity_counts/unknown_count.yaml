@@ -10,7 +10,7 @@ attributes:
   entities: |
     {{
       states | selectattr("state","eq","unknown")
-      | rejectattr("domain","in",["button","group"])
+      | rejectattr("domain","in",["button","group","update"])
       | rejectattr("entity_id","in",
           integration_entities("HASS Agent")
           +integration_entities("Moonraker: Troodon")

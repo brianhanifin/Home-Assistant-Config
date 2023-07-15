@@ -1784,17 +1784,40 @@ docker:
       alias: Update the passed sensor.
   mode: queued
   max: 10
-refresh_entry_problem_sensors:
-  alias: Refresh entity problem sensors
-  sequence:
-  - service: homeassistant.update_entity
-    data: {}
-    target:
-      entity_id:
-      - sensor.unknown_count
-      - sensor.unavailable_count
-  mode: single
-  icon: mdi:cog-refresh
+  fields:
+    update:
+      description: Which sensor triggered this action (if applicable)?
+      example: binary_sensor.docker_pi01_zigbee2mqtt
+      required: false
+      selector:
+        entity:
+          domain: binary_sensor
+          multiple: false
+          integration: rest
+    server:
+      description: Which server?
+      required: true
+      selector:
+        select:
+          options:
+          - unraid
+          - zima01
+          - pi01
+    container:
+      description: Name of the container.
+      required: true
+      example: net-unifi
+      selector:
+        text:
+    command:
+      description: What command to execute.
+      required: true
+      selector:
+        select:
+          options:
+          - restart
+          - start
+          - stop
 say_local:
   alias: Say local
   sequence:

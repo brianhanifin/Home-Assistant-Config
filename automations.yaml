@@ -679,35 +679,32 @@
       default: []
   mode: single
 - id: '1654047415255'
-  alias: Restart physical wireless access point
+  alias: Restart tuya lights when unavailable
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.alert_wirelessap2_offline
-    to: 'on'
-    alias: 'Wireless Access Point #2 stays offline'
+    - light.driveway_flood
+    to: unavailable
+    alias: When the driveway lights stays offline for 30 minutes.
     for:
       hours: 0
-      minutes: 0
+      minutes: 30
       seconds: 0
+    id: driveway_light_offline
   condition: []
   action:
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.wirelessap2_power_cycler
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 30
-      milliseconds: 0
-    enabled: true
-  - service: rest_command.docker_unraid
-    data:
-      container: unifi-controller
-      command: restart
-    alias: Restart Unifi controller's docker service.
+  - if:
+    - condition: trigger
+      id:
+      - driveway_light_offline
+    then:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.driveway_flood_light_power_cycler
+      alias: Turn off the plug, which automatically turns itself back on after a delay.
+    alias: When triggered by driveway_light_offline, cycle the power to the light.
   - delay:
       hours: 0
       minutes: 10
@@ -1470,36 +1467,6 @@
     target:
       entity_id: input_select.announcement_choices
   mode: single
-- id: '1664915034973'
-  alias: Restart software defined radio addon
-  description: Restart the SDR addon when a sensor temperature goes unavailable.
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.backyard_temperature
-    - sensor.fridge_temperature
-    - sensor.garage_fridge_temperature
-    to: unavailable
-    for:
-      minutes: 5
-  condition: []
-  action:
-  - alias: Check again, and restart the addon to resolve the MQTT connection failure?
-    choose:
-    - conditions: '{{ is_state(''sensor.backyard_temperature'',''unavailable'') or
-        is_state(''sensor.fridge_temperature'',''unavailable'') or is_state(''sensor.garage_fridge_temperature'',''unavailable'')
-        }}'
-      sequence:
-      - service: hassio.addon_restart
-        data:
-          addon: d63406df_sdr2mqtt
-      - service: script.notify_web
-        data:
-          type: warning
-          title: 'Restart addon: SDR to Home Assistant [Automation]'
-          message: The backyard temperature sensor has been unavailable for 5 minutes.
-            An attempt has been made to restart the addon.
-  mode: single
 - id: '1664915086230'
   alias: Restart Unifi for gaming pc network change
   description: When a disabled PC is re-enabled restart the Unifi docker to ensure
@@ -1561,11 +1528,12 @@
     to: 'off'
   condition: []
   action:
-  - service: rest_command.docker_unraid
+  - service: script.docker
     data:
+      server: pi01
       container: zigbee2mqtt
       command: restart
-    alias: Restart zigbee2mqtt's docker service.
+      update: binary_sensor.docker_pi01_zigbee2mqtt
   mode: single
 - id: '1664918803941'
   alias: 'Presence: activate/deactivate away mode'
@@ -4146,42 +4114,6 @@
     alias: When the lights need to be turned back down.
   mode: queued
   max: 10
-- id: '1668444960496'
-  alias: Restart Authelia docker service
-  description: Restart the Authelia docker service on Unraid when it is offline for
-    5 minutes.
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.docker_authelia
-    - binary_sensor.uptimekuma_authelia
-    to: 'off'
-    alias: When the Authelia service on Unraid is down.
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-  condition: []
-  action:
-  - repeat:
-      until:
-      - condition: state
-        entity_id: binary_sensor.docker_authelia
-        state: 'on'
-        alias: Repeat until Authelia is running.
-      sequence:
-      - service: rest_command.docker_unraid
-        data:
-          container: Authelia
-          command: restart
-        alias: Restart Authelia's docker service.
-      - delay:
-          hours: 0
-          minutes: 2
-          seconds: 0
-          milliseconds: 0
-    alias: Restart Authelia's docker service.
-  mode: single
 - id: '1668445491799'
   alias: Brian or Nerene leave home
   description: When Brian or Nerene leave the home zone, lock the door and close the
