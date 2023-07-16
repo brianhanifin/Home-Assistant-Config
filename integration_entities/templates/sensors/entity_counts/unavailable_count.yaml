@@ -10,6 +10,7 @@ attributes:
   entities: |
     {{
       states | selectattr("state","eq","unavailable")
+      | rejectattr("domain","eq","update")
       | rejectattr("entity_id","in",
           ["camera.glowforge"]
           +integration_entities("google_home")
