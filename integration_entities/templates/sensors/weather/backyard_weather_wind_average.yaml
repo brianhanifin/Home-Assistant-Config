@@ -1,0 +1,9 @@
+---
+unique_id: backyard_weather_wind_average
+name: backyard_weather_wind_average
+device_class: wind_speed
+state_class: measurement
+unit_of_measurement: "mph"
+state: >
+  {%- set wind_speed = states("sensor.backyard_weather_wind_average_kmh") | float | default(0) / 1.609 | round(1) %}
+  {{ wind_speed | round(1) }}

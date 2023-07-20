@@ -1,7 +1,22 @@
 ---
 unique_id: outdoor_temperature
-name: Outdoor Temperature
+name: Outdoor temperature
 device_class: temperature
 state_class: measurement
 unit_of_measurement: "°F"
-state: '{{ states("sensor.backyard_temperature")|default(199) }}'
+state: >
+  {%- set value0 = states("sensor.backyard_weather_temperature")|float(default=0) %}
+  {%- set value1 = states("sensor.backyard_shade_temperature")|float(default=0) %}
+  {%- set value2 = state_attr("weather.accuweather","temperature")|trim -%}
+  {%- set value3 = state_attr("weather.openweathermap","temperature")|trim -%}
+  {%- set value = value0 %}
+  {%- if value1 is number and value1 > 0 %}
+    {%- set value = value1 %}
+  {%- elif value2 is number and value2 > 0 %}
+    {%- set value = value2 %}
+  {%- elif value3 is number and value3 > 0 %}
+    {%- set value = value3 %}
+  {%- else %}
+    {%- set value = 199 %}
+  {%- endif %}
+  {{ value|round(default=0) }}

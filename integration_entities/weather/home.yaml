@@ -2,49 +2,44 @@
 platform: template
 unique_id: weather.home
 name: Home
-condition_template: |
-  {%- set value1 = states("weather.accuweather")|trim %}
-  {%- set value2 = states("weather.openweathermap")|trim %}
-  {{ value2 if value1 in ["unavailable","None",""] else value1 }}
-temperature_template: |
-  {%- set value0 = states("sensor.backyard_temperature")|float(default=0) %}
-  {%- set value1 = state_attr("weather.accuweather","temperature")|trim -%}
-  {%- set value2 = state_attr("weather.openweathermap","temperature")|trim -%}
-  {%- if value0 is number and value0 > 0 %}
-    {%- set value = value0 %}
-  {%- elif value1 is number and value1 > 0 %}
-    {%- set value = value1 %}
-  {%- elif value2 is number and value2 > 0 %}
-    {%- set value = value2 %}
-  {%- else %}
-    {%- set value = 199 %}
-  {%- endif %}
-  {{ value|round(default=0) }}
-humidity_template: |
-  {%- set value1 = state_attr("weather.accuweather","humidity")|trim -%}
-  {%- set value2 = state_attr("weather.openweathermap","humidity")|trim -%}
-  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ value|round(default=0) }}
-forecast_template: |
-  {%- set value1 = state_attr("weather.accuweather","forecast")|trim %}
-  {%- set value2 = state_attr("weather.openweathermap","forecast")|trim %}
-  {{ value2 if value1 in ["unavailable","None",""] else value1 }}
-pressure_template: |
-  {%- set value1 = state_attr("weather.accuweather","pressure")|trim %}
-  {%- set value2 = state_attr("weather.openweathermap","pressure")|trim %}
-  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ "%0.1f"|format(value|float(default=0)) }}
-wind_speed_template: |
-  {%- set value1 = state_attr("weather.accuweather","wind_speed")|trim %}
-  {%- set value2 = state_attr("weather.openweathermap","wind_speed")|trim %}
-  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ value|round(default=0) }}
-wind_bearing_template: |
-  {%- set value1 = state_attr("weather.accuweather","wind_bearing")|trim %}
-  {%- set value2 = state_attr("weather.openweathermap","wind_bearing")|trim %}
-  {%- set value = value2 if value1 in ["unavailable","None",""] else value1 %}
-  {{ value|round(default=0) }}
+apparent_temperature_template: |
+  {{ states("sensor.outdoor_feels_like_temperature") }}
 attribution_template: |
-  {%- set value1 = state_attr("weather.accuweather","attribution")|trim %}
-  {%- set value2 = state_attr("weather.openweathermap","attribution")|trim %}
-  {{ value2 if value1 in ["unavailable","None",""] else value1 }} and AccuRite
+  {%- set value0 = state_attr("weather.accuweather","attribution")|trim %}
+  {%- set value1 = state_attr("weather.openweathermap","attribution")|trim %}
+  {{ iif(value0 in ["unavailable","None",""], value1, value0) }} and AccuRite (Iris / 606TX).
+cloud_coverage_template: |
+  {%- set value0 = state_attr("weather.accuweather","cloud_coverage")|trim %}
+  {%- set value1 = state_attr("weather.openweathermap","cloud_coverage")|trim %}
+  {{- iif(value0 in ["unavailable","None",""], value1, value0) }}%
+condition_template: |
+  {%- set value0 = states("weather.accuweather")|trim %}
+  {%- set value1 = states("weather.openweathermap")|trim %}
+  {{ iif(value0 in ["unavailable","None",""], value1, value0) }}
+dew_point_template: |
+  {%- set value0 = state_attr("weather.accuweather","dew_point")|trim %}
+  {%- set value1 = state_attr("weather.openweathermap","dew_point")|trim %}
+  {{ iif(value0 in ["unavailable","None",""], value1, value0) }}
+forecast_template: |
+  {%- set value0 = state_attr("weather.accuweather","forecast")|trim %}
+  {%- set value1 = state_attr("weather.openweathermap","forecast")|trim %}
+  {{ iif(value0 in ["unavailable","None",""], value1, value0) }}
+humidity_template: |
+  {{ states("sensor.outdoor_humidity") }}
+precipitation_unit: in
+pressure_template: |
+  {%- set value0 = state_attr("weather.accuweather","pressure")|trim %}
+  {%- set value1 = state_attr("weather.openweathermap","pressure")|trim %}
+  {%- set value = iif(value0 in ["unavailable","None",""], value1, value0) %}
+  {{ "%0.1f"|format(value|float(default=0)) }}
+pressure_unit: inHg
+temperature_template: |
+  {{ states("sensor.outdoor_temperature") }}
+temperature_unit: °F
+wind_bearing_template: |
+  {{ state_attr("sensor.outdoor_wind_speed","direction") }}
+wind_gust_speed_template: |
+  {{ state_attr("weather.accuweather","forecast")[0].wind_gust_speed }}
+wind_speed_template: |
+  {{ states("sensor.outdoor_wind_speed") }}
+wind_speed_unit: mph

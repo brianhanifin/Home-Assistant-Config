@@ -1,0 +1,40 @@
+---
+unique_id: outdoor_feels_like_temperature
+name: Outdoor feels like temperature
+device_class: temperature
+state_class: measurement
+unit_of_measurement: "°F"
+# https://community.home-assistant.io/t/calculating-apparent-feels-like-temperature/370834/18
+state: >-
+  {% set T = state_attr("weather.home","temperature")|float(default=0) %}
+  {% set RH = state_attr("weather.home","humidity")|float(default=0) %}
+  {% set WS = state_attr("weather.home","wind_speed")|float(default=0) %}
+  {% set WC = T | float %}
+
+  {% if T <= 70 and WS >= 3 %}
+    {% set WC = 35.74 + (0.6215*T) - 35.75*(WS**0.16) + ((0.4275*T)*(WS**0.16)) %}
+  {% endif %}
+
+  {% set STEADMAN_HI = 0.5 * (T + 61.0 + ((T-68.0)*1.2) + (RH*0.094)) %}
+  {% if STEADMAN_HI >= 80 %}
+    {% set ROTHFUSZ_HI = -42.379 + 2.04901523*T + 10.14333127*RH - 0.22475541*T*RH - 0.00683783*T*T - 0.05481717*RH*RH + 0.00122874*T*T*RH + 0.00085282*T*RH*RH - 0.00000199*T*T*RH*RH %}
+    {% set HI = ROTHFUSZ_HI %}
+    {% if RH < 13 and 80 < T < 112 %}
+      {% set ADJUSTMENT = ((13-RH)/4)*((17-(T-95)|abs)/17)**0.5 %}
+      {% set HI = HI - ADJUSTMENT %}
+    {% elif RH > 85 and 80 < T < 87 %}
+      {% set ADJUSTMENT = ((RH-85)/10) * ((87-T)/5) %}
+      {% set HI = HI + ADJUSTMENT %}
+    {% endif %}
+  {% else %}
+    {% set HI = STEADMAN_HI %}
+  {% endif %}
+
+  {% if T < 50 %}
+    {% set FL = WC %}
+  {% elif 50 <= T < 70 %}
+    {% set FL = (((70-T)/20)*WC) + (((T-50)/20)*HI) %}
+  {% elif T >= 70 %}
+    {% set FL = HI %}
+  {% endif %}
+  {{- FL | round(1) -}}

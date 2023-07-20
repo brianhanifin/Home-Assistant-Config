@@ -5,5 +5,13 @@ device_class: humidity
 state_class: measurement
 unit_of_measurement: "%"
 state: |
-  {%- set humidity = state_attr("weather.home","humidity") %}
-  {{ humidity|int(default=0) if humidity is defined }}
+  {%- set value0 = states("sensor.backyard_weather_humidity")|trim -%}
+  {%- set value1 = state_attr("weather.accuweather","humidity")|trim -%}
+  {%- set value2 = state_attr("weather.openweathermap","humidity")|trim -%}
+  {%- set value = value0 %}
+  {%- if value1 is number and value1 > 0 %}
+    {%- set value = value1 %}
+  {%- elif value2 is number and value2 > 0 %}
+    {%- set value = value2 %}
+  {%- endif %}
+  {{ value|round(default=0) }}

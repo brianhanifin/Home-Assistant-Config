@@ -1,0 +1,29 @@
+---
+unique_id: outdoor_wind_speed
+name: Outdoor wind speed
+device_class: wind_speed
+state_class: measurement
+unit_of_measurement: "mph"
+state: |
+  {%- set value0 = states("sensor.backyard_weather_wind_average") %}
+  {%- set value1 = state_attr("weather.accuweather","wind_speed")|trim %}
+  {%- set value2 = state_attr("weather.openweathermap","wind_speed")|trim %}
+  {%- set value = value0 %}
+  {%- if value1 is number and value1 > 0 %}
+    {%- set value = value1 %}
+  {%- elif value2 is number and value2 > 0 %}
+    {%- set value = value2 %}
+  {%- endif %}
+  {{ value|round(default=0) }}
+attributes:
+  direction: |
+    {%- set value0 = states("sensor.backyard_weather_wind_direction") %}
+    {%- set value1 = state_attr("weather.accuweather","wind_bearing")|trim %}
+    {%- set value2 = state_attr("weather.openweathermap","wind_bearing")|trim %}
+    {%- set value = value0 %}
+    {%- if value1 is number and value1 > 0 %}
+      {%- set value = value1 %}
+    {%- elif value2 is number and value2 > 0 %}
+      {%- set value = value2 %}
+    {%- endif %}
+    {{ value|round(default=0) }}
