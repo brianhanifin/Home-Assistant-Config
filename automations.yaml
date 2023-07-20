@@ -3654,8 +3654,8 @@
       milliseconds: 0
   mode: single
 - id: '1666279149478'
-  alias: TV power ON/OFF
-  description: ''
+  alias: TV state changes
+  description: ON/OFF, Youtube opens
   trigger:
   - platform: device
     device_id: 32d18497e45ef4b0b2ced17b5e477538
@@ -3679,6 +3679,11 @@
     entity_id: 3bba059b7efe678cee758d15ee396557
     type: turned_off
     id: tv_off
+  - platform: state
+    entity_id:
+    - media_player.family_room_apple_tv
+    to: com.google.ios.youtube
+    id: app_youtube_opens
   condition: []
   action:
   - if:
@@ -3719,6 +3724,18 @@
         entity_id: light.home_entry
       alias: Turn on the home entry light.
     alias: Turn on the home entry light when the tv is turned off close bedtime.
+  - if:
+    - condition: trigger
+      id:
+      - app_youtube_opens
+      - tv_on
+    then:
+    - service: media_player.volume_set
+      data:
+        volume_level: 15
+      target:
+        entity_id: media_player.family_room_apple_tv
+    alias: Set volume to Youtube safe level when Youtube app is open.
   mode: single
 - id: '1667158538897'
   alias: 'Remote: Lucas bedside'
@@ -4475,7 +4492,7 @@
       lifetime: '{{ lifetime }}'
       screen_time: '{{ screen_time }}'
       icon_name: '{{ weather_icon }}'
-      text: '{{ states("sensor.backyard_temperature")|round ~ "°" }}
+      text: '{{ states("sensor.backyard_weather_temperature")|round ~ "°" }}
 
         '
     alias: 'Add screen: Weather.'
@@ -4918,7 +4935,7 @@
   description: Sleep therapy strict wakeup schedule.
   trigger:
   - platform: time
-    at: input_datetime.nerene_rigid_wakeup_time
+    at: input_datetime.nerene_rigid_wakeup
   condition: []
   action:
   - service: script.event_wakeup_nerene
@@ -4950,4 +4967,17 @@
       title: '{{ title }}'
       message: '{{ message }}'
     alias: Send the notification to my phone.
+  mode: single
+- id: '1689865750822'
+  alias: Turn on bedroom A/C at 10pm
+  description: ''
+  trigger:
+  - platform: time
+    at: '22:00:00'
+  condition: []
+  action:
+  - service: climate.set_temperature
+    data: {}
+    target:
+      entity_id: climate.bedroom_thermostat
   mode: single
