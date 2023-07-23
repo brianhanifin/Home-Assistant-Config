@@ -2,7 +2,10 @@
 script:
   event_wakeup_lucas:
     sequence:
-      - service: homeassistant.turn_off
+
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: "off"
         target:
           entity_id: climate.lucas_room_thermostat
 

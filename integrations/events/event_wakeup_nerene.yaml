@@ -5,9 +5,14 @@ script:
       - service: homeassistant.turn_off
         target:
           entity_id:
-            - climate.nerene_bed
             - fan.bedroom
             - switch.sound_machine
+
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: "off"
+        target:
+          entity_id: climate.bedroom_thermostat
 
       - service: script.event_light
         data:
@@ -25,6 +30,12 @@ script:
             {%- set light_name = states("input_select.event_light_wakeup_nerene") %}
             {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
             {{ entity_list[0] }}
+
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: "off"
+        target:
+          entity_id: climate.nerene_bed
 
 input_boolean:
   event_enabled_wakeup_nerene:

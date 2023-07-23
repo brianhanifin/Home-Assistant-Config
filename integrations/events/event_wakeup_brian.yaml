@@ -16,9 +16,16 @@ script:
       - service: homeassistant.turn_off
         target:
           entity_id:
-            - climate.brian_bed
             - fan.bedroom
             - switch.sound_machine
+
+      - service: climate.set_hvac_mode
+        data:
+          hvac_mode: "off"
+        target:
+          entity_id:
+            - climate.bedroom_thermostat
+            - climate.brian_bed
 
       - service: script.event_light
         data:
