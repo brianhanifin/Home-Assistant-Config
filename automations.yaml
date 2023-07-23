@@ -54,6 +54,13 @@
       message: Startup automation begins.
       type: warning
       duration: 120
+  - service: automation.turn_on
+    data: {}
+    target:
+      entity_id:
+      - automation.z2m_remote_nerene_bedside
+      - automation.z2m_remote_brian_bedside
+    alias: Force bedside remotes to remain enabled.
   - service: frontend.set_theme
     data:
       name: Mushroom
@@ -932,8 +939,7 @@
           %}\n{%- set seconds_from_midnight = (event_date.hour*3600) + (event_date.minute*60)
           %}\n{%- set event_midnight =  (event_date - timedelta(seconds=seconds_from_midnight))
           %}\n{%- set event_midnight = event_midnight|as_timestamp %}\n{%- if today
-          >= event_midnight %}\n  {%- set events = events ~ \",\" if events not in
-          [\"\",\"None\"] %}\n  {{ events ~ event_message }}\n{%- endif %}\n"
+          >= event_midnight %}\n  {{ event_message }}\n{%- endif %}\n"
         mqtt_message_attributes:
           today: '{{ today }}'
           next_event_date: '{{ event_date }}'
@@ -4980,4 +4986,26 @@
     data: {}
     target:
       entity_id: climate.bedroom_thermostat
+  mode: single
+- id: '1690129936906'
+  alias: 'Bedside remotes: force to stay enabled'
+  description: 'Something is disabling these automations, but my code doesn''t reference
+    them outside of this automation. :shrug:'
+  trigger:
+  - platform: state
+    entity_id:
+    - automation.z2m_remote_nerene_bedside
+    - automation.z2m_remote_brian_bedside
+    from:
+    to: 'off'
+    alias: When something inexplicabally disables the bedside remotes.
+  condition: []
+  action:
+  - service: automation.turn_on
+    data: {}
+    target:
+      entity_id:
+      - automation.z2m_remote_nerene_bedside
+      - automation.z2m_remote_brian_bedside
+    alias: Force bedside remotes to remain enabled.
   mode: single
