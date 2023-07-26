@@ -1500,6 +1500,22 @@ say_cloud:
         \   {%- set volume = volume|float(default=0) %}\n  {%- endif %}\n{%- else
         %}\n  {{ states(\"input_number.default_announcement_volume\")|int(default=0)
         / 100 }}\n{%- endif %}\n"
+      media_players_support_on: "{%- set supported = namespace(entities=[]) %}\n{%-
+        set TURN_ON = 128 %}\n\n{%- set speakers = expand(media_player) %}\n{%- for
+        speaker in speakers %}\n  {%- if speaker.attributes.supported_features | bitwise_and(TURN_ON)
+        %}\n    {%- set supported.entities = supported.entities + [speaker.entity_id]
+        %}\n  {%- endif %}\n{%- endfor %}\n{{ supported.entities }}\n"
+      media_players_support_off: "{%- set supported = namespace(entities=[]) %}\n{%-
+        set TURN_OFF = 256 %}\n\n{%- set speakers = expand(media_player) %}\n{%- for
+        speaker in speakers %}\n  {%- if speaker.attributes.supported_features | bitwise_and(TURN_OFF)
+        %}\n    {%- set supported.entities = supported.entities + [speaker.entity_id]
+        %}\n  {%- endif %}\n{%- endfor %}\n{{ supported.entities }}\n"
+      media_players_support_volume_set: "{%- set supported = namespace(entities=[])
+        %}\n{%- set VOLUME_SET = 4 %}\n\n{%- set speakers = expand(media_player) %}\n{%-
+        for speaker in speakers %}\n  {%- if speaker.attributes.supported_features
+        | bitwise_and(VOLUME_SET) %}\n    {%- set supported.entities = supported.entities
+        + [speaker.entity_id] %}\n  {%- endif %}\n{%- endfor %}\n{{ supported.entities
+        }}\n"
   - service: script.debug
     enabled: false
     data:
@@ -1516,15 +1532,27 @@ say_cloud:
     then:
     - if:
       - condition: template
-        value_template: '{{ not media_player.endswith("pc") }}'
+        value_template: '{{ media_players_support_on | count>0 }}'
+        alias: Are supported speakers present?
+      then:
+      - service: media_player.turn_on
+        data:
+          entity_id: '{{ media_players_support_on }}'
+        alias: Turn on supported speakers first to fix audio not being played sometimes.
+        enabled: true
+      alias: Turn on supported speakers first to fix audio not being played sometimes.
+      enabled: true
+    - if:
+      - condition: template
+        value_template: '{{ media_players_support_volume_set | count>0 }}'
       then:
       - alias: Set volume so announcement can be heard.
         service: media_player.volume_set
         target:
-          entity_id: '{{ media_player }}'
+          entity_id: '{{ media_players_support_volume_set }}'
         data:
           volume_level: '{{ volume }}'
-      alias: If not PC set volume so announcement can be heard.
+      alias: If supported players are present set volume so announcement can be heard.
     - delay:
         hours: 0
         minutes: 0
@@ -1567,6 +1595,17 @@ say_cloud:
       target:
         entity_id: '{{ media_player }}'
       alias: Turn off the media players.
+    - if:
+      - condition: template
+        value_template: '{{ media_players_support_off | count>0 }}'
+        alias: Are supported speakers present?
+      then:
+      - service: media_player.turn_off
+        data:
+          entity_id: '{{ media_players_support_off }}'
+        alias: Turn media players back off to attempt consistency.
+        enabled: true
+      alias: Turn off supported speakers.
     enabled: true
   mode: parallel
   fields:
@@ -1680,7 +1719,7 @@ say:
   alias: Say
   sequence:
   - variables:
-      media_player: '{{ media_player|default("media_player.google_kitchen") }}'
+      media_player: "{{\n  media_player\n  | default(\"media_player.google_kitchen\")\n}}\n"
     alias: Set a default media player.
   - alias: Debug output. (Disable to turn off.)
     service: script.debug
@@ -1707,13 +1746,15 @@ say:
           \ message,\n  person_arriving,\n  say_welcome_home,\n  say_greeting,\n  say_inside_weather,\n
           \ say_outside_weather,\n  say_goodbye,\n  say_goodnight\n) }}\n"
       enabled: false
-    - service: script.say_cloud
+      alias: Use `say_cloud`.
+    - service: script.say_local
       data:
         media_player: '{{ media_player }}'
         message: "{%- from \"speech.jinja\" import get_briefing %}\n{{ get_briefing(\n
           \ message,\n  person_arriving,\n  say_welcome_home,\n  say_greeting,\n  say_inside_weather,\n
           \ say_outside_weather,\n  say_goodbye,\n  say_goodnight\n) }}\n"
       enabled: true
+      alias: Use `say_local`.
     alias: Speak message when enabled.
     enabled: true
   mode: parallel
@@ -1833,6 +1874,22 @@ say_local:
         \   {%- set volume = volume|float(default=0) %}\n  {%- endif %}\n{%- else
         %}\n  {{ states(\"input_number.default_announcement_volume\")|int(default=0)
         / 100 }}\n{%- endif %}\n"
+      media_players_support_on: "{%- set supported = namespace(entities=[]) %}\n{%-
+        set TURN_ON = 128 %}\n\n{%- set speakers = expand(media_player) %}\n{%- for
+        speaker in speakers %}\n  {%- if speaker.attributes.supported_features | bitwise_and(TURN_ON)
+        %}\n    {%- set supported.entities = supported.entities + [speaker.entity_id]
+        %}\n  {%- endif %}\n{%- endfor %}\n{{ supported.entities }}\n"
+      media_players_support_off: "{%- set supported = namespace(entities=[]) %}\n{%-
+        set TURN_OFF = 256 %}\n\n{%- set speakers = expand(media_player) %}\n{%- for
+        speaker in speakers %}\n  {%- if speaker.attributes.supported_features | bitwise_and(TURN_OFF)
+        %}\n    {%- set supported.entities = supported.entities + [speaker.entity_id]
+        %}\n  {%- endif %}\n{%- endfor %}\n{{ supported.entities }}\n"
+      media_players_support_volume_set: "{%- set supported = namespace(entities=[])
+        %}\n{%- set VOLUME_SET = 4 %}\n\n{%- set speakers = expand(media_player) %}\n{%-
+        for speaker in speakers %}\n  {%- if speaker.attributes.supported_features
+        | bitwise_and(VOLUME_SET) %}\n    {%- set supported.entities = supported.entities
+        + [speaker.entity_id] %}\n  {%- endif %}\n{%- endfor %}\n{{ supported.entities
+        }}\n"
   - service: script.debug
     enabled: false
     data:
@@ -1849,15 +1906,27 @@ say_local:
     then:
     - if:
       - condition: template
-        value_template: '{{ not media_player.endswith("pc") }}'
+        value_template: '{{ media_players_support_on | count>0 }}'
+        alias: Are supported speakers present?
+      then:
+      - service: media_player.turn_on
+        data:
+          entity_id: '{{ media_players_support_on }}'
+        alias: Turn on supported speakers first to fix audio not being played sometimes.
+        enabled: true
+      alias: Turn on supported speakers first to fix audio not being played sometimes.
+      enabled: true
+    - if:
+      - condition: template
+        value_template: '{{ media_players_support_volume_set | count>0 }}'
       then:
       - alias: Set volume so announcement can be heard.
         service: media_player.volume_set
         target:
-          entity_id: '{{ media_player }}'
+          entity_id: '{{ media_players_support_volume_set }}'
         data:
           volume_level: '{{ volume }}'
-      alias: If not PC set volume so announcement can be heard.
+      alias: If supported players are present set volume so announcement can be heard.
     - delay:
         hours: 0
         minutes: 0
@@ -1895,10 +1964,17 @@ say_local:
         seconds: 0
         milliseconds: 0
       enabled: true
-    - service: media_player.turn_off
-      target:
-        entity_id: '{{ media_player }}'
-      alias: Turn off the media players.
+    - if:
+      - condition: template
+        value_template: '{{ media_players_support_off | count>0 }}'
+        alias: Are supported speakers present?
+      then:
+      - service: media_player.turn_off
+        data:
+          entity_id: '{{ media_players_support_off }}'
+        alias: Turn media players back off to attempt consistency.
+        enabled: true
+      alias: Turn off supported speakers.
     enabled: true
   mode: parallel
   fields:
