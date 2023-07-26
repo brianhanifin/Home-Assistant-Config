@@ -36,6 +36,16 @@
     data: {}
     target:
       entity_id: switch.docker_unifi
+  - service: button.press
+    data: {}
+    target:
+      entity_id:
+      - button.omg01_restart_gateway
+      - button.omg02_restart_gateway
+      - button.kitchen_cabinet_lights_restart
+      - button.irrigation_controller_restart
+      - button.workbench_presence_restart_device
+      - button.dishwasher_status_restart
   - service: script.notify_web
     data:
       type: success
@@ -293,6 +303,11 @@
       displays:
       - 47e1a1a35bb2d1e827ccdeb761f5721b
       - 7d6b52507e25e7eeba10914e56052d1c
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.kitchen_cabinet_lights_sync_receive
+    alias: Stop the cabinet strip from syncing with the dishwasher status.
   mode: single
 - id: '1640887750655'
   alias: Wet laundry Family room LED indicator
@@ -2184,32 +2199,39 @@
     to: 'on'
     from: 'off'
     alias: When kitchen motion is detected.
+    id: detected
   - platform: state
     entity_id:
     - binary_sensor.kitchen_motion
     to: 'off'
     from: 'on'
     alias: When kitchen motion is cleared.
+    id: cleared
   condition: []
   action:
   - if:
-    - condition: state
-      entity_id: binary_sensor.kitchen_motion
-      state: 'on'
-      alias: When motion is detected.
+    - condition: trigger
+      id:
+      - detected
     then:
     - service: light.turn_on
       data: {}
+      alias: Turn on cabinet light.
       target:
         entity_id: light.kitchen_cabinet
-      alias: Turn on cabinet light.
-    else:
+    else: []
+    alias: Turn on the light when motion is detected.
+  - if:
+    - condition: trigger
+      id:
+      - cleared
+    then:
     - service: light.turn_off
       data: {}
+      alias: 'When motion clears: turn off the cabinet light.'
       target:
         entity_id: light.kitchen_cabinet
-      alias: 'When motion clears: turn off the cabinet light.'
-    alias: Perform an action based on kitchen motion state.
+    alias: Turn off the light when motion is cleared.
   mode: single
 - id: '1666205350404'
   alias: 'Actionable notification: Keep unlocked'
@@ -3179,8 +3201,9 @@
   - alias: Washing when motor vibration is detected.
     id: Washing
     platform: state
-    entity_id: binary_sensor.dishwasher_moving
-    from: 'off'
+    entity_id:
+    - binary_sensor.dishwasher_moving
+    from:
     to: 'on'
     for:
       minutes: 2
@@ -3194,15 +3217,18 @@
   - alias: Clean when status has been Drying for a bit.
     id: Clean
     platform: state
-    entity_id: input_select.dishwasher_status
+    entity_id:
+    - input_select.dishwasher_status
     to: Drying
     for:
       minutes: 60
+    from:
   - alias: Dirty when door is open for longer than 1 minute.
     id: Dirty
     platform: state
-    entity_id: binary_sensor.dishwasher_door
-    from: 'off'
+    entity_id:
+    - binary_sensor.dishwasher_door
+    from:
     to: 'on'
     for:
       minutes: 1
@@ -3215,10 +3241,26 @@
         }}'
       notify_message: '{{ "The dishes are " ~ status|lower ~ "." if status in ["Clean","Dirty"]
         }}'
-  - condition:
-    - condition: template
-      value_template: '{{ status != previous_status and status != "Unknown" }}'
-  - alias: Update dishwasher status.
+  - condition: template
+    value_template: '{{ status != previous_status and status != "Unknown" }}'
+  - service: select.select_option
+    data:
+      option: '{{ status|title }}'
+    target:
+      entity_id: select.dishwasher_status_preset
+    alias: Change light strip to match status.
+  - if:
+    - condition: sun
+      before: sunset
+    then:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id:
+        - switch.dishwasher_status_sync_send
+        - switch.kitchen_cabinet_lights_sync_receive
+    alias: Sync kitchen light strips when before sunset.
+  - alias: Update dishwasher status light.
     service: input_select.select_option
     data:
       entity_id: input_select.dishwasher_status
@@ -3226,15 +3268,6 @@
   - service: script.notify_web
     data:
       message: '{{ "Dishwasher: " ~ status|lower }}'
-  - choose:
-    - conditions: '{{ status in ["Clean","Dirty"] }}'
-      sequence:
-      - service: script.notify_mobile
-        data:
-          title: '{{ notify_title }}'
-          message: '{{ notify_message }}'
-          who: brian
-          url: /lovelace-special/dishwasher
   - alias: Cool down timer.
     delay:
       minutes: 5
@@ -4775,18 +4808,18 @@
   alias: Garage workbench presence
   description: Turn off fan after 15 minutes of absence.
   trigger:
-  - type: occupied
-    platform: device
-    device_id: 61e154393572da4b675e2d58c8b4eba2
-    entity_id: binary_sensor.garage_workbench_presence
-    domain: binary_sensor
+  - platform: state
+    entity_id:
+    - binary_sensor.workbench_presence_occupancy
     id: present
-  - type: not_occupied
-    platform: device
-    device_id: 61e154393572da4b675e2d58c8b4eba2
-    entity_id: binary_sensor.garage_workbench_presence
-    domain: binary_sensor
+    from:
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.workbench_presence_occupancy
     id: away
+    from:
+    to: 'off'
   - platform: event
     event_type: timer.finished
     id: timer_finished
@@ -4807,6 +4840,16 @@
       data: {}
       target:
         entity_id: timer.workbench_presence
+    - if:
+      - condition: numeric_state
+        entity_id: sensor.workbench_temperature
+        above: 80
+      then:
+      - service: fan.turn_on
+        data: {}
+        target:
+          entity_id: fan.workbench
+      alias: Turn on workbench fan when temp is above 80.
     alias: '[present] When presence is detected.'
   - if:
     - condition: trigger
@@ -4826,44 +4869,13 @@
     - service: fan.turn_off
       data: {}
       target:
-        entity_id: fan.workbench_fan
+        entity_id: fan.workbench
       alias: Turn off the workbench fan.
     - service: switch.turn_on
       data: {}
       target:
         entity_id: switch.google_garage_do_not_disturb
     alias: '[timer_finished] When presence timeout ends.'
-  mode: single
-- id: '1686585700125'
-  alias: After sunset keep night dashboard on displays
-  description: ''
-  trigger:
-  - platform: time_pattern
-    minutes: /5
-  condition:
-  - condition: or
-    conditions:
-    - condition: sun
-      after: sunset
-    - condition: sun
-      before: sunrise
-    alias: Only after sunset or before sunrise.
-  action:
-  - if:
-    - condition: state
-      entity_id: media_player.google_kitchen
-      attribute: media_title
-      state: 'dashboard-cast: Night'
-    then:
-    - service: script.cast
-      data:
-        dashboard_path: dashboard-cast
-        displays:
-        - 47e1a1a35bb2d1e827ccdeb761f5721b
-        - 7d6b52507e25e7eeba10914e56052d1c
-        view_path: night
-      alias: 'Display the night dashboard. '
-    alias: When the night dashboard is not displayed.
   mode: single
 - id: '1686694412234'
   alias: Summer school wakeup
@@ -4875,13 +4887,14 @@
     entity_id: calendar.lucas
     id: 35m_before
     alias: 35 minutes before
-    enabled: false
+    enabled: true
   - platform: calendar
     event: start
     offset: -0:30:0
     entity_id: calendar.lucas
     alias: 30 minutes before
     id: 30m_before
+    enabled: true
   - platform: calendar
     event: start
     offset: -0:20:0
@@ -4892,6 +4905,10 @@
   - condition: template
     value_template: '{{ "summer school" in trigger.calendar_event.summary|lower }}'
     alias: Continue when “Summer school” is the event trigger?
+    enabled: false
+  - condition: template
+    value_template: '{{ "Band camp" in trigger.calendar_event.summary|lower }}'
+    alias: Continue when “Band camp” is the event trigger?
   action:
   - if:
     - condition: trigger
