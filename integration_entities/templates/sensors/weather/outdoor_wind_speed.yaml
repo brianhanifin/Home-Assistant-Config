@@ -9,10 +9,12 @@ state: |
   {%- set value1 = state_attr("weather.accuweather","wind_speed")|trim %}
   {%- set value2 = state_attr("weather.openweathermap","wind_speed")|trim %}
   {%- set value = value0 %}
-  {%- if value1 is number and value1 > 0 %}
-    {%- set value = value1 %}
-  {%- elif value2 is number and value2 > 0 %}
-    {%- set value = value2 %}
+  {%- if value0 is not number or value0 <= 0 %}
+    {%- if value1 is number and value1 > 0 %}
+      {%- set value = value1 %}
+    {%- elif value2 is number and value2 > 0 %}
+      {%- set value = value2 %}
+    {%- endif %}
   {%- endif %}
   {{ value|round(default=0) }}
 attributes:
@@ -21,9 +23,11 @@ attributes:
     {%- set value1 = state_attr("weather.accuweather","wind_bearing")|trim %}
     {%- set value2 = state_attr("weather.openweathermap","wind_bearing")|trim %}
     {%- set value = value0 %}
-    {%- if value1 is number and value1 > 0 %}
-      {%- set value = value1 %}
-    {%- elif value2 is number and value2 > 0 %}
-      {%- set value = value2 %}
+    {%- if value0 is not number or value0 <= 0 %}
+      {%- if value1 is number and value1 > 0 %}
+        {%- set value = value1 %}
+      {%- elif value2 is number and value2 > 0 %}
+        {%- set value = value2 %}
+      {%- endif %}
     {%- endif %}
     {{ value|round(default=0) }}

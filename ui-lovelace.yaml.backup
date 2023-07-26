@@ -523,14 +523,14 @@ views:
         %}
 
         {{- iif(lights_on>0, "mdi:lightbulb", "") }}'
-      entity: sensor.backyard_weather_temperature
+      entity: sensor.backyard_fence_temperature
       fill_container: true
       icon: mdi:flower
       icon_color: blue
       primary: Outside
       secondary: '{{ states("weather.home") }} ‧
 
-        {{ states("sensor.backyard_weather_temperature")|round(default=0) }}°'
+        {{ states("sensor.backyard_fence_temperature")|round(default=0) }}°'
       tap_action:
         action: navigate
         navigation_path: ./outdoor
@@ -2046,7 +2046,7 @@ views:
       position: sidebar
   - cards:
     - subtitle: "{%- set lights_on = states(\"sensor.lights_on_outdoors\")|int(default=0)\
-        \ %}\n{{- states(\"weather.home\") }}\n{{- \" ‧ \" ~ states(\"sensor.backyard_weather_temperature\"\
+        \ %}\n{{- states(\"weather.home\") }}\n{{- \" ‧ \" ~ states(\"sensor.backyard_fence_temperature\"\
         )|round(default=0) }}°\n{{- \" ‧ \" ~ state_attr(\"weather.home\",\"humidity\"\
         ) }}%\n{%- set lock = states(\"lock.front_door\") %}\n{{- iif(lock != \"locked\"\
         , \" ‧ front door is \" ~ lock, \"\") }}\n{%- if lights_on > 0 %}\n  {{- \"\
