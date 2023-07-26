@@ -1,0 +1,18 @@
+---
+unique_id: area_count
+name: Area count
+icon: mdi:floor-plan
+state_class: total
+state: |
+  {{ this.attributes.areas|default([]) | count }}
+attributes:
+  areas: |
+    {{
+      states
+        | map(attribute='entity_id')
+        | map('area_name')
+        | reject("==",None)
+        | unique
+        | sort
+        | list
+    }}

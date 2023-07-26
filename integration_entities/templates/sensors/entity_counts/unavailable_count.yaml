@@ -20,11 +20,13 @@ attributes:
           +integration_entities("upnp_availability")
           +integration_entities("uptime_kuma")
           +integration_entities("watchman")
+          +integration_entities("wled")
         )
       | map(attribute="entity_id")
       | reject("is_hidden_entity")
       | reject("search","blackpc")
       | reject("search","double_take")
+      | reject("search","google_")
       | reject("search","octoprint")
       | list
     }}
