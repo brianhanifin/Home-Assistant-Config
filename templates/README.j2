@@ -5,9 +5,9 @@
 [![Last commit][github-last-commit]][github-master] [![GitHub activity][commits-shield]][commits]
 
 # Repository statistics
-| Lines of code | Entities | Domains | Automations | Scripts |
-| :--: | :--: | :--: | :--: | :--: |
-| {{ "**{0:,.0f}**".format(states("sensor.code_line_count")|int(default=0))|trim }} | {{"{0:,.0f}".format(states("sensor.entity_count")|int(default=0))}} | {{states("sensor.domain_count")}} | {{states("sensor.automation_count")}} | {{states("sensor.script_count")}} |
+| Lines of code | Entities | Devices | Areas | Domains | Automations | Scripts |
+| :--: | :--: | :--: | :--: | :--: | :--: |
+| {{ "**{0:,.0f}**".format(states("sensor.code_line_count")|int(default=0))|trim }} | {{"{0:,.0f}".format(states("sensor.entity_count")|int(default=0))}} | {{states("sensor.device_count")}} | {{states("sensor.area_count")}} | {{states("sensor.automation_count")}} | {{states("sensor.script_count")}} |
 
 # Index
 
@@ -238,8 +238,9 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has approximately **{{ states|count }} total entities**,
-including **{{ states.sensor|count + states.binary_sensor|count }} sensors**. My YAML
+Our Home Assistant install has **{{ "{0:,.0f}".format(states("sensor.device_count")|int(default=0)) }}** devices
+featuring **{{ "{0:,.0f}".format(states("sensor.entity_count")|int(default=0)) }}** entities,
+including **{{ states.sensor|count + states.binary_sensor|count }}** sensors. My YAML
 files contain {{ "{0:,.0f}".format( states("sensor.code_line_count")|int(default=0) ) }} lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].
 

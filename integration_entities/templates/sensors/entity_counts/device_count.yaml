@@ -1,0 +1,27 @@
+---
+unique_id: device_count
+name: Device count
+icon: mdi:devices
+state_class: total
+state: |
+  {{ this.attributes.devices | default([]) | count }}
+attributes:
+  devices: |
+    {%-
+      set device_ids = states
+        | map(attribute='entity_id')
+        | reject("is_hidden_entity")
+        | map('device_id')
+        | reject("==",None)
+        | unique
+        | sort
+        | list
+    %}
+    {%- set device = namespace(names="") %}
+    {%- for device_id in device_ids %}
+      {%- set name = device_attr(device_id, "name") %}
+      {%- set name = name + iif(not loop.last, "\n", "") %}
+      {%- set device.names = device.names + name %}
+    {%- endfor -%}
+    {%- set device.names = device.names.split("\n") %}
+    {{ device.names | sort }}

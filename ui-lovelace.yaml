@@ -231,6 +231,27 @@ decluttering_templates:
       hours: 24
       icon: mdi:thermometer-low
       name: ' '
+  kitchen_cabinet_popup:
+    card:
+      cards:
+      - alignment: center
+        chips:
+        - content: WLED controller
+          icon: mdi:link
+          tap_action:
+            action: url
+            url_path: http://10.0.0.203
+          type: template
+        type: custom:mushroom-chips-card
+      - entity: select.kitchen_cabinet_lights_preset
+        layout: horizontal
+        name: Preset
+        secondary_info: last-changed
+        type: custom:mushroom-select-card
+      - entity: light.kitchen_cabinet
+        title: ' '
+        type: custom:more-info-card
+      type: vertical-stack
   top_chips:
     card:
       alignment: center
@@ -424,8 +445,12 @@ decluttering_templates:
               service: browser_mod.popup
           type: entity
         conditions:
-        - entity: sensor.contact_sensors_open
-          state_not: '0'
+        - condition: and
+          conditions:
+          - entity: sensor.contact_sensors_open
+            state_not: '0'
+          - entity: sensor.contact_sensors_open
+            state_not: Unavailable
         type: conditional
       type: custom:mushroom-chips-card
       view_layout:
@@ -568,14 +593,14 @@ views:
         %}
 
         {{- iif(lights_on>0, "mdi:lightbulb", "") }}'
-      entity: sensor.backyard_weather_temperature
+      entity: sensor.backyard_temperature
       fill_container: true
       icon: mdi:flower
       icon_color: blue
       primary: Outside
       secondary: '{{ states("weather.home") }} ‧
 
-        {{ states("sensor.backyard_weather_temperature")|round(default=0) }}°'
+        {{ states("sensor.outdoor_temperature")|round(default=0) }}°'
       tap_action:
         action: navigate
         navigation_path: ./outdoor
@@ -1134,10 +1159,7 @@ views:
                             icon_color: grey
                             tap_action:
                               action: call-service
-                              data: {}
-                              service: script.turn_on
-                              target:
-                                entity_id: script.refresh_entity_problem_sensors
+                              service: template.reload
                             type: template
                           type: custom:mushroom-chips-card
                         - entity: sensor.unknown_count
@@ -1634,7 +1656,34 @@ views:
         - collapsible_controls: true
           entity: light.dining_room
           fill_container: true
+          name: Dining room
           show_brightness_control: true
+          show_color_temp_control: false
+          type: custom:mushroom-light-card
+          use_light_color: true
+        - collapsible_controls: true
+          double_tap_action:
+            action: fire-dom-event
+            browser_mod:
+              data:
+                content:
+                  cards:
+                  - entity: select.kitchen_cabinet_lights_preset
+                    layout: horizontal
+                    name: Preset
+                    secondary_info: last-changed
+                    type: custom:mushroom-select-card
+                  - entity: light.kitchen_cabinet
+                    title: ' '
+                    type: custom:more-info-card
+                  type: vertical-stack
+                title: Calendar
+              service: browser_mod.popup
+          entity: light.kitchen_cabinet
+          fill_container: true
+          name: Kitchen cabinet
+          show_brightness_control: true
+          show_color_control: false
           show_color_temp_control: false
           type: custom:mushroom-light-card
           use_light_color: true
@@ -1831,7 +1880,9 @@ views:
         title: Garage
         type: custom:mushroom-title-card
       - cards:
-        - collapsible_controls: false
+        - card_mod:
+            style: "ha-state-icon {\n  animation: spin infinite linear spin;\n}\n"
+          collapsible_controls: false
           entity: fan.workbench_fan
           type: custom:mushroom-fan-card
         - entity: cover.garage_door
@@ -1980,7 +2031,9 @@ views:
           show_brightness_control: true
           type: custom:mushroom-light-card
           use_light_color: true
-        - collapsible_controls: true
+        - card_mod:
+            style: "ha-state-icon {\n  animation: spin infinite linear spin;\n}\n"
+          collapsible_controls: true
           double_tap_action:
             action: fire-dom-event
             browser_mod:
@@ -2000,7 +2053,6 @@ views:
           entity: fan.bedroom
           fill_container: true
           hide_state: false
-          icon_animation: true
           name: Fan
           show_oscillate_control: false
           show_percentage_control: true
@@ -2179,9 +2231,10 @@ views:
         title: Upstairs bathroom
         type: custom:mushroom-title-card
       - cards:
-        - entity: fan.upstairs_bathroom_exhaust
+        - card_mod:
+            style: "ha-state-icon {\n  animation: spin infinite linear spin;\n}\n"
+          entity: fan.upstairs_bathroom_exhaust
           hide_state: true
-          icon_animation: true
           name: Exhaust fan
           show_oscillate_control: false
           show_percentage_control: false
@@ -2492,7 +2545,7 @@ views:
   - cards:
     - cards:
       - subtitle: "{%- set lights_on = states(\"sensor.lights_on_outdoors\")|int(default=0)\
-          \ %}\n{{- states(\"weather.home\") }}\n{{- \" ‧ \" ~ states(\"sensor.backyard_weather_temperature\"\
+          \ %}\n{{- states(\"weather.home\") }}\n{{- \" ‧ \" ~ states(\"sensor.outdoor_temperature\"\
           )|round(default=0) }}°\n{{- \" ‧ \" ~ state_attr(\"weather.home\",\"humidity\"\
           ) }}%\n{%- set lock = states(\"lock.front_door\") %}\n{{- iif(lock != \"\
           locked\", \" ‧ front door is \" ~ lock, \"\") }}\n{%- if lights_on > 0 %}\n\
@@ -2596,7 +2649,7 @@ views:
             icon: mdi:walk
             id: frontdoor
             live_provider: ha
-          - camera_entity: camera.doorbell_restream
+          - camera_entity: camera.doorbell
             icon: mdi:doorbell-video
             id: doorbell
             live_provider: ha
@@ -2768,12 +2821,23 @@ views:
           - entities:
             - entity: input_boolean.glowforge_announce_complete
               name: Announce when complete
-            - entity: switch.docker_wyze_bridge
+            - entity: binary_sensor.docker_zima01_wyze_bridge
               icon: mdi:docker
-            - entity: switch.glowforge_camera
+              secondary_info: Tap to restart the serivce.
+              tap_action:
+                action: call-service
+                data:
+                  command: restart
+                  container: media-wyze-bridge
+                  server: zima01
+                  update: binary_sensor.docker_zima01_wyze_bridge
+                service: script.docker
+              type: custom:multiple-entity-row
+            - entity: switch.wyze_cam_glowforge
               icon: mdi:cctv
+              name: Enable camera
             - type: divider
-            - entity: sensor.glowforge_power_monitor_power
+            - entity: sensor.glowforge_power
               icon: mdi:power-plug
               name: Power monitor
             - type: divider
@@ -2929,14 +2993,14 @@ views:
         - name: VOCs
         - icon: mdi:air-filter
         - hours: 12
-        - entity1: sensor.family_room_voc_density
+        - entity1: sensor.glowforge_voc_density
         - entities:
-          - entity: sensor.bedroom_voc_density
+          - entity: sensor.glowforge_voc_density
             format: precision0
-            name: Bedroom
-          - entity: sensor.family_room_voc_density
+            name: Glowforge
+          - entity: sensor.workbench_voc_density
             format: precision0
-            name: Family room
+            name: Workbench
       type: vertical-stack
     - cards:
       - subtitle: ''
@@ -3637,6 +3701,14 @@ views:
                 icon: mdi:docker
                 icon_color: '{{ iif(is_state("binary_sensor.docker_unifi_controller","on"),
                   "blue", "grey") }}'
+                tap_action:
+                  action: call-service
+                  data:
+                    command: restart
+                    container: net-unifi
+                    server: unraid
+                    update: binary_sensor.docker_unifi_controller
+                  service: script.docker
                 type: template
               - content: UniFi UI
                 icon: mdi:link
