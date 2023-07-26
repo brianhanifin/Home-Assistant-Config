@@ -219,7 +219,7 @@
       = adaptive_lighting.switches + [ entity ] %}\n{%- endfor %} {{- adaptive_lighting.switches
       | map(attribute='entity_id') | list }}\n"
 - id: '1638910619111'
-  alias: 'Maintenace: lights off after sunrise'
+  alias: 'Maintenace: after sunrise'
   description: Turn the entry and porch lights off after sunrise.
   trigger:
   - platform: sun
@@ -303,11 +303,6 @@
       displays:
       - 47e1a1a35bb2d1e827ccdeb761f5721b
       - 7d6b52507e25e7eeba10914e56052d1c
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.kitchen_cabinet_lights_sync_receive
-    alias: Stop the cabinet strip from syncing with the dishwasher status.
   mode: single
 - id: '1640887750655'
   alias: Wet laundry Family room LED indicator
@@ -2210,6 +2205,20 @@
   condition: []
   action:
   - if:
+    - condition: sun
+      after: sunset
+    then:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id:
+        - switch.kitchen_cabinet_lights_sync_receive
+        - switch.dishwasher_status_sync_receive
+        - switch.kitchen_cabinet_lights_sync_send
+        - switch.dishwasher_status_sync_send
+      alias: Stop the cabinet strip from syncing with the dishwasher status.
+    alias: Turn off preset syncing after sunset.
+  - if:
     - condition: trigger
       id:
       - detected
@@ -2219,6 +2228,20 @@
       alias: Turn on cabinet light.
       target:
         entity_id: light.kitchen_cabinet
+    - if:
+      - condition: sun
+        after: sunset
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: 5
+        target:
+          entity_id: light.dishwasher_status
+      - service: select.select_option
+        data:
+          option: Nightlight
+        target:
+          entity_id: select.dishwasher_status_preset
     else: []
     alias: Turn on the light when motion is detected.
   - if:
@@ -2231,6 +2254,14 @@
       alias: 'When motion clears: turn off the cabinet light.'
       target:
         entity_id: light.kitchen_cabinet
+    - if:
+      - condition: sun
+        after: sunset
+      then:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.dishwasher_status
     alias: Turn off the light when motion is cleared.
   mode: single
 - id: '1666205350404'
@@ -3207,31 +3238,32 @@
     to: 'on'
     for:
       minutes: 2
-  - alias: Drying when temp is greater than 15 degrees above kitchen temperature.
-    id: Drying
-    platform: template
-    value_template: '{{ is_state("binary_sensor.dishwasher_moving","off") and states("sensor.kitchen_temperature")|int(default=0)
-      < (states("sensor.dishwasher_temperature")|int(default=0) - 15) }}'
-    for:
-      minutes: 10
-  - alias: Clean when status has been Drying for a bit.
-    id: Clean
-    platform: state
+  - platform: state
     entity_id:
-    - input_select.dishwasher_status
-    to: Drying
+    - binary_sensor.dishwasher_moving
+    from: 'on'
+    to: 'off'
     for:
-      minutes: 60
-    from:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    id: moving_stopped
+    alias: Evaluate for drying when dishwasher movement stops for 10 minutes.
+  - id: Clean
+    platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.dishwasher_drying
+    alias: Clean when drying timer finishes.
   - alias: Dirty when door is open for longer than 1 minute.
     id: Dirty
     platform: state
     entity_id:
-    - binary_sensor.dishwasher_door
+    - binary_sensor.dishwasher
     from:
-    to: 'on'
     for:
       minutes: 1
+    to: 'on'
   condition: []
   action:
   - variables:
@@ -3242,7 +3274,31 @@
       notify_message: '{{ "The dishes are " ~ status|lower ~ "." if status in ["Clean","Dirty"]
         }}'
   - condition: template
+    alias: Check for a valid status change.
     value_template: '{{ status != previous_status and status != "Unknown" }}'
+  - if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - moving_stopped
+      - condition: template
+        value_template: '{{ states("sensor.kitchen_temperature")|int(default=0) <
+          (states("sensor.dishwasher_temperature")|int(default=0) - 15) }}'
+        alias: When the temperature is 15 degrees higher at the dishwasher vent.
+      alias: When moving stopped and dishwasher vent temperture is 15 degrees higher
+        than kitchen.
+    then:
+    - variables:
+        status: Drying
+      alias: Change status to Drying.
+    - service: timer.start
+      data:
+        duration: 01:00:00
+      target:
+        entity_id: timer.dishwasher_drying
+      alias: Start the 1 hour countdown to Clean status change.
+    alias: Change status to Drying when conditions match.
   - service: select.select_option
     data:
       option: '{{ status|title }}'
@@ -3265,6 +3321,16 @@
     data:
       entity_id: input_select.dishwasher_status
       option: '{{ status }}'
+  - if:
+    - condition: sun
+      after: sunset
+    then:
+    - service: light.turn_on
+      data:
+        brightness_pct: 5
+      target:
+        entity_id: light.dishwasher_status
+    alias: Dim dishwasher status after sunset.
   - service: script.notify_web
     data:
       message: '{{ "Dishwasher: " ~ status|lower }}'
@@ -3576,7 +3642,7 @@
       seconds: 10
   mode: single
 - id: '1666220627171'
-  alias: Bedroom light switch on state changes
+  alias: Bedroom light state changes
   description: ''
   trigger:
   - platform: state
@@ -3586,10 +3652,17 @@
     to:
     id: button_press_detected
     from:
+  - platform: state
+    entity_id:
+    - light.bedroom
+    from: 'on'
+    id: light_off
+    to: 'off'
   condition:
   - condition: template
     value_template: '{{ trigger.to_state.state in ["single_top","double_top","single_bottom","double_bottom","single_both","double_both"]
       }}'
+    enabled: false
   action:
   - variables:
       action: "{%- set action = trigger.to_state.state %}\n{%- if action|length >=
@@ -3686,10 +3759,22 @@
       alias: Toggle ?????? on a douple tap of the bottom button.
       enabled: false
     alias: Bottom button tap actions.
+  - if:
+    - condition: trigger
+      id:
+      - light_off
+    then:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id:
+        - light.bedroom_table_lamp
+        - light.bedroom_east
+    alias: Turn off all lights when bedroom light turned off.
   - delay:
       hours: 0
       minutes: 0
-      seconds: 1
+      seconds: 2
       milliseconds: 0
   mode: single
 - id: '1666279149478'
