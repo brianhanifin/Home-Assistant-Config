@@ -1203,7 +1203,7 @@ notify_speech:
           entity_id: input_boolean.guest_mode
           state: 'on'
     then:
-    - service: script.say_local
+    - service: script.say_cloud
       data:
         media_player: '{{ media_player }}'
         message: '{{ message }}'
@@ -1663,7 +1663,7 @@ tts_phrase_say:
       value_template: '{{ message|trim != "" }}'
       alias: When a message is set.
     then:
-    - service: script.say_local
+    - service: script.say_cloud
       data:
         media_player: '{{ smart_speaker }}'
         message: '{{ message }}'
@@ -1700,7 +1700,7 @@ say:
         state: 'off'
       alias: When speech is enabled.
     then:
-    - service: script.say_local
+    - service: script.say_cloud
       data:
         media_player: '{{ media_player }}'
         message: "{%- from \"speech.jinja\" import get_briefing %}\n{{ get_briefing(\n
