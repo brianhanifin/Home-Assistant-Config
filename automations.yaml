@@ -2185,7 +2185,7 @@
   mode: queued
   max: 10
 - id: '1665953966268'
-  alias: Kitchen cabinet lights
+  alias: Kitchen presence (cabinet lights)
   description: ''
   trigger:
   - platform: state
@@ -5124,4 +5124,51 @@
       - automation.z2m_remote_nerene_bedside
       - automation.z2m_remote_brian_bedside
     alias: Force bedside remotes to remain enabled.
+  mode: single
+- id: '1690468563434'
+  alias: WLED restore settings after device restarts.
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - select.dishwasher_status_preset
+    to: unknown
+    from: unavailable
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    id: Dishwasher status preset after restart.
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id:
+      - Dishwasher status preset after restart.
+    then:
+    - service: select.select_option
+      data:
+        option: '{{ states("input_select.dishwasher_status")|title }}'
+      target:
+        entity_id: select.dishwasher_status_preset
+      alias: Sync the preset with the home assistant dishwasher status input_select.
+    - if:
+      - condition: state
+        entity_id: select.dishwasher_status_preset
+        state: Clean
+      - condition: state
+        entity_id: select.dishwasher_status_preset
+        state: Dirty
+      then:
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id:
+          - switch.dishwasher_status_sync_receive
+          - switch.dishwasher_status_sync_send
+          - switch.kitchen_cabinet_lights_sync_receive
+          - switch.kitchen_cabinet_lights_sync_send
+        alias: Disable WLED syncing.
+      alias: Disable WLED syncing when state is Clean or Dirty.
+    alias: Restore previous dishwasher status preset.
   mode: single
