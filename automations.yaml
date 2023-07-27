@@ -46,6 +46,7 @@
       - button.irrigation_controller_restart
       - button.workbench_presence_restart_device
       - button.dishwasher_status_restart
+    alias: Restart ESPHome + WLED devices.
   - service: script.notify_web
     data:
       type: success
@@ -1538,10 +1539,11 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.docker_zigbee2mqtt
+    - binary_sensor.docker_pi01_zigbee2mqtt
     for:
       minutes: 10
     to: 'off'
+    from:
   condition: []
   action:
   - service: script.docker
@@ -5171,4 +5173,36 @@
         alias: Disable WLED syncing.
       alias: Disable WLED syncing when state is Clean or Dirty.
     alias: Restore previous dishwasher status preset.
+  mode: single
+- id: '1690482253733'
+  alias: OpenMQTTGateway restart when unavailable
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.omg01_ip
+    to: unavailable
+    from:
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: automation.startup
+    state: 'off'
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.omg1_plug
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.omg1_plug
   mode: single
