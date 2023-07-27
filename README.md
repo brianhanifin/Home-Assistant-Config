@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Devices | Areas | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| **50,253** | 1,413 | 244 | 15 | 106 | 60 |
+| **58,148** | 1,430 | 246 | 15 | 106 | 59 |
 
 # Index
 
@@ -238,13 +238,13 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has **244** devices
-featuring **1,413** entities,
-including **605** sensors. My YAML
-files contain 50,253 lines of code.
+Our Home Assistant install has **246** devices
+featuring **1,430** entities,
+including **611** sensors. My YAML
+files contain 58,148 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>23 Custom integrations</summary>
 
-## [Adaptive Lighting v1.17.1](https://github.com/basnijholt/adaptive-lighting#readme)
+## [Adaptive Lighting v1.17.2](https://github.com/basnijholt/adaptive-lighting#readme)
 Adaptive Lighting custom component for Home AssistantAuthors:[@basnijholt](https://github.com/basnijholt), [@RubenKelevra](https://github.com/RubenKelevra), [@th3w1zard1](https://github.com/th3w1zard1), [@protyposis](https://github.com/protyposis).
 
 ## [Anniversaries v5.2.0](https://github.com/pinkywafer/Anniversaries)
@@ -439,7 +439,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.7.3-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.8.0b0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -449,7 +449,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-50,253-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-58,148-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

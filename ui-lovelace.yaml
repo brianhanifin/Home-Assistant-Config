@@ -75,14 +75,10 @@ decluttering_templates:
         square: false
         type: grid
       - cards:
-        - canary_style:
-            border: none;
-          entities: '[[sensors]]'
+        - entities: '[[sensors]]'
           state_color: true
           type: entities
-        - canary_style:
-            border: none;
-          entities:
+        - entities:
           - type: divider
           - entities:
             - entity: input_select.event_speakers_[[id]]
@@ -93,9 +89,7 @@ decluttering_templates:
           show_header_toggle: false
           state_color: true
           type: entities
-        - canary_style:
-            border: none;
-          entities:
+        - entities:
           - entities:
             - entity: input_select.event_light_[[id]]
             - entity: input_datetime.event_light_[[id]]
@@ -121,16 +115,12 @@ decluttering_templates:
         - cards:
           - subtitle: Temperature average
             type: custom:mushroom-title-card
-          - canary_style:
-              border: none;
-            entities:
+          - entities:
             - entity: '[[average]]'
               name: '[[floor]] average'
             show_icon: false
             type: glance
           - animate: true
-            canary_style:
-              border: none;
             entities:
             - entity: '[[average]]'
             height: 118
@@ -150,15 +140,11 @@ decluttering_templates:
         - cards:
           - subtitle: Room temperature
             type: custom:mushroom-title-card
-          - canary_style:
-              border: none;
-            entities: '[[temperature_entities]]'
+          - entities: '[[temperature_entities]]'
             show_icon: false
             type: glance
           - aggregate_func: max
             animate: true
-            canary_style:
-              border: none;
             entities: '[[temperature_entities]]'
             height: 75
             hours_to_show: 24
@@ -174,15 +160,11 @@ decluttering_templates:
         - cards:
           - subtitle: Room humidity
             type: custom:mushroom-title-card
-          - canary_style:
-              border: none;
-            entities: '[[humidity_entities]]'
+          - entities: '[[humidity_entities]]'
             show_icon: false
             type: glance
           - aggregate_func: max
             animate: true
-            canary_style:
-              border: none;
             entities: '[[humidity_entities]]'
             height: 75
             hours_to_show: 12
@@ -212,8 +194,6 @@ decluttering_templates:
         type: custom:multiple-entity-row
       footer:
         animate: true
-        canary_style:
-          border: none;
         entities: '[[entities]]'
         height: 75
         hours_to_show: '[[hours]]'
@@ -298,7 +278,6 @@ decluttering_templates:
                     show_header_toggle: false
                     show_name: false
                     show_state: false
-                    style: "ha-card {\n  border: none;\n}\n"
                     type: glance
                   entities:
                   - person.brian
@@ -323,7 +302,6 @@ decluttering_templates:
                   - entity: zone.range
                   - entity: zone.school
                   hours_to_show: 6
-                  style: "ha-card {\n  border: none;\n}\n"
                   type: map
                 type: vertical-stack
               title: People at home
@@ -345,7 +323,6 @@ decluttering_templates:
                       show_header_toggle: false
                       show_name: true
                       show_state: false
-                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       exclude:
@@ -365,7 +342,6 @@ decluttering_templates:
                       show_header_toggle: false
                       show_name: true
                       show_state: false
-                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       exclude:
@@ -385,7 +361,6 @@ decluttering_templates:
                       show_header_toggle: false
                       show_name: true
                       show_state: false
-                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       exclude:
@@ -418,7 +393,6 @@ decluttering_templates:
                   - subtitle: Downstairs
                     type: custom:mushroom-title-card
                   - card:
-                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
                       template: "{{\n  state_attr(\"sensor.windows_open_downstairs\"\
@@ -431,7 +405,6 @@ decluttering_templates:
                   - subtitle: Upstairs
                     type: custom:mushroom-title-card
                   - card:
-                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.windows_open_upstairs","entities")
@@ -466,11 +439,13 @@ decluttering_templates:
       - current: true
         details: true
         entity: weather.home
-        forecast: true
+        forecast: false
         hourly_forecast: false
         number_of_forecasts: '4'
-        style: "ha-card {\n    border: none;\n}\n"
         type: custom:weather-card
+      - entity: weather.home
+        type: custom:clock-weather-card
+        weather_icon_type: none
       - card:
           cards:
           - subtitle: National weather service alerts
@@ -481,7 +456,6 @@ decluttering_templates:
               \ {{ alert }}\n    {%- else %}\n      {{ iif(alert!=alerts[loop.index-1],\
               \ alert, \"\") }}\n    {%- endif %}\n  {%- endfor %}\n{%- else %}\n\
               \ {{ alerts }}\n{%- endif %}\n"
-            style: "ha-card {\n    border: none;\n}\n"
             type: markdown
           type: vertical-stack
         conditions:
@@ -501,7 +475,6 @@ decluttering_templates:
             show_marker: true
             square_map: true
             static_map: true
-            style: "ha-card {\n    border: none;\n}\n"
             type: custom:weather-radar-card
             zoom_level: 9
           type: vertical-stack
@@ -532,7 +505,6 @@ decluttering_templates:
           labels_secondary: true
           name: false
           state: false
-        style: "ha-card {\n    border: none;\n}\n"
         type: custom:mini-graph-card
       type: vertical-stack
 kiosk_mode:
@@ -968,7 +940,6 @@ views:
                   - title: Updates
                     type: custom:mushroom-title-card
                   - card:
-                      style: "ha-card {\n    border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.updates_available","entities")
@@ -1009,7 +980,6 @@ views:
                     more_info_on_tap: true
                     show_empty: false
                     show_notification_title: true
-                    style: "ha-card {\n    border: none;\n}\n"
                     type: custom:home-feed-card
                   type: vertical-stack
               service: browser_mod.popup
@@ -1030,7 +1000,6 @@ views:
                   - title: Low batteries
                     type: custom:mushroom-title-card
                   - card:
-                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.low_batteries","entities")
@@ -1058,7 +1027,6 @@ views:
                   - title: Automations and scripts running
                     type: custom:mushroom-title-card
                   - card:
-                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.alerts_automations_and_scripts_running","entities")
@@ -1086,7 +1054,6 @@ views:
                   - title: Timers on
                     type: custom:mushroom-title-card
                   - card:
-                      style: "ha-card {\n  border: none;\n}\n"
                       type: entities
                     filter:
                       template: '{{ state_attr("sensor.timers_on","entities") }}'
@@ -1124,7 +1091,6 @@ views:
                       \ endif %}\n  <tr>\n    <td><ha-icon icon=\"mdi:plex\"></ha-icon>\
                       \ &nbsp;{{ device }}</td>\n    <td align=\"right\">{{ content\
                       \ }}</td>\n  </tr>\n{%- endfor %} </table>"
-                    style: "ha-card {\n  border: none;\n}\n"
                     type: markdown
                   type: vertical-stack
               service: browser_mod.popup
@@ -1167,7 +1133,6 @@ views:
                           name: Unknown entities
                           type: custom:mushroom-entity-card
                         - card:
-                            style: "ha-card {\n  border: none;\n}\n"
                             type: entities
                           filter:
                             options:
@@ -1184,7 +1149,6 @@ views:
                           name: Unavailable entities
                           type: custom:mushroom-entity-card
                         - card:
-                            style: "ha-card {\n  border: none;\n}\n"
                             type: entities
                           filter:
                             options:
@@ -1224,7 +1188,6 @@ views:
                             \ &nbsp;{{ item.id }}</td>\n    <td align=\"right\"><a\
                             \ title=\"{{item.occurrences}}\"> {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
                             \  </tr>\n{%- endfor %}\n</table>"
-                          style: "ha-card {\n  border: none;\n}\n"
                           type: markdown
                         - entity: sensor.watchman_missing_services
                           icon: mdi:folder-hidden
@@ -1238,7 +1201,6 @@ views:
                             \  <td align=\"right\"><a title=\"{{item.occurrences}}\"\
                             > {{item.occurrences.split('/')[-1].split(':')[0]}}</a></td>\n\
                             \  </tr>\n{%- endfor %}\n</table>"
-                          style: "ha-card {\n  border: none;\n}\n"
                           type: markdown
                         type: vertical-stack
                     type: custom:tabbed-card
@@ -3536,14 +3498,15 @@ views:
                   filter:
                     exclude:
                     - state: '0'
+                    - entity_id: sensor.area_count
                     - entity_id: sensor.automation_count
                     - entity_id: sensor.code_line_count
+                    - entity_id: sensor.device_count
                     - entity_id: sensor.domain_count
                     - entity_id: sensor.entity_count
                     - entity_id: sensor.script_count
                     - entity_id: sensor.unavailable_count
                     - entity_id: sensor.unknown_count
-                    - integration: frigate
                     include:
                     - entity_id: sensor.*_count
                   no_card: true
@@ -3556,8 +3519,10 @@ views:
                   entities:
                   - entity: sensor.entity_count
                     name: Entities
-                  - entity: sensor.domain_count
-                    name: Domains
+                  - entity: sensor.device_count
+                    name: Devices
+                  - entity: sensor.area_count
+                    name: Areas
                   - entity: sensor.automation_count
                     name: Automations
                   - entity: sensor.script_count
