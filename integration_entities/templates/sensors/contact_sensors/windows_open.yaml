@@ -7,17 +7,16 @@ state: |
   {{ this.attributes.entities | default([]) | count | default(0) }}
 attributes:
   entities: |
-    {%-
-      set all_windows = state_attr("binary_sensor.downstairs_windows","entity_id")
-        + state_attr("binary_sensor.upstairs_windows","entity_id")
-    %}
     {{
       states.binary_sensor
-      | selectattr("entity_id","in", all_windows)
+      | selectattr("attributes.battery","defined")
+      | selectattr("attributes.device_class","defined")
+      | selectattr("attributes.device_class","eq","window")
       | selectattr("state","eq","on")
       | rejectattr("state","eq","unavailable")
       | rejectattr("state","eq","unknown")
       | map(attribute="entity_id")
+      | reject("is_hidden_entity")
       | list
       | sort
     }}

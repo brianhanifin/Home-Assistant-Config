@@ -1193,6 +1193,21 @@
       - condition: trigger
         id: sliding_door_open
       alias: When the windows or sliding door have been opened.
+    - condition: not
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: sensor.contact_sensors_open
+          state: '1'
+          alias: Only 1 contact sensor is open.
+        - condition: template
+          value_template: "{{\n  state_attr(\"sensor.contact_sensors_open\",\"entities\")[0]
+            is defined\n  and state_attr(\"sensor.contact_sensors_open\",\"entities\")[0]
+            == \"binary_sensor.guest_room_south_window\"\n}}"
+          alias: The guest room window is the only open contact sensor.
+        alias: When the only window that is open is in the Guest room.
+      alias: Ignore when the guest room has the lone open contact sensor.
     then:
     - service: climate.turn_off
       data: {}
@@ -5046,12 +5061,31 @@
   - condition: numeric_state
     entity_id: sensor.contact_sensors_open
     above: 0
+  - condition: not
+    conditions:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: sensor.contact_sensors_open
+        state: '1'
+        alias: Only 1 contact sensor is open.
+      - condition: template
+        value_template: "{{\n  state_attr(\"sensor.contact_sensors_open\",\"entities\")[0]
+          is defined\n  and state_attr(\"sensor.contact_sensors_open\",\"entities\")[0]
+          == \"binary_sensor.guest_room_south_window\"\n}}"
+        alias: The guest room window is the only open contact sensor.
+      alias: When the only window that is open is in the Guest room.
+    alias: Ignore when the guest room has the lone open contact sensor.
   action:
   - service: script.notify_mobile
     data:
       who: brian
-      title: '{{ states("sensor.contact_sensors_open") }} contacts sensors are open'
-      message: test
+      title: '{{ states("sensor.contact_sensors_open") }} contacts sensors are open
+
+        '
+      message: "{%-\n  set sensors = states.binary_sensor\n    | selectattr(\"entity_id\",\"in\",state_attr(\"sensor.contact_sensors_open\",\"entities\"))\n
+        \   | map(attribute=\"name\")\n    | list\n    | sort\n%} {%- for sensor in
+        sensors %}\n  {{ sensor ~ \"\\n\" }}\n{%- endfor %}\n"
   mode: single
 - id: '1688227408299'
   alias: Nerene rigid wakeup
