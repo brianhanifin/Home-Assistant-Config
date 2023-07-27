@@ -6,9 +6,9 @@ state_class: measurement
 unit_of_measurement: "°F"
 # https://community.home-assistant.io/t/calculating-apparent-feels-like-temperature/370834/18
 state: >-
-  {% set T = state_attr("weather.home","temperature")|float(default=0) %}
-  {% set RH = state_attr("weather.home","humidity")|float(default=0) %}
-  {% set WS = state_attr("weather.home","wind_speed")|float(default=0) %}
+  {% set T = states("sensor.outdoor_temperature")|float(default=0) %}
+  {% set RH = states("sensor.outdoor_humidity")|float(default=0) %}
+  {% set WS = states("sensor.outdoor_wind_speed")|float(default=0) %}
   {% set WC = T | float %}
 
   {% if T <= 70 and WS >= 3 %}
