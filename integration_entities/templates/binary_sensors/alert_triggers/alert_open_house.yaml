@@ -4,25 +4,36 @@ name: "Alert: open house"
 icon: mdi:home-lock-open
 device_class: problem
 delay_on: "00:02:00"
-state: |
-  {%- set outside_temp = states("sensor.outdoor_temperature")|round(1,default=0) %}
-  {%- set inside_temp = states("sensor.home_thermostat_temperature")|round(1,default=0) %}
-  {%- set outside_humidity = states("sensor.outdoor_humidity")|round(default=0) %}
-  {%- set indoor_humidity = states("sensor.home_thermostat_humidity")|round(default=0) %}
-  {%- set home_closed = is_state("binary_sensor.house_windows", "off") and
-                        is_state("binary_sensor.sliding_door", "off") %}
-  {%- set during_announcement_hours =
-        14 <= now().hour < states("input_number.quiet_hour_start")|int(default=21) %}
+state: >
   {{
-    is_state("input_boolean.cooler_outside_notification","on")
-    and (outside_temp - inside_temp) <= -2
-    and (outside_humidity - indoor_humidity) <= 20
-    and home_closed
-    and during_announcement_hours
+    this.attributes.notification_enabled | default(false)
+    and this.attributes.cooler_outside | default(false)
+    and this.attributes.home_closed | default(false)
+    and this.attributes.during_announcement_hours | default(false)
   }}
 attributes:
-  notification_enabled: '{{ is_state("input_boolean.cooler_outside_notification","on") }}'
-  temp_diff: '{{ states("sensor.outdoor_temperature")|round(1,default=0) - states("sensor.home_thermostat_temperature")|round(1,default=0) }}'
-  humid_diff: '{{ states("sensor.outdoor_humidity")|round(default=0) - states("sensor.home_thermostat_humidity")|round(default=0) }}'
-  home_closed: '{{ is_state("binary_sensor.house_windows", "off") and is_state("binary_sensor.sliding_door", "off") }}'
-  during_announcement_hours: '{{ 14 <= now().hour < states("input_number.quiet_hour_start")|int(default=21) }}'
+  notification_enabled: >
+    {{ is_state("input_boolean.cooler_outside_notification","on") }}
+  cooler_outside: >
+    {%-
+      set temp_diff =
+        states("sensor.outdoor_temperature")|round(1,default=0)
+        - states("sensor.home_thermostat_temperature")|round(1,default=0)
+    %}
+    {%-
+      set humid_diff =
+        states("sensor.outdoor_humidity")|round(default=0)
+        - states("sensor.home_thermostat_humidity")|round(default=0)
+    %}
+    {{ temp_diff <= -4 and humid_diff <= 20 }}
+  home_closed: >
+    {{
+      is_state("binary_sensor.house_windows", "off")
+      and is_state("binary_sensor.sliding_door", "off")
+    }}
+  during_announcement_hours: >
+    {{
+      14
+      <= now().hour
+      < states("input_number.quiet_hour_start")|int(default=21)
+    }}
