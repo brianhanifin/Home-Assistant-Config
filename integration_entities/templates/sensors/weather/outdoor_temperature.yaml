@@ -5,29 +5,30 @@ device_class: temperature
 state_class: measurement
 unit_of_measurement: "°F"
 state: >
-  {%- set value0 = states("sensor.backyard_fence_temperature")|float(default=0)   %}
-  {%- set value1 = states("sensor.backyard_wall_temperature")|float(default=0) %}
-  {%- set value2 = state_attr("weather.accuweather","temperature")|trim -%}
-  {%- set value3 = state_attr("weather.openweathermap","temperature")|trim -%}
-  {%- set value = value0 %}
-  {%- if value0 is not number or value0 <= 0 %}
-    {%- if value1 is number and value1 > 0 %}
-      {%- set value = value1 %}
-    {%- elif value2 is number and value2 > 0 %}
-      {%- set value = value2 %}
-    {%- elif value3 is number and value3 > 0 %}
-      {%- set value = value3 %}
-    {%- else %}
-      {%- set value = 0 %}
+  {%- set outdoor = namespace(temperature=0) %}
+  {%- set sources = ["backyard_fence","backyard_wall","openweather","accuweather"] %}
+  {%- for source in sources %}
+    {%- set temp = this.attributes[source] %}
+    {%- if outdoor.temperature == 0 and temp is number and temp > 0 %}
+      {%- set outdoor.temperature = temp %}
     {%- endif %}
-  {%- endif %}
-  {{ value|round(default=0) }}
+  {%- endfor %}
+  {{ outdoor.temperature | round(1,default=0) }}
+
 attributes:
-  backyard_fence: |
-    {{ states("sensor.backyard_fence_temperature")|float(default=0) }}
-  backyard_wall: |
-    {{ states("sensor.backyard_wall_temperature")|float(default=0) }}
-  accuweather: |
-    {{ state_attr("weather.accuweather","temperature")|trim }}
-  openweather: |
-    {{ state_attr("weather.openweathermap","temperature")|trim }}
+  backyard_fence: >
+    {%- set last_updated = states.sensor.backyard_fence_temperature.last_updated|default(0) %}
+    {%- set temp = states("sensor.backyard_fence_temperature") %}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, temp, "") }}
+  backyard_wall: >
+    {%- set last_updated = states.sensor.backyard_wall_temperature.last_updated|default(0) %}
+    {%- set temp = states("sensor.backyard_wall_temperature")|float(default=0) %}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, temp, "") }}
+  openweather: >
+    {%- set last_updated = states.weather.openweathermap.last_updated|default(0) %}
+    {%- set temp = state_attr("weather.openweathermap","temperature")|float(default=0) %}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 1800, temp, "") }}
+  accuweather: >
+    {%- set last_updated = states.weather.accuweather.last_updated|default(0) %}
+    {%- set temp = state_attr("weather.accuweather","temperature")|float(default=0) %}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 1800, temp, "") }}

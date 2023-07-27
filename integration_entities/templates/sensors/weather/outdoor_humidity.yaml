@@ -4,18 +4,27 @@ name: Outdoor Humidity
 device_class: humidity
 state_class: measurement
 unit_of_measurement: "%"
-state: |
-  {%- set value0 = states("sensor.backyard_weather_humidity")|trim -%}
-  {%- set value1 = state_attr("weather.accuweather","humidity")|trim -%}
-  {%- set value2 = state_attr("weather.openweathermap","humidity")|trim -%}
-  {%- set value = value0 %}
-  {%- if value0 is not number or value0 <= 0 %}
-    {%- if value1 is number and value1 > 0 %}
-      {%- set value = value1 %}
-    {%- elif value2 is number and value2 > 0 %}
-      {%- set value = value2 %}
-    {%- else %}
-      {%- set value = 0 %}
+state: >
+  {%- set outdoor = namespace(humidity=0) %}
+  {%- set sources = ["backyard_fence","openweather","accuweather"] %}
+  {%- for source in sources %}
+    {%- set humidity = this.attributes[source] %}
+    {%- if outdoor.humidity == 0 and humidity is number and humidity > 0 %}
+      {%- set outdoor.humidity = humidity %}
     {%- endif %}
-  {%- endif %}
-  {{ value|round(default=0) }}
+  {%- endfor %}
+  {{ outdoor.humidity | round(0,default=0) }}
+
+attributes:
+  backyard_fence: >
+    {%- set last_updated = states.sensor.backyard_fence_humidity.last_updated|default(0) %}
+    {%- set humidity = states("sensor.backyard_fence_humidity") %}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, humidity, "") }}
+  openweather: >
+    {%- set last_updated = states.weather.openweathermap.last_updated|default(0) %}
+    {%- set humidity = state_attr("weather.openweathermap","humidity")|float(default=0) %}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 1800, humidity, "") }}
+  accuweather: >
+    {%- set last_updated = states.weather.accuweather.last_updated|default(0) %}
+    {%- set humidity = state_attr("weather.accuweather","humidity")|float(default=0) %}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 1800, humidity, "") }}
