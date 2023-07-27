@@ -3237,7 +3237,20 @@
     from:
     to: 'on'
     for:
-      minutes: 2
+      hours: 0
+      minutes: 1
+      seconds: 0
+    enabled: false
+  - platform: template
+    value_template: "{{\n  states(\"input_select.dishwasher_status\")|title in [\"Clean\",\"Dirty\"]\n
+      \ and states(\"sensor.kitchen_temperature\")|int(default=0) < (states(\"sensor.dishwasher_temperature\")|int(default=0)
+      - 15)\n}}"
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    alias: When Clean or Dirty and temp over 15° warmer.
+    id: Washing_alt
   - platform: state
     entity_id:
     - binary_sensor.dishwasher_moving
@@ -3267,7 +3280,7 @@
   condition: []
   action:
   - variables:
-      status: '{{ trigger.id }}'
+      status: '{{ trigger.id | replace("Washing_alt","Washing") }}'
       previous_status: '{{ states("input_select.dishwasher_status") }}'
       notify_title: '{{ "Dishwasher: " ~ status|lower if status in ["Clean","Dirty"]
         }}'
