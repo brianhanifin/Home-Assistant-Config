@@ -4941,6 +4941,7 @@
     event_data:
       entity_id: timer.workbench_presence
     alias: '[timer_finished] When timeout ends.'
+    enabled: false
   - platform: numeric_state
     entity_id: sensor.workbench_temperature
     above: 78
@@ -4986,6 +4987,16 @@
       target:
         entity_id: timer.workbench_presence
       alias: Start workbench presence timeout timer.
+      enabled: false
+    - service: fan.turn_off
+      data: {}
+      target:
+        entity_id: fan.workbench
+      alias: Turn off the workbench fan.
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.google_garage_do_not_disturb
     alias: '[away] When presence is no longer detected.'
   - if:
     - condition: trigger
@@ -5001,6 +5012,7 @@
       target:
         entity_id: switch.google_garage_do_not_disturb
     alias: '[timer_finished] When presence timeout ends.'
+    enabled: false
   mode: single
 - id: '1686694412234'
   alias: Summer school wakeup
