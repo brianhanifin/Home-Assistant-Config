@@ -2202,7 +2202,7 @@
   mode: queued
   max: 10
 - id: '1665953966268'
-  alias: Kitchen presence (cabinet lights)
+  alias: Kitchen presence (cabinet + dishes lights)
   description: ''
   trigger:
   - platform: state
@@ -2239,26 +2239,62 @@
     - condition: trigger
       id:
       - detected
+      alias: When motion is detected.
     then:
-    - service: light.turn_on
-      data: {}
-      alias: Turn on cabinet light.
-      target:
-        entity_id: light.kitchen_cabinet
     - if:
       - condition: sun
-        after: sunset
+        before: sunset
+        after: sunrise
+        alias: During the day.
       then:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        alias: Turn on cabinet + dishwasher lights full brightness.
+        target:
+          entity_id:
+          - light.kitchen_cabinet
+          - light.dishwasher_status
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: input_select.dishwasher_status
+            state: Clean
+          - condition: state
+            entity_id: input_select.dishwasher_status
+            state: Dirty
+          alias: When the dishes are Clean or Dirty.
+        then:
+        - service: select.select_option
+          data:
+            option: Rainbow rainbow
+          target:
+            entity_id: select.kitchen_cabinet_lights_preset
+          alias: Set cabinet light to a daytime preset.
+        alias: Set the cabinet daytime preset, but only when the dishes are Clean
+          or Dirty.
+      alias: Set dishwasher brightness during day / night.
+      else:
+      - service: light.turn_on
+        data:
+          brightness_pct: 80
+        alias: Turn on cabinet lights.
+        target:
+          entity_id:
+          - light.kitchen_cabinet
+      - service: select.select_option
+        data:
+          option: Nightlight
+        target:
+          entity_id: select.kitchen_cabinet_lights_preset
+        alias: Set cabinet light to the Nightlight preset.
       - service: light.turn_on
         data:
           brightness_pct: 5
         target:
           entity_id: light.dishwasher_status
-      - service: select.select_option
-        data:
-          option: Nightlight
-        target:
-          entity_id: select.dishwasher_status_preset
+        alias: Turn on dishwasher light dimly.
     else: []
     alias: Turn on the light when motion is detected.
   - if:
@@ -2268,17 +2304,11 @@
     then:
     - service: light.turn_off
       data: {}
-      alias: 'When motion clears: turn off the cabinet light.'
+      alias: 'When motion clears: turn off both light strips.'
       target:
-        entity_id: light.kitchen_cabinet
-    - if:
-      - condition: sun
-        after: sunset
-      then:
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id: light.dishwasher_status
+        entity_id:
+        - light.kitchen_cabinet
+        - light.dishwasher_status
     alias: Turn off the light when motion is cleared.
   mode: single
 - id: '1666205350404'
