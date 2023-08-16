@@ -2093,3 +2093,34 @@ get_nerene_active_wakeup_time:
     alias: Return active wakeup time. [{{result.time}}]
   mode: single
   icon: mdi:family-tree
+get_room_speaker:
+  alias: Get room speaker
+  sequence:
+  - variables:
+      media_player: "{{\n  states.media_player\n    | selectattr('entity_id', 'in',
+        integration_entities('cast'))\n    | selectattr(\"entity_id\", \"in\", area_entities(room))\n
+        \   | map(attribute=\"entity_id\")\n    | list\n    | first\n}}\n"
+      result:
+        entity_id: '{{ media_player }}'
+  - stop: Return the entity
+    response_variable: result
+  mode: parallel
+  icon: mdi:speaker
+get_speaker_group:
+  alias: Get speaker group
+  sequence:
+  - variables:
+      group: "{%- set request = request|lower|replace(\" \",\"_\") %}\n{{\n  states.media_player\n
+        \   | rejectattr(\"attributes.supported_features\", \"undefined\")\n    |
+        selectattr(\"attributes.supported_features\", \"eq\", 22413)\n    | selectattr(\"entity_id\",
+        \"search\", (request))\n    | map(attribute=\"entity_id\")\n    | list\n    |
+        first\n}}\n"
+      group_members: '{{ states[group].attributes.entity_id }}'
+      result:
+        group: '{{ group }}'
+        media_players: '{{ group_members }}'
+  - stop: Return the results.
+    response_variable: result
+  mode: parallel
+  icon: mdi:speaker-multiple
+  max: 10
