@@ -16,8 +16,8 @@ state: >
   {{ outdoor.temperature | round(1,default=0) }}
 attributes:
   backyard_fence: >
-    {%- set last_updated = states.sensor.backyard_fence_temperature.last_updated|default(0) %}
-    {%- set temp = states("sensor.backyard_fence_temperature") %}
+    {%- set last_updated = states.sensor.backyard_weather_station_temperature.last_updated|default(0) %}
+    {%- set temp = states("sensor.backyard_weather_station_temperature") %}
     {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, temp, "") }}
   backyard_wall: >
     {%- set last_updated = states.sensor.backyard_wall_temperature.last_updated|default(0) %}

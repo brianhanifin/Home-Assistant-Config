@@ -1,9 +1,9 @@
 ---
 unique_id: backyard_fence_wind_average
-name: Backyard weather wind average
+name: Backyard weather station wind average
 device_class: wind_speed
 state_class: measurement
 unit_of_measurement: "mph"
 state: >
-  {%- set wind_speed_kmph = states("sensor.backyard_fence_wind_average_kmh") | float | default(0) | round(1) %}
+  {%- set wind_speed_kmph = states("sensor.backyard_weather_station_wind_average_kmh") | float | default(0) | round(1) %}
   {{ wind_speed_kmph * 0.6213711922 | round(1,default=0) }}

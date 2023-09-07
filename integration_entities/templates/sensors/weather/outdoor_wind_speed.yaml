@@ -29,8 +29,8 @@ attributes:
     {%- endif %}
     {{ value|round(default=0) }}
   backyard_speed: >
-    {%- set last_updated = states.sensor.backyard_fence_wind_average.last_updated|default(0) %}
-    {%- set speed = states("sensor.backyard_fence_wind_average")|float(default=0) %}
+    {%- set last_updated = states.sensor.backyard_weather_station_wind_average.last_updated|default(0) %}
+    {%- set speed = states("sensor.backyard_weather_station_wind_average")|float(default=0) %}
     {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, speed | round(1), "") }}
   openweather_speed: >
     {%- set last_updated = states.weather.openweathermap.last_updated|default(0) %}
