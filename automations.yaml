@@ -11,7 +11,9 @@
       type: warning
       duration: 300
     service: script.notify_web
+    continue_on_error: true
   - service: homeassistant.turn_off
+    continue_on_error: true
     target:
       entity_id:
       - input_boolean.guest_mode
@@ -19,11 +21,13 @@
     data: {}
   - data: {}
     service: script.holiday_sensors_update
+    continue_on_error: true
   - data:
       keep_days: 10
       repack: true
     service: recorder.purge
   - service: switch.turn_off
+    continue_on_error: true
     data: {}
     target:
       entity_id: switch.docker_unifi
@@ -33,10 +37,12 @@
       seconds: 15
       milliseconds: 0
   - service: switch.turn_on
+    continue_on_error: true
     data: {}
     target:
       entity_id: switch.docker_unifi
   - service: button.press
+    continue_on_error: true
     data: {}
     target:
       entity_id:
@@ -48,6 +54,7 @@
       - button.dishwasher_status_restart
     alias: Restart ESPHome + WLED devices.
   - service: script.notify_web
+    continue_on_error: true
     data:
       type: success
       message: Daily maintenance complete.
@@ -190,14 +197,17 @@
   condition: []
   action:
   - service: switch.turn_off
+    continue_on_error: true
     data:
       entity_id: '{{ switches }}'
   - delay:
       seconds: 5
   - service: switch.turn_on
+    continue_on_error: true
     data:
       entity_id: '{{ switches }}'
   - service: watchman.report
+    continue_on_error: true
     data: {}
   - if:
     - condition: state
@@ -205,6 +215,7 @@
       state: 'off'
     then:
     - service: switch.turn_on
+      continue_on_error: true
       data: {}
       target:
         entity_id: switch.google_bedroom_do_not_disturb
@@ -228,11 +239,13 @@
     offset: +00:15:00
   action:
   - service: switch.turn_off
+    continue_on_error: true
     target:
       entity_id: switch.adaptive_lighting_home_entry
     alias: Turn off adaptive lighting control temporarily.
     data: {}
   - service: light.turn_off
+    continue_on_error: true
     data:
       transition: 10
     target:
@@ -246,10 +259,12 @@
     target:
       entity_id: select.driveway_flood_mode
   - service: light.turn_off
+    continue_on_error: true
     data: {}
     target:
       entity_id: light.driveway_flood_accent
   - service: switch.turn_on
+    continue_on_error: true
     target:
       entity_id: switch.adaptive_lighting_home_entry
     alias: Turn adaptive lighting control back on.
@@ -718,6 +733,7 @@
       - driveway_light_offline
     then:
     - service: switch.turn_off
+      continue_on_error: true
       data: {}
       target:
         entity_id: switch.driveway_flood_light_power_cycler
@@ -1926,6 +1942,7 @@
 
         '
   - service: script.turn_off
+    continue_on_error: true
     target:
       entity_id:
       - script.light_sequence
@@ -1941,6 +1958,7 @@
           count: '{{ bulbs|count }}'
           sequence:
           - service: light.turn_off
+            continue_on_error: true
             data:
               entity_id: '{{ bulbs[repeat.index-1] }}'
             alias: Turn off each bulb.
@@ -1975,6 +1993,7 @@
       alias: If the light is on and brightness is > 0.
     then:
     - service: light.turn_on
+      continue_on_error: true
       data:
         brightness: '{{ state_attr("light.family_room","brightness") }}
 
@@ -1984,6 +2003,7 @@
       alias: Turn on table lamp and match brightness.
     else:
     - service: light.turn_off
+      continue_on_error: true
       data: {}
       target:
         area_id: family_room
@@ -1993,6 +2013,7 @@
       state: 'on'
     then:
     - service: light.turn_on
+      continue_on_error: true
       target:
         entity_id: light.family_room_floor_lamp
       data:
@@ -2226,6 +2247,7 @@
       after: sunset
     then:
     - service: switch.turn_off
+      continue_on_error: true
       data: {}
       target:
         entity_id:
@@ -2248,6 +2270,7 @@
         alias: During the day.
       then:
       - service: light.turn_on
+        continue_on_error: true
         data:
           brightness_pct: 100
         alias: Turn on cabinet + dishwasher lights full brightness.
@@ -2267,6 +2290,7 @@
           alias: When the dishes are Clean or Dirty.
         then:
         - service: select.select_option
+          continue_on_error: true
           data:
             option: Rainbow rainbow
           target:
@@ -2277,6 +2301,7 @@
       alias: Set dishwasher brightness during day / night.
       else:
       - service: light.turn_on
+        continue_on_error: true
         data:
           brightness_pct: 80
         alias: Turn on cabinet lights.
@@ -2284,12 +2309,14 @@
           entity_id:
           - light.kitchen_cabinet
       - service: select.select_option
+        continue_on_error: true
         data:
           option: Nightlight
         target:
           entity_id: select.kitchen_cabinet_lights_preset
         alias: Set cabinet light to the Nightlight preset.
       - service: light.turn_on
+        continue_on_error: true
         data:
           brightness_pct: 5
         target:
@@ -2303,6 +2330,7 @@
       - cleared
     then:
     - service: light.turn_off
+      continue_on_error: true
       data: {}
       alias: 'When motion clears: turn off both light strips.'
       target:
@@ -3172,6 +3200,7 @@
       id: door_opens
     then:
     - service: light.turn_on
+      continue_on_error: true
       data:
         brightness: 255
       target:
@@ -3190,6 +3219,7 @@
         state: 'off'
       then:
       - service: light.turn_on
+        continue_on_error: true
         data:
           brightness: 255
         target:
@@ -3232,6 +3262,7 @@
       id: timer_finished
     then:
     - service: light.turn_off
+      continue_on_error: true
       data: {}
       target:
         entity_id: light.laundry
@@ -3287,16 +3318,16 @@
       hours: 0
       minutes: 1
       seconds: 0
-    enabled: false
+    enabled: true
   - platform: template
     value_template: "{{\n  states(\"input_select.dishwasher_status\")|title in [\"Clean\",\"Dirty\"]\n
       \ and states(\"sensor.kitchen_temperature\")|int(default=0) < (states(\"sensor.dishwasher_temperature\")|int(default=0)
-      - 15)\n}}"
+      - 20)\n}}"
     for:
       hours: 0
       minutes: 1
       seconds: 0
-    alias: When Clean or Dirty and temp over 15° warmer.
+    alias: When Clean or Dirty and temp over 20° warmer.
     id: Washing_alt
   - platform: state
     entity_id:
@@ -3324,7 +3355,10 @@
     for:
       minutes: 1
     to: 'on'
-  condition: []
+  condition:
+  - condition: template
+    value_template: "{{\n  states(\"sensor.kitchen_temperature\") != \"Unknown\"\n
+      \ and states(\"sensor.dishwasher_temperature\") != \"Unknown\"\n}}"
   action:
   - variables:
       status: '{{ trigger.id | replace("Washing_alt","Washing") }}'
@@ -3751,6 +3785,7 @@
           alias: When the light is off.
         then:
         - service: light.turn_off
+          continue_on_error: true
           data: {}
           target:
             entity_id:
@@ -3761,6 +3796,7 @@
         alias: Toggle the bedroom lights.
         else:
         - service: light.turn_on
+          continue_on_error: true
           data: {}
           target:
             entity_id:
@@ -3781,6 +3817,7 @@
           alias: When the AC is on.
         then:
         - service: climate.turn_off
+          continue_on_error: true
           data: {}
           target:
             entity_id: climate.bedroom_thermostat
@@ -3788,6 +3825,7 @@
         alias: Toggle the AC.
         else:
         - service: climate.turn_on
+          continue_on_error: true
           data: {}
           target:
             entity_id: climate.bedroom_thermostat
@@ -3806,6 +3844,7 @@
         alias: Single tap.
       then:
       - service: homeassistant.turn_off
+        continue_on_error: true
         data: {}
         target:
           area_id: bedroom
@@ -3825,6 +3864,7 @@
       - light_off
     then:
     - service: light.turn_off
+      continue_on_error: true
       data: {}
       target:
         entity_id:
@@ -4119,6 +4159,7 @@
       alias: If porch is on and brightness is > 0.
     then:
     - service: light.turn_on
+      continue_on_error: true
       data:
         color_name: white
         brightness: '{{ state_attr("light.porch","brightness") }}
@@ -4129,6 +4170,7 @@
       alias: Turn on path lights and match brightness.
     else:
     - service: light.turn_off
+      continue_on_error: true
       data: {}
       target:
         entity_id: light.path_lights
@@ -4153,6 +4195,7 @@
       entity_id: select.driveway_flood_mode
     alias: Change the flood mode to manual.
   - service: light.turn_off
+    continue_on_error: true
     data: {}
     target:
       entity_id:
@@ -4229,6 +4272,7 @@
         entity_id: select.driveway_flood_mode
       alias: Take manual control of the driveway flood light.
     - service: light.turn_on
+      continue_on_error: true
       data:
         brightness: 255
       target:
@@ -4264,6 +4308,7 @@
         id: front_door_opens
       sequence:
       - service: light.turn_on
+        continue_on_error: true
         data:
           brightness: 255
         target:
@@ -4273,6 +4318,7 @@
         id: front_door_closes
       sequence:
       - service: light.turn_off
+        continue_on_error: true
         data:
           transition: 30
         target:
@@ -4283,11 +4329,13 @@
       id: turn_lights_down
     then:
     - service: light.turn_off
+      continue_on_error: true
       data: {}
       target:
         entity_id: light.driveway_flood_accent
       alias: Turn off flood accent light to improve camera vision.
     - service: select.select_option
+      continue_on_error: true
       data:
         option: Auto
       target:
@@ -4300,6 +4348,7 @@
         state: 'on'
       then:
       - service: switch.turn_off
+        continue_on_error: true
         target:
           entity_id: switch.adaptive_lighting_home_entry
         alias: Turn off adaptive lighting control temporarily.
@@ -4307,6 +4356,7 @@
       - delay:
           seconds: 1
       - service: switch.turn_on
+        continue_on_error: true
         target:
           entity_id: switch.adaptive_lighting_home_entry
         alias: Turn adaptive lighting control back on.
@@ -4458,6 +4508,7 @@
       alias: If the light is on and brightness is > 0.
     then:
     - service: light.turn_on
+      continue_on_error: true
       data:
         brightness: '{{ state_attr("light.play_room","brightness") }}
 
@@ -4467,6 +4518,7 @@
       alias: Turn on lamp and match brightness.
     else:
     - service: light.turn_off
+      continue_on_error: true
       data: {}
       target:
         area_id: play_room
