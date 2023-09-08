@@ -14,12 +14,14 @@ script:
       #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
       - service: homeassistant.turn_off
+        continue_on_error: true
         target:
           entity_id:
             - fan.bedroom
             - switch.sound_machine
 
       - service: climate.set_hvac_mode
+        continue_on_error: true
         data:
           hvac_mode: "off"
         target:
@@ -27,22 +29,46 @@ script:
             - climate.bedroom_thermostat
             - climate.brian_bed
 
-      - service: script.event_light
-        data:
-          id: wakeup_brian
-          light: |
-            {%- set light_name = states("input_select.event_light_wakeup_brian") %}
+      - variables:
+          id: &id >
+            wakeup_brian
+          light_name: &light_name >
+            {{ states("input_select.event_light_" ~ id|trim) }}
+          wakeup_light: &wakeup_light >
             {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
-            {{ entity_list[0] }}
+            {{ iif(entity_list|count > 0, entity_list[0], "error") }}
+      - if:
+          - '{{ wakeup_light != "error" }}'
+        then:
+          - service: script.event_light
+            continue_on_error: true
+            data:
+              id: "{{ id }}"
+              light: "{{ wakeup_light }}"
+        else: &error_alert
+          - service: script.notify_mobile
+            continue_on_error: true
+            data:
+              who: brian
+              title: Wakeup light missing
+              subtitle: "{{ id }}"
+              message: >
+                {{ light_name }} may not be named properly in the input_select.
 
   event_timeout_wakeup_brian:
     sequence:
-      - service: homeassistant.turn_off
-        target:
-          entity_id: |
-            {%- set light_name = states("input_select.event_light_wakeup_brian") %}
-            {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
-            {{ entity_list[0] }}
+      - variables:
+          id: *id
+          light_name: *light_name
+          wakeup_light: *wakeup_light
+      - if:
+          - '{{ wakeup_light != "error" }}'
+        then:
+          - service: homeassistant.turn_off
+            continue_on_error: true
+            target:
+              entity_id: "{{ wakeup_light }}"
+        else: *error_alert
 
 input_boolean:
   event_enabled_wakeup_brian:
@@ -80,6 +106,7 @@ input_select:
       - Bedroom east
       - Bedroom table lamp
       - Family room table lamp
+      - NONEXISTANT LIGHT
     icon: mdi:lamp
   event_speakers_wakeup_brian:
     name: Announce in which areas?

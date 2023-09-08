@@ -3,33 +3,58 @@ script:
   event_wakeup_nerene:
     sequence:
       - service: homeassistant.turn_off
+        continue_on_error: true
         target:
           entity_id:
             - fan.bedroom
             - switch.sound_machine
 
       - service: climate.set_hvac_mode
+        continue_on_error: true
         data:
           hvac_mode: "off"
         target:
-          entity_id: climate.bedroom_thermostat
+          entity_id:
+            - climate.bedroom_thermostat
+            - climate.nerene_bed
 
-      - service: script.event_light
-        data:
-          id: wakeup_nerene
-          light: |
-            {%- set light_name = states("input_select.event_light_wakeup_nerene") %}
+      - variables:
+          id: &id >
+            wakeup_nerene
+          light_name: &light_name >
+            {{ states("input_select.event_light_" ~ id|trim) }}
+          wakeup_light: &wakeup_light >
             {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
-            {{ entity_list[0] }}
+            {{ iif(entity_list|count > 0, entity_list[0], "error") }}
+      - if:
+          - '{{ wakeup_light != "error" }}'
+        then:
+          - service: script.event_light
+            data:
+              id: wakeup_nerene
+              light: "{{ wakeup_light }}"
+        else: &error_alert
+          - service: script.notify_mobile
+            data:
+              who: brian
+              title: Wakeup light missing
+              subtitle: "{{ id }}"
+              message: >
+                {{ light_name }} may not be named properly in the input_select.
 
   event_timeout_wakeup_nerene:
     sequence:
-      - service: homeassistant.turn_off
-        target:
-          entity_id: |
-            {%- set light_name = states("input_select.event_light_wakeup_nerene") %}
-            {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
-            {{ entity_list[0] }}
+      - variables:
+          light_name: *light_name
+          wakeup_light: *wakeup_light
+      - if:
+          - '{{ wakeup_light != "error" }}'
+        then:
+          - service: homeassistant.turn_off
+            target:
+              entity_id: "{{ wakeup_light }}"
+        else: *error_alert
+
 
       - service: climate.set_hvac_mode
         data:
