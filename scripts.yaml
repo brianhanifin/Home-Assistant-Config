@@ -2124,3 +2124,61 @@ get_speaker_group:
   mode: parallel
   icon: mdi:speaker-multiple
   max: 10
+toggle_entity:
+  alias: Toggle entity
+  sequence:
+  - variables:
+      original_state: '{{ states(entity_id) }}'
+  - service: homeassistant.toggle
+    data:
+      entity_id: '{{ entity_id }}'
+    alias: Toggle entity state.
+  - if:
+    - condition: template
+      value_template: '{{ states(entity_id) == original_state }}'
+      alias: When the state has not changed yet.
+    then:
+    - wait_for_trigger:
+      - platform: template
+        value_template: '{{ states(entity_id) != original_state }}'
+        for:
+          hours: 0
+          minutes: 2
+          seconds: 0
+      timeout:
+        hours: 0
+        minutes: 0
+        seconds: 15
+        milliseconds: 0
+      alias: Wait until the state changes.
+    alias: Wait for the state change to be confirmed.
+    else:
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 1
+        milliseconds: 0
+  - service: homeassistant.toggle
+    data:
+      entity_id: '{{ entity_id }}'
+    alias: Restore previous state.
+  mode: parallel
+  icon: mdi:shimmer
+toggle_entities:
+  alias: Toggle entities
+  sequence:
+  - if:
+    - condition: template
+      value_template: "{{\n  entities is defined\n  and entities | count > 0\n}}"
+      alias: When multiple entites are present.
+    then:
+    - repeat:
+        for_each: '{{ entities }}'
+        sequence:
+        - service: script.toggle_entity
+          data:
+            entity_id: '{{ entities[repeat.index-1] }}'
+    alias: Toggle each passed entity, when present.
+  mode: queued
+  icon: mdi:shimmer
+  max: 10

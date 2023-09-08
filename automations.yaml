@@ -196,19 +196,10 @@
     offset: '-2:00:00'
   condition: []
   action:
-  - service: switch.turn_off
-    continue_on_error: true
-    data:
-      entity_id: '{{ switches }}'
-  - delay:
-      seconds: 5
-  - service: switch.turn_on
-    continue_on_error: true
-    data:
-      entity_id: '{{ switches }}'
   - service: watchman.report
     continue_on_error: true
     data: {}
+    alias: Update watchman report.
   - if:
     - condition: state
       entity_id: switch.google_bedroom_do_not_disturb
@@ -219,17 +210,17 @@
       data: {}
       target:
         entity_id: switch.google_bedroom_do_not_disturb
+    alias: Restore bedroom do not disturb.
   - service: input_boolean.turn_off
     data: {}
     target:
       entity_id: input_boolean.keep_outdoor_lights_off
+  - service: script.toggle_entity
+    continue_on_error: true
+    data:
+      entity_id: switch.adaptive_lighting_family_room
+    alias: Adaptive lighting restore automated control.
   mode: single
-  variables:
-    switches: "{% set adaptive_lighting = namespace(switches=[]) %}\n{%- for entity
-      in states.switch if 'switch.adaptive_lighting_' in entity.entity_id\n      and
-      entity.entity_id[25:30] not in [\"adapt\",\"sleep\"] %}\n  {%- set adaptive_lighting.switches
-      = adaptive_lighting.switches + [ entity ] %}\n{%- endfor %} {{- adaptive_lighting.switches
-      | map(attribute='entity_id') | list }}\n"
 - id: '1638910619111'
   alias: 'Maintenace: after sunrise'
   description: Turn the entry and porch lights off after sunrise.
@@ -278,6 +269,7 @@
     offset: -00:30:00
   action:
   - service: light.turn_on
+    continue_on_error: true
     data:
       transition: 10
     target:
@@ -4223,6 +4215,7 @@
     id: front_door_opens
     to: 'on'
     enabled: true
+    from: 'off'
   - platform: state
     entity_id:
     - binary_sensor.front_door
@@ -4259,11 +4252,11 @@
       alias: Confirm "Keep outside lights off" is disabled and it is dark outside.
   action:
   - if:
-    - condition: or
-      conditions:
-      - condition: trigger
-        id: person_detected
-      alias: When a person is detected or the front door opens.
+    - condition: trigger
+      id:
+      - person_detected
+      - front_door_opens
+      alias: When triggered by person_detected or front_door_opens
     then:
     - service: select.select_option
       data:
@@ -4347,20 +4340,10 @@
         entity_id: switch.adaptive_lighting_home_entry
         state: 'on'
       then:
-      - service: switch.turn_off
+      - service: script.toggle_entity
         continue_on_error: true
-        target:
+        data:
           entity_id: switch.adaptive_lighting_home_entry
-        alias: Turn off adaptive lighting control temporarily.
-        data: {}
-      - delay:
-          seconds: 1
-      - service: switch.turn_on
-        continue_on_error: true
-        target:
-          entity_id: switch.adaptive_lighting_home_entry
-        alias: Turn adaptive lighting control back on.
-        data: {}
       alias: Restore adaptive lighting automated control.
     alias: When the lights need to be turned back down.
   mode: queued
