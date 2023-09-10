@@ -1,0 +1,30 @@
+---
+unique_id: rain_today
+name: Rain today
+state: >
+  {%- set outdoor = namespace(rain=0) %}
+  {%- set sources = ["backyard","openweather","accuweather"] %}
+  {%- for source in sources %}
+    {%- set rain = this.attributes[source] %}
+    {%- if outdoor.rain == 0 and rain is number and rain > 0 %}
+      {%- set outdoor.rain = rain %}
+    {%- endif %}
+  {%- endfor %}
+  {{ outdoor.rain|round(1,default=0) > 0.0 }}
+attributes:
+  # backyard: >
+  #   {%- set rain = states("sensor.backyard_weather_station_rain")|float(default=0) %}
+  #   {{ iif(rain > 0.0, rain, "") }}
+  openweather: >
+    {%- set rain1 = states("sensor.openweathermap_rain")|float(default=0) %}
+    {%- set rain2 = states("sensor.openweathermap_forecast_precipitation")|float(default=0) %}
+    {%- if rain1 > 0.0 %}
+      {{ rain1 }}
+    {%- elif rain2 > 0.0 %}
+      {{ rain2 }}
+    {%- else %}
+      0.0
+    {%- endif %}
+  accuweather: >
+    {%- set rain = states("sensor.accuweather_precipitation")|float(default=0) %}
+    {{ iif(rain > 0.0, rain, 0.0) }}
