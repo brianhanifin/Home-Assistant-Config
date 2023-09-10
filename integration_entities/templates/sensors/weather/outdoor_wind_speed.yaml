@@ -16,7 +16,7 @@ state: >
   {{ outdoor.speed | round(1,default=0) }}
 attributes:
   direction: >
-    {%- set value0 = states("sensor.backyard_fence_wind_direction") %}
+    {%- set value0 = states("sensor.backyard_weather_station_wind_direction") %}
     {%- set value1 = state_attr("weather.accuweather","wind_bearing")|trim %}
     {%- set value2 = state_attr("weather.openweathermap","wind_bearing")|trim %}
     {%- set value = value0 %}
@@ -31,12 +31,12 @@ attributes:
   backyard_speed: >
     {%- set last_updated = states.sensor.backyard_weather_station_wind_average.last_updated|default(0) %}
     {%- set speed = states("sensor.backyard_weather_station_wind_average")|float(default=0) %}
-    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, speed | round(1), "") }}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 3600, speed | round(1), "") }}
   openweather_speed: >
     {%- set last_updated = states.weather.openweathermap.last_updated|default(0) %}
     {%- set speed = state_attr("weather.openweathermap","wind_speed")|float(default=0) %}
-    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, speed | round(1), "") }}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 9600, speed | round(1), "") }}
   accuweather_speed: >
     {%- set last_updated = states.weather.accuweather.last_updated|default(0) %}
     {%- set speed = state_attr("weather.accuweather","wind_speed")|float(default=0) %}
-    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 300, speed | round(1), "") }}
+    {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 9600, speed | round(1), "") }}
