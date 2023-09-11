@@ -6,7 +6,7 @@ state_class: measurement
 unit_of_measurement: "mph"
 state: >
   {%- set outdoor = namespace(speed=0) %}
-  {%- set sources = ["backyard_speed","openweather_speed","accuweather_speed"] %}
+  {%- set sources = ["backyard","openweather","accuweather"] %}
   {%- for source in sources %}
     {%- set temp = this.attributes[source] %}
     {%- if outdoor.speed == 0 and temp is number and temp > 0 %}
@@ -28,15 +28,15 @@ attributes:
       {%- endif %}
     {%- endif %}
     {{ value|round(default=0) }}
-  backyard_speed: >
+  backyard: >
     {%- set last_updated = states.sensor.backyard_weather_station_wind_average.last_updated|default(0) %}
     {%- set speed = states("sensor.backyard_weather_station_wind_average")|float(default=0) %}
     {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 3600, speed | round(1), "") }}
-  openweather_speed: >
+  openweather: >
     {%- set last_updated = states.weather.openweathermap.last_updated|default(0) %}
     {%- set speed = state_attr("weather.openweathermap","wind_speed")|float(default=0) %}
     {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 9600, speed | round(1), "") }}
-  accuweather_speed: >
+  accuweather: >
     {%- set last_updated = states.weather.accuweather.last_updated|default(0) %}
     {%- set speed = state_attr("weather.accuweather","wind_speed")|float(default=0) %}
     {{ iif(as_timestamp(now()) - as_timestamp(last_updated) < 9600, speed | round(1), "") }}
