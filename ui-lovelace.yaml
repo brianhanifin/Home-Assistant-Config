@@ -1573,10 +1573,10 @@ views:
       - alignment: center
         chips:
         - content: Adaptive lighting
-          entity: switch.adaptive_lighting_adapt_brightness_family_room
-          icon: mdi:toggle-switch{{ iif(is_state("switch.adaptive_lighting_adapt_brightness_family_room","off"),
+          entity: switch.adaptive_lighting_family_room
+          icon: mdi:toggle-switch{{ iif(is_state("switch.adaptive_lighting_family_room","off"),
             "-off", "") }}
-          icon_color: '{{ iif(is_state("switch.adaptive_lighting_adapt_brightness_family_room","on"),
+          icon_color: '{{ iif(is_state("switch.adaptive_lighting_family_room","on"),
             "blue", "grey") }}'
           type: template
         - content: Do not disturb
@@ -3305,16 +3305,6 @@ views:
         type: custom:mushroom-chips-card
       - alignment: justify
         chips:
-        - content: Check config
-          icon: mdi:check-decagram
-          icon_color: grey
-          tap_action:
-            action: call-service
-            service: homeassistant.update_entity
-            service_data: {}
-            target:
-              entity_id: sensor.check_config_result
-          type: template
         - content: Generate readme
           icon: mdi:github
           icon_color: grey

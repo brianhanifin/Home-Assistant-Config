@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Devices | Areas | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| **45,431** | 1,434 | 276 | 15 | 108 | 61 |
+| **49,757** | 1,466 | 280 | 15 | 108 | 63 |
 
 # Index
 
@@ -238,10 +238,10 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has **276** devices
-featuring **1,434** entities,
-including **673** sensors. My YAML
-files contain 45,431 lines of code.
+Our Home Assistant install has **280** devices
+featuring **1,466** entities,
+including **685** sensors. My YAML
+files contain 49,757 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>23 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.19.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -292,13 +292,13 @@ Authors:[@ryanwinter](https://github.com/ryanwinter).
 ## [SamsungTV Smart v0.12.0](https://github.com/ollo69/ha-samsungtv-smart)
 Authors:[@jaruba](https://github.com/jaruba), [@ollo69](https://github.com/ollo69), [@screwdgeh](https://github.com/screwdgeh).
 
-## [Simple Wyze Vacuum v1.8.8](https://github.com/romedtino/simple-wyze-vac)
+## [Simple Wyze Vacuum v1.8.9](https://github.com/romedtino/simple-wyze-vac)
 Home Assistant Custom Component for Wyze VacuumAuthors:[romedtino](https://github.com/romedtino).
 
 ## [SmartThinQ LGE Sensors v0.33.3](https://github.com/ollo69/ha-smartthinq-sensors)
 Authors:[@ollo69](https://github.com/ollo69).
 
-## [Sun2 v2.3.1](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
+## [Sun2 v2.4.0](https://github.com/pnbruckner/ha-sun2/blob/master/README.md)
 Home Assistant Sun2 SensorAuthors:[@pnbruckner](https://github.com/pnbruckner).
 
 ## [UniFi Gateway v0.3.3](https://github.com/custom-components/sensor.unifigateway)
@@ -348,7 +348,7 @@ Flipdown Timer Card for Home Assistant Lovelace
 ## [Frigate Card v5.2.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
-## [Kiosk Mode v3.1.0](https://github.com/NemesisRE/kiosk-mode)
+## [Kiosk Mode v4.0.0](https://github.com/NemesisRE/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 ## [Layout Card v2.4.4](https://github.com/thomasloven/lovelace-layout-card)
@@ -387,7 +387,7 @@ A different take on the thermostat card for Home Assistant ♨️
 ## [Swipe Card v5.0.0](https://github.com/bramkragten/swipe-card)
 Card that allows you to swipe throught multiple cards for Home Assistant Lovelace
 
-## [Tabbed Card v0.3.1](https://github.com/kinghat/tabbed-card)
+## [Tabbed Card v0.3.2](https://github.com/kinghat/tabbed-card)
 a custom card for home assistant that utilizes tabs to segregate individual cards.
 
 ## [Timer Bar Card v1.29.1](https://github.com/rianadon/timer-bar-card)
@@ -436,7 +436,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.9.0-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.9.1-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -446,7 +446,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-45,431-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,757-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg
