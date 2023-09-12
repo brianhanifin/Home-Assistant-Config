@@ -25,6 +25,7 @@ attributes:
           +integration_entities("Z-Wave JS")
         )
       | rejectattr("entity_id","search","blackpc")
+      | rejectattr("entity_id","search","solar")
       | map(attribute="entity_id")
       | reject("is_hidden_entity")
       | list
