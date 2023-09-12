@@ -3308,30 +3308,29 @@
     to: 'on'
     for:
       hours: 0
-      minutes: 1
+      minutes: 2
       seconds: 0
     enabled: true
   - platform: template
     value_template: "{{\n  states(\"input_select.dishwasher_status\")|title in [\"Clean\",\"Dirty\"]\n
       \ and states(\"sensor.kitchen_temperature\")|int(default=0) < (states(\"sensor.dishwasher_temperature\")|int(default=0)
-      - 20)\n}}"
+      - 30)\n}}"
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+    alias: When Clean or Dirty and temp over 30° warmer.
+    id: Washing_alt
+  - platform: state
+    entity_id: sensor.dishwasher_moving
+    from: 'off'
+    to: 'on'
     for:
       hours: 0
       minutes: 1
       seconds: 0
-    alias: When Clean or Dirty and temp over 20° warmer.
-    id: Washing_alt
-  - platform: state
-    entity_id:
-    - binary_sensor.dishwasher_moving
-    from: 'on'
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 10
-      seconds: 0
     id: moving_stopped
-    alias: Evaluate for drying when dishwasher movement stops for 10 minutes.
+    alias: Evaluate for drying when dishwasher movement stops for 1 minute.
   - id: Clean
     platform: event
     event_type: timer.finished
@@ -3349,8 +3348,9 @@
     to: 'on'
   condition:
   - condition: template
-    value_template: "{{\n  states(\"sensor.kitchen_temperature\") != \"Unknown\"\n
-      \ and states(\"sensor.dishwasher_temperature\") != \"Unknown\"\n}}"
+    value_template: "{{\n  states(\"sensor.kitchen_temperature\") not in [\"Unknown\",\"Unavailable\"]\n
+      \ and states(\"sensor.dishwasher_temperature\") not in [\"Unknown\",\"Unavailable\"]\n}}"
+    alias: Ignore changes to "Unknown" temperature sensor values.
   action:
   - variables:
       status: '{{ trigger.id | replace("Washing_alt","Washing") }}'
@@ -3368,10 +3368,14 @@
       - condition: trigger
         id:
         - moving_stopped
+      - condition: state
+        entity_id: input_select.dishwasher_status
+        state: Washing
+        alias: Confirm Dishwasher status is currently "Washing".
       - condition: template
         value_template: '{{ states("sensor.kitchen_temperature")|int(default=0) <
-          (states("sensor.dishwasher_temperature")|int(default=0) - 15) }}'
-        alias: When the temperature is 15 degrees higher at the dishwasher vent.
+          (states("sensor.dishwasher_temperature")|int(default=0) - 30) }}'
+        alias: When the temperature is 30 degrees higher at the dishwasher vent.
       alias: When moving stopped and dishwasher vent temperture is 15 degrees higher
         than kitchen.
     then:
@@ -3385,6 +3389,11 @@
         entity_id: timer.dishwasher_drying
       alias: Start the 1 hour countdown to Clean status change.
     alias: Change status to Drying when conditions match.
+  - alias: Update dishwasher status.
+    service: input_select.select_option
+    data:
+      entity_id: input_select.dishwasher_status
+      option: '{{ status }}'
   - service: select.select_option
     data:
       option: '{{ status|title }}'
@@ -3402,11 +3411,6 @@
         - switch.dishwasher_status_sync_send
         - switch.kitchen_cabinet_lights_sync_receive
     alias: Sync kitchen light strips when before sunset.
-  - alias: Update dishwasher status light.
-    service: input_select.select_option
-    data:
-      entity_id: input_select.dishwasher_status
-      option: '{{ status }}'
   - if:
     - condition: sun
       after: sunset
@@ -4264,6 +4268,11 @@
       target:
         entity_id: select.driveway_flood_mode
       alias: Take manual control of the driveway flood light.
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
     - service: light.turn_on
       continue_on_error: true
       data:
@@ -4711,7 +4720,8 @@
       lifetime: '{{ lifetime }}'
       screen_time: '{{ screen_time }}'
       icon_name: '{{ weather_icon }}'
-      text: '{{ states("sensor.backyard_weather_station_temperature")|round ~ "°" }}
+      text: '{{ states("sensor.backyard_weather_station_temperature")|round ~ "°"
+        }}
 
         '
     alias: 'Add screen: Weather.'
@@ -5000,13 +5010,6 @@
     id: away
     from:
     to: 'off'
-  - platform: event
-    event_type: timer.finished
-    id: timer_finished
-    event_data:
-      entity_id: timer.workbench_presence
-    alias: '[timer_finished] When timeout ends.'
-    enabled: false
   - platform: numeric_state
     entity_id: sensor.workbench_temperature
     above: 78
@@ -5021,10 +5024,6 @@
       data: {}
       target:
         entity_id: switch.google_garage_do_not_disturb
-    - service: timer.cancel
-      data: {}
-      target:
-        entity_id: timer.workbench_presence
     alias: '[present] When presence is detected.'
   - if:
     - condition: and
@@ -5046,13 +5045,6 @@
     - condition: trigger
       id: away
     then:
-    - service: timer.start
-      data:
-        duration: 00:15:00
-      target:
-        entity_id: timer.workbench_presence
-      alias: Start workbench presence timeout timer.
-      enabled: false
     - service: fan.turn_off
       data: {}
       target:
@@ -5063,21 +5055,6 @@
       target:
         entity_id: switch.google_garage_do_not_disturb
     alias: '[away] When presence is no longer detected.'
-  - if:
-    - condition: trigger
-      id: timer_finished
-    then:
-    - service: fan.turn_off
-      data: {}
-      target:
-        entity_id: fan.workbench
-      alias: Turn off the workbench fan.
-    - service: switch.turn_on
-      data: {}
-      target:
-        entity_id: switch.google_garage_do_not_disturb
-    alias: '[timer_finished] When presence timeout ends.'
-    enabled: false
   mode: single
 - id: '1686694412234'
   alias: Summer school wakeup
