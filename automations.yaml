@@ -3348,12 +3348,12 @@
     to: 'on'
   condition:
   - condition: template
-    value_template: "{{\n  states(\"sensor.kitchen_temperature\") not in [\"Unknown\",\"Unavailable\"]\n
-      \ and states(\"sensor.dishwasher_temperature\") not in [\"Unknown\",\"Unavailable\"]\n}}"
-    alias: Ignore changes to "Unknown" temperature sensor values.
+    value_template: "{{\n  states(\"sensor.kitchen_temperature\")|title not in [\"Unknown\",\"Unavailable\"]\n
+      \ and states(\"sensor.dishwasher_temperature\")|title not in [\"Unknown\",\"Unavailable\"]\n}}"
+    alias: ignore invalid changes to temperature sensor values.
   action:
   - variables:
-      status: '{{ trigger.id | replace("Washing_alt","Washing") }}'
+      status: '{{ trigger.id|title | replace("Washing_alt","Washing") }}'
       previous_status: '{{ states("input_select.dishwasher_status") }}'
       notify_title: '{{ "Dishwasher: " ~ status|lower if status in ["Clean","Dirty"]
         }}'
@@ -3396,7 +3396,7 @@
       option: '{{ status }}'
   - service: select.select_option
     data:
-      option: '{{ status|title }}'
+      option: '{{ status }}'
     target:
       entity_id: select.dishwasher_status_preset
     alias: Change light strip to match status.
@@ -3424,6 +3424,12 @@
   - service: script.notify_web
     data:
       message: '{{ "Dishwasher: " ~ status|lower }}'
+  - service: script.notify_mobile
+    data:
+      who: brian
+      title: Dishwasher status update
+      message: '{{ status }}'
+    alias: 'DEBUG: phone notification'
   - alias: Cool down timer.
     delay:
       minutes: 5
