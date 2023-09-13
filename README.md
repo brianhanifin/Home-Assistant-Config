@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Devices | Areas | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| **49,757** | 1,466 | 280 | 15 | 108 | 63 |
+| **49,763** | 1,466 | 280 | 15 | 108 | 63 |
 
 # Index
 
@@ -241,7 +241,7 @@ smoke detectors, and a bulb.
 Our Home Assistant install has **280** devices
 featuring **1,466** entities,
 including **685** sensors. My YAML
-files contain 49,757 lines of code.
+files contain 49,763 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>23 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.19.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -318,7 +318,7 @@ Home Assistant Integration for Wyze devices.Authors:[@SecKatie](https://github.c
 ## [Apexcharts Card v2.0.4](https://github.com/RomRider/apexcharts-card)
 📈 A Lovelace card to display advanced graphs and charts based on ApexChartsJS for Home Assistant
 
-## [Atomic Calendar Revive v7.7.0](https://github.com/totaldebug/atomic-calendar-revive)
+## [Atomic Calendar Revive v7.7.1](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
 
 ## [Auto Entities v1.12.1](https://github.com/thomasloven/lovelace-auto-entities)
@@ -436,7 +436,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.9.1-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.9.2-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -446,7 +446,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,757-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,763-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg
