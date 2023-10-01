@@ -13,7 +13,7 @@ state: |
     {%- set event_dayofweek = "Monday" -%}
     {%- set event_month     = 1 -%}
 
-    {%- set today = as_datetime(states("sensor.date")) -%}
+    {%- set today = states("sensor.date") | as_datetime -%}
 
     {# Calculate the event for the current year. #}
     {%- set event_date = nth_dayofmonth(event_nthday, event_dayofweek, event_month, today.year) | replace("00:00:00","") -%}

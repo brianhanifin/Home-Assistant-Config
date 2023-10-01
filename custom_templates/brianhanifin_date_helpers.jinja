@@ -1,6 +1,6 @@
 {#-
 last_day_of_month(month, year)
-  ex. Get the last day of February 2024.
+  example: Get the last day of February 2024.
   {{ last_day_of_month(2, 2024) }}
 -#}
 {%- macro last_day_of_month(month=None, year=_today_date.year) %}
@@ -21,11 +21,11 @@ last_day_of_month(month, year)
 
 {#-
 list_of_dates(months, year)
-  ex. Get dates off during summer months.
+  example: Get dates off during summer months.
   This summer: {{ list_of_dates([6,7,8]) }}
   Summer of 2024: {{ list_of_dates([6,7,8, 2024]) }}
 
-  ex. Get dates off during winter break spanning this year and next.
+  example: Get dates off during winter break spanning this year and next.
   End/beginning of next year: {{ list_of_dates([12,1]) }}
 -#}
 {%- macro list_of_dates(months=[], year=_today_date.year) %}
@@ -46,8 +46,27 @@ list_of_dates(months, year)
 {%- endmacro %}
 
 {#-
+next_date("09-17")
+  Return the next date this event occurs.
+  example: Today is 2023-10-01. Since 2023-09-17 has passed the next_date will return 2024-09-17.
+#}
+{%- macro next_date(event_date) %}
+    {%- set event_date = (_today_date.year ~ "-" ~ event_date) | as_datetime %}
+
+    {# If the event has passed for this year, get next year's event. #}
+    {%- if event_date.month < _today_date.month -%}
+      {%- set event_year = _today_date.year + 1 -%}
+    {%- elif event_date.month == _today_date.month and event_date.day < _today_date.day %}
+      {%- set event_year = _today_date.year + 1 -%}
+    {%- else -%}
+      {%- set event_year = _today_date.year -%}
+    {%- endif -%}
+    {{ _today_date.replace(year=event_year, month=event_date.month, day=event_date.day) }}
+{%- endmacro %}
+
+{#-
 nth_day_of_month(nth, day_name, month, year)
-  ex. Get the nth Monday of May.
+  example: Get the nth Monday of May.
   1st: {{ nth_day_of_month(1, "Monday", 5) }}
   2nd: {{ nth_day_of_month(2, "Monday", 5, 2020) }}
   Last: {{ nth_day_of_month("last", "Monday", 5) }}
@@ -102,13 +121,14 @@ Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-da
 {#################
 INTERNAL USE ONLY.
 ##################}
-{%- set _today_date = now().date() %}
+{#%- set _today_date = now().date() %#}
+{%- set _today_date = states("sensor.date") %}
 {%- set _weekdays_long = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] %}
 {%- set _weekdays_short = ["mon","tue","wed","thu","fri","sat","sun"] %}
 
 {#-
 _weekday_name_to_number(weekday_name)
-  ex. Get the number which represents Thursday.
+  example: Get the number which represents Thursday.
   {{ _weekday_name_to_number("Thursday") }}
   {{ _weekday_name_to_number("Thu") }}
 -#}
@@ -132,7 +152,7 @@ _weekday_name_to_number(weekday_name)
 
 {#-
 _weekday_number_to_name(weekday_number, short)
-  ex. Get the number which represents Thursday.
+  example: Get the number which represents Thursday.
   {{ _weekday_number_to_name(1) }}
   {{ _weekday_number_to_name(1, False) }}
   {{ _weekday_number_to_name(weekday_number=1) }}

@@ -8,7 +8,7 @@ state: |
     "Nerene has training day",
     "Nerene has training"
   ] %}
-  {%- set today = now() %}
+  {%- set today = states("sensor.date") | as_datetime %}
   {%- set today = today.month ~ "-" ~ today.day %}
   {%- set event_date = state_attr("calendar.nerene","start_time")|as_datetime %}
   {%- set event_date = event_date.month ~ "-" ~ event_date.day %}

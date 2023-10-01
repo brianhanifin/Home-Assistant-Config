@@ -9,25 +9,26 @@ state: |
   {%- set event_day_of_week = "Sunday" -%}
   {%- set event_month = 5 -%}
 
-  {%- set today = as_datetime(states("sensor.date")) -%}
+  {%- set today = states("sensor.date") | as_datetime -%}
 
   {#- Calculate the event for the current year. #}
-  {%- set event_date = nth_day_of_month(event_nth_day, event_day_of_week, event_month, today.year) | replace("00:00:00","") -%}
+  {%- set event_date = nth_day_of_month(event_nth_day, event_day_name, event_month, today.year) | as_datetime -%}
 
   {#- If the event has passed for this year, get next year's event. #}
-  {%- set event_day = event_date.split('-')[2]|int(default=0) -%}
-  {%- if event_month < today.month -%}
-    {%- set event_date = nth_day_of_month(event_nth_day, event_day_of_week, event_month, today.year+1) | replace("00:00:00","")  -%}
-  {%- elif event_month == today.month and event_day < today.day %}
-    {%- set event_date = nth_day_of_month(event_nth_day, event_day_of_week, event_month, today.year+1) | replace("00:00:00","")  -%}
+  {%- set event_day = event_date.day|default(0) %}
+  {%-
+    if event_month < today.month
+      or (event_month == today.month and event_day < today.day)
+  -%}
+    {%- set event_date = nth_day_of_month(event_nth_day, event_day_name, event_month, today.year+1) | replace(" 00:00:00","")  -%}
   {%- endif -%}
 
-  {{- event_date|trim }}
+  {{- event_date }}
 attributes:
   type: Holiday
   friendly_date: |
     {%- set event_date = this.state|default("") %}
     {%- if event_date is defined and event_date|lower not in ["","none","unknown","unavailable"] %}
-      {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
-      {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int(default=0), event_date.split("-")[0]|int(default=0)) }}
+      {%- set event_date = event_date | as_datetime %}
+      {{ event_date.strftime('%B') ~ " " ~ event_date.day ~ ", " ~ event_date.year }}
     {%- endif %}

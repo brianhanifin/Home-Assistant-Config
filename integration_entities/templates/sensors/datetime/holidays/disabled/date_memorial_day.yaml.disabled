@@ -14,7 +14,7 @@ state: |
     {%- set event_month     = 5 %}
 
     {# If the event has passed for this year, get next year's event. #}
-    {%- set today = as_datetime(states("sensor.date")) %}
+    {%- set today = states("sensor.date") | as_datetime %}
     {%- if event_month < today.month %}
       {%- set event_year = today.year + 1 %}
     {%- else %}

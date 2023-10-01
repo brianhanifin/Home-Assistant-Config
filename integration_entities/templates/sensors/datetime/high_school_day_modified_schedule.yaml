@@ -3,7 +3,7 @@ unique_id: high_school_modified_day
 name: High school day modified schedule
 icon: mdi:wrench-clock
 state: |
-  {%- set today = now().strftime("%F") %}
+  {%- set today = states("sensor.date") | string  %}
   {%- set assembly_days = states.sensor.high_school_day_modified_schedule.attributes.double_assembly_days %}
   {%- set final_exam_days = states.sensor.high_school_day_modified_schedule.attributes.final_exam_days %}
   {%- set minimum_days = states.sensor.high_school_day_modified_schedule.attributes.minimum_days %}
@@ -14,7 +14,7 @@ attributes:
   next_modified_day: >-
     {%- macro get_next_date(days, last_next) %}
       {%- set local = namespace(next="") %}
-      {%- set today = now().date() %}
+      {%- set today = states("sensor.date") | as_datetime %}
 
       {%- for day in days|sort %}
         {%- if local.next == "" and today|as_timestamp <= day|as_timestamp %}

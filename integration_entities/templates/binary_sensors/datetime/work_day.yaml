@@ -3,7 +3,7 @@ unique_id: work_day
 name: Work day
 icon: "mdi:briefcase{{ '-off' if is_state('binary_sensor.work_day','off') }}"
 state: |
-  {%- set today = now().date() %}
+  {%- set today = states("sensor.date") | as_datetime %}
   {%- set days_of_week = ["mon","tue","wed","thu","fri","sat","sun"] %}
   {%- set week_day_index = today.isoweekday()-1 %}
   {%- set today_name = days_of_week[week_day_index] %}

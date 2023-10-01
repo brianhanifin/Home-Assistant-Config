@@ -3,21 +3,19 @@ unique_id: date_christmas_eve
 name: Christmas eve
 icon: fas:holly-berry
 state: |
-  {%- set this_event = "12-24" %}
-  {%- set event_date = this_event.split("-") %}
-  {%- set event_month = event_date[0]|int(default=0) %}
-  {%- set event_day = event_date[1]|int(default=0) %}
+  {%- set event_date = "12-24" %}
+  {%- set today = states("sensor.date") | as_datetime -%}
+  {%- set event_date = (today.year ~ "-" ~ event_date) | as_datetime %}
 
   {# If the event has passed for this year, get next year's event. #}
-  {%- set today = as_datetime(states('sensor.date')) -%}
-  {%- if event_month < today.month -%}
+  {%- if event_date.month < today.month -%}
     {%- set event_year = today.year + 1 -%}
-  {%- elif event_month == today.month and event_day < today.day %}
+  {%- elif event_date.month == today.month and event_date.day < today.day %}
     {%- set event_year = today.year + 1 -%}
   {%- else -%}
     {%- set event_year = today.year -%}
   {%- endif -%}
-  {{ strptime(event_year ~"-"~ this_event, "%Y-%m-%d")|replace(" 00:00:00","") }}
+  {{ today.replace(year=event_year, month=event_date.month, day=event_date.day) }}
 attributes:
   type: Holiday
   friendly_date: |

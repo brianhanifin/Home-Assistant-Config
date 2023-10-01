@@ -3,10 +3,10 @@ unique_id: date_easter
 name: Easter
 icon: mdi:egg-easter
 state: |
-  {%- set today = states('sensor.date') -%}
-  {%- set this_event = states('sensor.date_easter') -%}
-  {%- if today == this_event -%}
-    {{ states('sensor.date') }}
+  {%- set today = states("sensor.date") -%}
+  {%- set event_date = states('sensor.date_easter') -%}
+  {%- if today == event_date -%}
+    {{ states("sensor.date") }}
   {%- else -%}
     {{ states('sensor.date_next_easter') }}
   {%- endif -%}
@@ -15,6 +15,6 @@ attributes:
   friendly_date: |
     {%- set event_date = this.state|default("") %}
     {%- if event_date is defined and event_date|lower not in ["","none","unknown","unavailable"] %}
-      {%- set event_month = as_timestamp(event_date) | timestamp_custom("%B") %}
-      {{ event_month ~ " {:2}, {:4}".format(event_date.split("-")[2]|int(default=0), event_date.split("-")[0]|int(default=0)) }}
+      {%- set event_date = event_date | as_datetime %}
+      {{ event_date.strftime('%B') ~ " " ~ event_date.day ~ ", " ~ event_date.year }}
     {%- endif %}
