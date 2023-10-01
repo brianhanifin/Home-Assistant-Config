@@ -3,27 +3,13 @@ unique_id: date_fathers
 name: "Father's day"
 icon: mdi:human-male-boy
 state: |
-  {% from "brianhanifin_date_helpers.jinja" import nth_day_of_month %}
+  {% from "brianhanifin_date_helpers.jinja" import nth_day_of_month_next %}
 
   {%- set event_nth_day = 3 -%}
   {%- set event_day_name = "Sunday" -%}
   {%- set event_month = 6 -%}
 
-  {%- set today = states("sensor.date") | as_datetime -%}
-
-  {#- Calculate the event for the current year. #}
-  {%- set event_date = nth_day_of_month(event_nth_day, event_day_name, event_month, today.year) | as_datetime -%}
-
-  {#- If the event has passed for this year, get next year's event. #}
-  {%- set event_day = event_date.day|default(0) %}
-  {%-
-    if event_month < today.month
-      or (event_month == today.month and event_day < today.day)
-  -%}
-    {%- set event_date = nth_day_of_month(event_nth_day, event_day_name, event_month, today.year+1) | replace(" 00:00:00","")  -%}
-  {%- endif -%}
-
-  {{- event_date }}
+  {{ nth_day_of_month_next(event_nth_day, event_day_name, event_month) }}
 attributes:
   type: Holiday
   friendly_date: |

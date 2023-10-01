@@ -61,7 +61,8 @@ next_date("09-17")
     {%- else -%}
       {%- set event_year = _today_date.year -%}
     {%- endif -%}
-    {{ _today_date.replace(year=event_year, month=event_date.month, day=event_date.day) }}
+    {%- set result = _today_date.replace(year=event_year, month=event_date.month, day=event_date.day) %}
+    {{ result.date() }}
 {%- endmacro %}
 
 {#-
@@ -116,13 +117,36 @@ Reference: https://www.bennadel.com/blog/1446-getting-the-nth-occurrence-of-a-da
   {%- endif %}
 {%- endmacro %}
 
+{#-
+nth_day_of_month_next(nth, day_name, month, year)
+  example: Get the nth Monday of next May.
+  1st: {{ nth_day_of_month(1, "Monday", 5) }}
+  2nd: {{ nth_day_of_month(2, "Monday", 5, 2020) }}
+  Last: {{ nth_day_of_month("last", "Monday", 5) }}
+-#}
+{%- macro nth_day_of_month_next(nth=None, weekday_name=None, month=None, year=_today_date.year) %}
+  {#- Calculate the event for the current year. #}
+  {%- set event_date = nth_day_of_month(nth_day, weekday_name, month, year) | as_datetime -%}
+
+  {#- If the event has passed for this year, get next year's event. #}
+  {%- set event_day = event_date.day|default(0) %}
+  {%-
+    if month < _today_date.month
+      or (month == _today_date.month and event_day < _today_date.day)
+  -%}
+    {%- set event_date = nth_day_of_month(nth, weekday_name, month, year+1) -%}
+  {%- endif -%}
+
+  {{- event_date | replace(" 00:00:00","") }}
+{%- endmacro %}
+
 
 
 {#################
 INTERNAL USE ONLY.
 ##################}
 {#%- set _today_date = now().date() %#}
-{%- set _today_date = states("sensor.date") %}
+{%- set _today_date = states("sensor.date") | as_datetime %}
 {%- set _weekdays_long = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] %}
 {%- set _weekdays_short = ["mon","tue","wed","thu","fri","sat","sun"] %}
 
