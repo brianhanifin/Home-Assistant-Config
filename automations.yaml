@@ -81,7 +81,7 @@
     alias: Force bedside remotes to remain enabled.
   - service: frontend.set_theme
     data:
-      name: Mushroom
+      name: Mushroom Shadow
   - delay:
       hours: 0
       minutes: 1
@@ -311,6 +311,7 @@
       displays:
       - 47e1a1a35bb2d1e827ccdeb761f5721b
       - 7d6b52507e25e7eeba10914e56052d1c
+    enabled: false
   mode: single
 - id: '1640887750655'
   alias: Wet laundry Family room LED indicator
@@ -748,7 +749,7 @@
   - condition: device
     device_id: 8532ec8c935bfb73fc9438d6a98033cb
     domain: vacuum
-    entity_id: vacuum.family_room
+    entity_id: vacuum.downstairs
     type: is_docked
   - condition: device
     device_id: 05429a8986c6f325628f5d664519825e
@@ -759,7 +760,7 @@
   - service: script.vacuum_update
     data:
       vacuum:
-      - vacuum.family_room
+      - vacuum.downstairs
       - vacuum.play_room
   mode: single
 - id: '1654484047176'
@@ -773,7 +774,7 @@
       domain: vacuum
       service: start
       service_data:
-        entity_id: vacuum.family_room
+        entity_id: vacuum.downstairs
   - platform: event
     event_type: call_service
     id: play_room
@@ -790,7 +791,7 @@
     - platform: event
       event_type: state_changed
       event_data:
-        entity_id: vacuum.family_room
+        entity_id: vacuum.downstairs
     - platform: event
       event_type: state_changed
       event_data:
@@ -809,7 +810,7 @@
         - condition: device
           device_id: 8532ec8c935bfb73fc9438d6a98033cb
           domain: vacuum
-          entity_id: vacuum.family_room
+          entity_id: vacuum.downstairs
           type: is_docked
         sequence:
         - delay:
@@ -820,7 +821,7 @@
         - service: script.vacuum_update
           data:
             vacuum:
-            - vacuum.family_room
+            - vacuum.downstairs
   - if:
     - condition: trigger
       id: play_room
@@ -853,7 +854,7 @@
   - platform: device
     device_id: 8532ec8c935bfb73fc9438d6a98033cb
     domain: vacuum
-    entity_id: vacuum.family_room
+    entity_id: vacuum.downstairs
     type: docked
     id: family_room
   - platform: device
@@ -871,7 +872,7 @@
     - repeat:
         until:
         - condition: numeric_state
-          entity_id: vacuum.family_room
+          entity_id: vacuum.downstairs
           attribute: battery_level
           above: '99'
         sequence:
@@ -883,7 +884,7 @@
         - service: script.vacuum_update
           data:
             vacuum:
-            - vacuum.family_room
+            - vacuum.downstairs
   - if:
     - condition: trigger
       id: play_room
@@ -3308,29 +3309,31 @@
     to: 'on'
     for:
       hours: 0
-      minutes: 2
+      minutes: 1
       seconds: 0
     enabled: true
   - platform: template
     value_template: "{{\n  states(\"input_select.dishwasher_status\")|title in [\"Clean\",\"Dirty\"]\n
       \ and states(\"sensor.kitchen_temperature\")|int(default=0) < (states(\"sensor.dishwasher_temperature\")|int(default=0)
-      - 30)\n}}"
+      - 20)\n}}"
     for:
       hours: 0
       minutes: 2
       seconds: 0
-    alias: When Clean or Dirty and temp over 30° warmer.
+    alias: When Clean or Dirty and temp over 20° warmer.
     id: Washing_alt
+    enabled: false
   - platform: state
-    entity_id: sensor.dishwasher_moving
-    from: 'off'
-    to: 'on'
+    entity_id:
+    - sensor.dishwasher_moving
+    from: 'on'
+    to: 'off'
     for:
       hours: 0
-      minutes: 1
+      minutes: 5
       seconds: 0
     id: moving_stopped
-    alias: Evaluate for drying when dishwasher movement stops for 1 minute.
+    alias: Evaluate for drying when dishwasher movement stops for 5 minutes.
   - id: Clean
     platform: event
     event_type: timer.finished
@@ -3363,32 +3366,39 @@
     alias: Check for a valid status change.
     value_template: '{{ status != previous_status and status != "Unknown" }}'
   - if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id:
-        - moving_stopped
-      - condition: state
-        entity_id: input_select.dishwasher_status
-        state: Washing
-        alias: Confirm Dishwasher status is currently "Washing".
-      - condition: template
-        value_template: '{{ states("sensor.kitchen_temperature")|int(default=0) <
-          (states("sensor.dishwasher_temperature")|int(default=0) - 30) }}'
-        alias: When the temperature is 30 degrees higher at the dishwasher vent.
-      alias: When moving stopped and dishwasher vent temperture is 15 degrees higher
-        than kitchen.
+    - condition: trigger
+      id:
+      - moving_stopped
+      alias: When moving stopped.
     then:
-    - variables:
-        status: Drying
-      alias: Change status to Drying.
-    - service: timer.start
-      data:
-        duration: 01:00:00
-      target:
-        entity_id: timer.dishwasher_drying
-      alias: Start the 1 hour countdown to Clean status change.
-    alias: Change status to Drying when conditions match.
+    - if:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: input_select.dishwasher_status
+          state: Washing
+          alias: Confirm Dishwasher status is currently "Washing".
+        - condition: template
+          value_template: '{{ states("sensor.kitchen_temperature")|int(default=0)
+            < (states("sensor.dishwasher_temperature")|int(default=0) - 15) }}'
+          alias: When the temperature is 15 degrees higher at the dishwasher vent.
+        alias: When dishwasher is currently "Washing" and vent temperture is at least
+          15 degrees higher than kitchen.
+      then:
+      - variables:
+          status: Drying
+        alias: Change status to Drying.
+      - service: timer.start
+        data:
+          duration: 01:00:00
+        target:
+          entity_id: timer.dishwasher_drying
+        alias: Start the 1 hour countdown to Clean status change.
+      alias: Change status to Drying when conditions match.
+      else:
+      - stop: Motion stopped but temperature is not raised, so we should not change
+          the status.
+    alias: When triggered by moving_stopped.
   - alias: Update dishwasher status.
     service: input_select.select_option
     data:
@@ -4253,13 +4263,13 @@
       alias: Confirm triggered by "turn_lights_down" or "front_door_closes".
     - condition: and
       conditions:
-      - condition: state
-        entity_id: input_boolean.keep_outdoor_lights_off
-        state: 'off'
       - condition: numeric_state
         entity_id: sensor.outdoor_illuminance_educated_guessor
         below: 1000
-      alias: Confirm "Keep outside lights off" is disabled and it is dark outside.
+      - condition: state
+        entity_id: input_boolean.keep_outdoor_lights_off
+        state: 'off'
+      alias: Confirm it is dark outside and "Keep outside lights off" is disabled.
   action:
   - if:
     - condition: trigger
@@ -4361,6 +4371,8 @@
           entity_id: switch.adaptive_lighting_home_entry
       alias: Restore adaptive lighting automated control.
     alias: When the lights need to be turned back down.
+  trace:
+    stored_traces: 100
   mode: queued
   max: 10
 - id: '1668445491799'
@@ -5201,7 +5213,10 @@
   trigger:
   - platform: time
     at: '22:00:00'
-  condition: []
+  condition:
+  - condition: state
+    entity_id: binary_sensor.bedroom_window
+    state: 'off'
   action:
   - service: climate.set_hvac_mode
     data:

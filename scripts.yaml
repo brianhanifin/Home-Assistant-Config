@@ -648,7 +648,7 @@ vacuum_room_clean:
   sequence:
   - variables:
       rooms: "{%- if rooms is defined %}\n  {{ rooms }}\n{%- endif %}\n"
-      vacuum: "{%- if vacuum is defined %}\n  {{ vacuum }}\n{%- else %}\n  [\"vacuum.family_room\",\"vacuum.play_room\"]\n{%-
+      vacuum: "{%- if vacuum is defined %}\n  {{ vacuum }}\n{%- else %}\n  [\"vacuum.downstairs\",\"vacuum.play_room\"]\n{%-
         endif %}\n"
   - if:
     - condition: template
@@ -684,7 +684,7 @@ vacuum_room_clean:
     vacuum:
       name: Vacuum
       description: Vacuum to clean.
-      example: vacuum.family_room
+      example: vacuum.downstairs
       selector:
         entity:
           multiple: true
@@ -695,7 +695,7 @@ vacuum_update:
   alias: Vacuum update
   sequence:
   - variables:
-      vacuum: "{%- if vacuum is defined %}\n  {{ vacuum }}\n{%- else %}\n  [\"vacuum.family_room\",\"vacuum.play_room\"]\n{%-
+      vacuum: "{%- if vacuum is defined %}\n  {{ vacuum }}\n{%- else %}\n  [\"vacuum.downstairs\",\"vacuum.play_room\"]\n{%-
         endif %}\n"
   - service: vacuum.send_command
     data:
@@ -708,7 +708,7 @@ vacuum_update:
     vacuum:
       name: Vacuum
       description: Vacuum to update.
-      example: vacuum.family_room
+      example: vacuum.downstairs
       selector:
         entity:
           multiple: true
@@ -1207,6 +1207,11 @@ notify_speech:
       data:
         media_player: '{{ media_player }}'
         message: '{{ message }}'
+    - service: script.say_local
+      data:
+        media_player: '{{ media_player }}'
+        message: '{{ message }}'
+      enabled: false
     alias: When enabled and not quiet time, and family is home or guest mode is enabled.
   fields:
     message:
@@ -1591,10 +1596,6 @@ say_cloud:
         seconds: 0
         milliseconds: 0
       enabled: true
-    - service: media_player.turn_off
-      target:
-        entity_id: '{{ media_player }}'
-      alias: Turn off the media players.
     - if:
       - condition: template
         value_template: '{{ media_players_support_off | count>0 }}'
@@ -1706,12 +1707,12 @@ tts_phrase_say:
       data:
         media_player: '{{ smart_speaker }}'
         message: '{{ message }}'
-      enabled: true
+      enabled: false
     - service: script.say_cloud
       data:
         media_player: '{{ smart_speaker }}'
         message: '{{ message }}'
-      enabled: false
+      enabled: true
     alias: Speak when a message is set.
   mode: single
   icon: mdi:cast-audio-variant
@@ -1745,7 +1746,7 @@ say:
         message: "{%- from \"speech.jinja\" import get_briefing %}\n{{ get_briefing(\n
           \ message,\n  person_arriving,\n  say_welcome_home,\n  say_greeting,\n  say_inside_weather,\n
           \ say_outside_weather,\n  say_goodbye,\n  say_goodnight\n) }}\n"
-      enabled: false
+      enabled: true
       alias: Use `say_cloud`.
     - service: script.say_local
       data:
@@ -1753,7 +1754,7 @@ say:
         message: "{%- from \"speech.jinja\" import get_briefing %}\n{{ get_briefing(\n
           \ message,\n  person_arriving,\n  say_welcome_home,\n  say_greeting,\n  say_inside_weather,\n
           \ say_outside_weather,\n  say_goodbye,\n  say_goodnight\n) }}\n"
-      enabled: true
+      enabled: false
       alias: Use `say_local`.
     alias: Speak message when enabled.
     enabled: true
