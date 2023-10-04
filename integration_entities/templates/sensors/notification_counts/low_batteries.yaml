@@ -10,7 +10,7 @@ attributes:
   entities: |
     {{
       states.sensor
-      | selectattr("attributes.device_class","defined")
+      | rejectattr("attributes.device_class","undefined")
       | selectattr("attributes.device_class","eq","battery")
       | selectattr("state","lt","100")
       | selectattr("state","lt","40")
