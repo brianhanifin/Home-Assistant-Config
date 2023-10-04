@@ -51,7 +51,7 @@ automation:
           {%- if event_hour < 6 %}
             {{ high_school_day }}
           {%- else %}
-            {{ high_school_day_tomorrow or high_school_day_tomorrow }}
+            {{ high_school_day_tomorrow }}
           {%- endif %}
         {%- elif id == "bedtime_boys_daysoff" %}
           {%- if event_hour < 6 %}
@@ -118,7 +118,6 @@ automation:
       event_enabled: '{{ is_state("input_boolean.event_enabled_" + id, "on") }}'
       skipnext_entity: 'input_boolean.event_skipnext_{{ id }}'
       do_not_skipnext: '{{ is_state(skipnext_entity, "off") }}'
-      light_enabled: '{{ is_state("input_boolean.event_light_" + id, "on") }}'
 
       event_hour: '{{ states(entity_id)[:2]|int(default=0) }}'
       work_day: '{{ is_state("binary_sensor.work_day","on") }}'
@@ -158,15 +157,14 @@ automation:
       #     title: '{{ title|default("") }}'
       #     message: |
       #       id: {{ id }}
-      #       light_enabled: {{ light_enabled }}
       #       event_today: {{ event_today }}
-      #       {{ light_enabled and event_today and event_enabled }}
+      #       {{ event_today and event_enabled }}
       #       {{ do_not_skipnext }}
       #     notification_id: '{{ id|default("debug_" ~ as_timestamp(now())) }}'
 
-      - alias: 'Continue if the wakeup light is enabled, today is an event day, and the event is not deactivated.'
+      - alias: 'Continue when today is an event day, and the event is not deactivated.'
         condition: template
-        value_template: '{{ light_enabled and event_today and event_enabled }}'
+        value_template: '{{ event_today and event_enabled }}'
 
       - choose:
           - conditions: '{{ do_not_skipnext }}'

@@ -32,13 +32,14 @@ script:
       - variables:
           id: &id >
             wakeup_brian
+          light_enabled: '{{ states("input_boolean.event_light_" ~ id|trim) }}'
           light_name: &light_name >
             {{ states("input_select.event_light_" ~ id|trim) }}
           wakeup_light: &wakeup_light >
             {%- set entity_list = states.light | selectattr("name","eq",light_name) | map(attribute="entity_id") | list %}
             {{ iif(entity_list|count > 0, entity_list[0], "error") }}
       - if:
-          - '{{ wakeup_light != "error" }}'
+          - '{{ light_enabled == "on" and wakeup_light != "error" }}'
         then:
           - service: script.event_light
             continue_on_error: true

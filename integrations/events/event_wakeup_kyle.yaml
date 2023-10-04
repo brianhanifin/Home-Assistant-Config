@@ -2,23 +2,15 @@
 script:
   event_wakeup_kyle:
     sequence:
-      # - service: light.turn_on
-      #   target:
-      #     entity_id: light.kyle_bedside
-      #   data:
-      #     brightness: 26
-      # - delay:
-      #     seconds: 1
-      # - service: light.turn_on
-      #   target:
-      #     entity_id: light.kyle_bedside
-      #   data:
-      #     brightness: 26
-
-      - service: script.event_light
-        data:
-          light: light.kyle_bedside
-          id: wakeup_kyle
+      - if:
+          - condition: state
+            entity_id: input_boolean.event_light_wakeup_kyle
+            state: "on"
+        then:
+          - service: script.event_light
+            data:
+              light: light.kyle_bedside
+              id: wakeup_kyle
 
   event_timeout_wakeup_kyle:
     sequence:
