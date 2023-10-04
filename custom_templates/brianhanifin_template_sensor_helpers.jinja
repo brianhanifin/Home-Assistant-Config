@@ -6,9 +6,8 @@
       | selectattr(
           "entity_id","in",state_attr(sensor_group,"entity_id")
         )
+      | rejectattr("state", "in", ["unavailable","unknown"])
       | selectattr("state","eq",value)
-      | rejectattr("state","eq","unavailable")
-      | rejectattr("state","eq","unknown")
       | map(attribute="entity_id")
       | list
       | sort

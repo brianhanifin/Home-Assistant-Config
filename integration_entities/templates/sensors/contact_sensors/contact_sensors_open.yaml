@@ -7,12 +7,22 @@ state: |
   {{ this.attributes.entities | default([]) | count | default(0) }}
 attributes:
   entities: |
-    {%- set doors_open = state_attr("sensor.doors_open","entities")|default([]) %}
-    {%- set windows_open = state_attr("sensor.windows_open","entities")|default([]) %}
-    {%- if doors_open|count > 0 and windows_open|count > 0 %}
-      {{ doors_open + windows_open }}
-    {%- elif doors_open|count > 0 %}
-      {{ doors_open }}
-    {%- elif windows_open|count > 0 %}
-      {{ windows_open }}
-    {%- endif %}
+    {% set result = states.binary_sensor
+      | selectattr(
+          "entity_id","in",state_attr("sensor.doors_open","entities")
+        )
+      | rejectattr("state", "in", ["unavailable","unknown"])
+      | selectattr("state","eq","on")
+      | map(attribute="entity_id")
+      | list
+
+        + states.binary_sensor
+      | selectattr(
+          "entity_id","in",state_attr("sensor.windows_open","entities")
+        )
+      | rejectattr("state", "in", ["unavailable","unknown"])
+      | selectattr("state","eq","on")
+      | map(attribute="entity_id")
+      | list
+    %}
+    {{ result | sort }}

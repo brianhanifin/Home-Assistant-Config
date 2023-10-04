@@ -7,22 +7,5 @@ state: |
   {{ this.attributes.entities | default([]) | count | default(0) }}
 attributes:
   entities: |
-    {%- macro get_sensors_from_group_with_value(sensor_group=None, value="") %}
-      {%- if states(sensor_group) in ["unavailable","unknown"] %}
-        {%- set result = [] %}
-      {%- else %}
-        {% set result = states.binary_sensor
-          | selectattr(
-              "entity_id","in",state_attr(sensor_group,"entity_id")
-            )
-          | selectattr("state","eq",value)
-          | rejectattr("state","eq","unavailable")
-          | rejectattr("state","eq","unknown")
-          | map(attribute="entity_id")
-          | list
-          | sort
-        %}
-      {%- endif %}
-      {{ result }}
-    {%- endmacro %}
+    {% from "brianhanifin_template_sensor_helpers.jinja" import get_sensors_from_group_with_value %}
     {{ get_sensors_from_group_with_value("binary_sensor.downstairs_windows","on") }}
