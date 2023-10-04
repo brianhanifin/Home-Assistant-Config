@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Devices | Areas | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| **49,763** | 1,466 | 280 | 15 | 108 | 63 |
+| **38,379** | 1,501 | 292 | 15 | 108 | 63 |
 
 # Index
 
@@ -238,10 +238,10 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has **280** devices
-featuring **1,466** entities,
-including **685** sensors. My YAML
-files contain 49,763 lines of code.
+Our Home Assistant install has **292** devices
+featuring **1,501** entities,
+including **708** sensors. My YAML
+files contain 38,379 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>23 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.19.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -271,7 +271,7 @@ Authors:[@ludeeus](https://github.com/ludeeus).
 ## [Google Home v1.10.0](https://github.com/leikoilja/ha-google-home)
 Home Assistant Google Home custom componentAuthors:[@leikoilja](https://github.com/leikoilja), [@DurgNomis-drol](https://github.com/DurgNomis-drol), [@ArnyminerZ](https://github.com/ArnyminerZ), [@KapJI](https://github.com/KapJI).
 
-## [Home Assistant Community Store (HACS) v1.32.1](https://hacs.xyz/docs/configuration/start)
+## [Home Assistant Community Store (HACS) v1.33.0](https://hacs.xyz/docs/configuration/start)
 HACS gives you a powerful UI to handle downloads of all your custom needs.Authors:[@ludeeus](https://github.com/ludeeus).
 
 ## [Holidays v1.9.6](https://github.com/bruxy70/Holidays/)
@@ -313,27 +313,30 @@ Home Assistant custom integration to keep track of missing entities and services
 ## [Wyze v0.1.22](https://github.com/SecKatie/ha-wyzeapi#readme)
 Home Assistant Integration for Wyze devices.Authors:[@SecKatie](https://github.com/SecKatie).</details>
 
-<details><summary>29 lovelace plugins</summary>
+<details><summary>30 lovelace plugins</summary>
 
 ## [Apexcharts Card v2.0.4](https://github.com/RomRider/apexcharts-card)
 📈 A Lovelace card to display advanced graphs and charts based on ApexChartsJS for Home Assistant
 
-## [Atomic Calendar Revive v7.7.1](https://github.com/totaldebug/atomic-calendar-revive)
+## [Atomic Calendar Revive v9.0.0](https://github.com/totaldebug/atomic-calendar-revive)
 An advanced calendar card for Home Assistant Lovelace.
 
 ## [Auto Entities v1.12.1](https://github.com/thomasloven/lovelace-auto-entities)
 🔹Automatically populate the entities-list of lovelace cards
 
+## [Bubble Card v0.0.1-beta.8](https://github.com/Clooos/Bubble-Card)
+Bubble Card is a minimalist card collection for Home Assistant with a nice pop-up touch.
+
 ## [Canary v0.4.0](https://github.com/jcwillox/lovelace-canary)
 🐤 Adds many useful extensions to lovelace, such as templating secondary info, stacking within a card and more!
 
-## [Card Mod v3.2.2](https://github.com/thomasloven/lovelace-card-mod)
+## [Card Mod v3.2.3](https://github.com/thomasloven/lovelace-card-mod)
 🔹 Add CSS styles to (almost) any lovelace card
 
 ## [Card Tools v11](https://github.com/thomasloven/lovelace-card-tools)
 🔹A collection of tools for other lovelace plugins to use
 
-## [Clock Weather Card v1.0.17](https://github.com/pkissling/clock-weather-card)
+## [Clock Weather Card v1.1.0](https://github.com/pkissling/clock-weather-card)
 A Home Assistant Card indicating today's date/time, along with an iOS inspired weather forecast for the next days with animated icons
 
 ## [Decluttering Card v1.0.0](https://github.com/custom-cards/decluttering-card)
@@ -348,7 +351,7 @@ Flipdown Timer Card for Home Assistant Lovelace
 ## [Frigate Card v5.2.0](https://github.com/dermotduffy/frigate-hass-card)
 A Lovelace card for Frigate in Home Assistant
 
-## [Kiosk Mode v4.0.0](https://github.com/NemesisRE/kiosk-mode)
+## [Kiosk Mode v4.1.0](https://github.com/NemesisRE/kiosk-mode)
 🙈 Hides the Home Assistant header and/or sidebar
 
 ## [Layout Card v2.4.4](https://github.com/thomasloven/lovelace-layout-card)
@@ -436,7 +439,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.9.2-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.10.0b9-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -446,7 +449,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-49,763-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38,379-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg
