@@ -7,7 +7,7 @@
 # Repository statistics
 | Lines of code | Entities | Devices | Areas | Domains | Automations | Scripts |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| **38,379** | 1,501 | 292 | 15 | 108 | 63 |
+| **38,418** | 1,495 | 286 | 15 | 108 | 63 |
 
 # Index
 
@@ -238,10 +238,10 @@ smoke detectors, and a bulb.
 
 # Technical details
 
-Our Home Assistant install has **292** devices
-featuring **1,501** entities,
-including **708** sensors. My YAML
-files contain 38,379 lines of code.
+Our Home Assistant install has **286** devices
+featuring **1,495** entities,
+including **694** sensors. My YAML
+files contain 38,418 lines of code.
 All of my configuration files are tested against the most stable version of home-assistant using [Github Actions][github-actions].<details><summary>23 Custom integrations</summary>
 
 ## [Adaptive Lighting v1.19.0](https://github.com/basnijholt/adaptive-lighting#readme)
@@ -259,7 +259,7 @@ Climate entity for controlling eight sleep bedAuthors:[@amosyuen](https://github
 ## [Fontawesome icons v2.1.5](https://github.com/thomasloven/hass-fontawesome)
 
 
-## [Frigate v4.0.0](https://github.com/blakeblackshear/frigate)
+## [Frigate v5.0.0-beta.2](https://github.com/blakeblackshear/frigate)
 Frigate integration for Home AssistantAuthors:[@blakeblackshear](https://github.com/blakeblackshear).
 
 ## [GE Home (SmartHQ) v0.6.8](https://github.com/simbaja/ha_gehome)
@@ -439,7 +439,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [esphome-config]: https://github.com/brianhanifin/esphome-config
 
 [ha-version]: https://www.home-assistant.io/blog/categories/release-notes/
-[ha-version-shield]: https://img.shields.io/badge/2023.10.0b9-333333?logo=home%20assistant
+[ha-version-shield]: https://img.shields.io/badge/2023.10.0-333333?logo=home%20assistant
 
 [github-build-status-shield]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml/badge.svg
 [github-build-status]: https://github.com/brianhanifin/Home-Assistant-Config/actions/workflows/build.yml
@@ -449,7 +449,7 @@ I refactored my yaml files to be similar to his config ([as discussed in this vi
 [commits-shield]: https://img.shields.io/github/commit-activity/m/brianhanifin/Home-Assistant-Config.svg?logo=github&logoColor=838B95
 [commits]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
-[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38,379-informational
+[code-lines-shield]: https://img.shields.io/badge/lines%20of%20code-38,418-informational
 [code-link]: https://github.com/brianhanifin/Home-Assistant-Config/pulse
 
 [maintained]: https://img.shields.io/maintenance/yes/2023.svg

@@ -24,8 +24,8 @@ attributes:
           +integration_entities("wyoming")
           +integration_entities("Z-Wave JS")
         )
-      | rejectattr("entity_id","search","blackpc")
-      | rejectattr("entity_id","search","solar")
+      | rejectattr("object_id","search","blackpc")
+      | rejectattr("object_id","search","solar")
       | map(attribute="entity_id")
       | reject("is_hidden_entity")
       | list
