@@ -16,7 +16,9 @@ attributes:
     %}
     {%- for watcher in watchers %}
       {%- set content = states.sensor.plex.attributes[watcher] %}
-      {%- set content = content.split(" - ")[1] | default(content) %}
+      {%- set values = content.split(" - ") | unique | list %}
+      {%- set content = values[1] | default(content) %}
+      {%- set content = iif(values|count>2, content ~ "\t" ~ values[values|count-1], content) %}
       {%- set user = watcher.split(" - ")[0] %}
       {%- set plex.output = plex.output ~ (user ~ "\t" ~ content).split("\t") ~ "\n" %}
     {%- endfor %}
